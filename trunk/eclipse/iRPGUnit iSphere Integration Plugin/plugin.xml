@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <!-- ======================================= -->
+   <!--   Conext menue RPGUnit view             -->
+   <!-- ======================================= --> 
+   <extension
+         point="org.eclipse.ui.popupMenus">
+         
+	  <!-- ======================================= -->
+	  <!--   RPGUnit Test Suite                    -->
+	  <!-- ======================================= --> 
+      <objectContribution
+            objectClass="de.tools400.rpgunit.core.model.local.UnitTestSuite"
+            subtypefilter="*"
+            typecategoryfilter="*"
+            typefilter="*"
+            namefilter="*"
+            id="biz.isphere.rpgunit.unittestsuite.actions">
+         <menu
+               label="%SaveAs"
+               id="biz.isphere.rpgunit.unittestsuite.report.save">             
+            <separator
+                  name="main">
+            </separator>
+         </menu> 
+         <menu
+               label="%OpenAs"
+               id="biz.isphere.rpgunit.unittestsuite.report.open">             
+            <separator
+                  name="main">
+            </separator>
+         </menu> 
+         <action
+               label="%SaveAsPDF"
+               class="de.tools400.rpgunit.isphere.action.SpooledFileSaveAsPDFAction"
+               menubarPath="biz.isphere.rpgunit.unittestsuite.report.save/main"
+               enablesFor="+"
+               id="de.tools400.rpgunit.isphere.action.SpooledFileSaveAsPDFAction">
+         </action>
+         <action
+               label="%SaveAsHTML"
+               class="de.tools400.rpgunit.isphere.action.SpooledFileSaveAsHTMLAction"
+               menubarPath="biz.isphere.rpgunit.unittestsuite.report.save/main"
+               enablesFor="+"
+               id="de.tools400.rpgunit.isphere.action.SpooledFileSaveAsHTMLAction">
+         </action>
+         <action
+               label="%SaveAsText"
+               class="de.tools400.rpgunit.isphere.action.SpooledFileSaveAsTextAction"
+               menubarPath="biz.isphere.rpgunit.unittestsuite.report.save/main"
+               enablesFor="+"
+               id="de.tools400.rpgunit.isphere.action.SpooledFileSaveAsTextAction">
+         </action>
+         <action
+               label="%OpenAsPDF"
+               class="de.tools400.rpgunit.isphere.action.SpooledFileOpenAsPDFAction"
+               menubarPath="biz.isphere.rpgunit.unittestsuite.report.open/main"
+               enablesFor="+"
+               id="de.tools400.rpgunit.isphere.action.SpooledFileOpenAsPDFAction">
+         </action>
+         <action
+               label="%OpenAsHTML"
+               class="de.tools400.rpgunit.isphere.action.SpooledFileOpenAsHTMLAction"
+               menubarPath="biz.isphere.rpgunit.unittestsuite.report.open/main"
+               enablesFor="+"
+               id="de.tools400.rpgunit.isphere.action.SpooledFileOpenAsHTMLAction">
+         </action>
+         <action
+               label="%OpenAsText"
+               class="de.tools400.rpgunit.isphere.action.SpooledFileOpenAsTextAction"
+               menubarPath="biz.isphere.rpgunit.unittestsuite.report.open/main"
+               enablesFor="+"
+               id="de.tools400.rpgunit.isphere.action.SpooledFileOpenAsTextAction">
+         </action>
+	  </objectContribution>
+         
+	  <!-- ======================================= -->
+	  <!--   RPGUnit Test Case                     -->
+	  <!-- ======================================= --> 
+      <objectContribution
+            objectClass="de.tools400.rpgunit.core.model.local.UnitTestCase"
+            subtypefilter="*"
+            typecategoryfilter="*"
+            typefilter="*"
+            namefilter="*"
+            id="biz.isphere.rpgunit.unittestsuite.actions">
+         <menu
+               label="%SaveAs"
+               id="biz.isphere.rpgunit.unittestsuite.report.save">             
+            <separator
+                  name="main">
+            </separator>
+         </menu> 
+         <menu
+               label="%OpenAs"
+               id="biz.isphere.rpgunit.unittestsuite.report.open">             
+            <separator
+                  name="main">
+            </separator>
+         </menu> 
+         <action
+               label="%SaveAsPDF"
+               class="de.tools400.rpgunit.isphere.action.SpooledFileSaveAsPDFAction"
+               menubarPath="biz.isphere.rpgunit.unittestsuite.report.save/main"
+               enablesFor="+"
+               id="de.tools400.rpgunit.isphere.action.SpooledFileSaveAsPDFAction">
+         </action>
+         <action
+               label="%SaveAsHTML"
+               class="de.tools400.rpgunit.isphere.action.SpooledFileSaveAsHTMLAction"
+               menubarPath="biz.isphere.rpgunit.unittestsuite.report.save/main"
+               enablesFor="+"
+               id="de.tools400.rpgunit.isphere.action.SpooledFileSaveAsHTMLAction">
+         </action>
+         <action
+               label="%SaveAsText"
+               class="de.tools400.rpgunit.isphere.action.SpooledFileSaveAsTextAction"
+               menubarPath="biz.isphere.rpgunit.unittestsuite.report.save/main"
+               enablesFor="+"
+               id="de.tools400.rpgunit.isphere.action.SpooledFileSaveAsTextAction">
+         </action>
+         <action
+               label="%OpenAsPDF"
+               class="de.tools400.rpgunit.isphere.action.SpooledFileOpenAsPDFAction"
+               menubarPath="biz.isphere.rpgunit.unittestsuite.report.open/main"
+               enablesFor="+"
+               id="de.tools400.rpgunit.isphere.action.SpooledFileOpenAsPDFAction">
+         </action>
+         <action
+               label="%OpenAsHTML"
+               class="de.tools400.rpgunit.isphere.action.SpooledFileOpenAsHTMLAction"
+               menubarPath="biz.isphere.rpgunit.unittestsuite.report.open/main"
+               enablesFor="+"
+               id="de.tools400.rpgunit.isphere.action.SpooledFileOpenAsHTMLAction">
+         </action>
+         <action
+               label="%OpenAsText"
+               class="de.tools400.rpgunit.isphere.action.SpooledFileOpenAsTextAction"
+               menubarPath="biz.isphere.rpgunit.unittestsuite.report.open/main"
+               enablesFor="+"
+               id="de.tools400.rpgunit.isphere.action.SpooledFileOpenAsTextAction">
+         </action>
+	  </objectContribution>
+	  
+   </extension>
+
+</plugin>
