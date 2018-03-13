@@ -1,0 +1,75 @@
+Errors with 1.10.0
+------------------
+
+ASSERTT.testAssertWithFailure
+   Expected '9800', but was '16800'.
+   Reason: Refactoring of module ASSERT. Introduced new procedure doAssert().
+
+ASSERTT.testAssertWithSuccess
+   Expected '', but was '
+   Reason: The new "assertFailEvt" (assertFailEvtLong_t) had to be mapped to the
+           old "assertFailEvt" (assertFailEvt_t) structure, which properly sets
+           the length bytes of "assertFailEvt_v1.msg" to x'0000'. These bytes
+           had been set to x'4040' before. Procedure ASSERT.clrAssertFailEvt()
+           now uses 'clear' instead of '*BLANKS' to initialize the assert fail
+           event structure.
+
+ASSERTT.testBigIntegerEquality
+   Expected '', but was '
+   Reason: see ASSERTT.testAssertWithSuccess
+
+ASSERTT.testGoodByeIsNotHello
+   Expected 'assert', but was 'aEqual'.
+   Reason: see ASSERTT.testAssertWithFailure
+
+ASSERTT.testHelloEqualsHello
+   Expected '', but was '
+   Reason: see ASSERTT.testAssertWithSuccess
+
+ASSERTT.testTwoAndTwoEqualsFour
+   Expected '', but was '
+   Reason: see ASSERTT.testAssertWithSuccess
+
+ASSERTT.testTwoAndTwoIsNotEqualToFive
+   Expected 'assert', but was 'iEqual'.
+   Reason: see ASSERTT.testAssertWithFailure
+
+RUNT.test_loadTestSuite
+   MCH3601 - Pointer not set for location referenced.
+   Reason: Parameter srvPgm has been removed from procdure loadTestSuite().
+
+RUNT.test_runTestProc_errorInSetup
+   Expected 'E', but was 'F'.
+   Reason: see ASSERTT.testAssertWithSuccess
+
+RUNT.test_runTestProc_errorInTearDown
+   Expected 'E', but was 'F'.
+   Reason: see ASSERTT.testAssertWithSuccess
+
+RUNT.test_runTestProc_errorInTest
+   Expected 'E', but was 'F'.
+   Reason: see ASSERTT.testAssertWithSuccess
+
+RUNT.test_runTestProc_failureInTest
+   Expected 'TEST_FAIL', but was 'fail'.
+   Reason: Refactoring of module ASSERT. Introduced new procedure doFail().
+
+RUNT.test_runTestProc_tearDownAfterErrorInSetup
+   Expected 'E', but was 'F'.
+   Reason: see ASSERTT.testAssertWithSuccess
+
+RUACPTST.TESTBIGINTEGER
+   Expected 'assert', but was 'iEqual'.
+   Reason: see ASSERTT.testAssertWithFailure
+
+RUACPTST.TESTCHOOSETEST
+   Expected 'TEST2 (TESTPGM05', but was 'fail (RUTESTCASE'.
+   Reason: Refactoring of module ASSERT. Introduced new procedure doFail().
+
+RUACPTST.TESTFAILURES
+   Expected 'assert', but was 'iEqual'.
+   Reason: see ASSERTT.testAssertWithFailure
+
+RUACPTST.TESTSTACKTRACE
+   Expected 'assert', but was 'iEqual'.
+   Reason: see ASSERTT.testAssertWithFailure

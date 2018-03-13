@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="de.tools400.rpgunit.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="de.tools400.rpgunit.core" id="de.tools400.rpgunit.core.extensions.preferences.IRPGUnitProductLibrary" name="RPGUnit Preferences: Product Library"/>
+      </appInfo>
+      <documentation>
+         Extension point to make the product library available for other plugins.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <choice minOccurs="1" maxOccurs="unbounded">
+            <element ref="client"/>
+         </choice>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="client">
+      <complexType>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  Class that implemets interface &lt;i&gt;de.tools400.rpgunit.core.extensions.preferences.IRPGUnitProductLibrary&lt;/i&gt;. This class is called when when the plugin starts and when the &lt;i&gt;product library&lt;/i&gt; of the RPGUnit preferences is changed. The purpose of this class is to take and store the product library for later use.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":de.tools400.rpgunit.core.extensions.preferences.IRPGUnitProductLibrary"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         1.5.0
+      </documentation>
+   </annotation>
+
+
+
+
+
+</schema>
