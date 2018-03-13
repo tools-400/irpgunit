@@ -1,0 +1,23 @@
+# Version: @VERSION_NUMBER@ 
+# Created: @TODAY@
+
+# Default index page
+DirectoryIndex index.html
+
+# Enable URL rewriting
+RewriteEngine On
+
+# Do not redirect requests to the root directory
+RewriteRule ^\s*$ $1 [L]
+
+# Do not redirect requests to 'index.html'
+RewriteRule ^(index.html)$ $1 [L]
+
+# Do not redirect requests to 'assets'
+RewriteRule ^(assets/.*)$ $1 [L]
+
+# Redirect requests of root resources to the master site (Should be: http://master.dl.sourceforge.net)
+RewriteRule ^([^/]*)$ @SF_MASTER_DL@/@BETA_VERSION@/eclipse/@BUILD_TARGET@/$1 [L]
+
+# The rest goes to the auto-mirror location (Should be: http://downloads.sourceforge.net)
+RewriteRule (.*) @SF_DOWNLOADS@/@BETA_VERSION@/eclipse/@BUILD_TARGET@/$1 [L]
