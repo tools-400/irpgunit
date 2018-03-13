@@ -1,0 +1,84 @@
+STRPGMEXP  PGMLVL(*CURRENT) SIGNATURE('iRPGUNIT V2.0')
+
+  EXPORT SYMBOL("aEqual")
+  EXPORT SYMBOL("assert")
+  EXPORT SYMBOL("clrAssertFailEvt")
+  EXPORT SYMBOL("fail")
+  EXPORT SYMBOL("getAssertCalled")
+  EXPORT SYMBOL("getAssertFailEvt")
+  EXPORT SYMBOL("iEqual")
+  EXPORT SYMBOL("CLRPFM")
+  EXPORT SYMBOL("RCLACTGRP")
+  EXPORT SYMBOL("runCmd")
+  EXPORT SYMBOL("clearAssertCounter")
+  EXPORT SYMBOL("nEqual")
+  EXPORT SYMBOL("getVersion")
+
+  EXPORT SYMBOL("waitSeconds")
+  EXPORT SYMBOL("displayStatusMessage")
+  EXPORT SYMBOL("restoreStatusMessage")
+  EXPORT SYMBOL("clearStatusMessage")
+  EXPORT SYMBOL("getMemberType")
+  EXPORT SYMBOL("getMonitoredMessage")
+  EXPORT SYMBOL("setLowMessageKey")
+
+  EXPORT SYMBOL("getAssertFailEvtLong")
+
+ENDPGMEXP
+
+STRPGMEXP  PGMLVL(*PRV) SIGNATURE('RPGUNIT Plugin V1.0')
+
+  EXPORT SYMBOL("aEqual")
+  EXPORT SYMBOL("assert")
+  EXPORT SYMBOL("clrAssertFailEvt")
+  EXPORT SYMBOL("fail")
+  EXPORT SYMBOL("getAssertCalled")
+  EXPORT SYMBOL("getAssertFailEvt")
+  EXPORT SYMBOL("iEqual")
+  EXPORT SYMBOL("CLRPFM")
+  EXPORT SYMBOL("RCLACTGRP")
+  EXPORT SYMBOL("runCmd")
+  EXPORT SYMBOL("clearAssertCounter")
+  EXPORT SYMBOL("nEqual")
+  EXPORT SYMBOL("getVersion")
+
+  EXPORT SYMBOL("waitSeconds")
+  EXPORT SYMBOL("displayStatusMessage")
+  EXPORT SYMBOL("restoreStatusMessage")
+  EXPORT SYMBOL("clearStatusMessage")
+  EXPORT SYMBOL("getMemberType")
+  EXPORT SYMBOL("getMonitoredMessage")
+  EXPORT SYMBOL("setLowMessageKey")
+
+ENDPGMEXP
+
+STRPGMEXP  PGMLVL(*PRV) SIGNATURE('RPGUNIT V0.3')
+
+  EXPORT SYMBOL("aEqual")
+  EXPORT SYMBOL("assert")
+  EXPORT SYMBOL("clrAssertFailEvt")
+  EXPORT SYMBOL("fail")
+  EXPORT SYMBOL("getAssertCalled")
+  EXPORT SYMBOL("getAssertFailEvt")
+  EXPORT SYMBOL("iEqual")
+  EXPORT SYMBOL("CLRPFM")
+  EXPORT SYMBOL("RCLACTGRP")
+  EXPORT SYMBOL("runCmd")
+
+ENDPGMEXP
+
+STRPGMEXP  PGMLVL(*PRV) SIGNATURE('RPGUNIT V0.2')
+
+  EXPORT SYMBOL("aEqual")
+  EXPORT SYMBOL("assert")
+  EXPORT SYMBOL("clrAssertFailEvt")
+  EXPORT SYMBOL("fail")
+  EXPORT SYMBOL("getAssertCalled")
+  EXPORT SYMBOL("getAssertFailEvt")
+  EXPORT SYMBOL("iEqual")
+  EXPORT SYMBOL("raiseInternalError")
+  EXPORT SYMBOL("CLRPFM")
+  EXPORT SYMBOL("RCLACTGRP")
+  EXPORT SYMBOL("runCmd")
+
+ENDPGMEXP
