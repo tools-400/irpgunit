@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>aEqual (string equal)</title>
+</head>
+
+<body>
+<h1>aEqual (string equal)</h1>
+<b>Syntax:</b>
+<p class="indent">
+<code>aEqual( 'expected' : 'actual' [: 'fieldName');</code>
+</p>
+<b>Description:</b>
+<p class="indent">
+Compares the given String values <code>'expected'</code> and 
+<code>'actual'</code>. The assertion fails, if both values are different.
+</p>
+<b>Example:</b>
+<p>
+<code><pre class="indent">
+aEqual( 'Hello' : 'Hello' );          
+
+<span class="r-cmt">// No exception message => OK.</span>        
+
+aEqual( 'HelloWorld' : 'Hello' );
+
+<span class="r-cmt-red">// Never reached!</span>        
+</pre></code>
+</p>
+
+</p>
+</body>
+</html>

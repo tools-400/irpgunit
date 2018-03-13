@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Hinweise</title>
+</head>
+
+<body>
+<h1>Hinweise</h1>
+Folgende Hinweise sollen ihnen helfen, RPGUnit richtig anzuwenden und möglicherweise 
+unerwartetes Verhalten richtig zu interpretieren.
+
+<h2>Prinzipielle Arbeitsweise</h2>
+Grundsätzlich bemüht sich RPGUnit die Arbeitsweise von JUnit exakt nachzubilden.
+Problematisch ist hierbei jedoch das Überwachen von Programmanweisungen 
+auf Fehler. Hierzu stehen im RPG zwei Möglichkeiten zur Verfügung.
+<p>
+
+<h2>Monitor Block</h2>
+Der Aufruf einer RPGUnit Prüffunktion innerhalb eines Monitor-Blocks führt zu einem
+protokollierten Fehler. Dies entspricht exakt dem Verhalten von JUnit. Auch dort werden 
+Fehler innerhalb eines <code>try/catch</code> Blocks erkannt und protokolliert.
+<p>
+<b>Unproblematisch</b>
+<code><pre class="indent">
+monitor;
+
+   <span class="r-cmt">// calculation statements</span>
+   
+   aEqual( 'HelloWorld' : 'Hello' ); <span class="r-cmt">// correctly reported</span>  
+
+on-error;
+   <span class="r-cmt">// error handler</span>
+endmon;
+</pre></code> 
+
+<h2>CALLP - Error Extender</h2>
+Beim Aufruf der RPGUnit Prüffunktionen werden auftretende Fehler ignoriert, wenn der 
+Aufruf über <code>CALLP(E)</code> erfolgt. Verzichten Sie daher beim auf den Error 
+Extender <code>(E)</code> beim Aufruf der Prüffuktionen über <code>CALLP</code>.
+<p>
+<b>Richtig</b>
+<code><pre class="indent">
+aEqual( 'HelloWorld' : 'Hello' );
+
+callp aEqual( 'HelloWorld' : 'Hello' );
+</pre></code> 
+<p>
+<b>Falsch</b>
+<code><pre class="indent-red">
+callp(e) aEqual( 'HelloWorld' : 'Hello' ); // not reported by RPGUnit!
+</pre></code> 
+
+<pre>
+</body>
+</html>

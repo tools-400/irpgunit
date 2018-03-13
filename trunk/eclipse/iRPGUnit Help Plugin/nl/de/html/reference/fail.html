@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>fail (fail)</title>
+</head>
+
+<body>
+<h1>fail (fail)</h1>
+<b>Syntax:</b>
+<p class="indent">
+<code>fail( 'nachricht' );</code>
+</p>
+<b>Beschreibung:</b>
+<p class="indent">
+Erzeugt einen Fehler und bricht die Verarbeitung mit der angegebenen <code>nachricht</code> ab.
+</p>
+<b>Beispiel:</b>
+<p>
+<code><pre class="indent">
+monitor;
+
+  produceAnException(doFailure);
+  
+  <span class="r-cmt-red">fail('produceAnException(..) should have raised an error.');</span>
+
+on-error;
+  <span class="r-cmt">// Success. Failure exception was seen.</span>
+endmon;
+</pre></code>
+</p>
+
+</body>
+</html>

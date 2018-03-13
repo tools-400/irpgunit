@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>restoreStatusMessage (restore status message)</title>
+</head>
+
+<body>
+<h1>restoreStatusMessage (restore status message)</h1>
+<b>Syntax:</b>
+<p class="indent">
+<code>restoreStatusMessage();</code>
+</p>
+<b>Description:</b>
+<p class="indent">
+Replaces the current status message with the previous message.
+</p>
+<b>Example:</b>
+<p>
+<code><pre class="indent">
+<span class="r-cmt">// Display status message.</span>
+
+displayStatusMessage('Hello World!');      
+    
+<span class="r-cmt">// Overwrite status message.</span>
+
+displayStatusMessage('The quick brown fox ...');  
+        
+<span class="r-cmt">// Restore previous 'Hello World!' message.</span>
+
+restoreStatusMessage();    
+      
+</pre></code>
+</p>
+
+</body>
+</html>

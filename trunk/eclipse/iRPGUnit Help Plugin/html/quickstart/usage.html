@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Usage</title>
+</head>
+
+<body>
+<h1>Usage</h1>
+Using RPGUnit is splitted into two parts:
+<ol>
+<li>Creating test cases</li>
+<li>Running test cases</li>
+</ol>
+<h2>Creating test cases</h2>
+In RPG a test case is an exported procedure. Its name must start with <code>test</code> 
+in order to be accepted by RPGUnit. But that also means that you must not export 
+procedures, starting with <code>test</code>, that are not intended to be a test case.
+<p>
+In order to use the RPGUnit procedures you need to add copy book <code>TESTCASE</code> 
+to your source meber:
+<code class="indent"><pre>
+ /copy RPGUNIT1,/copy RPGUNIT1,TESTCASE                     RPGUnit
+</pre></code>
+<p>
+<u>Test case examples</u>
+<ul>
+<li>testGenerateUUID</li>
+<li>testUpdateStatus</li>
+<li>testGenerateMD5</li>
+<li>testGetNextRecord</li>
+</ul>
+<p>
+One or more test cases make a test suite. In RPG we use a service program for that.
+A test suite (service program) is created with command <code>RUCRTTST</code>.
+<p class="indent">
+<code>RUCRTTST TSTPGM(RPGUNIT/RUPLUGINT1) SRCFILE(RPGUNITT1)</code></p>
+<p>
+Member <a href="../appendix/assets/RPGUnitTestSuite.txt"><code>RPGUNIT1.TEMPLATE</code></a> is 
+an example of a test suite. It does not do any harm but produces a spooled file with the
+execution flow. 
+<p>
+<table>
+<tr>
+<td class="notice">Note: You need to specify a named source member and compiler option <code>*EVENTF</code> in 
+                   order to get back your compile result in RDi. Furthermore parameter SRCMBR
+                   has to be set to the name of source member to enable RDi to load the compile 
+                   result. For example:<p>
+                   <code><u>RPGLE:</u><br>RUCRTTST TSTPGM(&O/&N) SRCFILE(&L/&F) SRCMBR(&N) COPTION(*SRCSTMT *EVENTF) DBGVIEW(*LIST)
+                   <br><br><u>SQLRPGLE:</u><br>RUCRTTST TSTPGM(&O/&N) SRCFILE(&L/&F) SRCMBR(&N) POPTION(*EVENTF) COMPILEOPT('DBGVIEW(*LIST)')</code><p>
+                   It is also recommended to specify <code>*SRCSTMT</code>, to directly jump to the failed source 
+                   statement, when double-clicking an error in the RPGUnit view.</code>
+                   </td>
+</tr>
+</table>
+<h2>Running test cases on a CL command line</h2>
+Once you have your test suites in place, you can execute them with command 
+<code>RUCALLTST</code>. By default the command executes all test cases of a
+test suite. If you want to run a single test case you can specify the name
+of the test case (procedure name) at parameter <code>TSTPRC</code> at the
+command prompt.  
+<p class="indent">
+<code class="code">RUCALLTST TSTPGM(RUPLUGINT1)</code></p>
+or
+<p class="indent">
+<code class="code">RUCALLTST TSTPGM(RUPLUGINT1) TSTPRC(TESTALLOK_2)</code></p>
+<p>
+<h2>Running test cases from RDP</h2>
+From RPD you can use the Remote Systems Explorer to run your test suites. There is a 
+new context menu 'Run RPGUnit Test' that lets you select and run your test suites.
+<p class="indent">
+<img src="assets/RunRPGUnitTest.png" alt="Run RPGUnit Test">
+</p>
+<p>
+The result is shown in view 'RPGUnit': 
+<p class="indent">
+<img src="assets/RPGUnitView_Success.png" alt="Display RPGUnit Test Result">
+</p>
+From there you can choose between the following options:
+<ul>
+<li>Collapse All</li>
+<li>Expand All</li>
+<li>Show Failures Only</li>
+<li>Rerun All Test Cases</li>
+<li>Disable Report</li>
+<li>Enable Debug Mode</li>
+</ul>
+<p>
+The following options are available from the context menu: 
+<p class="indent">
+<img src="assets/RPGUnitPopupMenu.png" alt="RPGUnit Context Menu">
+</p>
+<ul>
+<li>Rerun Selected Test Case</li>
+<li>Display Report</li>
+<li>Edit LPEX (also: mouse double-click)</li>
+<li>Remove Selected Test Suite</li>
+</ul>
+<p>
+Result of a failed unit test: 
+<p class="indent">
+<img src="assets/RPGUnitView_Error.png" alt="Display RPGUnit Test Result">
+</p>
+<p>
+Use the properties view to see the properties of a selected line in a grid: 
+<p class="indent">
+<img src="assets/RPGUnitView_Error_Properties.png" alt="Display RPGUnit Test Result">
+</p>
+By default, the execution time is hidden in the properties view. You can display it 
+with the "Show Advanced Properties" <img align="top" src="assets/Show_Advanced_Properties_Button.png" /> button.
+<p>
+</body>
+</html>
