@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup class="de.tools400.rpgunit.core.versioncheck.StartUp"/>
+   </extension>
+
+   <!-- ======================================= -->
+   <!--   Extension Points                      -->
+   <!-- ======================================= --> 
+   <extension-point id="de.tools400.rpgunit.core.extensions.view.IRPGUnitViewSelectionChanged" 
+         name="RPGUnit View: Popup Menu" 
+         schema="schema/de.tools400.rpgunit.core.extensions.view.IRPGUnitViewSelectionChanged.xsd">
+   </extension-point>
+   
+   <extension-point id="de.tools400.rpgunit.core.extensions.testcase.IRPGUnitUpdateTestResult" 
+         name="RPGUnit Tests: Update Test Result" 
+         schema="schema/de.tools400.rpgunit.core.extensions.testcase.IRPGUnitUpdateTestResult.xsd">
+   </extension-point>
+   
+   <extension-point id="de.tools400.rpgunit.core.extensions.preferences.IRPGUnitProductLibrary" 
+         name="RPGUnit Preferences: Product Library" 
+         schema="schema/de.tools400.rpgunit.core.extensions.preferences.IRPGUnitProductLibrary.xsd">
+   </extension-point>
+   
+   <!-- ======================================= -->
+   <!--   Views                                 -->
+   <!-- ======================================= --> 
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="de.tools400.rpgunit.core.category"
+            name="RPGUnit">
+      </category>
+      
+      <view
+            category="de.tools400.rpgunit.core.category"
+            class="de.tools400.rpgunit.core.ui.view.RPGUnitView"
+            icon="icons/rpgunit16.png"
+            id="de.tools400.rpgunit.core"
+            name="RPGUnit"
+            restorable="true">
+      </view>
+   </extension>
+   
+   <!-- ======================================= -->
+   <!--   Menue (RPGUnit View)                  -->
+   <!-- ======================================= --> 
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:de.tools400.rpgunit.core">
+         <command
+               commandId="de.tools400.rpgunit.core.command.collapseallunittests"
+               icon="icons/collapse_all16.png"
+               tooltip="%Collapse_All"
+               style="push">
+         </command>
+         
+         <command
+               commandId="de.tools400.rpgunit.core.command.expandallunittests"
+               icon="icons/expand_all16.png"
+               tooltip="%Expand_All"
+               style="push">
+         </command>
+         
+         <command
+               commandId="de.tools400.rpgunit.core.command.toggleshowfailures"
+               icon="icons/toggle16.png"
+               tooltip="%Show_Failures_Only"
+               style="toggle">
+         </command>
+         
+         <command
+               commandId="de.tools400.rpgunit.core.command.rerunalltests"
+               icon="icons/rerun16.gif"
+               tooltip="%Rerun_All_Test_Cases"
+               style="push">
+         </command>
+         
+         <command
+               commandId="de.tools400.rpgunit.core.command.toggledisablereport"
+               icon="icons/disable_report.png"
+               tooltip="%Disable_Report"
+               style="toggle">
+         </command>
+         
+         <command
+               commandId="de.tools400.rpgunit.core.command.toggleenabledebugmode"
+               icon="icons/enable_debug.png"
+               tooltip="%Enable_Debug_Mode"
+               style="toggle">
+         </command>
+      </menuContribution>
+   
+   <!-- ======================================= -->
+   <!--   Popup Menue (RPGUnit View)            -->
+   <!-- ======================================= --> 
+      <menuContribution 
+            locationURI="popup:de.tools400.rpgunit.core">
+	     <command
+               commandId="de.tools400.rpgunit.core.command.rerunselectedunittests"
+               label="%Rerun_Selected_Test_Case"
+               icon="icons/rerun16.gif"
+               style="push">
+	     </command>
+      </menuContribution>
+
+      <menuContribution 
+            locationURI="popup:de.tools400.rpgunit.core">
+	     <command
+               commandId="de.tools400.rpgunit.core.command.editremotesourcemember"
+               label="%Edit_LPEX"
+               icon="icons/edit16.png"
+               style="push">
+	     </command>
+      </menuContribution>
+      
+      <menuContribution 
+            locationURI="popup:de.tools400.rpgunit.core">
+	     <command
+               commandId="de.tools400.rpgunit.core.command.removeselectedunittests"
+               label="%Remove_Selected_Test_Suite"
+               icon="icons/delete_testcase16.png"
+               style="push">
+	     </command>
+      </menuContribution>
+   </extension>
+   
+   <!-- ======================================= -->
+   <!--   Popup Menue (Remote System Explorer)  -->
+   <!-- ======================================= --> 
+   <extension point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="com.ibm.etools.iseries.services.qsys.api.IQSYSServiceProgram"
+            id="de.tools400.rpgunit.core.popup.unitTestSrvPgm"
+            nameFilter="*.*SRVPGM*">
+         <action
+               class="de.tools400.rpgunit.core.action.RunUnitTestAction"
+               enablesFor="+"
+               icon="icons/run16.gif"
+               id="de.tools400.rpgunit.core.action.rununittestaction"
+               label="%Run_RPGUnit_Test"
+               menubarPath="additions">
+         </action>
+      </objectContribution>
+      
+      <objectContribution
+            objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteProcedure"
+            id="de.tools400.rpgunit.core.popup.unitTestProcedure"
+            nameFilter="*">
+         <action
+               class="de.tools400.rpgunit.core.action.RunUnitTestAction"
+               enablesFor="+"
+               icon="icons/run16.gif"
+               id="de.tools400.rpgunit.core.action.rununittestaction"
+               label="%Run_RPGUnit_Test"
+               menubarPath="additions">
+         </action>
+      </objectContribution>
+    </extension>
+    
+   <!-- ======================================= -->
+   <!--   Commands                              -->
+   <!-- ======================================= --> 
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            description="RPGUnit"
+            id="de.tools400.rpgunit.core.category"
+            name="RPGUnit">
+      </category>
+      
+      <command
+            categoryId="de.tools400.rpgunit.core.category"
+            description="Run RPGUnit Test"
+            id="de.tools400.rpgunit.core.command.rununittest"
+            name="Run RPGUnit Test">
+      </command>
+      
+      <command
+            categoryId="de.tools400.rpgunit.core.category"
+            description="Rerun Selected RPGUnit Test"
+            id="de.tools400.rpgunit.core.command.rerunselectedunittests"
+            name="Rerun Selected RPGUnit Test">
+      </command>
+      
+      <command
+            categoryId="de.tools400.rpgunit.core.category"
+            description="Edit remote source member with LPEX editor"
+            id="de.tools400.rpgunit.core.command.editremotesourcemember"
+            name="Edit with LPEX">
+      </command>
+      
+      <command
+            categoryId="de.tools400.rpgunit.core.category"
+            description="Rerun All RPGUnit Test"
+            id="de.tools400.rpgunit.core.command.rerunalltests"
+            name="Rerun All RPGUnit Test">
+      </command>
+      
+      <command
+            categoryId="de.tools400.rpgunit.core.category"
+            description="Removes the selected unit tests from the RPGUNit view."
+            id="de.tools400.rpgunit.core.command.removeselectedunittests"
+            name="Remove Selected RPGUnit Test">
+      </command>
+      
+      <command
+            categoryId="de.tools400.rpgunit.core.category"
+            description="Show Failures Only"
+            id="de.tools400.rpgunit.core.command.toggleshowfailures"
+            name="Show Failures Only">
+      </command>
+      
+      <command
+            categoryId="de.tools400.rpgunit.core.category"
+            description="Disable RPGUnit Report"
+            id="de.tools400.rpgunit.core.command.toggledisablereport"
+            name="Disable RPGUnit Report">
+      </command>
+      
+      <command
+            categoryId="de.tools400.rpgunit.core.category"
+            description="Enable Debug Mode"
+            id="de.tools400.rpgunit.core.command.toggleenabledebugmode"
+            name="Enable Debug Mode">
+      </command>
+      
+      <command
+            categoryId="de.tools400.rpgunit.core.category"
+            description="Collapse All RPGUnit Test Cases"
+            id="de.tools400.rpgunit.core.command.collapseallunittests"
+            name="Collapse All RPGUnit Test Cases">
+      </command>
+      
+      <command
+            categoryId="de.tools400.rpgunit.core.category"
+            description="Expand All RPGUnit Test Cases"
+            id="de.tools400.rpgunit.core.command.expandallunittests"
+            name="Expand All RPGUnit Test Cases">
+      </command>
+   </extension>
+   
+   <!-- ======================================= -->
+   <!--   Handlers                              -->
+   <!-- ======================================= --> 
+   <extension
+         point="org.eclipse.ui.handlers">
+      
+      <handler
+            class="de.tools400.rpgunit.core.handler.RerunAllUnitTestsHandler"
+            commandId="de.tools400.rpgunit.core.command.rerunalltests">
+         <activeWhen>
+            <with
+               variable="de.tools400.rpgunit.core.commands.state.rerunallunittests.enabled">
+               <and>
+                  <equals
+                        value="ENABLED">
+                  </equals>
+               </and>
+            </with>
+         </activeWhen>         	
+      </handler>
+      
+      <handler
+            class="de.tools400.rpgunit.core.handler.RerunSelectedUnitTestsHandler"
+            commandId="de.tools400.rpgunit.core.command.rerunselectedunittests">
+         <activeWhen>
+            <with
+               variable="de.tools400.rpgunit.core.commands.state.rerunselectedunittests.enabled">
+               <and>
+                  <equals
+                        value="ENABLED">
+                  </equals>
+               </and>
+            </with>
+         </activeWhen>         	
+      </handler>
+      
+      <handler
+            class="de.tools400.rpgunit.core.handler.EditRemoteSourceMemberHandler"
+            commandId="de.tools400.rpgunit.core.command.editremotesourcemember">
+         <activeWhen>
+            <with
+               variable="de.tools400.rpgunit.core.command.editremotesourcemember.enabled">
+               <and>
+                  <equals
+                        value="ENABLED">
+                  </equals>
+               </and>
+            </with>
+         </activeWhen>         	
+      </handler>
+      
+      <handler
+            class="de.tools400.rpgunit.core.handler.RemoveSelectedUnitTestsHandler"
+            commandId="de.tools400.rpgunit.core.command.removeselectedunittests">
+         <activeWhen>
+            <with
+               variable="de.tools400.rpgunit.core.commands.state.removeselectedunittests.enabled">
+               <and>
+                  <equals
+                        value="ENABLED">
+                  </equals>
+               </and>
+            </with>
+         </activeWhen>         	
+      </handler>
+      
+      <handler
+            class="de.tools400.rpgunit.core.handler.CollapseAllUnitTestsHandler"
+            commandId="de.tools400.rpgunit.core.command.collapseallunittests">
+         <activeWhen>
+            <with
+               variable="de.tools400.rpgunit.core.commands.state.collapseallunittests.enabled">
+               <and>
+                  <equals
+                        value="ENABLED">
+                  </equals>
+               </and>
+            </with>
+         </activeWhen>         	
+      </handler>
+      
+      <handler
+            class="de.tools400.rpgunit.core.handler.ExpandAllUnitTestsHandler"
+            commandId="de.tools400.rpgunit.core.command.expandallunittests">
+         <activeWhen>
+            <with
+               variable="de.tools400.rpgunit.core.commands.state.expandallunittests.enabled">
+               <and>
+                  <equals
+                        value="ENABLED">
+                  </equals>
+               </and>
+            </with>
+         </activeWhen>         	
+      </handler>
+      
+      <handler
+            class="de.tools400.rpgunit.core.handler.ToggleShowFailuresHandler"
+            commandId="de.tools400.rpgunit.core.command.toggleshowfailures">
+      </handler>
+      
+      <handler
+            class="de.tools400.rpgunit.core.handler.ToggleDisableReportHandler"
+            commandId="de.tools400.rpgunit.core.command.toggledisablereport">
+      </handler>
+      
+      <handler
+            class="de.tools400.rpgunit.core.handler.ToggleEnableDebugMode"
+            commandId="de.tools400.rpgunit.core.command.toggleenabledebugmode">
+      </handler>
+   </extension>
+   
+   <!-- ======================================= -->
+   <!--   Services                              -->
+   <!-- ======================================= --> 
+   <extension
+         point="org.eclipse.ui.services">
+      
+      <sourceProvider
+            provider="de.tools400.rpgunit.core.command.states.RerunAllUnitTestsCommandState">
+         <variable
+               name="de.tools400.rpgunit.core.commands.state.rerunallunittests.enabled"
+               priorityLevel="workbench">
+         </variable>
+      </sourceProvider>
+      
+      <sourceProvider
+            provider="de.tools400.rpgunit.core.command.states.EditRemoteSourceMemberCommandState">
+         <variable
+               name="de.tools400.rpgunit.core.command.editremotesourcemember.enabled"
+               priorityLevel="workbench">
+         </variable>
+      </sourceProvider>
+      
+      <sourceProvider
+            provider="de.tools400.rpgunit.core.command.states.RerunSelectedUnitTestsCommandState">
+         <variable
+               name="de.tools400.rpgunit.core.commands.state.rerunselectedunittests.enabled"
+               priorityLevel="workbench">
+         </variable>
+      </sourceProvider>
+      
+      <sourceProvider
+            provider="de.tools400.rpgunit.core.command.states.RemoveSelectedUnitTestsCommandState">
+         <variable
+               name="de.tools400.rpgunit.core.commands.state.removeselectedunittests.enabled"
+               priorityLevel="workbench">
+         </variable>
+      </sourceProvider>
+      
+      <sourceProvider
+            provider="de.tools400.rpgunit.core.command.states.CollapseAllTestsCommandState">
+         <variable
+               name="de.tools400.rpgunit.core.commands.state.collapseallunittests.enabled"
+               priorityLevel="workbench">
+         </variable>
+      </sourceProvider>
+      
+      <sourceProvider
+            provider="de.tools400.rpgunit.core.command.states.ExpandAllTestsCommandState">
+         <variable
+               name="de.tools400.rpgunit.core.commands.state.expandallunittests.enabled"
+               priorityLevel="workbench">
+         </variable>
+      </sourceProvider>
+   </extension>
+   
+   <!-- ======================================= -->
+   <!--   Preferences RPGUnit                   -->
+   <!-- ======================================= --> 
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="de.tools400.rpgunit.core.preferences.PreferencesInitializer">
+      </initializer>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="de.tools400.rpgunit.core.ui.preferences.PreferencesPage"
+            id="de.tools400.rpgunit.core.ui.preferences.PreferencesPage"
+            name="RPGUnit">
+      </page>
+   </extension>   
+
+</plugin>
