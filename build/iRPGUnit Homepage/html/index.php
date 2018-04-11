@@ -102,6 +102,7 @@
         <h2 class="release">Help</h2>
         <div class="section">
         <table>
+        <tr><td>Visit the iRPGUnit <a target="_help" href="https://irpgunit.sourceforge.io/help/">help</a> page.</td></tr>
         <tr><td>Ask your questions at the <a target="_wdsci-l" href="http://lists.midrange.com/mailman/listinfo/wdsci-l">WDSCI-L</a> mailing list at <a target="_wdsci-l" href="http://www.midrange.com">midrange.com</a>.</td></tr>
         <tr><td>For bug reports open a ticket at the <a href="https://sourceforge.net/p/irpgunit/tickets/">iRPGUnit bug tracker.</a></td></tr>
         </table>
