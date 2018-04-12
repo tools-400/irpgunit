@@ -1,15 +1,4 @@
 /*
-body { font-family:Helvetica, Arial,sans-serif; color:#000000; background-color:#FFFFFF; padding:0px; font-size:80%; }
-
-h1   { margin-left:0; padding:2; }
-h2   { margin-left:0; padding:2; background:#2E8AE6; color:#000000; }
-
-
-download-link { font-family:Helvetica, Arial; color:#000000; background-color:#FFFFFF; padding:0px; font-size:100%; color:#0431B4; }
-
-.indent { margin-left:5%; margin-right:5%; }
-*/
-/*
  *  The default font of the help text.
  */
 
@@ -52,23 +41,15 @@ h3 {
     color: #000000; line-height: 1.6em; font-weight: bold; font-style: italic;
 }
 
-/*
+li {
+	list-style-type: circle; margin-left: -25;
+}
 
-/*
- *  Table header.
- */
-
-th {
-    color: #000000; line-height: 1.6em; font-weight: bold; font-style: italic;
+.section {
+	margin-left: 26; margin-top: 20px; margin-bottom: 30px;
 }
 
 /*
- *  Table as grid.
- */
-
-.grid {
-    border-collapse: collapse; border: 1px solid lightgrey; padding: 4px;
-}
  *  Beta Version Highlighter.
  */
 
@@ -106,12 +87,18 @@ img {
     margin-bottom: 5px;
 }
 
+img.noborder {
+    margin-left: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
 /*
  *  Indention of tables that appear between paragraphs.
  */
 
 table {
-    margin-left: 10px;
+    margin-left: -10px;
     border-spacing: 15px 5px;
 }
 

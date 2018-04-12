@@ -94,7 +94,7 @@
         The easiest way to install the iRPGUnit plug-in is using the official update sites:
         <p/>
         <table class="nomargin">
-        <tr><td><img class="noborder" src="./assets/updatesite.png"></td><td><a href="http://isphere.sourceforge.net/irpgunit/rdi8.0/">IBM Rational Developer for i - RDi 8.0+</a></td></tr>
+        <tr><td><img class="noborder" src="./assets/updatesite.png"></td><td><a href="http://irpgunit.sourceforge.io/eclipse/rdi8.0/">IBM Rational Developer for i - RDi 8.0+</a></td></tr>
         </table>
         <p/>
         </div>
