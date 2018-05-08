@@ -35,28 +35,26 @@ public abstract class AbstractRemoteAction<T> implements IObjectActionDelegate {
 
     private StructuredSelection _selectedItems;
 
-    List<Object> _errObj;
+    private List<IObjectInError> _errObj;
 
     public AbstractRemoteAction() {
         _selectedItems = new StructuredSelection();
-        _errObj = new ArrayList<Object>();
+        _errObj = new ArrayList<IObjectInError>();
     }
 
     @Override
     public void selectionChanged(org.eclipse.jface.action.IAction action, org.eclipse.jface.viewers.ISelection selection) {
         List<I5ServiceProgram> tList = new ArrayList<I5ServiceProgram>();
-        _errObj = new ArrayList<Object>();
+        _errObj = new ArrayList<IObjectInError>();
 
         Iterator<?> theSet = ((IStructuredSelection)selection).iterator();
 
         while (theSet.hasNext()) {
             Object obj = theSet.next();
-            if (isValidItem(obj) && obj instanceof IQSYSServiceProgram) {
+            if (obj instanceof IQSYSServiceProgram && isValidItem(obj, _errObj)) {
                 tList.add(produceRemoteObject((IQSYSServiceProgram)obj));
-            } else if (isValidItem(obj) && obj instanceof QSYSRemoteProcedure) {
+            } else if (obj instanceof QSYSRemoteProcedure && isValidItem(obj, _errObj)) {
                 produceOrUpdateRemoteObject(tList, (QSYSRemoteProcedure)obj);
-            } else {
-                _errObj.add(obj);
             }
             _selectedItems = new StructuredSelection(tList);
         }
@@ -89,7 +87,7 @@ public abstract class AbstractRemoteAction<T> implements IObjectActionDelegate {
         return _selectedItems;
     }
 
-    protected abstract boolean isValidItem(Object anObject);
+    protected abstract boolean isValidItem(Object anObject, List<IObjectInError> anErrObjList);
 
     protected abstract I5ServiceProgram produceRemoteObject(IQSYSServiceProgram aRemoteObject);
 
@@ -109,23 +107,25 @@ public abstract class AbstractRemoteAction<T> implements IObjectActionDelegate {
         }
     }
 
-    protected void displayInvalidObjects(List<Object> anObjects) {
+    protected void displayInvalidObjects(List<IObjectInError> anObjects) {
 
         StringBuffer tObjects = new StringBuffer();
-        for (Iterator<Object> tIter = anObjects.iterator(); tIter.hasNext();) {
+        for (Iterator<IObjectInError> tIter = anObjects.iterator(); tIter.hasNext();) {
 
-            Object tObject = tIter.next();
+            IObjectInError tObject = tIter.next();
 
             if (tObjects.length() > 0) {
                 tObjects.append("\n"); //$NON-NLS-1$
             }
+
+            tObjects.append(tObject.getErrorMessage());
 
             if (tObject instanceof IQSYSResource) {
                 IQSYSResource tResource = (IQSYSResource)tObject;
                 tObjects.append("-  " + tResource.getFullName() + " (" + tResource.getType() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             } else if (tObject instanceof QSYSRemoteProcedure) {
                 QSYSRemoteProcedure tProcedure = (QSYSRemoteProcedure)tObject;
-                tObjects.append("-  " + tProcedure.getProcedureName() + "()"); //$NON-NLS-1$ //$NON-NLS-2$ 
+                tObjects.append("-  " + tProcedure.getProcedureName() + "()"); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
 

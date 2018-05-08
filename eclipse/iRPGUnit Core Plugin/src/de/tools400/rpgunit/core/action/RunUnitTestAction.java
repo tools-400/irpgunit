@@ -18,6 +18,7 @@ import org.eclipse.ui.PlatformUI;
 
 import com.ibm.etools.iseries.services.qsys.api.IQSYSModule;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSProgramBase;
+import com.ibm.etools.iseries.services.qsys.api.IQSYSResource;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSServiceProgram;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteProcedure;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteProgramModule;
@@ -67,32 +68,40 @@ public class RunUnitTestAction extends AbstractRemoteAction<IQSYSServiceProgram>
     }
 
     @Override
-    protected boolean isValidItem(Object anObject) {
+    protected boolean isValidItem(Object anObject, List<IObjectInError> anErrObjList) {
 
-        if (!isSupportedObject(anObject)) {
+        if (!isSupportedObject(anObject, anErrObjList)) {
             return false;
         }
 
         return true;
     }
 
-    private boolean isSupportedObject(Object anObject) {
+    private boolean isSupportedObject(Object anObject, List<IObjectInError> anErrObjList) {
+
+        String errorMessage = null;
 
         if (anObject instanceof IQSYSServiceProgram) {
-            return checkServiceProgram((IQSYSServiceProgram)anObject);
+            errorMessage = checkServiceProgram((IQSYSServiceProgram)anObject);
         }
 
         if (anObject instanceof QSYSRemoteProcedure) {
-            return checkRemoteProcedure((QSYSRemoteProcedure)anObject);
+            errorMessage = checkRemoteProcedure((QSYSRemoteProcedure)anObject);
         }
+
+        if (errorMessage == null) {
+            return true;
+        }
+
+        anErrObjList.add(new ObjectInError(anObject, errorMessage));
 
         return false;
     }
 
-    private boolean checkServiceProgram(IQSYSServiceProgram aServiceprogram) {
+    private String checkServiceProgram(IQSYSServiceProgram aServiceprogram) {
 
         if (Preferences.CHECK_TEST_SUITE_NONE.equals(Preferences.getInstance().getCheckTestSuite())) {
-            return true;
+            return null;
         }
 
         if (Preferences.CHECK_TEST_SUITE_TEXT.equals(Preferences.getInstance().getCheckTestSuite())) {
@@ -102,21 +111,21 @@ public class RunUnitTestAction extends AbstractRemoteAction<IQSYSServiceProgram>
         return checkUserDefinedAttribute(aServiceprogram);
     }
 
-    private boolean checkTextDescription(IQSYSServiceProgram aServiceprogram) {
+    private String checkTextDescription(IQSYSServiceProgram aServiceprogram) {
 
         String tDescription = aServiceprogram.getDescription();
-        if (tDescription == null) {
-            return false;
+        if (tDescription == null || tDescription.trim().length() == 0) {
+            return Messages.Description_of_service_program_is_missing;
         }
 
         if (!tDescription.toUpperCase().startsWith(RPGUNIT_LABEL)) {
-            return false;
+            return Messages.bind(Messages.Description_of_service_program_does_not_start_with_A, RPGUNIT_LABEL);
         }
 
-        return true;
+        return null;
     }
 
-    private boolean checkUserDefinedAttribute(IQSYSServiceProgram aServiceprogram) {
+    private String checkUserDefinedAttribute(IQSYSServiceProgram aServiceprogram) {
 
         String tUserDefinedAttribute = aServiceprogram.getUserDefinedAttribute();
         if (tUserDefinedAttribute == null && ((Calendar.getInstance().getTimeInMillis() - lastWarnMsg) > 1000 || lastWarnMsg == 0)) {
@@ -128,28 +137,28 @@ public class RunUnitTestAction extends AbstractRemoteAction<IQSYSServiceProgram>
 
         if (!RPGUNIT_LABEL.equalsIgnoreCase(tUserDefinedAttribute)) {
             // Requires PTF for APAR SE55976
-            return false;
+            return Messages.bind(Messages.User_defined_attribute_of_service_program_is_not_set_to_A, RPGUNIT_LABEL);
         }
 
-        return true;
+        return null;
     }
 
-    private boolean checkRemoteProcedure(QSYSRemoteProcedure aRemoteProcedure) {
+    private String checkRemoteProcedure(QSYSRemoteProcedure aRemoteProcedure) {
 
-        if (!aRemoteProcedure.getProcedureName().toUpperCase().startsWith(TEST_PROC_NAME_PREFIX)) { //$NON-NLS-1$
-            return false;
+        if (!aRemoteProcedure.getProcedureName().toUpperCase().startsWith(TEST_PROC_NAME_PREFIX)) { // $NON-NLS-1$
+            return Messages.bind(Messages.Procedure_name_does_not_start_with_A, TEST_PROC_NAME_PREFIX);
         }
 
         IQSYSModule tModule = aRemoteProcedure.getParent();
         if (!(tModule instanceof QSYSRemoteProgramModule)) {
-            return false;
+            return Messages.Module_is_not_a_QSYSRemoteProgramModule;
         }
 
         QSYSRemoteProgramModule tPgmModule = (QSYSRemoteProgramModule)tModule;
         IQSYSProgramBase tPgm = tPgmModule.getProgram();
 
         if (!(tPgm instanceof IQSYSServiceProgram)) {
-            return false;
+            return Messages.Object_is_not_a_IQSYSServiceProgram;
         }
 
         return checkServiceProgram((IQSYSServiceProgram)tPgm);
@@ -194,4 +203,29 @@ public class RunUnitTestAction extends AbstractRemoteAction<IQSYSServiceProgram>
         return null;
     }
 
+    private class ObjectInError implements IObjectInError {
+
+        private Object object;
+        private String message;
+
+        public ObjectInError(Object object, String message) {
+            this.object = object;
+            this.message = message;
+        }
+
+        @Override
+        public String getErrorMessage() {
+
+            if (object instanceof IQSYSResource) {
+                IQSYSResource tResource = (IQSYSResource)object;
+                return "-  " + tResource.getFullName() + " (" + tResource.getType() + "):\n" + message; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            } else if (object instanceof QSYSRemoteProcedure) {
+                QSYSRemoteProcedure tProcedure = (QSYSRemoteProcedure)object;
+                return "-  " + tProcedure.getProcedureName() + "():\n" + message; //$NON-NLS-1$ //$NON-NLS-2$
+            }
+
+            return "-  " + object.toString() + ":\n" + message; //$NON-NLS-1$ //$NON-NLS-2$
+        }
+
+    }
 }
