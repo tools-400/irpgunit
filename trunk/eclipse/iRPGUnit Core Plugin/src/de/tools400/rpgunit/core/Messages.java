@@ -25,6 +25,12 @@ public class Messages extends NLS {
     public static String The_object_A_does_not_contain_any_test_cases;
     public static String The_unit_test_A_has_not_finished_successful_B;
     public static String Number_of_selected_test_cases_exceeds_maximum_of_A_items;
+    public static String Description_of_service_program_is_missing;
+    public static String Description_of_service_program_does_not_start_with_A;
+    public static String User_defined_attribute_of_service_program_is_not_set_to_A;
+    public static String Procedure_name_does_not_start_with_A;
+    public static String Module_is_not_a_QSYSRemoteProgramModule;
+    public static String Object_is_not_a_IQSYSServiceProgram;
     public static String Run_Unit_Test;
 
     public static String EditableSourceMember_0;
