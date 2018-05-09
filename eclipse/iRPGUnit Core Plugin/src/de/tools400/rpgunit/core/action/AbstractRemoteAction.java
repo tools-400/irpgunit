@@ -21,15 +21,14 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
-import com.ibm.etools.iseries.services.qsys.api.IQSYSResource;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSServiceProgram;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.objects.IRemoteObjectContextProvider;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteProcedure;
 
-import de.tools400.rpgunit.core.Messages;
 import de.tools400.rpgunit.core.model.ibmi.I5ServiceProgram;
 import de.tools400.rpgunit.core.ui.UIUtils;
+import de.tools400.rpgunit.core.ui.dialog.ObjectsInErrorListDialog;
 
 public abstract class AbstractRemoteAction<T> implements IObjectActionDelegate {
 
@@ -109,26 +108,33 @@ public abstract class AbstractRemoteAction<T> implements IObjectActionDelegate {
 
     protected void displayInvalidObjects(List<IObjectInError> anObjects) {
 
-        StringBuffer tObjects = new StringBuffer();
-        for (Iterator<IObjectInError> tIter = anObjects.iterator(); tIter.hasNext();) {
+        ObjectsInErrorListDialog dialog = new ObjectsInErrorListDialog(UIUtils.getShell(), anObjects.toArray(new IObjectInError[anObjects.size()]));
+        dialog.open();
 
-            IObjectInError tObject = tIter.next();
-
-            if (tObjects.length() > 0) {
-                tObjects.append("\n"); //$NON-NLS-1$
-            }
-
-            tObjects.append(tObject.getErrorMessage());
-
-            if (tObject instanceof IQSYSResource) {
-                IQSYSResource tResource = (IQSYSResource)tObject;
-                tObjects.append("-  " + tResource.getFullName() + " (" + tResource.getType() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            } else if (tObject instanceof QSYSRemoteProcedure) {
-                QSYSRemoteProcedure tProcedure = (QSYSRemoteProcedure)tObject;
-                tObjects.append("-  " + tProcedure.getProcedureName() + "()"); //$NON-NLS-1$ //$NON-NLS-2$
-            }
-        }
-
-        UIUtils.displayError(Messages.AbstractRemoteAction_0 + tObjects.toString());
+        // StringBuffer tObjects = new StringBuffer();
+        // for (Iterator<IObjectInError> tIter = anObjects.iterator();
+        // tIter.hasNext();) {
+        //
+        // IObjectInError tObject = tIter.next();
+        //
+        // if (tObjects.length() > 0) {
+        // tObjects.append("\n"); //$NON-NLS-1$
+        // }
+        //
+        // tObjects.append(tObject.getErrorMessage());
+        //
+        // if (tObject instanceof IQSYSResource) {
+        // IQSYSResource tResource = (IQSYSResource)tObject;
+        // tObjects.append("- " + tResource.getFullName() + " (" +
+        // tResource.getType() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        // } else if (tObject instanceof QSYSRemoteProcedure) {
+        // QSYSRemoteProcedure tProcedure = (QSYSRemoteProcedure)tObject;
+        // tObjects.append("- " + tProcedure.getProcedureName() + "()");
+        // //$NON-NLS-1$ //$NON-NLS-2$
+        // }
+        // }
+        //
+        // UIUtils.displayError(Messages.AbstractRemoteAction_0 +
+        // tObjects.toString());
     }
 }

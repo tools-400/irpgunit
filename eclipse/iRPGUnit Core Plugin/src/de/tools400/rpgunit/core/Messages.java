@@ -56,6 +56,8 @@ public class Messages extends NLS {
     public static String No_spooled_file_viewer_installed;
     public static String Could_not_open_the_iSphere_spooled_file_viewer;
     public static String Could_not_open_the_RPGUnit_spooled_file_viewer;
+    public static String Error_Message;
+    public static String Object_name;
 
     public static String PreferencesPage2_grpCommandParameters_text;
     public static String PreferencesPage2_lblRunOrder_text;

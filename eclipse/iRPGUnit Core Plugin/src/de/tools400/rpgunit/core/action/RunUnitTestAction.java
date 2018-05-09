@@ -13,18 +13,20 @@ import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
+import com.ibm.etools.iseries.comm.interfaces.IISeriesHostProcedure;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSModule;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSProgramBase;
-import com.ibm.etools.iseries.services.qsys.api.IQSYSResource;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSServiceProgram;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteProcedure;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteProgramModule;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteServiceProgram;
 
 import de.tools400.rpgunit.core.Messages;
+import de.tools400.rpgunit.core.RPGUnitCorePlugin;
 import de.tools400.rpgunit.core.handler.ISelectionHandler;
 import de.tools400.rpgunit.core.handler.RunUnitTestHandler;
 import de.tools400.rpgunit.core.model.ibmi.I5Library;
@@ -209,22 +211,44 @@ public class RunUnitTestAction extends AbstractRemoteAction<IQSYSServiceProgram>
         private String message;
 
         public ObjectInError(Object object, String message) {
+
+            if (!((object instanceof IQSYSServiceProgram) || (object instanceof IISeriesHostProcedure))) {
+                throw new IllegalArgumentException("Parameter object must be one of IQSYSServiceProgram or IISeriesHostProcedure"); //$NON-NLS-1$
+            }
+
             this.object = object;
             this.message = message;
         }
 
         @Override
-        public String getErrorMessage() {
+        public Image getImage() {
 
-            if (object instanceof IQSYSResource) {
-                IQSYSResource tResource = (IQSYSResource)object;
-                return "-  " + tResource.getFullName() + " (" + tResource.getType() + "):\n" + message; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            } else if (object instanceof QSYSRemoteProcedure) {
-                QSYSRemoteProcedure tProcedure = (QSYSRemoteProcedure)object;
-                return "-  " + tProcedure.getProcedureName() + "():\n" + message; //$NON-NLS-1$ //$NON-NLS-2$
+            if (object instanceof IQSYSServiceProgram) {
+                return RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_SRVPGM);
+            } else if (object instanceof IISeriesHostProcedure) {
+                return RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_PROCEDURE);
+            } else {
+                return null;
             }
+        }
 
-            return "-  " + object.toString() + ":\n" + message; //$NON-NLS-1$ //$NON-NLS-2$
+        @Override
+        public String getObjectName() {
+
+            if (object instanceof IQSYSServiceProgram) {
+                IQSYSServiceProgram tResource = (IQSYSServiceProgram)object;
+                return tResource.getFullName() + " (" + tResource.getType() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+            } else if (object instanceof IISeriesHostProcedure) {
+                IISeriesHostProcedure tProcedure = (IISeriesHostProcedure)object;
+                return tProcedure.getProcedureName() + "()"; //$NON-NLS-1$
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        public String getErrorMessage() {
+            return message;
         }
 
     }

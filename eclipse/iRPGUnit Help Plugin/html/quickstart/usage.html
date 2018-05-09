@@ -111,5 +111,16 @@ Use the properties view to see the properties of a selected line in a grid:
 By default, the execution time is hidden in the properties view. You can display it 
 with the "Show Advanced Properties" <img align="top" src="assets/Show_Advanced_Properties_Button.png" /> button.
 <p>
+<h3>Error Messages</h3>
+The following error dialog is displayed, when a service program is not recognized as a RPGUnit test suite or when
+a procedure is not recognized as a test case. Check the following rules to identify the problem:
+<ul>
+<li>Depending on the preferences service programs must be tagged with 'RPGUNIT' (user defined attribute or description).</li>
+<li>Procedure names must start with 'test'.</li>
+</ul>
+<p class="indent">
+<img src="assets/TestCaseErrorMessages.png" alt="Error messages when attempting to run a test case">
+</p>
+<p>
 </body>
 </html>
