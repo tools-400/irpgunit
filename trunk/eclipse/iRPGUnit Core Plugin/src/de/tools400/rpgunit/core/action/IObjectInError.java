@@ -8,7 +8,13 @@
 
 package de.tools400.rpgunit.core.action;
 
+import org.eclipse.swt.graphics.Image;
+
 public interface IObjectInError {
+
+    public Image getImage();
+
+    public String getObjectName();
 
     public String getErrorMessage();
 

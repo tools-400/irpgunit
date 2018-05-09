@@ -21,17 +21,18 @@ import org.osgi.framework.Constants;
  */
 public class RPGUnitCorePlugin extends AbstractUIPlugin {
 
-    public static final String IMAGE_ERROR = "error"; //$NON-NLS-1$
+    public static final String IMAGE_ASSERTION = "assertions16.png"; //$NON-NLS-1$
+    public static final String IMAGE_FAILURE = "failure16.png"; //$NON-NLS-1$
+    public static final String IMAGE_ERROR = "error16.png"; //$NON-NLS-1$
 
-    public static final String IMAGE_ASSERTION = "assertion"; //$NON-NLS-1$
+    public static final String IMAGE_TEST_SUCCESS = "test_success16.gif"; //$NON-NLS-1$
+    public static final String IMAGE_TEST_FAILED = "test_failed16.gif"; //$NON-NLS-1$
+    public static final String IMAGE_TEST_ERROR = "test_error16.gif"; //$NON-NLS-1$
 
-    public static final String IMAGE_FAILURE = "failure"; //$NON-NLS-1$
+    public static final String IMAGE_SRVPGM = "srvpgm.gif"; //$NON-NLS-1$
+    public static final String IMAGE_PROCEDURE = "procedure.gif"; //$NON-NLS-1$
 
-    public static final String IMAGE_TEST_ERROR = "test_error"; //$NON-NLS-1$
-
-    public static final String IMAGE_TEST_FAILED = "test_failed"; //$NON-NLS-1$
-
-    public static final String IMAGE_TEST_SUCCESS = "test_success"; //$NON-NLS-1$
+    public static final String ICONS_PATH = "icons/";
 
     // The plug-in ID
     public static final String PLUGIN_ID = "de.tools400.rpgunit.core"; //$NON-NLS-1$
@@ -139,11 +140,11 @@ public class RPGUnitCorePlugin extends AbstractUIPlugin {
      * Returns an image descriptor for the image file at the given plug-in
      * relative path
      * 
-     * @param path the image path
+     * @param fileName the image path
      * @return the image descriptor
      */
-    public static ImageDescriptor getImageDescriptor(String path) {
-        return imageDescriptorFromPlugin(PLUGIN_ID, path);
+    public static ImageDescriptor getImageDescriptor(String fileName) {
+        return imageDescriptorFromPlugin(PLUGIN_ID, ICONS_PATH + fileName);
     }
 
     /*
@@ -156,13 +157,16 @@ public class RPGUnitCorePlugin extends AbstractUIPlugin {
         super.initializeImageRegistry(reg);
 
         // add images
-        reg.put(IMAGE_TEST_SUCCESS, getImageDescriptor("icons/test_success16.gif")); //$NON-NLS-1$
-        reg.put(IMAGE_TEST_FAILED, getImageDescriptor("icons/test_failed16.gif")); //$NON-NLS-1$
-        reg.put(IMAGE_TEST_ERROR, getImageDescriptor("icons/test_error16.gif")); //$NON-NLS-1$
+        reg.put(IMAGE_TEST_SUCCESS, getImageDescriptor(IMAGE_TEST_SUCCESS)); // $NON-NLS-1$
+        reg.put(IMAGE_TEST_FAILED, getImageDescriptor(IMAGE_TEST_FAILED)); // $NON-NLS-1$
+        reg.put(IMAGE_TEST_ERROR, getImageDescriptor(IMAGE_TEST_ERROR)); // $NON-NLS-1$
 
-        reg.put(IMAGE_ASSERTION, getImageDescriptor("icons/assertions16.png")); //$NON-NLS-1$
-        reg.put(IMAGE_FAILURE, getImageDescriptor("icons/failure16.png")); //$NON-NLS-1$
-        reg.put(IMAGE_ERROR, getImageDescriptor("icons/error16.png")); //$NON-NLS-1$
+        reg.put(IMAGE_ASSERTION, getImageDescriptor(IMAGE_ASSERTION)); // $NON-NLS-1$
+        reg.put(IMAGE_FAILURE, getImageDescriptor(IMAGE_FAILURE)); // $NON-NLS-1$
+        reg.put(IMAGE_ERROR, getImageDescriptor(IMAGE_ERROR)); // $NON-NLS-1$
+
+        reg.put(IMAGE_SRVPGM, getImageDescriptor(IMAGE_SRVPGM)); // $NON-NLS-1$
+        reg.put(IMAGE_PROCEDURE, getImageDescriptor(IMAGE_PROCEDURE)); // $NON-NLS-1$
 
         // additional icons used in 'plugin.xml':
         // --------------------------------------
