@@ -18,7 +18,7 @@ is no longer alive. Nevertheless the original Internet pages at SourceForge
 are still a good source of information.
 
 The Eclipse update site of the plug-in is at:
-   http://www.tools400.de/rpgunit/
+   https://irpgunit.sourceforge.io/eclipse/rdi8.0/
 
 Let me know your experiences!
 
@@ -47,22 +47,41 @@ d) Optionally run the RPGUnit self tests:
 --------------------------------------
 
 
+Version 2.2.2 - 09.05.2018
+--------------------------
+Changed: Improved error reporting when validating a service program or
+         procedure.
+Changed: Changed A_INSTALL to pass the TGTRLS parameter to all called
+         MK* programs.
+
+
+Version 2.2.1 - 08.02.2018
+--------------------------
+Changed: Changed RPGUnit view to display the number of assertions.
+Changed: Fixed problem, that a test procedure had to start with 'test'
+         in lower case. Now the case is ignored.
+Fixed:   Now errors in setup/teadown procedures properly show up in RDi.
+Changed: Added number of executed assertions to RPGUnit view.
+
+
 Version 2.0.0 - 10.10.2017
 --------------------------
 Changed: Changed length of message text from 256 to 1024 bytes.
-Added unit test RUPLIGINT5.
-Added procedure getAssertFailEvtLong() to retrieve the long message text.
-Added new type definition AssertFailEvtLong_t for procedure getAssertFailEvtLong().
-Fixed hard coded reference to library RPGUNIT in unit test RUCRTTSTT.
-Fixed missing 'Export' keyword of procedure 'tearDown' of unit test 'CRTTSTT'.
-Renamed RUN to CMDRUNSRV.
-Renamed RUCRTTST to CRTTST.
-Renamed RUPGMRMT to PGMRMT.
-Renamed RURUNRMT to RMTRUNSRV.
-Renamed RUSRCMBR to SRCMBR.
-Renamed RUTAGTST to TAGTST.
-Renamed MKRUNRMT to MKRMTRUN.
-Renamed RUCRTTSTT to CRTTSTT.
+Added:   Added unit test RUPLUGINT5.
+Added:   Added procedure getAssertFailEvtLong() to retrieve the long
+         message text.
+Added:   Added new type definition AssertFailEvtLong_t for procedure
+         getAssertFailEvtLong().
+Fixed:   Fixed hard coded reference to library RPGUNIT in unit test RUCRTTSTT.
+Fixed:   Fixed missing 'Export' keyword of procedure 'tearDown' of unit test 'CRTTSTT'.
+Changed: Renamed RUN to CMDRUNSRV.
+Changed: Renamed RUCRTTST to CRTTST.
+Changed: Renamed RUPGMRMT to PGMRMT.
+Changed: Renamed RURUNRMT to RMTRUNSRV.
+Changed: Renamed RUSRCMBR to SRCMBR.
+Changed: Renamed RUTAGTST to TAGTST.
+Changed: Renamed MKRUNRMT to MKRMTRUN.
+Changed: Renamed RUCRTTSTT to CRTTSTT.
 
 The following errors are produced by units tests of version 1.10 and lower:
 

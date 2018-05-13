@@ -79,7 +79,7 @@ Option 1: Using the update site
 
 The URL of the RPGUnit plugin site is: 
 
-  http://www.tools400.de/rpgunit/update/rdp8.0/
+  https://irpgunit.sourceforge.io/eclipse/rdi8.0/
 
 Option 2: Using the 'dropins' folder
 ------------------------------------
