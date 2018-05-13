@@ -51,7 +51,17 @@
 	<property file="ftp.properties" />
 
 	<!-- Load SourceForge ftp user name and password -->
-	<property file="ftp-credentials.properties" />
+    <if>
+        <available file="ftp-credentials.properties"/>
+        <then>
+            <property file="ftp-credentials.properties" />
+        </then>
+        <else>
+			<echo>File 'ftp-credentials.properties' not found.</echo>
+			<echo>Copy 'ftp-credentials_template.properties' to 'ftp-credentials.properties' and set the user names only (recommended).</echo>
+        	<fail message="Ant script stopped."/>
+        </else>
+    </if>
 
 	<!-- Set date and time -->
 	<tstamp>
@@ -86,22 +96,53 @@
 		</else>
 	</if>
 
+	<!-- Set regular expressions and replacement values -->
+	<property name="version.number.validation.regex" value="[1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:(b)[0-9]{3}|(r)[0-9]{0,1}))?" />
+	
+	<property name="version.number.search.regex" value="[1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{1,3}|r[0-9]{0,1}))?" />
+	
+	<property name="validate.version.regex" value="^(${version.number.validation.regex})$" />
+	<property name="release.flag.regex" value="^(?:${version.number.validation.regex})$" />
+
+	<property name="manifest.version.regex" value="(Bundle-Version:\s)(${version.number.search.regex})" />
+	<property name="manifest.version.replace" value="\1${build.version}" />
+
+	<property name="feature.1.version.regex" value="(&lt;feature.*version=&quot;)(${version.number.search.regex})(&quot;\s+provider-name.*?&gt;)" />
+	<property name="feature.1.version.replace" value="\1${build.version}\3" />
+
+	<property name="feature.2.version.regex" value="(&lt;import feature.*version=&quot;)(${version.number.search.regex})(&quot;\s*)(match.*)?(/&gt;)" />
+	<property name="feature.2.version.replace" value="\1${build.version}\3\4\5" />
+	
+	<property name="feature.copyright.1.date.regex" value="^([ ]*Copyright.*[0-9]{4})-([0-9]{4})(.*)$" />
+	<property name="feature.copyright.1.date.replace" value="\1-${today.year}\3" />
+
+	<property name="site.1.version.regex" value="(&lt;feature.*_)(${version.number.search.regex})(\.jar)" />
+	<property name="site.1.version.replace" value="\1${build.version}\3" />
+
+	<property name="site.2.version.regex" value="(&lt;feature.*version=&quot;)(${version.number.search.regex})(&quot;)" />
+	<property name="site.2.version.replace" value="\1${build.version}\3" />
+
+	<property name="html.copyright.1.version.regex" value="^(Version: )(${version.number.search.regex})(.*)?" />
+	<property name="html.copyright.1.version.replace" value="\1${build.version}\3" />
+	
+	<property name="html.copyright.2.version.regex" value="(Copyright: )([0-9]{4})" />
+	<property name="html.copyright.2.version.replace" value="\1${today.year}" />
+
 	<!-- Check for BETA or RELEASE version -->
-	<property name="release.flag.regex" value="^(?:[1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{3}|(r)))?)$" />
 	<propertyregex property="release.flag" input="${build.version}" regexp="${release.flag.regex}" select="\1" casesensitive="true" />
 	<if>
-		<equals arg1="${release.flag}" arg2="r" />
+		<equals arg1="${release.flag}" arg2="b" />
 		<then>
-			<echo>Building a RELEASE version.</echo>
-			<property name="is.beta.version" value="false" />
-			<property name="beta.dir" value="." />
-			<property name="version.info" value="&lt;div class=&quot;release&quot;&gt;Release Version - ${build.version}&lt;/div&gt;" />
-		</then>
-		<else>
 			<echo>Building a BETA version.</echo>
 			<property name="is.beta.version" value="true" />
 			<property name="beta.dir" value="${sf.ftp.beta.dir.name}" />
 			<property name="version.info" value="&lt;div class=&quot;beta&quot;&gt;Beta Version - ${build.version}&lt;/div&gt;" />
+		</then>
+		<else>
+			<echo>Building a RELEASE version.</echo>
+			<property name="is.beta.version" value="false" />
+			<property name="beta.dir" value="." />
+			<property name="version.info" value="&lt;div class=&quot;release&quot;&gt;Release Version - ${build.version}&lt;/div&gt;" />
 		</else>
 	</if>
 
@@ -174,24 +215,6 @@
 	<!-- Set the name of the default home page file -->
 	<property name="home.page" value="index.php" />
 	<property name="support.page" value="support.php" />
-
-	<!-- Set regular expressions and replacement values -->
-	<property name="validate.version.regex" value="^([1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{3}|r))?)$" />
-
-	<property name="manifest.version.regex" value="(Bundle-Version:\s)([1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{1,3}|r))?)" />
-	<property name="manifest.version.replace" value="\1${build.version}" />
-
-	<property name="feature.1.version.regex" value="(&lt;feature.*version=&quot;)([1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{1,3}|r))?)(&quot;\s+provider-name.*?&gt;)" />
-	<property name="feature.1.version.replace" value="\1${build.version}\3" />
-
-	<property name="feature.2.version.regex" value="(&lt;import feature.*version=&quot;)([0-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{1,3}|r))?)(&quot;\s+match.*?&gt;)" />
-	<property name="feature.2.version.replace" value="\1${build.version}\3" />
-
-	<property name="site.1.version.regex" value="(&lt;feature.*_)([0-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{1,3}|r))?)(\.jar)" />
-	<property name="site.1.version.replace" value="\1${build.version}\3" />
-
-	<property name="site.2.version.regex" value="(&lt;feature.*version=&quot;)([0-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{1,3}|r))?)(&quot;)" />
-	<property name="site.2.version.replace" value="\1${build.version}\3" />
 
 	<!-- Set update site values -->
 	<property name="updatesite.tag.file" location="${workspace.home}\${build.updatesite}\${build.updatesite} v${build.version}.tag" />
@@ -830,6 +853,18 @@
 							<then>
 								<replaceregexp match="${manifest.version.regex}" replace="${manifest.version.replace}" byline="true">
 									<fileset dir="${workspace.home}\@{project}/META-INF" includes="MANIFEST.MF" />
+								</replaceregexp>
+							</then>
+						</if>
+						
+						<if>
+							<available file="${workspace.home}\@{project}/html" />
+							<then>
+								<replaceregexp match="${html.copyright.1.version.regex}" replace="${html.copyright.1.version.replace}" byline="true">
+									<fileset dir="${workspace.home}\@{project}/html" includes="copyright.html" />
+								</replaceregexp>
+								<replaceregexp match="${html.copyright.2.version.regex}" replace="${html.copyright.2.version.replace}" byline="true">
+									<fileset dir="${workspace.home}\@{project}/html" includes="copyright.html" />
 								</replaceregexp>
 							</then>
 						</if>
