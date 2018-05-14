@@ -91,10 +91,21 @@
 
         <h2 class="release">Installation</h2>
         <div class="section">
-        The easiest way to install the iRPGUnit plug-in is using the official update sites:
+        The easiest way to install the iRPGUnit plug-in is using Eclipse Marketplace. Search for <a href="https://marketplace.eclipse.org/content/irpgunit"><i>iRPGUnit</i></a>:
+        <p/>
+        <table class="nomargin">
+        <tr><td><img class="noborder" src="./assets/eclipse_marketplace.png"></td><td><a href="https://marketplace.eclipse.org/">Eclipse Marketplace</a></td></tr>
+        </table>
+        <p/>
+        But you can also use the official update site at SourceForge:
         <p/>
         <table class="nomargin">
         <tr><td><img class="noborder" src="./assets/updatesite.png"></td><td><a href="http://irpgunit.sourceforge.io/eclipse/rdi8.0/">IBM Rational Developer for i - RDi 8.0+</a></td></tr>
+        </table>
+        Last but not least you can download the local update site as a zip file and install iRPGUnit from there:
+        <p/>
+        <table class="nomargin">
+        <tr><td><img class="noborder" src="./assets/zip_file.png"></td><td><a href="https://sourceforge.net/projects/irpgunit/files/?source=navbar/">SourceForge Files</a></td></tr>
         </table>
         <p/>
         </div>
