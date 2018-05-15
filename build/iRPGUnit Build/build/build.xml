@@ -200,6 +200,7 @@
 	<property name="build.template.dir" location="${build.dir}/build/templates" />
 	<property name="build.template.dir.maintenance" location="${build.template.dir}/template_maintenance" />
 	<property name="build.template.dir.web" location="${build.template.dir}/template_updatesite_web" />
+	<property name="build.template.dir.web.assets" location="${build.template.dir.web}/eclipse/build_target/assets" />
 	<property name="build.upload.dir" location="${build.dir}/upload" />
 	<property name="build.upload.dir.files" location="${build.upload.dir}/sf-files/${beta.dir}" />
 	<property name="build.upload.dir.files.eclipse" location="${build.upload.dir}/sf-files/${beta.dir}/eclipse" />
@@ -210,7 +211,6 @@
 	<property name="zip.base.directory" location="${workspace.home}/${build.updatesite}" />
 	<property name="project.doc" location="${workspace.home}/${build.project.core}/${build.folder.doc}/${build.project.doc}" />
 	<property name="project.pdf" location="${workspace.home}/${build.project.core}/${build.folder.doc}/${build.project.pdf}" />
-	<property name="updatesite.tag.file" location="${workspace.home}\${build.updatesite}\${build.updatesite} v${build.version}.tag" />
 	
 	<!-- Set the name of the default home page file -->
 	<property name="home.page" value="index.php" />
@@ -726,7 +726,7 @@
 		<mkdir dir="${temp.dir.local_updatesite}/features" />
 		<mkdir dir="${temp.dir.local_updatesite}/plugins" />
 		<mkdir dir="${temp.dir.local_updatesite}/Server" />
-
+		
 		<copy todir="${temp.dir.local_updatesite}/features">
 			<fileset dir="${site.dir}/features" />
 		</copy>
@@ -739,6 +739,7 @@
 			<fileset dir="${site.dir}" includes="artifacts.jar" />
 			<fileset dir="${site.dir}" includes="content.jar" />
 			<fileset dir="${site.dir}" includes="*.tag" />
+			<fileset dir="${site.dir}" includes="*.bat" />
 		</copy>
 		
 		<copy toDir="${temp.dir.local_updatesite}/Server" >
@@ -772,6 +773,8 @@
 		<echo>Creating version tag file ${updatesite.tag.file} ...</echo>
 
 		<touch file="${updatesite.tag.file}" />
+
+		<copy file="${build.template.dir.web.assets}/upload_savf.bat" todir="${workspace.home}\${build.updatesite}" />
 
 		<eclipse.refreshLocal resource="${build.updatesite}" depth="infinite" />
 
@@ -817,6 +820,7 @@
 			<fileset dir="${site.dir}" includes="artifacts.jar" />
 			<fileset dir="${site.dir}" includes="content.jar" />
 			<fileset dir="${site.dir}" includes="*.tag" />
+			<fileset dir="${site.dir}" includes="*.bat" />
 		</delete>
 
 		<!-- Files created by PDE Tools -->
