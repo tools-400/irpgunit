@@ -22,18 +22,23 @@ Create a SVN repository location pointing to "https://svn.code.sf.net/p/irpgunit
 and import the i Project from ./trunk/host/iRPGUnit
 
 
-Option 2.a: Upload save file
-----------------------------
+Option 2.a: Upload save file with upload_savf.bat
+-------------------------------------------------
 
-Execute the following batch script to upload the RPGUnit save file 
-to library RPGUNIT:
+Download the zipped update site from the iRPGUnit 'Files' section
+at SourceForge, e.g. iRPGUnit for RDi 8.0+ (v2.2.2.r Update Site).zip.
+
+URL: https://sourceforge.net/projects/irpgunit/files/
+
+Unzip 'upload_savf.bat' from sub-folder 'Server' to an empty folder on your PC.
+
+Unzip 'RPGUNIT.SAVF' from sub-folder 'Server' to the same folder on your PC.
+
+Run 'upload_savf.bat' with the following parameters:
 
   upload_savf.bat HOST USER PASSWORD
 
-The batch file is part of the update site zip file (iRPGUnit*.zip). The
-file is located at SourceForge at:
-
-  https://sourceforge.net/projects/irpgunit/files/
+Calling 'upload_savf.bat' without parameters displays usage instructions.
 
   
 Option 2.b: Upload save file by hand

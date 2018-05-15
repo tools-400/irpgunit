@@ -727,6 +727,8 @@
 		<mkdir dir="${temp.dir.local_updatesite}/plugins" />
 		<mkdir dir="${temp.dir.local_updatesite}/Server" />
 		
+		<copy file="${build.template.dir.web.assets}/upload_savf.bat" todir="${temp.dir.local_updatesite}/Server" />
+		
 		<copy todir="${temp.dir.local_updatesite}/features">
 			<fileset dir="${site.dir}/features" />
 		</copy>
@@ -773,8 +775,6 @@
 		<echo>Creating version tag file ${updatesite.tag.file} ...</echo>
 
 		<touch file="${updatesite.tag.file}" />
-
-		<copy file="${build.template.dir.web.assets}/upload_savf.bat" todir="${workspace.home}\${build.updatesite}" />
 
 		<eclipse.refreshLocal resource="${build.updatesite}" depth="infinite" />
 
