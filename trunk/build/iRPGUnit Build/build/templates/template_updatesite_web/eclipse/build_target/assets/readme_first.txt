@@ -11,16 +11,15 @@ library RPGUNIT. Then compile and execute program A_INSTALL to create the
 required objects.
 
 If you encounter problems with the save file, perhaps a problem with the 
-release level, you may consider to upload the source members.
+release level, you may consider to import the iRPGUnit i Project from
+SourceForge.
 
 
-Option 1: Upload source members
--------------------------------
+Option 1: Import i Project
+--------------------------
 
-Execute the following batch script to upload the RPGUnit source members 
-to library RPGUNIT:
-
-  upload_src.bat HOST USER PASSWORD
+Create a SVN repository location pointing to "https://svn.code.sf.net/p/irpgunit/code"
+and import the i Project from ./trunk/host/iRPGUnit
 
 
 Option 2.a: Upload save file
@@ -30,6 +29,11 @@ Execute the following batch script to upload the RPGUnit save file
 to library RPGUNIT:
 
   upload_savf.bat HOST USER PASSWORD
+
+The batch file is part of the update site zip file (iRPGUnit*.zip). The
+file is located at SourceForge at:
+
+  https://sourceforge.net/projects/irpgunit/files/
 
   
 Option 2.b: Upload save file by hand
@@ -56,7 +60,10 @@ Now use FTP to transfer the save file to your i5:
   Terminate FTP session:
     quite
 
-Now logon to your i5 and restore library RPGUNIT from the save file and 
+Compiling the RPGUnit Library
+-----------------------------
+
+Logon to your i5 and restore library RPGUNIT from the save file and 
 add the library to your library list: 
 
   RSTLIB SAVLIB(RPGUNIT) DEV(*SAVF) SAVF(QGPL/RPGUNIT)

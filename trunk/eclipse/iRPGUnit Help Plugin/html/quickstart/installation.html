@@ -10,10 +10,24 @@
 <body>
 <h1>Installation</h1>
 <h2>Install the RPGUnit library</h2>
-First you need to transfer save file RPGUnit_* to your server and restore library 
+First you need to transfer save file RPGUNIT.SAVF to your server and restore library 
 <code>RPGUNIT</code>. Then compile and execute program <code>A_INSTALL</code> 
-to create the required objects.
-<h3>Transfer save file</h3>
+to create the required objects. The save file is part of the update site zip file
+and the iRPGUnit Core Plug-in jar file.
+<h3>Transfer Save File With upload_savf.bat</h3>
+<p/>
+Download the zipped update site from the iRPGUnit '<a href="https://sourceforge.net/projects/irpgunit/files/?source=navbar">Files</a>' section
+at SourceForge, e.g. <i>iRPGUnit for RDi 8.0+ (v2.2.2.r Update Site).zip</i>.<p/>
+Unzip <i>upload_savf.bat</i> to an empty folder on your PC.<p/>
+Unzip <i>RPGUNIT.SAVF</i> to the same folder on your PC.<p/>
+Run <i>upload_savf.bat</i> with the following parameters:<p/>
+<p/>
+<pre class="indent">
+  upload_savf.bat hostName userName password
+</pre>
+Calling <i>upload_savf.bat</i> without parameters displays usage instructions.
+<p/>
+<h3>Transfer Save File by Hand</h3>
 Please create an empty save file on your server before sending the file from your PC:
 <pre class="indent">
 Create save file:
@@ -34,7 +48,8 @@ Transfer save file:
 Terminate FTP session:
   quite
 </pre> 
-Now logon to your server and restore library <code>RPGUNIT</code> from the save  
+<h3>Compiling the RPGUnit Library</h3>
+Logon to your server and restore library <code>RPGUNIT</code> from the save  
 file and add the library to your library list:
 <pre class="indent">
   RSTLIB SAVLIB(RPGUNIT) DEV(*SAVF) SAVF(QGPL/RPGUNIT)
@@ -50,7 +65,7 @@ Finished.
 <h3>Install the RPGUnit plug-in</h3>
 <b>Using the update site</b><p>
 The URL of the RPGUnit plug-in site is:
-<p class="indent"><a href="http://www.tools400.de/rpgunit/update/rdp8.0/">http://www.tools400.de/rpgunit/update/rdp8.0/</a></p>
+<p class="indent"><a href="http://www.tools400.de/rpgunit/update/rdp8.0/">http://www.tools400.de/rpgunit/update/rdp8.0/</a><p/>
 <b>Using the 'dropins' folder</b><p>
 Go to the '<i>dropins</i>' folder of your <b>Rational Developer for Power (RDP)</b> installation. 
 Usually that is:
