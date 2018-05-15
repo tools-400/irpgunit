@@ -47,6 +47,11 @@ d) Optionally run the RPGUnit self tests:
 --------------------------------------
 
 
+Version 2.2.3 - xx.xx.2018
+--------------------------
+Fixed:   Fixed RUPLUGINT1.testAllOK_4() test case.
+
+
 Version 2.2.2 - 09.05.2018
 --------------------------
 Changed: Improved error reporting when validating a service program or
