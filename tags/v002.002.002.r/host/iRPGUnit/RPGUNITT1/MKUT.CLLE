@@ -1,0 +1,81 @@
+     /* =================================================================== */
+     /*  RPGUnit SelfTest - Build and run all unit tests.                   */
+     /*                                                                     */
+     /*  Usage: CALL MKUT TARGETLIB                                         */
+     /*    where TARGETLIB is the library containing the RPGUnit            */
+     /*    source files.                                                    */
+     /* =================================================================== */
+     /*   >>PRE-COMPILER<<                                                  */
+     /*     >>CRTCMD<<  CRTBNDCL      PGM(&LI/&OB) +                        */
+     /*                               SRCFILE(&SL/&SF)  +                   */
+     /*                               SRCMBR(&SM);                          */
+     /*     >>COMPILE<<                                                     */
+     /*       >>PARM<< DBGVIEW(*LIST);                                      */
+     /*     >>END-COMPILE<<                                                 */
+     /*     >>LINK<<                                                        */
+     /*       >>PARM<< DFTACTGRP(*NO);                                      */
+     /*       >>PARM<< ACTGRP(*NEW);                                        */
+     /*     >>END-LINK<<                                                    */
+     /*     >>EXECUTE<<                                                     */
+     /*   >>END-PRE-COMPILER<<                                              */
+     /* =================================================================== */
+             PGM        PARM(&TARGETLIB)
+             DCL        VAR(&TARGETLIB) TYPE(*CHAR) LEN(10)
+
+             CHGVAR     VAR(&TARGETLIB) VALUE(&TARGETLIB)
+             MONMSG     MSGID(MCH3601) EXEC(SNDPGMMSG MSGID(CPF9898) +
+                          MSGF(QCPFMSG) MSGDTA('Target library +
+                          parameter required.') MSGTYPE(*ESCAPE))
+
+             CRTBNDCL   PGM(QTEMP/MKLIBLT) SRCFILE(RPGUNITT1)
+             CALL       PGM(QTEMP/MKLIBLT) PARM(&TARGETLIB)
+             RUCALLTST  TSTPGM(&TARGETLIB/LIBLT)
+
+             CRTBNDCL   PGM(QTEMP/MKPGMMSGT) SRCFILE(RPGUNITT1)
+             CALL       PGM(QTEMP/MKPGMMSGT) PARM(&TARGETLIB)
+             RUCALLTST  TSTPGM(&TARGETLIB/PGMMSGT)
+
+             CRTBNDCL   PGM(QTEMP/MKSTRINGT) SRCFILE(RPGUNITT1)
+             CALL       PGM(QTEMP/MKSTRINGT) PARM(&TARGETLIB)
+             RUCALLTST  TSTPGM(&TARGETLIB/STRINGT)
+
+             CRTBNDCL   PGM(QTEMP/MKCRTTSTT) SRCFILE(RPGUNITT1)
+             CALL       PGM(QTEMP/MKCRTTSTT) PARM(&TARGETLIB)
+             RUCALLTST  TSTPGM(&TARGETLIB/CRTTSTT)
+
+             RUCRTTST   TSTPGM(&TARGETLIB/ASSERTT) SRCFILE(RPGUNITT1)
+             RUCALLTST  TSTPGM(&TARGETLIB/ASSERTT)
+
+             RUCRTTST   TSTPGM(&TARGETLIB/CALLPROCT) SRCFILE(RPGUNITT1) +
+                          BNDSRVPGM(RURUNNER)
+             RUCALLTST  TSTPGM(&TARGETLIB/CALLPROCT)
+
+             CRTBNDCL   PGM(QTEMP/MKEXTPRCT) SRCFILE(RPGUNITT1)
+             CALL       PGM(QTEMP/MKEXTPRCT) PARM(&TARGETLIB)
+             RUCALLTST  TSTPGM(&TARGETLIB/EXTPRCT)
+
+             CRTBNDCL   PGM(QTEMP/MKEXTTSTT) SRCFILE(RPGUNITT1)
+             CALL       PGM(QTEMP/MKEXTTSTT) PARM(&TARGETLIB)
+             RUCALLTST  TSTPGM(&TARGETLIB/EXTTSTT)
+
+             CRTBNDCL   PGM(QTEMP/MKJOBLOGT) SRCFILE(RPGUNITT1)
+             CALL       PGM(QTEMP/MKJOBLOGT) PARM(&TARGETLIB)
+             RUCALLTST  TSTPGM(&TARGETLIB/JOBLOGT)
+
+             CRTBNDCL   PGM(QTEMP/MKRUNT) SRCFILE(RPGUNITT1)
+             CALL       PGM(QTEMP/MKRUNT) PARM(&TARGETLIB)
+             RUCALLTST  TSTPGM(&TARGETLIB/RUNT)
+
+             CRTBNDCL   PGM(QTEMP/MKCMDRUNT) SRCFILE(RPGUNITT1)
+             CALL       PGM(QTEMP/MKCMDRUNT) PARM(&TARGETLIB)
+             RUCALLTST  TSTPGM(&TARGETLIB/CMDRUNT)
+
+             CRTBNDCL   PGM(QTEMP/MKCMDRUNLT) SRCFILE(RPGUNITT1)
+             CALL       PGM(QTEMP/MKCMDRUNLT) PARM(&TARGETLIB)
+             RUCALLTST  TSTPGM(&TARGETLIB/CMDRUNLOGT)
+
+             CRTBNDCL   PGM(QTEMP/MKACPTST) SRCFILE(RPGUNITT1)
+             CALL       PGM(QTEMP/MKACPTST) PARM(&TARGETLIB)
+             RUCALLTST  TSTPGM(&TARGETLIB/RUACPTST)
+
+             ENDPGM

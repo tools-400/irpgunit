@@ -1,0 +1,46 @@
+     /* =================================================================== */
+     /*  RPGUnit SelfTest - Build EXTTSTT.                                  */
+     /*                                                                     */
+     /*  Usage: CALL MKEXTTSTT TARGETLIB                                    */
+     /*    where TARGETLIB is the library containing the RPGUnit            */
+     /*    source files.                                                    */
+     /* =================================================================== */
+     /*   >>PRE-COMPILER<<                                                  */
+     /*     >>CRTCMD<<  CRTBNDCL      PGM(&LI/&OB) +                        */
+     /*                               SRCFILE(&SL/&SF)  +                   */
+     /*                               SRCMBR(&SM);                          */
+     /*     >>COMPILE<<                                                     */
+     /*       >>PARM<< DBGVIEW(*LIST);                                      */
+     /*     >>END-COMPILE<<                                                 */
+     /*     >>LINK<<                                                        */
+     /*       >>PARM<< DFTACTGRP(*NO);                                      */
+     /*       >>PARM<< ACTGRP(*NEW);                                        */
+     /*     >>END-LINK<<                                                    */
+     /*     >>EXECUTE<<                                                     */
+     /*   >>END-PRE-COMPILER<<                                              */
+     /* =================================================================== */
+             PGM        PARM(&TARGETLIB)
+             DCL        VAR(&TARGETLIB) TYPE(*CHAR) LEN(10)
+
+             CHGVAR     VAR(&TARGETLIB) VALUE(&TARGETLIB)
+             MONMSG     MSGID(MCH3601) EXEC(SNDPGMMSG MSGID(CPF9898) +
+                          MSGF(QCPFMSG) MSGDTA('Target library +
+                          parameter required.') MSGTYPE(*ESCAPE))
+
+             CRTRPGMOD  MODULE(QTEMP/EXTTST) SRCFILE(RPGUNIT1) +
+                          DBGVIEW(*LIST)
+             CRTRPGMOD  MODULE(QTEMP/EXTTSTT) SRCFILE(RPGUNITT1) +
+                          DBGVIEW(*LIST)
+             CRTRPGMOD  MODULE(QTEMP/STRING) SRCFILE(RPGUNIT1) +
+                          DBGVIEW(*LIST)
+
+             CRTSRVPGM  SRVPGM(&TARGETLIB/EXTTSTT) +
+                          MODULE(QTEMP/EXTTSTT QTEMP/EXTTST QTEMP/STRING) +
+                          EXPORT(*ALL) +
+                          BNDSRVPGM(&TARGETLIB/RURUNNER +
+                                    &TARGETLIB/RUTESTCASE +
+                                    &TARGETLIB/LLIST) +
+                          BNDDIR(QC2LE) OPTION(*DUPPROC) +
+                          TEXT('RPGUnit SelfTest - Test EXTTST.')
+
+             ENDPGM

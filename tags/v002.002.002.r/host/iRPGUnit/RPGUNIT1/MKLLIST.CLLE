@@ -1,0 +1,49 @@
+     /* =================================================================== */
+     /*  RPG Next Gen - Build Linked List.                                  */
+     /*                                                                     */
+     /*  Usage: CALL MKLLIST TARGETLIB                                      */
+     /*    where TARGETLIB is the library containing the RPGUnit            */
+     /*    source files.                                                    */
+     /* =================================================================== */
+     /*   >>PRE-COMPILER<<                                                  */
+     /*     >>CRTCMD<<  CRTBNDCL      PGM(&LI/&OB) +                        */
+     /*                               SRCFILE(&SL/&SF)  +                   */
+     /*                               SRCMBR(&SM);                          */
+     /*     >>COMPILE<<                                                     */
+     /*       >>PARM<< DBGVIEW(*LIST);                                      */
+     /*     >>END-COMPILE<<                                                 */
+     /*     >>LINK<<                                                        */
+     /*       >>PARM<< DFTACTGRP(*NO);                                      */
+     /*       >>PARM<< ACTGRP(*NEW);                                        */
+     /*     >>END-LINK<<                                                    */
+     /*     >>EXECUTE<<                                                     */
+     /*   >>END-PRE-COMPILER<<                                              */
+     /* =================================================================== */
+             PGM        PARM(&TARGETLIB &I_TGTRLS)
+             DCL        VAR(&TARGETLIB) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&I_TGTRLS ) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&TGTRLS   ) TYPE(*CHAR) LEN(10) VALUE(*CURRENT)
+
+             CHGVAR     VAR(&TGTRLS) VALUE(&I_TGTRLS)
+             MONMSG     MSGID(MCH3601) EXEC(DO)
+                RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
+             ENDDO
+
+             CHGVAR     VAR(&TARGETLIB) VALUE(&TARGETLIB)
+             MONMSG     MSGID(MCH3601) EXEC(SNDPGMMSG MSGID(CPF9898) +
+                          MSGF(QCPFMSG) MSGDTA('Target library +
+                          parameter required.') MSGTYPE(*ESCAPE))
+
+             CRTRPGMOD  MODULE(QTEMP/LLIST) SRCFILE(RPGUNIT1) +
+                          OPTION(*SRCSTMT) DBGVIEW(*LIST) TGTRLS(&TGTRLS)
+             CRTRPGMOD  MODULE(QTEMP/LLIST_SORT) SRCFILE(RPGUNIT1) +
+                          OPTION(*SRCSTMT) DBGVIEW(*LIST) TGTRLS(&TGTRLS)
+
+             CRTSRVPGM  SRVPGM(&TARGETLIB/LLIST) +
+                          MODULE(QTEMP/LLIST QTEMP/LLIST_SORT) +
+                          EXPORT(*SRCFILE) +
+                          SRCFILE(RPGUNIT1) SRCMBR(LLIST_API) +
+                          TGTRLS(&TGTRLS) + 
+                          TEXT('RPG Next Gen - Linked List : Implemenation.')
+
+             ENDPGM

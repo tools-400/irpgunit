@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="Referenz" link_to="toc/toc.xml#reference">
+    <topic href="html/reference/setupTeardownOverview.html"    label="Initialisieren und Beenden">
+        <topic href="html/reference/setupTestSuite.html"       label="Initialisieren Test Suite" />
+        <topic href="html/reference/setupTestCase.html"        label="Initialisieren Test Case"  />
+        <topic href="html/reference/teardownTestCase.html"     label="Beenden Test Case"  />
+        <topic href="html/reference/teardownTestSuite.html"    label="Beenden Test Suite" />
+    </topic>
+    <topic label="Zusicherungen">
+        <topic href="html/reference/aEqual.html"               label="aEqual" />
+        <topic href="html/reference/iEqual.html"               label="iEqual" />
+        <topic href="html/reference/nEqual.html"               label="nEqual" />
+        <topic href="html/reference/assert.html"               label="assert" />
+        <topic href="html/reference/fail.html"                 label="fail"   />
+        <topic href="html/reference/getMonitoredMessage.html"  label="getMonitoredMessage"/>
+    </topic>
+    <topic href="html/reference/selftest.html"                 label="Selbsttest">
+        <topic href="html/reference/getAssertFailEvt.html"     label="getAssertFailEvt"   />
+        <topic href="html/reference/getAssertFailEvtLong.html" label="getAssertFailEvtLong" />
+        <topic href="html/reference/getAssertCalled.html"      label="getAssertCalled"    />
+        <topic href="html/reference/clearAssertCounter.html"   label="clearAssertCounter" />
+        <topic href="html/reference/clrAssertFailEvt.html"     label="clrAssertFailEvt"   />
+    </topic>
+    <topic label="CL Befehle">
+        <topic href="html/reference/CLRPFM.html"               label="CLRPFM"    />
+        <topic href="html/reference/RCLACTGRP.html"            label="RCLACTGRP" />
+        <topic href="html/reference/runCmd.html"               label="runCmd"    />
+        <topic href="html/reference/waitSeconds.html"          label="waitSeconds"/>
+        <topic href="html/reference/displayStatusMessage.html" label="displayStatusMessage" />
+        <topic href="html/reference/restoreStatusMessage.html" label="restoreStatusMessage" />
+        <topic href="html/reference/clearStatusMessage.html"   label="clearStatusMessage" />
+    </topic>
+</toc>

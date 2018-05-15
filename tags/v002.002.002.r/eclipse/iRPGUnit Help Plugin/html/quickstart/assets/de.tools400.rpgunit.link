@@ -1,0 +1,22 @@
+# -----------------------------------------------------------------------------------
+# This is a sample "link" file in case you want to use the 'dropins' folder.
+# -----------------------------------------------------------------------------------
+# Please copy this file to "c:\Program Files\IBM\SDP\dropins\" and
+# adjust the path to your local RPGUnit plugin folder. The example below
+# uses folder 'local_updatesite'.
+#
+# C:/Users/Joe/My Documents/
+# +-- RPGUnit Plugin
+#       +-- local_updatesite
+#            +-- plugins
+#                 +-- de.tools400.rpgunit.core.help_*.jar
+#                     de.tools400.rpgunit.core_*.jar
+#                     de.tools400.rpgunit.isphere_*.jar
+#                     de.tools400.rpgunit.spooledfileviewer_*.jar
+#            +-- features
+#                 +-- de.tools400.rpgunit.core.help_*.jar
+#                     de.tools400.rpgunit.core_*.jar
+#                     de.tools400.rpgunit.isphere_*.jar
+#                     de.tools400.rpgunit.spooledfileviewer_*.jar
+# -----------------------------------------------------------------------------------
+path=C:/Users/Joe/My Documents/RPGUnit Plugin/local_updatesite/

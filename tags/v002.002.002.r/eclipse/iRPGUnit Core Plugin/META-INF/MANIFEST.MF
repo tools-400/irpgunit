@@ -1,0 +1,27 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: iRPGUnit Core (required)
+Bundle-SymbolicName: de.tools400.rpgunit.core;singleton:=true
+Bundle-Version: 2.2.2.r
+Bundle-Activator: de.tools400.rpgunit.core.RPGUnitCorePlugin
+Bundle-Vendor: iRPGUnit Project Team
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.ui.views,
+ org.eclipse.core.runtime,
+ org.eclipse.rse.core,
+ org.eclipse.rse.ui,
+ org.eclipse.rse.services,
+ org.eclipse.core.resources,
+ com.ibm.etools.iseries.toolbox,
+ com.ibm.etools.iseries.services.qsys,
+ com.ibm.etools.iseries.subsystems.qsys,
+ com.ibm.etools.iseries.edit,
+ com.ibm.etools.iseries.rse.ui
+Bundle-ActivationPolicy: lazy
+Export-Package: de.tools400.rpgunit.core.extensions.preferences,
+ de.tools400.rpgunit.core.extensions.testcase,
+ de.tools400.rpgunit.core.extensions.view,
+ de.tools400.rpgunit.core.ui.view,
+ de.tools400.rpgunit.core.versioncheck
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Localization: plugin

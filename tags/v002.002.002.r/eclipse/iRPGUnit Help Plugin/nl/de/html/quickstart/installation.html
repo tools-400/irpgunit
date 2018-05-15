@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Installation</title>
+</head>
+
+<body>
+<h1>Installation</h1>
+<h2>Installation der RPGUnit Bibliothek</h2>
+Zur Installation von RPGUnit wird zunächst die Sicherungsdatei RPGUnit_* auf 
+den Server übertragen und anschließend die Bibliothek <code>RPGUNIT</code> wiederhergestellt.
+Den Abschluß den Installation bildet das Programm <code>A_INSTALL</code>, welches 
+die RPGUnit Objekte auf der Maschine erstellt.
+<h3>Übertragen der Sicherungsdatei</h3>
+Vor dem Übertragen der Sicherungsdatei erstellen Sie bitte eine leere Sicherungsdatei auf ihrem
+Server:
+<pre class="indent">
+Erstellen Sicherungsdatei:
+  CRTSAVF FILE(QGPL/RPGUNIT)
+</pre>
+Anschließend läßt sich die Sicherungsdatei schnell und einfach per FTP übertragen:
+<pre class="indent">
+Öffnen einer DOS Box:
+  XP, Win7: Start -> Ausführen -> cmd.exe
+
+Starten einer FTP Sitzung zu ihrem Server:
+  FTP your.server.com
+
+Übertragen der Sicherungsdatei:
+  binary
+  put RPGUnit_v* QGPL/RPGUNIT
+  
+Beenden der FTP Sitzung:
+  quite
+</pre> 
+Melden Sie sich nun an ihrem Server an und stellen Sie die Bibliothek <code>RPGUNIT</code> wieder her 
+und fügen Sie die Bibliothek ihrer Bibliotheksliste hinzu:
+<pre class="indent">
+  RSTLIB SAVLIB(RPGUNIT) DEV(*SAVF) SAVF(QGPL/RPGUNIT)
+  ADDLIBLE RPGUNIT
+</pre>
+Starten Sie jetzt den <code>PDM</code> für die Datei <code>RPGUNIT1</code> der 
+Blibliothek <code>RPGUNIT</code> und erstellen Sie die RPGUNIT Objekte:
+<pre class="indent">
+  CRTBNDCL PGM(RPGUNIT/A_INSTALL) SRCFILE(RPGUNIT/RPGUNIT1) SRCMBR(*PGM)
+  CALL PGM(RPGUNIT/A_INSTALL) PARM('RPGUNIT')
+</pre>
+Damit ist die Installation abgeschlossen.
+<h3>Installieren des Plugins</h3>
+<b>Verwenden der Update Site</b><p>
+Die URL der Update Site ist:
+<p class="indent"><a href="http://www.tools400.de/rpgunit/update/rdp8.0/">http://www.tools400.de/rpgunit/update/rdp8.0/</a></p>
+<b>Verwenden des 'dropins' Verzeichnis</b><p>
+Gehen Sie zunächst zum '<i>dropins</i>' Verzeichnis ihrer <b>Rational Developer for Power (RDP)</b> Installation. 
+Normalerweise ist dies:
+<p class="indent">
+c:\Program Files\IBM\SDP\dropins\
+</p>
+Erstellen Sie nun  eine Text Datei <a href="assets/de.tools400.rpgunit.link">'<i>de.tools400.rdp.rpgunit.link</i>'</a> 
+mit folgendem Inhalt (Beispiel) in ihrem '<i>dropins</i>' Verzeichnis:
+<pre class="indent">
+path=C:/Users/Joe/Documents/RPGUnit Plugin/<span class="pre-strong">local_updatesite/</span>
+</pre>
+Abschließend kopieren Sie das Verzeichnis '<i>local_updatesite</i>' der zip Datei in das Verzeichnis,
+welches Sie soeben bei '<i>path</i>' angegeben haben. Im Ergebnis sollte die Verzeichnisstruktur
+wie folgt aussehen:   
+<pre class="indent">
+C:/Users/Joe/Documents/
+ +-- RPGUnit Plugin
+      +-- <span class="pre-strong">local_updatesite
+           +-- plugins
+                +-- de.tools400.rpgunit.core.help_*.jar
+                    de.tools400.rpgunit.core_*.jar
+                    de.tools400.rpgunit.isphere_*.jar
+                    de.tools400.rpgunit.spooledfileviewer_*.jar
+           +-- features
+                +-- de.tools400.rpgunit.core.help_*.jar
+                    de.tools400.rpgunit.core_*.jar
+                    de.tools400.rpgunit.isphere_*.jar
+                    de.tools400.rpgunit.spooledfileviewer_*.jar</span>
+</pre>
+Bitte achten Sie darauf bei der Pfadangabe einer 'slash' (/) und keinen 'back slash' (\) zu verwenden
+und vergessen Sie auch nicht den abschließenden 'slash' hinter '<i>local_updatesite</i>'.
+<p>
+Damit ist die Installation abgeschlossen. Sollte RDP aktiv sein, müssen Sie RDP zur Aktivierung 
+des Plugins neu starten.
+<p>
+<table border=1 bgcolor=#FA5858 cellspacing="0" cellpadding="10">
+<tr><td>Bitte vergessen Sie nicht die Bibliothek <b>RPGUNIT</b> in die Bibliotheksliste ihrer Remote Connection aufzunehmen.</td></tr>
+</table>
+ <p>
+</body>
+</html>

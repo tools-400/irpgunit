@@ -1,0 +1,269 @@
+.* =================================================================== */
+.*  RPGUnit - Command online help.                                     */
+.* =================================================================== */
+.*   >>PRE-COMPILER<<                                                  */
+.*     >>CRTCMD<<  CRTPNLGRP  PNLGRP(&LI/&OB) +                        */
+.*                               SRCFILE(&SL/&SF)  +                   */
+.*                               SRCMBR(&SM);                          */
+.*     >>IMPORTANT<<                                                   */
+.*       >>PARM<< OPTION(*EVENTF);                                     */
+.*     >>END-IMPORTANT<<                                               */
+.*     >>EXECUTE<<                                                     */
+.*   >>END-PRE-COMPILER<<                                              */
+.* =================================================================== */
+:pnlgrp.
+.*
+:help name=RUCRTTST WIDTH=74.
+RPGUnit Create Test (RUCRTTST) - Help
+:p.
+The RPGUnit Create Test (RUCRTTST) command
+compiles an RPGLE source member containing test procedures into a test program.
+:ehelp.
+.*
+:help name='RUCRTTST/TSTPGM' WIDTH=64.
+Test program (TSTPGM) - Help
+:xh3.Test program (TSTPGM)
+:p.
+Specifies the name of the test program (*SRVPGM) to create.
+:ehelp.
+.*
+:help name='RUCRTTST/SRCFILE' WIDTH=64.
+Source file (SRCFILE) - Help
+:xh3.Source file (SRCFILE)
+:p.
+Specifies the name of the source file containing a member with the same name as
+TSTPGM. This member must be a valid, nomain RPGLE source member.
+:ehelp.
+.*
+:help name='RUCRTTST/SRCMBR' WIDTH=64.
+Source file (SRCFILE) - Help
+:xh3.Source file (SRCFILE)
+:p.
+Specifies the name of the member of the source file that contains the ILE RPG or
+SQL RPG source specifications to be compiled.
+:p.
+:HP2.Hint::EHP2.*TSTPGM does not work, when you want to get the result of the
+compile action back into RDi, because RDi requires a named source member.
+:parml.
+:pt.:pk def.*TSTPGM:epk.
+:pd.Use the name specified for the TSTPGM parameter as the
+source file member name.
+:pt.source-file-member-name
+:pd.Enter the name of the member that contains the ILE RPG
+or SQL RPG source specifications.
+:eparml.
+:ehelp.
+.*
+:help name='RUCRTTST/TEXT' WIDTH=64.
+Text 'description' (TEXT) - Help
+:xh3.Text 'description' (TEXT)
+:p.
+Allows you to enter text that briefly describes the RPGUnit
+test case and its function.
+:ehelp.
+.*
+:help name='RUCRTTST/COPTION' WIDTH=64.
+Compile options (COPTION) - Help
+:xh3.Compile options (COPTION)
+:p.
+Refer to the OPTION parameter in CRTRPGMOD command help.
+:p.
+:HP2.Hint::EHP2.You need to specify a named source member at
+parameter :HP2.SRCMBR:EHP2., if you want to use :HP2.*EVENTF:EHP2.
+to load the result of your compile action into RDi.
+:ehelp.
+.*
+:help name='RUCRTTST/DBGVIEW' WIDTH=64.
+Debugging views (DBGVIEW) - Help
+:xh3.Debugging views (DBGVIEW)
+:p.
+Refer to the DBGVIEW parameter in CRTRPGMOD command help.
+:p.
+:HP2.Note::EHP2.For SQLRPGLE source members, the debug view parameter is
+automatically added to parameter COMPILEOPT of command CRTSQLRPGI, if DBGVIEW
+is not already specified at COMPILEOPT.
+:ehelp.
+.*
+:help name='RUCRTTST/BNDSRVPGM' WIDTH=64.
+Bind service program (BNDSRVPGM) - Help
+:xh3.Bind service program (BNDSRVPGM)
+:p.
+Refer to the BNDSRVPGM parameter in CRTSRVPGM command help.
+:ehelp.
+.*
+:help name='RUCRTTST/BNDDIR' WIDTH=64.
+Binding directory (BNDDIR) - Help
+:xh3.Binding directory (BNDDIR)
+:p.
+Refer to the BNDDIR parameter in CRTSRVPGM command help.
+:ehelp.
+.*
+:help name='RUCRTTST/BOPTION' WIDTH=64.
+Binding options (BOPTION) - Help
+:xh3.Binding options (BOPTION)
+:p.
+Refer to the OPTION parameter in CRTSRVPGM command help.
+:ehelp.
+.*
+:help name='RUCRTTST/MODULE' WIDTH=64.
+Module (MODULE) - Help
+:xh3.Module (MODULE)
+:p.
+Refer to the MODULE parameter in CRTSRVPGM command help.
+:ehelp.
+.*
+:help name='RUCRTTST/POPTION' WIDTH=64.
+Pre-compiler OPTIONS (POPTION) - Help
+:xh3.Pre-compiler OPTIONS (POPTION)
+:p.
+Refer to the OPTION parameter in CRTSQLRPGI command help.
+:ehelp.
+.*
+:help name='RUCRTTST/COMPILEOPT' WIDTH=64.
+Pre-Compiler COMPILEOPT (COMPILEOPT) - Help
+:xh3.Pre-Compiler COMPILEOPT (COMPILEOPT)
+:p.
+Refer to the COMPILEOPT parameter in CRTSQLRPGI command help.
+:p.
+:HP2.Note::EHP2.If COMPILEOPT does not include 'DBGVIEW', the value
+of parameter DBGVIEW is automatically added.
+:ehelp.
+.*
+:help name=RUCALLTST WIDTH=74.
+RPGUnit Call Tests (RUCALLTST) - Help
+:p.
+The RPGUnit Call Tests (RUCALLTST) command runs a test suite or a test procedure.
+:ehelp.
+.*
+:help name='RUCALLTST/TSTPGM' WIDTH=64.
+Test program (TSTPGM) - Help
+:xh3.Test program (TSTPGM)
+:p.
+A test program is a service program object (*SRVPGM), exporting procedures
+starting with TEST.
+:ehelp.
+.*
+:help name='RUCALLTST/TSTPRC' WIDTH=64.
+Test procedure (TSTPRC) - Help
+:xh3.Test procedure (TSTPRC)
+:p.
+Specifies the names of up to 250 test procedures that should be run.
+:parml.
+:pt.:pk def.*ALL:epk.
+:pd.Run all test procedures.
+:pt.test-procedure-name
+:pd.Enter the name of the test procedures to run.
+:eparml.
+:ehelp.
+.*
+:help name='RUCALLTST/ORDER' WIDTH=64.
+Run order (ORDER) - Help
+:xh3.Run order (ORDER)
+:p.
+Specifies the order for running the test procedures.
+Useful to check that there is no dependencies between test procedures.
+:parml.
+:pt.:pk def.*API:epk.
+:pd.Run test procedures in the order provided by the system API.
+:pt.*REVERSE
+:pd.Run test procedures in reverse order.
+:eparml.
+:ehelp.
+.*
+:help name='RUCALLTST/DETAIL' WIDTH=64.
+Report detail (DETAIL) - Help
+:xh3.Report detail (DETAIL)
+:p.
+Specifies how detailed the test run report should be.
+:parml.
+:pt.:pk def.*BASIC:epk.
+:pd.Full detail for failures and errors, no detail for successes.
+:pt.*ALL
+:pd.Full detail in all cases.
+:eparml.
+:ehelp.
+.*
+:help name='RUCALLTST/OUTPUT' WIDTH=64.
+Create report (OUTPUT) - Help
+:xh3.Create report (OUTPUT)
+:p.
+Specifies whether or not a report is created.
+:parml.
+:pt.:pk def.*ALLWAYS:epk.
+:pd.Creates a report regardless of the test result.
+:pt.*ERROR
+:pd.Creates a report in case of failures and errors, only.
+:pt.*NONE
+:pd.Does not create any report.
+:eparml.
+:ehelp.
+.*
+:help name='RUCALLTST/LIBL' WIDTH=64.
+Libraries for unit test (LIBL) - Help
+:xh3.Libraries for unit test (LIBL)
+:p.
+Specifies the library list for executing the specified
+unit test suite.
+:parml.
+:pt.:pk def.*CURRENT:epk.
+:pd.The current library list is used to execute the
+unit test suite.
+:pt.*JOBD
+:pd.The initial library list part of the specified
+job description is used to execute the unit test suite.
+:pt.name
+:pd.Specify the names of the libraries to be added to
+user portion of the library list for the current thread.
+:eparml.
+:ehelp.
+.*
+:help name='RUCALLTST/JOBD' WIDTH=64.
+Job description (JOBD) - Help
+:xh3.Job description (JOBD)
+:p.
+Specifies the job description that is used
+to set the library list, when parameter :HP2.LIBL:EHP2. is
+set to :HP2.*JOBD:EHP2..
+:parml.
+:pt.:pk def.*DFT:epk.
+:pd.The library of the unit test suite, specified at
+parameter :HP2.TSTPGM:EHP2., is searched for job
+description :HP2.RPGUNIT:EHP2..
+:pt.job-description
+:pd.The name of the job description that is used to set
+the library list of the unit test suite.
+:eparml.
+:P.
+The possible library values are:
+:P.
+:PARML.
+:PT.:PK DEF.*LIBL:EPK.
+:PD.All libraries in the user and system portions of the
+job's library list are searched until the first match
+is found.
+.*
+:PT.:PV.library-name:EPV.
+:PD.Specify the name of the library to be searched.
+:EPARML.
+:ehelp.
+.*
+:help name='RUCALLTST/RCLRSC' WIDTH=64.
+Reclaim resources (RCLRSC) - Help
+:xh3.Reclaim resources (RCLRSC)
+:p.
+Specifies when to reclaim resources. Resources, such as open files, can
+be reclaimed after each test case or at the end of the test suite.
+:p.
+This option is useful if the test suite calls OPM programs, which do
+not set the *INLR indicator.
+:parml.
+:pt.:pk def.*NO:epk.
+:pd.Resources are not reclaimed.
+:pt.*ALLWAYS
+:pd.Resources are reclaimed after each test case and at the end of the test suite.
+:pt.*ONCE
+:pd.Resources are reclaimed at the end of the test suite.
+:eparml.
+:ehelp.
+.*
+:epnlgrp.

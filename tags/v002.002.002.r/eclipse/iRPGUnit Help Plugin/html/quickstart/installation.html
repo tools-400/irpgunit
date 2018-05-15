@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Installation</title>
+</head>
+
+<body>
+<h1>Installation</h1>
+<h2>Install the RPGUnit library</h2>
+First you need to transfer save file RPGUnit_* to your server and restore library 
+<code>RPGUNIT</code>. Then compile and execute program <code>A_INSTALL</code> 
+to create the required objects.
+<h3>Transfer save file</h3>
+Please create an empty save file on your server before sending the file from your PC:
+<pre class="indent">
+Create save file:
+  CRTSAVF FILE(QGPL/RPGUNIT)
+</pre>
+Now use FTP to transfer the save file to your server:
+<pre class="indent">
+Open a DOS box:
+  XP, Win7: Start -> Execute -> cmd.exe
+
+Start an FTP session to your server:
+  FTP your.server.com
+
+Transfer save file:
+  binary
+  put RPGUnit_v* QGPL/RPGUNIT
+  
+Terminate FTP session:
+  quite
+</pre> 
+Now logon to your server and restore library <code>RPGUNIT</code> from the save  
+file and add the library to your library list:
+<pre class="indent">
+  RSTLIB SAVLIB(RPGUNIT) DEV(*SAVF) SAVF(QGPL/RPGUNIT)
+  ADDLIBLE RPGUNIT
+</pre>
+Compile and execute install program <code>A_INSTALL</code> to create the 
+RPGUnit objects:
+<pre class="indent">
+  CRTBNDCL PGM(RPGUNIT/A_INSTALL) SRCFILE(RPGUNIT/RPGUNIT1) SRCMBR(*PGM)
+  CALL PGM(RPGUNIT/A_INSTALL) PARM('RPGUNIT')
+</pre>
+Finished.
+<h3>Install the RPGUnit plug-in</h3>
+<b>Using the update site</b><p>
+The URL of the RPGUnit plug-in site is:
+<p class="indent"><a href="http://www.tools400.de/rpgunit/update/rdp8.0/">http://www.tools400.de/rpgunit/update/rdp8.0/</a></p>
+<b>Using the 'dropins' folder</b><p>
+Go to the '<i>dropins</i>' folder of your <b>Rational Developer for Power (RDP)</b> installation. 
+Usually that is:
+<p class="indent">
+c:\Program Files\IBM\SDP\dropins\
+</p>
+Add a plain text file <a href="assets/de.tools400.rpgunit.link">'<i>de.tools400.rdp.rpgunit.link</i>'</a> with 
+the following content (example) to your '<i>dropins</i>' folder:
+<pre class="indent">
+path=C:/Users/Joe/My Documents/RPGUnit Plugin/<span class="pre-strong">local_updatesite/</span>
+</pre>
+Now copy folder '<i>local_updatesite</i>' from the zip file to the folder that 
+you just specified at the '<i>path</i>' property. The structure
+of that folder should look like that:   
+<pre class="indent">
+C:/Users/Joe/My Documents/
+ +-- RPGUnit Plugin
+      +-- <span class="pre-strong">local_updatesite
+           +-- plugins
+                +-- de.tools400.rpgunit.core.help_*.jar
+                    de.tools400.rpgunit.core_*.jar
+                    de.tools400.rpgunit.isphere_*.jar
+                    de.tools400.rpgunit.spooledfileviewer_*.jar
+           +-- features
+                +-- de.tools400.rpgunit.core.help_*.jar
+                    de.tools400.rpgunit.core_*.jar
+                    de.tools400.rpgunit.isphere_*.jar
+                    de.tools400.rpgunit.spooledfileviewer_*.jar</span>
+</pre>
+Please make sure to use a slash (/) instand of a back slash (\) and do not forget the last back slash 
+behind '<i>local_updatesite</i>'.
+<p>
+Finished. Please restart RPD to use the plug-in.
+<p>
+<table border=1 bgcolor=#FA5858 cellspacing="0" cellpadding="10">
+<tr><td>Do not forget to add library <b>RPGUNIT</b> to the library list of your Remote Connection.</td></tr>
+</table>
+ <p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
