@@ -42,7 +42,7 @@
         </tr>
         <tr>
         <td valign="bottom" align="right" nowrap>
-        <b>Version: <?php echo $current_version; ?></b>
+        <b>Version: @VERSION_NUMBER@</b>
         </td>
         </tr>
         </table>
@@ -53,8 +53,8 @@
         
         <h2 class="release">Getting Support</h2>
         <div class="section">
-        When you are in doubt whether or not something is wrong with iRPGUnit, please, start with the iRPGUnit help and 
-        check for remarks regarding your concerns or ask your questions at the 
+        When you are in doubt whether or not something is wrong with iRPGUnit, please, start with the iRPGUnit <a target="_help" href="@HELP_SITE_URL@">help</a> 
+        and check for remarks regarding your concerns or ask your questions at the 
         <a target="_wdsci-l" href="http://lists.midrange.com/mailman/listinfo/wdsci-l">WDSCI-L</a> mailing list. In
         case you are sure that you spotted a bug, add a bug report at the 
         <a target="_iRPGUnit-bugs" href="https://sourceforge.net/p/irpgunit/tickets/">iRPGUnit bug tracker</a>.
@@ -79,7 +79,7 @@
         <br>
         <hr>
         <table border="0" class="copyright">
-        <tr><td class="copyright" align="left" width="50%">Version: <?php echo $current_version; ?> - Copyright: @TODAY_YEAR@, iRPGUnit project team</td><td class="copyright" align="right" width="50%">Updated: @TODAY@</td></tr>
+        <tr><td class="copyright" align="left" width="50%">Version: @VERSION_NUMBER@ - Copyright: @TODAY_YEAR@, iRPGUnit project team</td><td class="copyright" align="right" width="50%">Updated: @TODAY@</td></tr>
         </table>
         <br>
     </body>
