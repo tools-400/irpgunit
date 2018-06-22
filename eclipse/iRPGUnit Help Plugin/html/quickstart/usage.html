@@ -16,13 +16,14 @@ Using RPGUnit is splitted into two parts:
 </ol>
 <h2>Creating test cases</h2>
 In RPG a test case is an exported procedure. Its name must start with <code>test</code> 
-in order to be accepted by RPGUnit. But that also means that you must not export 
-procedures, starting with <code>test</code>, that are not intended to be a test case.
+in order to be accepted by the RPGUnit utility. But that also means that you must not 
+export procedures, starting with <code>test</code>, that are not intended to be a test 
+case.
 <p>
-In order to use the RPGUnit procedures you need to add copy book <code>TESTCASE</code> 
-to your source meber:
+In order to use RPGUnit procedures you need to add copy book <code>TESTCASE</code> 
+to your source member:
 <code class="indent"><pre>
- /copy RPGUNIT1,/copy RPGUNIT1,TESTCASE                     RPGUnit
+ /copy RPGUNIT1,/copy RPGUNIT1,TESTCASE                     RPGUnit Utility
 </pre></code>
 <p>
 <u>Test case examples</u>
@@ -51,7 +52,7 @@ execution flow.
                    <code><u>RPGLE:</u><br>RUCRTTST TSTPGM(&O/&N) SRCFILE(&L/&F) SRCMBR(&N) COPTION(*SRCSTMT *EVENTF) DBGVIEW(*LIST)
                    <br><br><u>SQLRPGLE:</u><br>RUCRTTST TSTPGM(&O/&N) SRCFILE(&L/&F) SRCMBR(&N) POPTION(*EVENTF) COMPILEOPT('DBGVIEW(*LIST)')</code><p>
                    It is also recommended to specify <code>*SRCSTMT</code>, to directly jump to the failed source 
-                   statement, when double-clicking an error in the RPGUnit view.</code>
+                   statement, when double-clicking an error in the iRPGUnit view.</code>
                    </td>
 </tr>
 </table>
@@ -74,7 +75,7 @@ new context menu 'Run RPGUnit Test' that lets you select and run your test suite
 <img src="assets/RunRPGUnitTest.png" alt="Run RPGUnit Test">
 </p>
 <p>
-The result is shown in view 'RPGUnit': 
+The result is shown in view 'iRPGUnit': 
 <p class="indent">
 <img src="assets/RPGUnitView_Success.png" alt="Display RPGUnit Test Result">
 </p>
@@ -90,7 +91,7 @@ From there you can choose between the following options:
 <p>
 The following options are available from the context menu: 
 <p class="indent">
-<img src="assets/RPGUnitPopupMenu.png" alt="RPGUnit Context Menu">
+<img src="assets/RPGUnitPopupMenu.png" alt="iRPGUnit Context Menu">
 </p>
 <ul>
 <li>Rerun Selected Test Case</li>
