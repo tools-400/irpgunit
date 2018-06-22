@@ -412,7 +412,7 @@
    </extension>
    
    <!-- ======================================= -->
-   <!--   Preferences RPGUnit                   -->
+   <!--   Preferences iRPGUnit                  -->
    <!-- ======================================= --> 
    <extension
          point="org.eclipse.core.runtime.preferences">
@@ -426,7 +426,7 @@
       <page
             class="de.tools400.rpgunit.core.ui.preferences.PreferencesPage"
             id="de.tools400.rpgunit.core.ui.preferences.PreferencesPage"
-            name="RPGUnit">
+            name="iRPGUnit">
       </page>
    </extension>   
 
