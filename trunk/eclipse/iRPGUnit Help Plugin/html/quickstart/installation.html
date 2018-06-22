@@ -9,7 +9,7 @@
 
 <body>
 <h1>Installation</h1>
-<h2>Install the RPGUnit library</h2>
+<h2>Installing the RPGUnit Library</h2>
 First you need to transfer save file RPGUNIT.SAVF to your server and restore library 
 <code>RPGUNIT</code>. Then compile and execute program <code>A_INSTALL</code> 
 to create the required objects. The save file is part of the update site zip file
@@ -62,9 +62,9 @@ RPGUnit objects:
   CALL PGM(RPGUNIT/A_INSTALL) PARM('RPGUNIT')
 </pre>
 Finished.
-<h3>Install the RPGUnit plug-in</h3>
+<h3>Installing the iRPGUnit plug-in</h3>
 <b>Using the update site</b><p>
-The URL of the RPGUnit plug-in site is:
+The URL of the iRPGUnit plug-in site is:
 <p class="indent"><a href="http://www.tools400.de/rpgunit/update/rdp8.0/">http://www.tools400.de/rpgunit/update/rdp8.0/</a><p/>
 <b>Using the 'dropins' folder</b><p>
 Go to the '<i>dropins</i>' folder of your <b>Rational Developer for Power (RDP)</b> installation. 
@@ -75,14 +75,14 @@ c:\Program Files\IBM\SDP\dropins\
 Add a plain text file <a href="assets/de.tools400.rpgunit.link">'<i>de.tools400.rdp.rpgunit.link</i>'</a> with 
 the following content (example) to your '<i>dropins</i>' folder:
 <pre class="indent">
-path=C:/Users/Joe/My Documents/RPGUnit Plugin/<span class="pre-strong">local_updatesite/</span>
+path=C:/Users/Joe/My Documents/iRPGUnit Plugin/<span class="pre-strong">local_updatesite/</span>
 </pre>
 Now copy folder '<i>local_updatesite</i>' from the zip file to the folder that 
 you just specified at the '<i>path</i>' property. The structure
 of that folder should look like that:   
 <pre class="indent">
 C:/Users/Joe/My Documents/
- +-- RPGUnit Plugin
+ +-- iRPGUnit Plugin
       +-- <span class="pre-strong">local_updatesite
            +-- plugins
                 +-- de.tools400.rpgunit.core.help_*.jar
@@ -93,7 +93,7 @@ C:/Users/Joe/My Documents/
                 +-- de.tools400.rpgunit.core.help_*.jar
                     de.tools400.rpgunit.core_*.jar
                     de.tools400.rpgunit.isphere_*.jar
-                    de.tools400.rpgunit.spooledfileviewer_*.jar</span>
+                    de.tools400.rpgunit.spooledfileviewer_*.jar
 </pre>
 Please make sure to use a slash (/) instand of a back slash (\) and do not forget the last back slash 
 behind '<i>local_updatesite</i>'.

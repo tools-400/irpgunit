@@ -5,7 +5,7 @@
 ; 
 ;
 ; C:/Users/Joe/Documents/
-;  +-- RPGUnit Plugin
+;  +-- iRPGUnit Plugin
 ;       +-- local_updatesite
 ;            +-- plugins
 ;                 +-- de.tools400.rpgunit.core.help_*.jar
@@ -19,9 +19,9 @@
 ;                     de.tools400.rpgunit.spooledfileviewer_*.jar
 ; -----------------------------------------------------------------------------------
 ; Example 1;
-;path=%userprofile%/Documents/Programmierung/Tools/RPGUnit/plugin/
+;path=%userprofile%/Documents/Programmierung/Tools/iRPGUnit/plugin/
 ;
 ; Example 2;
-;path=C:/Users/Joe/Documents/RPGUnit Plugin/local_updatesite/
+;path=C:/Users/Joe/Documents/iRPGUnit Plugin/local_updatesite/
 
 
