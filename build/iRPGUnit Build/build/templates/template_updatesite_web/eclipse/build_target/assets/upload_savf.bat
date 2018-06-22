@@ -28,7 +28,7 @@ if not "%count%"=="1" (goto tooMuchFiles)
 :askUser
 cls
 echo *************************************************************
-echo   You are about to uploaded %LCL_FILE% to 
+echo   You are about to uploaded %LCL_FILE% to
 echo   file %LIB%/%RMT_FILE% on host %HOST%.
 echo.
 echo   If the file %LIB%/%RMT_FILE% does already exist
@@ -54,16 +54,16 @@ ftp -s:%TEMPFILE% %HOST%
 del %TEMPFILE%
 
 echo *************************************************************
-echo   Successfully uploaded %LCL_FILE% to library %LIB% on 
+echo   Successfully uploaded %LCL_FILE% to library %LIB% on
 echo   host %HOST%.
 echo   Now log on to host %HOST% and execute the
 echo   following commands:
 echo      1. RSTLIB SAVLIB(RPGUNIT) DEV(*SAVF)
 echo            SAVF(%LIB%/%RMT_FILE%)
 echo      2. ADDLIBLE RPGUNIT
-echo      3. CRTBNDCL PGM(RPGUNIT/MKRPGUNIT) 
+echo      3. CRTBNDCL PGM(RPGUNIT/A_INSTALL)
 echo            SRCFILE(RPGUNIT/RPGUNIT1) SRCMBR(*PGM)
-echo      4. CALL PGM(RPGUNIT/MKRPGUNIT) PARM('RPGUNIT')
+echo      4. CALL PGM(RPGUNIT/A_INSTALL) PARM('RPGUNIT')
 echo *************************************************************
 goto end
 
@@ -88,4 +88,4 @@ echo      HOST = FTP host you want to upload to (as400.example.com)
 echo      USER = UserID to log in with
 echo  PASSWORD = Password to log in with
 echo.
-:end 
+:end
