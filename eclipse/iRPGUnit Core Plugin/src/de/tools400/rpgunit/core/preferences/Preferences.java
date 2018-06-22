@@ -21,7 +21,7 @@ public final class Preferences {
     private static Preferences instance;
 
     /**
-     * Global preferences of the RPGUnit plugin.
+     * Global preferences of the RPGUnit plug-in.
      */
     private static IPreferenceStore preferenceStore;
 

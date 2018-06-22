@@ -83,13 +83,13 @@ objects:
 Finished. 
 
 
-Step 2: Installation of the RPGUnit plugin
-------------------------------------------
+Step 2: Installation of the RPGUnit plug-in
+-------------------------------------------
 
 Option 1: Using the update site
 -------------------------------
 
-The URL of the RPGUnit plugin site is: 
+The URL of the RPGUnit plug-in site is: 
 
   https://irpgunit.sourceforge.io/eclipse/rdi8.0/
 
@@ -144,4 +144,4 @@ structure should look like this:
                       de.tools400.rpgunit.isphere_*.jar
                       de.tools400.rpgunit.spooledfileviewer_*.jar
 
-Finished. Please restart RPD to use the plugin.
+Finished. Please restart RPi to use the plug-in.
