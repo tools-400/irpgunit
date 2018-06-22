@@ -52,7 +52,7 @@
          <attribute name="class" type="string">
             <annotation>
                <documentation>
-                  Class that implemets interface &lt;i&gt;de.tools400.rpgunit.core.extensions.testcase.IRPGUnitUpdateTestResult&lt;/i&gt;. This class is called when a test result changes. The purpose of this class is to update viewers and editors.
+                  Class that implements interface &lt;i&gt;de.tools400.rpgunit.core.extensions.testcase.IRPGUnitUpdateTestResult&lt;/i&gt;. This class is called when a test result changes. The purpose of this class is to update viewers and editors.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn=":de.tools400.rpgunit.core.extensions.testcase.IRPGUnitUpdateTestResult"/>
