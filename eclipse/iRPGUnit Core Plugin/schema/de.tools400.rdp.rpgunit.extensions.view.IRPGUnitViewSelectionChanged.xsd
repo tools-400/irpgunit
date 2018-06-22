@@ -52,7 +52,7 @@
          <attribute name="class" type="string">
             <annotation>
                <documentation>
-                  Class that implemets interface &lt;i&gt;de.tools400.rpgunit.core.extensions.view.IRPGUnitViewSelectionChanged&lt;/i&gt;. This class is called when the selection of the RPGUnit view is changed. The purpose of this class is to store the currently selected spooled files.
+                  Class that implements interface &lt;i&gt;de.tools400.rpgunit.core.extensions.view.IRPGUnitViewSelectionChanged&lt;/i&gt;. This class is called when the selection of the RPGUnit view is changed. The purpose of this class is to store the currently selected spooled files.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn=":de.tools400.rpgunit.core.extensions.view.IRPGUnitViewSelectionChanged"/>
