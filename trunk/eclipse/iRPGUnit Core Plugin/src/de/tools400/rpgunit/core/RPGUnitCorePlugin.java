@@ -83,10 +83,10 @@ public class RPGUnitCorePlugin extends AbstractUIPlugin {
     }
 
     /**
-     * Returns the version of the plugin, as assigned to "Bundle-Version" in
+     * Returns the version of the plug-in, as assigned to "Bundle-Version" in
      * "MANIFEST.MF".
      * 
-     * @return Version of the plugin.
+     * @return Version of the plug-in.
      */
     public String getVersion() {
         String version = (String)getBundle().getHeaders().get(Constants.BUNDLE_VERSION);
