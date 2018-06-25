@@ -42,7 +42,7 @@
         <h2 class="release">Introduction</h2>
         <div class="section">
         iRPGUnit is an open source plug-in for IBM Rational Developer for i. It enables you to develop and
-        execute repeatable unit tests for RPG programs and service programs. The current version is <?php echo $current_version; ?>.
+        execute repeatable unit tests for RPG programs and service programs. The current version is @VERSION_NUMBER@.
 		<p/>
 		The iRPGUnit plug-in uses a fork of the <a href="https://sourceforge.net/projects/rpgunit/"  target="_external">RPGUnit</a>
 		library, which was started by Lacton back in September 2006. The enhanced library adds an interface that enables RPGUnit to 
