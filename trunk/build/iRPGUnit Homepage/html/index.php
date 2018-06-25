@@ -94,7 +94,7 @@
         The easiest way to install the iRPGUnit plug-in is using Eclipse Marketplace. Search for <a href="https://marketplace.eclipse.org/content/irpgunit"><i>iRPGUnit</i></a>:
         <p/>
         <table class="nomargin">
-        <tr><td><img class="noborder" src="./assets/eclipse_marketplace.png"></td><td><a href="https://marketplace.eclipse.org/">Eclipse Marketplace</a></td></tr>
+        <tr><td><img class="noborder" src="./assets/eclipse_marketplace.png"></td><td><a href="https://marketplace.eclipse.org/content/irpgunit">Eclipse Marketplace</a></td></tr>
         </table>
         <p/>
         But you can also use the official update site at SourceForge:
