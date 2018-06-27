@@ -206,6 +206,7 @@
 	<property name="build.upload.dir.files.eclipse" location="${build.upload.dir}/sf-files/${beta.dir}/eclipse" />
 	<property name="build.upload.dir.web" location="${build.upload.dir}/sf-web/${beta.dir}" />
 	<property name="build.upload.dir.web.eclipse" location="${build.upload.dir}/sf-web/${beta.dir}/eclipse" />
+	<property name="build.upload.dir.web.eclipse.assets" location="${build.upload.dir}/sf-web/${beta.dir}/eclipse/${target.ide.sf.dir}/assets" />
 	<property name="build.upload.dir.help" location="${build.upload.dir}/sf-help/${beta.dir}/help" />
 	<property name="build.upload.dir.home" location="${build.upload.dir}/sf-home/" />
 	<property name="zip.base.directory" location="${workspace.home}/${build.updatesite}" />
@@ -408,10 +409,20 @@
 			</fileset>
 		</copy>
 
+		<echo>Copying A_README.TXT ...</echo>
+		<copy todir="${build.upload.dir.web.eclipse.assets}">
+			<fileset dir="${workspace.home}\${build.project.server}\RPGUNIT1">
+				<include name="A_README.TXT" />
+			</fileset>
+		</copy>
+		
 		<echo>Renaming ${target.ide.sf.dir} ...</echo>
 		<move todir="${build.upload.dir.web.eclipse}\${target.ide.sf.dir}">
 			<fileset dir="${build.upload.dir.web.eclipse}\build_target" />
 		</move>
+
+		<echo>Renaming A_README.TXT ...</echo>
+		<move file="${build.upload.dir.web.eclipse.assets}\A_README.TXT" tofile="${build.upload.dir.web.eclipse.assets}\readme.txt" />
 
 		<echo>Renaming index.html ...</echo>
 		<move file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\${build.target}_index.html" tofile="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" />
