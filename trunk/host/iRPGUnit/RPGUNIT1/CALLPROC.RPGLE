@@ -122,8 +122,8 @@
         // Get export.
         QleGetExp( actMark :
                    0 :
-                   %len(%trimr(proc.procNm)) :
-                   %trimr(proc.procNm) :
+                   %len(proc.procNm) :
+                   proc.procNm :
                    proc.procPtr :
                    exportType :
                    percolateErrors );

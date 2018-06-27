@@ -51,6 +51,8 @@
      D                 pr                  extproc('ET_tearDownSuite')
      D ET_testProc_1   pr                  extproc('ET_testProc_1')
      D ET_testProc_2   pr                  extproc('ET_testProc_2')
+      * Test procedure with trailing spaces
+     D ET_testProc_3   pr                  extproc('ET_testProc_3   ')
 
 
       //----------------------------------------------------------------------
@@ -324,7 +326,7 @@
 
      D actMark         s                   like(ActMark_t)
      D srvPgm          ds                  likeds(Object_t)
-     D testCase        ds                  Dim(2) likeds(Proc_t)
+     D testCase        ds                  Dim(3) likeds(Proc_t)
 
       /free
 
@@ -340,10 +342,11 @@
 
         testSuite.setUpSuite.procNm = 'ET_setUpSuite';
         testSuite.setUp.procNm = 'ET_setUp';
-        testSuite.testCasesCnt = 2;
+        testSuite.testCasesCnt = 3;
         testSuite.testList = %addr(testCase);
         testCase(1).procNm = 'ET_testProc_1';
         testCase(2).procNm = 'ET_testProc_2';
+        testCase(3).procNm = 'ET_testProc_3   ';
         testSuite.tearDown.procNm = 'ET_tearDown';
         testSuite.tearDownSuite.procNm = 'ET_tearDownSuite';
 
@@ -365,6 +368,10 @@
         expTestProc.procNm = 'ET_testProc_2';
         expTestProc.procPtr = %paddr( ET_testProc_2 );
         testProcEqual( expTestProc : testSuite : 2 );
+
+        expTestProc.procNm = 'ET_testProc_3   ';
+        expTestProc.procPtr = %paddr( ET_testProc_3 );
+        testProcEqual( expTestProc : testSuite : 3 );
 
         assert( testSuite.tearDown.procPtr = %paddr( ET_tearDown ) :
                 'Resolution of ET_tearDown failed' );
@@ -403,6 +410,10 @@
 
      P ET_testProc_2   b                   export
      D ET_testProc_2   pi
+     P                 e
+
+     P ET_testProc_3   b                   export
+     D ET_testProc_3   pi
      P                 e
 
 
