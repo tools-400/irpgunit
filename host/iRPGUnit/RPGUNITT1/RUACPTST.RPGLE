@@ -170,6 +170,7 @@
         splfSkipLine();  // Skip "Date"
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
+        splfSkipLine();  // Skip "iRPGUnit : RADDATZ"
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'TESTFALSE - FAILURE' );
         splfLineStartsWith( 'Expected 5, but was 4.' );
@@ -254,6 +255,7 @@
         splfSkipLine();  // Skip "Date"
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
+        splfSkipLine();  // Skip "iRPGUnit : RADDATZ"
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'TESTERROR - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
@@ -299,6 +301,7 @@
         splfSkipLine();  // Skip "Date"
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
+        splfSkipLine();  // Skip "iRPGUnit : RADDATZ"
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'TESTSTACK - FAILURE' );
         splfLineStartsWith( 'Expected 5, but was 4.' );
@@ -355,6 +358,7 @@
         splfSkipLine();  // Skip "Date"
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
+        splfSkipLine();  // Skip "iRPGUnit : RADDATZ"
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'TEST - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
@@ -387,6 +391,7 @@
         splfSkipLine();  // Skip "Date"
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
+        splfSkipLine();  // Skip "iRPGUnit : RADDATZ"
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'TEST - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
@@ -459,6 +464,7 @@
         splfSkipLine();  // Skip "Date"
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
+        splfSkipLine();  // Skip "iRPGUnit : RADDATZ"
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'TEST_DIFFERENT - FAILURE' );
         splfLineStartsWith( 'Expected 123456789012345678901234567890'
@@ -498,6 +504,7 @@
         splfSkipLine();  // Skip "Date"
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
+        splfSkipLine();  // Skip "iRPGUnit : RADDATZ"
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'TESTTRUE - Success' );
         splfLineStartsWith( '1 assertions' );
@@ -563,6 +570,7 @@
         splfSkipLine();  // Skip "Date"
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
+        splfSkipLine();  // Skip "iRPGUnit : RADDATZ"
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'TEST2 - FAILURE' );
         splfLineStartsWith( 'test2' );
@@ -598,6 +606,7 @@
         splfSkipLine();  // Skip "Date"
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
+        splfSkipLine();  // Skip "iRPGUnit : RADDATZ"
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'NON_EXISTING_TEST - ERROR' );
         splfLineStartsWith( 'Test procedure not found.' );
@@ -649,6 +658,7 @@
         splfSkipLine();  // Skip "Date"
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
+        splfSkipLine();  // Skip "iRPGUnit : RADDATZ"
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'SETUPSUITE - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
@@ -685,6 +695,7 @@
         splfSkipLine();  // Skip "Date"
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
+        splfSkipLine();  // Skip "iRPGUnit : RADDATZ"
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'TEARDOWNSUITE - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
@@ -720,6 +731,7 @@
         splfSkipLine();  // Skip "Date"
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
+        splfSkipLine();  // Skip "iRPGUnit : RADDATZ"
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'SETUPSUITE - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );

@@ -133,12 +133,12 @@
         // Controls.
 
         assert( logWasOpened : 'Log was not opened' );
-        aEqual( MARGIN + '*** Tests from MY_SRVPGM ***       ' : logLine(1) );
-        aEqual( MARGIN + 'successful_test_with_one_asser     ' : logLine(7) );
-        aEqual( MARGIN + 'tion - Success                     ' : logLine(8) );
-        aEqual( MARGIN + '  1 assertions                     ' : logLine(9) );
-        aEqual( MARGIN + '-----------------------            ' : logLine(10) );
-        iEqual( 11 : logIdx );
+        aEqual( MARGIN + '*** Tests from MY_SRVPGM *** (     ' : logLine(1)  );
+        aEqual( MARGIN + 'successful_test_with_one_asser     ' : logLine(9)  );
+        aEqual( MARGIN + 'tion - Success                     ' : logLine(10) );
+        aEqual( MARGIN + '  1 assertions                     ' : logLine(11) );
+        aEqual( MARGIN + '-----------------------            ' : logLine(12) );
+        iEqual( 13 : logIdx );
 
       /end-free
      P                 e
@@ -163,12 +163,12 @@
 
         // Controls.
 
-        aEqual( MARGIN + '*** Tests from MY_SRVPGM ***      ' : logLine(1) );
-        aEqual( MARGIN + 'successful_test_with_two_asser    ' : logLine(7) );
-        aEqual( MARGIN + 'tions - Success                   ' : logLine(8) );
-        aEqual( MARGIN + '  2 assertions                    ' : logLine(9) );
-        aEqual( MARGIN + '-----------------------           ' : logLine(10) );
-        iEqual( 11 : logIdx );
+        aEqual( MARGIN + '*** Tests from MY_SRVPGM *** (    ' : logLine(1)  );
+        aEqual( MARGIN + 'successful_test_with_two_asser    ' : logLine(9)  );
+        aEqual( MARGIN + 'tions - Success                   ' : logLine(10) );
+        aEqual( MARGIN + '  2 assertions                    ' : logLine(11) );
+        aEqual( MARGIN + '-----------------------           ' : logLine(12) );
+        iEqual( 13 : logIdx );
 
       /end-free
      P                 e
@@ -195,15 +195,15 @@
 
         // Controls.
 
-        aEqual( MARGIN + '*** Tests from MY_SRVPGM ***' : logLine(1)  );
-        aEqual( MARGIN + 'successful_test_1 - Success ' : logLine(7)  );
-        aEqual( MARGIN + '  0 assertions              ' : logLine(8)  );
-        aEqual( MARGIN + '-----------------------     ' : logLine(9)  );
-        aEqual( MARGIN + ''                             : logLine(10) );
-        aEqual( MARGIN + 'successful_test_2 - Success ' : logLine(11) );
-        aEqual( MARGIN + '  0 assertions              ' : logLine(12) );
-        aEqual( MARGIN + '-----------------------     ' : logLine(13) );
-        iEqual( 14 : logIdx );
+        aEqual( MARGIN + '*** Tests from MY_SRVPGM *** (' : logLine(1)  );
+        aEqual( MARGIN + 'successful_test_1 - Success   ' : logLine(9)  );
+        aEqual( MARGIN + '  0 assertions                ' : logLine(10) );
+        aEqual( MARGIN + '-----------------------       ' : logLine(11) );
+        aEqual( MARGIN + ''                               : logLine(12) );
+        aEqual( MARGIN + 'successful_test_2 - Success   ' : logLine(13) );
+        aEqual( MARGIN + '  0 assertions                ' : logLine(14) );
+        aEqual( MARGIN + '-----------------------       ' : logLine(15) );
+        iEqual( 16 : logIdx );
 
       /end-free
      P                 e
@@ -234,14 +234,14 @@
         // Controls.
 
         assert( logWasOpened : 'Log was not opened' );
-        aEqual( MARGIN + '*** Tests from MY_SRVPGM ***      ' : logLine(1) );
-        aEqual( MARGIN + 'failure_without_spec_nb - FAIL    ' : logLine(7) );
-        aEqual( MARGIN + 'URE                               ' : logLine(8) );
-        aEqual( MARGIN + '  failure_without_spec_nb (MY_    ' : logLine(9) );
-        aEqual( MARGIN + 'SRVPGM->MY_SRVPGM:*N)             ' : logLine(10));
-        aEqual( MARGIN + '-----------------------           ' : logLine(11));
-        aEqual( MARGIN + '                                  ' : logLine(12));
-        iEqual( 12 : logIdx );
+        aEqual( MARGIN + '*** Tests from MY_SRVPGM *** (    ' : logLine(1)  );
+        aEqual( MARGIN + 'failure_without_spec_nb - FAIL    ' : logLine(9)  );
+        aEqual( MARGIN + 'URE                               ' : logLine(10) );
+        aEqual( MARGIN + '  failure_without_spec_nb (MY_    ' : logLine(11) );
+        aEqual( MARGIN + 'SRVPGM->MY_SRVPGM:*N)             ' : logLine(12) );
+        aEqual( MARGIN + '-----------------------           ' : logLine(13) );
+        aEqual( MARGIN + '                                  ' : logLine(14) );
+        iEqual( 14 : logIdx );
 
       /end-free
      P                 e
@@ -272,12 +272,12 @@
         // Controls.
 
         assert( logWasOpened : 'Log was not opened' );
-        aEqual( MARGIN + '*** Tests from MY_SRVPGM ***      ' : logLine(1) );
-        aEqual( MARGIN + 'error_with_missing_msg_id - ERROR ' : logLine(7) );
-        aEqual( MARGIN + 'Error message.                    ' : logLine(8) );
-        aEqual( MARGIN + '  error_proc (ERRORPGM->:1000)    ' : logLine(9) );
-        aEqual( MARGIN + '-----------------------           ' : logLine(10) );
-        iEqual( 11 : logIdx );
+        aEqual( MARGIN + '*** Tests from MY_SRVPGM *** (    ' : logLine(1)  );
+        aEqual( MARGIN + 'error_with_missing_msg_id - ERROR ' : logLine(9)  );
+        aEqual( MARGIN + 'Error message.                    ' : logLine(10) );
+        aEqual( MARGIN + '  error_proc (ERRORPGM->:1000)    ' : logLine(11) );
+        aEqual( MARGIN + '-----------------------           ' : logLine(12) );
+        iEqual( 13 : logIdx );
 
       /end-free
      P                 e
@@ -307,11 +307,11 @@
 
         // Controls.
 
-        aEqual( MARGIN + '*** Tests from MY_SRVPGM ***      ' : logLine(1) );
-        aEqual( MARGIN + 'error_without_origin_info - ERROR ' : logLine(7) );
-        aEqual( MARGIN + 'CPF1234 - Error message.          ' : logLine(8) );
-        aEqual( MARGIN + '-----------------------           ' : logLine(9) );
-        iEqual( 10 : logIdx );
+        aEqual( MARGIN + '*** Tests from MY_SRVPGM *** (    ' : logLine(1)  );
+        aEqual( MARGIN + 'error_without_origin_info - ERROR ' : logLine(9)  );
+        aEqual( MARGIN + 'CPF1234 - Error message.          ' : logLine(10) );
+        aEqual( MARGIN + '-----------------------           ' : logLine(11) );
+        iEqual( 12 : logIdx );
 
       /end-free
      P                 e
@@ -328,9 +328,9 @@
         // Controls.
 
         assert( logWasOpened : 'Log was not opened' );
-        aEqual( MARGIN + '*** Tests from MY_SRVPGM ***      ' : logLine(1) );
-        aEqual( MARGIN + 'Completion message                ' : logLine(7) );
-        iEqual( 7 : logIdx );
+        aEqual( MARGIN + '*** Tests from MY_SRVPGM *** (    ' : logLine(1) );
+        aEqual( MARGIN + 'Completion message                ' : logLine(9) );
+        iEqual( 9 : logIdx );
         assert( logWasClosed : 'Log was not closed' );
 
       /end-free
@@ -347,8 +347,8 @@
 
         // Controls.
 
-        aEqual( MARGIN + 'A short text                      ' : logLine(7) );
-        iEqual( 7 : logIdx );
+        aEqual( MARGIN + 'A short text                      ' : logLine(9) );
+        iEqual( 9 : logIdx );
 
       /end-free
      P                 e
@@ -377,9 +377,9 @@
 
               //          1111111111222222222233333333334
               // 1234567890123456789012345678901234567890
-        aEqual( MARGIN + 'A very very very very very ver' : logLine(7) );
-        aEqual( MARGIN + 'y very very long text' : logLine(8) );
-        iEqual( 8 : logIdx );
+        aEqual( MARGIN + 'A very very very very very ver' : logLine(9) );
+        aEqual( MARGIN + 'y very very long text' : logLine(10) );
+        iEqual( 10 : logIdx );
 
       /end-free
      P                 e

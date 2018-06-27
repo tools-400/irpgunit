@@ -49,59 +49,64 @@ d) Optionally run the RPGUnit self tests:
 
 Version 2.2.3 - 25.06.2018
 --------------------------
- • Fixed RUPLUGINT1.testAllOK_4() test case.
- • Fixed  upload_savf.bat.
- • Changed name of preference page to "iRPGUnit".
- • Changed name of help manual to "iRPGUnit".
+ * Fixed CMDRUNLOGT to match the changed report layout.
+ * Fixed RUACPTST to match the changed report layout.
+ * Fixed rslvProc() to return procedure pointer for procedure
+   names with trailing spaces.
+ * Fixed RUPLUGINT1.testAllOK_4() test case.
+ * Fixed  upload_savf.bat.
+ * Added dummy procedure 'ET_testProc_3   ' to self-test EXTTSTT.
+ * Changed name of preference page to "iRPGUnit".
+ * Changed name of help manual to "iRPGUnit".
 
 
 Version 2.2.2 - 08.02.2018
 --------------------------
- • Improved error reporting when validating a service program or
+ * Improved error reporting when validating a service program or
    procedure.
- • Changed A_INSTALL to pass the TGTRLS parameter to all called
+ * Changed A_INSTALL to pass the TGTRLS parameter to all called
    MK* programs.
 
 
 Version 2.2.1 - 14.06.2017
 --------------------------
- • Changed RPGUnit view to display the number of assertions.
- • Fixed problem, that a test procedure had to start with 'test'
+ * Changed RPGUnit view to display the number of assertions.
+ * Fixed problem, that a test procedure had to start with 'test'
    in lower case. Now the case is ignored.
- • Now errors in setup/teadown procedures properly show up in RDi.
- • Added number of executed assertions to RPGUnit view.
+ * Now errors in setup/teardown procedures properly show up in RDi.
+ * Added number of executed assertions to RPGUnit view.
 
 
 Version 2.1.0 - 06.12.2016
 --------------------------
- • Changed RUCRTTST to validate the combination *EVENTF/*TSTPGM for
+ * Changed RUCRTTST to validate the combination *EVENTF/*TSTPGM for
    RPGLE and SQLRPGLE member types. 
- • Updated copyright notice of LLIST_SORT.
- • Updated STRPREPRC header of source member TEMPLATE.
- • Added example source member TEMPLSQL.
- • Added number of assertions to RPGUnit view.
+ * Updated copyright notice of LLIST_SORT.
+ * Updated STRPREPRC header of source member TEMPLATE.
+ * Added example source member TEMPLSQL.
+ * Added number of assertions to RPGUnit view.
 
 
 Version 2.0.0 - 29.11.2016
 --------------------------
- • Changed length of message text from 256 to 1024 bytes.
- • Added unit test RUPLUGINT5.
- • Added procedure getAssertFailEvtLong() to retrieve the long
+ * Changed length of message text from 256 to 1024 bytes.
+ * Added unit test RUPLUGINT5.
+ * Added procedure getAssertFailEvtLong() to retrieve the long
    message text.
- • Added new type definition AssertFailEvtLong_t for procedure
+ * Added new type definition AssertFailEvtLong_t for procedure
    getAssertFailEvtLong().
- • Fixed hard coded reference to library RPGUNIT in unit test RUCRTTSTT.
- • Fixed missing 'Export' keyword of procedure 'tearDown' of unit test 'CRTTSTT'.
- • Renamed RUN to CMDRUNSRV       (source member + module).
- • Renamed RUCRTTST to CRTTST     (source member + module).
- • Renamed RUPGMRMT to PGMRMT     (source member + module).
- • Renamed RURUNRMT to RMTRUNSRV  (source member + module).
- • Renamed RUSRCMBR to SRCMBR     (source member + module).
- • Renamed RUTAGTST to TAGTST     (source member + module).
- • Renamed MKRUNRMT to MKRMTRUN   (source member + program).
- • Renamed MKCMDRUN to MKCALLTST  (source member + program).
- • Renamed RUCRTTSTT to CRTTSTT   (source member + module).
- • Renamed RUCMDRUN to RUCALLTST  (object only, see: MKCALLTST).
+ * Fixed hard coded reference to library RPGUNIT in unit test RUCRTTSTT.
+ * Fixed missing 'Export' keyword of procedure 'tearDown' of unit test 'CRTTSTT'.
+ * Renamed RUN to CMDRUNSRV       (source member + module).
+ * Renamed RUCRTTST to CRTTST     (source member + module).
+ * Renamed RUPGMRMT to PGMRMT     (source member + module).
+ * Renamed RURUNRMT to RMTRUNSRV  (source member + module).
+ * Renamed RUSRCMBR to SRCMBR     (source member + module).
+ * Renamed RUTAGTST to TAGTST     (source member + module).
+ * Renamed MKRUNRMT to MKRMTRUN   (source member + program).
+ * Renamed MKCMDRUN to MKCALLTST  (source member + program).
+ * Renamed RUCRTTSTT to CRTTSTT   (source member + module).
+ * Renamed RUCMDRUN to RUCALLTST  (object only, see: MKCALLTST).
 
 The following errors are produced by units tests of version 1.10 and lower:
 
@@ -181,95 +186,95 @@ RUACPTST.TESTSTACKTRACE
 
 Version 1.10.0 - 26.01.2016
 ---------------------------
- • Restructured the RPGUnit utility for better maintenance.
- • Fixed self-test compile errors.
+ * Restructured the RPGUnit utility for better maintenance.
+ * Fixed self-test compile errors.
 
 
 Version 1.9.1 - 06.02.2015
 --------------------------
- • Enhanced the help text and described the new option that
+ * Enhanced the help text and described the new option that
    controls how the test suite service programs are validated.
- • Added warning message, when the user defined attribute could
+ * Added warning message, when the user defined attribute could
    not be retrieved
 
 
 Version 1.9.0 - 05.02.2015
 --------------------------
- • Added preference option to select the type of validity
+ * Added preference option to select the type of validity
    checking of unit test service programs.
 
 
 Version 1.8.0 - 25.01.2015
 --------------------------
- • Changed the plug-in to select unit test procedures from
+ * Changed the plug-in to select unit test procedures from
    the RSE tree.
 
 
 Version 1.7.5 - 16.12.2014
 --------------------------
- • Added message box that is displayed, when the statement
+ * Added message box that is displayed, when the statement
    identifier cannot be mapped to the source line number.
 
 
 Version 1.7.4 - 09.12.2014
 --------------------------
- • Fixed problem that the LPEX editor did not always position to
+ * Fixed problem that the LPEX editor did not always position to
    source statement in error when opening a failed test case.
 
 
 Version 1.7.3 - 26.08.2014
 --------------------------
- • Fixed getCallStk() to respect the size of the call stack entry
+ * Fixed getCallStk() to respect the size of the call stack entry
    array.
- • Fixed runTestProc() to properly set the number of executed
+ * Fixed runTestProc() to properly set the number of executed
    assertions per test case. (See also: RURUNRMT.fillUserSpace())
- • Changed getCallStk() to flag incomplete call stacks with
+ * Changed getCallStk() to flag incomplete call stacks with
    '*INCOMPLETE' on the last call stack entry.
- • Thoroughly renamed field 'stmt' to 'specNB'.
- • Removed spaces for 'Initialize Printer' and 'Carriage Return'
+ * Thoroughly renamed field 'stmt' to 'specNB'.
+ * Removed spaces for 'Initialize Printer' and 'Carriage Return'
    from RUWSCST.
- • Changed RUPLUGINT1 to produce a deeper call stack.
+ * Changed RUPLUGINT1 to produce a deeper call stack.
    (See: recursion of procInError())
- • Plug-in: Now passing special value *ALL instead of a null
+ * Plug-in: Now passing special value *ALL instead of a null
    parameter to RUPGMRMT to execute all test cases.
 
 
 Version 1.7.2 - 19.02.2014
 --------------------------
- • Changed RURUNRMT to restore the library list after the test
+ * Changed RURUNRMT to restore the library list after the test
    suite has been run. (System i)
 
 
 Version 1.7.1 - 19.02.2014
 --------------------------
- • Fixed RNX0100 in procedure hasSameBeginning() of module EXTTST.
+ * Fixed RNX0100 in procedure hasSameBeginning() of module EXTTST.
    (System i)
 
 
 Version 1.7.0 - 07.01.2014
 --------------------------
- • Added option to do a RCLRSC at the end of the test suite.
+ * Added option to do a RCLRSC at the end of the test suite.
 
 
 Version 1.6.0 - 27.11.2013
 --------------------------
- • Added option to open a source member from the RPGUnit view.
- • Fixed missing German internationalizations.
+ * Added option to open a source member from the RPGUnit view.
+ * Fixed missing German internationalizations.
 
 
 Version 1.5.3 - 22.11.2013
 --------------------------
- • Fixed missing German tooltips of buttons of RPGUnit view.
+ * Fixed missing German tooltips of buttons of RPGUnit view.
 
 
 Version 1.5.2 - 20.11.2013
 --------------------------
- • Added German translation.
+ * Added German translation.
 
 
 Version 1.5.1 - 19.11.2013
 --------------------------
- • Added option to use a separate connection for running
+ * Added option to use a separate connection for running
    the unit tests. This way service entry points can be used
    for debugging unit tests.
    (See: Preferences -> RPGUnit -> Enforce new connection)
@@ -277,8 +282,8 @@ Version 1.5.1 - 19.11.2013
 
 Version 1.5.0 - 17.11.2013
 --------------------------
- • Added Spooled File Viewer to display the RPGUnit test report.
- • Changed RUCALLTST and plug-in to accept up to 250 procedure names.
+ * Added Spooled File Viewer to display the RPGUnit test report.
+ * Changed RUCALLTST and plug-in to accept up to 250 procedure names.
 
     * ======================================================================= *
     /  Note: Please notice that you need to set your preferences again,       /
@@ -288,28 +293,28 @@ Version 1.5.0 - 17.11.2013
 
 Version 1.4.2 - 07.11.2013
 --------------------------
- • Removed invalid setting of "Bundle-RequiredExecutionEnvironment"
+ * Removed invalid setting of "Bundle-RequiredExecutionEnvironment"
    of RPGUnit for WDSC 7.0.
- • Changed compiler of RPGUnit for WDSC 7.0 to original IBM J9
+ * Changed compiler of RPGUnit for WDSC 7.0 to original IBM J9
    compiler.
 
 
 Version 1.4.1 - 06.11.2013
 --------------------------
- • Added buttons "Collapse All" and "Expand All".
- • Added menue item "Remove Selected RPGUnit Test Suite".
- • Updated preferences page and added option to specify the
+ * Added buttons "Collapse All" and "Expand All".
+ * Added menue item "Remove Selected RPGUnit Test Suite".
+ * Updated preferences page and added option to specify the
    product library. The product library is used to find program
    RURUNRMT, which executes the unit tests.
 
 
 Version 1.4 - 31.10.2013
 ------------------------
- • Fixed: Now "Runs:" displays the correct number of executed test cases.
- • Changed RPGUnit view to get closer to JUnit.
- • Added: Special thank to Michael Calabro who enhanced RUCRTTST to
+ * Fixed: Now "Runs:" displays the correct number of executed test cases.
+ * Changed RPGUnit view to get closer to JUnit.
+ * Added: Special thank to Michael Calabro who enhanced RUCRTTST to
    compile SQLRPGLE source members.
- • Added procedure:  MsgInfo_t = getMonitoredMessage(*ON|*OFF)
+ * Added procedure:  MsgInfo_t = getMonitoredMessage(*ON|*OFF)
      Usage:
                  monitor;
                    a = 10;
@@ -325,8 +330,8 @@ Version 1.4 - 31.10.2013
 
 Version 1.3 - 15.08.2013
 ------------------------
- • Fixed errors in 'upload_src.bat'.
- • Fixed selftest unit test cases. The unit test cases had to be
+ * Fixed errors in 'upload_src.bat'.
+ * Fixed selftest unit test cases. The unit test cases had to be
    fixed because of internal changes that were required for the
    plug-in:
 
@@ -359,65 +364,65 @@ Version 1.3 - 15.08.2013
 
 Version 1.2.2 - 12.08.2013
 --------------------------
- • Replaced 'MKRPGUNIT' with 'A_INSTALL' in 'readme_first.txt'.
- • Removed unused code from plug-in.
+ * Replaced 'MKRPGUNIT' with 'A_INSTALL' in 'readme_first.txt'.
+ * Removed unused code from plug-in.
 
 
 Version 1.2.1 - 28.06.2013
 --------------------------
- • Now the plug-in correctly passes parameter 'procedure' as a
+ * Now the plug-in correctly passes parameter 'procedure' as a
    VARYING field to program RUPGMRMT.
- • Now the plug-in correctly enables/disables actions 'Rerun All
+ * Now the plug-in correctly enables/disables actions 'Rerun All
    Unit Tests' and 'Rerun Selected Unit Tests' when the view
    is opened.
- • Now the plug-in checks for job description 'RPGUNIT' when
+ * Now the plug-in checks for job description 'RPGUNIT' when
    parameter 'LIBL' is set to '*JOBD'.
- • Ported plug-in back to WDSC 7.0.
- • Refactored plug-in as suggested in 'templates' by the original
+ * Ported plug-in back to WDSC 7.0.
+ * Refactored plug-in as suggested in 'templates' by the original
    author and replaced 'ExcpMsgInfo_t' with 'Msg_t'.
 
 
 Version 1.2.0 - 24.06.2013
 --------------------------
- • Added call stack entries to the RPGUnit view, when the
+ * Added call stack entries to the RPGUnit view, when the
    result of a test suite is displayed.
 
 
 Version 1.1.2 - 21.06.2013
 --------------------------
- • Compiled plug-in for RDP 8.0.
+ * Compiled plug-in for RDP 8.0.
 
 
 Version 1.1.1 - 21.06.2013
 --------------------------
- • Added parameters LIBL and JOBD to the preferences page.
- • Removed unused program code.
- • Added parameter 'fieldName' to aEqual(), iEqual() und
+ * Added parameters LIBL and JOBD to the preferences page.
+ * Removed unused program code.
+ * Added parameter 'fieldName' to aEqual(), iEqual() und
    nEqual().
- • Added parameters LIBL and JOBD to RUPGMRMT and RURUNRMT.
- • Changed RURUNRMT to save and restore the library list.
- • Added utility procedures waitSeconds(), displayStatusMessage(),
+ * Added parameters LIBL and JOBD to RUPGMRMT and RURUNRMT.
+ * Changed RURUNRMT to save and restore the library list.
+ * Added utility procedures waitSeconds(), displayStatusMessage(),
    restoreStatusMessage() and clearStatusMessage().
 
 
 Version 1.1.0 - 20.06.2013
 --------------------------
- • Added screen shot to update site.
+ * Added screen shot to update site.
 
 
 Version 1.0.6 - 08.06.2013
 --------------------------
- • Now the character cases are correctly ignored when
+ * Now the character cases are correctly ignored when
    comparing the specified 'test procedure' name.
- • Added parameters LIBL and JOBD to command RUCALLTST.
+ * Added parameters LIBL and JOBD to command RUCALLTST.
 
 
 Version 1.0.5 - 07.05.2013
 --------------------------
- • Added parameter MODULE to command RUCRTTST.
+ * Added parameter MODULE to command RUCRTTST.
 
 
 Version 1.0.4 - 06.05.2013
 --------------------------
- • First release of the 'RPGUnit Test for IBM Rational Developer
+ * First release of the 'RPGUnit Test for IBM Rational Developer
    for Power Systems 8.0' plug-in.
