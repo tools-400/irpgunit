@@ -226,8 +226,6 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         });
         chkDisableReport.setToolTipText(Messages.PreferencesPage2_chkDisableReport_toolTipText);
         chkDisableReport.setText(Messages.PreferencesPage2_chkDisableReport_text);
-        grpCommandParameters.setLayoutData(new GridData(SWT.FILL, GridData.VERTICAL_ALIGN_BEGINNING, true, false));
-        new Label(grpCommandParameters, SWT.NONE);
 
         Group grpRuntime = new Group(mainPanel, SWT.NONE);
         grpRuntime.setText(Messages.PreferencesPage2_grpRuntime_text);
