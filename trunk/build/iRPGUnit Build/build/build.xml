@@ -450,6 +450,7 @@
 		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@VERSION_NUMBER@" value="${build.version}" />
 		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@PROJECT_HOME@" value="${sf.home.url}" />
 		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@PLUGIN_NAME@" value="${plugin.name}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
 
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
 
