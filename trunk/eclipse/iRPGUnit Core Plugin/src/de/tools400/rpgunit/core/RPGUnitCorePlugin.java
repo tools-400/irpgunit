@@ -8,6 +8,8 @@
 
 package de.tools400.rpgunit.core;
 
+import java.net.URL;
+
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -32,6 +34,8 @@ public class RPGUnitCorePlugin extends AbstractUIPlugin {
     public static final String IMAGE_SRVPGM = "srvpgm.gif"; //$NON-NLS-1$
     public static final String IMAGE_PROCEDURE = "procedure.gif"; //$NON-NLS-1$
 
+    public static final String IMAGE_TRANSFER_LIBRARY = "transfer_library_32.gif"; //$NON-NLS-1$
+
     public static final String ICONS_PATH = "icons/";
 
     // The plug-in ID
@@ -39,6 +43,9 @@ public class RPGUnitCorePlugin extends AbstractUIPlugin {
 
     // The shared instance
     private static RPGUnitCorePlugin plugin;
+
+    // URL, where the plug-in is installed
+    private static URL installURL;
 
     /**
      * The constructor
@@ -56,6 +63,7 @@ public class RPGUnitCorePlugin extends AbstractUIPlugin {
     public void start(BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
+        installURL = context.getBundle().getEntry("/");
     }
 
     /*
@@ -76,6 +84,10 @@ public class RPGUnitCorePlugin extends AbstractUIPlugin {
      */
     public static RPGUnitCorePlugin getDefault() {
         return plugin;
+    }
+
+    public static URL getInstallURL() {
+        return installURL;
     }
 
     public static IPreferenceStore getPreferencesStore() {
@@ -167,6 +179,7 @@ public class RPGUnitCorePlugin extends AbstractUIPlugin {
 
         reg.put(IMAGE_SRVPGM, getImageDescriptor(IMAGE_SRVPGM)); // $NON-NLS-1$
         reg.put(IMAGE_PROCEDURE, getImageDescriptor(IMAGE_PROCEDURE)); // $NON-NLS-1$
+        reg.put(IMAGE_TRANSFER_LIBRARY, getImageDescriptor(IMAGE_TRANSFER_LIBRARY)); // $NON-NLS-1$
 
         // additional icons used in 'plugin.xml':
         // --------------------------------------

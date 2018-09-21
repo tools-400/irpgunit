@@ -101,7 +101,7 @@ public final class Preferences {
     public static final boolean WARN_MESSAGE_DEFAULT = true;
 
     /**
-     * Values controlling report enablement.
+     * Values controlling report enablement:
      */
     public static final String REPORT = RPGUNIT + ".report"; //$NON-NLS-1$
 
@@ -147,6 +147,21 @@ public final class Preferences {
     public static final Boolean DEBUG_POSITION_TO_LINE_YES = true;
 
     public static final Boolean DEBUG_POSITION_TO_LINE_NO = false;
+
+    /**
+     * RPGUnit product library upload parameters:
+     */
+    public static final String UPLOAD_PRODUCT_LIBRARY = RPGUNIT + ".productLibrary"; //$NON-NLS-1$
+
+    public static final String UPLOAD_CONNECTION_NAME = UPLOAD_PRODUCT_LIBRARY + ".connection.name";
+
+    public static final String UPLOAD_FTP_PORT_NUMBER = UPLOAD_PRODUCT_LIBRARY + ".ftp.port";
+
+    public static final String UPLOAD_LIBRARY_NAME = UPLOAD_PRODUCT_LIBRARY + ".library.name";
+
+    private static final int FTP_PORT_NUMBER = 21;
+
+    private static final String PRODUCT_LIBRARY_NAME = "RPGUNIT";
 
     /**
      * Private constructor to ensure the Singleton pattern.
@@ -271,6 +286,26 @@ public final class Preferences {
         return version;
     }
 
+    public String getUploadConnectionName() {
+        String connectionName = preferenceStore.getString(UPLOAD_CONNECTION_NAME);
+        return connectionName;
+    }
+
+    public int getUploadFtpPortNumber() {
+        int ftpPortNumber;
+        try {
+            ftpPortNumber = preferenceStore.getInt(UPLOAD_FTP_PORT_NUMBER);
+        } catch (Throwable e) {
+            ftpPortNumber = getDefaultUploadFtpPortNumber();
+        }
+        return ftpPortNumber;
+    }
+
+    public String getUploadLibraryName() {
+        String libraryName = preferenceStore.getString(UPLOAD_LIBRARY_NAME);
+        return libraryName;
+    }
+
     /*
      * Preferences: SETTER
      */
@@ -357,6 +392,18 @@ public final class Preferences {
         savePreferencesVersionNumber(versionNumber);
     }
 
+    public void setUploadConnectionName(String connectionName) {
+        saveUploadConnectionName(connectionName);
+    }
+
+    public void setUploadFtpPortNumber(int ftpPortNumber) {
+        saveUploadFtpPortNumber(ftpPortNumber);
+    }
+
+    public void setUploadLibraryName(String libraryName) {
+        saveUploadLibraryName(libraryName);
+    }
+
     /**
      * Is called by
      * {@link PreferencesInitializer#initializeDefaultPreferences()} in order to
@@ -377,10 +424,16 @@ public final class Preferences {
         preferenceStore.setDefault(PRODUCT_LIBRARY, getDefaultProductLibrary());
         preferenceStore.setDefault(CHECK_TEST_SUITE, getDefaultCheckTestSuite());
         preferenceStore.setDefault(RECLAIM_RESOURCES, getDefaultReclaimResources());
+
         preferenceStore.setDefault(WARN_MESSAGE_SRC_OPTION, getDefaultShowWarnMessages());
         preferenceStore.setDefault(WARN_MESSAGE_USER_DEFINED_ATTRIBUTE, getDefaultShowWarnMessages());
         preferenceStore.setDefault(WARN_MESSAGE_OBSOLETE_PLUGINS_V1, getDefaultShowWarnMessages());
+
         preferenceStore.setDefault(PREFERENCES_VERSION_NUMBER, getDefaultPreferencesVersionNumber());
+
+        preferenceStore.setDefault(UPLOAD_CONNECTION_NAME, getDefaultUploadConnectionName());
+        preferenceStore.setDefault(UPLOAD_FTP_PORT_NUMBER, getDefaultUploadFtpPortNumber());
+        preferenceStore.setDefault(UPLOAD_LIBRARY_NAME, getDefaultUploadLibraryName());
 
         preferenceStore.firePropertyChangeEvent(PRODUCT_LIBRARY, getProductLibrary(), getProductLibrary());
     }
@@ -492,6 +545,18 @@ public final class Preferences {
         return -1;
     }
 
+    public String getDefaultUploadConnectionName() {
+        return "";
+    }
+
+    public int getDefaultUploadFtpPortNumber() {
+        return FTP_PORT_NUMBER;
+    }
+
+    public String getDefaultUploadLibraryName() {
+        return PRODUCT_LIBRARY_NAME;
+    }
+
     public String[] getLibraryListItems() {
         return new String[] { LIBRARY_LIST_CURRENT, LIBRARY_LIST_JOBD };
     }
@@ -571,6 +636,18 @@ public final class Preferences {
 
     private void savePreferencesVersionNumber(int versionNumber) {
         preferenceStore.setValue(PREFERENCES_VERSION_NUMBER, versionNumber);
+    }
+
+    private void saveUploadConnectionName(String connectionName) {
+        preferenceStore.setValue(UPLOAD_CONNECTION_NAME, connectionName);
+    }
+
+    private void saveUploadFtpPortNumber(int ftpPortNumber) {
+        preferenceStore.setValue(UPLOAD_FTP_PORT_NUMBER, ftpPortNumber);
+    }
+
+    private void saveUploadLibraryName(String libraryName) {
+        preferenceStore.setValue(UPLOAD_LIBRARY_NAME, libraryName);
     }
 
     /**

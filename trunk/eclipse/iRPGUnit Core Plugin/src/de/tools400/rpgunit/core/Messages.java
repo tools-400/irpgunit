@@ -18,6 +18,9 @@ public class Messages extends NLS {
     public static String Obsolete_Bundles_Warning_Message_Message;
 
     public static String AbstractRemoteAction_0;
+    public static String Transfer_RPGUnit_Library;
+    public static String ActionLabel_Copy;
+    public static String DialogTitle_Sign_On;
 
     public static String Invalid_host_version;
 
@@ -58,6 +61,14 @@ public class Messages extends NLS {
     public static String Could_not_open_the_RPGUnit_spooled_file_viewer;
     public static String Error_Message;
     public static String Object_name;
+    public static String Please_select_a_connection;
+    public static String Please_specify_a_valid_FTP_port_number;
+    public static String Please_enter_a_valid_library_name;
+    public static String Ready_to_transfer_library_A_to_host_B_using_port_C;
+    public static String Enter_a_host_name;
+    public static String Enter_a_user_name;
+    public static String Enter_a_password;
+    public static String Host_A_not_found_in_configured_RSE_connections;
 
     public static String PreferencesPage2_grpCommandParameters_text;
     public static String PreferencesPage2_lblRunOrder_text;
@@ -93,6 +104,44 @@ public class Messages extends NLS {
     public static String PreferencesPage2_grpWarnings_text;
     public static String PreferencesPage2_chkResetWarnings_text;
     public static String PreferencesPage2_chkResetWarnings_toolTipText;
+
+    public static String Label_Host_name_colon;
+    public static String Tooltip_Host_name;
+    public static String Label_Signon_User_colon;
+    public static String Tooltip_Signon_User;
+    public static String Label_Password_colon;
+    public static String Tooltip_Password;
+
+    public static String Tooltip_Connection_name;
+    public static String Label_FTP_port_number_colon;
+    public static String Tooltip_FTP_port_number;
+    public static String Label_UploadLibrary;
+    public static String Tooltip_UploadLibrary;
+    public static String Label_UploadButton;
+    public static String Tooltip_UploadButton;
+    public static String Label_CloseButton;
+    public static String Tooltip_CloseButton;
+
+    public static String DialogTitle_Delete_Object;
+    public static String Connected_to_host_A;
+    public static String Could_not_connect_to_host_A;
+    public static String Checking_library_A_for_existence;
+    public static String Library_A_does_already_exist;
+    public static String Question_Do_you_want_to_delete_library_A;
+    public static String Deleting_library_A;
+    public static String Checking_file_B_in_library_A_for_existence;
+    public static String File_B_in_library_A_does_already_exist;
+    public static String Creating_save_file_B_in_library_A;
+    public static String Could_not_create_save_file_B_in_library_A;
+    public static String Sending_save_file_to_host_A;
+    public static String Could_not_send_save_file_to_host_A;
+    public static String Using_Ftp_port_number;
+    public static String Restoring_library_A;
+    public static String Could_not_restore_library_A;
+    public static String Disconnected_from_host_A;
+
+    public static String Question_Do_you_want_to_delete_object_A_B_type_C;
+    public static String Deleting_object_A_B_of_type_C;
 
     public static String Warning;
     public static String Source_line_number_not_found_Did_you_compile_the_source_member_with_OPTION_SRCSTMT;
