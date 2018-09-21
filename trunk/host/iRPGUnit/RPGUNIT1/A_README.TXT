@@ -46,6 +46,13 @@ d) Optionally run the RPGUnit self tests:
               History
 --------------------------------------
 
+Version 2.3.0 - 21.09.2018
+--------------------------
+ * Added dialog for uploading the RPGUNIT library from the iRPGUnit
+   preference page. (Button next to "Product library".)
+ * Removed readme_first.txt because everything is described on
+   the local update site.
+ * Updated help text regarding the installation instructions.
 
 Version 2.2.3 - 25.06.2018
 --------------------------
