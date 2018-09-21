@@ -2,7 +2,7 @@
 <feature
       id="de.tools400.rpgunit.core.help"
       label="iRPGUnit Help (recommended)"
-      version="2.2.3.r"
+      version="2.3.0.r"
       provider-name="iRPGUnit Project Team"
       plugin="de.tools400.rpgunit.core">
 
