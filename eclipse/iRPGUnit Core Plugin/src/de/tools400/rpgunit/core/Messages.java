@@ -104,6 +104,7 @@ public class Messages extends NLS {
     public static String PreferencesPage2_grpWarnings_text;
     public static String PreferencesPage2_chkResetWarnings_text;
     public static String PreferencesPage2_chkResetWarnings_toolTipText;
+    public static String PreferencesPage2_btnUploadLibrary_toolTipText;
 
     public static String Label_Host_name_colon;
     public static String Tooltip_Host_name;

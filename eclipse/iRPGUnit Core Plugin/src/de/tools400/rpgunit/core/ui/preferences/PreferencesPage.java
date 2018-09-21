@@ -275,6 +275,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
 
         Button btnUploadLibrary = new Button(grpRuntimeParameters, SWT.PUSH);
         btnUploadLibrary.setImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_TRANSFER_LIBRARY));
+        btnUploadLibrary.setToolTipText(Messages.PreferencesPage2_btnUploadLibrary_toolTipText);
         btnUploadLibrary.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
         btnUploadLibrary.addSelectionListener(new SelectionListener() {
 
