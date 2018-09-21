@@ -21,7 +21,6 @@ set UPDATE_SITE_CONTENT=%UPDATE_SITE_PATH%\content.jar
 set UPDATE_SITE_SITE=%UPDATE_SITE_PATH%\site.xml
 
 set UPDATE_SITE_TEMPLATES=%UPDATE_SITE_PATH%\build\templates
-set UPDATE_SITE_README_FILE=%UPDATE_SITE_TEMPLATES%\readme_first.txt
 set UPDATE_SITE_SAMPLE_LINK_FILE=%UPDATE_SITE_TEMPLATES%\de.tools400.rpgunit.core.link
 
 set VERSION_PROPERTIES=version.properties
@@ -142,7 +141,7 @@ xcopy "%UPDATE_SITE_SITE%"      ".\local_updatesite\" /S
 
 :zip
 del %ZIP_FILE_FOLDER%\*.zip
-"%UTILITIES_DIR%"\7z a -mx=8 "%ZIP_FILE_PATH%" "source\*" "local_updatesite\*" "%UPDATE_SITE_SAMPLE_LINK_FILE%" "%UPDATE_SITE_README_FILE%" "upload_src.bat" "upload_savf.bat" "RPGUNIT_%VERSION%_*.SAVF"
+"%UTILITIES_DIR%"\7z a -mx=8 "%ZIP_FILE_PATH%" "source\*" "local_updatesite\*" "%UPDATE_SITE_SAMPLE_LINK_FILE%" "upload_src.bat" "upload_savf.bat" "RPGUNIT_%VERSION%_*.SAVF"
 
 :cleanup
 del "RPGUNIT_%VERSION%_*.SAVF"
