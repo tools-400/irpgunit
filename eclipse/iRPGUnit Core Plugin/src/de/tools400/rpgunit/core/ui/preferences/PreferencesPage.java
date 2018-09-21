@@ -8,6 +8,7 @@
 
 package de.tools400.rpgunit.core.ui.preferences;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -15,6 +16,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -32,9 +34,11 @@ import org.eclipse.ui.commands.ICommandService;
 import de.tools400.rpgunit.core.Messages;
 import de.tools400.rpgunit.core.RPGUnitCorePlugin;
 import de.tools400.rpgunit.core.handler.Command;
+import de.tools400.rpgunit.core.handler.UploadRPGUnitLibraryHandler;
 import de.tools400.rpgunit.core.model.ibmi.I5ObjectName;
 import de.tools400.rpgunit.core.preferences.Preferences;
-import de.tools400.rpgunit.core.ui.listener.UpperCaseOnlyVerifier;
+import de.tools400.rpgunit.core.swt.widgets.UpperCaseOnlyVerifier;
+import de.tools400.rpgunit.core.utils.ExceptionHelper;
 
 public class PreferencesPage extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -90,6 +94,21 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         GridLayout gl_mainPanel = new GridLayout(1, true);
         gl_mainPanel.verticalSpacing = 10;
         mainPanel.setLayout(gl_mainPanel);
+
+        createGroupCommandParameters(mainPanel);
+        createGroupOverrideCommandParameters(mainPanel);
+        createGroupRuntimeParameters(mainPanel);
+        createGroupDebugParameters(mainPanel);
+        createGroupWarningMessages(mainPanel);
+
+        initializeValues();
+
+        updateControlsOnEnterPage();
+
+        return mainPanel;
+    }
+
+    private void createGroupCommandParameters(Composite mainPanel) {
 
         Group grpCommandParameters = new Group(mainPanel, SWT.NULL);
         grpCommandParameters.setText(Messages.PreferencesPage2_grpCommandParameters_text);
@@ -210,6 +229,10 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         cboReclaimResources.setItems(getPreferences().getReclaimResourcesItems());
         cboReclaimResources.setToolTipText(Messages.PreferencesPage2_cboReclaimResources_toolTipText);
         cboReclaimResources.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        new Label(grpCommandParameters, SWT.NONE);
+    }
+
+    private void createGroupOverrideCommandParameters(Composite mainPanel) {
 
         Group grpOverrideCommandParameters = new Group(mainPanel, SWT.NONE);
         grpOverrideCommandParameters.setText(Messages.PreferencesPage2_grpOverrideCommandParameters_text);
@@ -226,43 +249,69 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         });
         chkDisableReport.setToolTipText(Messages.PreferencesPage2_chkDisableReport_toolTipText);
         chkDisableReport.setText(Messages.PreferencesPage2_chkDisableReport_text);
+    }
 
-        Group grpRuntime = new Group(mainPanel, SWT.NONE);
-        grpRuntime.setText(Messages.PreferencesPage2_grpRuntime_text);
-        GridLayout gl_grpRuntime = new GridLayout(3, false);
-        grpRuntime.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-        grpRuntime.setLayout(gl_grpRuntime);
+    private void createGroupRuntimeParameters(Composite mainPanel) {
 
-        Label lblProductLibrary = new Label(grpRuntime, SWT.NONE);
+        Group grpRuntimeParameters = new Group(mainPanel, SWT.NONE);
+        grpRuntimeParameters.setText(Messages.PreferencesPage2_grpRuntime_text);
+        GridLayout gl_grpRuntime = new GridLayout(4, false);
+        grpRuntimeParameters.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+        grpRuntimeParameters.setLayout(gl_grpRuntime);
+
+        Label lblProductLibrary = new Label(grpRuntimeParameters, SWT.NONE);
         GridData gd_lblProductLibrary = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
         gd_lblProductLibrary.widthHint = COLUMN_1_WIDTH;
         lblProductLibrary.setLayoutData(gd_lblProductLibrary);
         lblProductLibrary.setText(Messages.PreferencesPage2_lblProductLibrary_text);
 
-        txtProductLibrary = new Text(grpRuntime, SWT.BORDER);
+        txtProductLibrary = new Text(grpRuntimeParameters, SWT.BORDER);
         txtProductLibrary.addVerifyListener(new UpperCaseOnlyVerifier());
         txtProductLibrary.setToolTipText(Messages.PreferencesPage2_txtProductLibrary_toolTipText);
-        GridData gd_txtProductLibrary = new GridData(SWT.LEFT, SWT.TOP, true, false, 1, 1);
+        GridData gd_txtProductLibrary = new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1);
         gd_txtProductLibrary.minimumWidth = INPUT_FIELD_LENGTH;
         gd_txtProductLibrary.widthHint = INPUT_FIELD_LENGTH;
         txtProductLibrary.setLayoutData(gd_txtProductLibrary);
 
-        Label lbllibl = new Label(grpRuntime, SWT.NONE);
+        Button btnUploadLibrary = new Button(grpRuntimeParameters, SWT.PUSH);
+        btnUploadLibrary.setImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_TRANSFER_LIBRARY));
+        btnUploadLibrary.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+        btnUploadLibrary.addSelectionListener(new SelectionListener() {
+
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                try {
+                    UploadRPGUnitLibraryHandler handler = new UploadRPGUnitLibraryHandler();
+                    handler.execute(txtProductLibrary.getText());
+                } catch (Exception e) {
+                    MessageDialog.openError(getShell(), Messages.ERROR, ExceptionHelper.getLocalizedMessage(e));
+                }
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent arg0) {
+            }
+        });
+
+        Label lblProductLibraryChoice = new Label(grpRuntimeParameters, SWT.NONE);
         GridData gd_lbllibl = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
         gd_lbllibl.widthHint = COLUMN_3_WIDTH;
-        lbllibl.setLayoutData(gd_lbllibl);
-        lbllibl.setText(Messages.PreferencesPage2_lblProductLibrary_choice);
+        lblProductLibraryChoice.setLayoutData(gd_lbllibl);
+        lblProductLibraryChoice.setText(Messages.PreferencesPage2_lblProductLibrary_choice);
 
-        Label lblCheckTestSuite = new Label(grpRuntime, SWT.NONE);
+        Label lblCheckTestSuite = new Label(grpRuntimeParameters, SWT.NONE);
         GridData gd_lblCheckTestSuite = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
         gd_lblCheckTestSuite.widthHint = COLUMN_1_WIDTH;
         lblCheckTestSuite.setLayoutData(gd_lblCheckTestSuite);
         lblCheckTestSuite.setText(Messages.PreferencesPage2_lblCheckTestSuite_text);
 
-        cboCheckTestSuite = new Combo(grpRuntime, SWT.DROP_DOWN | SWT.READ_ONLY);
+        cboCheckTestSuite = new Combo(grpRuntimeParameters, SWT.DROP_DOWN | SWT.READ_ONLY);
         cboCheckTestSuite.setItems(getPreferences().getCheckTestSuiteItems());
         cboCheckTestSuite.setToolTipText(Messages.PreferencesPage2_cboCheckTestSuite_toolTipText);
-        cboCheckTestSuite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        cboCheckTestSuite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+    }
+
+    private void createGroupDebugParameters(Composite mainPanel) {
 
         Group grpDebugParameters = new Group(mainPanel, SWT.NONE);
         grpDebugParameters.setText(Messages.PreferencesPage2_grpDebugParameters_text);
@@ -277,6 +326,9 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         chkPosToLineOnOpen = new Button(grpDebugParameters, SWT.CHECK);
         chkPosToLineOnOpen.setToolTipText(Messages.PreferencesPage2_chkPosToLineOnOpen_toolTipText);
         chkPosToLineOnOpen.setText(Messages.PreferencesPage2_chkPosToLineOnOpen_text);
+    }
+
+    private void createGroupWarningMessages(Composite mainPanel) {
 
         Group grpWarningMessages = new Group(mainPanel, SWT.NONE);
         grpWarningMessages.setText(Messages.PreferencesPage2_grpWarnings_text);
@@ -287,12 +339,6 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         chkWarnMessages = new Button(grpWarningMessages, SWT.CHECK);
         chkWarnMessages.setToolTipText(Messages.PreferencesPage2_chkResetWarnings_toolTipText);
         chkWarnMessages.setText(Messages.PreferencesPage2_chkResetWarnings_text);
-
-        initializeValues();
-
-        updateControlsOnEnterPage();
-
-        return mainPanel;
     }
 
     /**
