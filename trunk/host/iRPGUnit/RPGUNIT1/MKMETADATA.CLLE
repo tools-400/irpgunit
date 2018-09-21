@@ -209,18 +209,18 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/RPGUNITT1) +
-                          MBR(DNSUITET) +                                                           
-                          SRCTYPE(RPGLE) +                                                          
-                          TEXT('RPGUnit SelfTest - Test TearDownSuite')                             
-             MONMSG     MSGID(CPF3288)                                                              
-                                                                                                    
-             CHGPFM     FILE(&TARGETLIB/RPGUNITT1) +                                                
-                          MBR(DNTESTT) +                                                            
-                          SRCTYPE(RPGLE) +                                                          
-                          TEXT('RPGUnit SelfTest - Test TearDown Test Case')                        
-             MONMSG     MSGID(CPF3288)                                                              
-                                                                                                    
-             CHGPFM     FILE(&TARGETLIB/RPGUNITT1) +                                                
+                          MBR(DNSUITET) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('RPGUnit SelfTest - Test TearDownSuite')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/RPGUNITT1) +
+                          MBR(DNTESTT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('RPGUnit SelfTest - Test TearDown Test Case')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/RPGUNITT1) +
                           MBR(EXTPRCT) +
                           SRCTYPE(RPGLE) +
                           TEXT('RPGUnit SelfTest - Test EXTPRC.')
@@ -400,12 +400,12 @@
                           TEXT('RPGUnit SelfTest - Test SetupSuite')
              MONMSG     MSGID(CPF3288)
 
-             CHGPFM     FILE(&TARGETLIB/RPGUNITT1) +                                                
-                          MBR(UPTESTT) +                                                            
-                          SRCTYPE(RPGLE) +                                                          
-                          TEXT('RPGUnit SelfTest - Test Setup Test Case')                           
-             MONMSG     MSGID(CPF3288)                                                              
-                                                                                                    
+             CHGPFM     FILE(&TARGETLIB/RPGUNITT1) +
+                          MBR(UPTESTT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('RPGUnit SelfTest - Test Setup Test Case')
+             MONMSG     MSGID(CPF3288)
+
              CHGPFM     FILE(&TARGETLIB/RPGUNITY1) +
                           MBR(APILIST) +
                           SRCTYPE(RPGLE) +
@@ -821,13 +821,7 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/RPGUNIT1) +
-                          MBR(#METADATA) +
-                          SRCTYPE(RPGLE) +
-                          TEXT('RPGUnit - Create RPGUnit Meta Data.')
-             MONMSG     MSGID(CPF3288)
-
-             CHGPFM     FILE(&TARGETLIB/RPGUNIT1) +
-                          MBR(#PACKAGE) +
+                          MBR(A_CRTPKG) +
                           SRCTYPE(CLLE) +
                           TEXT('RPGUnit - Create distribution package.')
              MONMSG     MSGID(CPF3288)
@@ -878,6 +872,12 @@
                           MBR(CMDRUNSRV) +
                           SRCTYPE(RPGLE) +
                           TEXT('RPGUnit - Command Line Toolkit.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/RPGUNIT1) +
+                          MBR(CRTMETADTA) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('RPGUnit - Create RPGUnit Meta Data.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/RPGUNIT1) +
@@ -1049,12 +1049,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/RPGUNIT1) +
-                          MBR(TEMPLSQL) +                                                           
-                          SRCTYPE(SQLRPGLE) +                                                       
-                          TEXT('RPGUnit - Empty SQL Unit Test Case.')                               
-             MONMSG     MSGID(CPF3288)                                                              
-                                                                                                    
-             CHGPFM     FILE(&TARGETLIB/RPGUNIT1) +                                                 
+                          MBR(TEMPLSQL) +
+                          SRCTYPE(SQLRPGLE) +
+                          TEXT('RPGUnit - Empty SQL Unit Test Case.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/RPGUNIT1) +
                           MBR(TESTCASE) +
                           SRCTYPE(RPGLE) +
                           TEXT('RPGUnit - Assertion utilities for test cases.')
