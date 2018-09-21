@@ -34,7 +34,7 @@ public class RPGUnitCorePlugin extends AbstractUIPlugin {
     public static final String IMAGE_SRVPGM = "srvpgm.gif"; //$NON-NLS-1$
     public static final String IMAGE_PROCEDURE = "procedure.gif"; //$NON-NLS-1$
 
-    public static final String IMAGE_TRANSFER_LIBRARY = "transfer_library_32.gif"; //$NON-NLS-1$
+    public static final String IMAGE_TRANSFER_LIBRARY = "transfer_library16.gif"; //$NON-NLS-1$
 
     public static final String ICONS_PATH = "icons/";
 
