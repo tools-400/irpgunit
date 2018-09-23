@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: iRPGUnit iSphere Integration (optional)
+Bundle-SymbolicName: de.tools400.rpgunit.isphere;singleton:=true
+Bundle-Version: 2.3.0.r
+Bundle-Activator: de.tools400.rpgunit.isphere.RPGUnitISphereIntegrationPlugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ com.ibm.etools.iseries.toolbox,
+ com.ibm.etools.iseries.rse.ui,
+ de.tools400.rpgunit.core,
+ biz.isphere.core;bundle-version="2.9.2",
+ biz.isphere.base;bundle-version="2.9.2"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: iRPGUnit Project Team
+Bundle-Localization: plugin

@@ -1,0 +1,26 @@
+     /* =================================================================== */
+     /*  RPGUnit - Host print transform table EBCDIC/ASCII.                 */
+     /*  Used by the RPGUnit spooled file viewer to transform a given       */
+     /*  spooled file to ASCII.                                             */
+     /*  See:                                                               */
+     /*  de.tools400.rpgunit.spooledfileviewer.ui.editor.SpooledFileStorage */
+     /*                                                                     */
+     /*  For the documentation of workstation customization objects refer   */
+     /*  to manual:  Workstation Customization Programming  (SC41-5605-00)  */
+     /* =================================================================== */
+:WSCST DEVCLASS=TRANSFORM.
+
+    :TRNSFRMTBL.
+    :INITPRT                /* Initialize Printer */
+      DATA =''X.
+    :CARRTN                 /* Carrier Return */
+      DATA =''X.
+    :SPACE                  /* Space */
+      DATA ='20'X.
+    :LINEFEED               /* Linefeed */
+      DATA ='0A'X.
+    :FORMFEED               /* Formfeed: '-- New Page --' */
+    /*DATA ='0A202020202020202020202D2D204E65772050616765202D2D'X.*/
+      DATA ='0A'X.
+
+:EWSCST.

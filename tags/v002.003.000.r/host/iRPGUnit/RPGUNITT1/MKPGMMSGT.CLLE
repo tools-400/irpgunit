@@ -1,0 +1,40 @@
+     /* =================================================================== */
+     /*  RPGUnit SelfTest - Build PGMMSGT.                                  */
+     /*                                                                     */
+     /*  Usage: CALL MKPGMMSGT TARGETLIB                                    */
+     /*    where TARGETLIB is the library containing the RPGUnit            */
+     /*    source files.                                                    */
+     /* =================================================================== */
+     /*   >>PRE-COMPILER<<                                                  */
+     /*     >>CRTCMD<<  CRTBNDCL      PGM(&LI/&OB) +                        */
+     /*                               SRCFILE(&SL/&SF)  +                   */
+     /*                               SRCMBR(&SM);                          */
+     /*     >>COMPILE<<                                                     */
+     /*       >>PARM<< DBGVIEW(*LIST);                                      */
+     /*     >>END-COMPILE<<                                                 */
+     /*     >>LINK<<                                                        */
+     /*       >>PARM<< DFTACTGRP(*NO);                                      */
+     /*       >>PARM<< ACTGRP(*NEW);                                        */
+     /*     >>END-LINK<<                                                    */
+     /*     >>EXECUTE<<                                                     */
+     /*   >>END-PRE-COMPILER<<                                              */
+     /* =================================================================== */
+             PGM        PARM(&TARGETLIB)
+             DCL        VAR(&TARGETLIB) TYPE(*CHAR) LEN(10)
+
+             CHGVAR     VAR(&TARGETLIB) VALUE(&TARGETLIB)
+             MONMSG     MSGID(MCH3601) EXEC(SNDPGMMSG MSGID(CPF9898) +
+                          MSGF(QCPFMSG) MSGDTA('Target library +
+                          parameter required.') MSGTYPE(*ESCAPE))
+
+             CRTRPGMOD  MODULE(QTEMP/PGMMSG) SRCFILE(RPGUNIT1) +
+                          DBGVIEW(*LIST)
+             CRTRPGMOD  MODULE(QTEMP/PGMMSGT) SRCFILE(RPGUNITT1) +
+                          DBGVIEW(*LIST)
+
+             CRTSRVPGM  SRVPGM(&TARGETLIB/PGMMSGT) +
+                          MODULE(QTEMP/PGMMSGT QTEMP/PGMMSG) +
+                          EXPORT(*ALL) BNDSRVPGM(RUTESTCASE) +
+                          TEXT('RPGUnit SelfTest - Test PGMMSG.')
+
+             ENDPGM
