@@ -336,6 +336,8 @@
 
 		<mkdir dir="${build.upload.dir.files}" />
 
+		<copy file="${project.pdf}" todir="${build.upload.dir.files}" overwrite="true"/>
+
 		<zip destfile="${build.upload.dir.files}/${target.ide.zip.file.name}">
 			<fileset dir="${temp.dir.local_updatesite}" />
 		</zip>
@@ -759,6 +761,8 @@
 			<fileset dir="${local.savefile.directory}" includes="${local.savefile.name}" />
 		</copy>
 
+		<copy file="${project.pdf}" todir="${temp.dir.local_updatesite}" overwrite="true"/>
+
 		<if>
 			<equals arg1="${do.copy.site.xml}" arg2="true" />
 			<then>
@@ -832,6 +836,7 @@
 			<fileset dir="${site.dir}" includes="content.jar" />
 			<fileset dir="${site.dir}" includes="*.tag" />
 			<fileset dir="${site.dir}" includes="*.bat" />
+			<fileset dir="${site.dir}" includes="*.pdf" />
 		</delete>
 
 		<!-- Files created by PDE Tools -->
