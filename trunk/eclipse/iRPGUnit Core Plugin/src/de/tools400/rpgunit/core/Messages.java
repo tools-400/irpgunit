@@ -69,6 +69,7 @@ public class Messages extends NLS {
     public static String Enter_a_user_name;
     public static String Enter_a_password;
     public static String Host_A_not_found_in_configured_RSE_connections;
+    public static String Unit_test_ended_with_errors;
 
     public static String PreferencesPage2_grpCommandParameters_text;
     public static String PreferencesPage2_lblRunOrder_text;
