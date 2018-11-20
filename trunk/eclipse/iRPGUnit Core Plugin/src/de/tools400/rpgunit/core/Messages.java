@@ -101,6 +101,9 @@ public class Messages extends NLS {
     public static String PreferencesPage2_chkNewConnection_toolTipText;
     public static String PreferencesPage2_chkPosToLineOnOpen_text;
     public static String PreferencesPage2_chkPosToLineOnOpen_toolTipText;
+    public static String PreferencesPage2_grpUIBehavior_text;
+    public static String PreferencesPage2_chkShowResultView_toolTipText;
+    public static String PreferencesPage2_chkShowResultView_text;
     public static String PreferencesPage2_grpWarnings_text;
     public static String PreferencesPage2_chkResetWarnings_text;
     public static String PreferencesPage2_chkResetWarnings_toolTipText;

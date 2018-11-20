@@ -12,6 +12,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 import de.tools400.rpgunit.core.RPGUnitCorePlugin;
 import de.tools400.rpgunit.core.model.ibmi.I5ObjectName;
+import de.tools400.rpgunit.core.preferences.internal.PreferencesChangeListener;
 
 public final class Preferences {
 
@@ -39,7 +40,7 @@ public final class Preferences {
     /**
      * Parameters of IBMi remote program 'RUPGMRMT':
      */
-    public static final String RMTPGM = RPGUNIT + ".rmtpgm"; //$NON-NLS-1$
+    private static final String RMTPGM = RPGUNIT + ".rmtpgm"; //$NON-NLS-1$
 
     public static final String RUN_ORDER = RMTPGM + ".order"; //$NON-NLS-1$
 
@@ -90,7 +91,7 @@ public final class Preferences {
     /**
      * RPGUnit warning messages:
      */
-    public static final String WARN_MESSAGE = RPGUNIT + ".warnings"; //$NON-NLS-1$
+    private static final String WARN_MESSAGE = RPGUNIT + ".warnings"; //$NON-NLS-1$
 
     public static final String WARN_MESSAGE_SRC_OPTION = WARN_MESSAGE + ".source.option.srcstmt"; //$NON-NLS-1$
 
@@ -103,7 +104,7 @@ public final class Preferences {
     /**
      * Values controlling report enablement:
      */
-    public static final String REPORT = RPGUNIT + ".report"; //$NON-NLS-1$
+    private static final String REPORT = RPGUNIT + ".report"; //$NON-NLS-1$
 
     public static final String REPORT_DISABLED = REPORT + ".disabled"; //$NON-NLS-1$
 
@@ -114,7 +115,7 @@ public final class Preferences {
     /**
      * Product library.
      */
-    public static final String SYSTEM = RPGUNIT + ".system"; //$NON-NLS-1$
+    private static final String SYSTEM = RPGUNIT + ".system"; //$NON-NLS-1$
 
     public static final String PRODUCT_LIBRARY = SYSTEM + ".productLibrary"; //$NON-NLS-1$
 
@@ -123,7 +124,7 @@ public final class Preferences {
     /**
      * Check test suite service program.
      */
-    public static final String CHECK_TEST_SUITE = RPGUNIT + ".checkTestSuite"; //$NON-NLS-1$
+    private static final String CHECK_TEST_SUITE = RPGUNIT + ".checkTestSuite"; //$NON-NLS-1$
 
     public static final String CHECK_TEST_SUITE_NONE = "*NONE"; //$NON-NLS-1$
 
@@ -132,10 +133,15 @@ public final class Preferences {
     public static final String CHECK_TEST_SUITE_ATTRIBUTE = "*ATTRIBUTE"; //$NON-NLS-1$
 
     /**
+     * Values controlling UI behavior.
+     */
+    private static final String UI = RPGUNIT + ".ui"; //$NON-NLS-1$
+
+    private static final String SHOW_VIEW = UI + ".showView"; //$NON-NLS-1$
+
+    /**
      * Values controlling debug settings.
      */
-    public static final String DEBUG = RPGUNIT + ".debug"; //$NON-NLS-1$
-
     public static final String DEBUG_CONNECTION = REPORT + ".connection"; //$NON-NLS-1$
 
     public static final Boolean DEBUG_CONNECTION_NEW = true;
@@ -151,7 +157,7 @@ public final class Preferences {
     /**
      * RPGUnit product library upload parameters:
      */
-    public static final String UPLOAD_PRODUCT_LIBRARY = RPGUNIT + ".productLibrary"; //$NON-NLS-1$
+    private static final String UPLOAD_PRODUCT_LIBRARY = RPGUNIT + ".productLibrary"; //$NON-NLS-1$
 
     public static final String UPLOAD_CONNECTION_NAME = UPLOAD_PRODUCT_LIBRARY + ".connection.name";
 
@@ -251,6 +257,11 @@ public final class Preferences {
     public String getCheckTestSuite() {
         String tCheckTestSuite = preferenceStore.getString(CHECK_TEST_SUITE);
         return tCheckTestSuite;
+    }
+
+    public boolean isShowResultView() {
+        boolean tIsShowView = preferenceStore.getBoolean(SHOW_VIEW);
+        return tIsShowView;
     }
 
     public boolean mustCreateNewConnection() {
@@ -354,6 +365,10 @@ public final class Preferences {
         saveCheckTestSuite(aCheckTestSuite);
     }
 
+    public void setShowResultView(boolean aShow) {
+        saveShowView(aShow);
+    }
+
     public void setReclaimResources(String aRclRsc) {
         saveReclaimResources(aRclRsc);
     }
@@ -423,6 +438,7 @@ public final class Preferences {
         preferenceStore.setDefault(DEBUG_POSITION_TO_LINE, getDefaultPositionToLineState());
         preferenceStore.setDefault(PRODUCT_LIBRARY, getDefaultProductLibrary());
         preferenceStore.setDefault(CHECK_TEST_SUITE, getDefaultCheckTestSuite());
+        preferenceStore.setDefault(SHOW_VIEW, getDefaultIsShowResultView());
         preferenceStore.setDefault(RECLAIM_RESOURCES, getDefaultReclaimResources());
 
         preferenceStore.setDefault(WARN_MESSAGE_SRC_OPTION, getDefaultShowWarnMessages());
@@ -541,6 +557,10 @@ public final class Preferences {
         return CHECK_TEST_SUITE_TEXT;
     }
 
+    public boolean getDefaultIsShowResultView() {
+        return true;
+    }
+
     private int getDefaultPreferencesVersionNumber() {
         return -1;
     }
@@ -624,6 +644,10 @@ public final class Preferences {
 
     private void saveCheckTestSuite(String aCheckTestSuite) {
         preferenceStore.setValue(CHECK_TEST_SUITE, aCheckTestSuite);
+    }
+
+    private void saveShowView(boolean aShow) {
+        preferenceStore.setValue(SHOW_VIEW, aShow);
     }
 
     private void saveReclaimResources(String aRclRsc) {

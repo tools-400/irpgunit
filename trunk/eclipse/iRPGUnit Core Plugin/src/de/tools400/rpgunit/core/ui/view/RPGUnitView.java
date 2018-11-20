@@ -420,7 +420,7 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
             tUnitTestResult.removeNonExecutableTestCases();
             tUnitTestResult.setIsSelected(anIsSelected);
         }
-        
+
         setInput(tAllUnitTestSuits);
     }
 
@@ -891,10 +891,13 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
 
             if (numberErrors > 0 || numberFailures > 0) {
                 errorPanel.setBackground(red);
+                setTitleImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_RPGUNIT_ERROR));
             } else if (numberRuns > 0) {
                 errorPanel.setBackground(green);
+                setTitleImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_RPGUNIT_OK));
             } else {
                 errorPanel.setBackground(grey);
+                setTitleImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_RPGUNIT_OK));
             }
 
             this.update();

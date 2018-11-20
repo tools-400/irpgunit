@@ -17,6 +17,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 import de.tools400.rpgunit.core.RPGUnitCorePlugin;
 import de.tools400.rpgunit.core.jobs.local.RunUnitTestsJob;
+import de.tools400.rpgunit.core.preferences.Preferences;
 import de.tools400.rpgunit.core.ui.view.IInputProvider;
 import de.tools400.rpgunit.core.ui.view.RPGUnitView;
 
@@ -52,7 +53,11 @@ public class RunUnitTestHandler implements ISelectionHandler {
     protected RPGUnitView getView(IWorkbenchWindow aWindow) {
         RPGUnitView tView = null;
         try {
-            tView = (RPGUnitView)aWindow.getActivePage().showView(RPGUnitView.ID);
+            if (Preferences.getInstance().isShowResultView()) {
+                tView = (RPGUnitView)aWindow.getActivePage().showView(RPGUnitView.ID);
+            } else {
+                tView = (RPGUnitView)aWindow.getActivePage().findView(RPGUnitView.ID);
+            }
         } catch (Exception e) {
             RPGUnitCorePlugin.logError("Could not get handle of RPGUnit view.", e); //$NON-NLS-1$
             return null;
