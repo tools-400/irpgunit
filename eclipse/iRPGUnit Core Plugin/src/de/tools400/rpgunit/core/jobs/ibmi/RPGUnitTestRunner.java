@@ -635,8 +635,7 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
 
         retrieveTestCases(bytes, tTotalSizeUserSpace, tOffsetTestCases, numTestCasesRtn, tTestSuite, tVersion);
 
-         assert tNumberAssertions == tTestSuite.getNumberAssertions() :
-         "Number of assertions does not match";
+        assert tNumberAssertions == tTestSuite.getNumberAssertions() : "Number of assertions does not match";
         // assert tNumberFailures == tTestSuite.getNumberFailures() :
         // "Number of failed assertions does not match";
         // assert tNumberErrors == tTestSuite.getNumberErrors() :

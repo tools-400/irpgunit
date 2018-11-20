@@ -23,9 +23,9 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 
-import org.junit.Test;
-
 import junit.framework.JUnit4TestAdapter;
+
+import org.junit.Test;
 
 /**
  * <b>JUnit 4 Test Case</b>
@@ -110,8 +110,8 @@ public class CheckNLSMessages {
 
             // Check
             System.out.println("Testing: " + nlsMessageConstant);
-            assertTrue("ERROR:" + localeInfo + "NLS string must not be NULL or empty: " + nlsMessageConstant,
-                messageText != null && messageText.trim().length() > 0);
+            assertTrue("ERROR:" + localeInfo + "NLS string must not be NULL or empty: " + nlsMessageConstant, messageText != null
+                && messageText.trim().length() > 0);
             assertFalse("ERROR:" + localeInfo + "NLS String must not end with spaces: " + nlsMessageConstant, messageText.endsWith(" "));
             assertNotNull("ERROR:" + localeInfo + "Message text must not be [null]. Missing property: " + nlsMessageConstant + "("
                 + nlsMessagesObject.getClass().getName() + ")", messageText);

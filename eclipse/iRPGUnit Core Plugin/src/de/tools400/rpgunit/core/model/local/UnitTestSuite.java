@@ -98,21 +98,21 @@ public class UnitTestSuite implements IRPGUnitTestCaseItem, IUnitTestTreeItem, I
     }
 
     public void removeNonExecutableTestCases() {
-        
-        Set<String> toBeRemoved=new HashSet<String>();
-        
+
+        Set<String> toBeRemoved = new HashSet<String>();
+
         for (String key : unitTestCases.keySet()) {
-           UnitTestCase unitTestCase= unitTestCases.get(key);
-           if (!unitTestCase.isExecutable()) {
-               toBeRemoved.add(key);
-           }
+            UnitTestCase unitTestCase = unitTestCases.get(key);
+            if (!unitTestCase.isExecutable()) {
+                toBeRemoved.add(key);
+            }
         }
-        
+
         for (String key : toBeRemoved) {
             unitTestCases.remove(key);
         }
     }
-    
+
     public void setIncompleteProcedureList(boolean anIsIncomplete) {
         isIncompleteProcedureList = anIsIncomplete;
     }
