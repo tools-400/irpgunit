@@ -6,12 +6,13 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package de.tools400.rpgunit.core.preferences;
+package de.tools400.rpgunit.core.preferences.internal;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 import de.tools400.rpgunit.core.extensions.preferences.RPGUnitProductLibraryEvaluateContributionsHandler;
+import de.tools400.rpgunit.core.preferences.Preferences;
 
 public class PreferencesChangeListener implements IPropertyChangeListener {
 

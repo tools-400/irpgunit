@@ -72,6 +72,8 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
 
     private Button chkPosToLineOnOpen;
 
+    private Button chkShowResultView;
+
     private Button chkWarnMessages;
 
     /**
@@ -99,6 +101,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         createGroupOverrideCommandParameters(mainPanel);
         createGroupRuntimeParameters(mainPanel);
         createGroupDebugParameters(mainPanel);
+        createGroupUIBehavior(mainPanel);
         createGroupWarningMessages(mainPanel);
 
         initializeValues();
@@ -329,6 +332,19 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         chkPosToLineOnOpen.setText(Messages.PreferencesPage2_chkPosToLineOnOpen_text);
     }
 
+    private void createGroupUIBehavior(Composite mainPanel) {
+
+        Group grpUIBehavior = new Group(mainPanel, SWT.NONE);
+        grpUIBehavior.setText(Messages.PreferencesPage2_grpUIBehavior_text);
+        GridLayout gl_grpUIBehavior = new GridLayout(1, false);
+        grpUIBehavior.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+        grpUIBehavior.setLayout(gl_grpUIBehavior);
+
+        chkShowResultView = new Button(grpUIBehavior, SWT.CHECK);
+        chkShowResultView.setToolTipText(Messages.PreferencesPage2_chkShowResultView_toolTipText);
+        chkShowResultView.setText(Messages.PreferencesPage2_chkShowResultView_text);
+    }
+
     private void createGroupWarningMessages(Composite mainPanel) {
 
         Group grpWarningMessages = new Group(mainPanel, SWT.NONE);
@@ -364,6 +380,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         cboCheckTestSuite.setText(getPreferences().getCheckTestSuite());
         chkNewConnection.setSelection(getPreferences().mustCreateNewConnection());
         chkPosToLineOnOpen.setSelection(getPreferences().shallPositionToLine());
+        chkShowResultView.setSelection(getPreferences().isShowResultView());
         chkWarnMessages.setSelection(false);
     }
 
@@ -381,6 +398,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         cboCheckTestSuite.setText(getPreferences().getDefaultCheckTestSuite());
         chkNewConnection.setSelection(getPreferences().getDefaultConnectionState());
         chkPosToLineOnOpen.setSelection(getPreferences().getDefaultPositionToLineState());
+        chkShowResultView.setSelection(getPreferences().getDefaultIsShowResultView());
         chkWarnMessages.setSelection(false);
 
         updateReportControlsEnablement();
@@ -414,6 +432,8 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         if (chkWarnMessages.getEnabled()) {
             tPreferences.enableAllWarningMessages();
         }
+
+        tPreferences.setShowResultView(chkShowResultView.getSelection());
 
         updateDisableReportButton();
         updateEnableDebugModeButton();

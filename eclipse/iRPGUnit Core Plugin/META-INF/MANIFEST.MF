@@ -21,7 +21,10 @@ Bundle-ActivationPolicy: lazy
 Export-Package: de.tools400.rpgunit.core.extensions.preferences,
  de.tools400.rpgunit.core.extensions.testcase,
  de.tools400.rpgunit.core.extensions.view,
- de.tools400.rpgunit.core.ui.view,
+ de.tools400.rpgunit.core.handler,
+ de.tools400.rpgunit.core.model.ibmi,
+ de.tools400.rpgunit.core.preferences,
+ de.tools400.rpgunit.core.ui,
  de.tools400.rpgunit.core.versioncheck
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Localization: plugin

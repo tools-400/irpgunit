@@ -23,6 +23,9 @@ import org.osgi.framework.Constants;
  */
 public class RPGUnitCorePlugin extends AbstractUIPlugin {
 
+    public static final String IMAGE_RPGUNIT_OK = "rpgunit16.png"; //$NON-NLS-1$
+    public static final String IMAGE_RPGUNIT_ERROR = "rpgunit16error.png"; //$NON-NLS-1$
+
     public static final String IMAGE_ASSERTION = "assertions16.png"; //$NON-NLS-1$
     public static final String IMAGE_FAILURE = "failure16.png"; //$NON-NLS-1$
     public static final String IMAGE_ERROR = "error16.png"; //$NON-NLS-1$
@@ -169,17 +172,20 @@ public class RPGUnitCorePlugin extends AbstractUIPlugin {
         super.initializeImageRegistry(reg);
 
         // add images
-        reg.put(IMAGE_TEST_SUCCESS, getImageDescriptor(IMAGE_TEST_SUCCESS)); // $NON-NLS-1$
-        reg.put(IMAGE_TEST_FAILED, getImageDescriptor(IMAGE_TEST_FAILED)); // $NON-NLS-1$
-        reg.put(IMAGE_TEST_ERROR, getImageDescriptor(IMAGE_TEST_ERROR)); // $NON-NLS-1$
+        reg.put(IMAGE_RPGUNIT_OK, getImageDescriptor(IMAGE_RPGUNIT_OK));
+        reg.put(IMAGE_RPGUNIT_ERROR, getImageDescriptor(IMAGE_RPGUNIT_ERROR));
 
-        reg.put(IMAGE_ASSERTION, getImageDescriptor(IMAGE_ASSERTION)); // $NON-NLS-1$
-        reg.put(IMAGE_FAILURE, getImageDescriptor(IMAGE_FAILURE)); // $NON-NLS-1$
-        reg.put(IMAGE_ERROR, getImageDescriptor(IMAGE_ERROR)); // $NON-NLS-1$
+        reg.put(IMAGE_TEST_SUCCESS, getImageDescriptor(IMAGE_TEST_SUCCESS));
+        reg.put(IMAGE_TEST_FAILED, getImageDescriptor(IMAGE_TEST_FAILED));
+        reg.put(IMAGE_TEST_ERROR, getImageDescriptor(IMAGE_TEST_ERROR));
 
-        reg.put(IMAGE_SRVPGM, getImageDescriptor(IMAGE_SRVPGM)); // $NON-NLS-1$
-        reg.put(IMAGE_PROCEDURE, getImageDescriptor(IMAGE_PROCEDURE)); // $NON-NLS-1$
-        reg.put(IMAGE_TRANSFER_LIBRARY, getImageDescriptor(IMAGE_TRANSFER_LIBRARY)); // $NON-NLS-1$
+        reg.put(IMAGE_ASSERTION, getImageDescriptor(IMAGE_ASSERTION));
+        reg.put(IMAGE_FAILURE, getImageDescriptor(IMAGE_FAILURE));
+        reg.put(IMAGE_ERROR, getImageDescriptor(IMAGE_ERROR));
+
+        reg.put(IMAGE_SRVPGM, getImageDescriptor(IMAGE_SRVPGM));
+        reg.put(IMAGE_PROCEDURE, getImageDescriptor(IMAGE_PROCEDURE));
+        reg.put(IMAGE_TRANSFER_LIBRARY, getImageDescriptor(IMAGE_TRANSFER_LIBRARY));
 
         // additional icons used in 'plugin.xml':
         // --------------------------------------
