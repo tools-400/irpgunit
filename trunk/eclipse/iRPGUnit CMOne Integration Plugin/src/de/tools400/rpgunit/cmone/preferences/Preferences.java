@@ -1,6 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2013-2016 iRPGUnit Project Team
- * All rights reserved. This program and the accompanying materials
+ * Copyright (c) 2013-2018 iRPGUnit Project Team
+ * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
@@ -87,8 +87,8 @@ public final class Preferences {
     public void initializeDefaultPreferences() {
 
         preferenceStore.setDefault(CMONE_INTEGRATION_ENABLED, getDefaultCMOneIntegrationEnabledState());
-        preferenceStore.setDefault(PREFERENCES_VERSION_NUMBER,
-            de.tools400.rpgunit.core.preferences.Preferences.getInstance().getPreferencesVersionNumber());
+        preferenceStore.setDefault(PREFERENCES_VERSION_NUMBER, de.tools400.rpgunit.core.preferences.Preferences.getInstance()
+            .getPreferencesVersionNumber());
     }
 
     public boolean getDefaultCMOneIntegrationEnabledState() {
