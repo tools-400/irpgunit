@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2013-2018 iRPGUnit Project Team
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ *******************************************************************************/
+
 package de.tools400.rpgunit.cmone.action;
 
 import java.util.LinkedList;
@@ -18,8 +26,8 @@ import de.taskforce.cmoneng.connection.model.CMOneNGConnection;
 import de.taskforce.cmoneng.extensionpoints.AdditionalParameter;
 import de.taskforce.cmoneng.extensionpoints.ICMOneNGObjectAction;
 import de.taskforce.cmoneng.general.IValidityCheck;
-import de.tools400.rpgunit.cmone.RPGUnitCMOneIntegrationPlugin;
 import de.tools400.rpgunit.cmone.Messages;
+import de.tools400.rpgunit.cmone.RPGUnitCMOneIntegrationPlugin;
 import de.tools400.rpgunit.cmone.preferences.Preferences;
 import de.tools400.rpgunit.core.handler.ISelectionHandler;
 import de.tools400.rpgunit.core.handler.RunUnitTestHandler;
@@ -202,8 +210,8 @@ public class RunUnitTestAction implements ICMOneNGObjectAction, IValidityCheck {
 
     }
 
-    private IQSYSServiceProgram loadServiceProgram(IBMiConnection connection, ICMOneNGNFSObject cmoneNFSObject)
-        throws SystemMessageException, InterruptedException {
+    private IQSYSServiceProgram loadServiceProgram(IBMiConnection connection, ICMOneNGNFSObject cmoneNFSObject) throws SystemMessageException,
+        InterruptedException {
 
         String object = cmoneNFSObject.getObject();
         String library = cmoneNFSObject.getObjectLibrary();
