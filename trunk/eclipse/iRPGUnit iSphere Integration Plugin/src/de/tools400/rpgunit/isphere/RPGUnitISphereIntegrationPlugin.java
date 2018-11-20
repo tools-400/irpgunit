@@ -54,7 +54,7 @@ public class RPGUnitISphereIntegrationPlugin extends AbstractUIPlugin {
 
     /**
      * Returns the shared instance
-     *
+     * 
      * @return the shared instance
      */
     public static RPGUnitISphereIntegrationPlugin getDefault() {
