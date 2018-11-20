@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2017 iRPGUnit Project Team
+ * Copyright (c) 2013-2018 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,6 +57,8 @@ import de.tools400.rpgunit.core.model.local.UnitTestCase;
 import de.tools400.rpgunit.core.model.local.UnitTestExecutionTimeFormatter;
 import de.tools400.rpgunit.core.model.local.UnitTestSuite;
 import de.tools400.rpgunit.core.model.local.UnitTestViewerRoot;
+import de.tools400.rpgunit.core.preferences.Preferences;
+import de.tools400.rpgunit.core.ui.warning.WarningMessage;
 import de.tools400.rpgunit.core.utils.ExceptionHelper;
 import de.tools400.rpgunit.core.versioncheck.PluginCheck;
 
@@ -261,6 +263,11 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
         viewer.setSelection(null);
         if (selection != null) {
             viewer.setSelection(selection);
+        }
+
+        if (header.hasErrors() && !Preferences.getInstance().isShowResultView()) {
+            WarningMessage.openWarning(getSite().getShell(), Preferences.WARN_MESSAGE_UNIT_TEST_ENDED_WITH_ERRORS,
+                Messages.Unit_test_ended_with_errors);
         }
     }
 
@@ -760,6 +767,8 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
 
         private Label assertions;
 
+        private boolean hasErrors;
+
         public HeaderControl(Composite parent) {
             super(parent, SWT.NONE);
 
@@ -772,10 +781,14 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
             failures.setText("0"); //$NON-NLS-1$
             assertions.setText("0"); //$NON-NLS-1$
 
+            hasErrors = false;
+
             this.update();
         }
 
         private void init() {
+
+            hasErrors = false;
 
             red = getDisplay().getSystemColor(SWT.COLOR_DARK_RED);
             green = getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN);
@@ -869,6 +882,10 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
             aGridData.minimumWidth = 80;
         }
 
+        private boolean hasErrors() {
+            return hasErrors;
+        }
+
         private void update(UnitTestSuite[] results) {
             int numberRuns = 0;
             int numberErrors = 0;
@@ -891,12 +908,18 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
 
             if (numberErrors > 0 || numberFailures > 0) {
                 errorPanel.setBackground(red);
-                setTitleImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_RPGUNIT_ERROR));
+                hasErrors = true;
             } else if (numberRuns > 0) {
                 errorPanel.setBackground(green);
-                setTitleImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_RPGUNIT_OK));
+                hasErrors = false;
             } else {
                 errorPanel.setBackground(grey);
+                hasErrors = false;
+            }
+
+            if (hasErrors) {
+                setTitleImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_RPGUNIT_ERROR));
+            } else {
                 setTitleImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_RPGUNIT_OK));
             }
 

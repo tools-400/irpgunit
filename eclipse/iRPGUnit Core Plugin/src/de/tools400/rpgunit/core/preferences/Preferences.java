@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2016 iRPGUnit Project Team
+ * Copyright (c) 2013-2018 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -98,6 +98,8 @@ public final class Preferences {
     public static final String WARN_MESSAGE_USER_DEFINED_ATTRIBUTE = WARN_MESSAGE + ".serviceprogram.userdefinedattribute"; //$NON-NLS-1$
 
     public static final String WARN_MESSAGE_OBSOLETE_PLUGINS_V1 = WARN_MESSAGE + ".obsolete.plugins.v1"; //$NON-NLS-1$
+
+    public static final String WARN_MESSAGE_UNIT_TEST_ENDED_WITH_ERRORS = WARN_MESSAGE + ".unittest.with.errors"; //$NON-NLS-1$
 
     public static final boolean WARN_MESSAGE_DEFAULT = true;
 
@@ -281,7 +283,7 @@ public final class Preferences {
 
     public boolean isAnyWarningMessageDisabled() {
         if (preferenceStore.getBoolean(WARN_MESSAGE_SRC_OPTION) && preferenceStore.getBoolean(WARN_MESSAGE_USER_DEFINED_ATTRIBUTE)
-            && preferenceStore.getBoolean(WARN_MESSAGE_OBSOLETE_PLUGINS_V1)) {
+            && preferenceStore.getBoolean(WARN_MESSAGE_OBSOLETE_PLUGINS_V1) && preferenceStore.getBoolean(WARN_MESSAGE_UNIT_TEST_ENDED_WITH_ERRORS)) {
             return false;
         }
         return true;
@@ -401,6 +403,7 @@ public final class Preferences {
         saveShowWarningMessage(WARN_MESSAGE_SRC_OPTION, true);
         saveShowWarningMessage(WARN_MESSAGE_USER_DEFINED_ATTRIBUTE, true);
         saveShowWarningMessage(WARN_MESSAGE_OBSOLETE_PLUGINS_V1, true);
+        saveShowWarningMessage(WARN_MESSAGE_UNIT_TEST_ENDED_WITH_ERRORS, true);
     }
 
     public void setPreferencesVersionNumber(int versionNumber) {
@@ -444,6 +447,7 @@ public final class Preferences {
         preferenceStore.setDefault(WARN_MESSAGE_SRC_OPTION, getDefaultShowWarnMessages());
         preferenceStore.setDefault(WARN_MESSAGE_USER_DEFINED_ATTRIBUTE, getDefaultShowWarnMessages());
         preferenceStore.setDefault(WARN_MESSAGE_OBSOLETE_PLUGINS_V1, getDefaultShowWarnMessages());
+        preferenceStore.setDefault(WARN_MESSAGE_UNIT_TEST_ENDED_WITH_ERRORS, getDefaultShowWarnMessages());
 
         preferenceStore.setDefault(PREFERENCES_VERSION_NUMBER, getDefaultPreferencesVersionNumber());
 
