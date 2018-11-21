@@ -27,4 +27,11 @@
       <import plugin="de.taskforce.cmoneng"/>
    </requires>
 
+   <plugin
+         id="de.tools400.rpgunit.cmone"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
