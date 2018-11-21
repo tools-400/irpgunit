@@ -89,6 +89,8 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
     @Override
     public void createPartControl(Composite parent) {
 
+        setTitleImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_RPGUNIT));
+
         mainPanel = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(1, false);
         layout.marginWidth = 0;
@@ -917,14 +919,10 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
                 hasErrors = false;
             }
 
-            if (Preferences.getInstance().isShowResultView()) {
-                setTitleImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_RPGUNIT));
+            if (hasErrors) {
+                setTitleImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_RPGUNIT_ERROR));
             } else {
-                if (hasErrors) {
-                    setTitleImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_RPGUNIT_ERROR));
-                } else {
-                    setTitleImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_RPGUNIT_OK));
-                }
+                setTitleImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_RPGUNIT_OK));
             }
 
             this.update();
