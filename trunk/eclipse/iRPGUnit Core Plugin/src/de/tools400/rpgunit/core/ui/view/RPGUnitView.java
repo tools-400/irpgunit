@@ -917,10 +917,14 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
                 hasErrors = false;
             }
 
-            if (hasErrors) {
-                setTitleImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_RPGUNIT_ERROR));
+            if (Preferences.getInstance().isShowResultView()) {
+                setTitleImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_RPGUNIT));
             } else {
-                setTitleImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_RPGUNIT_OK));
+                if (hasErrors) {
+                    setTitleImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_RPGUNIT_ERROR));
+                } else {
+                    setTitleImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_RPGUNIT_OK));
+                }
             }
 
             this.update();

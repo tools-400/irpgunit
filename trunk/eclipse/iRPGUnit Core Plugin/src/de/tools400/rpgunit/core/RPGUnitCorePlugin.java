@@ -23,7 +23,8 @@ import org.osgi.framework.Constants;
  */
 public class RPGUnitCorePlugin extends AbstractUIPlugin {
 
-    public static final String IMAGE_RPGUNIT_OK = "rpgunit16.png"; //$NON-NLS-1$
+    public static final String IMAGE_RPGUNIT = "rpgunit16.png"; //$NON-NLS-1$
+    public static final String IMAGE_RPGUNIT_OK = "rpgunit16ok.png"; // $NON-NLS-1$
     public static final String IMAGE_RPGUNIT_ERROR = "rpgunit16error.png"; //$NON-NLS-1$
 
     public static final String IMAGE_ASSERTION = "assertions16.png"; //$NON-NLS-1$
@@ -172,6 +173,7 @@ public class RPGUnitCorePlugin extends AbstractUIPlugin {
         super.initializeImageRegistry(reg);
 
         // add images
+        reg.put(IMAGE_RPGUNIT, getImageDescriptor(IMAGE_RPGUNIT));
         reg.put(IMAGE_RPGUNIT_OK, getImageDescriptor(IMAGE_RPGUNIT_OK));
         reg.put(IMAGE_RPGUNIT_ERROR, getImageDescriptor(IMAGE_RPGUNIT_ERROR));
 
