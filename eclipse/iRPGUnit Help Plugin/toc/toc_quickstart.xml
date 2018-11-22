@@ -6,7 +6,9 @@
     <topic href="html/quickstart/preferences.html"   label="Preferences" >
     	<topic href="html/quickstart/preferences_cmone.html"   label="CMOne Integration" />
     </topic>
-    <topic href="html/quickstart/usage.html"         label="Usage" />
+    <topic href="html/quickstart/usage.html"         label="Usage" >
+    	<topic href="html/quickstart/usage_cmone.html"   label="With CMOne" />
+    </topic>
     <topic href="html/quickstart/debug.html"         label="Debugging Test Cases" />
     <topic href="html/quickstart/notices.html"       label="Notices" />
     <topic href="html/quickstart/contributors.html"  label="Contributors" />

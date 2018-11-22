@@ -20,6 +20,9 @@ public class Messages extends NLS {
     public static String CMOnePreferencesPage_chkEnableIntegration_toolTipText;
     public static String CMOnePreferencesPage_chkEnableIntegration_text;
 
+    public static String CMOnePreferencesPage_grpLibraryListInfo_text;
+    public static String CMOnePreferencesPage_lblLibraryListInfo;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

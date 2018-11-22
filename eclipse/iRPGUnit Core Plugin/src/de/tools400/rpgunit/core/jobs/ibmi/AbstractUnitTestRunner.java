@@ -344,7 +344,8 @@ public abstract class AbstractUnitTestRunner {
      *         </ul>
      * @throws Exception
      */
-    protected abstract int executeTest(QSYSObjectPathName aServiceProgram, ArrayList<String> aListOfProcedure) throws Exception;
+    protected abstract int executeTest(QSYSObjectPathName aServiceProgram, ArrayList<String> aListOfProcedure, String[] aLibraryList)
+        throws Exception;
 
     /**
      * Retrieves the result of the unit test case.
@@ -382,7 +383,7 @@ public abstract class AbstractUnitTestRunner {
         try {
             prepareTest(aServiceprogram.getPathName(), aListOfProcedures);
 
-            int rc = executeTest(aServiceprogram.getPathName(), aListOfProcedures);
+            int rc = executeTest(aServiceprogram.getPathName(), aListOfProcedures, aServiceprogram.getExecutionLibraryList().getLibraries());
             switch (rc) {
             case SUCCESS: // test ok, return result
             case FAILURE: // test failed, return result

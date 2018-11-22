@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Usage With CMOne</title>
+</head>
+
+<body>
+<h1>Usage With CMOne</h1>
+If you are a user of the CMOne, the Software Change Management System of Task Force IT-Consulting GmbH, you
+can integrate iRPGUnit into CMOne. Just install the <i>iRPGUnit CMOne Integration</i> feature to do so.
+<p class="indent">
+<img src="assets/InstallCMOneFeature.png" alt="iRPGUnit Preferences">
+</p>
+<p>
+Now you can launch a RPGUnit test suite directly from a CMOne worksheet:
+<p class="indent">
+<img src="assets/RPGUnitCMOneIntegration.png" alt="iRPGUnit Preferences">
+</p>
+<p>
+Example of a CMOne type code for RPGUnit test suites:
+<p>
+<table>
+<tr><td>Typecode:</td><td width="10">&nbsp;</td><td>RUNIT</td></tr>
+<tr><td>Description:</td><td width="10">&nbsp;</td><td>Unit Test</td></tr>
+<tr><td>Priority:</td><td width="10">&nbsp;</td><td>401</td></tr>
+<tr><td>Source typecode:</td><td width="10">&nbsp;</td><td>*YES</td></tr>
+<tr><td>Object typecode:</td><td width="10">&nbsp;</td><td>*YES</td></tr>
+<tr><td>Source file:</td><td width="10">&nbsp;</td><td>QRUNIT</td></tr>
+<tr><td>Source attribute:</td><td width="10">&nbsp;</td><td>RPGLE</td></tr>
+<tr><td>Object type:</td><td width="10">&nbsp;</td><td>*SRVPGM</td></tr>
+<tr><td>Object attribute:</td><td width="10">&nbsp;</td><td>*BLANK</td></tr>
+</table>
+<p>
+<table>
+<tr><td>Command:</td><td width="10">&nbsp;</td><td>RUCRTTST</td></tr>
+<tr><td>Parameter TSTPGM:</td><td width="10">&nbsp;</td><td>&OL/&EO</td></tr>
+<tr><td>Parameter SRCFILE:</td><td width="10">&nbsp;</td><td>&SL/&SF</td></tr>
+<tr><td>Parameter SRCMBR:</td><td width="10">&nbsp;</td><td>&ES</td></tr>
+<tr><td>Parameter COPTION:</td><td width="10">&nbsp;</td><td>*EVENTF</td></tr>
+</table>
+<p>
+The type code for test suites with embedded SQL looks the same, but should have a different <i>Description</i>
+and the <i>Source attribute</i> must be set to <i>SQLRPGLE</i>.
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

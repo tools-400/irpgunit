@@ -28,10 +28,13 @@ public class I5Object extends I5AbstractObject implements IActionFilter, Compara
 
     private String sourceMember = null;
 
+    private I5LibraryList libraryList = null;
+
     public I5Object(String name, String type, I5Library lib) {
         setName(name.toUpperCase());
         setLibrary(lib);
         setType(type.toUpperCase());
+        setExecutionLibraryList(I5LibraryList.getDefaultList());
     }
 
     public String getAttribute() {
@@ -82,6 +85,18 @@ public class I5Object extends I5AbstractObject implements IActionFilter, Compara
 
     public void setSourceMember(String sourceMember) {
         this.sourceMember = sourceMember;
+    }
+
+    public I5LibraryList getExecutionLibraryList() {
+        return libraryList;
+    }
+
+    private void setExecutionLibraryList(I5LibraryList libraryList) {
+        this.libraryList = libraryList;
+    }
+
+    public void setExecutionLibraryList(String[] libraryList) {
+        setExecutionLibraryList(new I5LibraryList(libraryList));
     }
 
     /**
