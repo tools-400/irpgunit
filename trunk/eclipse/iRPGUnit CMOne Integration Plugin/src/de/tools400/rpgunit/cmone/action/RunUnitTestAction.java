@@ -26,6 +26,7 @@ import de.taskforce.cmoneng.connection.model.CMOneNGConnection;
 import de.taskforce.cmoneng.extensionpoints.AdditionalParameter;
 import de.taskforce.cmoneng.extensionpoints.ICMOneNGObjectAction;
 import de.taskforce.cmoneng.general.IValidityCheck;
+import de.taskforce.cmoneng.librarylist.LibraryListHelper;
 import de.tools400.rpgunit.cmone.Messages;
 import de.tools400.rpgunit.cmone.RPGUnitCMOneIntegrationPlugin;
 import de.tools400.rpgunit.cmone.preferences.Preferences;
@@ -210,8 +211,8 @@ public class RunUnitTestAction implements ICMOneNGObjectAction, IValidityCheck {
 
     }
 
-    private IQSYSServiceProgram loadServiceProgram(IBMiConnection connection, ICMOneNGNFSObject cmoneNFSObject) throws SystemMessageException,
-        InterruptedException {
+    private IQSYSServiceProgram loadServiceProgram(IBMiConnection connection, ICMOneNGNFSObject cmoneNFSObject)
+        throws SystemMessageException, InterruptedException {
 
         String object = cmoneNFSObject.getObject();
         String library = cmoneNFSObject.getObjectLibrary();
@@ -226,7 +227,12 @@ public class RunUnitTestAction implements ICMOneNGObjectAction, IValidityCheck {
         String library = cmoneNFSObject.getObjectLibrary();
         I5Library i5Library = new I5Library(library, connection);
 
-        return new I5ServiceProgram(name, i5Library);
+        String[] libraryList = LibraryListHelper.getConfigurationLibraryList(cmoneNFSObject);
+
+        I5ServiceProgram serviceProgram = new I5ServiceProgram(name, i5Library);
+        serviceProgram.setExecutionLibraryList(libraryList);
+
+        return serviceProgram;
     }
 
     private IBMiConnection getConnection(ICMOneNGObject cmoneNGObject) {

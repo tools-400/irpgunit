@@ -458,7 +458,8 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
      * @return Parameter list of the remote test suite driver program.
      * @throws Exception
      */
-    private ProgramParameter[] getParameterList(QSYSObjectPathName aServiceProgram, ArrayList<String> aListOfProcedure) throws Exception {
+    private ProgramParameter[] getParameterList(QSYSObjectPathName aServiceProgram, ArrayList<String> aListOfProcedure, String[] aLibraryList)
+        throws Exception {
 
         QSYSObjectPathName usPath = new QSYSObjectPathName(userSpace.getPath());
 
@@ -497,7 +498,10 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
         }
 
         // Parameter 8: Library list
-        parameter[PARM_LIBRARY_LIST] = produceStringArrayParameter(Preferences.getInstance().getLibraryList(), 10);
+        parameter[PARM_LIBRARY_LIST] = produceStringArrayParameter(aLibraryList, 10);
+        // TODO: remove debug code
+        // System.out.println("Using library list: " + new
+        // I5LibraryList(aLibraryList).toString());
 
         // Parameter 9: Qualified job description name
         parameter[PARM_JOB_DESCRIPTION] = producesQualifiedObjectName(Preferences.getInstance().getJobDescription());
@@ -800,8 +804,8 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
         if (Preferences.getInstance().useJobDescriptionForLibraryList()) {
             I5ObjectName tJobDescription = getJobDescription(aUnitTestServiceprogram);
             if (!isJobDescriptionAvailable(tJobDescription)) {
-                throw new UnitTestException(Messages.bind(Messages.Can_not_execute_unit_test_A_B_due_to_missing_job_description_C, new Object[] {
-                    aUnitTestServiceprogram.getLibraryName(), aUnitTestServiceprogram.getObjectName(), tJobDescription.toString() }),
+                throw new UnitTestException(Messages.bind(Messages.Can_not_execute_unit_test_A_B_due_to_missing_job_description_C,
+                    new Object[] { aUnitTestServiceprogram.getLibraryName(), aUnitTestServiceprogram.getObjectName(), tJobDescription.toString() }),
                     UnitTestException.Type.unexpectedError);
             }
         }
@@ -849,13 +853,13 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
     }
 
     @Override
-    protected int executeTest(QSYSObjectPathName aServiceProgram, ArrayList<String> aListOfProcedure) throws Exception {
+    protected int executeTest(QSYSObjectPathName aServiceProgram, ArrayList<String> aListOfProcedure, String[] aLibraryList) throws Exception {
 
         int returnCode = 0;
 
         ProgramCall program = new ProgramCall(getSystem());
         program.setProgram(getPath());
-        program.setParameterList(getParameterList(aServiceProgram, aListOfProcedure));
+        program.setParameterList(getParameterList(aServiceProgram, aListOfProcedure, aLibraryList));
 
         if (program.run()) {
             returnCode = getReturnCode(program);
@@ -866,9 +870,10 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
                 as400ErrorMsg.append(msgList[j].getID() + " - " + msgList[j].getText() + " "); //$NON-NLS-1$ //$NON-NLS-2$
             }
             RPGUnitCorePlugin.logError(as400ErrorMsg.toString());
-            throw new UnitTestException(Messages.bind(Messages.Unit_test_A_B_ended_unexpected_with_error_message,
-                new Object[] { aServiceProgram.getLibraryName(), aServiceProgram.getObjectName(), as400ErrorMsg.toString(),
-                    program.getServerJob().toString() }), UnitTestException.Type.unexpectedError);
+            throw new UnitTestException(
+                Messages.bind(Messages.Unit_test_A_B_ended_unexpected_with_error_message, new Object[] { aServiceProgram.getLibraryName(),
+                    aServiceProgram.getObjectName(), as400ErrorMsg.toString(), program.getServerJob().toString() }),
+                UnitTestException.Type.unexpectedError);
         }
 
         return returnCode;
