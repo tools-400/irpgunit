@@ -131,7 +131,7 @@ public class RunUnitTestAction implements ICMOneNGObjectAction, IValidityCheck {
             IQSYSServiceProgram qsysServiceProgram = loadServiceProgram(connection, cmoneNFSObject);
 
             if (de.tools400.rpgunit.core.preferences.Preferences.CHECK_TEST_SUITE_NONE.equals(corePreferences.getCheckTestSuite())) {
-                return null;
+                return cmoneNFSObject;
             } else if (de.tools400.rpgunit.core.preferences.Preferences.CHECK_TEST_SUITE_TEXT.equals(corePreferences.getCheckTestSuite())) {
                 if (checkTextDescription(qsysServiceProgram)) {
                     return cmoneNFSObject;
