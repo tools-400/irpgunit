@@ -1,0 +1,96 @@
+STRPGMEXP  PGMLVL(*CURRENT) SIGNATURE('RPGUNIT V0.3')
+
+  /* CALLPROC */
+
+  EXPORT SYMBOL("activateSrvPgm")
+  EXPORT SYMBOL("callProcByPtr")
+  EXPORT SYMBOL("rslvProc")
+
+  /* EXTPRC */
+
+  EXPORT SYMBOL("cntProc")
+  EXPORT SYMBOL("getProcNmList")
+  EXPORT SYMBOL("getProcNm")
+  EXPORT SYMBOL("goToNextProc")
+  EXPORT SYMBOL("loadProcList")
+
+  /* EXTTST */
+
+  EXPORT SYMBOL("activateTestSuite")
+  EXPORT SYMBOL("getTestNm")
+  EXPORT SYMBOL("getTestProc")
+  EXPORT SYMBOL("getTestSuite")
+
+  /* PGMMSG */
+
+  EXPORT SYMBOL("rcvExcpMsgInfo")
+  EXPORT SYMBOL("rcvPgmMsg")
+  EXPORT SYMBOL("sndCompMsg")
+  EXPORT SYMBOL("sndEscapeMsgToCaller")
+  EXPORT SYMBOL("sndEscapeMsgAboveCtlBdy")
+  EXPORT SYMBOL("sndInfoMsg")
+  EXPORT SYMBOL("sndStsMsg")
+
+  /* RUN */
+
+  EXPORT SYMBOL("loadTestSuite")
+  EXPORT SYMBOL("raiseRUError")
+  EXPORT SYMBOL("rclTestSuite")
+  EXPORT SYMBOL("runTest")
+  EXPORT SYMBOL("runTestProc")
+
+  /* USRSPC */
+
+  EXPORT SYMBOL("crtUsrSpc")
+
+  /* RUN */
+
+  EXPORT SYMBOL("runProc")
+  EXPORT SYMBOL("initTestResult")
+
+ENDPGMEXP
+
+STRPGMEXP  PGMLVL(*PRV) SIGNATURE('RPGUNIT V0.2')
+
+  /* CALLPROC */
+
+  EXPORT SYMBOL("activateSrvPgm")
+  EXPORT SYMBOL("callProcByPtr")
+  EXPORT SYMBOL("rslvProc")
+
+  /* EXTPRC */
+
+  EXPORT SYMBOL("cntProc")
+  EXPORT SYMBOL("getProcNmList")
+  EXPORT SYMBOL("getProcNm")
+  EXPORT SYMBOL("goToNextProc")
+  EXPORT SYMBOL("loadProcList")
+
+  /* EXTTST */
+
+  EXPORT SYMBOL("activateTestSuite")
+  EXPORT SYMBOL("getTestNm")
+  EXPORT SYMBOL("getTestProc")
+  EXPORT SYMBOL("getTestSuite")
+
+  /* PGMMSG */
+
+  EXPORT SYMBOL("rcvExcpMsgInfo")
+  EXPORT SYMBOL("sndCompMsg")
+  EXPORT SYMBOL("sndEscapeMsgToCaller")
+  EXPORT SYMBOL("sndEscapeMsgAboveCtlBdy")
+  EXPORT SYMBOL("sndInfoMsg")
+
+  /* RUN */
+
+  EXPORT SYMBOL("loadTestSuite")
+  EXPORT SYMBOL("raiseRUError")
+  EXPORT SYMBOL("rclTestSuite")
+  EXPORT SYMBOL("runTest")
+  EXPORT SYMBOL("runTestProc")
+
+  /* USRSPC */
+
+  EXPORT SYMBOL("crtUsrSpc")
+
+ENDPGMEXP

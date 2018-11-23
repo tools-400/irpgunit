@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>clearAssertCounter (clear assertions counter)</title>
+</head>
+
+<body>
+<h1>clearAssertCounter (clear assertions counter)</h1>
+<b>Syntax:</b>
+<p class="indent">
+<code>clearAssertCounter();</code>
+</p>
+<b>Beschreibung:</b>
+<p class="indent">
+Setzt die Anzahl der bisher durchgeführten Zusicherungen der aktuell laufenden 
+Testprozedur zurück auf 0.
+</p>
+<b>Beispiel:</b>
+<p>
+<code><pre class="indent">
+<span class="r-cmt">// Setup.</span>
+
+assertCallCnt = getAssertCalled();
+
+<span class="r-cmt">// Execution.</span>
+
+assert( *on: *blank );
+iEqual( 4: 2+2 );
+aEqual( 'Hello': 'Hello' );
+
+<span class="r-cmt">// Controls.</span>
+
+iEqual( assertCallCnt + 3 : getAssertCalled() );
+clearAssertCounter();
+iEqual( 0 : getAssertCalled() );
+</pre></code>
+</p>
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/de.tools400.rpgunit.core_2.4.0.r.jar" id="de.tools400.rpgunit.core" version="2.4.0.r">
+      <category name="de.tools400.rpgunit"/>
+   </feature>
+   <feature url="features/de.tools400.rpgunit.core.help_2.4.0.r.jar" id="de.tools400.rpgunit.core.help" version="2.4.0.r">
+      <category name="de.tools400.rpgunit"/>
+   </feature>
+   <feature url="features/de.tools400.rpgunit.isphere_2.4.0.r.jar" id="de.tools400.rpgunit.isphere" version="2.4.0.r">
+      <category name="de.tools400.rpgunit.integration"/>
+   </feature>
+   <feature url="features/de.tools400.rpgunit.spooledfileviewer_2.4.0.r.jar" id="de.tools400.rpgunit.spooledfileviewer" version="2.4.0.r">
+      <category name="de.tools400.rpgunit.additions"/>
+   </feature>
+   <feature url="features/de.tools400.rpgunit.cmone_2.4.0.r.jar" id="de.tools400.rpgunit.cmone" version="2.4.0.r">
+      <category name="de.tools400.rpgunit.integration"/>
+   </feature>
+   <category-def name="de.tools400.rpgunit" label="iRPGUnit for IBM i">
+      <description>
+         iRPGUnit for RDi 8.0 / 9.0+. This is the base component of iRPGUnit.
+      </description>
+   </category-def>
+   <category-def name="de.tools400.rpgunit.additions" label="iRPGUnit for IBM i (optional features)">
+      <description>
+         Optional features of iRPGUnit for RDi 8.0 / 9.0+. The features listed here are optional. It is recommended to install the spooled file viewer, if you do not have installed the iSphere plug-in.
+      </description>
+   </category-def>
+   <category-def name="de.tools400.rpgunit.integration" label="iRPGUnit for IBM i (optional integration features)">
+      <description>
+         Optional integration features of iRPGUnit for RDi 8.0 / 9.0+. The features listed here are interesting for iSphere and CMOne users. You should install these features, when you want to connect iSphere or CMOne and iRPGUnit.
+      </description>
+   </category-def>
+</site>
