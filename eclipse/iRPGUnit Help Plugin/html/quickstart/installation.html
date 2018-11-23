@@ -9,7 +9,7 @@
 <body>
 <h1>Installation</h1>
 <p>
-Installing and using the iRPGUnit plug-in requires three steps:
+Installing the iRPGUnit plug-in requires three steps:
 <p>
 <ul>
 <li><a href="#installing_the_plugin">Installing the iRPGUnit Plug-in</a></li>
@@ -20,10 +20,35 @@ Installing and using the iRPGUnit plug-in requires three steps:
 <a id="#installing_the_plugin" />
 <h2>Installing the iRPGUnit Plug-in</h2>
 <p>
+<h3>What Should I Install?</h3>
+<p>
+Everything of category <i>iRPGUnit for IBM i</i> belongs to the base components of
+iRPGUnit and must or at least should be installed:
+<p>
+<ul>
+<li>iRPGUnit Core (required)</li>
+<li>iRPGUnit Help (recommended)</li>
+</ul>
+<p>
+Features of category <i>iRPGUnit for IBM i (optional features)</i> are optional and 
+can be installed depending on your needs:
+<p>
+<ul>
+<li>iRPGUnit Spooled File Viewer Feature (recommended, if iSphere is missing)</li>
+</ul>
+<p>
+Features of category <i>iRPGUnit for IBM i (optional integration features)</i> are optional
+and can be installed depending on your needs:
+<p>
+<ul>
+<li>iRPGUnit iSphere Integration (optional)</li>
+<li>iRPGUnit CMOne Integration (optional)</li>
+</ul>
+<p>
 <h3>Using Eclipse Marketplace</h3>
 <p>
 From the main menu, select "Help > Eclipse Marketplace..." to enter the marketplace.
-Search for iRPGUnit and click the Install button:
+Search for 'iRPGUnit' and click the [Install] button:
 <p class="indent">
 <img class="noborder" src="./assets/eclipseMarketplace.png">
 <p>
@@ -46,20 +71,23 @@ http://www.tools400.de/rpgunit/update/rdp8.0/</a>
 <p>
 <h3>Using a Local Update Directory</h3>
 <p>
-Go to the iRPGUnit <a href="@PROJECT_HOME@" target="_blank">download page</a> at SourceForge and download the zip file for your environment.
+Go to the iRPGUnit <a href="@PROJECT_HOME@" target="_blank">download page</a> at SourceForge.
 <p>
 Then follow these steps to create your local update site:
 <p>
 <ul>
+<li>Download the zip file to a directory of your choice.</li>
 <li>Unpack the zip file to a directory of your choice. This directory will be your local update site.</li>
 <li>From the main menu, select "Help > Install New Software..." to enter the "Install" dialog.</li>
 <li>Press the [Add] button to add your directory to the list of available update sites.</li>
 <li>Use the [Local...] button to select your directory.</li>
 </ul>
 <p>
+Select the options you want to install, press the [Next] button and follow the instructions given on the following pages.
+<p>
 <h3>Using a Local Update Archive</h3>
 <p>
-Go to the iRPGUnit <a href="@PROJECT_HOME@" target="_blank">download page</a> at SourceForge and download the zip file for your environment.
+Go to the iRPGUnit <a href="@PROJECT_HOME@" target="_blank">download page</a> at SourceForge.
 <p>
 Then follow these steps to create your local update site:
 <p>
@@ -71,17 +99,17 @@ Then follow these steps to create your local update site:
 <li>Use the [Archive...] button to select the zip file.</li>
 </ul>
 <p>
-Finished. Please restart RPD to use the plug-in.
+Select the options you want to install, press the [Next] button and follow the instructions given on the following pages.
 <p>
 <a id="#installing_the_library" />
 <h2>Installing the RPGUnit Library</h2>
 <p>
-First you need to transfer save file RPGUNIT.SAVF to your server and restore library 
+First you need to transfer save file <i>RPGUNIT.SAVF</i> to your server and restore library 
 <code>RPGUNIT</code>. Then compile and execute program <code>A_INSTALL</code> 
-to create the required objects. The save file is part of the update site zip file
-and the iRPGUnit Core Plug-in jar file.
+to create the required objects. The save file is part of the update site zip file. You find it 
+in folder <i>/Server</i> of the zip file.
 <p>
-<h3>Using the Embedded Installer</h3>
+<h3>Using the Embedded Install Dialog</h3>
 <p>
 The most easiest way to install the library is to upload it from the preference page of the iRPGUnit 
 plug-in. However that requires that you are allowed to start a FTP connection to your host.
@@ -92,17 +120,17 @@ Take these steps to use the embedded installer:
 <li>Filter for 'iRPGUnit'.</li>
 <li>Click the upload button next to option 'Runtime: Product library'.</li>
 <li>Select a connection.</li>
-<li>Check the FTP port. The default is 21.</li>
-<li>Check the library. The default is 'RPGUNIT'.</li>
+<li>Check the FTP port number. The default is 21.</li>
+<li>Check the library name. The default is 'RPGUNIT'.</li>
 <li>Click the [Install] button.</li>
 </ul>
 <p>
 <table class="info">
 <tr><td>You do not necessarily need to compile the library unless you want to run
-        the self-test unit tests.</td></tr>
+        the RPGUnit self-test.</td></tr>
 </table>
 <p>
-<h3>Transfer Save File With upload_savf.bat</h3>
+<h3>Transfer Save File With 'upload_savf.bat'</h3>
 <p>
 Download the zipped update site from the iRPGUnit '<a href="https://sourceforge.net/projects/irpgunit/files/?source=navbar">Files</a>' section
 at SourceForge, e.g. <i>iRPGUnit for RDi 8.0+ (v2.2.2.r Update Site).zip</i>.
@@ -118,7 +146,7 @@ Run <i>upload_savf.bat</i> with the following parameters:
 </pre>
 Calling <i>upload_savf.bat</i> without parameters displays usage instructions.
 <p>
-Go ahead with <a href="#compiling_the_library">compiling</a>a> the library.
+Go ahead with <a href="#compiling_the_library">Compiling the RPGUnit Library</a> the library.
 <p>
 <h3>Transfer Save File by Hand</h3>
 <p>
@@ -140,15 +168,15 @@ Transfer save file:
   put RPGUnit_v* QGPL/RPGUNIT
   
 Terminate FTP session:
-  quite
+  quit
 </pre> 
 <p>
-Go ahead with <a href="#compiling_the_library">compiling</a>a> the library.
+Go ahead with <a href="#compiling_the_library">Compiling the RPGUnit Library</a> the library.
 <p>
 <a id="#compiling_the_library" />
 <h3>Compiling the RPGUnit Library</h3>
 <p>
-Logon to your server and restore library <code>RPGUNIT</code> from the save  
+Logon to your server, restore library <code>RPGUNIT</code> from the save  
 file and add the library to your library list:
 <pre class="indent">
   RSTLIB SAVLIB(RPGUNIT) DEV(*SAVF) SAVF(QGPL/RPGUNIT)
@@ -162,7 +190,7 @@ RPGUnit objects:
 </pre>
 Finished.
 <p>
-<table class="important">
+<table class="notice">
 <tr><td>Do not forget to add library <b>RPGUNIT</b> to the library list of your Remote Connection or 
         change the product library from *LIBL to the actual library on the iRPGUnit preference page.</td></tr>
 </table>
