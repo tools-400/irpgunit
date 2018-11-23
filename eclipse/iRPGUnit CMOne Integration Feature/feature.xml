@@ -2,7 +2,7 @@
 <feature
       id="de.tools400.rpgunit.cmone"
       label="iRPGUnit CMOne Integration (optional)"
-      version="2.3.0.r"
+      version="2.4.0.r"
       provider-name="iRPGUnit Project Team"
       plugin="de.tools400.rpgunit.core">
 
