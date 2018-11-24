@@ -16,6 +16,10 @@ public class I5LibraryList {
 
     private String[] libraryList;
 
+    public static final String TYPE_CURRENT = Preferences.LIBRARY_LIST_CURRENT;
+    public static final String TYPE_JOBD = Preferences.LIBRARY_LIST_JOBD;
+    public static final String TYPE_SPECIFIED = "*SPECIFIED"; //$NON-NLS-1$
+
     public static I5LibraryList getDefaultList() {
         String[] libraries = Preferences.getInstance().getLibraryList();
         return new I5LibraryList(libraries);
@@ -23,6 +27,42 @@ public class I5LibraryList {
 
     public I5LibraryList(String[] libraries) {
         this.libraryList = libraries;
+    }
+
+    /**
+     * Checks, whether the library list is one of the following types:
+     * 
+     * @param types
+     * @return
+     */
+    public boolean isTypeOf(String type) {
+
+        if (libraryList == null || libraryList.length == 0) {
+            return false;
+        }
+
+        String firstLibrary = libraryList[0];
+        if (firstLibrary == null) {
+            return false;
+        }
+
+        if (TYPE_CURRENT.equals(type)) {
+            if (TYPE_CURRENT.equals(firstLibrary)) {
+                return true;
+            }
+        } else if (TYPE_JOBD.equals(type)) {
+            if (TYPE_JOBD.equals(firstLibrary)) {
+                return true;
+            }
+        } else if (TYPE_SPECIFIED.equals(type)) {
+            if (firstLibrary.startsWith("*")) { //$NON-NLS-1$
+                return true;
+            }
+        } else {
+            throw new IllegalArgumentException("Illegal value of parameter 'type': " + type); // $NON-NLS-N$
+        }
+
+        return false;
     }
 
     public String[] getLibraries() {

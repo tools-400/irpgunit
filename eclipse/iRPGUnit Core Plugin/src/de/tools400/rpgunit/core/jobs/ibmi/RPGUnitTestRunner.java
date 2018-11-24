@@ -25,6 +25,7 @@ import de.tools400.rpgunit.core.RPGUnitCorePlugin;
 import de.tools400.rpgunit.core.exceptions.InvalidVersionException;
 import de.tools400.rpgunit.core.handler.UnitTestException;
 import de.tools400.rpgunit.core.model.ibmi.I5Library;
+import de.tools400.rpgunit.core.model.ibmi.I5LibraryList;
 import de.tools400.rpgunit.core.model.ibmi.I5Object;
 import de.tools400.rpgunit.core.model.ibmi.I5ObjectName;
 import de.tools400.rpgunit.core.model.ibmi.I5ServiceProgram;
@@ -458,7 +459,7 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
      * @return Parameter list of the remote test suite driver program.
      * @throws Exception
      */
-    private ProgramParameter[] getParameterList(QSYSObjectPathName aServiceProgram, ArrayList<String> aListOfProcedure, String[] aLibraryList)
+    private ProgramParameter[] getParameterList(I5ServiceProgram aServiceProgram, ArrayList<String> aListOfProcedure, String[] aLibraryList)
         throws Exception {
 
         QSYSObjectPathName usPath = new QSYSObjectPathName(userSpace.getPath());
@@ -472,7 +473,7 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
         parameter[PARM_USER_SPACE] = produceStringParameter(usPath.toQualifiedObjectName(), 20);
 
         // Parameter 3: Service program name
-        parameter[PARM_SERVICE_PROGRAM] = produceStringParameter(aServiceProgram.toQualifiedObjectName(), 20);
+        parameter[PARM_SERVICE_PROGRAM] = produceStringParameter(aServiceProgram.getPathName().toQualifiedObjectName(), 20);
 
         // Parameter 4: Optional. Procedure name
         if (aListOfProcedure != null && aListOfProcedure.size() > 0) {
@@ -800,12 +801,15 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
     }
 
     @Override
-    protected void prepareTest(QSYSObjectPathName aUnitTestServiceprogram, ArrayList<String> aListOfProcedure) throws UnitTestException {
-        if (Preferences.getInstance().useJobDescriptionForLibraryList()) {
+    protected void prepareTest(I5ServiceProgram aUnitTestServiceprogram, ArrayList<String> aListOfProcedure) throws UnitTestException {
+
+        if (aUnitTestServiceprogram.getExecutionLibraryList().isTypeOf(I5LibraryList.TYPE_JOBD)) {
+
             I5ObjectName tJobDescription = getJobDescription(aUnitTestServiceprogram);
             if (!isJobDescriptionAvailable(tJobDescription)) {
-                throw new UnitTestException(Messages.bind(Messages.Can_not_execute_unit_test_A_B_due_to_missing_job_description_C,
-                    new Object[] { aUnitTestServiceprogram.getLibraryName(), aUnitTestServiceprogram.getObjectName(), tJobDescription.toString() }),
+                throw new UnitTestException(
+                    Messages.bind(Messages.Can_not_execute_unit_test_A_B_due_to_missing_job_description_C,
+                        new Object[] { aUnitTestServiceprogram.getLibrary(), aUnitTestServiceprogram.getName(), tJobDescription.toString() }),
                     UnitTestException.Type.unexpectedError);
             }
         }
@@ -840,7 +844,7 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
         return tAvailable;
     }
 
-    private I5ObjectName getJobDescription(QSYSObjectPathName aUnitTestServiceprogram) {
+    private I5ObjectName getJobDescription(I5ServiceProgram aUnitTestServiceprogram) {
         I5ObjectName tJobDescription = Preferences.getInstance().getJobDescription();
         if (Preferences.getInstance().useDefaultJobDescriptionForLibraryList()) {
             tJobDescription = getDefaultJobDescription(aUnitTestServiceprogram);
@@ -848,12 +852,12 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
         return tJobDescription;
     }
 
-    private I5ObjectName getDefaultJobDescription(QSYSObjectPathName aUnitTestServiceprogram) {
-        return new I5ObjectName("RPGUNIT", aUnitTestServiceprogram.getLibraryName()); //$NON-NLS-1$
+    private I5ObjectName getDefaultJobDescription(I5ServiceProgram aUnitTestServiceprogram) {
+        return new I5ObjectName("RPGUNIT", aUnitTestServiceprogram.getLibrary().getName()); //$NON-NLS-1$
     }
 
     @Override
-    protected int executeTest(QSYSObjectPathName aServiceProgram, ArrayList<String> aListOfProcedure, String[] aLibraryList) throws Exception {
+    protected int executeTest(I5ServiceProgram aServiceProgram, ArrayList<String> aListOfProcedure, String[] aLibraryList) throws Exception {
 
         int returnCode = 0;
 
@@ -871,8 +875,8 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             }
             RPGUnitCorePlugin.logError(as400ErrorMsg.toString());
             throw new UnitTestException(
-                Messages.bind(Messages.Unit_test_A_B_ended_unexpected_with_error_message, new Object[] { aServiceProgram.getLibraryName(),
-                    aServiceProgram.getObjectName(), as400ErrorMsg.toString(), program.getServerJob().toString() }),
+                Messages.bind(Messages.Unit_test_A_B_ended_unexpected_with_error_message, new Object[] { aServiceProgram.getLibrary(),
+                    aServiceProgram.getName(), as400ErrorMsg.toString(), program.getServerJob().toString() }),
                 UnitTestException.Type.unexpectedError);
         }
 
@@ -880,7 +884,7 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
     }
 
     @Override
-    protected void cleanUpTest(QSYSObjectPathName tServiceProgramName, ArrayList<String> aProcedure) {
+    protected void cleanUpTest(I5ServiceProgram tServiceProgramName, ArrayList<String> aProcedure) {
         try {
             if (userSpace != null) {
                 userSpace.delete();

@@ -21,7 +21,6 @@ import com.ibm.as400.access.AS400Bin8;
 import com.ibm.as400.access.CharConverter;
 import com.ibm.as400.access.ObjectList;
 import com.ibm.as400.access.ProgramParameter;
-import com.ibm.as400.access.QSYSObjectPathName;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 import de.tools400.rpgunit.core.Messages;
@@ -324,7 +323,7 @@ public abstract class AbstractUnitTestRunner {
      *        for all test cases.
      * @throws Exception
      */
-    protected abstract void prepareTest(QSYSObjectPathName aServiceProgram, ArrayList<String> aListOfProcedure) throws Exception;
+    protected abstract void prepareTest(I5ServiceProgram aServiceProgram, ArrayList<String> aListOfProcedure) throws Exception;
 
     /**
      * Executes a prepared unit test suite or unit test case case.
@@ -344,8 +343,7 @@ public abstract class AbstractUnitTestRunner {
      *         </ul>
      * @throws Exception
      */
-    protected abstract int executeTest(QSYSObjectPathName aServiceProgram, ArrayList<String> aListOfProcedure, String[] aLibraryList)
-        throws Exception;
+    protected abstract int executeTest(I5ServiceProgram aServiceProgram, ArrayList<String> aListOfProcedure, String[] aLibraryList) throws Exception;
 
     /**
      * Retrieves the result of the unit test case.
@@ -367,7 +365,7 @@ public abstract class AbstractUnitTestRunner {
      * @param aProcedure Unit test case that is executed or <code>null</code>
      *        for all test cases.
      */
-    protected abstract void cleanUpTest(QSYSObjectPathName aServiceProgram, ArrayList<String> aListOfProcedure);
+    protected abstract void cleanUpTest(I5ServiceProgram aServiceProgram, ArrayList<String> aListOfProcedure);
 
     private UnitTestSuite runRemoteUnitTests(I5ServiceProgram aServiceprogram, ArrayList<String> aListOfProcedures) throws Exception {
 
@@ -381,9 +379,9 @@ public abstract class AbstractUnitTestRunner {
         initializeSystem(true);
 
         try {
-            prepareTest(aServiceprogram.getPathName(), aListOfProcedures);
+            prepareTest(aServiceprogram, aListOfProcedures);
 
-            int rc = executeTest(aServiceprogram.getPathName(), aListOfProcedures, aServiceprogram.getExecutionLibraryList().getLibraries());
+            int rc = executeTest(aServiceprogram, aListOfProcedures, aServiceprogram.getExecutionLibraryList().getLibraries());
             switch (rc) {
             case SUCCESS: // test ok, return result
             case FAILURE: // test failed, return result
@@ -396,13 +394,13 @@ public abstract class AbstractUnitTestRunner {
             }
 
         } finally {
-            cleanUp(aServiceprogram.getPathName(), aListOfProcedures);
+            cleanUp(aServiceprogram, aListOfProcedures);
         }
 
         return testResult;
     }
 
-    private void cleanUp(QSYSObjectPathName aServiceProgram, ArrayList<String> aListOfProcedures) throws SystemMessageException {
+    private void cleanUp(I5ServiceProgram aServiceProgram, ArrayList<String> aListOfProcedures) throws SystemMessageException {
         cleanUpTest(aServiceProgram, aListOfProcedures);
         disconnectSystem();
     }
