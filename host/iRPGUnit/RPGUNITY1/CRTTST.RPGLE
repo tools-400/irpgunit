@@ -25,6 +25,7 @@
      D  module                             const likeds(ObjectArray_t)
      D  options                            const likeds(Options_t)
      D  export                       10a   const
+     D  actGrp                             const like(ActivationGroup_t)
      D  text                               const like(Text_t )
 
      D serializeObjectArray...
@@ -74,6 +75,8 @@
      D HeadToken_t     s             10a   based(template)
      D DbgView_t       s             10a   based(template)
      D Export_t        s             10a   based(template)
+     D ActivationGroup_t...
+     D                 s             10a   based(template)
 
      D Cmd_t           s           8192a   based(template) varying
      D SerializedArray_t...
