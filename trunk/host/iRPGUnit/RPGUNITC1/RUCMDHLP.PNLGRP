@@ -112,6 +112,13 @@ Module (MODULE) - Help
 Refer to the MODULE parameter in CRTSRVPGM command help.
 :ehelp.
 .*
+:help name='RUCRTTST/ACTGRP' WIDTH=64.
+Activation group (ACTGRP) - Help
+:xh3.Activation group (ACTGRP)
+:p.
+Refer to the ACTGRP parameter in CRTSRVPGM command help.
+:ehelp.
+.*
 :help name='RUCRTTST/POPTION' WIDTH=64.
 Pre-compiler OPTIONS (POPTION) - Help
 :xh3.Pre-compiler OPTIONS (POPTION)

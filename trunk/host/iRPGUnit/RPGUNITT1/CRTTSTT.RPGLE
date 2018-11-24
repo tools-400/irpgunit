@@ -38,6 +38,10 @@
      D                 pr                  extproc('testOneBindingOption')
      D testExport...
      D                 pr                  extproc('testExport')
+     D testActGrp...
+     D                 pr                  extproc('testActGrp')
+     D testText...
+     D                 pr                  extproc('testText')
      D testBndDirWithoutLibrary...
      D                 pr                  extproc('testBndDirWithoutLibrary')
      D testSerializeObjectNameWithLibrary...
@@ -88,6 +92,8 @@
      D noModule        ds                  likeds(ObjectArray_t)
        // No SQL pre-compiler compile option.
      D noCompileOpt    s              1a   varying
+       // No activation group.
+     D noActGrp        s             10a   varying
 
        // Command to create an RPG module.
      D crtRpgModCmd    s            256a
@@ -118,7 +124,7 @@
       //----------------------------------------------------------------------
 
      Psetup            b                   export
-     Dsetup            pi
+     D                 pi
       /free
 
         clear crtRpgModCmd;
@@ -144,7 +150,7 @@
         restoreLibl(newLiblList);
 
       /end-free
-     Psetup            e
+     P                 e
 
      PtearDown         b                   export
      D                 pi
@@ -157,7 +163,7 @@
 
 
      PtestSrcFile      b                   export
-     DtestSrcFile      pi
+     D                 pi
       /free
 
         crtRpgModCmd = getCrtRpgModCmd( 'ASSERTT   *CURLIB   ' :
@@ -171,12 +177,11 @@
               + 'SRCFILE(*LIBL/RPGUNITT1) SRCMBR(ASSERTT)' : crtRpgModCmd );
 
       /end-free
-     PtestSrcFile      e
+     P                 e
 
 
      PtestOneCompileOption...
      P                 b                   export
-     DtestOneCompileOption...
      D                 pi
 
      DoneCOption       ds                  likeds(Options_t)
@@ -198,13 +203,11 @@
               + 'OPTION(*SRCSTMT )' : crtRpgModCmd );
 
       /end-free
-     PtestOneCompileOption...
      P                 e
 
 
      PtestTwoCompileOptions...
      P                 b                   export
-     DtestTwoCompileOptions...
      D                 pi
 
      DtwoCOptions      ds                  likeds(Options_t)
@@ -227,12 +230,11 @@
               + 'OPTION(*SRCSTMT *NODEBUGIO )' : crtRpgModCmd );
 
       /end-free
-     PtestTwoCompileOptions...
      P                 e
 
 
      PtestDbgView      b                   export
-     DtestDbgView      pi
+     D                 pi
       /free
 
         crtRpgModCmd = getCrtRpgModCmd( 'ASSERTT   *CURLIB   ' :
@@ -247,12 +249,11 @@
               + 'DBGVIEW(*LIST)' : crtRpgModCmd );
 
       /end-free
-     PtestDbgView      e
+     P                 e
 
 
      PtestOneBndSrvPgm...
      P                 b                   export
-     DtestOneBndSrvPgm...
      D                 pi
 
       // Binding one Service Program.
@@ -274,22 +275,21 @@
                                         noModule :
                                         noBOption :
                                         noExport :
+                                        noActGrp :
                                         noText );
 
         // Control.
 
         aEqual( 'CRTSRVPGM SRVPGM(*CURLIB/PGM_NAME) MODULE(*CURLIB/PGM_NAME ) '
-              + 'BNDSRVPGM(SRVPGM_LIB/SRVPGM_NM ) TEXT('''') DETAIL(''*BASIC'')'
+              + 'BNDSRVPGM(SRVPGM_LIB/SRVPGM_NM ) DETAIL(''*BASIC'')'
               : crtSrvPgmCmd );
 
       /end-free
-     PtestOneBndSrvPgm...
      P                 e
 
 
      PtestTwoBndSrvPgm...
      P                 b                   export
-     DtestTwoBndSrvPgm...
      D                 pi
 
       // Binding two Service Programs.
@@ -313,22 +313,22 @@
                                         noModule :
                                         noBOption :
                                         noExport :
+                                        noActGrp :
                                         noText );
 
         // Control.
 
         aEqual( 'CRTSRVPGM SRVPGM(*CURLIB/PGM_NAME) MODULE(*CURLIB/PGM_NAME ) '
               + 'BNDSRVPGM(SRVPGM_LIB/SRVPGM_NM SRVPGM_LB2/SRVPGM_NM2 ) '
-              + 'TEXT('''') DETAIL(''*BASIC'')'
+              + 'DETAIL(''*BASIC'')'
               : crtSrvPgmCmd );
 
       /end-free
-     PtestTwoBndSrvPgm...
      P                 e
 
 
      PtestOneBndDir    b                   export
-     DtestOneBndDir    pi
+     D                 pi
 
       // One binding directory.
      DoneBndDir        ds                  likeds(ObjectArray_t)
@@ -349,21 +349,21 @@
                                         noModule :
                                         noBOption :
                                         noExport :
+                                        noActGrp :
                                         noText );
 
         // Control.
 
         aEqual( 'CRTSRVPGM SRVPGM(*CURLIB/PGM_NAME) MODULE(*CURLIB/PGM_NAME ) '
-              + 'BNDDIR(BNDDIR_LIB/BNDDIR_NM ) TEXT('''') DETAIL(''*BASIC'')'
+              + 'BNDDIR(BNDDIR_LIB/BNDDIR_NM ) DETAIL(''*BASIC'')'
               : crtSrvPgmCmd );
 
       /end-free
-     PtestOneBndDir    e
+     P                 e
 
 
      PtestBndDirWithoutLibrary...
      P                 b                   export
-     DtestBndDirWithoutLibrary...
      D                 pi
 
       // One binding directory.
@@ -385,22 +385,21 @@
                                         noModule :
                                         noBOption :
                                         noExport :
+                                        noActGrp :
                                         noText );
 
         // Control.
 
         aEqual( 'CRTSRVPGM SRVPGM(*CURLIB/PGM_NAME) MODULE(*CURLIB/PGM_NAME ) +
-                 BNDDIR(BNDDIR_NM ) TEXT('''') DETAIL(''*BASIC'')'
+                 BNDDIR(BNDDIR_NM ) DETAIL(''*BASIC'')'
               : crtSrvPgmCmd );
 
       /end-free
-     PtestBndDirWithoutLibrary...
      P                 e
 
 
      PtestOneBindingOption...
      P                 b                   export
-     DtestOneBindingOption...
      D                 pi
 
       // One Binding Option.
@@ -421,21 +420,21 @@
                                         noModule :
                                         oneBOption :
                                         noExport :
+                                        noActGrp :
                                         noText );
 
         // Control.
 
         aEqual( 'CRTSRVPGM SRVPGM(*CURLIB/PGM_NAME) MODULE(*CURLIB/PGM_NAME ) '
-              + 'OPTION(*DUPPROC ) TEXT('''') DETAIL(''*BASIC'')'
+              + 'OPTION(*DUPPROC ) DETAIL(''*BASIC'')'
               : crtSrvPgmCmd );
 
       /end-free
-     PtestOneBindingOption...
      P                 e
 
 
      PtestExport       b                   export
-     DtestExport       pi
+     D                 pi
 
        // Export option.
      D export          s             10a
@@ -454,21 +453,87 @@
                                         noModule :
                                         noBOption :
                                         export :
+                                        noActGrp :
                                         noText );
 
         // Control.
 
         aEqual( 'CRTSRVPGM SRVPGM(*CURLIB/PGM_NAME) MODULE(*CURLIB/PGM_NAME ) '
-              + 'TEXT('''') DETAIL(''*BASIC'') '
-              + 'EXPORT(*ALL)' : crtSrvPgmCmd );
+              + 'DETAIL(''*BASIC'') EXPORT(*ALL)'
+              : crtSrvPgmCmd );
 
       /end-free
-     PtestExport       e
+     P                 e
+
+
+     PtestActGrp       b                   export
+     D                 pi
+
+       // Export option.
+     D actGrp          s             10a
+
+      /free
+
+        // Setup.
+
+        actGrp = 'QTEST';
+
+        // Execute.
+
+        crtSrvPgmCmd = getCrtSrvPgmCmd( 'PGM_NAME  *CURLIB   ' :
+                                        noBndSrvPgm :
+                                        noBndDir :
+                                        noModule :
+                                        noBOption :
+                                        noExport :
+                                        actGrp :
+                                        noText );
+
+        // Control.
+
+        aEqual( 'CRTSRVPGM SRVPGM(*CURLIB/PGM_NAME) MODULE(*CURLIB/PGM_NAME ) '
+              + 'ACTGRP(QTEST) DETAIL(''*BASIC'')'
+              : crtSrvPgmCmd );
+
+      /end-free
+     P                 e
+
+
+     PtestText         b                   export
+     D                 pi
+
+       // Export option.
+     D text            s             50a
+
+      /free
+
+        // Setup.
+
+        text = 'Object ''description'' text';
+
+        // Execute.
+
+        crtSrvPgmCmd = getCrtSrvPgmCmd( 'PGM_NAME  *CURLIB   ' :
+                                        noBndSrvPgm :
+                                        noBndDir :
+                                        noModule :
+                                        noBOption :
+                                        noExport :
+                                        noActGrp :
+                                        text );
+
+        // Control.
+
+        aEqual( 'CRTSRVPGM SRVPGM(*CURLIB/PGM_NAME) MODULE(*CURLIB/PGM_NAME ) '
+              + 'TEXT(''Object ''''description'''' text'') DETAIL(''*BASIC'')'
+              : crtSrvPgmCmd );
+
+      /end-free
+     P                 e
 
 
      PtestSerializeObjectNameWithLibrary...
      P                 b                   export
-     DtestSerializeObjectNameWithLibrary...
      D                 pi
 
       // An object name.
@@ -486,13 +551,11 @@
         aEqual( 'OBJLIB/OBJNAME' : serializeObjectName(object) );
 
       /end-free
-     PtestSerializeObjectNameWithLibrary...
      P                 e
 
 
      PtestSerializeObjectNameWithoutLibrary...
      P                 b                   export
-     DtestSerializeObjectNameWithoutLibrary...
      D                 pi
 
       // An object name.
@@ -510,5 +573,4 @@
         aEqual( 'OBJNAME' : serializeObjectName(object) );
 
       /end-free
-     PtestSerializeObjectNameWithoutLibrary...
      P                 e

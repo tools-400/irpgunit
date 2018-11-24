@@ -48,6 +48,7 @@
      D  bndDir                             const likeds(ObjectArray_t)
      D  module                             const likeds(ObjectArray_t)
      D  bOption                            const likeds(Options_t)
+     D  actGrp                             const like(ActivationGroup_t)
      D  text                               const like(Text_t    )
 
 
@@ -75,12 +76,13 @@
      D  testPgm                            const likeds(Object_t)
      D  srcFile                            const likeds(Object_t)
      D  srcMbr                             const like(SrcMbr_t.mbr)
-     D  text                               const like(Text_t    )
+     D  text                               const like(Text_t)
      D  cOption                            const likeds(Options_t)
      D  dbgView                            const like(DbgView_t)
      D  bndSrvPgm                          const likeds(ObjectArray_t)
      D  bndDir                             const likeds(ObjectArray_t)
      D  bOption                            const likeds(Options_t)
+     D  actGrp                             const like(ActivationGroup_t)
      D  module                             const likeds(ObjectArray_t)
      D  pOption                            const likeds(Options_t)
      D  compileopt                 5000a   const varying options(*varsize)
@@ -90,12 +92,13 @@
      D  testPgm                            const likeds(Object_t)
      D  srcFile                            const likeds(Object_t)
      D  srcMbr                             const like(SrcMbr_t.mbr)
-     D  text                               const like(Text_t    )
+     D  text                               const like(Text_t)
      D  cOption                            const likeds(Options_t)
      D  dbgView                            const like(DbgView_t)
      D  bndSrvPgm                          const likeds(ObjectArray_t)
      D  bndDir                             const likeds(ObjectArray_t)
      D  bOption                            const likeds(Options_t)
+     D  actGrp                             const like(ActivationGroup_t)
      D  module                             const likeds(ObjectArray_t)
      D  pOption                            const likeds(Options_t)
      D  compileopt                 5000a   const varying options(*varsize)
@@ -142,7 +145,8 @@
          crtRpgMod( testPgm : srcFile : srcMbr2 : cOption : dbgView :
                     pOption : compileopt );
          srvPgm = crtSrvPgm(
-                     testPgm : bndSrvPgm : bndDir : module : bOption : text2);
+                     testPgm : bndSrvPgm : bndDir : module : bOption :
+                     actGrp : text2);
 
          RUTAGTST(srvPgm.nm : srvPgm.lib : srcFile : testPgm.nm);
 
@@ -212,7 +216,8 @@
      D  bndDir                             const likeds(ObjectArray_t)
      D  module                             const likeds(ObjectArray_t)
      D  bOption                            const likeds(Options_t)
-     D  text                               const like(Text_t    )
+     D  actGrp                             const like(ActivationGroup_t)
+     D  text                               const like(Text_t)
 
        // Export all procedures from the service program.
      D EXPORT_ALL      c                   const('*ALL')
@@ -239,6 +244,7 @@
                                 module :
                                 bOption :
                                 EXPORT_ALL :
+                                actGrp :
                                 text );
          sndInfoMsg( cmd );
          qcmdexc( cmd : %len(cmd) );
@@ -261,6 +267,7 @@
      D  modules                            const likeds(ObjectArray_t)
      D  options                            const likeds(Options_t)
      D  export                             const like(Export_t)
+     D  actGrp                             const like(ActivationGroup_t)
      D  text                               const like(Text_t )
 
        // Command string accumulator.
@@ -281,6 +288,7 @@
         cmd += serializeObjectArray( 'BNDSRVPGM' : bndSrvPgm );
         cmd += serializeObjectArray( 'BNDDIR'    : bndDir    );
         cmd += serializeOptions( 'OPTION' : options );
+        cmd += serializeValue( 'ACTGRP' : actGrp );
         cmd += serializeString( 'TEXT' : text );
         cmd += serializeString( 'DETAIL' : '*BASIC' );
 
@@ -503,7 +511,7 @@
 
       /free
 
-        if %Len(text) = 0;
+        if %Len(%TrimR(text)) = 0;
           return '';
         endif;
 

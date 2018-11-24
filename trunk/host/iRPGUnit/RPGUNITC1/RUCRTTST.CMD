@@ -99,6 +99,17 @@
                                  *DUPVAR)                    +
                           PROMPT('Binding options')
 
+         /* -------------------------------------- */
+         /*   Additional parameters                */
+         /* -------------------------------------- */
+
+             PARM       KWD(ACTGRP)                          +
+                          TYPE(*NAME)                        +
+                          PMTCTL(*PMTRQS)                    +
+                          SPCVAL(*CALLER)                    +
+                          DFT(*CALLER)                       +
+                          PROMPT('Activation group')
+
              PARM       KWD(MODULE)                          +
                           TYPE(MODULE)                       +
                           MAX(50)                            +

@@ -46,6 +46,13 @@ d) Optionally run the RPGUnit self tests:
               History
 --------------------------------------
 
+Version 2.4.1 - 24.11.2018
+--------------------------
+ * Added parameter ACTGRP to command RUCRTTST.
+ * Added unit tests 'testActGrp' and 'testText'.
+ * Changed 'serializeString' to trim parameter 'text' before
+   checking it for an empty string.
+
 Version 2.3.0 - 21.09.2018
 --------------------------
  * Added dialog for uploading the RPGUNIT library from the iRPGUnit
