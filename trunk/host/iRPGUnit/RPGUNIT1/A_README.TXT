@@ -50,6 +50,8 @@ Version 2.4.1 - 24.11.2018
 --------------------------
  * Added parameter ACTGRP to command RUCRTTST.
  * Added unit tests 'testActGrp' and 'testText'.
+ * Added special value '*BLANK' to parameter 'TEXT' of command
+   RUCRTTST.
  * Changed 'serializeString' to trim parameter 'text' before
    checking it for an empty string.
 

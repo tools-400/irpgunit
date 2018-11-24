@@ -36,6 +36,7 @@
                         LEN(50)                              +
                         VARY(*YES *INT2)                     +
                         DFT('RPGUnit - Test Case')           +
+                        SPCVAL(*BLANK)                       +
                         PROMPT('Text ''description''')
 
              PARM       KWD(COPTION)                         +

@@ -130,7 +130,7 @@
        endif;
 
        monitor;
-         if not startsWith('RPGUnit' : text);
+         if text <> '*BLANK' and not startsWith('RPGUnit' : text);
             text2 = 'RPGUnit - ' + text;
          else;
             text2 = text;
