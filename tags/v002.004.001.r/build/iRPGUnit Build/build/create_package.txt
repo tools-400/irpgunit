@@ -1,0 +1,26 @@
+
+Info
+====
+
+The "build.xml" Ant script must run in the same JRE of the workspace,
+to make the "eclipse.refreshLocal" tag work properly.
+
+
+
+Preparation
+===========
+
+1. Open file "build.properties" of the project "Build".
+2. Increment version number of property "build.version".
+
+
+Creating the Update Site
+========================
+
+3. Execute target "build".
+4. Create plug-in: Right-click 'site.xml', select 'PDE Tools -> Build Site'.
+5. Execute target "createSourceForgeFiles".
+6. Check-in source code.
+7. Create version tag.
+
+See also: build.xml

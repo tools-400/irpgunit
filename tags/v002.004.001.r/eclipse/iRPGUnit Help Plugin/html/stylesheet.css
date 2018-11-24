@@ -1,0 +1,68 @@
+
+body { font-family: Arial, Helvetica, sans-serif; font-size: 0.8em; }
+
+.copyright { font-style:italic; }
+
+h1 {
+    font-size: 1.8em; color: #f26721; line-height: 1.4em;
+}
+
+h2 {
+    color: #000000; line-height: 1.6em; font-weight: bold;
+}
+
+h3 {
+    color: #000000; line-height: 1.6em; font-weight: bold; font-style: italic;
+}
+
+.indent      { text-align:left; margin-left:20px; }
+.indent-red  { text-align:left; margin-left:20px; color: red; }
+
+code    { color:#003399; }
+
+ol, ul  { text-align:left; margin-left:40px; }
+
+table	{ margin-left:20px; font-family: Arial, Helvetica, sans-serif; font-size: 1.0em; }
+table.contributors       { border:0px; margin-right:20px; }
+col.contributors_name    { font-weight:bold; width:140px; text-align:left; vertical-align:top; }
+col.contributors_date    { width:70px; text-align:left; vertical-align:top; }
+col.contributors_comment { text-align:left; vertical-align:top; }
+
+.pre-strong  { color:green; font-weight:bold; }
+
+.r-cmt  { color:green; }
+
+.r-cmt-red  { color:red; }
+
+/*
+ *  "Messages Boxes":
+ *
+ *  <table>
+ *  <tr><td class="notice" >Notice: Example message text.</td></tr>
+ *  </table>
+ *
+ */
+
+.info {
+    border: thin;
+    border-style: solid;
+    padding:10px;
+    color: #000000;
+    background-color: #9FF781;
+}
+
+.notice {
+    border: thin;
+    border-style: solid;
+    padding:10px;
+    color: #000000;
+    background-color: #F3F781;
+}
+
+.important {
+    border: thin;
+    border-style: solid;
+    padding:10px;
+    color: #000000;
+    background-color: #FA5858;
+}

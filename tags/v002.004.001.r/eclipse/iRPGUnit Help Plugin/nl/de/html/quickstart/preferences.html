@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Voreinstellungen</title>
+</head>
+
+<body>
+<h1>Voreinstellungen</h1>
+Die Voreinstellungen von RPGUnit sind, wie üblich, über den Menüpfad "Window" -> 
+"Preferences" zu erreichen.
+<p class="indent">
+<img src="assets/RPGUnitPreferences.png" width="674" height="626" alt="RPGUnit Preferences">
+</p>
+
+<h3>Run order</h3>
+Gibt an, in welcher Reihenfolge die Test Cases (Prozeduren) einer Test Suite 
+(Serviceprogramm) ausgeführt werden.<p>
+Die möglichen Werte sind:<p>
+<table width="80%">
+<colgroup>
+ <col width="100">
+</colgroup>
+<tr><td valign="top">*API</td><td>Die Test Cases werden in der Reihenfolge ihrer Exporte aufgerufen.</td></tr>
+<tr><td valign="top">*REVERSE</td><td>Die Test Cases werden in umgekehrter Exportfolge aufgerufen.</td></tr>
+</table>
+<p>
+
+<h3>Library list</h3>
+Gibt an, mit welcher Bibliotheksliste die Test Cases (Prozeduren) einer Test Suite 
+(Serviceprogramm) ausgeführt werden.<p>
+Die möglichen Werte sind:<p>
+<table width="80%">
+<colgroup>
+ <col width="100">
+</colgroup>
+<tr><td valign="top">*JOBD</td><td>Die Test Cases werden mit der Bibliotheksliste der am Parameter 
+                                   <i>'Job description'</i> angegebenen Jobbeschreibung ausgeführt.</td></tr>
+<tr><td valign="top">*CURRENT</td><td>Die Test Cases werden mit der in der <i>'Verbindung'</i> zum Server 
+                                      abgelegten Bibliotheksliste ausgeführt. Siehe: <i>'Subsystems'</i> 
+                                      in den Eigenschaften der Verbindung zum Server.</td></tr> 
+</table>
+<p>
+
+<h3>Job description</h3>
+Gibt an, welche Jobbeschreibung zur Ermittlung der Bibliotheksliste herangezogen wird, 
+wenn der Parameter <i>'Library list'</i> auf <i>'*JOBD' steht.</i>>.<p>
+Die möglichen Werte sind:<p>
+<table width="80%">
+<colgroup>
+ <col width="100">
+</colgroup>
+<tr><td valign="top">*DFT</td><td>Die Bibliotheksliste wird anhand der Jobbeschreibung <i>'RPGUNIT'</i> 
+                                  aus der Bibliothek der Test Suite (Serviceprogramm) ermittelt.</td></tr>
+<tr><td valign="top">name</td><td>Name der zu verwendenden Jobbeschreibung.</td></tr> 
+</table>
+<p>
+
+<h3>Job description library</h3>
+Gibt an, welche Bibliothek nach der zu verwendenen Job Beschreibung durchsucht wird.<p>
+Die möglichen Werte sind:<p>
+<table width="80%">
+<colgroup>
+ <col width="100">
+</colgroup>
+<tr><td valign="top">*LIBL</td><td>Alle Bibliotheken in der Bibliotheksliste der Verbindung zum Server werden durchsucht.</td></tr>
+<tr><td valign="top">name</td><td>Name der zu durchsuchenden Bibliothek.</td></tr> 
+</table>
+<p>
+
+<h3>Report detail</h3>
+Gibt an, mit welcher Detailierungsstufe der Ausdruck der Ergebnisse des Unit Tests erfolgt.<p>
+Die möglichen Werte sind:<p>
+<table width="80%">
+<colgroup>
+ <col width="100">
+</colgroup>
+<tr><td valign="top">*BASIC</td><td>Fehler werden mit allen Details ausgewiesen. Erfolgreiche Tests werden nicht gedruckt.</td></tr>
+<tr><td valign="top">*ALL</td><td>Sowohl fehlerhafte, als auch erfolgreiche Test werden angedruckt.</td></tr> 
+</table>
+<p>
+
+<h3>Create report</h3>
+Gibt an, ob eine Druckausgabe der Ergebnisse des Unit Tests erzeugt wird.<p>
+Die möglichen Werte sind:<p>
+<table width="80%">
+<colgroup>
+ <col width="100">
+</colgroup>
+<tr><td valign="top">*NONE</td><td>Es erfolgt keine Druckausgabe.</td></tr>
+<tr><td valign="top">*ERROR</td><td>Eine Druckausgabe wird nur erzeugt, wenn Fehler aufgetreten sind.</td></tr> 
+<tr><td valign="top">*ALLWAYS</td><td>Eine Druckausgabe wird grundsätzlich erzeugt.</td></tr> 
+</table>
+<p>
+
+<h3>Reclaim resources</h3>
+Gibt an, ob verwendete Ressourcen zurückgefordert werden. Ressourcen, zum Beispiel offene Dateien, können nach 
+jedem Testfall oder am Ende der Testreihe zurück gefordert werden.<p>
+Dieser Parameter ist hilfreich, wenn innerhalb der Testreihe OPM Programme ohne gesetzter *INLR Bezugszahl aufgerufen werden.<p>
+Die möglichen Werte sind:<p>
+<table width="80%">
+<colgroup>
+ <col width="100">
+</colgroup>
+<tr><td valign="top">*NO</td><td>Es werden keine Ressourcen zurück gefordert.</td></tr>
+<tr><td valign="top">*ALLWAYS</td><td>Die Ressourcen werden nach jedem Testfall und am Ende der Testreihe zurück gefordert.</td></tr> 
+<tr><td valign="top">*ONCE</td><td>Die Ressourcen werden einmalig am Ende der Testreihe zurück gefordert.</td></tr> 
+</table>
+<p>
+
+<h3>Disable report</h3>
+Unabhängig von der Einstellung des Parameters <i>'Create report'</i> kann hiermit die Druckausgabe temporär 
+ausgeschaltet werden, sofern <i>'Create report'</i> nicht auf <i>'*NONE'</i> gesetzt ist. Dieser Schalter
+korrespondiert mit der Schaltfläche <i>'Disable RPGUnit report'</i> der <i>'RPGUnit'</i> View.<p>
+<p>
+
+<h3>Product library</h3>
+Gibt den Namen der RPGUnit Produktbibliothek an. Der hier eingetragene Wert wird verwendet, um dass zur Ausführung 
+der Unit Tests erforderliche Programm 'RUPGMRMT' zu finden.<p>
+<p>
+
+<h3>Check test suite service program</h3>
+Gibt an, ob zur Ausführung selektierte Serviceprogramme validiert werden.<p>
+Die möglichen Werte sind:<p>
+<table width="80%">
+<colgroup>
+ <col width="100">
+</colgroup>
+<tr><td valign="top">*NONE</td><td>Zur Ausführung selektierte Serviceprogramme werden nicht validiert.</td></tr>
+<tr><td valign="top">*TEXT</td><td>Die Objektbeschreibung des zur Ausführung ausgewählten Serviceprogramms muss mit
+                                   <i>'RPGUnit'</i> (Groß-/Kleinschreibung wird ignoriert) beginnen.</td></tr> 
+<tr><td valign="top">*ATTRIBUTE</td><td>Das benutzerdefinierte Attribut des zur Ausführung ausgewählten Serviceprogramms
+                                        muss <i>'RPGUnit'</i> (Groß-/Kleinschreibung wird ignoriert) enthalten. Dies ist
+                                        die empfohlene Prüfung, die jedoch leider nicht bei allen RDi Versionen
+                                        funktioniert. Siehe APAR SE55976.</td></tr> 
+</table>
+<p>
+<i>'RPGUNIT'</i> wird bei der Erstellung der Test Suite automatisch von <code>RUCRTTST</code> in das benutzerdefinierte 
+Attribut des Serviceprogramms eingetragen.
+<p>
+
+<h3>Enforce new connection</h3>
+Gibt an, ob für die Ausführung des Unit Tests eine neue Verbindung erstellt wird oder nicht. Eine neue Verbindung ist
+dann erforderlich, wenn für die Fehlersuche Service Entry Points verwendet werden sollen. Ohne eine neue Verbindung friert die 
+Anwendung beim Erreichen des Service Entry Points ein.<p>
+<p>
+
+<h3>Position editor to line of assertion</h3>
+Gibt an, ob der LPEX Editor beim Laden einer Quellenteidatei auf die fehlerhafte Zeile positioniert wird. Damit 
+diese Einstellung korrekt funktioniert, müssen sie die Option <code>*SRCSTMT</code> in der RPG Quellenteildatei 
+gesetzt haben.
+<p>
+
+<h3>Show result view</h3>
+Gibt an, ob die Ansicht der Ergebnisse eines Unit Tests am Ende des Testlaufs automatisch angezeigt wird.
+<p>
+
+<h3>Reset warning messages</h3>
+Setzt alle Warnungen zurück, die mit "Nicht noch einmal nachfragen." beantwortet worden sind zurück, so dass diese
+Nachrichten erneut angezeigt werden.
+<p>
+</body>
+</html>

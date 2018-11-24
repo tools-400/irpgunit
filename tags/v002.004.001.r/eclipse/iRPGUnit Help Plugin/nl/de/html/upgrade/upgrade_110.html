@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Usage</title>
+</head>
+
+<body>
+<h1>Umsteigen von RPGUnit v1.10</h1>
+Alle bestehenden Unit Test Suites sollten sich problemlos mit iRPGUnit 2.0 erstellen und 
+ausführen lassen. Dennoch: 
+<p>
+<table>
+<tr>
+<td class="notice"><b>Testen sie ihre bestehenden Test Suites sorgfältig innerhalb einer 
+                      geschützten Testumgebung mit iRPGUnit 2.0, bevor sie endgültig auf 
+                      die neue Version umsteigen.</b></td>
+</tr>
+</table>
+<p>
+Unit Test, welche ausschließlich die folgenden Zusicherungen verwenden, lassen sich
+problemlos unter allen Versionen von RPGUnit kompilieren und ausführen:
+<ul>
+<li>assert()</li>
+<li>aEqual()</li>
+<li>iEqual()</li>
+<li>fail()</li>
+</ul>
+<p>
+Die folgenden Unit Tests (kompiliert mit v1.10) brechen unter iRPGUnit mit einem Fehler ab: 
+<ul>
+<li>Unit Test <i>TESTASSERTWITHFAILURE</i> der Test Suite ASSERTT.</li>
+<li>Unit Test <i>TESTASSERTWITHSUCCESS</i> der Test Suite ASSERTT.</li>
+<li>Unit Test <i>TESTBIGINTEGEREQUALITY</i> der Test Suite ASSERTT.</li>
+<li>Unit Test <i>TESTGOODBYEISNOTHELLO</i> der Test Suite ASSERTT.</li>
+<li>Unit Test <i>TESTHELLOEQUALSHELLO</i> der Test Suite ASSERTT.</li>
+<li>Unit Test <i>TESTTWOANDTWOEQUALSFOUR</i> der Test Suite ASSERTT.</li>
+<li>Unit Test <i>TESTTWOANDTWOISNOTEQUALTOFIVE</i> der Test Suite ASSERTT.</li>
+<p>
+<li>Unit Test <i>TESTBIGINTEGER</i> der Test Suite RUACPTST.</li>
+<li>Unit Test <i>TESTCHOOSETEST</i> der Test Suite RUACPTST.</li>
+<li>Unit Test <i>TESTFAILURES</i> der Test Suite RUACPTST.</li>
+<li>Unit Test <i>TESTSTACKTRACE</i> der Test Suite RUACPTST.</li>
+<p>
+<li>Unit Test <i>TEST_LOADTESTSUITE</i> der Test Suite RUNT.</li>
+<li>Unit Test <i>TEST_RUNTESTPROC_ERRORINSETUP</i> der Test Suite RUNT.</li>
+<li>Unit Test <i>TEST_RUNTESTPROC_ERRORINTEARDOWN</i> der Test Suite RUNT.</li>
+<li>Unit Test <i>TEST_RUNTESTPROC_ERRORINTEST</i> der Test Suite RUNT.</li>
+<li>Unit Test <i>TEST_RUNTESTPROC_FAILUREINTEST</i> der Test Suite RUNT.</li>
+<li>Unit Test <i>TEST_RUNTESTPROC_TEARDOWNAFTERERRORINSETUP</i> der Test Suite RUNT.</li>
+</ul>
+Die folgenden Unit Tests lassen sich mit iRPGUnit nicht kompilieren: 
+<ul>
+<li>Test Suite <i>CMDRUNT</i>: Prototyp <i>logCompMsg()</i> in Modul <i>CMDRUNLOG</i> wurde geändert.</li>
+<li>Test Suite <i>EXTTSTT</i>: Parameter <i>mockSrvPgm</i> der Prozedur getTestSuite() wurde entfernt.</li>
+<li>Test Suite <i>RUCRTTSTT</i>: /COPY Teildatei <i>RUCRTTST</i> wurde umbenannt in <i>CRTTST</i> und die Anzahl Parameter von getCrtRpgModCmd() und getCrtSrvPgmCmd() haben sich geändert.</li>
+<li>Test Suite <i>RUNT</i>: /COPY Teildatei <i>RUCRTTST</i> wurde umbenannt in <i>CMDRUNSRV</i>.</li>
+</ul>
+<p>
+</body>
+</html>

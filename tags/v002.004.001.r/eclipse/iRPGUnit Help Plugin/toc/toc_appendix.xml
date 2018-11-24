@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="Anhang" link_to="./toc/toc.xml#appendix">
+    <topic href="html/appendix/example_1.html"  label="RPGUnit Test Template" />
+    <topic href="html/appendix/example_2.html"  label="Example .link File" />
+</toc>

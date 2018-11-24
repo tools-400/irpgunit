@@ -1,0 +1,42 @@
+     /* =================================================================== */
+     /*  RPGUnit SelfTest - Build CMDRUNLOGT.                               */
+     /*                                                                     */
+     /*  Usage: CALL MKCMDRUNLT TARGETLIB                                   */
+     /*    where TARGETLIB is the library containing the RPGUnit            */
+     /*    source files.                                                    */
+     /* =================================================================== */
+     /*   >>PRE-COMPILER<<                                                  */
+     /*     >>CRTCMD<<  CRTBNDCL      PGM(&LI/&OB) +                        */
+     /*                               SRCFILE(&SL/&SF)  +                   */
+     /*                               SRCMBR(&SM);                          */
+     /*     >>COMPILE<<                                                     */
+     /*       >>PARM<< DBGVIEW(*LIST);                                      */
+     /*     >>END-COMPILE<<                                                 */
+     /*     >>LINK<<                                                        */
+     /*       >>PARM<< DFTACTGRP(*NO);                                      */
+     /*       >>PARM<< ACTGRP(*NEW);                                        */
+     /*     >>END-LINK<<                                                    */
+     /*     >>EXECUTE<<                                                     */
+     /*   >>END-PRE-COMPILER<<                                              */
+     /* =================================================================== */
+             PGM        PARM(&TARGETLIB)
+             DCL        VAR(&TARGETLIB) TYPE(*CHAR) LEN(10)
+
+             CHGVAR     VAR(&TARGETLIB) VALUE(&TARGETLIB)
+             MONMSG     MSGID(MCH3601) EXEC(SNDPGMMSG MSGID(CPF9898) +
+                          MSGF(QCPFMSG) MSGDTA('Target library +
+                          parameter required.') MSGTYPE(*ESCAPE))
+
+             CRTRPGMOD  MODULE(QTEMP/CMDRUNLOG) SRCFILE(RPGUNIT1) +
+                          DBGVIEW(*LIST)
+             CRTRPGMOD  MODULE(QTEMP/STRING) SRCFILE(RPGUNIT1) +
+                          DBGVIEW(*LIST)
+             CRTRPGMOD  MODULE(QTEMP/CMDRUNLOGT) SRCFILE(RPGUNITT1) +
+                          DBGVIEW(*LIST)
+             CRTSRVPGM  SRVPGM(&TARGETLIB/CMDRUNLOGT) +
+                          MODULE(QTEMP/CMDRUNLOGT QTEMP/CMDRUNLOG +
+                                 QTEMP/STRING) +
+                          EXPORT(*ALL) BNDSRVPGM(RURUNNER RUTESTCASE) +
+                          TEXT('RPGUnit SelfTest - Test CMDRUNLOG.')
+
+             ENDPGM
