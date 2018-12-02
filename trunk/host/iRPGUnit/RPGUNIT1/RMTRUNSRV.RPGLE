@@ -150,7 +150,7 @@
      D  procNm                      256a
      D  qSrcMbr                            likeds(SrcMbr_t)
       *
-      /copy RPGUNIT/RPGUNITY1,TEMPLATES
+      /copy RPGUNITY1,TEMPLATES
 
       *-------------------------------------------------------------------------
       * Module Status

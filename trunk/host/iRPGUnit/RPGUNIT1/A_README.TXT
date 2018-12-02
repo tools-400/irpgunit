@@ -46,6 +46,11 @@ d) Optionally run the RPGUnit self tests:
               History
 --------------------------------------
 
+Version 2.4.2 - 02.11.2018
+--------------------------
+ * Fixed compile issue when installing the utility into a different
+   library (RUNRMTSVR, ticket: #1).
+
 Version 2.4.1 - 24.11.2018
 --------------------------
  * Added parameter ACTGRP to command RUCRTTST.
