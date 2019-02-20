@@ -1,0 +1,71 @@
+     /* =================================================================== */
+     /*  RPGUnit - Build RPGUnit library - Remove debug data                */
+     /* =================================================================== */
+     /*  Removes the debug data from the RPGUnit objects.                   */
+     /* =================================================================== */
+     /* STRPREPRC Compile Options:                                          */
+     /*   >>PRE-COMPILER<<                                                  */
+     /*     >>CRTCMD<<    CRTBNDCL   PGM(&LI/&OB) +                         */
+     /*                              SRCFILE(&SL/&SF) SRCMBR(&SM);          */
+     /*       >>COMPILE<<                                                   */
+     /*         >>PARM<<   DFTACTGRP(*NO);                                  */
+     /*         >>PARM<<   ACTGRP(*NEW);                                    */
+     /*         >>PARM<<   DBGVIEW(*LIST);                                  */
+     /*         >>PARM<<   TGTRLS(&TR);                                     */
+     /*       >>END-COMPILE<<                                               */
+     /*       >>EXECUTE<<                                                   */
+     /*   >>END-PRE-COMPILER<<                                              */
+     /* =================================================================== */
+             PGM        PARM(&PRDLIB &TMPLIB)
+
+             DCL        VAR(&PRDLIB  ) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&TMPLIB  ) TYPE(*CHAR) LEN(10)
+
+             DCL        VAR(&TMPFILE ) TYPE(*CHAR) LEN(10) VALUE('BUILD_OBJD')
+             DCL        VAR(&NUM_RCDS) TYPE(*DEC)  LEN(10 0)
+
+             DCLF       FILE(QADSPOBJ) OPNID(OBJ)
+
+             SNDPGMMSG  MSGID(CPF9897) MSGF(QCPFMSG) +
+                          MSGDTA('Removing debug data ...') +
+                          TOPGMQ(*EXT) TOMSGQ(*TOPGMQ) +
+                          MSGTYPE(*STATUS)
+
+             OVRDBF     FILE(QADSPOBJ) TOFILE(&TMPLIB/&TMPFILE) OVRSCOPE(*CALLLVL)
+
+             DSPOBJD    OBJ(&PRDLIB/*ALL) OBJTYPE(*PGM *SRVPGM) +
+                          DETAIL(*BASIC) OUTPUT(*OUTFILE) +
+                          OUTFILE(&TMPLIB/&TMPFILE) +
+                          OUTMBR(*FIRST *REPLACE)
+             RTVMBRD    FILE(&TMPLIB/&TMPFILE) NBRCURRCD(&NUM_RCDS)
+
+             OPNDBF     FILE(&TMPLIB/&TMPFILE) OPTION(*INP) +
+                          OPNID(OBJ)
+
+             IF         COND(&NUM_RCDS > 0) THEN(DO)
+ LOOP:          RCVF       OPNID(OBJ)
+
+                IF         COND(&OBJ_ODOBNM *EQ 'BUILD') THEN(DO)
+                   GOTO       CMDLBL(LOOP)
+                ENDDO
+
+                IF         COND(&OBJ_ODOBTP *EQ '*PGM') THEN(DO)
+                   CHGPGM     PGM(&OBJ_ODLBNM/&OBJ_ODOBNM) +
+                                RMVOBS(*DBGDTA)
+                   MONMSG     MSGID(CPF0541)
+                ENDDO
+
+                IF         COND(&OBJ_ODOBTP *EQ '*SRVPGM') THEN(DO)
+                   CHGSRVPGM  SRVPGM(&OBJ_ODLBNM/&OBJ_ODOBNM) +
+                                RMVOBS(*DBGDTA)
+                ENDDO
+
+                CHGVAR     VAR(&NUM_RCDS) VALUE(&NUM_RCDS - 1)
+                IF         COND(&NUM_RCDS > 0) THEN(DO)
+                   GOTO       CMDLBL(LOOP)
+                ENDDO
+             ENDDO
+
+             CLOF       OPNID(OBJ)
+
+             ENDPGM

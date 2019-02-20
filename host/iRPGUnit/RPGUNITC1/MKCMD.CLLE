@@ -48,4 +48,7 @@
                           HLPPNLGRP(&TARGETLIB/RUCMDHLP) +
                           HLPID(RUCRTTST)
 
+             CRTPNLGRP  PNLGRP(&TARGETLIB/RUCMDHLP) +
+                          SRCFILE(RPGUNITC1)
+
              ENDPGM

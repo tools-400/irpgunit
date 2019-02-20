@@ -1,0 +1,86 @@
+     /* =================================================================== */
+     /*  RPGUnit - Build RPGUnit library - Change object owner              */
+     /* =================================================================== */
+     /*  Removes the debug data from the RPGUnit objects.                   */
+     /* =================================================================== */
+     /* STRPREPRC Compile Options:                                          */
+     /*   >>PRE-COMPILER<<                                                  */
+     /*     >>CRTCMD<<    CRTBNDCL   PGM(&LI/&OB) +                         */
+     /*                              SRCFILE(&SL/&SF) SRCMBR(&SM);          */
+     /*       >>COMPILE<<                                                   */
+     /*         >>PARM<<   DFTACTGRP(*NO);                                  */
+     /*         >>PARM<<   ACTGRP(*NEW);                                    */
+     /*         >>PARM<<   DBGVIEW(*LIST);                                  */
+     /*         >>PARM<<   TGTRLS(&TR);                                     */
+     /*       >>END-COMPILE<<                                               */
+     /*       >>EXECUTE<<                                                   */
+     /*   >>END-PRE-COMPILER<<                                              */
+     /* =================================================================== */
+             PGM        PARM(&PRDLIB &TMPLIB &OWNER)
+
+             DCL        VAR(&PRDLIB  ) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&TMPLIB  ) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&OWNER   ) TYPE(*CHAR) LEN(10)
+
+             DCL        VAR(&TMPFILE ) TYPE(*CHAR) LEN(10) VALUE('BUILD_OBJD')
+             DCL        VAR(&NUM_RCDS) TYPE(*DEC)  LEN(10 0)
+
+             DCLF       FILE(QADSPOBJ) OPNID(OBJ)
+
+             SNDPGMMSG  MSGID(CPF9897) MSGF(QCPFMSG) +
+                          MSGDTA('Changing object owner ...') +
+                          TOPGMQ(*EXT) TOMSGQ(*TOPGMQ) +
+                          MSGTYPE(*STATUS)
+
+     /* =================================================== */
+     /*   Change library owner                              */
+     /* =================================================== */
+             CHGOBJOWN  OBJ(&PRDLIB) +
+                          OBJTYPE(*LIB) +
+                          NEWOWN(&OWNER) +
+                          CUROWNAUT(*REVOKE)
+
+             RVKOBJAUT  OBJ(&PRDLIB) +
+                          OBJTYPE(*LIB) USER(*ALL)
+
+             GRTOBJAUT  OBJ(&PRDLIB) +
+                          OBJTYPE(*LIB) +
+                          USER(*PUBLIC) AUT(*CHANGE)
+
+     /* =================================================== */
+     /*   Change object owner                               */
+     /* =================================================== */
+             OVRDBF     FILE(QADSPOBJ) TOFILE(&TMPLIB/&TMPFILE) OVRSCOPE(*CALLLVL)
+
+             DSPOBJD    OBJ(&PRDLIB/*ALL) OBJTYPE(*ALL) DETAIL(*BASIC) +
+                          OUTPUT(*OUTFILE) OUTFILE(&TMPLIB/&TMPFILE) +
+                          OUTMBR(*FIRST *REPLACE)
+             RTVMBRD    FILE(&TMPLIB/&TMPFILE) NBRCURRCD(&NUM_RCDS)
+
+             OPNDBF     FILE(&TMPLIB/&TMPFILE) OPTION(*INP) +
+                          OPNID(OBJ)
+
+             IF         COND(&NUM_RCDS > 0) THEN(DO)
+ LOOP:          RCVF       OPNID(OBJ)
+
+                CHGOBJOWN  OBJ(&OBJ_ODLBNM/&OBJ_ODOBNM) +
+                             OBJTYPE(&OBJ_ODOBTP) +
+                             NEWOWN(&OWNER) +
+                             CUROWNAUT(*REVOKE)
+
+                RVKOBJAUT  OBJ(&OBJ_ODLBNM/&OBJ_ODOBNM) +
+                             OBJTYPE(&OBJ_ODOBTP) USER(*ALL)
+
+                GRTOBJAUT  OBJ(&OBJ_ODLBNM/&OBJ_ODOBNM) +
+                             OBJTYPE(&OBJ_ODOBTP) +
+                             USER(*PUBLIC) AUT(*CHANGE)
+
+                CHGVAR     VAR(&NUM_RCDS) VALUE(&NUM_RCDS - 1)
+                IF         COND(&NUM_RCDS > 0) THEN(DO)
+                   GOTO       CMDLBL(LOOP)
+                ENDDO
+             ENDDO
+
+             CLOF       OPNID(OBJ)
+
+             ENDPGM
