@@ -1,4 +1,6 @@
       // =====================================================================
+      //  Unit test suite that has no unit tests.
+      // =====================================================================
       //    >>PRE-COMPILER<<
       //      >>CRTCMD<<  RUCRTTST    TSTPGM(&LI/&OB) +
       //                              SRCFILE(&SL/&SF) SRCMBR(&SM);

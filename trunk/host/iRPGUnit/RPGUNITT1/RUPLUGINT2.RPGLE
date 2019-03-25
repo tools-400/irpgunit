@@ -1,4 +1,7 @@
       // =====================================================================
+      //  Various unit test with different results. Test: execute a second
+      //  unit test, after a previous test has failed.
+      // =====================================================================
       //    >>PRE-COMPILER<<
       //      >>CRTCMD<<  RUCRTTST    TSTPGM(&LI/&OB) +
       //                              SRCFILE(&SL/&SF) SRCMBR(&SM);
