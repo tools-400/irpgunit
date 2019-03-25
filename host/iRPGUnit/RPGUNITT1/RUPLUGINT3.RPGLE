@@ -1,4 +1,7 @@
       // =====================================================================
+      //  Unit tests that toggle their result depending on the content
+      //  of data area pgmLib/RUPLUGINT3.
+      // =====================================================================
       //    >>PRE-COMPILER<<
       //      >>CRTCMD<<  RUCRTTST    TSTPGM(&LI/&OB) +
       //                              SRCFILE(&SL/&SF) SRCMBR(&SM);

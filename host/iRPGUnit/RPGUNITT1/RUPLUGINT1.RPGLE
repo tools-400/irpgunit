@@ -1,4 +1,6 @@
       // =====================================================================
+      //  Various unit test with different results.
+      // =====================================================================
       //    >>PRE-COMPILER<<
       //      >>CRTCMD<<  RUCRTTST    TSTPGM(&LI/&OB) +
       //                              SRCFILE(&SL/&SF) SRCMBR(&SM);

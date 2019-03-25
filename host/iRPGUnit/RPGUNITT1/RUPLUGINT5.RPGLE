@@ -1,4 +1,6 @@
       // =====================================================================
+      //  Unit tests with really long assertion messages.
+      // =====================================================================
       //    >>PRE-COMPILER<<
       //      >>CRTCMD<<  RUCRTTST    TSTPGM(&LI/&OB) +
       //                              SRCFILE(&SL/&SF) SRCMBR(&SM);
