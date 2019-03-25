@@ -1,0 +1,163 @@
+      // =====================================================================
+      //  Unit tests that tests whether or not an 'on-exit' procedure
+      //  is called on errors.
+      // =====================================================================
+      //    >>PRE-COMPILER<<
+      //      >>CRTCMD<<  RUCRTTST    TSTPGM(&LI/&OB) +
+      //                              SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //      >>COMPILE<<
+      //        >>PARM<< COPTION(*SRCSTMT *EVENTF);
+      //        >>PARM<< DBGVIEW(*LIST);
+      //      >>END-COMPILE<<
+      //      >>EXECUTE<<
+      //    >>END-PRE-COMPILER<<
+      // =====================================================================
+
+     H NoMain Option(*SrcStmt)
+
+      //----------------------------------------------------------------------
+      //   Exported Procedures
+      //----------------------------------------------------------------------
+
+     D setUpSuite...
+     D                 pr                  extproc('setUpSuite')
+
+      //----------------------------------------------------------------------
+      //   Imported Procedures
+      //----------------------------------------------------------------------
+
+      /copy RPGUNITY1,ASSERT
+      /copy RPGUNITY1,TEMPLATES
+      /copy RPGUNIT1,TESTCASE
+
+
+      //----------------------------------------------------------------------
+      //   Private Procedures
+      //----------------------------------------------------------------------
+
+
+      //----------------------------------------------------------------------
+      //   Test Procedures
+      //----------------------------------------------------------------------
+
+     D testOnExitNoError...
+     D                 pr                  extproc('testOnExitNoError')
+     D testOnExitWithError...
+     D                 pr                  extproc('testOnExitWithError')
+
+     D onExitProcNoError...
+     D                 pr                  extproc('onExitProcNoError')
+     D  io_onExitWasCalled...
+     D                                 N
+
+     D onExitProcWithError...
+     D                 pr                  extproc('onExitProcWithError')
+     D  io_onExitWasCalled...
+     D                                 N
+
+      // ============================================================
+      //  Set up test suite. Executed once per RUCALLTST.
+      // ============================================================
+     P setUpSuite...
+     P                 b                   export
+     D                 pi
+
+     D rc              S              1A
+      /free
+
+
+      /end-free
+     P                 e
+
+      // ============================================================
+      //  Test that on-exit is called and that
+      //  isAbnormalEnd is set to *OFF.
+      // ============================================================
+     P testOnExitNoError...
+     P                 b                   export
+     D                 pi
+
+     D onExitWasCalled...
+     D                 S               N
+      /free
+
+         onExitProcNoError(onExitWasCalled);
+
+         nEqual(*on: onExitWasCalled: 'onExitWasCalled');
+
+      /end-free
+     P                 e
+
+      // ============================================================
+      //  Test that on-exit is called and that
+      //  isAbnormalEnd is set to *OFF.
+      // ============================================================
+     P testOnExitWithError...
+     P                 b                   export
+     D                 pi
+
+     D onExitWasCalled...
+     D                 S               N
+     D excpWasSeen     S               N
+      /free
+
+         monitor;
+            onExitProcWithError(onExitWasCalled);
+            excpWasSeen = *off;
+         on-error;
+            excpWasSeen = *on;
+         endmon;
+
+         nEqual(*on: excpWasSeen: 'excpWasSeen');
+         nEqual(*on: onExitWasCalled: 'onExitWasCalled');
+
+      /end-free
+     P                 e
+
+      // ============================================================
+      //  Procedure, that is called on-exit.
+      // ============================================================
+     P onExitProcNoError...
+     P                 b                   export
+     D                 pi
+     D  io_onExitWasCalled...
+     D                                 N
+
+     D isAbnormalEnde  s               N
+      /free
+
+         on-exit isAbnormalEnde;
+
+            io_onExitWasCalled = *on;
+
+      /end-free
+     P                 e
+
+      // ============================================================
+      //  Procedure, that is called on-exit.
+      // ============================================================
+     P onExitProcWithError...
+     P                 b                   export
+     D                 pi
+     D  io_onExitWasCalled...
+     D                                 N
+
+     D value1          s             10i 0
+     D value2          s             10i 0
+
+     D isAbnormalEnde  s               N
+      /free
+
+         value1 = 10;
+         value2 = 0;
+
+         // division by zero!
+         value2 = value1 / value2;
+
+         on-exit isAbnormalEnde;
+
+            io_onExitWasCalled = *on;
+
+      /end-free
+     P                 e
+
