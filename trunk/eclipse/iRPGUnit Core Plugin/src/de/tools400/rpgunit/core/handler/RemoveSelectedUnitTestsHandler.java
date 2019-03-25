@@ -28,7 +28,7 @@ public class RemoveSelectedUnitTestsHandler extends AbstractUnitTestsHandler {
         }
 
         UnitTestSuite[] tUnitTestSuiteArray = new UnitTestSuite[tUnitTestSuites.size()];
-        getView(anEvent).setInput(tUnitTestSuites.toArray(tUnitTestSuiteArray));
+        getView(anEvent).setInput(tUnitTestSuites.toArray(tUnitTestSuiteArray), false);
 
         return null;
     }

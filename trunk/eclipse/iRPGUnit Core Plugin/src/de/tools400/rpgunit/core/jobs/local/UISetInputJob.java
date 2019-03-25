@@ -29,7 +29,7 @@ public class UISetInputJob extends UIJob {
 
     @Override
     public IStatus runInUIThread(IProgressMonitor aMonitor) {
-        view.setInput(input);
+        view.setInput(input, true);
         return Status.OK_STATUS;
     }
 
