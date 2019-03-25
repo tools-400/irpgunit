@@ -42,7 +42,7 @@ public class RunUnitTestHandler implements ISelectionHandler {
                 return null;
             }
 
-            ((IInputProvider)tView).setInput(null);
+            ((IInputProvider)tView).setInput(null, false);
 
             RunUnitTestsJob tJob = new RunUnitTestsJob(aShell, tView, (IStructuredSelection)aSelection);
             tJob.schedule();

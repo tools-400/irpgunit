@@ -239,7 +239,7 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
     }
 
     @Override
-    public void setInput(Object aTestResults) {
+    public void setInput(Object aTestResults, boolean showViewWarning) {
 
         UnitTestSuite[] testResults = (UnitTestSuite[])aTestResults;
 
@@ -267,9 +267,11 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
             viewer.setSelection(selection);
         }
 
-        if (header.hasErrors() && !Preferences.getInstance().isShowResultView()) {
-            WarningMessage.openWarning(getSite().getShell(), Preferences.WARN_MESSAGE_UNIT_TEST_ENDED_WITH_ERRORS,
-                Messages.Unit_test_ended_with_errors);
+        if (testResults != null && showViewWarning) {
+            if (header.hasErrors() && !Preferences.getInstance().isShowResultView()) {
+                WarningMessage.openWarning(getSite().getShell(), Preferences.WARN_MESSAGE_UNIT_TEST_ENDED_WITH_ERRORS,
+                    Messages.Unit_test_ended_with_errors);
+            }
         }
     }
 
@@ -430,7 +432,7 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
             tUnitTestResult.setIsSelected(anIsSelected);
         }
 
-        setInput(tAllUnitTestSuits);
+        setInput(tAllUnitTestSuits, false);
     }
 
     private UnitTestViewerRoot getViewerInput() {

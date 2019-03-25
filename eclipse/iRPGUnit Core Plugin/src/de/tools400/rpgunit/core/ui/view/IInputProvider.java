@@ -10,7 +10,7 @@ package de.tools400.rpgunit.core.ui.view;
 
 public interface IInputProvider {
 
-    public void setInput(Object anInput);
+    public void setInput(Object anInputs, boolean showViewWarning);
 
     public Object getInput();
 
