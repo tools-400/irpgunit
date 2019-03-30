@@ -124,6 +124,23 @@ with the "Show Advanced Properties" <img align="top" src="assets/Show_Advanced_P
 <tr><td><img src="assets/Icon_Error.png" /></td><td width="10">&nbsp;</td><td>Indicates that the unit test ended with errors. Check the result view for details.</td></tr>
 </table>
 <p>
+<h3>Unit Tests With Errors</h3>
+<p>
+In case that a unit test ended with errors, it may be helpful to see the messages of the job log. Use the
+<a href="./preferences.html">preferences</a> or the view menu to set the appropriate message capturing level: 
+<p class="indent">
+<img src="assets/RPGUnitView_Menu.png" alt="Display RPGUnit Test Result">
+</p>
+<p>
+<table>
+<tr><td valign="top" nowrap>Do not capture anything</td><td valign="top">-</td><td valign="top">No messages are captured from the job log.</td></tr>
+<tr><td valign="top" nowrap>Capture escape messages on unexpected errors</td><td valign="top">-</td><td valign="top">Escape messages are captured from the job log, when a test case ended with errors.</td></tr>
+<tr><td valign="top" nowrap>Capture all messages on unexpected errors</td><td valign="top">-</td><td valign="top">All messages of the job log are captured, when a test case ended with errors.</td></tr>
+<tr><td valign="top" nowrap>Capture all job log messages</td><td valign="top">-</td><td valign="top">All messages of the job log are captured at any time.</td></tr>
+</table>
+<p>
+Captured messages are displayed in the <i>Commands Log</i> view.
+<p>
 <h3>Error Messages</h3>
 The following error dialog is displayed, when a service program is not recognized as a RPGUnit test suite or when
 a procedure is not recognized as a test case. Check the following rules to identify the problem:

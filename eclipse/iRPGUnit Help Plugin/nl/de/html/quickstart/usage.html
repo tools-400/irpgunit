@@ -125,6 +125,23 @@ Standardmäßig wird die Ausführungszeit nicht angezeigt. Sie läßt sich jedoch bei
 <tr><td><img src="assets/Icon_Error.png" /></td><td width="10">&nbsp;</td><td>Zeigt an, dass der Unit Test mit Fehlern geendet hat. Wechseln sie zur Ergebnissicht, um die Details zu prüfen.</td></tr>
 </table>
 <p>
+<h3>Unit Tests Mit Fehlern</h3>
+<p>
+Im Fall eines unerwarteten Programmabbruchs kann es hilfreich sein die Nachrichten im Jobprotokoll einsehen zu können. Verwenden sie die
+<a href="./preferences.html">Voreinstellungen</a> oder das Menü der Ansicht, um den Umfang der aufgezeichneten Nachrichten einzustellen: 
+<p class="indent">
+<img src="assets/RPGUnitView_Menu.png" alt="Display RPGUnit Test Result">
+</p>
+<p>
+<table>
+<tr><td valign="top" nowrap>Keine Nachrichten</td><td valign="top">-</td><td valign="top">Es werden keine Nachrichten aus dem Jobprotokoll aufgezeichnet.</td></tr>
+<tr><td valign="top" nowrap>Abbruchnachrichten bei einem Programmabbruch</td><td valign="top">-</td><td valign="top">Bei einem unerwarteten Programmabbruch werden alle Abbruchnachrichten (*ESCAPE) des Jobprotokolls aufgezeichnet.</td></tr>
+<tr><td valign="top" nowrap>Alle Nachrichten bei einem Programmabbruch</td><td valign="top">-</td><td valign="top">Bei einem unerwarteten Programmabbruch werden alle Nachrichten des Jobprotokolls aufgezeichnet.</td></tr>
+<tr><td valign="top" nowrap>Alle Einträge</td><td valign="top">-</td><td valign="top">Alle Nachrichten des Jobprotokolls werden aufgezeichnet.</td></tr>
+</table>
+<p>
+Die aufgezeichneten Nachrichten des Jobprotokolls werden in der <i>Befehlsprotokoll</i> Ansicht angezeigt.
+<p>
 <h3>Fehlernachrichten</h3>
 Der folgende Dialog wird angezeigt, wenn ein Serviceprogramm nicht als Test Suite oder eine Prozedur nicht als Test Case
 akzeptiert wird. Prüfen sie die folgenden Regeln, um das Problem zu lokalisieren:
