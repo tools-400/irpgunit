@@ -8,22 +8,30 @@
 
 package de.tools400.rpgunit.core.jobs.ibmi;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Bin4;
 import com.ibm.as400.access.AS400Message;
+import com.ibm.as400.access.Job;
+import com.ibm.as400.access.JobLog;
+import com.ibm.as400.access.MessageQueue;
 import com.ibm.as400.access.ObjectList;
 import com.ibm.as400.access.ProgramCall;
 import com.ibm.as400.access.ProgramParameter;
 import com.ibm.as400.access.QSYSObjectPathName;
+import com.ibm.as400.access.QueuedMessage;
 import com.ibm.as400.access.UserSpace;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+import com.ibm.etools.iseries.subsystems.qsys.commands.QSYSCommandSubSystem;
 
 import de.tools400.rpgunit.core.Messages;
 import de.tools400.rpgunit.core.RPGUnitCorePlugin;
 import de.tools400.rpgunit.core.exceptions.InvalidVersionException;
 import de.tools400.rpgunit.core.handler.UnitTestException;
+import de.tools400.rpgunit.core.helpers.StringHelper;
 import de.tools400.rpgunit.core.model.ibmi.I5Library;
 import de.tools400.rpgunit.core.model.ibmi.I5LibraryList;
 import de.tools400.rpgunit.core.model.ibmi.I5Object;
@@ -37,6 +45,11 @@ import de.tools400.rpgunit.core.preferences.Preferences;
 
 @SuppressWarnings("unused")
 public class RPGUnitTestRunner extends AbstractUnitTestRunner {
+
+    private static final String IBM_NULL = "*N"; //$NON-NLS-1$
+    private static final String NEW_LINE = "\n"; //$NON-NLS-1$
+
+    UnitTestSuite testResult = null;
 
     /*
      * Remote test driver: Object properties.
@@ -529,7 +542,11 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
     @Override
     protected UnitTestSuite retrieveUnitTestResult(I5ServiceProgram aServiceprogram, ArrayList<String> aListOfProcedure) throws Exception {
 
-        UnitTestSuite tTestSuite = new UnitTestSuite(aServiceprogram);
+        if (testResult != null) {
+            return testResult;
+        }
+
+        testResult = new UnitTestSuite(aServiceprogram);
 
         // @formatter:off
         /*
@@ -618,12 +635,12 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             numTestCasesRtn = tNumberRuns;
         }
 
-        tTestSuite.setRuns(tNumberRuns);
-        tTestSuite.setNumberTestCases(tNumberTestCases);
+        testResult.setRuns(tNumberRuns);
+        testResult.setNumberTestCases(tNumberTestCases);
 
-        tTestSuite.getServiceProgram().setSourceFile(tSrcFile);
-        tTestSuite.getServiceProgram().setSourceLibrary(tSrcLibrary);
-        tTestSuite.getServiceProgram().setSourceMember(tSrcMember);
+        testResult.getServiceProgram().setSourceFile(tSrcFile);
+        testResult.getServiceProgram().setSourceLibrary(tSrcLibrary);
+        testResult.getServiceProgram().setSourceMember(tSrcMember);
 
         if (tSplfName != null && tSplfName.trim().length() > 0) {
             UnitTestReportFile tSpooledFile = new UnitTestReportFile(aServiceprogram.getPath());
@@ -633,20 +650,20 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             tSpooledFile.setJobName(tJobName);
             tSpooledFile.setJobUser(tJobUser);
             tSpooledFile.setJobNumber(tJobNumber);
-            tTestSuite.setSpooledFile(tSpooledFile);
+            testResult.setSpooledFile(tSpooledFile);
         } else {
-            tTestSuite.setSpooledFile(null);
+            testResult.setSpooledFile(null);
         }
 
-        retrieveTestCases(bytes, tTotalSizeUserSpace, tOffsetTestCases, numTestCasesRtn, tTestSuite, tVersion);
+        retrieveTestCases(bytes, tTotalSizeUserSpace, tOffsetTestCases, numTestCasesRtn, testResult, tVersion);
 
-        assert tNumberAssertions == tTestSuite.getNumberAssertions() : "Number of assertions does not match";
+        assert tNumberAssertions == testResult.getNumberAssertions() : "Number of assertions does not match"; //$NON-NLS-1$
         // assert tNumberFailures == tTestSuite.getNumberFailures() :
         // "Number of failed assertions does not match";
         // assert tNumberErrors == tTestSuite.getNumberErrors() :
         // "Number of errors does not match";
 
-        return tTestSuite;
+        return testResult;
     }
 
     private void retrieveTestCases(byte[] aUserSpaceBytes, int aTotalLength, int anOffsetTestCases, int numTestCasesRtn, UnitTestSuite aTestSuite,
@@ -859,15 +876,27 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
     @Override
     protected int executeTest(I5ServiceProgram aServiceProgram, ArrayList<String> aListOfProcedure, String[] aLibraryList) throws Exception {
 
+        testResult = null;
+
         int returnCode = 0;
 
         ProgramCall program = new ProgramCall(getSystem());
         program.setProgram(getPath());
         program.setParameterList(getParameterList(aServiceProgram, aListOfProcedure, aLibraryList));
 
+        String captureJobLog = Preferences.getInstance().getCaptureJobLog();
+        byte[] startingMessageKey = new byte[] { 0x00, 0x00, 0x00, 0x00 };
+        if (!Preferences.DEBUG_CAPTURE_JOBLOG_OFF.equals(captureJobLog)) {
+            QueuedMessage[] jobLogMessages = getJobLog(program.getServerJob(), MessageQueue.NEWEST, 1);
+            if (jobLogMessages.length > 0) {
+                startingMessageKey = jobLogMessages[0].getKey();
+            }
+        }
+
         if (program.run()) {
             returnCode = getReturnCode(program);
         } else {
+
             AS400Message[] msgList = program.getMessageList();
             StringBuilder as400ErrorMsg = new StringBuilder();
             for (int j = 0; j < msgList.length; j++) {
@@ -880,7 +909,196 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
                 UnitTestException.Type.unexpectedError);
         }
 
+        if (Preferences.DEBUG_CAPTURE_JOBLOG_ALL.equals(captureJobLog)) {
+            captureJobLog(program, aServiceProgram, startingMessageKey);
+        } else if (Preferences.DEBUG_CAPTURE_JOBLOG_ERRORS_ON_ERROR.equals(captureJobLog) || Preferences.DEBUG_CAPTURE_JOBLOG_ALL_ON_ERROR.equals(captureJobLog)) {
+            retrieveUnitTestResult(aServiceProgram, aListOfProcedure);
+            if (testResult.isError()) {
+                captureJobLog(program, aServiceProgram, startingMessageKey);
+            }
+        }
+
         return returnCode;
+    }
+
+    private void captureJobLog(ProgramCall program, I5ServiceProgram aServiceProgram, byte[] startingMessageKey) throws Exception {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss"); //$NON-NLS-1$
+
+        String now = formatter.format(new Date());
+        String newJobLogEntry = Messages.bind(Messages.A_Result_of_iRPGUnit_Test_Case_B_served_by_server_job_C,
+            new Object[] { now, aServiceProgram, program.getServerJob() });
+        logMessage(newJobLogEntry);
+
+        QueuedMessage[] jobLogMessages = getJobLog(program.getServerJob(), startingMessageKey, -1);
+
+        for (QueuedMessage jobLogMessage : jobLogMessages) {
+
+            // Skip starting message key, because it was the last message in
+            // the queue, before running the unit test
+            if (java.util.Arrays.equals(startingMessageKey, jobLogMessage.getKey())) {
+                continue;
+            }
+
+            if (Preferences.DEBUG_CAPTURE_JOBLOG_ERRORS_ON_ERROR.equals(Preferences.getInstance().getCaptureJobLog())) {
+                if (!isError(jobLogMessage)) {
+                    continue;
+                }
+            }
+
+            jobLogMessage.load();
+
+            newJobLogEntry = jobLogMessage.getID() + " (" + getMessageType(jobLogMessage) + "): " + jobLogMessage.getText(); //$NON-NLS-1$ //$NON-NLS-2$
+
+            String messageHelp = jobLogMessage.getHelp();
+            if (!StringHelper.isNullOrEmpty(messageHelp)) {
+                newJobLogEntry += NEW_LINE + messageHelp;
+            }
+
+            newJobLogEntry += NEW_LINE + logProgramName(Messages.Sending, jobLogMessage.getSendingProgramName(), jobLogMessage.getSendingModuleName(),
+                jobLogMessage.getSendingProcedureName(), jobLogMessage.getSendingStatementNumbers(),
+                jobLogMessage.getSendingProgramInstructionNumber());
+            ;
+            newJobLogEntry += NEW_LINE + logProgramName(Messages.Receiving, jobLogMessage.getReceivingProgramName(),
+                jobLogMessage.getReceivingModuleName(), jobLogMessage.getReceivingProcedureName(),
+                new String[] { jobLogMessage.getReceivingProgramInstructionNumber() }, jobLogMessage.getReceivingProgramInstructionNumber());
+
+            logMessage(newJobLogEntry);
+        }
+    }
+
+    private boolean isError(QueuedMessage message) {
+
+        int type = message.getType();
+
+        if (type == QueuedMessage.ESCAPE || type == QueuedMessage.ESCAPE_NOT_HANDLED) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private String getMessageType(QueuedMessage message) {
+
+        int type = message.getType();
+
+        switch (type) {
+        case QueuedMessage.COMPLETION:
+            return "*COMP"; //$NON-NLS-1$
+        case QueuedMessage.DIAGNOSTIC:
+            return "*DIAG"; //$NON-NLS-1$
+        case QueuedMessage.INFORMATIONAL:
+            return "*INFO"; //$NON-NLS-1$
+        case QueuedMessage.INQUIRY:
+            return "*INQUIRY"; //$NON-NLS-1$
+        case QueuedMessage.SENDERS_COPY:
+            return "*COPY"; //$NON-NLS-1$
+        case QueuedMessage.REQUEST:
+        case QueuedMessage.REQUEST_WITH_PROMPTING:
+            return "*REQUEST"; //$NON-NLS-1$
+        case QueuedMessage.NOTIFY:
+        case QueuedMessage.NOTIFY_NOT_HANDLED:
+            return "*NOTIFY"; //$NON-NLS-1$
+        case QueuedMessage.ESCAPE:
+        case QueuedMessage.ESCAPE_NOT_HANDLED:
+            return "*ESCAPE"; //$NON-NLS-1$
+        case QueuedMessage.REPLY_FROM_SYSTEM_REPLY_LIST:
+        case QueuedMessage.REPLY_MESSAGE_DEFAULT_USED:
+        case QueuedMessage.REPLY_NOT_VALIDITY_CHECKED:
+        case QueuedMessage.REPLY_SYSTEM_DEFAULT_USED:
+        case QueuedMessage.REPLY_VALIDITY_CHECKED:
+            return "*REPLY"; //$NON-NLS-1$
+
+        default:
+            return IBM_NULL; // $NON-NLS-1$
+        }
+    }
+
+    private QueuedMessage[] getJobLog(Job serverJob, byte[] startingMessageKey, int count) throws Exception {
+
+        AS400 system = serverJob.getSystem();
+        String job = serverJob.getName();
+        String user = serverJob.getUser();
+        String number = serverJob.getNumber();
+
+        JobLog jobLog = null;
+
+        try {
+
+            jobLog = new JobLog(system, job, user, number);
+            jobLog.setListDirection(true);
+            jobLog.clearAttributesToRetrieve();
+            jobLog.addAttributeToRetrieve(JobLog.MESSAGE_WITH_REPLACEMENT_DATA);
+            jobLog.addAttributeToRetrieve(JobLog.MESSAGE_HELP_WITH_REPLACEMENT_DATA);
+            jobLog.addAttributeToRetrieve(JobLog.SENDING_PROGRAM_NAME);
+            jobLog.addAttributeToRetrieve(JobLog.SENDING_MODULE_NAME);
+            jobLog.addAttributeToRetrieve(JobLog.SENDING_PROCEDURE_NAME);
+            jobLog.addAttributeToRetrieve(JobLog.SENDING_STATEMENT_NUMBERS);
+            jobLog.addAttributeToRetrieve(JobLog.RECEIVING_PROGRAM_NAME);
+            jobLog.addAttributeToRetrieve(JobLog.RECEIVING_MODULE_NAME);
+            jobLog.addAttributeToRetrieve(JobLog.RECEIVING_PROCEDURE_NAME);
+            jobLog.addAttributeToRetrieve(JobLog.RECEIVING_STATEMENT_NUMBERS);
+            jobLog.setStartingMessageKey(startingMessageKey);
+            jobLog.load();
+
+            QueuedMessage[] messages;
+
+            if (count <= 0) {
+                messages = jobLog.getMessages(-1, -1);
+            } else {
+                messages = jobLog.getMessages(jobLog.getLength() - 1, 1);
+                QueuedMessage message = messages[0];
+            }
+
+            return messages;
+
+        } catch (Throwable e) {
+            e.printStackTrace();
+
+        } finally {
+            if (jobLog != null) {
+                jobLog.close();
+            }
+        }
+
+        return new QueuedMessage[0];
+    }
+
+    private String logProgramName(String label, String programName, String moduleName, String procedureName, String[] statementNumbers,
+        String instructionNumber) {
+
+        // Show first available statement number
+        String statement = null;
+        for (int i = 0; i < statementNumbers.length; i++) {
+            if (!StringHelper.isNullOrEmpty(statementNumbers[i])) {
+                statement = statementNumbers[i];
+                break;
+            }
+        }
+
+        String message = Messages.bind(Messages.A_program_B_module_C_procedure_D_statement_E, new Object[] { label, getValueOrNull(programName),
+            getValueOrNull(moduleName), getValueOrNull(procedureName), getValueOrNull(statement) });
+
+        return message.toString();
+    }
+
+    private String getValueOrNull(String value) {
+
+        if (StringHelper.isNullOrEmpty(value)) {
+            return IBM_NULL; // $NON-NLS-1$
+        }
+
+        return value.trim();
+    }
+
+    private void logMessage(String message) {
+
+        if (StringHelper.isNullOrEmpty(message)) {
+            return;
+        }
+
+        QSYSCommandSubSystem commandSubSystem = getConnection().getCommandSubSystem();
+        commandSubSystem.logExplanation(message);
     }
 
     @Override

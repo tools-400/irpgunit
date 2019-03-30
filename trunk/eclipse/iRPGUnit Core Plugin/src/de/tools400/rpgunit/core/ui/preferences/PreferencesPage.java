@@ -72,6 +72,8 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
 
     private Button chkPosToLineOnOpen;
 
+    private Combo cboCaptureJobLog;
+
     private Button chkShowResultView;
 
     private Button chkWarnMessages;
@@ -319,17 +321,27 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
 
         Group grpDebugParameters = new Group(mainPanel, SWT.NONE);
         grpDebugParameters.setText(Messages.PreferencesPage2_grpDebugParameters_text);
-        GridLayout gl_grpDebugParameters = new GridLayout(1, false);
+        grpDebugParameters.setLayout(new GridLayout(2, false));
         grpDebugParameters.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-        grpDebugParameters.setLayout(gl_grpDebugParameters);
 
         chkNewConnection = new Button(grpDebugParameters, SWT.CHECK);
+        chkNewConnection.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 2, 1));
         chkNewConnection.setToolTipText(Messages.PreferencesPage2_chkNewConnection_toolTipText);
         chkNewConnection.setText(Messages.PreferencesPage2_chkNewConnection_text);
 
         chkPosToLineOnOpen = new Button(grpDebugParameters, SWT.CHECK);
+        chkPosToLineOnOpen.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 2, 1));
         chkPosToLineOnOpen.setToolTipText(Messages.PreferencesPage2_chkPosToLineOnOpen_toolTipText);
         chkPosToLineOnOpen.setText(Messages.PreferencesPage2_chkPosToLineOnOpen_text);
+
+        Label lblCaptureJobLog = new Label(grpDebugParameters, SWT.NONE);
+        lblCaptureJobLog.setText(Messages.PreferencesPage2_lblCaptureJobLog_text);
+        lblCaptureJobLog.setToolTipText(Messages.PreferencesPage2_cboCaptureJobLog_toolTipText);
+
+        cboCaptureJobLog = new Combo(grpDebugParameters, SWT.DROP_DOWN | SWT.READ_ONLY);
+        cboCaptureJobLog.setItems(getPreferences().getCaptureJoblogItems());
+        cboCaptureJobLog.setToolTipText(Messages.PreferencesPage2_cboCaptureJobLog_toolTipText);
+
     }
 
     private void createGroupUIBehavior(Composite mainPanel) {
@@ -380,6 +392,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         cboCheckTestSuite.setText(getPreferences().getCheckTestSuite());
         chkNewConnection.setSelection(getPreferences().mustCreateNewConnection());
         chkPosToLineOnOpen.setSelection(getPreferences().shallPositionToLine());
+        cboCaptureJobLog.setText(getPreferences().getCaptureJobLogText());
         chkShowResultView.setSelection(getPreferences().isShowResultView());
         chkWarnMessages.setSelection(false);
     }
@@ -398,6 +411,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         cboCheckTestSuite.setText(getPreferences().getDefaultCheckTestSuite());
         chkNewConnection.setSelection(getPreferences().getDefaultConnectionState());
         chkPosToLineOnOpen.setSelection(getPreferences().getDefaultPositionToLineState());
+        cboCaptureJobLog.setText(getPreferences().getDefaultCaptureJobLogText());
         chkShowResultView.setSelection(getPreferences().getDefaultIsShowResultView());
         chkWarnMessages.setSelection(false);
 
@@ -428,8 +442,9 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
 
         tPreferences.setDebugConnectionNew(chkNewConnection.getSelection());
         tPreferences.setPositionToLine(chkPosToLineOnOpen.getSelection());
+        tPreferences.setCaptureJobLogByText(cboCaptureJobLog.getText());
 
-        if (chkWarnMessages.getEnabled()) {
+        if (chkWarnMessages.getSelection()) {
             tPreferences.enableAllWarningMessages();
         }
 

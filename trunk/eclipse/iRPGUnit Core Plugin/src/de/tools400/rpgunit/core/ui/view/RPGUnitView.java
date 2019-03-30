@@ -14,7 +14,10 @@ import java.util.Map;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -40,6 +43,7 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 
 import com.ibm.etools.iseries.rse.ui.actions.popupmenu.ISeriesAbstractQSYSPopupMenuAction;
@@ -86,6 +90,11 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
 
     private IRPGUnitViewDelegate viewDelegate = null;
 
+    private CaptureJoblogAction captureJobLogOffAction;
+    private CaptureJoblogAction captureJobLogErrorsOnErrorAction;
+    private CaptureJoblogAction captureJobLogAllOnErrorAction;
+    private CaptureJoblogAction captureJobLogAllAction;
+
     @Override
     public void createPartControl(Composite parent) {
 
@@ -127,6 +136,53 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
         tDelegate.enableExpandAllButton(numItems);
 
         getSite().setSelectionProvider(viewer);
+
+        initializeMenu();
+    }
+
+    private void initializeMenu() {
+
+        IActionBars actionBars = getViewSite().getActionBars();
+        IMenuManager viewMenu = actionBars.getMenuManager();
+
+        captureJobLogOffAction = new CaptureJoblogAction(Preferences.DEBUG_CAPTURE_JOBLOG_OFF) {
+            @Override
+            public void run() {
+                setCaptureJobLogOptionSelected();
+            }
+        };
+
+        captureJobLogErrorsOnErrorAction = new CaptureJoblogAction(Preferences.DEBUG_CAPTURE_JOBLOG_ERRORS_ON_ERROR) {
+            @Override
+            public void run() {
+                setCaptureJobLogOptionSelected();
+            }
+        };
+
+        captureJobLogAllOnErrorAction = new CaptureJoblogAction(Preferences.DEBUG_CAPTURE_JOBLOG_ALL_ON_ERROR) {
+            @Override
+            public void run() {
+                setCaptureJobLogOptionSelected();
+            }
+        };
+
+        captureJobLogAllAction = new CaptureJoblogAction(Preferences.DEBUG_CAPTURE_JOBLOG_ALL) {
+            @Override
+            public void run() {
+                setCaptureJobLogOptionSelected();
+            }
+        };
+
+        viewMenu.add(captureJobLogOffAction);
+        viewMenu.add(captureJobLogErrorsOnErrorAction);
+        viewMenu.add(captureJobLogAllOnErrorAction);
+        viewMenu.add(captureJobLogAllAction);
+
+        Preferences preferences = Preferences.getInstance();
+        preferences.addPropertyChangeListener(captureJobLogOffAction);
+        preferences.addPropertyChangeListener(captureJobLogErrorsOnErrorAction);
+        preferences.addPropertyChangeListener(captureJobLogAllOnErrorAction);
+        preferences.addPropertyChangeListener(captureJobLogAllAction);
     }
 
     /**
@@ -932,4 +988,61 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
         }
     }
 
+    @Override
+    public void dispose() {
+
+        Preferences preferences = Preferences.getInstance();
+        preferences.removePropertyChangeListener(captureJobLogOffAction);
+        preferences.removePropertyChangeListener(captureJobLogErrorsOnErrorAction);
+        preferences.removePropertyChangeListener(captureJobLogAllOnErrorAction);
+        preferences.removePropertyChangeListener(captureJobLogAllAction);
+
+        super.dispose();
+    }
+
+    private class CaptureJoblogAction extends Action implements IPropertyChangeListener {
+
+        private String option;
+        private boolean isSelected;
+        private Preferences preferences;
+
+        public CaptureJoblogAction(String option) {
+            super("", Action.AS_RADIO_BUTTON);
+
+            this.option = option;
+            this.preferences = Preferences.getInstance();
+
+            setText(preferences.getCaptureJobLogText(this.option));
+
+            updateSelectedState();
+        }
+
+        @Override
+        public boolean isChecked() {
+            return super.isChecked();
+        }
+
+        protected void setCaptureJobLogOptionSelected() {
+            preferences.setCaptureJobLog(this.option);
+        }
+
+        @Override
+        public void propertyChange(PropertyChangeEvent event) {
+            if (event.getProperty() == Preferences.DEBUG_CAPTURE_JOBLOG) {
+                if (event.getNewValue() != null && (event.getNewValue() instanceof String)) {
+                    updateSelectedState();
+                }
+            }
+        }
+
+        private void updateSelectedState() {
+            String option = preferences.getCaptureJobLog();
+            if (this.option.equals(option)) {
+                this.isSelected = true;
+            } else {
+                this.isSelected = false;
+            }
+            setChecked(isSelected);
+        }
+    }
 }

@@ -8,8 +8,17 @@
 
 package de.tools400.rpgunit.core.preferences;
 
-import org.eclipse.jface.preference.IPreferenceStore;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+
+import de.tools400.rpgunit.core.Messages;
 import de.tools400.rpgunit.core.RPGUnitCorePlugin;
 import de.tools400.rpgunit.core.model.ibmi.I5ObjectName;
 import de.tools400.rpgunit.core.preferences.internal.PreferencesChangeListener;
@@ -30,6 +39,11 @@ public final class Preferences {
      * Base configuration key:
      */
     private static final String RPGUNIT = "rpgunit"; //$NON-NLS-1$
+
+    /**
+     * Map of capture job log options
+     */
+    private Map<String, String> captureJobLogItems;
 
     /**
      * Preferences version number
@@ -156,6 +170,16 @@ public final class Preferences {
 
     public static final Boolean DEBUG_POSITION_TO_LINE_NO = false;
 
+    public static final String DEBUG_CAPTURE_JOBLOG = REPORT + ".captureJoblog"; //$NON-NLS-1$
+
+    public static final String DEBUG_CAPTURE_JOBLOG_OFF = "OFF"; //$NON-NLS-1$
+
+    public static final String DEBUG_CAPTURE_JOBLOG_ERRORS_ON_ERROR = "ERRORS_ON_ERROR"; //$NON-NLS-1$
+
+    public static final String DEBUG_CAPTURE_JOBLOG_ALL_ON_ERROR = "ALL_ON_ERROR"; //$NON-NLS-1$
+
+    public static final String DEBUG_CAPTURE_JOBLOG_ALL = "ALL"; //$NON-NLS-1$
+
     /**
      * RPGUnit product library upload parameters:
      */
@@ -187,6 +211,14 @@ public final class Preferences {
             instance.initialize();
         }
         return instance;
+    }
+
+    public void addPropertyChangeListener(IPropertyChangeListener listener) {
+        preferenceStore.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(IPropertyChangeListener listener) {
+        preferenceStore.removePropertyChangeListener(listener);
     }
 
     /*
@@ -319,6 +351,24 @@ public final class Preferences {
         return libraryName;
     }
 
+    public String getCaptureJobLog() {
+        String captureJobLog = preferenceStore.getString(DEBUG_CAPTURE_JOBLOG);
+        if (!captureJobLogItems.containsKey(captureJobLog)) {
+            captureJobLog = getDefaultCaptureJobLog();
+            setCaptureJobLog(captureJobLog);
+        }
+        return captureJobLog;
+    }
+
+    public String getCaptureJobLogText() {
+        String captureJobLog = getCaptureJobLog();
+        return captureJobLogItems.get(captureJobLog);
+    }
+
+    public String getCaptureJobLogText(String option) {
+        return captureJobLogItems.get(option);
+    }
+
     /*
      * Preferences: SETTER
      */
@@ -422,6 +472,22 @@ public final class Preferences {
         saveUploadLibraryName(libraryName);
     }
 
+    public void setCaptureJobLog(String option) {
+        saveCaptureJobLog(option);
+    }
+
+    public void setCaptureJobLogByText(String text) {
+
+        Set<Entry<String, String>> captureJobLogTextItems = this.captureJobLogItems.entrySet();
+        for (Entry<String, String> entry : captureJobLogTextItems) {
+
+            if (entry.getValue().equals(text)) {
+                saveCaptureJobLog(entry.getKey());
+                return;
+            }
+        }
+    }
+
     /**
      * Is called by
      * {@link PreferencesInitializer#initializeDefaultPreferences()} in order to
@@ -431,19 +497,32 @@ public final class Preferences {
      * PreferencesInitializer class.
      */
     public void initializeDefaultPreferences() {
-        preferenceStore.setDefault(OUTPUT, getDefaultOutput());
-        preferenceStore.setDefault(REPORT_DETAIL, getDefaultDetail());
+
+        // Command parameters
         preferenceStore.setDefault(RUN_ORDER, getDefaultRunOrder());
         preferenceStore.setDefault(LIBRARY_LIST, getDefaultLibraryList());
         preferenceStore.setDefault(JOBD_NAME, getDefaultJobDescription().getName());
         preferenceStore.setDefault(JOBD_LIBRARY, getDefaultJobDescription().getLibrary());
+        preferenceStore.setDefault(REPORT_DETAIL, getDefaultDetail());
         preferenceStore.setDefault(REPORT_DISABLED, getDefaultReportDisabledState());
-        preferenceStore.setDefault(DEBUG_POSITION_TO_LINE, getDefaultPositionToLineState());
-        preferenceStore.setDefault(PRODUCT_LIBRARY, getDefaultProductLibrary());
-        preferenceStore.setDefault(CHECK_TEST_SUITE, getDefaultCheckTestSuite());
-        preferenceStore.setDefault(SHOW_VIEW, getDefaultIsShowResultView());
         preferenceStore.setDefault(RECLAIM_RESOURCES, getDefaultReclaimResources());
 
+        // Override command parameters
+        preferenceStore.setDefault(OUTPUT, getDefaultOutput());
+
+        // Runtime
+        preferenceStore.setDefault(PRODUCT_LIBRARY, getDefaultProductLibrary());
+        preferenceStore.setDefault(CHECK_TEST_SUITE, getDefaultCheckTestSuite());
+
+        // Debug
+        preferenceStore.setDefault(DEBUG_CONNECTION, getDefaultConnectionState());
+        preferenceStore.setDefault(DEBUG_POSITION_TO_LINE, getDefaultPositionToLineState());
+        preferenceStore.setDefault(DEBUG_CAPTURE_JOBLOG, getDefaultCaptureJobLog());
+
+        // Appearance
+        preferenceStore.setDefault(SHOW_VIEW, getDefaultIsShowResultView());
+
+        // Warning messages
         preferenceStore.setDefault(WARN_MESSAGE_SRC_OPTION, getDefaultShowWarnMessages());
         preferenceStore.setDefault(WARN_MESSAGE_USER_DEFINED_ATTRIBUTE, getDefaultShowWarnMessages());
         preferenceStore.setDefault(WARN_MESSAGE_OBSOLETE_PLUGINS_V1, getDefaultShowWarnMessages());
@@ -545,6 +624,15 @@ public final class Preferences {
         return DEBUG_POSITION_TO_LINE_NO;
     }
 
+    public String getDefaultCaptureJobLog() {
+        return DEBUG_CAPTURE_JOBLOG_OFF;
+    }
+
+    public String getDefaultCaptureJobLogText() {
+        String captureJobLog = getDefaultCaptureJobLog();
+        return captureJobLogItems.get(captureJobLog);
+    }
+
     public String getDefaultProductLibrary() {
         return PRODUCT_LIBRARY_LIBL;
     }
@@ -603,6 +691,17 @@ public final class Preferences {
 
     public String[] getCheckTestSuiteItems() {
         return new String[] { CHECK_TEST_SUITE_NONE, CHECK_TEST_SUITE_TEXT, CHECK_TEST_SUITE_ATTRIBUTE };
+    }
+
+    public String[] getCaptureJoblogItems() {
+
+        List<String> captureJobLogItems = new LinkedList<String>();
+        captureJobLogItems.add(this.captureJobLogItems.get(DEBUG_CAPTURE_JOBLOG_OFF));
+        captureJobLogItems.add(this.captureJobLogItems.get(DEBUG_CAPTURE_JOBLOG_ERRORS_ON_ERROR));
+        captureJobLogItems.add(this.captureJobLogItems.get(DEBUG_CAPTURE_JOBLOG_ALL_ON_ERROR));
+        captureJobLogItems.add(this.captureJobLogItems.get(DEBUG_CAPTURE_JOBLOG_ALL));
+
+        return captureJobLogItems.toArray(new String[captureJobLogItems.size()]);
     }
 
     public IPreferenceStore getStore() {
@@ -678,6 +777,10 @@ public final class Preferences {
         preferenceStore.setValue(UPLOAD_LIBRARY_NAME, libraryName);
     }
 
+    private void saveCaptureJobLog(String option) {
+        preferenceStore.setValue(DEBUG_CAPTURE_JOBLOG, option);
+    }
+
     /**
      * Initializes the preferences. Adds a property change listener to the
      * Eclipse preferences store to keep track of changes.
@@ -686,7 +789,12 @@ public final class Preferences {
 
         // Add change listener to the preference store so that we are notified
         // in case of changes
-        preferenceStore.addPropertyChangeListener(new PreferencesChangeListener());
+        addPropertyChangeListener(new PreferencesChangeListener());
+        captureJobLogItems = new HashMap<String, String>();
+        captureJobLogItems.put(DEBUG_CAPTURE_JOBLOG_OFF, Messages.Capture_Joblog_OFF);
+        captureJobLogItems.put(DEBUG_CAPTURE_JOBLOG_ERRORS_ON_ERROR, Messages.Capture_Joblog_ERRORS_ON_ERROR);
+        captureJobLogItems.put(DEBUG_CAPTURE_JOBLOG_ALL_ON_ERROR, Messages.Capture_Joblog_ALL_ON_ERROR);
+        captureJobLogItems.put(DEBUG_CAPTURE_JOBLOG_ALL, Messages.Capture_Joblog_ALL);
     }
 
 }
