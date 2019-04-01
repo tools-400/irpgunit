@@ -956,7 +956,7 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
                 newJobLogEntry += NEW_LINE + messageHelp;
             }
 
-            newJobLogEntry += NEW_LINE + logProgramName(Messages.Sending, jobLogMessage.getSendingProgramName(), jobLogMessage.getSendingModuleName(),
+            newJobLogEntry += NEW_LINE + logProgramName(Messages.Sending, jobLogMessage.getFromProgram(), jobLogMessage.getSendingModuleName(),
                 jobLogMessage.getSendingProcedureName(), jobLogMessage.getSendingStatementNumbers());
             ;
             newJobLogEntry += NEW_LINE + logProgramName(Messages.Receiving, jobLogMessage.getReceivingProgramName(),
