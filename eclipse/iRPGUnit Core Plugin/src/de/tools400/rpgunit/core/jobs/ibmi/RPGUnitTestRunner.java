@@ -911,7 +911,8 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
 
         if (Preferences.DEBUG_CAPTURE_JOBLOG_ALL.equals(captureJobLog)) {
             captureJobLog(program, aServiceProgram, startingMessageKey);
-        } else if (Preferences.DEBUG_CAPTURE_JOBLOG_ERRORS_ON_ERROR.equals(captureJobLog) || Preferences.DEBUG_CAPTURE_JOBLOG_ALL_ON_ERROR.equals(captureJobLog)) {
+        } else if (Preferences.DEBUG_CAPTURE_JOBLOG_ERRORS_ON_ERROR.equals(captureJobLog)
+            || Preferences.DEBUG_CAPTURE_JOBLOG_ALL_ON_ERROR.equals(captureJobLog)) {
             retrieveUnitTestResult(aServiceProgram, aListOfProcedure);
             if (testResult.isError()) {
                 captureJobLog(program, aServiceProgram, startingMessageKey);
@@ -956,12 +957,11 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             }
 
             newJobLogEntry += NEW_LINE + logProgramName(Messages.Sending, jobLogMessage.getSendingProgramName(), jobLogMessage.getSendingModuleName(),
-                jobLogMessage.getSendingProcedureName(), jobLogMessage.getSendingStatementNumbers(),
-                jobLogMessage.getSendingProgramInstructionNumber());
+                jobLogMessage.getSendingProcedureName(), jobLogMessage.getSendingStatementNumbers());
             ;
-            newJobLogEntry += NEW_LINE + logProgramName(Messages.Receiving, jobLogMessage.getReceivingProgramName(),
-                jobLogMessage.getReceivingModuleName(), jobLogMessage.getReceivingProcedureName(),
-                new String[] { jobLogMessage.getReceivingProgramInstructionNumber() }, jobLogMessage.getReceivingProgramInstructionNumber());
+            newJobLogEntry += NEW_LINE
+                + logProgramName(Messages.Receiving, jobLogMessage.getReceivingProgramName(), jobLogMessage.getReceivingModuleName(),
+                    jobLogMessage.getReceivingProcedureName(), new String[] { jobLogMessage.getReceivingProgramInstructionNumber() });
 
             logMessage(newJobLogEntry);
         }
@@ -1064,8 +1064,7 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
         return new QueuedMessage[0];
     }
 
-    private String logProgramName(String label, String programName, String moduleName, String procedureName, String[] statementNumbers,
-        String instructionNumber) {
+    private String logProgramName(String label, String programName, String moduleName, String procedureName, String[] statementNumbers) {
 
         // Show first available statement number
         String statement = null;
