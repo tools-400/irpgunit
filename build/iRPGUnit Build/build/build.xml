@@ -178,12 +178,14 @@
 		<equals arg1="${is.beta.version}" arg2="true" />
 		<then>
 			<property name="target.ide.root.update.site.url" value="${sf.root.url}/${beta.dir}/eclipse/${target.ide.sf.dir}/" />
-			<property name="target.ide.root.help.site.url" value="${sf.help.url}/${beta.dir}/${sf.dir.updatesite.help.dir}/" />
+			<property name="target.ide.root.help.site.url" value="${sf.help.url}/${sf.dir.updatesite.help.dir}/" />
+			<property name="target.ide.root.beta.help.site.url" value="${sf.help.url}/beta-version/${sf.dir.updatesite.help.dir}/" />
 			<property name="site.xml.property.url" value="${sf.root.master.dl.url}/${beta.dir}/eclipse/${target.ide.sf.dir}" />
 		</then>
 		<else>
 			<property name="target.ide.root.update.site.url" value="${sf.root.url}/eclipse/${target.ide.sf.dir}/" />
 			<property name="target.ide.root.help.site.url" value="${sf.help.url}/${sf.dir.updatesite.help.dir}/" />
+			<property name="target.ide.root.beta.help.site.url" value="${sf.help.url}/beta-version/${sf.dir.updatesite.help.dir}/" />
 			<property name="site.xml.property.url" value="${sf.root.master.dl.url}/eclipse/${target.ide.sf.dir}" />
 		</else>
 	</if>
@@ -453,6 +455,7 @@
 		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@PROJECT_HOME@" value="${sf.home.url}" />
 		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@PLUGIN_NAME@" value="${plugin.name}" />
 		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@BETA_HELP_SITE_URL@" value="${target.ide.root.beta.help.site.url}" />
 
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
 
@@ -529,12 +532,14 @@
 		<replace file="${build.upload.dir.home}/${home.page}" token="@TODAY@" value="${today.timestamp}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
+		<replace file="${build.upload.dir.home}/${home.page}" token="@BETA_HELP_SITE_URL@" value="${target.ide.root.beta.help.site.url}" />
 		
 		<replace file="${build.upload.dir.home}/${support.page}" token="@VERSION_NUMBER@" value="${build.version}" />
 		<replace file="${build.upload.dir.home}/${support.page}" token="@TODAY_YEAR@" value="${today.year}" />
 		<replace file="${build.upload.dir.home}/${support.page}" token="@TODAY@" value="${today.timestamp}" />
 		<replace file="${build.upload.dir.home}/${support.page}" token="@UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
 		<replace file="${build.upload.dir.home}/${support.page}" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
+		<replace file="${build.upload.dir.home}/${support.page}" token="@BETA_HELP_SITE_URL@" value="${target.ide.root.beta.help.site.url}" />
 
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
 

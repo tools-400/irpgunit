@@ -75,9 +75,16 @@
         Click to enlarge:
         <table class="nomargin">
         <tr>
-            <td><a href="./assets/irpgunit_screenshot_1.png"><img class="noborder" src="./assets/irpgunit_screenshot_1_preview.png"></a><br>Execute a test suite</td>
-            <td><a href="./assets/irpgunit_screenshot_2.png"><img class="noborder" src="./assets/irpgunit_screenshot_2_preview.png"></a><br>Result of an execute test suite</td>
-            <td><a href="./assets/irpgunit_screenshot_3.png"><img class="noborder" src="./assets/irpgunit_screenshot_3_preview.png"></a><br>The failed assertion</td>
+            <td><a href="./assets/irpgunit_screenshot_1.png"><img class="noborder" src="./assets/irpgunit_screenshot_1_preview.png"></a></td>
+            <td><a href="./assets/irpgunit_screenshot_2.png"><img class="noborder" src="./assets/irpgunit_screenshot_2_preview.png"></a></td>
+            <td><a href="./assets/irpgunit_screenshot_3.png"><img class="noborder" src="./assets/irpgunit_screenshot_3_preview.png"></a></td>
+            <td><a href="./assets/irpgunit_screenshot_4.png"><img class="noborder" src="./assets/irpgunit_screenshot_4_preview.png"></a></td>
+        </tr>
+        <tr>
+            <td>Run a unit test suite from the <i>Remote Systems</i> view.</td>
+            <td>Display the result spooled file of a unit test with a mouse click.</td>
+            <td>Open a failed test statement with a mouse click.</td>
+            <td>Command log of a unit test with errors.</td>
         </tr>
         </table>
         <ul>
@@ -107,7 +114,19 @@
         <table class="nomargin">
         <tr><td><img class="noborder" src="./assets/zip_file.png"></td><td><a href="https://sourceforge.net/projects/irpgunit/files/?source=navbar/">SourceForge Files</a></td></tr>
         </table>
+        Refer to the iRPGUnit <a target="_help" href="@HELP_SITE_URL@">help</a> page for detailed installation instructions.
         <p/>
+        The iRPGUnit beta version is available here: 
+        <p/>
+        <table class="nomargin">
+        <tr><td><img class="noborder" src="./assets/updatesite_beta.png"></td><td><a href="http://irpgunit.sourceforge.io/beta-version/eclipse/rdi8.0/">IBM Rational Developer for i - RDi 8.0+</a></td></tr>
+        </table>
+        <p/>
+        <table class="nomargin">
+        <tr><td><img class="noborder" src="./assets/zip_file.png"></td><td><a href="https://sourceforge.net/projects/irpgunit/files/beta-version/?source=navbar/">SourceForge Files</a></td></tr>
+        </table>
+        <p/>
+        Refer to the iRPGUnit <a target="_help" href="@BETA_HELP_SITE_URL@">help (beta version)</a> page for detailed installation instructions.
         </div>
 
         <h2 class="release">Help</h2>
