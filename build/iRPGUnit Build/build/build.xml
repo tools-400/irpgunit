@@ -137,6 +137,7 @@
 			<property name="is.beta.version" value="true" />
 			<property name="beta.dir" value="${sf.ftp.beta.dir.name}" />
 			<property name="version.info" value="&lt;div class=&quot;beta&quot;&gt;Beta Version - ${build.version}&lt;/div&gt;" />
+			<property name="ignore.build.home" value="true" />
 		</then>
 		<else>
 			<echo>Building a RELEASE version.</echo>
