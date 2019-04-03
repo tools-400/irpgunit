@@ -58,7 +58,7 @@
 		iRPGUnit features are driven from our ideas and needs, but everybody is encouraged to contribute
 		suggestions and manpower to improve the power of iRPGUnit.
 		<p/>
-		<table  border="0">
+		<table  border="0" >
 		<tr><td valign="top">
 			<table border="0" style="border-spacing: 0px 0px; ">
 			<tr><td valign="top"><h2>The iRPGUnit Project Team</h2></td></tr>
@@ -75,23 +75,24 @@
         Click to enlarge:
         <table class="nomargin">
         <tr>
-            <td><a href="./assets/irpgunit_screenshot_1.png"><img class="noborder" src="./assets/irpgunit_screenshot_1_preview.png"></a></td>
-            <td><a href="./assets/irpgunit_screenshot_2.png"><img class="noborder" src="./assets/irpgunit_screenshot_2_preview.png"></a></td>
-            <td><a href="./assets/irpgunit_screenshot_3.png"><img class="noborder" src="./assets/irpgunit_screenshot_3_preview.png"></a></td>
-            <td><a href="./assets/irpgunit_screenshot_4.png"><img class="noborder" src="./assets/irpgunit_screenshot_4_preview.png"></a></td>
+            <td width="230px"><a href="./assets/irpgunit_screenshot_1.png"><img class="noborder" src="./assets/irpgunit_screenshot_1_preview.png"></a></td><td width="20px">&nbsp;</td>
+            <td width="230px"><a href="./assets/irpgunit_screenshot_2.png"><img class="noborder" src="./assets/irpgunit_screenshot_2_preview.png"></a></td><td width="20px">&nbsp;</td>
+            <td width="230px"><a href="./assets/irpgunit_screenshot_3.png"><img class="noborder" src="./assets/irpgunit_screenshot_3_preview.png"></a></td><td width="20px">&nbsp;</td>
+            <td width="230px"><a href="./assets/irpgunit_screenshot_4.png"><img class="noborder" src="./assets/irpgunit_screenshot_4_preview.png"></a></td>
         </tr>
         <tr>
-            <td>Run a unit test suite from the <i>Remote Systems</i> view.</td>
-            <td>Display the result spooled file of a unit test with a mouse click.</td>
-            <td>Open a failed test statement with a mouse click.</td>
+            <td>Run a unit test suite from the <i>Remote Systems</i> view.</td><td>&nbsp;</td>
+            <td>Display the result spooled file of a unit test with a mouse click.</td><td>&nbsp;</td>
+            <td>Open a failed test statement with a mouse click.</td><td>&nbsp;</td>
             <td>Command log of a unit test with errors.</td>
         </tr>
         </table>
         <ul>
             <li>Groups test cases in a test suite.</li>
             <li>Executes a test suite or one or more selected test cases.</li>
-            <li>Optionally creates a test report.</li>
-            <li>Opens the source member with the failing assertion.</li>
+            <li>Optionally create a test report.</li>
+            <li>Open the test report with a mouse click on test suite.</li>
+            <li>Open the source member with a mouse click on the failed assertion.</li>
         </ul>
         </div>
         <p/>
