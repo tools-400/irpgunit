@@ -70,7 +70,8 @@ public class Messages extends NLS {
     public static String Enter_a_password;
     public static String Host_A_not_found_in_configured_RSE_connections;
     public static String Unit_test_ended_with_errors;
-    public static String A_program_B_module_C_procedure_D_statement_E;
+    public static String A_program_B_module_C_procedure_D_statement_E_FORMATTED;
+    public static String A_program_B_module_C_procedure_D_statement_E_UNFORMATTED;
     public static String Sending;
     public static String Receiving;
     public static String A_Result_of_iRPGUnit_Test_Case_B_served_by_server_job_C;
@@ -119,6 +120,8 @@ public class Messages extends NLS {
     public static String PreferencesPage2_btnUploadLibrary_toolTipText;
     public static String PreferencesPage2_lblCaptureJobLog_text;
     public static String PreferencesPage2_cboCaptureJobLog_toolTipText;
+    public static String PreferencesPage2_chkFormatJobLog_text;
+    public static String PreferencesPage2_chkFormatJobLog_toolTipText;
 
     public static String Label_Host_name_colon;
     public static String Tooltip_Host_name;

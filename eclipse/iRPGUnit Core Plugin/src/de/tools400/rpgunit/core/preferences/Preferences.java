@@ -180,6 +180,8 @@ public final class Preferences {
 
     public static final String DEBUG_CAPTURE_JOBLOG_ALL = "ALL"; //$NON-NLS-1$
 
+    public static final String DEBUG_FORMATTED_JOBLOG = "formatJobLog"; //$NON-NLS-1$
+
     /**
      * RPGUnit product library upload parameters:
      */
@@ -360,6 +362,10 @@ public final class Preferences {
         return captureJobLog;
     }
 
+    public boolean isFormattedJobLog() {
+        return preferenceStore.getBoolean(DEBUG_FORMATTED_JOBLOG);
+    }
+
     public String getCaptureJobLogText() {
         String captureJobLog = getCaptureJobLog();
         return captureJobLogItems.get(captureJobLog);
@@ -488,6 +494,10 @@ public final class Preferences {
         }
     }
 
+    public void setFormatJobLog(boolean formatted) {
+        saveFormatJobLog(formatted);
+    }
+
     /**
      * Is called by
      * {@link PreferencesInitializer#initializeDefaultPreferences()} in order to
@@ -518,6 +528,7 @@ public final class Preferences {
         preferenceStore.setDefault(DEBUG_CONNECTION, getDefaultConnectionState());
         preferenceStore.setDefault(DEBUG_POSITION_TO_LINE, getDefaultPositionToLineState());
         preferenceStore.setDefault(DEBUG_CAPTURE_JOBLOG, getDefaultCaptureJobLog());
+        preferenceStore.setDefault(DEBUG_FORMATTED_JOBLOG, getDefaultFormatJobLog());
 
         // Appearance
         preferenceStore.setDefault(SHOW_VIEW, getDefaultIsShowResultView());
@@ -626,6 +637,10 @@ public final class Preferences {
 
     public String getDefaultCaptureJobLog() {
         return DEBUG_CAPTURE_JOBLOG_OFF;
+    }
+
+    public boolean getDefaultFormatJobLog() {
+        return true;
     }
 
     public String getDefaultCaptureJobLogText() {
@@ -779,6 +794,10 @@ public final class Preferences {
 
     private void saveCaptureJobLog(String option) {
         preferenceStore.setValue(DEBUG_CAPTURE_JOBLOG, option);
+    }
+
+    private void saveFormatJobLog(boolean formatted) {
+        preferenceStore.setValue(DEBUG_FORMATTED_JOBLOG, formatted);
     }
 
     /**

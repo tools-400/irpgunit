@@ -15,6 +15,7 @@ import java.util.Map;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -90,6 +91,7 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
 
     private IRPGUnitViewDelegate viewDelegate = null;
 
+    private FormatJoblogAction formatJobLogOffAction;
     private CaptureJoblogAction captureJobLogOffAction;
     private CaptureJoblogAction captureJobLogErrorsOnErrorAction;
     private CaptureJoblogAction captureJobLogAllOnErrorAction;
@@ -145,6 +147,13 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
         IActionBars actionBars = getViewSite().getActionBars();
         IMenuManager viewMenu = actionBars.getMenuManager();
 
+        formatJobLogOffAction = new FormatJoblogAction() {
+            @Override
+            public void run() {
+                setCaptureJobLogOptionSelected();
+            }
+        };
+
         captureJobLogOffAction = new CaptureJoblogAction(Preferences.DEBUG_CAPTURE_JOBLOG_OFF) {
             @Override
             public void run() {
@@ -177,12 +186,15 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
         viewMenu.add(captureJobLogErrorsOnErrorAction);
         viewMenu.add(captureJobLogAllOnErrorAction);
         viewMenu.add(captureJobLogAllAction);
+        viewMenu.add(new Separator());
+        viewMenu.add(formatJobLogOffAction);
 
         Preferences preferences = Preferences.getInstance();
         preferences.addPropertyChangeListener(captureJobLogOffAction);
         preferences.addPropertyChangeListener(captureJobLogErrorsOnErrorAction);
         preferences.addPropertyChangeListener(captureJobLogAllOnErrorAction);
         preferences.addPropertyChangeListener(captureJobLogAllAction);
+        preferences.addPropertyChangeListener(formatJobLogOffAction);
     }
 
     /**
@@ -996,14 +1008,56 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
         preferences.removePropertyChangeListener(captureJobLogErrorsOnErrorAction);
         preferences.removePropertyChangeListener(captureJobLogAllOnErrorAction);
         preferences.removePropertyChangeListener(captureJobLogAllAction);
+        preferences.removePropertyChangeListener(formatJobLogOffAction);
 
         super.dispose();
+    }
+
+    private class FormatJoblogAction extends Action implements IPropertyChangeListener {
+
+        private Preferences preferences;
+
+        public FormatJoblogAction() {
+            super("", Action.AS_CHECK_BOX);
+
+            this.preferences = Preferences.getInstance();
+
+            setText(Messages.PreferencesPage2_chkFormatJobLog_text);
+
+            updateCheckedState(preferences.isFormattedJobLog());
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return !preferences.DEBUG_CAPTURE_JOBLOG_OFF.equals(preferences.getCaptureJobLog());
+        }
+
+        @Override
+        public boolean isChecked() {
+            return super.isChecked();
+        }
+
+        protected void setCaptureJobLogOptionSelected() {
+            preferences.setFormatJobLog(isChecked());
+        }
+
+        @Override
+        public void propertyChange(PropertyChangeEvent event) {
+            if (event.getProperty() == Preferences.DEBUG_FORMATTED_JOBLOG) {
+                if (event.getNewValue() != null && (event.getNewValue() instanceof Boolean)) {
+                    updateCheckedState((Boolean)event.getNewValue());
+                }
+            }
+        }
+
+        private void updateCheckedState(boolean checked) {
+            setChecked(checked);
+        }
     }
 
     private class CaptureJoblogAction extends Action implements IPropertyChangeListener {
 
         private String option;
-        private boolean isSelected;
         private Preferences preferences;
 
         public CaptureJoblogAction(String option) {
@@ -1014,12 +1068,7 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
 
             setText(preferences.getCaptureJobLogText(this.option));
 
-            updateSelectedState();
-        }
-
-        @Override
-        public boolean isChecked() {
-            return super.isChecked();
+            updateSelectedState(preferences.getCaptureJobLog());
         }
 
         protected void setCaptureJobLogOptionSelected() {
@@ -1030,19 +1079,13 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
         public void propertyChange(PropertyChangeEvent event) {
             if (event.getProperty() == Preferences.DEBUG_CAPTURE_JOBLOG) {
                 if (event.getNewValue() != null && (event.getNewValue() instanceof String)) {
-                    updateSelectedState();
+                    updateSelectedState((String)event.getNewValue());
                 }
             }
         }
 
-        private void updateSelectedState() {
-            String option = preferences.getCaptureJobLog();
-            if (this.option.equals(option)) {
-                this.isSelected = true;
-            } else {
-                this.isSelected = false;
-            }
-            setChecked(isSelected);
+        private void updateSelectedState(String option) {
+            setChecked(this.option.equals(option));
         }
     }
 }

@@ -17,6 +17,7 @@ import com.ibm.as400.access.AS400Bin4;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.Job;
 import com.ibm.as400.access.JobLog;
+import com.ibm.as400.access.MessageFile;
 import com.ibm.as400.access.MessageQueue;
 import com.ibm.as400.access.ObjectList;
 import com.ibm.as400.access.ProgramCall;
@@ -933,6 +934,8 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
 
         QueuedMessage[] jobLogMessages = getJobLog(program.getServerJob(), startingMessageKey, -1);
 
+        boolean formatted = Preferences.getInstance().isFormattedJobLog();
+
         for (QueuedMessage jobLogMessage : jobLogMessages) {
 
             // Skip starting message key, because it was the last message in
@@ -947,7 +950,11 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
                 }
             }
 
-            jobLogMessage.load();
+            if (formatted) {
+                jobLogMessage.load(MessageFile.SUBSTITUTE_FORMATTING_CHARACTERS);
+            } else {
+                jobLogMessage.load(MessageFile.NO_FORMATTING);
+            }
 
             newJobLogEntry = jobLogMessage.getID() + " (" + getMessageType(jobLogMessage) + "): " + jobLogMessage.getText(); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -956,11 +963,13 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
                 newJobLogEntry += NEW_LINE + messageHelp;
             }
 
-            newJobLogEntry += NEW_LINE + logProgramName(Messages.Sending, jobLogMessage.getFromProgram(), jobLogMessage.getSendingModuleName(),
-                jobLogMessage.getSendingProcedureName(), jobLogMessage.getSendingStatementNumbers());
-            ;
-            newJobLogEntry += NEW_LINE + logProgramName(Messages.Receiving, jobLogMessage.getReceivingProgramName(),
-                jobLogMessage.getReceivingModuleName(), jobLogMessage.getReceivingProcedureName(), jobLogMessage.getReceiverStatementNumbers());
+            newJobLogEntry += NEW_LINE + createProgramEntry(formatted, Messages.Sending, jobLogMessage.getSendingProgramName(),
+                jobLogMessage.getSendingModuleName(), jobLogMessage.getSendingProcedureName(), jobLogMessage.getSendingStatementNumbers(),
+                jobLogMessage.getSendingProgramInstructionNumber());
+
+            newJobLogEntry += NEW_LINE + createProgramEntry(formatted, Messages.Receiving, jobLogMessage.getReceivingProgramName(),
+                jobLogMessage.getReceivingModuleName(), jobLogMessage.getReceivingProcedureName(),
+                new String[] { jobLogMessage.getReceivingProgramInstructionNumber() }, jobLogMessage.getReceivingProgramInstructionNumber());
 
             logMessage(newJobLogEntry);
         }
@@ -1027,6 +1036,7 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             jobLog = new JobLog(system, job, user, number);
             jobLog.setListDirection(true);
             jobLog.clearAttributesToRetrieve();
+            jobLog.addAttributeToRetrieve(JobLog.REPLACEMENT_DATA);
             jobLog.addAttributeToRetrieve(JobLog.MESSAGE_WITH_REPLACEMENT_DATA);
             jobLog.addAttributeToRetrieve(JobLog.MESSAGE_HELP_WITH_REPLACEMENT_DATA);
             jobLog.addAttributeToRetrieve(JobLog.SENDING_PROGRAM_NAME);
@@ -1063,7 +1073,8 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
         return new QueuedMessage[0];
     }
 
-    private String logProgramName(String label, String programName, String moduleName, String procedureName, String[] statementNumbers) {
+    private String createProgramEntry(boolean formatted, String label, String programName, String moduleName, String procedureName,
+        String[] statementNumbers, String instructionNumber) {
 
         // Show first available statement number
         String statement = null;
@@ -1074,8 +1085,17 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             }
         }
 
-        String message = Messages.bind(Messages.A_program_B_module_C_procedure_D_statement_E, new Object[] { label, getValueOrNull(programName),
-            getValueOrNull(moduleName), getValueOrNull(procedureName), getValueOrNull(statement) });
+        String message;
+        if (formatted) {
+            label = "   " + label;
+            message = Messages.bind(Messages.A_program_B_module_C_procedure_D_statement_E_FORMATTED,
+                new Object[] { label, getValueOrNull(programName), label, getValueOrNull(moduleName), label, getValueOrNull(procedureName), label,
+                    getValueOrNull(statement) });
+        } else {
+            message = Messages.bind(Messages.A_program_B_module_C_procedure_D_statement_E_UNFORMATTED,
+                new Object[] { label, getValueOrNull(programName), label, getValueOrNull(moduleName), label, getValueOrNull(procedureName), label,
+                    getValueOrNull(statement) });
+        }
 
         return message.toString();
     }
