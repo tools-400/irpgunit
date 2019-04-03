@@ -963,13 +963,11 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
                 newJobLogEntry += NEW_LINE + messageHelp;
             }
 
-            newJobLogEntry += NEW_LINE + createProgramEntry(formatted, Messages.Sending, jobLogMessage.getSendingProgramName(),
-                jobLogMessage.getSendingModuleName(), jobLogMessage.getSendingProcedureName(), jobLogMessage.getSendingStatementNumbers(),
-                jobLogMessage.getSendingProgramInstructionNumber());
+            newJobLogEntry += NEW_LINE + createProgramEntry(formatted, Messages.Sending, jobLogMessage.getFromProgram(),
+                jobLogMessage.getSendingModuleName(), jobLogMessage.getSendingProcedureName(), jobLogMessage.getSendingStatementNumbers());
 
             newJobLogEntry += NEW_LINE + createProgramEntry(formatted, Messages.Receiving, jobLogMessage.getReceivingProgramName(),
-                jobLogMessage.getReceivingModuleName(), jobLogMessage.getReceivingProcedureName(),
-                new String[] { jobLogMessage.getReceivingProgramInstructionNumber() }, jobLogMessage.getReceivingProgramInstructionNumber());
+                jobLogMessage.getReceivingModuleName(), jobLogMessage.getReceivingProcedureName(), jobLogMessage.getReceiverStatementNumbers());
 
             logMessage(newJobLogEntry);
         }
@@ -1074,7 +1072,7 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
     }
 
     private String createProgramEntry(boolean formatted, String label, String programName, String moduleName, String procedureName,
-        String[] statementNumbers, String instructionNumber) {
+        String[] statementNumbers) {
 
         // Show first available statement number
         String statement = null;
