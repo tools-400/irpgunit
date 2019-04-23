@@ -13,13 +13,13 @@
        //----------------------------------------------------------------------
       /include qinclude,SRCMBR
       /include qinclude,TEMPLATES
-      /include qinclude,USRSPC
-      /include qinclude,APILIST
+      /include qsysinc,USRSPC
+      /include qsysinc,APILIST
       /include qinclude,ERRORCODE
-      /include qinclude,QUSROBJD
-      /include qinclude,QBNLSPGM
-      /include qinclude,QBNLPGMI
-      /include qinclude,QCLRPGMI
+      /include qsysinc,QUSROBJD
+      /include qsysinc,QBNLSPGM
+      /include qsysinc,QBNLPGMI
+      /include qsysinc,QCLRPGMI
 
      D getOPMSourceMember...
      D                 pr            10a

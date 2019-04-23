@@ -31,9 +31,9 @@
        //   Imported Procedures
        //----------------------------------------------------------------------
 
-      /include qinclude,APILIST
-      /include qinclude,QBNLSPGM
-      /include qinclude,USRSPC
+      /include qsysinc,APILIST
+      /include qsysinc,QBNLSPGM
+      /include qsysinc,USRSPC
 
 
        //----------------------------------------------------------------------

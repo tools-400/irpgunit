@@ -3,7 +3,7 @@
 
       /include qsrc,TESTCASE
       /include qinclude,ERRORCODE
-      /include qinclude,QMHSNDPM
+      /include qsysinc,QMHSNDPM
 
      D setupSuite      pr
      D test1           pr

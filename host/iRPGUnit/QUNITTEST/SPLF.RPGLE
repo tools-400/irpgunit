@@ -51,16 +51,16 @@
       //----------------------------------------------------------------------
 
       /include qinclude,ERRORCODE
-      /include qinclude,QGYCLST
-      /include qinclude,QGYGTLE
-      /include qinclude,QGYOLSPL
-      /include qinclude,OPNLIST
-      /include qinclude,QSPCLOSP
-      /include qinclude,QSPGETSP
-      /include qinclude,QSPOPNSP
-      /include qinclude,QWCRTVCA
+      /include qsysinc,QGYCLST
+      /include qsysinc,QGYGTLE
+      /include qsysinc,QGYOLSPL
+      /include qsysinc,OPNLIST
+      /include qsysinc,QSPCLOSP
+      /include qsysinc,QSPGETSP
+      /include qsysinc,QSPOPNSP
+      /include qsysinc,QWCRTVCA
       /include qinclude,TEMPLATES
-      /include qinclude,USRSPC
+      /include qsysinc,USRSPC
       /include qsrc,TESTCASE
 
 

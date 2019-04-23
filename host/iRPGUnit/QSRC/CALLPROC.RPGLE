@@ -19,10 +19,10 @@
       //----------------------------------------------------------------------
 
       /include qinclude,ERRORCODE
-      /include qinclude,QLEACTBNDP
-      /include qinclude,QLEGETEXP
-      /include qinclude,QLICVTTP
-      /include qinclude,RSLVSP
+      /include qsysinc,QLEACTBNDP
+      /include qsysinc,QLEGETEXP
+      /include qsysinc,QLICVTTP
+      /include qsysinc,RSLVSP
 
 
       //----------------------------------------------------------------------

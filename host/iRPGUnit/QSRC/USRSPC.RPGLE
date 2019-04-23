@@ -10,15 +10,15 @@
        //   Public Procedure Prototypes
        //----------------------------------------------------------------------
 
-      /include qinclude,USRSPC
+      /include qsysinc,USRSPC
 
 
        //----------------------------------------------------------------------
        //   Imported Procedures
        //----------------------------------------------------------------------
 
-      /include qinclude,QUSCRTUS
-      /include qinclude,QUSPTRUS
+      /include qsysinc,QUSCRTUS
+      /include qsysinc,QUSPTRUS
 
 
        //----------------------------------------------------------------------

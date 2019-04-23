@@ -27,8 +27,8 @@
       //----------------------------------------------------------------------
 
       /include qinclude,ERRORCODE
-      /include qinclude,QMHRCVPM
-      /include qinclude,QMHSNDPM
+      /include qsysinc,QMHRCVPM
+      /include qsysinc,QMHSNDPM
       /include qinclude,TEMPLATES
 
 

@@ -24,7 +24,7 @@
       /include qinclude,FDINFDS_PF
       /include qinclude,TEMPLATES
       /include qinclude,ERRORCODE
-      /include qinclude,QSPRILSP
+      /include qsysinc,QSPRILSP
       /include qsrc,TESTCASE
 
 

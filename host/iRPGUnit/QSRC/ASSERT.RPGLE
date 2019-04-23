@@ -25,7 +25,7 @@
       /include qinclude,ASSERT
       /include qinclude,ERRORCODE
       /include qinclude,PGMMSG
-      /include qinclude,QWVRCSTK
+      /include qsysinc,QWVRCSTK
       /include qinclude,TEMPLATES
       /include qsrc,TESTCASE
 

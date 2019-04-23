@@ -18,9 +18,9 @@
 
       /include qinclude,TEMPLATES
       /include qinclude,ERRORCODE
-      /include qinclude,QWDRJOBD
-      /include qinclude,QUSRJOBI
-      /include qinclude,QLICHGLL
+      /include qsysinc,QWDRJOBD
+      /include qsysinc,QUSRJOBI
+      /include qsysinc,QLICHGLL
 
 
       //----------------------------------------------------------------------

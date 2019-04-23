@@ -63,7 +63,7 @@
       //----------------------------------------------------------------------
 
       /include qinclude,PGMMSG
-      /include qinclude,QCMDEXC
+      /include qsysinc,QCMDEXC
       /include qinclude,JOBLOG
       /include qinclude,SPLF
       /include qinclude,TEMPLATES

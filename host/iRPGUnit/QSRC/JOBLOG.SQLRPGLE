@@ -18,10 +18,10 @@
 
       /include qsrc,TESTCASE
       /include qinclude,ERRORCODE
-      /include qinclude,OPNLIST
+      /include qsysinc,OPNLIST
       /include qinclude,PGMMSG
-      /include qinclude,QGYCLST
-      /include qinclude,QGYOLJBL
+      /include qsysinc,QGYCLST
+      /include qsysinc,QGYOLJBL
       /include qinclude,TEMPLATES
 
 

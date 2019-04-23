@@ -10,7 +10,7 @@
        //   IMPORTS
        //----------------------------------------------------------------------
 
-      /include qinclude,QCMDEXC
+      /include qsysinc,QCMDEXC
       /include qsrc,TESTCASE
 
 

@@ -12,7 +12,7 @@
       /include qinclude,ERRORCODE
       /include qinclude,STRING
       /include qinclude,PGMMSG
-      /include qinclude,QCMDEXC
+      /include qsysinc,QCMDEXC
       /include qinclude,TEMPLATES
       /include qinclude,OSAPI
       /include qinclude,TAGTST
