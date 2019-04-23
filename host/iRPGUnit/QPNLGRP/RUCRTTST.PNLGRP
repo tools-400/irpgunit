@@ -1,0 +1,139 @@
+.* =================================================================== */
+.*  iRPGUnit - Create Test Suite.                                      */
+.* =================================================================== */
+.*   >>PRE-COMPILER<<                                                  */
+.*     >>CRTCMD<<  CRTPNLGRP  PNLGRP(&LI/&OB) +                        */
+.*                               SRCFILE(&SL/&SF)  +                   */
+.*                               SRCMBR(&SM);                          */
+.*     >>IMPORTANT<<                                                   */
+.*       >>PARM<< OPTION(*EVENTF);                                     */
+.*     >>END-IMPORTANT<<                                               */
+.*     >>EXECUTE<<                                                     */
+.*   >>END-PRE-COMPILER<<                                              */
+.* =================================================================== */
+:pnlgrp.
+.*
+:help name=RUCRTTST WIDTH=74.
+RPGUnit Create Test (RUCRTTST) - Help
+:p.
+The RPGUnit Create Test (RUCRTTST) command
+compiles an RPGLE source member containing test procedures into a test program.
+:ehelp.
+.*
+:help name='RUCRTTST/TSTPGM' WIDTH=64.
+Test program (TSTPGM) - Help
+:xh3.Test program (TSTPGM)
+:p.
+Specifies the name of the test program (*SRVPGM) to create.
+:ehelp.
+.*
+:help name='RUCRTTST/SRCFILE' WIDTH=64.
+Source file (SRCFILE) - Help
+:xh3.Source file (SRCFILE)
+:p.
+Specifies the name of the source file containing a member with the same name as
+TSTPGM. This member must be a valid, nomain RPGLE source member.
+:ehelp.
+.*
+:help name='RUCRTTST/SRCMBR' WIDTH=64.
+Source file (SRCFILE) - Help
+:xh3.Source file (SRCFILE)
+:p.
+Specifies the name of the member of the source file that contains the ILE RPG or
+SQL RPG source specifications to be compiled.
+:p.
+:HP2.Hint::EHP2.*TSTPGM does not work, when you want to get the result of the
+compile action back into RDi, because RDi requires a named source member.
+:parml.
+:pt.:pk def.*TSTPGM:epk.
+:pd.Use the name specified for the TSTPGM parameter as the
+source file member name.
+:pt.source-file-member-name
+:pd.Enter the name of the member that contains the ILE RPG
+or SQL RPG source specifications.
+:eparml.
+:ehelp.
+.*
+:help name='RUCRTTST/TEXT' WIDTH=64.
+Text 'description' (TEXT) - Help
+:xh3.Text 'description' (TEXT)
+:p.
+Allows you to enter text that briefly describes the RPGUnit
+test case and its function.
+:ehelp.
+.*
+:help name='RUCRTTST/COPTION' WIDTH=64.
+Compile options (COPTION) - Help
+:xh3.Compile options (COPTION)
+:p.
+Refer to the OPTION parameter in CRTRPGMOD command help.
+:p.
+:HP2.Hint::EHP2.You need to specify a named source member at
+parameter :HP2.SRCMBR:EHP2., if you want to use :HP2.*EVENTF:EHP2.
+to load the result of your compile action into RDi.
+:ehelp.
+.*
+:help name='RUCRTTST/DBGVIEW' WIDTH=64.
+Debugging views (DBGVIEW) - Help
+:xh3.Debugging views (DBGVIEW)
+:p.
+Refer to the DBGVIEW parameter in CRTRPGMOD command help.
+:p.
+:HP2.Note::EHP2.For SQLRPGLE source members, the debug view parameter is
+automatically added to parameter COMPILEOPT of command CRTSQLRPGI, if DBGVIEW
+is not already specified at COMPILEOPT.
+:ehelp.
+.*
+:help name='RUCRTTST/BNDSRVPGM' WIDTH=64.
+Bind service program (BNDSRVPGM) - Help
+:xh3.Bind service program (BNDSRVPGM)
+:p.
+Refer to the BNDSRVPGM parameter in CRTSRVPGM command help.
+:ehelp.
+.*
+:help name='RUCRTTST/BNDDIR' WIDTH=64.
+Binding directory (BNDDIR) - Help
+:xh3.Binding directory (BNDDIR)
+:p.
+Refer to the BNDDIR parameter in CRTSRVPGM command help.
+:ehelp.
+.*
+:help name='RUCRTTST/BOPTION' WIDTH=64.
+Binding options (BOPTION) - Help
+:xh3.Binding options (BOPTION)
+:p.
+Refer to the OPTION parameter in CRTSRVPGM command help.
+:ehelp.
+.*
+:help name='RUCRTTST/MODULE' WIDTH=64.
+Module (MODULE) - Help
+:xh3.Module (MODULE)
+:p.
+Refer to the MODULE parameter in CRTSRVPGM command help.
+:ehelp.
+.*
+:help name='RUCRTTST/ACTGRP' WIDTH=64.
+Activation group (ACTGRP) - Help
+:xh3.Activation group (ACTGRP)
+:p.
+Refer to the ACTGRP parameter in CRTSRVPGM command help.
+:ehelp.
+.*
+:help name='RUCRTTST/POPTION' WIDTH=64.
+Pre-compiler OPTIONS (POPTION) - Help
+:xh3.Pre-compiler OPTIONS (POPTION)
+:p.
+Refer to the OPTION parameter in CRTSQLRPGI command help.
+:ehelp.
+.*
+:help name='RUCRTTST/COMPILEOPT' WIDTH=64.
+Pre-Compiler COMPILEOPT (COMPILEOPT) - Help
+:xh3.Pre-Compiler COMPILEOPT (COMPILEOPT)
+:p.
+Refer to the COMPILEOPT parameter in CRTSQLRPGI command help.
+:p.
+:HP2.Note::EHP2.If COMPILEOPT does not include 'DBGVIEW', the value
+of parameter DBGVIEW is automatically added.
+:ehelp.
+.*
+:epnlgrp.

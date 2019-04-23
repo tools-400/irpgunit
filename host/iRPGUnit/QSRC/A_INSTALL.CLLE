@@ -1,0 +1,58 @@
+      /* =================================================================== */
+      /*   RPGUnit Installer                                                 */
+      /* =================================================================== */
+      /*   Installation Instructions:                                        */
+      /*                                                                     */
+      /*   a) Compile the A_INSTALL CL program:                              */
+      /*      CRTBNDCL   PGM(RPGUNIT/A_INSTALL) SRCFILE(QSRC)                */
+      /*                                                                     */
+      /*   b) Call the installation program:                                 */
+      /*      CALL       PGM(RPGUNIT/A_INSTALL) PARM('RPGUNIT')              */
+      /*                                                                     */
+      /*   c) Optionally delete the installation program:                    */
+      /*      DLTPGM     PGM(RPGUNIT/A_INSTALL)                              */
+      /*                                                                     */
+      /*   d) Optionally run the RPGUnit self tests:                         */
+      /*      CRTBNDCL   PGM(RPGUNIT/MKUT) SRCFILE(QUNITTEST)                */
+      /*      CALL       PGM(RPGUNIT/MKUT) PARM('RPGUNIT')                   */
+      /*      DLTPGM     PGM(RPGUNIT/MKUT)                                   */
+      /*                                                                     */
+      /* =================================================================== */
+      /* >>PRE-COMPILER<<                                                    */
+      /*   >>CRTCMD<< CRTBNDCL     PGM(&LI/&OB) +                            */
+      /*                           SRCFILE(&SL/&SF) +                        */
+      /*                           SRCMBR(&SM);                              */
+      /*   >>COMPILE<<                                                       */
+      /*     >>PARM<< DBGVIEW(*LIST);                                        */
+      /*   >>END-COMPILE<<                                                   */
+      /*   >>EXECUTE<<                                                       */
+      /* >>END-PRE-COMPILER<<                                                */
+      /* =================================================================== */
+             PGM        PARM(&TARGETLIB)
+             DCL        VAR(&TARGETLIB) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&TGTRLS   ) TYPE(*CHAR) LEN(10) VALUE('*CURRENT')
+
+             CHGVAR     VAR(&TARGETLIB) VALUE(&TARGETLIB)
+             MONMSG     MSGID(MCH3601) EXEC(SNDPGMMSG MSGID(CPF9898) +
+                          MSGF(QCPFMSG) MSGDTA('Target library +
+                          parameter required.') MSGTYPE(*ESCAPE))
+
+             CRTBNDCL   PGM(QTEMP/MKLLIST) SRCFILE(QSRC)
+             CALL       PGM(QTEMP/MKLLIST) PARM(&TARGETLIB &TGTRLS)
+
+             CRTBNDCL   PGM(QTEMP/MKTESTCASE) SRCFILE(QSRC)
+             CALL       PGM(QTEMP/MKTESTCASE) PARM(&TARGETLIB &TGTRLS)
+
+             CRTBNDCL   PGM(QTEMP/MKCRTTST) SRCFILE(QSRC)
+             CALL       PGM(QTEMP/MKCRTTST) PARM(&TARGETLIB &TGTRLS)
+
+             CRTBNDCL   PGM(QTEMP/MKCALLTST) SRCFILE(QSRC)
+             CALL       PGM(QTEMP/MKCALLTST) PARM(&TARGETLIB &TGTRLS)
+
+             CRTBNDCL   PGM(QTEMP/MKRMTRUN) SRCFILE(QSRC)
+             CALL       PGM(QTEMP/MKRMTRUN) PARM(&TARGETLIB &TGTRLS)
+
+             CRTBNDCL   PGM(QTEMP/MKCMD) SRCFILE(QCMD)
+             CALL       PGM(QTEMP/MKCMD) PARM(&TARGETLIB &TGTRLS)
+
+             ENDPGM

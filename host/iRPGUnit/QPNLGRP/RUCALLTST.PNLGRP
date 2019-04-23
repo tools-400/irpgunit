@@ -1,0 +1,153 @@
+.* =================================================================== */
+.*  iRPGUnit - Execute Test Suite.                                     */
+.* =================================================================== */
+.*   >>PRE-COMPILER<<                                                  */
+.*     >>CRTCMD<<  CRTPNLGRP  PNLGRP(&LI/&OB) +                        */
+.*                               SRCFILE(&SL/&SF)  +                   */
+.*                               SRCMBR(&SM);                          */
+.*     >>IMPORTANT<<                                                   */
+.*       >>PARM<< OPTION(*EVENTF);                                     */
+.*     >>END-IMPORTANT<<                                               */
+.*     >>EXECUTE<<                                                     */
+.*   >>END-PRE-COMPILER<<                                              */
+.* =================================================================== */
+:pnlgrp.
+.*
+:help name=RUCALLTST WIDTH=74.
+RPGUnit Call Tests (RUCALLTST) - Help
+:p.
+The RPGUnit Call Tests (RUCALLTST) command runs a test suite or a test procedure.
+:ehelp.
+.*
+:help name='RUCALLTST/TSTPGM' WIDTH=64.
+Test program (TSTPGM) - Help
+:xh3.Test program (TSTPGM)
+:p.
+A test program is a service program object (*SRVPGM), exporting procedures
+starting with TEST.
+:ehelp.
+.*
+:help name='RUCALLTST/TSTPRC' WIDTH=64.
+Test procedure (TSTPRC) - Help
+:xh3.Test procedure (TSTPRC)
+:p.
+Specifies the names of up to 250 test procedures that should be run.
+:parml.
+:pt.:pk def.*ALL:epk.
+:pd.Run all test procedures.
+:pt.test-procedure-name
+:pd.Enter the name of the test procedures to run.
+:eparml.
+:ehelp.
+.*
+:help name='RUCALLTST/ORDER' WIDTH=64.
+Run order (ORDER) - Help
+:xh3.Run order (ORDER)
+:p.
+Specifies the order for running the test procedures.
+Useful to check that there is no dependencies between test procedures.
+:parml.
+:pt.:pk def.*API:epk.
+:pd.Run test procedures in the order provided by the system API.
+:pt.*REVERSE
+:pd.Run test procedures in reverse order.
+:eparml.
+:ehelp.
+.*
+:help name='RUCALLTST/DETAIL' WIDTH=64.
+Report detail (DETAIL) - Help
+:xh3.Report detail (DETAIL)
+:p.
+Specifies how detailed the test run report should be.
+:parml.
+:pt.:pk def.*BASIC:epk.
+:pd.Full detail for failures and errors, no detail for successes.
+:pt.*ALL
+:pd.Full detail in all cases.
+:eparml.
+:ehelp.
+.*
+:help name='RUCALLTST/OUTPUT' WIDTH=64.
+Create report (OUTPUT) - Help
+:xh3.Create report (OUTPUT)
+:p.
+Specifies whether or not a report is created.
+:parml.
+:pt.:pk def.*ALLWAYS:epk.
+:pd.Creates a report regardless of the test result.
+:pt.*ERROR
+:pd.Creates a report in case of failures and errors, only.
+:pt.*NONE
+:pd.Does not create any report.
+:eparml.
+:ehelp.
+.*
+:help name='RUCALLTST/LIBL' WIDTH=64.
+Libraries for unit test (LIBL) - Help
+:xh3.Libraries for unit test (LIBL)
+:p.
+Specifies the library list for executing the specified
+unit test suite.
+:parml.
+:pt.:pk def.*CURRENT:epk.
+:pd.The current library list is used to execute the
+unit test suite.
+:pt.*JOBD
+:pd.The initial library list part of the specified
+job description is used to execute the unit test suite.
+:pt.name
+:pd.Specify the names of the libraries to be added to
+user portion of the library list for the current thread.
+:eparml.
+:ehelp.
+.*
+:help name='RUCALLTST/JOBD' WIDTH=64.
+Job description (JOBD) - Help
+:xh3.Job description (JOBD)
+:p.
+Specifies the job description that is used
+to set the library list, when parameter :HP2.LIBL:EHP2. is
+set to :HP2.*JOBD:EHP2..
+:parml.
+:pt.:pk def.*DFT:epk.
+:pd.The library of the unit test suite, specified at
+parameter :HP2.TSTPGM:EHP2., is searched for job
+description :HP2.RPGUNIT:EHP2..
+:pt.job-description
+:pd.The name of the job description that is used to set
+the library list of the unit test suite.
+:eparml.
+:P.
+The possible library values are:
+:P.
+:PARML.
+:PT.:PK DEF.*LIBL:EPK.
+:PD.All libraries in the user and system portions of the
+job's library list are searched until the first match
+is found.
+.*
+:PT.:PV.library-name:EPV.
+:PD.Specify the name of the library to be searched.
+:EPARML.
+:ehelp.
+.*
+:help name='RUCALLTST/RCLRSC' WIDTH=64.
+Reclaim resources (RCLRSC) - Help
+:xh3.Reclaim resources (RCLRSC)
+:p.
+Specifies when to reclaim resources. Resources, such as open files, can
+be reclaimed after each test case or at the end of the test suite.
+:p.
+This option is useful if the test suite calls OPM programs, which do
+not set the *INLR indicator.
+:parml.
+:pt.:pk def.*NO:epk.
+:pd.Resources are not reclaimed.
+:pt.*ALLWAYS
+:pd.Resources are reclaimed after each test case and at the end of the test suite.
+:pt.*ONCE
+:pd.Resources are reclaimed at the end of the test suite.
+:eparml.
+:ehelp.
+.*
+:epnlgrp.

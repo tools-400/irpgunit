@@ -1,0 +1,53 @@
+     /* =================================================================== */
+     /*  RPGUnit - Make RUCRTTST program.                                   */
+     /*                                                                     */
+     /*  Usage: CALL MKCRTTST TARGETLIB                                     */
+     /*    where TARGETLIB is the library containing the RPGUnit            */
+     /*    source files.                                                    */
+     /* =================================================================== */
+     /*   >>PRE-COMPILER<<                                                  */
+     /*     >>CRTCMD<<  CRTBNDCL      PGM(&LI/&OB) +                        */
+     /*                               SRCFILE(&SL/&SF)  +                   */
+     /*                               SRCMBR(&SM);                          */
+     /*     >>COMPILE<<                                                     */
+     /*       >>PARM<< DBGVIEW(*LIST);                                      */
+     /*     >>END-COMPILE<<                                                 */
+     /*     >>LINK<<                                                        */
+     /*       >>PARM<< DFTACTGRP(*NO);                                      */
+     /*       >>PARM<< ACTGRP(*NEW);                                        */
+     /*     >>END-LINK<<                                                    */
+     /*     >>EXECUTE<<                                                     */
+     /*   >>END-PRE-COMPILER<<                                              */
+     /* =================================================================== */
+             PGM        PARM(&TARGETLIB &I_TGTRLS)
+             DCL        VAR(&TARGETLIB) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&I_TGTRLS ) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&TGTRLS   ) TYPE(*CHAR) LEN(10) VALUE(*CURRENT)
+
+             CHGVAR     VAR(&TGTRLS) VALUE(&I_TGTRLS)
+             MONMSG     MSGID(MCH3601) EXEC(DO)
+                RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
+             ENDDO
+
+             CHGVAR     VAR(&TARGETLIB) VALUE(&TARGETLIB)
+             MONMSG     MSGID(MCH3601) EXEC(SNDPGMMSG MSGID(CPF9898) +
+                          MSGF(QCPFMSG) MSGDTA('Target library +
+                          parameter required.') MSGTYPE(*ESCAPE))
+
+             CRTRPGMOD  MODULE(QTEMP/PGMMSG) SRCFILE(QSRC) +
+                          OPTION(*SRCSTMT) DBGVIEW(*LIST) TGTRLS(&TGTRLS)
+             CRTRPGMOD  MODULE(QTEMP/CRTTST) SRCFILE(QSRC) +
+                          OPTION(*SRCSTMT) DBGVIEW(*LIST) TGTRLS(&TGTRLS)
+             CRTRPGMOD  MODULE(QTEMP/STRING) SRCFILE(QSRC) +
+                          OPTION(*SRCSTMT) DBGVIEW(*LIST) TGTRLS(&TGTRLS)
+
+             CRTPGM     PGM(&TARGETLIB/RUCRTTST) +
+                          MODULE(QTEMP/CRTTST  +
+                                 QTEMP/PGMMSG  +
+                                 QTEMP/STRING) +
+                          BNDSRVPGM(&TARGETLIB/RUTESTCASE) +
+                          ACTGRP(*NEW) +
+                          TGTRLS(&TGTRLS) + 
+                          TEXT('RPGUnit - Compile test Suite')
+
+             ENDPGM
