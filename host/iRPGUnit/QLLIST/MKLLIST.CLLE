@@ -34,16 +34,7 @@
                           MSGF(QCPFMSG) MSGDTA('Target library +
                           parameter required.') MSGTYPE(*ESCAPE))
 
-             CRTRPGMOD  MODULE(QTEMP/LLIST) SRCFILE(QSRC) +
+             CRTRPGMOD  MODULE(QTEMP/LLIST) SRCFILE(QLLIST) +
                           OPTION(*SRCSTMT) DBGVIEW(*LIST) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/LLIST_SORT) SRCFILE(QSRC) +
-                          OPTION(*SRCSTMT) DBGVIEW(*LIST) TGTRLS(&TGTRLS)
-
-             CRTSRVPGM  SRVPGM(&TARGETLIB/LLIST) +
-                          MODULE(QTEMP/LLIST QTEMP/LLIST_SORT) +
-                          EXPORT(*SRCFILE) +
-                          SRCFILE(QSRC) SRCMBR(LLIST_API) +
-                          TGTRLS(&TGTRLS) + 
-                          TEXT('RPG Next Gen - Linked List : Implemenation.')
 
              ENDPGM

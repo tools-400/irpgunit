@@ -46,7 +46,7 @@
       /include qinclude,TEMPLATES
       /include qinclude,PGMMSG
       /include qinclude,RUNNER
-      /include qinclude,LLIST_H
+      /include qllist,LLIST_H
       /include qinclude,STRING
       /include qinclude,LIBL
       /include qinclude,SRCMBR

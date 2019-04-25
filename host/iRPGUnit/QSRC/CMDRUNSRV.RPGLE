@@ -24,7 +24,7 @@
       /include qinclude,EXTTST
       /include qinclude,PGMMSG
       /include qinclude,TEMPLATES
-      /include qinclude,LLIST_H
+      /include qllist,LLIST_H
 
 
       //----------------------------------------------------------------------

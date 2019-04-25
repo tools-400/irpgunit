@@ -289,5 +289,3 @@
      D                                 N   const options(*nopass)
 
       /endif
-
-      /include qinclude,LLIST_SO_H

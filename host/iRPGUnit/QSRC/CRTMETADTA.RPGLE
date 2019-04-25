@@ -1,20 +1,15 @@
       * ===================================================================
-      *  Create RPGUnit Meta Data (Member Description and Type).
+      *  iRPGUnit - Create iRPGUnit Meta Data.
       * ===================================================================
       * >>PRE-COMPILER<<
-      *   >>CRTCMD<< CRTRPGMOD    MODULE(&LI/&OB) +
-      *                           SRCFILE(&SL/&SF) +
-      *                           SRCMBR(&SM);
+      *   >>CRTCMD<< CRTBNDRPG    PGM(&LI/&OB) +
+      *                           SRCFILE(&SL/&SF) SRCMBR(&SM);
       *   >>COMPILE<<
       *     >>PARM<< OPTION(*EVENTF);
       *     >>PARM<< TRUNCNBR(*NO);
       *     >>PARM<< DBGVIEW(*LIST);
       *   >>END-COMPILE<<
       *   >>EXECUTE<<
-      *   >>CMD<<    CRTPGM       PGM(&LI/&OB) +
-      *                           MODULE(&LI/&OB ) +
-      *                           BNDDIR(*LIBL/QC2LE) +
-      *                           DETAIL(*BASIC);
       * >>END-PRE-COMPILER<<
       * ===================================================================
       /include qinclude,H_SPEC
@@ -262,13 +257,15 @@
             endmon;
 
             // Get member list into output file
+            File_exportMemberList(i_lib: 'QBND');
             File_exportMemberList(i_lib: 'QCMD');
-            File_exportMemberList(i_lib: 'QTESTCASES');
-            File_exportMemberList(i_lib: 'QUNITTEST');
             File_exportMemberList(i_lib: 'QINCLUDE');
+            File_exportMemberList(i_lib: 'QLLIST' );
+            File_exportMemberList(i_lib: 'QPNLGRP' );
             File_exportMemberList(i_lib: 'QSRC' );
-
-            qcmdexc(cmd: %len(cmd));
+            File_exportMemberList(i_lib: 'QSYSINC' );
+            File_exportMemberList(i_lib: 'QTESTCASES' );
+            File_exportMemberList(i_lib: 'QUNITTEST' );
 
             // Write source member ...
             open QSRC;

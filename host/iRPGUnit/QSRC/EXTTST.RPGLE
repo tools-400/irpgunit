@@ -20,10 +20,10 @@
       /include qinclude,CALLPROC
       /include qinclude,EXTPRC
       /include qinclude,TEMPLATES
-      /include qinclude,LLIST_H
+      /include qllist,LLIST_H
       /include qinclude,STRING
       /include qinclude,ERRORCODE
-      /include qinclude,LIBC_H
+      /include qllist,LIBC_H
 
 
       //----------------------------------------------------------------------

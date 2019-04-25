@@ -31,14 +31,16 @@
              CRTRPGMOD  MODULE(QTEMP/RUNT) SRCFILE(QUNITTEST) DBGVIEW(*LIST)
              CRTRPGMOD  MODULE(QTEMP/STRING) SRCFILE(QSRC) DBGVIEW(*LIST)
              CRTRPGMOD  MODULE(QTEMP/PGMMSG) SRCFILE(QSRC) DBGVIEW(*LIST)
+             CRTRPGMOD  MODULE(QTEMP/LLIST) SRCFILE(QLLIST) DBGVIEW(*LIST)
 
              CRTSRVPGM  SRVPGM(&TARGETLIB/RUNT) +
                           MODULE(QTEMP/RUNT      +
                                  QTEMP/CMDRUNSRV +
                                  QTEMP/STRING    +
-                                 QTEMP/PGMMSG)   +
+                                 QTEMP/PGMMSG    +
+                                 QTEMP/LLIST)    +
                           EXPORT(*ALL) +
-                          BNDSRVPGM(RURUNNER RUTESTCASE LLIST) +
+                          BNDSRVPGM(RURUNNER RUTESTCASE) +
                           OPTION(*DUPPROC) +
                           TEXT('RPGUnit SelfTest - Test CMDRUNSRV.')
 

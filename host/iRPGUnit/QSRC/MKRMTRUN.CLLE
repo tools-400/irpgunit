@@ -66,10 +66,11 @@
                                  QTEMP/CMDRUNPRT +
                                  QTEMP/SRCMBR    +
                                  QTEMP/LIBL      +
-                                 QTEMP/STRING)   +
+                                 QTEMP/STRING    +
+                                 QTEMP/LLIST)    +
                           EXPORT(*ALL) +
                           BNDSRVPGM(&TARGETLIB/RURUNNER +
-                                    &TARGETLIB/RUTESTCASE &TARGETLIB/LLIST) +
+                                    &TARGETLIB/RUTESTCASE) +
                           TGTRLS(&TGTRLS) +
                           TEXT('RPGUnit - Plug-in Adapter.')
 

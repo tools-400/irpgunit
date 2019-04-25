@@ -5,11 +5,6 @@
       * Prototypes for C-Functions
       *-------------------------------------------------------------------------
 
-      /if not defined(QUSEC)
-      /define QUSEC
-      /include QSYSINC/QRPGLESRC,QUSEC
-      /endif
-
       *
       * string functions
       *
@@ -40,7 +35,7 @@
      D   input                     1024A   const options(*varsize)
      D   output                    1024A   options(*varsize)
      D   len                         10I 0 const
-     D   errorcode                         likeds(QUSEC) options(*varsize)
+     D   errorcode                         likeds(errorCode) options(*varsize)
 
       *
       * memory functions

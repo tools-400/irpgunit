@@ -64,11 +64,11 @@
                                  QTEMP/PGMMSG    +
                                  QTEMP/CMDRUNSRV +
                                  QTEMP/USRSPC    +
-                                 QTEMP/STRING)   +
+                                 QTEMP/STRING    +
+                                 QTEMP/LLIST)    +
                           EXPORT(*SRCFILE) +
                           SRCFILE(QBND) SRCMBR(RUNNERBND) +
-                          BNDSRVPGM(&TARGETLIB/RUTESTCASE +
-                                    &TARGETLIB/LLIST) +
+                          BNDSRVPGM(&TARGETLIB/RUTESTCASE) +
                           TGTRLS(&TGTRLS) +
                           TEXT('RPGUnit - Runner Toolkit.') +
                           BNDDIR(QC2LE)
@@ -78,10 +78,10 @@
                                  QTEMP/CMDRUNLOG +
                                  QTEMP/CMDRUNPRT +
                                  QTEMP/STRING  +
-                                 QTEMP/LIBL) +
+                                 QTEMP/LIBL +
+                                 QTEMP/LLIST) +
                           BNDSRVPGM(&TARGETLIB/RUTESTCASE +
-                                    &TARGETLIB/RURUNNER +
-                                    &TARGETLIB/LLIST) +
+                                    &TARGETLIB/RURUNNER) +
                           ACTGRP(*NEW) +
                           TGTRLS(&TGTRLS) +
                           TEXT('RPGUnit - Execute Test Suite')

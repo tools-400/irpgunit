@@ -412,7 +412,7 @@
                           TEXT('RPGUnit Prototype - Call a SRVPGM''s proc.')
              MONMSG     MSGID(CPF3288)
 
-             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+             CHGPFM     FILE(&TARGETLIB/QLLIST) +
                           MBR(CEEAPI_H) +
                           SRCTYPE(RPGLE) +
                           TEXT('RPG Next Gen - Linked List : CEE APIs.')
@@ -946,7 +946,7 @@
                           TEXT('RPGUnit - Make RUCRTTST program.')
              MONMSG     MSGID(CPF3288)
 
-             CHGPFM     FILE(&TARGETLIB/QSRC) +
+             CHGPFM     FILE(&TARGETLIB/QLLIST) +
                           MBR(MKLLIST) +
                           SRCTYPE(CLLE) +
                           TEXT('RPG Next Gen - Build Linked List.')

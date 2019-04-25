@@ -37,7 +37,7 @@
                           MSGF(QCPFMSG) MSGDTA('Target library +
                           parameter required.') MSGTYPE(*ESCAPE))
 
-             CRTBNDCL   PGM(QTEMP/MKLLIST) SRCFILE(QSRC)
+             CRTBNDCL   PGM(QTEMP/MKLLIST) SRCFILE(QLLIST)
              CALL       PGM(QTEMP/MKLLIST) PARM(&TARGETLIB &TGTRLS)
 
              CRTBNDCL   PGM(QTEMP/MKTESTCASE) SRCFILE(QSRC)

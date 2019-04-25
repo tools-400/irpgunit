@@ -23,7 +23,7 @@
       /include qinclude,PGMMSG
       /include qinclude,TEMPLATES
       /include qsrc,TESTCASE
-      /include qinclude,LLIST_H
+      /include qllist,LLIST_H
 
 
       //----------------------------------------------------------------------

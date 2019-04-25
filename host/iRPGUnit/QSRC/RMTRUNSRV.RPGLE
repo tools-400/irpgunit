@@ -56,7 +56,7 @@
       /include qinclude,PGMMSG
       /include qinclude,RUNNER
       /include qinclude,CMDRUN
-      /include qinclude,LLIST_H
+      /include qllist,LLIST_H
       /include qinclude,LIBL
       /include qinclude,SRCMBR
 

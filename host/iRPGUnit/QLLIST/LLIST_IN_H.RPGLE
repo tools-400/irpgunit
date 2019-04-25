@@ -44,7 +44,7 @@
       * Variables
       *-------------------------------------------------------------------------
 
-      *
+     /*
       * If the list has only one entry, the pointer for the first and last
       * entry points to the same entry. If the list has no entries both pointers
       * has a *null value.

@@ -57,7 +57,7 @@
       *      Userdata parameter on list_foreach is now optional <br>
       *      list_merge got new parameter to only optionally skip duplicate entries
       */
- 
+
       *------------------------------------------------------------------------
       *
       * Copyright (c) 2007-2009 Mihael Schmidt
@@ -79,24 +79,35 @@
       * License along with LLIST.  If not, see http://www.gnu.org/licenses/.
       *
       *------------------------------------------------------------------------
- 
- 
+      *  >>PRE-COMPILER<<
+      *    >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      *    >>IMPORTANT<<
+      *      >>PARM<<  INCDIR('/qsys.lib/&LI.lib/qllist.file/');
+      *      >>PARM<<  OPTION(*EVENTF);
+      *      >>PARM<<  DBGVIEW(*LIST);
+      *    >>END-IMPORTANT<<
+      *    >>EXECUTE<<
+      *  >>END-PRE-COMPILER<<
+      *------------------------------------------------------------------------
+
+
+
      H NOMAIN
      H COPYRIGHT('Copyright (c) 2007-2011 Mihael Schmidt. All rights reserved.')
- 
- 
+
+
       *-------------------------------------------------------------------------
       * Prototypen
       *-------------------------------------------------------------------------
-      /include qinclude,LLIST_H
-      /include qinclude,LLIST_IN_H
-      /include qinclude,CEEAPI_H
- 
- 
+      /include qllist,llist_h
+      /include qllist,llist_in_h
+      /include qllist,ceeapi_h
+
+
       *-------------------------------------------------------------------------
       * Procedures
       *-------------------------------------------------------------------------
- 
+
      /**
       *  \brief Create list
       *
@@ -121,10 +132,10 @@
      D heapId          S             10I 0
       /free
        cee_createHeap(heapId : *omit : *omit : *omit : *omit);
- 
+
        // allocate memory for list header
        cee_getStorage(heapId : %size(tmpl_header) : listPtr : *omit);
- 
+
        header.id = LIST_ID;
        header.heapId = heapId;
        header.size = 0;
@@ -134,12 +145,12 @@
        header.iteration = -1;
        header.iterNextEntry = *null;
        header.iterPrevEntry = *null;
- 
+
        return listPtr;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Dispose list
       *
@@ -163,17 +174,17 @@
        if (listPtr = *null);
          // do nothing
        else;
- 
+
          if (isLinkedListImpl(listPtr));
            cee_discardHeap(header.heapId : *omit);
            listPtr = *null;
          endif;
- 
+
        endif;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Add list entry
       *
@@ -219,13 +230,13 @@
      D retVal          S               N   inz(*on)
       /free
        if (%parms() = 4);
- 
+
          if (isLinkedListImpl(listPtr));
            // check if the position is outside of the list
            if (pos < 0 or pos > header.size -1);
              sendEscapeMessage(MSG_POSITION_OUT_OF_BOUNDS);
            endif;
- 
+
            nextEntryPtr = getListEntryDs(listPtr : pos);
            if (nextEntryPtr <> *null);
              if (nextEntry.prev <> *null);
@@ -233,25 +244,25 @@
              else;
                // must be the start of the list (which has no previous entry)
              endif;
- 
+
              //
              // create new entry
              //
- 
+
              // alloc memory for this entry
              cee_getStorage(header.heapId:%size(tmpl_entry):newEntryPtr:*omit);
              newEntry.length = length + 1;     // +1 for the null value
              cee_getStorage(header.heapId : length + 1 : newEntry.value :*omit);
              newEntry.next = *null;
              newEntry.prev = *null;
- 
+
              // copy value to the list entry
              memcpy(newEntry.value : ptrValue : length);
- 
+
              // set null to the last byte
              tmpPtr = newEntry.value + length;
              memcpy(tmpPtr : %addr(hexNull) : 1);
- 
+
              // set pointers so that the list is correctly linked again
              newEntry.prev = prevEntryPtr;
              newEntry.next = nextEntryPtr;
@@ -259,31 +270,31 @@
              if (prevEntryPtr <> *null);
                prevEntry.next = newEntryPtr;
              endif;
- 
+
              // update header
              header.size += 1;
              if (newEntry.prev = *null);
                header.firstEntry = newEntryPtr;
              endif;
- 
+
            else;
              // could not get entry at given position
              retVal = *off;
            endif;
- 
+
          else;
            retVal = *off;
          endif;
- 
+
        else; // append to the end of the list
          retVal = list_addLast(listPtr : ptrValue : length);
        endif;
- 
+
        return retVal;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Add list entry to the top of the list
       *
@@ -314,45 +325,45 @@
      D retVal          S               N   inz(*on)
       /free
        if (isLinkedListImpl(listPtr));
- 
+
          //
          // create new entry
          //
- 
+
          // alloc memory for this entry
          cee_getStorage(header.heapId:%size(tmpl_entry):newEntryPtr:*omit);
          newEntry.length = length + 1;     // +1 for the null value
          cee_getStorage(header.heapId : length + 1 : newEntry.value :*omit);
          newEntry.next = *null;
          newEntry.prev = *null;
- 
+
          // copy value to the list entry
          memcpy(newEntry.value : valuePtr : length);
- 
+
          // add null
          tmpPtr = newEntry.value + length;
          memcpy(tmpPtr : %addr(hexNull) : 1);
- 
+
          if (header.size > 0);
            nextEntryPtr = getListEntryDs(listPtr : 0);
            nextEntry.prev = newEntryPtr;
            newEntry.next = nextEntryPtr;
          endif;
- 
+
          // update header
          header.size += 1;
          header.firstEntry = newEntryPtr;
          if (header.size = 1);
            header.lastEntry = newEntryPtr;
          endif;
- 
+
        endif;
- 
+
        return retVal;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Add list entry to the end of the list
       *
@@ -383,45 +394,45 @@
      D retVal          S               N   inz(*on)
       /free
        if (isLinkedListImpl(listPtr));
- 
+
          //
          // create new entry
          //
- 
+
          // alloc memory for this entry
          cee_getStorage(header.heapId:%size(tmpl_entry):newEntryPtr:*omit);
          newEntry.length = length + 1;     // +1 for the null value
          cee_getStorage(header.heapId : length + 1 : newEntry.value :*omit);
          newEntry.next = *null;
          newEntry.prev = *null;
- 
+
          // copy value to the list entry
          memcpy(newEntry.value : valuePtr : length);
- 
+
          // add null
          tmpPtr = newEntry.value + length;
          memcpy(tmpPtr : %addr(hexNull) : 1);
- 
+
          if (header.size > 0);
            prevEntryPtr = getListEntryDs(listPtr : header.size -1);
            prevEntry.next = newEntryPtr;
            newEntry.prev = prevEntryPtr;
          endif;
- 
+
          // update header
          header.size += 1;
          header.lastEntry = newEntryPtr;
          if (header.size = 1);
            header.firstEntry = newEntryPtr;
          endif;
- 
+
        endif;
- 
+
        return retVal;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Add all elements of a list
       *
@@ -449,25 +460,25 @@
       /free
        if (isLinkedListImpl(listPtr) and
            isLinkedLIstImpl(srcListPtr));
- 
+
          entryPtr = header.firstEntry;
          dow (entryPtr <> *null);
- 
+
            // entry.length -1 => dont include the null value
            if (not list_add(listPtr : entry.value : entry.length-1));
              retVal = *off;
              leave;
            endif;
- 
+
            entryPtr = entry.next;
          enddo;
        endif;
- 
+
        return retVal;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Remove list entry
       *
@@ -502,35 +513,35 @@
      D prevEntry       DS                  likeds(tmpl_entry)
      D                                     based(prevEntryPtr)
      D retVal          S               N   inz(*on)
- 
+
       /free
        if (isLinkedListImpl(listPtr));
- 
+
          // check if the position is outside of the list
          if (index < 0 or index > header.size -1);
            return *off;
          endif;
- 
+
          ptr = getListEntryDs(listPtr : index);
          if (ptr = *null);
            return *off;
          endif;
- 
+
          nextEntryPtr = entry.next;
          prevEntryPtr = entry.prev;
- 
+
          if (prevEntryPtr <> *null);
            prevEntry.next = nextEntryPtr;
          endif;
- 
+
          if (nextEntryPtr <> *null);
            nextEntry.prev = prevEntryPtr;
          endif;
- 
+
          // free memory
          cee_freeStorage(entry.value : *omit);
          cee_freeStorage(ptr : *omit);
- 
+
          // update header
          header.size -= 1;
          if (nextEntryPtr = *null);
@@ -539,14 +550,14 @@
          if (prevEntryPtr = *null);
            header.firstEntry = nextEntryPtr;
          endif;
- 
+
        endif;
- 
+
        return retVal;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Remove first list entry
       *
@@ -564,13 +575,13 @@
      P                 B                   export
      D                 PI              N
      D   listPtr                       *   const
- 
+
       /free
        return list_remove(listPtr : 0);
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Remove last list entry
       *
@@ -591,17 +602,17 @@
       *
      D header          DS                  likeds(tmpl_header) based(listPtr)
      D retVal          S               N   inz(*off)
- 
+
       /free
        if (isLinkedListImpl(listPtr));
          retVal = list_remove(listPtr : header.size - 1);
        endif;
- 
+
        return retVal;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Clear list
       *
@@ -626,19 +637,19 @@
      D retVal          S               N   inz(*off)
       /free
        if (isLinkedListImpl(listPtr));
- 
+
          ptr = header.lastEntry;
          dow (ptr <> *null);
            tmpPtr = entry.prev;
- 
+
            if (entry.value <> *null);
              cee_freeStorage(entry.value : *omit);
            endif;
- 
+
            cee_freeStorage(ptr : *omit);
            ptr = tmpPtr;
          enddo;
- 
+
          // update header
          header.size = 0;
          header.firstEntry = *null;
@@ -647,14 +658,14 @@
          header.iteration = -1;
          header.iterNextEntry = *null;
          header.iterPrevEntry = *null;
- 
+
        endif;
- 
+
        return retVal;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Get next entry
       *
@@ -680,8 +691,8 @@
        return list_iterate(listPtr);
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Iterate list
       *
@@ -694,7 +705,7 @@
       *
       * \param Pointer to the list
       *
-      * \return Pointer to entry or *n ll if no more entries in list
+      * \return Pointer to entry or *nll if no more entries in list
       */
      P list_iterate    B                   export
      D                 PI              *
@@ -706,32 +717,32 @@
      D retVal          S               *
       /free
        if (isLinkedListImpl(listPtr));
- 
+
          if (header.iteration + 1 = header.size);
            list_resetIteration(listPtr);
            retVal = *null;
          else;
            header.iteration += 1;
- 
+
            if (header.iterNextEntry = *null);
              entryPtr = getListEntryDs(listPtr : header.iteration);
            else;
              entryPtr = header.iterNextEntry;
            endif;
- 
+
            header.iterNextEntry = entry.next;
            header.iterPrevEntry = entry.prev;
- 
+
            retVal = entry.value;
          endif;
- 
+
        endif;
- 
+
        return retVal;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Get previous entry
       *
@@ -756,41 +767,41 @@
      D retVal          S               *
       /free
        if (isLinkedListImpl(listPtr));
- 
+
          if (header.iteration = 0);
            list_resetIteration(listPtr);
            retVal = *null;
          else;
- 
+
            if (header.iteration = -1);
              header.iteration = header.size;
            endif;
- 
+
            header.iteration -= 1;
- 
+
            if (header.iterPrevEntry = *null);
              entryPtr = getListEntryDs(listPtr : header.iteration);
            else;
              entryPtr = header.iterPrevEntry;
            endif;
- 
+
            if (entryPtr = *null);
              retVal = *null;
            else;
              header.iterNextEntry = entry.next;
              header.iterPrevEntry = entry.prev;
- 
+
              retVal = entry.value;
            endif;
          endif;
- 
+
        endif;
- 
+
        return retVal;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Abort iteration
       *
@@ -814,8 +825,8 @@
        list_resetIteration(listPtr);
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Reset iteration
       *
@@ -841,8 +852,8 @@
        endif;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Replaces an entry in the list
       *
@@ -873,28 +884,28 @@
      D retVal          S               N   inz(*on)
       /free
        if (isLinkedListImpl(listPtr));
- 
+
          // check if the position is outside of the list
          if (index < 0 or index > header.size -1);
            return *off;
          endif;
- 
+
          entryPtr = getListEntryDs(listPtr : index);
          entry.length = lengthValue + 1;
          cee_reallocateStorage(entry.value : lengthValue + 1 : *omit); // +1 for the null byte
- 
+
          // copy value to the list entry
          memcpy(ptrValue : entry.value : lengthValue);
- 
+
          // set null to the last byte
          memcpy(entry.value + lengthValue : %addr(hexNull) : 1);
        endif;
- 
+
        return retVal;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Contains entry
       *
@@ -922,7 +933,7 @@
      D retVal          S               N   inz(*off)
       /free
        if (isLinkedListImpl(listPtr));
- 
+
          entryPtr = header.firstEntry;
          dow (entryPtr <> *null);
            if (valueLength = entry.length - 1 and
@@ -930,17 +941,17 @@
              retVal = *on;
              leave;
            endif;
- 
+
            entryPtr = entry.next;
          enddo;
- 
+
        endif;
- 
+
        return retVal;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Check if list is empty
       *
@@ -962,20 +973,20 @@
      D retVal          S               N
       /free
        if (isLinkedListImpl(listPtr));
- 
+
          if (header.size = 0);
            retVal = *on;
          else;
            retVal = *off;
          endif;
- 
+
        endif;
- 
+
        return retVal;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Get entry
       *
@@ -1009,16 +1020,16 @@
          elseif (index < 0 or index > header.size -1);
            return *null;
          endif;
- 
+
          entryPtr = getListEntryDs(listPtr : index);
          retVal = entry.value;
        endif;
- 
+
        return retVal;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Get first entry
       *
@@ -1041,12 +1052,12 @@
        if (isLinkedListImpl(listPtr));
          retVal = list_get(listPtr : 0);
        endif;
- 
+
        return retVal;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Get last entry
       *
@@ -1070,12 +1081,12 @@
        if (isLinkedListImpl(listPtr));
          retVal = list_get(listPtr : header.size -1);
        endif;
- 
+
        return retVal;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Index of entry
       *
@@ -1104,27 +1115,27 @@
      D retVal          S             10I 0 inz(-1)
       /free
        if (isLinkedListImpl(listPtr));
- 
+
          entryPtr = header.firstEntry;
          dow (entryPtr <> *null);
            i += 1;
- 
+
            if (valueLength = entry.length - 1 and
                memcmp(valuePtr : entry.value : valueLength) = 0); // dont include the null
              retVal = i;
              leave;
            endif;
- 
+
            entryPtr = entry.next;
          enddo;
- 
+
        endif;
- 
+
        return retVal;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Last index of entry
       *
@@ -1155,28 +1166,28 @@
      D retVal          S             10I 0 inz(-1)
       /free
        if (isLinkedListImpl(listPtr));
- 
+
          entryPtr = header.lastEntry;
          i = header.size;
          dow (entryPtr <> *null);
            i -= 1;
- 
+
            if (valueLength = entry.length - 1 and
                memcmp(valuePtr : entry.value : valueLength) = 0); // dont include the null
              retVal = i;
              leave;
            endif;
- 
+
            entryPtr = entry.prev;
          enddo;
- 
+
        endif;
- 
+
        return retVal;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief To character array
       *
@@ -1212,28 +1223,28 @@
          if (header.size = 0);
            return;
          endif;
- 
+
          for i = 0 to header.size;
            if (count > i);
              entryPtr = getListEntryDs(listPtr : i);
              arrayElemPtr = arrayPtr + (i * length);
- 
+
              if (entry.length < length);
                tmpLength = entry.length;
              else;
                tmpLength = length;
              endif;
- 
+
              memcpy(arrayElemPtr : entry.value : tmpLength);
- 
+
            endif;
          endfor;
- 
+
        endif;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Check for linked list implementation
       *
@@ -1268,20 +1279,20 @@
          else;
            isList = *off;
          endif;
- 
+
          on-error *all;
            isList = *off;
        endmon;
- 
+
        if (not isList);
          sendEscapeMessage(MSG_NO_LIST_IMPL);
        endif;
- 
+
        return isList;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Send Escape Message
       *
@@ -1324,20 +1335,20 @@
          msgdata = 'The requested type does not correspond to the list ' +
                    'entry type.';
        endif;
- 
+
        sendProgramMessage('CPF9898' :
                           'QCPFMSG   *LIBL     ' :
                           %trimr(msgdata) :
                           %len(%trimr(msgdata)) :
                           '*ESCAPE   ' :
-                          '*PGMBDY' :
-                          0 :
+                          '*' :
+                          1 :
                           msgkey :
                           apiError);
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Get list entry data structure
       *
@@ -1370,10 +1381,10 @@
              if (entryPtr = *null);
                leave;
              endif;
- 
+
              entryPtr = entry.next;
            endfor;
- 
+
          else;
            // walk through the list from the end to the start
            entryPtr = header.lastEntry;
@@ -1381,20 +1392,20 @@
              if (entryPtr = *null);
                leave;
              endif;
- 
+
              entryPtr = entry.prev;
            endfor;
- 
+
          endif;
- 
+
          on-error *all;
            entryPtr = *null;
        endmon;
- 
+
        return entryPtr;
       /end-free
      P                 E
- 
+
      /**
       * \brief Get list size
       *
@@ -1420,8 +1431,8 @@
        endif;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Create sublist
       *
@@ -1449,21 +1460,21 @@
      D endIndex        S             10I 0
       /free
        if (isLinkedListImpl(listPtr));
- 
+
          if (%parms() = 2);
            endIndex = header.size -1;
          else;
            endIndex = startIndex + length - 1;
          endif;
- 
+
          if (startIndex < 0);
            return *null;
          endif;
- 
+
          newListPtr = list_create();
- 
+
          entryPtr = getListEntryDs(listPtr : startIndex);
- 
+
          for i = startIndex to endIndex;
            if (header.size > i);
              list_add(newListPtr : entry.value : entry.length - 1);
@@ -1472,16 +1483,16 @@
              leave;
            endif;
          endfor;
- 
+
          return newListPtr;
- 
+
        else;
          return *null;
        endif;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Rotate list by n positions
       *
@@ -1508,7 +1519,7 @@
       * \author Mihael Schmidt
       * \date   23.01.2008
       *
-      * \param Pointer to the list
+     * \param Pointer to the list
       * \param Number positions to rotate list
       */
      P list_rotate     B                   export
@@ -1531,37 +1542,37 @@
          if (header.size = 0);
            return;
          endif;
- 
+
          absRotPos = %rem(rotatePos : list_size(listPtr));
- 
+
          if (absRotPos > 0);
            firstPtr = header.firstEntry;
            lastPtr = header.lastEntry;
- 
+
            // connect the ends of the list
            firstEntry.prev = lastPtr;
            lastEntry.next = firstPtr;
- 
+
            // set new start entry
            newStartPtr = getListEntryDs(listPtr :
                                         list_size(listPtr) - absRotPos);
            // set new end entry
            newEndPtr = newStartEntry.prev;
- 
+
            // disconnect new end and new start entry
            newEndEntry.next = *null;
            newStartEntry.prev = *null;
- 
+
            // update header
            header.firstEntry = newStartPtr;
            header.lastEntry = newEndPtr;
          endif;
- 
+
        endif;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Swap list items
       *
@@ -1586,8 +1597,8 @@
        endif;
       /end-free
      P                 E
- 
- 
+
+
      P internal_swap   B                   export
      D                 PI              N
      D   listPtr                       *   const
@@ -1615,12 +1626,12 @@
      D tmpPtr          S               *
       /free
        if (%parms() = 3);
- 
+
          // check both items point to the same entry
          if (itemPos1 = itemPos2);
            return *on;
          endif;
- 
+
          // check if item is out of bounds
          if (itemPos1 < 0 or
              itemPos2 < 0 or
@@ -1628,110 +1639,110 @@
              itemPos2 >= header.size);
            return *off;
          endif;
- 
+
          entryPtr1 = getListEntryDs(listPtr : itemPos1);
          entryPtr2 = getListEntryDs(listPtr : itemPos2);
- 
+
        elseif (%parms() = 5);
          entryPtr1 = itemPtr1;
          entryPtr2 = itemPtr2;
        else;
          return *off;
        endif;
- 
+
          // check if the entries are valid
          if (entryPtr1 <> *null and entryPtr2 <> *null);
            entryPtr1P = entry1.prev;
            entryPtr1N = entry1.next;
            entryPtr2P = entry2.prev;
            entryPtr2N = entry2.next;
- 
- 
+
+
            // check if the two nodes are neighbouring nodes
            if (entry1.next = entryPtr2);
              entry1.next = entry2.next;
              entry2.next = entryPtr1;
- 
+
              entry2.prev = entry1.prev;
              entry1.prev = entryPtr2;
- 
+
              if (entryPtr1P <> *null);
                entry1P.next = entryPtr2;
              endif;
- 
+
              if (entryPtr2N <> *null);
                entry2N.prev = entryPtr1;
              endif;
- 
+
            elseif (entry1.prev = entryPtr2); // neighbouring nodes (other way round)
              entry2.next = entry1.next;
              entry1.next = entryPtr2;
- 
+
              entry1.prev = entry2.prev;
              entry2.prev = entryPtr1;
- 
- 
+
+
              if (entryPtr1N <> *null);
                entry1N.prev = entryPtr2;
              endif;
- 
+
              if (entryPtr2P <> *null);
                entry2P.next = entryPtr1;
              endif;
- 
+
            else; // no neighbours
              tmpPtr = entry1.next;
              entry1.next = entry2.next;
              entry2.next = tmpPtr;
- 
+
              tmpPtr = entry1.prev;
              entry1.prev = entry2.prev;
              entry2.prev = tmpPtr;
- 
+
              if (entryPtr1P <> *null);
                entry1P.next = entryPtr2;
              endif;
- 
+
              if (entryPtr1N <> *null);
                entry1N.prev = entryPtr2;
              endif;
- 
+
              if (entryPtr2P <> *null);
                entry2P.next = entryPtr1;
              endif;
- 
+
              if (entryPtr2N <> *null);
                entry2N.prev = entryPtr1;
              endif;
- 
+
            endif;
- 
- 
+
+
            if (entry1.prev = *null);         // check if it is the first item
              header.firstEntry = entryPtr1;
            endif;
- 
+
            if (entry2.prev = *null);         // check if it is the first item
              header.firstEntry = entryPtr2;
            endif;
- 
+
            if (entry1.next = *null);         // check if it is the last item
              header.lastEntry = entryPtr1;
            endif;
- 
+
            if (entry2.next = *null);         // check if it is the last item
              header.lastEntry = entryPtr2;
            endif;
- 
+
            return *on;
          else;
            return *off;
          endif;
- 
+
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Execute procedure for every list item
       *
@@ -1773,24 +1784,24 @@
      D userDataPassed  S               N
       /free
        userDataPassed = (%parms() = 3);
- 
+
        if (isLinkedListImpl(listPtr));
          ptr = header.firstEntry;
          dow (ptr <> *null);
- 
+
            if (userDataPassed);
              foreachProc(entry.value : userData);
            else;
              foreachProc(entry.value);
            endif;
- 
+
            ptr = entry.next;
          enddo;
        endif;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Return character representation of list
       *
@@ -1835,24 +1846,24 @@
      D retVal          S          65535A   varying
       /free
        if (isLinkedListImpl(listPtr));
- 
+
          // check if separator is passed
          if (%parms() >= 2 and %addr(pSeparator) <> *null);
            noSeparator = (%len(pSeparator) = 0);
            separator = pSeparator;
          endif;
- 
+
          // check if enclosing characters are passed
          if (%parms() >= 3);
            enclosingStart = pEnclosing;
            enclosingEnd = pEnclosing;
          endif;
- 
+
          // check if we should use different chars for start and end of item
          if (%parms() = 4);
            enclosingEnd = pEnclosingEnd;
          endif;
- 
+
          // process list items
          valuePtr = list_getNext(listPtr);
          dow (valuePtr <> *null);
@@ -1862,21 +1873,21 @@
              retVal += enclosingStart + %str(valuePtr) + enclosingEnd +
                        separator;
            endif;
- 
+
            valuePtr = list_getNext(listPtr);
          enddo;
- 
+
          // remove the last separator
          if (not noSeparator and %len(retVal) > 0);
            %len(retVal) = %len(retVal) -1;
          endif;
        endif;
- 
+
        return retVal;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Split character string
       *
@@ -1915,24 +1926,24 @@
        cee_getOpDescInfo(1 : descType : dataType : descInfo1 : descInfo2 :
                          length : *omit);
        string = %subst(pString : 1 : length);
- 
+
        if (%parms() = 2);
          separator = pSeparator;
        endif;
- 
+
        list = list_create();
- 
+
        token = getToken(string : separator);
        dow (token <> *null);
          list_add(list : token : getStringLength(token));
          token = getToken(*null : separator);
        enddo;
- 
+
        return list;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Reverse list
       *
@@ -1951,22 +1962,22 @@
      D tmp             S               *
       /free
        ptr = header.lastEntry;
- 
+
        dow (ptr <> *null);
          tmp = entry.prev;
          entry.prev = entry.next;
          entry.next = tmp;
          ptr = tmp;
        enddo;
- 
+
        // update header
        tmp = header.firstEntry;
        header.firstEntry = header.lastEntry;
        header.lastEntry = tmp;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Create a copy of a list
       *
@@ -1977,7 +1988,7 @@
       *
       * \param Pointer to the list
       *
-      * \return Pointer to t¥e new list
+      * \return Pointer to te new list
       */
      P list_copy       B                   export
      D                 PI              *
@@ -1989,25 +2000,25 @@
      D newListPtr      S               *   inz(*null)
       /free
        if (isLinkedListImpl(listPtr));
- 
+
          newListPtr = list_create();
- 
+
          entryPtr = header.firstEntry;
- 
+
          dow (entryPtr <> *null);
            list_add(newListPtr : entry.value : entry.length - 1);
            entryPtr = entry.next;
          enddo;
- 
+
          return newListPtr;
- 
+
        endif;
- 
+
        return newListPtr;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Frequency of a value in the list
       *
@@ -2036,25 +2047,25 @@
      D count           S             10U 0 inz(0)
       /free
        if (isLinkedListImpl(listPtr));
- 
+
          entryPtr = header.firstEntry;
          dow (entryPtr <> *null);
- 
+
            if (valueLength = entry.length - 1 and
                memcmp(valuePtr : entry.value : valueLength) = 0); // dont include the null
              count += 1;
            endif;
- 
+
            entryPtr = entry.next;
          enddo;
- 
+
        endif;
- 
+
        return count;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Add character list entry
       *
@@ -2095,7 +2106,7 @@
        cee_getOpDescInfo(2 : descType : dataType : descInfo1 : descInfo2 :
                          length : *omit);
        string = %subst(value : 1 : length);
- 
+
        if (%parms() = 2);
          return list_add(listPtr : %addr(string) : length);
        elseif (%parms() = 3);
@@ -2105,8 +2116,8 @@
        endif;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Add integer list entry
       *
@@ -2139,7 +2150,7 @@
      D integer         S             10I 0
       /free
        integer = value;
- 
+
        if (%parms() = 2);
          return list_add(listPtr : %addr(integer) : 4);
        elseif (%parms() = 3);
@@ -2149,8 +2160,8 @@
        endif;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Add long list entry
       *
@@ -2183,7 +2194,7 @@
      D local           S             20I 0
       /free
        local = value;
- 
+
        if (%parms() = 2);
          return list_add(listPtr : %addr(local) : 8);
        elseif (%parms() = 3);
@@ -2193,8 +2204,8 @@
        endif;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Add short list entry
       *
@@ -2227,7 +2238,7 @@
      D local           S              5I 0
       /free
        local = value;
- 
+
        if (%parms() = 2);
          return list_add(listPtr : %addr(local) : 2);
        elseif (%parms() = 3);
@@ -2237,8 +2248,8 @@
        endif;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Add float list entry
       *
@@ -2271,7 +2282,7 @@
      D local           S              4F
       /free
        local = value;
- 
+
        if (%parms() = 2);
          return list_add(listPtr : %addr(local) : %size(local));
        elseif (%parms() = 3);
@@ -2281,8 +2292,8 @@
        endif;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Add double list entry
       *
@@ -2315,7 +2326,7 @@
      D local           S              8F
       /free
        local = value;
- 
+
        if (%parms() = 2);
          return list_add(listPtr : %addr(local) : %size(local));
        elseif (%parms() = 3);
@@ -2325,8 +2336,8 @@
        endif;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Add boolean list entry
       *
@@ -2359,7 +2370,7 @@
      D local           S               N
       /free
        local = value;
- 
+
        if (%parms() = 2);
          return list_add(listPtr : %addr(local) : %size(local));
        elseif (%parms() = 3);
@@ -2369,8 +2380,8 @@
        endif;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Add packed decimal list entry
       *
@@ -2403,7 +2414,7 @@
      D local           S             15P 5
       /free
        local = value;
- 
+
        if (%parms() = 2);
          return list_add(listPtr : %addr(local) : %size(local));
        elseif (%parms() = 3);
@@ -2413,8 +2424,8 @@
        endif;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Add date list entry
       *
@@ -2447,7 +2458,7 @@
      D local           S               D
       /free
        local = value;
- 
+
        if (%parms() = 2);
          return list_add(listPtr : %addr(local) : %size(local));
        elseif (%parms() = 3);
@@ -2457,8 +2468,8 @@
        endif;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Get character entry
       *
@@ -2493,9 +2504,9 @@
            sendEscapeMessage(MSG_POSITION_OUT_OF_BOUNDS);
            return *blank;
          endif;
- 
+
          entryPtr = getListEntryDs(listPtr : index);
- 
+
          monitor;
            // test if the temp variable is filled with the right data for the type
            // by moving the data from temp to another var (testVar in this case)
@@ -2508,8 +2519,8 @@
        endif;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Get integer entry
       *
@@ -2544,13 +2555,13 @@
            sendEscapeMessage(MSG_POSITION_OUT_OF_BOUNDS);
            return *loval;
          endif;
- 
+
          entryPtr = getListEntryDs(listPtr : index);
- 
+
          if (entry.length -1 <> 4);  // integer = 4 byte
            sendEscapeMessage(MSG_INVALID_VALUE_TYPE);
          endif;
- 
+
          monitor;
            // test if the temp variable is filled with the right data for the type
            // by moving the data from temp to another var (testVar in this case)
@@ -2563,8 +2574,8 @@
        endif;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Get short entry
       *
@@ -2599,13 +2610,13 @@
            sendEscapeMessage(MSG_POSITION_OUT_OF_BOUNDS);
            return *loval;
          endif;
- 
+
          entryPtr = getListEntryDs(listPtr : index);
- 
+
          if (entry.length -1 <> 2);  // short = 2 byte
            sendEscapeMessage(MSG_INVALID_VALUE_TYPE);
          endif;
- 
+
          monitor;
            // test if the temp variable is filled with the right data for the type
            // by moving the data from temp to another var (testVar in this case)
@@ -2618,8 +2629,8 @@
        endif;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Get long entry
       *
@@ -2654,13 +2665,13 @@
            sendEscapeMessage(MSG_POSITION_OUT_OF_BOUNDS);
            return *loval;
          endif;
- 
+
          entryPtr = getListEntryDs(listPtr : index);
- 
+
          if (entry.length -1 <> 8);  // long = 8 byte
            sendEscapeMessage(MSG_INVALID_VALUE_TYPE);
          endif;
- 
+
          monitor;
            // test if the temp variable is filled with the right data for the type
            // by moving the data from temp to another var (testVar in this case)
@@ -2673,9 +2684,9 @@
        endif;
       /end-free
      P                 E
- 
- 
-     /**
+
+
+     /**?
       * \brief Get float entry
       *
       * Returns a float list entry specified by the passed index.
@@ -2709,13 +2720,13 @@
            sendEscapeMessage(MSG_POSITION_OUT_OF_BOUNDS);
            return *loval;
          endif;
- 
+
          entryPtr = getListEntryDs(listPtr : index);
- 
+
          if (entry.length -1 <> %size(temp));
            sendEscapeMessage(MSG_INVALID_VALUE_TYPE);
          endif;
- 
+
          monitor;
            // test if the temp variable is filled with the right data for the type
            // by moving the data from temp to another var (testVar in this case)
@@ -2728,8 +2739,8 @@
        endif;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Get double entry
       *
@@ -2750,7 +2761,7 @@
      D   index                       10U 0 const
       *
      D header          DS                  likeds(tmpl_header) based(listPtr)
-     D entryPtr        S               *
+    D entryPtr        S               *
      D entry           DS                  likeds(tmpl_entry) based(entryPtr)
      D temp            S              8F   based(entry.value)
      D testVar         S              8F
@@ -2764,13 +2775,13 @@
            sendEscapeMessage(MSG_POSITION_OUT_OF_BOUNDS);
            return *loval;
          endif;
- 
+
          entryPtr = getListEntryDs(listPtr : index);
- 
+
          if (entry.length -1 <> %size(temp));
            sendEscapeMessage(MSG_INVALID_VALUE_TYPE);
          endif;
- 
+
          monitor;
            // test if the temp variable is filled with the right data for the type
            // by moving the data from temp to another var (testVar in this case)
@@ -2783,8 +2794,8 @@
        endif;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Get boolean entry
       *
@@ -2819,13 +2830,13 @@
            sendEscapeMessage(MSG_POSITION_OUT_OF_BOUNDS);
            return *loval;
          endif;
- 
+
          entryPtr = getListEntryDs(listPtr : index);
- 
+
          if (entry.length -1 <> 1);
            sendEscapeMessage(MSG_INVALID_VALUE_TYPE);
          endif;
- 
+
          monitor;
            // test if the temp variable is filled with the right data for the type
            // by moving the data from temp to another var (testVar in this case)
@@ -2838,8 +2849,8 @@
        endif;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Get packed decimal entry
       *
@@ -2874,13 +2885,13 @@
            sendEscapeMessage(MSG_POSITION_OUT_OF_BOUNDS);
            return *loval;
          endif;
- 
+
          entryPtr = getListEntryDs(listPtr : index);
- 
+
          if (entry.length -1 <> %size(temp));
            sendEscapeMessage(MSG_INVALID_VALUE_TYPE);
          endif;
- 
+
          monitor;
            // test if the temp variable is filled with the right data for the type
            // by moving the data from temp to another var (testVar in this case)
@@ -2893,8 +2904,8 @@
        endif;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Get date entry
       *
@@ -2929,13 +2940,13 @@
            sendEscapeMessage(MSG_POSITION_OUT_OF_BOUNDS);
            return *loval;
          endif;
- 
+
          entryPtr = getListEntryDs(listPtr : index);
- 
+
          if (entry.length -1 <> %size(temp));
            sendEscapeMessage(MSG_INVALID_VALUE_TYPE);
          endif;
- 
+
          monitor;
            // test if the temp variable is filled with the right data for the type
            // by moving the data from temp to another var (testVar in this case)
@@ -2948,8 +2959,8 @@
        endif;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Remove range of elements
       *
@@ -2974,25 +2985,25 @@
      D i               S             10U 0
       /free
        isLinkedListImpl(listPtr);
- 
+
        // check if the start is in the range of the list
        if (index > header.size - 1);
          sendEscapeMessage(MSG_POSITION_OUT_OF_BOUNDS);
        endif;
- 
+
        if (index + pNumberElements > header.size -1);
          numberElements = header.size - index;
        else;
          numberElements = pNumberElements;
        endif;
- 
+
        for i = 1 to numberElements;
          list_remove(listPtr : index);
        endfor;
- 
+
       /end-free
      P                 E
- 
+
      /**
       * \brief Sort list
       *
@@ -3020,8 +3031,8 @@
        endif;
       /end-free
      P                 E
- 
- 
+
+
      /**
       * \brief Merge lists
       *
@@ -3051,24 +3062,24 @@
        if (%parms() = 3);
          skipDuplicates = pSkipDuplicates;
        endif;
- 
+
        if (isLinkedListImpl(destList) and
            isLinkedListImpl(sourceList));
- 
+
          entryPtr = header.firstEntry;
          dow (entryPtr <> *null);
- 
+
            if (skipDuplicates);
              if (not list_contains(destList : entry.value : entry.length - 1));
-               list_add(destList : entry.value : entry.length - 1); // dont include the null v
+               list_add(destList : entry.value : entry.length - 1); // dont include the null value
              endif;
            else;
-             list_add(destList : entry.value : entry.length - 1); // dont include the null val
+             list_add(destList : entry.value : entry.length - 1); // dont include the null value
            endif;
- 
+
            entryPtr = entry.next;
          enddo;
- 
+
        endif;
       /end-free
      P                 E

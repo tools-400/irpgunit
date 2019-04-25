@@ -61,7 +61,7 @@
              /* ---------------------------------------------------- */
              /*  Re-create objects for the specified target release  */
              /* ---------------------------------------------------- */
-             CRTBNDCL   PGM(&TMPLIB/MKLLIST) SRCFILE(QSRC)
+             CRTBNDCL   PGM(&TMPLIB/MKLLIST) SRCFILE(QLLIST)
              CALL       PGM(&TMPLIB/MKLLIST) PARM(&LIB &TGTRLS)
 
              CRTBNDCL   PGM(&TMPLIB/MKTESTCASE) SRCFILE(QSRC)
