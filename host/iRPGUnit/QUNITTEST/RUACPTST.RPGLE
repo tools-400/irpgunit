@@ -65,7 +65,7 @@
       /include qinclude,PGMMSG
       /include qsysinc,QCMDEXC
       /include qinclude,JOBLOG
-      /include qinclude,SPLF
+      /include qunittest,SPLF_H
       /include qinclude,TEMPLATES
       /include qsrc,TESTCASE
 

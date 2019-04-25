@@ -27,7 +27,7 @@
                           MSGF(QCPFMSG) MSGDTA('Target library +
                           parameter required.') MSGTYPE(*ESCAPE))
 
-             CRTCLMOD   MODULE(QTEMP/LIBLC) SRCFILE(QSRC) +
+             CRTCLMOD   MODULE(QTEMP/LIBLC) SRCFILE(QUNITTEST) +
                           DBGVIEW(*LIST)
              CRTRPGMOD  MODULE(QTEMP/LIBL ) SRCFILE(QSRC) +
                           DBGVIEW(*LIST)
