@@ -5,7 +5,7 @@
       //
 
      D QMHRCVPM        pr                  ExtPgm('QMHRCVPM')
-     D  msgInfo                   32565a   options(*varsize)
+     D  msgInfo                   32767a   options(*varsize)
      D  msgInfoLen                   10i 0 const
      D  fmtNm                         8a   const
      D  callStkEnt                   10a   const
@@ -14,7 +14,7 @@
      D  msgKey                        4a   const
      D  waitTime                     10i 0 const
      D  msgAction                    10a   const
-     D  errorCode                 32565a   options(*varsize) noopt
+     D  errorCode                 32767a   options(*varsize) noopt
 
      D RCVM0200Hdr     ds                  qualified based(template)
      D  bytesR                       10i 0
@@ -104,7 +104,6 @@
      D                                2a
       // ...last fields omitted.
 
-
       //----------------------------------------------------------------------
       //   Symbolic Constants
       //----------------------------------------------------------------------
@@ -117,9 +116,12 @@
      D ALL_MSG_INFO_WITH_SENDER_INFO...
      D                 c                   const('RCVM0300')
 
+      /if not defined(THIS_CALL_STK_ENT)
+      /define THIS_CALL_STK_ENT
        // The current call stack entry.
      D THIS_CALL_STK_ENT...
      D                 c                   const('*')
+      /endif
 
        // No message key.
      D NO_MSG_KEY      c                   const(*blank)

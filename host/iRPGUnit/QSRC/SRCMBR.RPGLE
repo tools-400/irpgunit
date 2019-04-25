@@ -13,7 +13,7 @@
        //----------------------------------------------------------------------
       /include qinclude,SRCMBR
       /include qinclude,TEMPLATES
-      /include qsysinc,USRSPC
+      /include qinclude,USRSPC
       /include qsysinc,APILIST
       /include qinclude,ERRORCODE
       /include qsysinc,QUSROBJD

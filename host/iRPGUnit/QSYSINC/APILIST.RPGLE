@@ -1,3 +1,5 @@
+      /if not defined (IRPGUNIT_APILIST)
+      /define IRPGUNIT_APILIST
 
        // List API generic header structure (template).
      D ListHdr_t       ds                   qualified based(template)
@@ -19,4 +21,6 @@
      D   entCnt                      10i 0
          // Size of a single entry
      D   entSize                     10i 0
+
+      /endif
 

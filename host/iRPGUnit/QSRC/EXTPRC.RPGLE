@@ -33,7 +33,7 @@
 
       /include qsysinc,APILIST
       /include qsysinc,QBNLSPGM
-      /include qsysinc,USRSPC
+      /include qinclude,USRSPC
 
 
        //----------------------------------------------------------------------

@@ -1,3 +1,5 @@
+       /if not defined (IRPGUNIT_QUSCRTUS)
+       /define IRPGUNIT_QUSCRTUS
 
        //
        // Create User Space API
@@ -24,3 +26,4 @@
      D  text                         50a
      D  replace                      10a
 
+      /endif

@@ -60,7 +60,7 @@
       /include qsysinc,QSPOPNSP
       /include qsysinc,QWCRTVCA
       /include qinclude,TEMPLATES
-      /include qsysinc,USRSPC
+      /include qinclude,USRSPC
       /include qsrc,TESTCASE
 
 

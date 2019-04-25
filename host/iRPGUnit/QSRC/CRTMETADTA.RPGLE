@@ -13,6 +13,7 @@
       * >>END-PRE-COMPILER<<
       * ===================================================================
       /include qinclude,H_SPEC
+     H DFTACTGRP(*NO) ACTGRP(*NEW)
       * ===================================================================
      FQAFDMBRL  IF   E             DISK    usropn
      F                                     extfile(g_outfile)

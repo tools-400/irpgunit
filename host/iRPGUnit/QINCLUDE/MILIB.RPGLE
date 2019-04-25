@@ -1,3 +1,6 @@
+      /if not defined (IRPGUNIT_MILIB)
+      /define IRPGUNIT_MILIB
+
        // MI procedure prototypes.
 
        // The following values can be OR'd for the Wait Options parameter
@@ -28,4 +31,24 @@
 
        // The standard definition for time in the MI library (QSYSINC/MIH.MICOMMON):
      D mi_time_t       S              8A   inz
+
+
+      //
+      // Prototype for RslvSP MI instruction.
+      //
+      // Resolve System Pointer.
+      //
+
+     D rslvSP          pr              *   extproc('rslvsp') procptr
+        // Object type (in hexadecimal format -- see QLICVTTP API).
+     D  hexType                       2a   Value
+        // Object name.
+     D  object                         *   Value options(*String)
+        // Library name.
+     D  lib                            *   Value options(*String)
+        // Authority.
+     D  auth                          2a   Value
+
+
+      /endif
 
