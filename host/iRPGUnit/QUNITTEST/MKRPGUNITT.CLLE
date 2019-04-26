@@ -23,14 +23,14 @@
              DCL        VAR(&TARGETLIB) TYPE(*CHAR) LEN(10)
              /* Was the failure event seen? */
              DCL        VAR(&FAILSEEN) TYPE(*CHAR) LEN(2) VALUE('KO')
- 
+
              CHGVAR     VAR(&TARGETLIB) VALUE(&TARGETLIB)
              MONMSG     MSGID(MCH3601) EXEC(SNDPGMMSG MSGID(CPF9898) +
                           MSGF(QCPFMSG) MSGDTA('Target library +
                           parameter required.') MSGTYPE(*ESCAPE))
- 
+
              /* Sanity Check. */
- 
+
              RUCRTTST   TSTPGM(QTEMP/TESTPGM03) SRCFILE(QTESTCASES)
              RUCALLTST  TSTPGM(QTEMP/TESTPGM03)
              MONMSG     MSGID(CPF0000) EXEC(CHGVAR VAR(&FAILSEEN) +
@@ -39,16 +39,16 @@
                           MSGID(CPF9898) MSGF(QCPFMSG) +
                           MSGDTA('Assertion failure sanity check +
                           failed') MSGTYPE(*ESCAPE))
- 
+
              /* Unit Tests. */
- 
+
              CRTBNDCL   PGM(QTEMP/MKUT) SRCFILE(QUNITTEST)
              CALL       PGM(QTEMP/MKUT) PARM(&TARGETLIB)
- 
+
              /* Acceptance Tests. */
- 
+
              CRTBNDCL   PGM(QTEMP/MKACPTST) SRCFILE(QUNITTEST)
              CALL       PGM(QTEMP/MKACPTST) PARM(&TARGETLIB)
              RUCALLTST  TSTPGM(&TARGETLIB/RUACPTST)
- 
+
              ENDPGM

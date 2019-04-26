@@ -47,7 +47,7 @@
                                  QTEMP/STRING) +
                           BNDSRVPGM(&TARGETLIB/RUTESTCASE) +
                           ACTGRP(*NEW) +
-                          TGTRLS(&TGTRLS) + 
+                          TGTRLS(&TGTRLS) +
                           TEXT('RPGUnit - Compile test Suite')
 
              ENDPGM
