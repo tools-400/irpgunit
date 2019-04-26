@@ -1013,12 +1013,6 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
-                          MBR(RURMTPGMT) +
-                          SRCTYPE(RPGLE) +
-                          TEXT('RPGUnit Dev. of RDP Plugin.')
-             MONMSG     MSGID(CPF3288)
-
-             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(SPLF) +
                           SRCTYPE(RPGLE) +
                           TEXT('RPGUnit SelfTest - Spool file test helper.')
