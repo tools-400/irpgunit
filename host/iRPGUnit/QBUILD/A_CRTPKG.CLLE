@@ -49,11 +49,9 @@
              /* ---------------------------------------------------- */
              /*  Create member list of QSRC and get release#.        */
              /* ---------------------------------------------------- */
-             CRTRPGMOD  MODULE(&TMPLIB/CRTMETADTA) +
-                          SRCFILE(*LIBL/QSRC) SRCMBR(*MODULE) +
+             CRTBNDRPG  PGM(&TMPLIB/CRTMETADTA) +
+                          SRCFILE(*LIBL/QBUILD) SRCMBR(*MODULE) +
                           DBGVIEW(*LIST) TRUNCNBR(*NO)
-             CRTPGM     PGM(&TMPLIB/CRTMETADTA) BNDDIR(QC2LE) +
-                          DETAIL(*BASIC)
              DLTMOD     MODULE(&TMPLIB/CRTMETADTA)
 
              CALL       PGM(&TMPLIB/CRTMETADTA) PARM(&LIB &RELEASE)

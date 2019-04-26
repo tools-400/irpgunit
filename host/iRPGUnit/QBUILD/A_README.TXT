@@ -101,7 +101,7 @@ Version 2.2.1 - 14.06.2017
 Version 2.1.0 - 06.12.2016
 --------------------------
  * Changed RUCRTTST to validate the combination *EVENTF/*TSTPGM for
-   RPGLE and SQLRPGLE member types. 
+   RPGLE and SQLRPGLE member types.
  * Updated copyright notice of LLIST_SORT.
  * Updated STRPREPRC header of source member TEMPLATE.
  * Added example source member TEMPLSQL.

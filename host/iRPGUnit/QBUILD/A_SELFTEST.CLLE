@@ -1,0 +1,162 @@
+     /* =================================================================== */
+     /*  RPGUnit - Create distribution package.                             */
+     /* =================================================================== */
+     /*  Updates the MKMETADATA source member and saves the                 */
+     /*  RPGUNIT library to save file RPGUNIT/RPGUNIT.                      */
+     /* =================================================================== */
+     /*   >>PRE-COMPILER<<                                                  */
+     /*     >>CRTCMD<<  CRTBNDCL      PGM(&LI/&OB) +                        */
+     /*                               SRCFILE(&SL/&SF) SRCMBR(&SM);         */
+     /*     >>IMPORTANT<<                                                   */
+     /*       >>PARM<< OPTION(*EVENTF);                                     */
+     /*       >>PARM<< DBGVIEW(*LIST);                                      */
+     /*       >>PARM<< DFTACTGRP(*NO);                                      */
+     /*       >>PARM<< ACTGRP(*NEW);                                        */
+     /*     >>END-IMPORTANT<<                                               */
+     /*     >>EXECUTE<<                                                     */
+     /*   >>END-PRE-COMPILER<<                                              */
+     /* =================================================================== */
+             PGM        PARM(&LIB)
+
+             DCL        VAR(&LIB       ) TYPE(*CHAR) LEN(10)
+
+             DCL        VAR(&SRCF      ) TYPE(*CHAR) LEN(10) VALUE('QUNITTEST')
+             DCL        VAR(&DBGVIEW   ) TYPE(*CHAR) LEN(10) VALUE('*LIST')
+             DCL        VAR(&BNDDIR    ) TYPE(*CHAR) LEN(10) VALUE('IRPGUNIT')
+
+         /* -------------------------------------------- */
+         /*  Display usage information.                  */
+         /* -------------------------------------------- */
+             CHGVAR     VAR(&LIB) VALUE(&LIB)
+             MONMSG     MSGID(MCH3601) EXEC(DO) /* Pointer not set */
+               RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
+               SNDPGMMSG  MSGID(CPF9898) MSGF(*LIBL/QCPFMSG) +
+                            MSGDTA('Usage: CALL PGM(A_SELFTEST) PARM(''libraryName'')') +
+                            TOPGMQ(*PRV (*PGMBDY *NONE *NONE)) +
+                            TOMSGQ(*TOPGMQ) MSGTYPE(*ESCAPE)
+             ENDDO
+
+         /* -------------------------------------------- */
+         /*  Create iRPGUnit binding directory.          */
+         /* -------------------------------------------- */
+
+             DLTBNDDIR BNDDIR(&LIB/&BNDDIR)
+             MONMSG     MSGID(CPF2105) EXEC(DO) /* Object not found */
+               RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
+             ENDDO
+
+             CHKOBJ     OBJ(&LIB/&BNDDIR) OBJTYPE(*BNDDIR)
+             MONMSG     MSGID(CPF9801) EXEC(DO) /* Object not found */
+               CRTBNDDIR  BNDDIR(&LIB/&BNDDIR) TEXT('iRPGUnit - Binding Directory')
+               ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/ASSERT    *MODULE))
+               ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/CALLPROC  *MODULE))
+               ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/CMDRUN    *MODULE))
+               ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/CMDRUNLOG *MODULE))
+               ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/CMDRUNPRT *MODULE))
+               ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/CMDRUNSRV *MODULE))
+               ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/CRTTST    *MODULE))
+               ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/EXTPRC    *MODULE))
+               ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/EXTTST    *MODULE))
+               ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/LIBL      *MODULE))
+               ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/OBJECT    *MODULE))
+               ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/PGMMSG    *MODULE))
+               ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/PGMRMT    *MODULE))
+               ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/RMTRUNSRV *MODULE))
+               ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/SRCMBR    *MODULE))
+               ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/STRING    *MODULE))
+               ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/TAGTST    *MODULE))
+               ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/TESTUTILS *MODULE))
+               ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/USRSPC    *MODULE))
+               ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/VERSION   *MODULE))
+               ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/XMLWRITER *MODULE))
+               ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/LLIST     *MODULE))
+               ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/LIBLC     *MODULE))
+               ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/SPLF      *MODULE))
+             ENDDO
+
+         /* -------------------------------------------- */
+         /*  Create helper modules.                      */
+         /* -------------------------------------------- */
+             CALL       PGM(&LIB/A_INSTALL) PARM(&LIB 'CMPMODS')
+
+         /* -------------------------------------------- */
+         /*  Create iRPGUnit SelfTest unit tests.        */
+         /* -------------------------------------------- */
+             RUCRTTST   TSTPGM(&LIB/ASSERTT   ) SRCFILE(&LIB/&SRCF) DBGVIEW(&DBGVIEW) +
+                          BNDDIR(&LIB/&BNDDIR) BOPTION(*DUPPROC)
+
+             RUCRTTST   TSTPGM(&LIB/CALLPROCT ) SRCFILE(&LIB/&SRCF) DBGVIEW(&DBGVIEW) +
+                          BNDDIR(&LIB/&BNDDIR) BOPTION(*DUPPROC)
+
+             RUCRTTST   TSTPGM(&LIB/CALLPROCT ) SRCFILE(&LIB/&SRCF) DBGVIEW(&DBGVIEW) +
+                          BNDDIR(&LIB/&BNDDIR) BOPTION(*DUPPROC)
+
+             RUCRTTST   TSTPGM(&LIB/CMDRUNLOGT) SRCFILE(&LIB/&SRCF) DBGVIEW(&DBGVIEW) +
+                          BNDDIR(&LIB/&BNDDIR) BOPTION(*DUPPROC)
+
+             RUCRTTST   TSTPGM(&LIB/CMDRUNT   ) SRCFILE(&LIB/&SRCF) DBGVIEW(&DBGVIEW) +
+                          BNDDIR(&LIB/&BNDDIR) BOPTION(*DUPPROC)
+
+             RUCRTTST   TSTPGM(&LIB/CRTTSTT   ) SRCFILE(&LIB/&SRCF) DBGVIEW(&DBGVIEW) +
+                          BNDDIR(&LIB/&BNDDIR) BOPTION(*DUPPROC)
+
+             RUCRTTST   TSTPGM(&LIB/EXTPRCT   ) SRCFILE(&LIB/&SRCF) DBGVIEW(&DBGVIEW) +
+                          BNDDIR(&LIB/&BNDDIR) BOPTION(*DUPPROC)
+
+             RUCRTTST   TSTPGM(&LIB/EXTTSTT   ) SRCFILE(&LIB/&SRCF) DBGVIEW(&DBGVIEW) +
+                          BNDDIR(&LIB/&BNDDIR) BOPTION(*DUPPROC)
+
+             RUCRTTST   TSTPGM(&LIB/JOBLOGT   ) SRCFILE(&LIB/&SRCF) DBGVIEW(&DBGVIEW) +
+                          BNDDIR(&LIB/&BNDDIR) BOPTION(*DUPPROC)
+
+             RUCRTTST   TSTPGM(&LIB/LIBLT     ) SRCFILE(&LIB/&SRCF) DBGVIEW(&DBGVIEW) +
+                          BNDDIR(&LIB/&BNDDIR) BOPTION(*DUPPROC)
+
+             RUCRTTST   TSTPGM(&LIB/PGMMSGT   ) SRCFILE(&LIB/&SRCF) DBGVIEW(&DBGVIEW) +
+                          BNDDIR(&LIB/&BNDDIR) BOPTION(*DUPPROC)
+
+             RUCRTTST   TSTPGM(&LIB/RUNT      ) SRCFILE(&LIB/&SRCF) DBGVIEW(&DBGVIEW) +
+                          BNDDIR(&LIB/&BNDDIR) BOPTION(*DUPPROC)
+
+             RUCRTTST   TSTPGM(&LIB/STRINGT   ) SRCFILE(&LIB/&SRCF) DBGVIEW(&DBGVIEW) +
+                          BNDDIR(&LIB/&BNDDIR) BOPTION(*DUPPROC)
+
+             RUCRTTST   TSTPGM(&LIB/RUACPTST  ) SRCFILE(&LIB/&SRCF) DBGVIEW(&DBGVIEW) +
+                          BNDDIR(&LIB/&BNDDIR) BOPTION(*DUPPROC)
+
+         /* -------------------------------------------- */
+         /*  Run iRPGUnit SelfTest unit tests.           */
+         /* -------------------------------------------- */
+             RUCALLTST  TSTPGM(&LIB/ASSERTT    ) TSTPRC(*ALL) OUTPUT(*ERROR)
+             RUCALLTST  TSTPGM(&LIB/CALLPROCT  ) TSTPRC(*ALL) OUTPUT(*ERROR)
+             RUCALLTST  TSTPGM(&LIB/CMDRUNLOGT ) TSTPRC(*ALL) OUTPUT(*ERROR)
+             RUCALLTST  TSTPGM(&LIB/CMDRUNT    ) TSTPRC(*ALL) OUTPUT(*ERROR)
+             RUCALLTST  TSTPGM(&LIB/CRTTSTT    ) TSTPRC(*ALL) OUTPUT(*ERROR)
+             RUCALLTST  TSTPGM(&LIB/EXTPRCT    ) TSTPRC(*ALL) OUTPUT(*ERROR)
+             RUCALLTST  TSTPGM(&LIB/EXTTSTT    ) TSTPRC(*ALL) OUTPUT(*ERROR)
+             RUCALLTST  TSTPGM(&LIB/JOBLOGT    ) TSTPRC(*ALL) OUTPUT(*ERROR)
+             RUCALLTST  TSTPGM(&LIB/LIBLT      ) TSTPRC(*ALL) OUTPUT(*ERROR)
+             RUCALLTST  TSTPGM(&LIB/PGMMSGT    ) TSTPRC(*ALL) OUTPUT(*ERROR)
+             RUCALLTST  TSTPGM(&LIB/RUNT       ) TSTPRC(*ALL) OUTPUT(*ERROR)
+             RUCALLTST  TSTPGM(&LIB/STRINGT    ) TSTPRC(*ALL) OUTPUT(*ERROR)
+             RUCALLTST  TSTPGM(&LIB/RUACPTST   ) TSTPRC(*ALL) OUTPUT(*ERROR)
+
+         /* -------------------------------------------- */
+         /*  Delete modules.                             */
+         /* -------------------------------------------- */
+             CALL       PGM(&LIB/A_INSTALL) PARM(&LIB 'DLTMODS')
+
+         /* -------------------------------------------- */
+         /*  Remove binding directory.                   */
+         /* -------------------------------------------- */
+             DLTBNDDIR  BNDDIR(&LIB/&BNDDIR)
+
+         /* -------------------------------------------- */
+         /*  FINISHED!                                   */
+         /* -------------------------------------------- */
+             SNDPGMMSG  MSGID(CPF9898) MSGF(*LIBL/QCPFMSG) +
+                          MSGDTA('Successfully executed the iRPGUnit self tests') +
+                          TOPGMQ(*PRV (*PGMBDY *NONE *NONE)) +
+                          TOMSGQ(*TOPGMQ) MSGTYPE(*INFO)
+
+             ENDPGM
