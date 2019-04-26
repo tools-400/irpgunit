@@ -1,0 +1,140 @@
+/* ========================================================================== */
+/*  iRPGUnit - Public API.                                                    */
+/* ========================================================================== */
+/*  Copyright (c) 2013-2019 iRPGUnit Project Team                             */
+/*  All rights reserved. This program and the accompanying materials          */
+/*  are made available under the terms of the Common Public License v1.0      */
+/*  which accompanies this distribution, and is available at                  */
+/*  http://www.eclipse.org/legal/cpl-v10.html                                 */
+/* ========================================================================== */
+/* >>PRE-COMPILER<<                                                           */
+/*   >>CRTCMD<<  CRTSRVPGM SRVPGM(&LI/&OB);                                   */
+/*   >>IMPORTANT<<                                                            */
+/*     >>PARM<<  MODULE(&LI/ASSERT &LI/PGMMSG &LI/VERSION &LI/TESTUTILS);     */
+/*     >>PARM<<  EXPORT(*SRCFILE);                                            */
+/*     >>PARM<<  SRCFILE(&LI/QBND);                                           */
+/*     >>PARM<<  SRCMBR(RUTESTCASE);                                          */
+/*     >>PARM<<  ACTGRP(*CALLER);                                             */
+/*     >>PARM<<  ALWUPD(*YES);                                                */
+/*     >>PARM<<  ALWLIBUPD(*YES);                                             */
+/*     >>PARM<<  TEXT('iRPGUnit - Test Suite Toolkit.');                      */
+/*     >>PARM<<  DETAIL(*BASIC);                                              */
+/*   >>END-IMPORTANT<<                                                        */
+/*   >>EXECUTE<<                                                              */
+/* >>END-PRE-COMPILER<<                                                       */
+/* ========================================================================== */
+
+STRPGMEXP  PGMLVL(*CURRENT) SIGNATURE('iRPGUNIT V3.0')
+
+  EXPORT SYMBOL("aEqual")                      /* public API */
+  EXPORT SYMBOL("assert")                      /* public API */
+  EXPORT SYMBOL("clrAssertFailEvt")            /* internal self-test API */
+  EXPORT SYMBOL("fail")                        /* public API */
+  EXPORT SYMBOL("getAssertCalled")             /* internal self-test API */
+  EXPORT SYMBOL("getAssertFailEvt")            /* internal self-test API */
+  EXPORT SYMBOL("iEqual")                      /* public API */
+  EXPORT SYMBOL("clrpfm")                      /* public API */
+  EXPORT SYMBOL("rclactgrp")                   /* public API */
+  EXPORT SYMBOL("runCmd")                      /* public API */
+  EXPORT SYMBOL("clearAssertCounter")          /* internal self-test API */
+  EXPORT SYMBOL("nEqual")                      /* public API */
+  EXPORT SYMBOL("getVersion")                  /* internal use */
+
+  EXPORT SYMBOL("waitSeconds")                 /* public API */
+  EXPORT SYMBOL("displayStatusMessage")        /* public API */
+  EXPORT SYMBOL("restoreStatusMessage")        /* public API */
+  EXPORT SYMBOL("clearStatusMessage")          /* public API */
+  EXPORT SYMBOL("getMemberType")               /* public API */
+  EXPORT SYMBOL("getMonitoredMessage")         /* public API */
+  EXPORT SYMBOL("setLowMessageKey")            /* public API */
+
+  EXPORT SYMBOL("getAssertFailEvtLong")        /* internal self-test API */
+  EXPORT SYMBOL("assertJobLogContains")        /* public API */
+  EXPORT SYMBOL("getFullTimeStamp")            /* public API */
+
+ENDPGMEXP
+
+STRPGMEXP  PGMLVL(*CURRENT) SIGNATURE('iRPGUNIT V2.0')
+
+  EXPORT SYMBOL("aEqual")
+  EXPORT SYMBOL("assert")
+  EXPORT SYMBOL("clrAssertFailEvt")
+  EXPORT SYMBOL("fail")
+  EXPORT SYMBOL("getAssertCalled")
+  EXPORT SYMBOL("getAssertFailEvt")
+  EXPORT SYMBOL("iEqual")
+  EXPORT SYMBOL("CLRPFM")
+  EXPORT SYMBOL("RCLACTGRP")
+  EXPORT SYMBOL("runCmd")
+  EXPORT SYMBOL("clearAssertCounter")
+  EXPORT SYMBOL("nEqual")
+  EXPORT SYMBOL("getVersion")
+
+  EXPORT SYMBOL("waitSeconds")
+  EXPORT SYMBOL("displayStatusMessage")
+  EXPORT SYMBOL("restoreStatusMessage")
+  EXPORT SYMBOL("clearStatusMessage")
+  EXPORT SYMBOL("getMemberType")
+  EXPORT SYMBOL("getMonitoredMessage")
+  EXPORT SYMBOL("setLowMessageKey")
+
+  EXPORT SYMBOL("getAssertFailEvtLong")
+
+ENDPGMEXP
+
+STRPGMEXP  PGMLVL(*PRV) SIGNATURE('RPGUNIT Plugin V1.0')
+
+  EXPORT SYMBOL("aEqual")
+  EXPORT SYMBOL("assert")
+  EXPORT SYMBOL("clrAssertFailEvt")
+  EXPORT SYMBOL("fail")
+  EXPORT SYMBOL("getAssertCalled")
+  EXPORT SYMBOL("getAssertFailEvt")
+  EXPORT SYMBOL("iEqual")
+  EXPORT SYMBOL("CLRPFM")
+  EXPORT SYMBOL("RCLACTGRP")
+  EXPORT SYMBOL("runCmd")
+  EXPORT SYMBOL("clearAssertCounter")
+  EXPORT SYMBOL("nEqual")
+  EXPORT SYMBOL("getVersion")
+
+  EXPORT SYMBOL("waitSeconds")
+  EXPORT SYMBOL("displayStatusMessage")
+  EXPORT SYMBOL("restoreStatusMessage")
+  EXPORT SYMBOL("clearStatusMessage")
+  EXPORT SYMBOL("getMemberType")
+  EXPORT SYMBOL("getMonitoredMessage")
+  EXPORT SYMBOL("setLowMessageKey")
+
+ENDPGMEXP
+
+STRPGMEXP  PGMLVL(*PRV) SIGNATURE('RPGUNIT V0.3')
+
+  EXPORT SYMBOL("aEqual")
+  EXPORT SYMBOL("assert")
+  EXPORT SYMBOL("clrAssertFailEvt")
+  EXPORT SYMBOL("fail")
+  EXPORT SYMBOL("getAssertCalled")
+  EXPORT SYMBOL("getAssertFailEvt")
+  EXPORT SYMBOL("iEqual")
+  EXPORT SYMBOL("CLRPFM")
+  EXPORT SYMBOL("RCLACTGRP")
+  EXPORT SYMBOL("runCmd")
+
+ENDPGMEXP
+
+STRPGMEXP  PGMLVL(*PRV) SIGNATURE('RPGUNIT V0.2')
+
+  EXPORT SYMBOL("aEqual")
+  EXPORT SYMBOL("assert")
+  EXPORT SYMBOL("clrAssertFailEvt")
+  EXPORT SYMBOL("fail")
+  EXPORT SYMBOL("getAssertCalled")
+  EXPORT SYMBOL("getAssertFailEvt")
+  EXPORT SYMBOL("iEqual")
+  EXPORT SYMBOL("raiseInternalError")
+  EXPORT SYMBOL("CLRPFM")
+  EXPORT SYMBOL("RCLACTGRP")
+  EXPORT SYMBOL("runCmd")
+
+ENDPGMEXP

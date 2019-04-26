@@ -1,25 +1,37 @@
-      // =====================================================================
-      //
-      // Tests EXTPRC.
-      //
-      // =====================================================================
-      //   >>PRE-COMPILER<<
-      //     >>CMD<<    CRTBNDCL   PGM(QTEMP/MKEXTPRCT) SRCFILE(&SF);
-      //     >>CMD<<    CALL       PGM(QTEMP/MKEXTPRCT) PARM(&LI);
-      //   >>END-PRE-COMPILER<<
-      // =====================================================================
+      // ==========================================================================
+      //  iRPGUnit SelfTest - Test EXTPRC.s
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
+      // >>PRE-COMPILER<<
+      //   >>CRTCMD<<  RUCRTTST TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>IMPORTANT<<
+      //     >>PARM<<  MODULE(&LI/EXTPRC    +
+      //                      &LI/OBJECT    +
+      //                      &LI/SRCMBR    +
+      //                      &LI/USRSPC    +
+      //                      );
+      //     >>PARM<<    COPTION(*SRCSTMT *EVENTF);
+      //   >>END-IMPORTANT<<
+      //   >>EXECUTE<<
+      // >>END-PRE-COMPILER<<
+      // ==========================================================================
 
      H NoMain Option(*SrcStmt)
-
 
        //----------------------------------------------------------------------
        //   Imported Procedures
        //----------------------------------------------------------------------
 
-      /include qinclude,EXTPRC
-      /include qinclude,TEMPLATES
-      /include qsrc,TESTCASE
-
+      /copy qinclude,ASSERT
+      /copy qinclude,EXTPRC
+      /copy qinclude,OBJECT
+      /copy qinclude,TEMPLATES
+      /copy qinclude,TESTUTILS
 
        //----------------------------------------------------------------------
        //   Test Prototypes
@@ -31,9 +43,6 @@
      D testProcNmList  pr                  extproc('testProcNmList')
      D testSrvPgmNotFound...
      D                 pr                  extproc('testSrvPgmNotFound')
-     D setUpSuite      pr                  extproc('setUpSuite')
-     D tearDownSuite   pr                  extproc('tearDownSuite')
-
 
        //----------------------------------------------------------------------
        //   Private Procedure Prototypes
@@ -51,7 +60,6 @@
      D goToNext        pr                  extproc(goToNext_p)
      D  privateData                    *   const
 
-
        //----------------------------------------------------------------------
        //   Global Variables
        //----------------------------------------------------------------------
@@ -61,19 +69,22 @@
      D getNm_p         s               *   procptr
      D goToNext_p      s               *   procptr
 
-
        //----------------------------------------------------------------------
        //   Procedures Definition
        //----------------------------------------------------------------------
 
      PtestOneProc      b                   export
-     DtestOneProc      pi
+     D                 pi
 
      D procList        ds                  likeds(ProcList_t)
      D procCnt         s             10i 0
      D procNm          s                   like(ProcNm_t)
 
       /free
+
+        if (TestSuite_isDirty('SRVPGM1': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/SRVPGM1) SRCFILE(QTESTCASES)' );
+        endif;
 
         procList = loadProcList( 'SRVPGM1' );
         procCnt = cntProc( procList );
@@ -85,17 +96,21 @@
         aEqual( 'PROC1': procNm );
 
       /end-free
-     PtestOneProc      e
+     P                 e
 
 
      PtestSeveralProc  b                   export
-     DtestSeveralProc  pi
+     D                 pi
 
      D procList        ds                  likeds(ProcList_t)
      D procCnt         s             10i 0
      D procNm          s                   like(ProcNm_t)
 
       /free
+
+        if (TestSuite_isDirty('SRVPGM2': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/SRVPGM2) SRCFILE(QTESTCASES)' );
+        endif;
 
         procList = loadProcList( 'SRVPGM2' );
         procCnt = cntProc( procList );
@@ -112,17 +127,21 @@
         aEqual( 'PROC2': procNm );
 
       /end-free
-     PtestSeveralProc  e
+     P                 e
 
 
      PtestProcNmList   b                   export
-     DtestProcNmList   pi
+     D                 pi
 
      D procList        ds                  likeds(ProcList_t)
      D procNmList      ds                  likeds(ProcNmList_t)
      D privateData     s               *   based(procNmList.handle)
 
       /free
+
+        if (TestSuite_isDirty('SRVPGM2': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/SRVPGM2) SRCFILE(QTESTCASES)' );
+        endif;
 
         // Setup.
 
@@ -149,45 +168,12 @@
 
      PtestSrvPgmNotFound...
      P                 b                   export
-     DtestSrvPgmNotFound...
      D                 pi
-
-     D escapeMsgSeen   s               n
-
-      /free
-
         monitor;
           loadProcList(' ');
-          escapeMsgSeen = *off;
+          fail('loadProcList('' '') should raise an escape message.' );
 
         on-error;
-          escapeMsgSeen = *on;
+          //
         endmon;
-
-        assert( escapeMsgSeen:
-                'loadProcList('' '') should raise an escape message.' );
-
-      /end-free
-     PtestSrvPgmNotFound...
      P                 e
-
-     PsetUpSuite       b                   export
-     DsetUpSuite       pi
-      /free
-
-        runcmd( 'RUCRTTST TSTPGM(QTEMP/SRVPGM1) SRCFILE(QTESTCASES)' );
-        runcmd( 'RUCRTTST TSTPGM(QTEMP/SRVPGM2) SRCFILE(QTESTCASES)' );
-
-      /end-free
-     PsetUpSuite       e
-
-
-     PtearDownSuite    b                   export
-     DtearDownSuite    pi
-      /free
-
-        runcmd( 'DLTSRVPGM SRVPGM(QTEMP/SRVPGM1)' );
-        runcmd( 'DLTSRVPGM SRVPGM(QTEMP/SRVPGM2)' );
-
-      /end-free
-     PtearDownSuite    e

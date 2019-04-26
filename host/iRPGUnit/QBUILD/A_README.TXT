@@ -17,6 +17,9 @@ at http://rpgunit.sourceforge.net/. Unfortunately it seems as if the project
 is no longer alive. Nevertheless the original Internet pages at SourceForge
 are still a good source of information.
 
+In 2019 Mihael Schmidt and Thomas Raddatz joined iRPGUnit and ILEUnit to
+iRPGUnit 3.0.
+
 The Eclipse update site of the plug-in is at:
    https://irpgunit.sourceforge.io/eclipse/rdi8.0/
 
@@ -28,7 +31,7 @@ Let me know your experiences!
 --------------------------------------
 
 a) Compile the A_INSTALL CL program:
-   CRTBNDCL   PGM(RPGUNIT/A_INSTALL) SRCFILE(QSRC)
+   CRTBNDCL   PGM(RPGUNIT/A_INSTALL) SRCFILE(RPGUNIT1)
 
 b) Call the installation program:
    CALL       PGM(RPGUNIT/A_INSTALL) PARM('RPGUNIT')
@@ -37,7 +40,7 @@ c) Optionally delete the installation program:
    DLTPGM     PGM(RPGUNIT/A_INSTALL)
 
 d) Optionally run the RPGUnit self tests:
-   CRTBNDCL   PGM(RPGUNIT/MKUT) SRCFILE(QUNITTEST)
+   CRTBNDCL   PGM(RPGUNIT/MKUT) SRCFILE(RPGUNITT1)
    CALL       PGM(RPGUNIT/MKUT) PARM('RPGUNIT')
    DLTPGM     PGM(RPGUNIT/MKUT)
 

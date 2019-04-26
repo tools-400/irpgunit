@@ -29,14 +29,15 @@
      D MBR_SQLRPGLE    c                   const('SQLRPGLE')
      D PARM_DBGVIEW    c                   const('DBGVIEW')
 
-     D order_t         s             10a   based(template)
-     D detail_t        s             10a   based(template)
-     D output_t        s             10a   based(template)
-     D rclrsc_t        s             10a   based(template)
+     D order_t         s             10a   template
+     D detail_t        s             10a   template
+     D output_t        s             10a   template
+     D rclrsc_t        s             10a   template
+     D stmf_t          s           1024a   varying template
 
      D MAX_NUM_LIB     c                   250
 
-     D LibL_t          ds                  based(template)
+     D LibL_t          ds                  template
      D  numE                   1      2i 0
      D  lib                    3   2502a   dim(MAX_NUM_LIB)
 
@@ -45,7 +46,7 @@
      D  libL                               likeds(LibL_t)
 
        // ILE Activation Mark.
-     D ActMark_t       s             10i 0 based(template)
+     D ActMark_t       s             10i 0 template
 
        // Empty Assertion Failure Event of version 1.
      D EMPTY_ASSERT_FAIL_EVT...
@@ -56,83 +57,85 @@
 
        // Assertion Failure Event.
      D AssertFailEvtLong_t...
-     D                 ds                  qualified based(template)
+     D                 ds                  qualified template
      D  msg                                like(msgText_t)
      D  callStk                            likeds(CallStk_t)
 
        // Assertion Failure Event of version 1
      D assertFailEvt_t...
-     D                 ds                  qualified based(template)
+     D                 ds                  qualified template
      D  msg                         256a   varying
      D  callStk                            likeds(CallStk_t)
 
        // Call Stack.
-     D CallStk_t       ds                  qualified based(template)
+     D CallStk_t       ds                  qualified template
      D  numE                         10i 0
      D  entry                              likeds(CallStkEnt_t)
      D                                     Dim(MAX_CALL_STK_SIZE)
 
        // Call Stack Entry.
-     D CallStkEnt_t    ds                  qualified based(template)
+     D CallStkEnt_t    ds                  qualified template
      D  level                        10i 0
      D  sender                             likeds(MsgSender_t)
 
        // Program Message.
-     D Msg_t           ds                  qualified based(template)
+     D Msg_t           ds                  qualified template
      D  id                            7a
      D  txt                                like(msgText_t)
      D  rplData                     256a   varying
      D  sender                             likeds(MsgSender_t)
 
        // Sender of a program message
-     D MsgSender_t     ds                  qualified based(template)
+     D MsgSender_t     ds                  qualified template
      D  qPgm                               likeds(Object_t)
      D  qMod                               likeds(Object_t)
      D  procNm                             like(ProcNm_t)
      D  specNb                       10a
 
+       // MsgInfo_t is and must be defined in member TESTCASE!
+
        // Object qualified Name.
-     D Object_t        ds                  qualified based(template)
+     D Object_t        ds                  qualified template
      D  nm                           10a
      D  lib                          10a
 
        // Spooled file qualified Name.
-     D SplF_t          ds                  qualified based(template)
+     D SplF_t          ds                  qualified template
      D  system                       10a
      D  nm                           10a
      D  nbr                          10i 0
      D  job                                likeds(Job_t)
 
        // Job qualified Name.
-     D Job_t           ds                  qualified based(template)
+     D Job_t           ds                  qualified template
      D  name                         10A
      D  user                         10A
      D  nbr                           6A
 
        // Named callable procedure.
-     D Proc_t          ds                  qualified based(template)
+     D Proc_t          ds                  qualified template
      D  procNm                             like(ProcNm_t)
      D  procPtr                        *   procptr
 
-     D ProcNmList_t    ds                  qualified based(template)
+     D ProcNmList_t    ds                  qualified template
      D  handle                         *
      D  cnt                            *   procptr
      D  getNm                          *   procptr
      D  goToNext                       *   procptr
 
-     D ProcNm_t        s            256a   varying based(template)
+     D ProcNm_t        s            256a   varying template
 
-     D ProcNms_t       ds                  qualified based(template)
+     D ProcNms_t       ds                  qualified template
      D  numE                          5i 0
      D  name                               like(ProcNm_t) Dim(250)
 
        // qualified Job Name.
-     D QlfJobNm_t      ds                  qualified based(template)
+     D QlfJobNm_t      ds                  qualified template
      D  jobNm                        10a
      D  usrNm                        10a
      D  jobNb                         6a
 
-     D TestResult_t    ds                  qualified based(template)
+     D TestResult_t    ds                  qualified template
      D  outcome                       1a
      D  details
      D  failure                            likeds(AssertFailEvtLong_t)
@@ -146,7 +149,7 @@
      D  srcMbr                       10a
      D  assertCnt                    10i 0
 
-     D TestSuite_t     ds                  qualified based(template)
+     D TestSuite_t     ds                  qualified template
      D  setUpSuite                         likeds(Proc_t)
      D  setUp                              likeds(Proc_t)
      D  testCasesCnt                 10i 0
@@ -156,23 +159,23 @@
      D  testResults                    *
 
        // User profile name.
-     D UsrNm_t         s             10a   based(template)
+     D UsrNm_t         s             10a   template
 
        // Object description
-     D Text_t          s             50a   varying based(template)
+     D Text_t          s             50a   varying template
 
        // String value (must be greater than COMPILEOPT)
      D String_t...
-     D                 s           5120a   varying based(template)
+     D                 s           5120a   varying template
 
        // Value of a line of the log.
-     D Line_t          s            256a   varying based(template)
+     D Line_t          s            256a   varying template
 
        // Message replacement data or message text.
-     D msgText_t       s           1024a   varying based(template)
+     D msgText_t       s           1024a   varying template
 
        // Full qualified source member.
-     D SrcMbr_t        ds                  qualified based(template)
+     D SrcMbr_t        ds                  qualified template
      D  file                         10a
      D  lib                          10a
      D  mbr                          10a
@@ -192,3 +195,29 @@
 
      D QUOTE           c                   const('''')
 
+
+      // A sized array of OS400 objects.
+     D ObjectArray_t   ds                  based(template) qualified
+     D  size                          5i 0
+     D  object                             Dim(51) likeds(Object_t)
+
+       // A sized list of options.
+     D Options_t       ds                  based(template) qualified
+     D  size                          5i 0
+     D  option                       10a   Dim(25)
+
+     D HeadToken_t     s             10a   based(template)
+     D DbgView_t       s             10a   based(template)
+     D Export_t        s             10a   based(template)
+     D ActivationGroup_t...
+     D                 s             10a   based(template)
+
+     D Cmd_t           s           8192a   based(template) varying
+     D SerializedArray_t...
+     D                 s           2048a   based(template) varying
+     D SerializedObject_t...
+     D                 s             21a   based(template) varying
+     D SerializedOptions_t...
+     D                 s            512a   based(template) varying
+     D SerializedString_t...
+     D                 s           5136a   based(template) varying

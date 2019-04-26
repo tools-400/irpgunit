@@ -1,26 +1,29 @@
-      // =====================================================================
-      //
-      // Spool file test helper.
-      //
-      // =====================================================================
-      //   >>PRE-COMPILER<<
-      //     >>CRTCMD<<  RUCRTTST   TSTPGM(&LI/&OB) SRCFILE(&SF);
-      //     >>COMPILE<<
-      //       >>PARM<< DBGVIEW(*LIST);
-      //     >>END-COMPILE<<
-      //     >>EXECUTE<<
-      //   >>END-PRE-COMPILER<<
-      // =====================================================================
+      // ==========================================================================
+      //  iRPGUnit SelfTest - Spool file test helper.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
+      // >>PRE-COMPILER<<
+      //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>IMPORTANT<<
+      //     >>PARM<<  OPTION(*EVENTF);
+      //     >>PARM<<  DBGVIEW(*LIST);
+      //   >>END-IMPORTANT<<
+      //   >>EXECUTE<<
+      // >>END-PRE-COMPILER<<
+      // ==========================================================================
 
      H NoMain Option(*SrcStmt)
-
 
       //----------------------------------------------------------------------
       //   Exported Procedures
       //----------------------------------------------------------------------
 
       /include qunittest,SPLF_H
-
 
       //----------------------------------------------------------------------
       //   Private Procedures
@@ -41,28 +44,19 @@
      D  usrNm                              const like(UsrNm_t)
      D  usrData                      10a   const
 
-     D rtvSplfHdl      pr            10i 0
+     D rtvSplfHdl      pr                  likeds(SplfId_t)
      D  splfNm                       10a   const
      D  usrData                      10a   const
-
 
       //----------------------------------------------------------------------
       //   Imported Procedures
       //----------------------------------------------------------------------
 
-      /include qinclude,ERRORCODE
-      /include qsysinc,QGYCLST
-      /include qsysinc,QGYGTLE
-      /include qsysinc,QGYOLSPL
-      /include qsysinc,OPNLIST
-      /include qsysinc,QSPCLOSP
-      /include qsysinc,QSPGETSP
-      /include qsysinc,QSPOPNSP
-      /include qsysinc,QWCRTVCA
-      /include qinclude,TEMPLATES
-      /include qinclude,USRSPC
-      /include qsrc,TESTCASE
-
+      /copy qinclude,ASSERT
+      /copy qinclude,ERRORCODE
+      /copy qinclude,SYSTEMAPI
+      /copy qinclude,TEMPLATES
+      /copy qinclude,USRSPC
 
       //----------------------------------------------------------------------
       //   Constants
@@ -72,16 +66,15 @@
        // - New Line
      D NL              c                   const(x'15')
 
-
       //----------------------------------------------------------------------
       //   Templates
       //----------------------------------------------------------------------
 
      D SplfId_t        ds                  qualified based(template)
-     D  qlfJobNm                           likeds(QlfJobNm_t)
-     D  nm                           10a
-     D  nb                           10i 0
-
+     D  qJob                               likeds(QlfJobNm_t)
+     D  name                         10a
+     D  number                       10i 0
+     D  handle                       10i 0
 
       //----------------------------------------------------------------------
       //   Global Variables
@@ -89,6 +82,9 @@
 
        // Spool file.
      D splf            ds                  qualified
+     D   qJob                              likeds(QlfJobNm_t)
+     D   name                        10a
+     D   number                      10i 0
          // - Handle
      D   hdl                         10i 0 inz(-1)
          // - Print Data User Space Current Position Pointer
@@ -96,13 +92,13 @@
          // - Print Data User Space End Pointer
      D   usrSpcEnd_p                   *
 
-
       //----------------------------------------------------------------------
       //   Procedure Definition
       //----------------------------------------------------------------------
 
-     PbufEqual         b
-     DbufEqual         pi              *
+     P bufEqual...
+     P                 b
+     D                 pi              *
      D expBuf                       256a   const varying
      D actBuf_p                        *   const
 
@@ -120,8 +116,9 @@
      P                 e
 
 
-     PchkAndCloSplF    b                   export
-     DchkAndCloSplF    pi
+     P chkAndCloSplF...
+     P                 b                   export
+     D                 pi
       /free
 
         if (splf.hdl <> -1);
@@ -132,11 +129,26 @@
      P                 e
 
 
-     PcloSplf          b                   export
-     DcloSplf          pi
+     P cloSplf...
+     P                 b                   export
+     D                 pi
+
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
+     D cmd             s            100a   varying
       /free
 
         QSPCLOSP( splf.hdl : percolateErrors );
+
+        cmd = 'DLTSPLF FILE(' + %trim(splf.name) + ') ' +
+                      'JOB(' + %trim(splf.qJob.jobNb) + '/' +
+                               %trim(splf.qJob.usrNm) +'/' +
+                               %trim(splf.qJob.jobNm) + ') ' +
+                      'SPLNBR(' + %char(splf.number) + ')';
+
+        qcmdexc(cmd: %len(cmd));
+
         clear splf;
         splf.hdl = -1;
 
@@ -144,8 +156,9 @@
      P                 e
 
 
-     PfindInSpool      b
-     DfindInSpool      pi              *
+     P findInSpool...
+     P                 b
+     D                 pi              *
      D charToFind                     1a   const
      D startPos                        *   const
      D endPos                          *   const
@@ -171,8 +184,9 @@
      P                 e
 
 
-     P opnSplf         b                   export
-     D opnSplf         pi
+     P opnSplf...
+     P                 b                   export
+     D                 pi
      D  splfNm                       10a   const
      D  usrData                      10a   const
 
@@ -185,11 +199,20 @@
      D                                     based(qspGenHdr_p)
        // User Space to store spool contents.
      D usrSpcNm        ds                  likeds(Object_t)
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
 
+     D splfId          ds                  likeds(SplfId_t) inz
       /free
 
         clear splf;
-        splf.hdl = rtvSplfHdl( splfNm : usrData );
+        splfId = rtvSplfHdl( splfNm : usrData );
+
+        splf.qJob = splfId.qJob;
+        splf.name = splfId.name;
+        splf.number = splfId.number;
+        splf.hdl = splfId.handle;
 
         usrSpcNm.nm  = 'RUSPOOL';
         usrSpcNm.lib = 'QTEMP';
@@ -213,8 +236,9 @@
      P                 e
 
 
-     PrtvJobUsrNm      b
-     DrtvJobUsrNm      pi            10a
+     P rtvJobUsrNm...
+     P                 b
+     D                 pi            10a
 
        // Job attributes.
      D jobAttribs      ds                  likeds(dsRTVC0100)
@@ -222,7 +246,9 @@
      D attribKeys      s             10i 0 Dim(1)
        // Current user profile name job attribute entry.
      D usrNmEnt        ds                  likeds(dsRTVC0100Ent)
-
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
       /free
 
         attribKeys(1) = CUR_USR_NM;
@@ -252,8 +278,9 @@
      P                 e
 
 
-     P rtvLatestSplf   b
-     D rtvLatestSplf   pi                  likeds(SplfId_t)
+     P rtvLatestSplf...
+     P                 b
+     D                 pi                  likeds(SplfId_t)
      D  usrNm                              const like(UsrNm_t)
      D  usrData                      10a   const
 
@@ -295,6 +322,9 @@
      D   deviceNm                    10a   inz('*ALL')
      D                                2a   inz(x'00')
 
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
       /free
 
         filterInfo.usrNm   = usrNm;
@@ -342,11 +372,11 @@
 
         QGYCLST( listInfo.rqsHdl : percolateErrors );
 
-        latestSplfId.qlfJobNm.jobNm = latestSplfInfo.jobNm;
-        latestSplfId.qlfJobNm.usrNm = latestSplfInfo.usrNm;
-        latestSplfId.qlfJobNm.jobNb = latestSplfInfo.jobNb;
-        latestSplfId.nm             = latestSplfInfo.splfNm;
-        latestSplfId.nb             = latestSplfInfo.splfNb;
+        latestSplfId.qJob.jobNm = latestSplfInfo.jobNm;
+        latestSplfId.qJob.usrNm = latestSplfInfo.usrNm;
+        latestSplfId.qJob.jobNb = latestSplfInfo.jobNb;
+        latestSplfId.name           = latestSplfInfo.splfNm;
+        latestSplfId.number         = latestSplfInfo.splfNb;
 
         return latestSplfId;
 
@@ -354,8 +384,9 @@
      P                 e
 
 
-     P rtvSplfHdl      b
-     D rtvSplfHdl      pi            10i 0
+     P rtvSplfHdl...
+     P                 b
+     D                 pi                  likeds(SplfId_t)
      D  splfNm                       10a   const
      D  usrData                      10a   const
 
@@ -365,7 +396,9 @@
      D latestSplfId    ds                  likeds(SplfId_t)
        // Current user profile name.
      D curUsrNm        s                   like(UsrNm_t)
-
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
       /free
 
         // A simple QSPOPNSP( splfHdl : '*' : *blank : *blank : splfNm : -1 : 1 : percolateErr
@@ -377,23 +410,24 @@
         latestSplfId = rtvLatestSplf( curUsrNm : usrData );
 
         QSPOPNSP( latestSplfHdl :
-                  latestSplfId.qlfJobNm :
+                  latestSplfId.qJob :
                   *blank :
                   *blank :
-                  latestSplfId.nm :
-                  latestSplfId.nb :
+                  latestSplfId.name :
+                  latestSplfId.number :
                   1 :
                   percolateErrors );
 
-        return latestSplfHdl;
+        latestSplfId.handle = latestSplfHdl;
+
+        return latestSplfId;
 
       /end-free
      P                 e
 
 
-     PsplfLineStartsWith...
+     P splfLineStartsWith...
      P                 b                   export
-     DsplfLineStartsWith...
      D                 pi
      D expString                    256a   const varying
 
@@ -406,7 +440,7 @@
      P                 e
 
 
-     PsplfSkipLine...
+     P splfSkipLine...
      P                 b                   export
      D                 pi
 

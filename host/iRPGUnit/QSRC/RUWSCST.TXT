@@ -1,13 +1,21 @@
-     /* =================================================================== */
-     /*  RPGUnit - Host print transform table EBCDIC/ASCII.                 */
-     /*  Used by the RPGUnit spooled file viewer to transform a given       */
-     /*  spooled file to ASCII.                                             */
-     /*  See:                                                               */
-     /*  de.tools400.rpgunit.spooledfileviewer.ui.editor.SpooledFileStorage */
-     /*                                                                     */
-     /*  For the documentation of workstation customization objects refer   */
-     /*  to manual:  Workstation Customization Programming  (SC41-5605-00)  */
-     /* =================================================================== */
+     /* ======================================================================= */
+     /*  iRPGUnit - Host print transform table EBCDIC/ASCII                     */
+     /* ======================================================================= */
+     /*  Copyright (c) 2013-2019 iRPGUnit Project Team                          */
+     /*  All rights reserved. This program and the accompanying materials       */
+     /*  are made available under the terms of the Common Public License v1.0   */
+     /*  which accompanies this distribution, and is available at               */
+     /*  http://www.eclipse.org/legal/cpl-v10.html                              */
+     /* ======================================================================= */
+     /*  RPGUnit - Host print transform table EBCDIC/ASCII.                     */
+     /*  Used by the iRPGUnit spooled file viewer to transform a given          */
+     /*  spooled file to ASCII.                                                 */
+     /*  See class:                                                             */
+     /*  de.tools400.rpgunit.spooledfileviewer.ui.editor.SpooledFileStorage     */
+     /*                                                                         */
+     /*  For the documentation of workstation customization objects refer       */
+     /*  to manual:  Workstation Customization Programming  (SC41-5605-00)      */
+     /* ======================================================================= */
 :WSCST DEVCLASS=TRANSFORM.
 
     :TRNSFRMTBL.

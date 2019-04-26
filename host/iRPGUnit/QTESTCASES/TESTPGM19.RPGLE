@@ -1,9 +1,18 @@
+      // ==========================================================================
+      //  iRPGUnit Fixture - Errors in setUp/tearDownSuite.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
 
      H NoMain Option(*SrcStmt: *NoDebugIo)
 
-      /include qsrc,TESTCASE
+      /include qinclude,TESTCASE
       /include qinclude,ERRORCODE
-      /include qsysinc,QMHSNDPM
+      /include qinclude,SYSTEMAPI
 
      D setupSuite      pr
      D test1           pr
@@ -58,7 +67,9 @@
        // The message reference key (unique string of characters that identifies
        // a particular instance of a message in a queue).
      D msgKey          s              4a
-
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
       /free
 
         QMHSNDPM( *blank :

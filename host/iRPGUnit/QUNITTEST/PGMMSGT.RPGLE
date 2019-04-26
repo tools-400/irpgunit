@@ -1,25 +1,34 @@
-      // =====================================================================
-      //
-      // Tests PGMMSG.
-      //
-      // =====================================================================
-      //   >>PRE-COMPILER<<
-      //     >>CMD<<    CRTBNDCL   PGM(QTEMP/MKPGMMSGT) SRCFILE(&SF);
-      //     >>CMD<<    CALL       PGM(QTEMP/MKPGMMSGT) PARM(&LI);
-      //   >>END-PRE-COMPILER<<
-      // =====================================================================
+      // ==========================================================================
+      //  iRPGUnit SelfTest - Test PGMMSG.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
+      // >>PRE-COMPILER<<
+      //   >>CRTCMD<<  RUCRTTST TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>IMPORTANT<<
+      //     >>PARM<<  MODULE(&LI/PGMMSG    +
+      //                      );
+      //     >>PARM<<    COPTION(*SRCSTMT *EVENTF);
+      //   >>END-IMPORTANT<<
+      //   >>EXECUTE<<
+      // >>END-PRE-COMPILER<<
+      // ==========================================================================
 
      H NoMain Option(*SrcStmt)
-
 
       //----------------------------------------------------------------------
       //   Imported Procedures
       //----------------------------------------------------------------------
 
-      /include qinclude,ERRORCODE
-      /include qinclude,PGMMSG
-      /include qinclude,TEMPLATES
-      /include qsrc,TESTCASE
+      /copy qinclude,ASSERT
+      /copy qinclude,ERRORCODE
+      /copy qinclude,PGMMSG
+      /copy qinclude,TEMPLATES
+      /copy qinclude,TESTUTILS
 
 
       //----------------------------------------------------------------------
@@ -55,21 +64,22 @@
 
      P callSndEscapeMsgToCaller...
      P                 b
-     D callSndEscapeMsgToCaller...
      D                 pi
       /free
 
         sndEscapeMsgToCaller( 'Dummy error message' );
 
       /end-free
-     P callSndEscapeMsgToCaller...
      P                 e
 
 
      P monitorEscapeMsgAndResendIt...
      P                 b
-     D monitorEscapeMsgAndResendIt...
      D                 pi
+
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
       /free
 
         monitor;
@@ -83,7 +93,7 @@
 
 
      P procWithError   b
-     D procWithError   pi            10i 0
+     D                 pi            10i 0
      D  zero           s             10i 0 inz(0)
       /free
 
@@ -99,12 +109,13 @@
 
      P test_rcvExcpMsgInfo...
      P                 b                   export
-     D test_rcvExcpMsgInfo...
      D                 pi
 
      D excpMsgInfo     ds                  likeds(Msg_t)
-
+     D msgKey          s              4a
       /free
+
+        setLowMessageKey(getHighestMsgKey());
 
         monitor;
           procWithError();
@@ -122,7 +133,14 @@
             // do that, since it depends on the locale.
         aEqual( 'PGMMSGT': excpMsgInfo.sender.qPgm.nm );
         aEqual( 'procWithError': excpMsgInfo.sender.procNm );
-        aEqual( '9000': excpMsgInfo.sender.specNb );
+
+        monitor;
+           msgKey = getHighestMsgKey();
+           aEqual( '100'   : excpMsgInfo.sender.specNb );   // IFS Compile
+        on-error;
+           getLatestEscMsg(msgKey: *ON);
+           aEqual( '10000' : excpMsgInfo.sender.specNb );   // QSYS Compile
+        endmon;
 
       /end-free
      P                 e
@@ -130,13 +148,11 @@
 
      P test_sndEscapeMsgToCaller...
      P                 b                   export
-     D test_sndEscapeMsgToCaller...
      D                 pi
 
      D excpMsgInfo     ds                  likeds(Msg_t)
 
       /free
-
         monitor;
           callSndEscapeMsgToCaller();
           fail( 'sndEscapeMsgToCaller() did not raise an exception.' );
@@ -150,13 +166,11 @@
         aEqual( 'Dummy error message' : excpMsgInfo.txt );
 
       /end-free
-     P test_sndEscapeMsgToCaller...
      P                 e
 
 
      P test_resendEscapeMsg...
      P                 b                   export
-     D test_resendEscapeMsg...
      D                 pi
 
      D resentMsgSeen   s               n
@@ -189,8 +203,10 @@
      D a               s             10i 0
      D b               s             10i 0
      D c               s             10i 0
-
+     D msgKey          s              4a
       /free
+
+         setLowMessageKey(getHighestMsgKey());
 
          monitor;
            a = 10;
@@ -233,7 +249,14 @@
             // do that, since it depends on the locale.
         aEqual( 'PGMMSGT': msgInfo.pgm );
         aEqual( 'procWithError': msgInfo.proc );
-        aEqual( '9000': msgInfo.specNb );
+
+        monitor;
+           msgKey = getHighestMsgKey();
+           aEqual( '100'   : msgInfo.specNb );   // IFS Compile
+        on-error;
+           getLatestEscMsg(msgKey: *ON);
+           aEqual( '10000' : msgInfo.specNb );   // QSYS Compile
+        endmon;
 
       /end-free
      P                 e

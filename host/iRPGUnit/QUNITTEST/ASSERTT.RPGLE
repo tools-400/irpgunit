@@ -1,19 +1,22 @@
-      // =====================================================================
-      //
-      // Unit tests for ASSERT.
-      //
-      // =====================================================================
-      //   >>PRE-COMPILER<<
-      //     >>CRTCMD<<  RUCRTTST   TSTPGM(&LI/&OB) SRCFILE(&SF);
-      //     >>COMPILE<<
-      //       >>PARM<< DBGVIEW(*LIST);
-      //     >>END-COMPILE<<
-      //     >>EXECUTE<<
-      //   >>END-PRE-COMPILER<<
-      // =====================================================================
+      // ==========================================================================
+      //  iRPGUnit SelfTest - Test ASSERT.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
+      // >>PRE-COMPILER<<
+      //   >>CRTCMD<<  RUCRTTST TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>IMPORTANT<<
+      //     >>PARM<<  MODULE(&LI/PGMMSG);
+      //   >>END-IMPORTANT<<
+      //   >>EXECUTE<<
+      // >>END-PRE-COMPILER<<
+      // ==========================================================================
 
      H NoMain Option(*SrcStmt)
-
 
       //----------------------------------------------------------------------
       //   Exported Procedures
@@ -50,8 +53,8 @@
       //----------------------------------------------------------------------
 
       /include qinclude,ASSERT
+      /include qinclude,PGMMSG
       /include qinclude,TEMPLATES
-      /include qsrc,TESTCASE
 
 
       //----------------------------------------------------------------------
@@ -122,6 +125,7 @@
 
      D excpWasSeen     s               n
      D assertFailEvt   ds                  likeds(AssertFailEvt_t)
+     D msgKey          s              4a
 
       /free
 
@@ -147,7 +151,14 @@
         aEqual( 'RUTESTCASE' : assertFailEvt.callStk.Entry(1).sender.qPgm.nm );
         aEqual( 'ASSERT'     : assertFailEvt.callStk.Entry(1).sender.qMod.nm );
         aEqual( 'iEqual'     : assertFailEvt.callStk.Entry(1).sender.procNm );
-        aEqual( '12900'      : assertFailEvt.callStk.Entry(1).sender.specNb );
+
+        monitor;
+           msgKey = getHighestMsgKey();
+           aEqual( '122'     : assertFailEvt.callStk.Entry(1).sender.specNb );  // IFS Compile
+        on-error;
+           getLatestEscMsg(msgKey: *ON);
+           aEqual( '12200'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
+        endmon;
 
         aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(2).sender.qPgm.nm );
         aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(2).sender.qMod.nm );
@@ -183,6 +194,7 @@
 
      D excpWasSeen     s               n
      D assertFailEvt   ds                  likeds(AssertFailEvt_t)
+     D msgKey          s              4a
 
       /free
 
@@ -210,7 +222,14 @@
         aEqual( 'RUTESTCASE' : assertFailEvt.callStk.Entry(1).sender.qPgm.nm );
         aEqual( 'ASSERT'     : assertFailEvt.callStk.Entry(1).sender.qMod.nm );
         aEqual( 'aEqual'     : assertFailEvt.callStk.Entry(1).sender.procNm );
-        aEqual( '10200'      : assertFailEvt.callStk.Entry(1).sender.specNb );
+
+        monitor;
+           msgKey = getHighestMsgKey();
+           aEqual( '95'      : assertFailEvt.callStk.Entry(1).sender.specNb );
+        on-error;
+           getLatestEscMsg(msgKey: *ON);
+           aEqual( '9500'    : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
+        endmon;
 
         aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(2).sender.qPgm.nm );
         aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(2).sender.qMod.nm );
@@ -284,6 +303,7 @@
      D                 pi
 
      D assertFailEvt   ds                  likeds(AssertFailEvt_t)
+     D msgKey          s              4a
 
       /free
 
@@ -306,7 +326,14 @@
         aEqual( 'RUTESTCASE' : assertFailEvt.callStk.Entry(1).sender.qPgm.nm );
         aEqual( 'ASSERT'     : assertFailEvt.callStk.Entry(1).sender.qMod.nm );
         aEqual( 'assert'     : assertFailEvt.callStk.Entry(1).sender.procNm );
-        aEqual( '17200'      : assertFailEvt.callStk.Entry(1).sender.specNb );
+
+        monitor;
+           msgKey = getHighestMsgKey();
+           aEqual( '165'     : assertFailEvt.callStk.Entry(1).sender.specNb );  // IFS Compile
+        on-error;
+           getLatestEscMsg(msgKey: *ON);
+           aEqual( '16500'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
+        endmon;
 
         aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(2).sender.qPgm.nm );
         aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(2).sender.qMod.nm );

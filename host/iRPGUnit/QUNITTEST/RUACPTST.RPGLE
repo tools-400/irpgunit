@@ -1,16 +1,30 @@
-      // =====================================================================
-      //
-      // Acceptance Tests for RPGUnit.
-      //
-      // =====================================================================
-      //   >>PRE-COMPILER<<
-      //     >>CMD<<    CRTBNDCL   PGM(QTEMP/MKACPTST) SRCFILE(&SF);
-      //     >>CMD<<    CALL       PGM(QTEMP/MKACPTST) PARM(&LI);
-      //   >>END-PRE-COMPILER<<
-      // =====================================================================
+      // ==========================================================================
+      //  iRPGUnit SelfTest - Acceptance tests.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
+      // >>PRE-COMPILER<<
+      //   >>CRTCMD<<  RUCRTTST TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>IMPORTANT<<
+      //     >>PARM<<  MODULE(&LI/SPLF      +
+      //                      &LI/ASSERT    +
+      //                      &LI/OBJECT    +
+      //                      &LI/PGMMSG    +
+      //                      &LI/SRCMBR    +
+      //                      &LI/TESTUTILS +
+      //                      &LI/USRSPC    +
+      //                      );
+      //     >>PARM<<  BOPTION(*DUPPROC);
+      //   >>END-IMPORTANT<<
+      //   >>EXECUTE<<
+      // >>END-PRE-COMPILER<<
+      // ==========================================================================
 
      H NoMain Option(*SrcStmt)
-
 
       //----------------------------------------------------------------------
       //   Exported Procedures
@@ -62,19 +76,21 @@
       //   Imported Procedures
       //----------------------------------------------------------------------
 
+      /include qinclude,ASSERT
+      /include qinclude,OBJECT
       /include qinclude,PGMMSG
-      /include qsysinc,QCMDEXC
-      /include qinclude,JOBLOG
+      /include qinclude,SYSTEMAPI
       /include qunittest,SPLF_H
       /include qinclude,TEMPLATES
-      /include qsrc,TESTCASE
+      /include qinclude,TESTUTILS
 
 
       //----------------------------------------------------------------------
       //   Private Procedures
       //----------------------------------------------------------------------
 
-     D run             pr                  extproc('run')
+     D run...
+     D                 pr                  extproc('run')
      D  cmd                       32767a   const varying
      D  errorExpected                  n   const options(*NoPass)
      D  msgType                      10a   const options(*NoPass)
@@ -104,8 +120,9 @@
       //   Test Procedures
       //----------------------------------------------------------------------
 
-     PsetUp            b                   export
-     DsetUp            pi
+     P setUp...
+     P                 b                   export
+     D                 pi
       /free
 
         clear msgTxt;
@@ -114,7 +131,8 @@
      P                 e
 
 
-     PtearDown         b                   export
+     P tearDown...
+     P                 b                   export
      D                 pi
       /free
 
@@ -124,43 +142,60 @@
      P                 e
 
 
-     PtestEmptyTest    b                   export
-     DtestEmptyTest    pi
+     P testEmptyTest...
+     P                 b                   export
+     D                 pi
       /free
 
-        run( 'RUCRTTST TSTPGM(QTEMP/TESTPGM01) SRCFILE(QTESTCASES)' );
+        if (TestSuite_isDirty('TESTPGM01': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/TESTPGM01) SRCFILE(QTESTCASES)' );
+        endif;
 
-        run( 'RUCALLTST QTEMP/TESTPGM01' : noError : '*COMP' : msgTxt );
+        run( 'RUCALLTST TESTPGM01' : noError : '*COMP' : msgTxt );
+
+        opnSplf( 'RPGUNIT' : 'TESTPGM01' );
 
         aEqual( 'Success. 1 test case, 0 assertion, 0 failure, 0 error.':
                 msgTxt );
 
+        cloSplf();
+
       /end-free
      P                 e
 
 
-     PtestSuccess      b                   export
-     DtestSuccess      pi
+     P testSuccess...
+     P                 b                   export
+     D                 pi
       /free
 
-        run( 'RUCRTTST TSTPGM(QTEMP/TESTPGM02) SRCFILE(QTESTCASES)' );
+        if (TestSuite_isDirty('TESTPGM02': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/TESTPGM02) SRCFILE(QTESTCASES)' );
+        endif;
 
-        run( 'RUCALLTST QTEMP/TESTPGM02' : noError : '*COMP' : msgTxt );
+        run( 'RUCALLTST TESTPGM02' : noError : '*COMP' : msgTxt );
+
+        opnSplf( 'RPGUNIT' : 'TESTPGM02' );
 
         aEqual( 'Success. 1 test case, 1 assertion, 0 failure, 0 error.':
                 msgTxt );
 
+        cloSplf();
+
       /end-free
      P                 e
 
 
-     PtestFailures     b                   export
-     DtestFailures     pi
+     P testFailures...
+     P                 b                   export
+     D                 pi
       /free
 
-        run( 'RUCRTTST TSTPGM(QTEMP/TESTPGM03) SRCFILE(QTESTCASES)' );
+        if (TestSuite_isDirty('TESTPGM03': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/TESTPGM03) SRCFILE(QTESTCASES)' );
+        endif;
 
-        run( 'RUCALLTST QTEMP/TESTPGM03' : errorExpected : '*ESCAPE' : msgTxt );
+        run( 'RUCALLTST TESTPGM03' : errorExpected : '*ESCAPE' : msgTxt );
 
         aEqual( 'FAILURE. 2 test cases, 2 assertions, 2 failures, 0 error.':
                 msgTxt );
@@ -175,13 +210,13 @@
         splfLineStartsWith( 'TESTFALSE - FAILURE' );
         splfLineStartsWith( 'Expected 5, but was 4.' );
         splfLineStartsWith( 'iEqual' );
-        splfLineStartsWith( 'TESTFALSE (TESTPGM03->TESTPGM03:1300)' );
+        splfLineStartsWith( 'TESTFALSE (TESTPGM03->TESTPGM03:22' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'TESTFALSE2 - FAILURE' );
         splfLineStartsWith( 'Expected 6, but was 4.' );
         splfLineStartsWith( 'iEqual' );
-        splfLineStartsWith( 'TESTFALSE2 (TESTPGM03->TESTPGM03:2200)' );
+        splfLineStartsWith( 'TESTFALSE2 (TESTPGM03->TESTPGM03:31' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'FAILURE. 2 test cases, 2 assertions,'
@@ -192,32 +227,40 @@
      P                 e
 
 
-     PtestNonTestProc...
+     P testNonTestProc...
      P                 b                   export
-     DtestNonTestProc...
      D                 pi
       /free
 
-        run( 'RUCRTTST TSTPGM(QTEMP/TESTPGM04) SRCFILE(QTESTCASES)' );
+        if (TestSuite_isDirty('TESTPGM04': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/TESTPGM04) SRCFILE(QTESTCASES)' );
+        endif;
 
-        run( 'RUCALLTST QTEMP/TESTPGM04' : noError : '*COMP' : msgTxt );
+        run( 'RUCALLTST TESTPGM04' : noError : '*COMP' : msgTxt );
+
+        opnSplf( 'RPGUNIT' : 'TESTPGM04' );
 
         aEqual( 'Success. 2 test cases, 0 assertion, 0 failure, 0 error.':
                 msgTxt );
+
+       cloSplf();
 
       /end-free
      P                 e
 
 
-     PtestSetupAndTearDown...
+     P testSetupAndTearDown...
      P                 b                   export
-     DtestSetupAndTearDown...
      D                 pi
       /free
 
-        run( 'RUCRTTST TSTPGM(QTEMP/TESTPGM05) SRCFILE(QTESTCASES)' );
+        if (TestSuite_isDirty('TESTPGM05': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/TESTPGM05) SRCFILE(QTESTCASES)' );
+        endif;
 
-        run( 'RUCALLTST QTEMP/TESTPGM05' : errorExpected : '*ESCAPE' : msgTxt );
+        run( 'RUCALLTST TESTPGM05' : errorExpected : '*ESCAPE' : msgTxt );
+
+        opnSplf( 'RPGUNIT' : 'TESTPGM05' );
 
         aEqual( 'FAILURE. 2 test cases, 0 assertion, 1 failure, 0 error.':
                 msgTxt );
@@ -229,21 +272,26 @@
         aEqual( 'test2'        : rcvMsgData('*INFO') );    // Raises a failure.
         aEqual( 'teardown'     : rcvMsgData('*INFO') );    // Call 'teardown' anyway.
 
+        cloSplf();
+
       /end-free
      P                 e
 
 
-     PtestError        b                   export
-     DtestError        pi
+     P testError...
+     P                 b                   export
+     D                 pi
 
      D testStartTime   s               z
 
       /free
 
-        testStartTime = getFullTimeStamp();
-        run( 'RUCRTTST TSTPGM(QTEMP/TESTPGM06) SRCFILE(QTESTCASES)' );
+        if (TestSuite_isDirty('TESTPGM06': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/TESTPGM06) SRCFILE(QTESTCASES)' );
+        endif;
 
-        run( 'RUCALLTST QTEMP/TESTPGM06' : errorExpected : '*ESCAPE' : msgTxt );
+        testStartTime = getFullTimeStamp();
+        run( 'RUCALLTST TESTPGM06' : errorExpected : '*ESCAPE' : msgTxt );
 
         aEqual( 'ERROR. 1 test case, 0 assertion, 0 failure, 1 error.':
                 msgTxt );
@@ -259,7 +307,7 @@
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'TESTERROR - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
-        splfLineStartsWith( 'TESTERROR (TESTPGM06->TESTPGM06:1400)' );
+        splfLineStartsWith( 'TESTERROR (TESTPGM06->TESTPGM06:23' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'ERROR. 1 test case, 0 assertion,'
@@ -270,28 +318,16 @@
      P                 e
 
 
-     PtestManyTests    b                   export
-     DtestManyTests    pi
+     P testStackTrace...
+     P                 b                   export
+     D                 pi
       /free
 
-        run( 'RUCRTTST TSTPGM(QTEMP/TESTPGM13) SRCFILE(QTESTCASES)' );
+        if (TestSuite_isDirty('TESTPGM07': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/TESTPGM07) SRCFILE(QTESTCASES)' );
+        endif;
 
-        run( 'RUCALLTST QTEMP/TESTPGM13' : noError : '*COMP' : msgTxt );
-
-        aEqual( 'Success. 256 test cases, 0 assertion, 0 failure, 0 error.':
-                msgTxt );
-
-      /end-free
-     P                 e
-
-
-     PtestStackTrace   b                   export
-     DtestStackTrace   pi
-      /free
-
-        run( 'RUCRTTST TSTPGM(QTEMP/TESTPGM07) SRCFILE(QTESTCASES)' );
-
-        run( 'RUCALLTST QTEMP/TESTPGM07' : errorExpected : '*ESCAPE' : msgTxt );
+        run( 'RUCALLTST TESTPGM07' : errorExpected : '*ESCAPE' : msgTxt );
 
         aEqual( 'FAILURE. 1 test case, 1 assertion, 1 failure, 0 error.':
                 msgTxt );
@@ -306,8 +342,8 @@
         splfLineStartsWith( 'TESTSTACK - FAILURE' );
         splfLineStartsWith( 'Expected 5, but was 4.' );
         splfLineStartsWith( 'iEqual' );
-        splfLineStartsWith( 'FAILINGPROC (TESTPGM07->TESTPGM07:1300)' );
-        splfLineStartsWith( 'TESTSTACK (TESTPGM07->TESTPGM07:2200)' );
+        splfLineStartsWith( 'FAILINGPROC (TESTPGM07->TESTPGM07:22' );
+        splfLineStartsWith( 'TESTSTACK (TESTPGM07->TESTPGM07:31' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'FAILURE. 1 test case, 1 assertion,'
@@ -318,33 +354,41 @@
      P                 e
 
 
-     PtestMissingObject...
+     P testMissingObject...
      P                 b                   export
-     DtestMissingObject...
      D                 pi
       /free
 
-        callp(e) run( 'DLTSRVPGM QTEMP/TESTPGM08' );    // No TESTPGM08.
+        if (TestSuite_exists('TESTPGM08': 'QTEMP'));
+           runcmd( 'DLTSRVPGM SRVPGM(QTEMP/TESTPGM08)' ); // Must not exists!
+        endif;
 
-        run( 'RUCALLTST QTEMP/TESTPGM08' : errorExpected : '*ESCAPE' : msgTxt );
+        callp(e) run( 'DLTSRVPGM TESTPGM08' );    // No TESTPGM08.
+
+        run( 'RUCALLTST TESTPGM08' : errorExpected : '*ESCAPE' : msgTxt );
+
+        opnSplf( 'RPGUNIT' : 'TESTPGM08' );
 
         aEqual( 'RPGUnit Error.'
-              + ' Error while loading the test suite in QTEMP/TESTPGM08.' :
+              + ' Error while loading the test suite in *LIBL/TESTPGM08.' :
                 msgTxt );
+
+        cloSplf();
 
       /end-free
      P                 e
 
 
-     PtestErrorDuringSetup...
+     P testErrorDuringSetup...
      P                 b                   export
-     DtestErrorDuringSetup...
      D                 pi
       /free
 
-        run( 'RUCRTTST TSTPGM(QTEMP/TESTPGM09) SRCFILE(QTESTCASES)' );
+        if (TestSuite_isDirty('TESTPGM09': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/TESTPGM09) SRCFILE(QTESTCASES)' );
+        endif;
 
-        run( 'RUCALLTST QTEMP/TESTPGM09' : errorExpected : '*ESCAPE' : msgTxt );
+        run( 'RUCALLTST TESTPGM09' : errorExpected : '*ESCAPE' : msgTxt );
 
         aEqual( 'ERROR. 1 test case, 0 assertion, 0 failure, 1 error.' :
                 msgTxt );
@@ -362,7 +406,7 @@
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'TEST - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
-        splfLineStartsWith( 'SETUP (TESTPGM09->TESTPGM09:2100)' );
+        splfLineStartsWith( 'SETUP (TESTPGM09->TESTPGM09:30' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'ERROR. 1 test case, 0 assertion,'
@@ -373,15 +417,16 @@
      P                 e
 
 
-     PtestErrorDuringTearDown...
+     P testErrorDuringTearDown...
      P                 b                   export
-     DtestErrorDuringTearDown...
      D                 pi
       /free
 
-        run( 'RUCRTTST TSTPGM(QTEMP/TESTPGM10) SRCFILE(QTESTCASES)' );
+        if (TestSuite_isDirty('TESTPGM10': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/TESTPGM10) SRCFILE(QTESTCASES)' );
+        endif;
 
-        run( 'RUCALLTST QTEMP/TESTPGM10' : errorExpected : '*ESCAPE' : msgTxt );
+        run( 'RUCALLTST TESTPGM10' : errorExpected : '*ESCAPE' : msgTxt );
 
         aEqual( 'ERROR. 1 test case, 0 assertion, 0 failure, 1 error.' :
                 msgTxt );
@@ -395,7 +440,7 @@
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'TEST - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
-        splfLineStartsWith( 'TEARDOWN (TESTPGM10->TESTPGM10:1900)' );
+        splfLineStartsWith( 'TEARDOWN (TESTPGM10->TESTPGM10:28' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'ERROR. 1 test case, 0 assertion,'
@@ -406,31 +451,41 @@
      P                 e
 
 
-     PtestNoTestCase   b                   export
-     DtestNoTestCase   pi
+     P testNoTestCase...
+     P                 b                   export
+     D                 pi
       /free
 
-        run( 'RUCRTTST TSTPGM(QTEMP/TESTPGM11) SRCFILE(QTESTCASES)' );
+        if (TestSuite_isDirty('TESTPGM11': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/TESTPGM11) SRCFILE(QTESTCASES)' );
+        endif;
 
-        run( 'RUCALLTST QTEMP/TESTPGM11' : errorExpected : '*ESCAPE' : msgTxt );
+        run( 'RUCALLTST TESTPGM11' : errorExpected : '*ESCAPE' : msgTxt );
+
+        opnSplf( 'RPGUNIT' : 'TESTPGM11' );
 
         aEqual( 'RPGUnit Error.'
-              + ' No test case found in service program QTEMP/TESTPGM11.' :
+              + ' No test case found in service program *LIBL/TESTPGM11.' :
                 msgTxt );
+
+        cloSplf();
 
       /end-free
      P                 e
 
 
-     PtestSetupSuiteAndTearDownSuite...
+     P testSetupSuiteAndTearDownSuite...
      P                 b                   export
-     DtestSetupSuiteAndTearDownSuite...
      D                 pi
       /free
 
-        run( 'RUCRTTST TSTPGM(QTEMP/TESTPGM12) SRCFILE(QTESTCASES)' );
+        if (TestSuite_isDirty('TESTPGM12': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/TESTPGM12) SRCFILE(QTESTCASES)' );
+        endif;
 
-        run( 'RUCALLTST QTEMP/TESTPGM12' : errorExpected : '*ESCAPE' : msgTxt );
+        run( 'RUCALLTST TESTPGM12' : errorExpected : '*ESCAPE' : msgTxt );
+
+        opnSplf( 'RPGUNIT' : 'TESTPGM12' );
 
         aEqual( 'FAILURE. 2 test cases, 0 assertion, 1 failure, 0 error.':
                 msgTxt );
@@ -444,17 +499,44 @@
         aEqual( 'teardown'     : rcvMsgData('*INFO') );    // Call 'teardown' anyway.
         aEqual( 'teardownSuite': rcvMsgData('*INFO') );    // Call 'teardownsuite' anyway.
 
+        cloSplf();
+
       /end-free
      P                 e
 
 
-     PtestBigInteger   b                   export
-     DtestBigInteger   pi
+     P testManyTests...
+     P                 b                   export
+     D                 pi
       /free
 
-        run( 'RUCRTTST TSTPGM(QTEMP/TESTPGM14) SRCFILE(QTESTCASES)' );
+        if (TestSuite_isDirty('TESTPGM13': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/TESTPGM13) SRCFILE(QTESTCASES)' );
+        endif;
 
-        run( 'RUCALLTST QTEMP/TESTPGM14' : errorExpected : '*ESCAPE' : msgTxt );
+        run( 'RUCALLTST TESTPGM13' : noError : '*COMP' : msgTxt );
+
+        opnSplf( 'RPGUNIT' : 'TESTPGM13' );
+
+        aEqual( 'Success. 256 test cases, 0 assertion, 0 failure, 0 error.':
+                msgTxt );
+
+        cloSplf();
+
+      /end-free
+     P                 e
+
+
+     P testBigInteger...
+     P                 b                   export
+     D                 pi
+      /free
+
+        if (TestSuite_isDirty('TESTPGM14': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/TESTPGM14) SRCFILE(QTESTCASES)' );
+        endif;
+
+        run( 'RUCALLTST TESTPGM14' : errorExpected : '*ESCAPE' : msgTxt );
 
         aEqual( 'FAILURE. 2 test cases, 2 assertions, 1 failure, 0 error.' :
                 msgTxt );
@@ -471,8 +553,7 @@
                           + '1, but was 12345678901234567890' );
         splfLineStartsWith( '12345678900.' );
         splfLineStartsWith( 'iEqual' );
-        splfLineStartsWith( 'TEST_DIFFERENT (TESTPGM14->TESTPGM14:'
-                          + '2800)');
+        splfLineStartsWith( 'TEST_DIFFERENT (TESTPGM14->TESTPGM14:31');
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'FAILURE. 2 test cases, 2 assertions,'
@@ -483,15 +564,16 @@
      P                 e
 
 
-     PtestForceSpoolOnSuccess...
+     P testForceSpoolOnSuccess...
      P                 b                   export
-     DtestForceSpoolOnSuccess...
      D                 pi
       /free
 
-        run( 'RUCRTTST TSTPGM(QTEMP/TESTPGM15) SRCFILE(QTESTCASES)' );
+        if (TestSuite_isDirty('TESTPGM15': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/TESTPGM15) SRCFILE(QTESTCASES)' );
+        endif;
 
-        run( 'RUCALLTST TSTPGM(QTEMP/TESTPGM15) DETAIL(*ALL)' :
+        run( 'RUCALLTST TSTPGM(TESTPGM15) DETAIL(*ALL)' :
              noError :
              '*COMP' :
              msgTxt );
@@ -524,16 +606,19 @@
 
      P testReverseOrder...
      P                 b                   export
-     D testReverseOrder...
      D                 pi
       /free
 
-        run( 'RUCRTTST TSTPGM(QTEMP/TESTPGM16) SRCFILE(QTESTCASES)' );
+        if (TestSuite_isDirty('TESTPGM16': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/TESTPGM16) SRCFILE(QTESTCASES)' );
+        endif;
 
-        run( 'RUCALLTST TSTPGM(QTEMP/TESTPGM16) ORDER(*REVERSE)' :
+        run( 'RUCALLTST TSTPGM(TESTPGM16) ORDER(*REVERSE)' :
              noError :
              '*COMP' :
              msgTxt );
+
+        opnSplf( 'RPGUNIT' : 'TESTPGM16' );
 
         aEqual( 'Success. 2 test cases, 0 assertion, 0 failure, 0 error.':
                 msgTxt );
@@ -545,17 +630,22 @@
         aEqual( 'test1'        : rcvMsgData('*INFO') );
         aEqual( 'teardown'     : rcvMsgData('*INFO') );
 
+        cloSplf();
+
       /end-free
      P                 e
 
 
-     PtestChooseTest   b                   export
-     DtestChooseTest   pi
+     P testChooseTest...
+     P                 b                   export
+     D                 pi
       /free
 
-        run( 'RUCRTTST TSTPGM(QTEMP/TESTPGM05) SRCFILE(QTESTCASES)' );
+        if (TestSuite_isDirty('TESTPGM05': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/TESTPGM05) SRCFILE(QTESTCASES)' );
+        endif;
 
-        run( 'RUCALLTST QTEMP/TESTPGM05 TSTPRC(TEST2)' :
+        run( 'RUCALLTST TESTPGM05 TSTPRC(TEST2)' :
              errorExpected : '*ESCAPE' : msgTxt );
 
         aEqual( 'FAILURE. 1 test case, 0 assertion, 1 failure, 0 error.':
@@ -575,7 +665,7 @@
         splfLineStartsWith( 'TEST2 - FAILURE' );
         splfLineStartsWith( 'test2' );
         // New, due to new procedure doFail():
-        splfLineStartsWith( 'fail (RUTESTCASE' );
+        splfLineStartsWith( 'fail (RUTESTCASE->ASSERT' );
         splfLineStartsWith( 'TEST2 (TESTPGM05' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
@@ -587,15 +677,16 @@
      P                 e
 
 
-     PtestChooseNonExistingTest...
+     P testChooseNonExistingTest...
      P                 b                   export
-     DtestChooseNonExistingTest...
      D                 pi
       /free
 
-        run( 'RUCRTTST TSTPGM(QTEMP/TESTPGM05) SRCFILE(QTESTCASES)' );
+        if (TestSuite_isDirty('TESTPGM05': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/TESTPGM05) SRCFILE(QTESTCASES)' );
+        endif;
 
-        run( 'RUCALLTST QTEMP/TESTPGM05 TSTPRC(NON_EXISTING_TEST)' :
+        run( 'RUCALLTST TESTPGM05 TSTPRC(NON_EXISTING_TEST)' :
              errorExpected : '*ESCAPE' : msgTxt );
 
         aEqual( 'ERROR. 0 test case, 0 assertion, 0 failure, 1 error.':
@@ -620,32 +711,16 @@
      P                 e
 
 
-     PtestTestCreationSuccess...
-     P                 b                   export
-     DtestTestCreationSuccess...
-     D                 pi
-      /free
-
-        run( 'RUCRTTST TSTPGM(QTEMP/TESTPGM01) SRCFILE(QTESTCASES)' :
-             noError :
-             '*COMP' :
-             msgTxt );
-
-        aEqual( 'Test program TESTPGM01 created in library QTEMP.' : msgTxt );
-
-      /end-free
-     P                 e
-
-
      P testErrorInSetUpSuite...
      P                 b                   export
-     D testErrorInSetUpSuite...
      D                 pi
       /free
 
-        run( 'RUCRTTST TSTPGM(QTEMP/TESTPGM17) SRCFILE(QTESTCASES)' );
+        if (TestSuite_isDirty('TESTPGM17': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/TESTPGM17) SRCFILE(QTESTCASES)' );
+        endif;
 
-        run( 'RUCALLTST QTEMP/TESTPGM17' : errorExpected : '*ESCAPE' : msgTxt );
+        run( 'RUCALLTST TESTPGM17' : errorExpected : '*ESCAPE' : msgTxt );
 
         aEqual( 'ERROR. 0 test case, 0 assertion, 0 failure, 1 error.':
                 msgTxt );
@@ -662,7 +737,7 @@
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'SETUPSUITE - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
-        splfLineStartsWith( 'SETUPSUITE (TESTPGM17->TESTPGM17:2100)' );
+        splfLineStartsWith( 'SETUPSUITE (TESTPGM17->TESTPGM17:30' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'ERROR. 0 test case, 0 assertion,'
@@ -675,13 +750,14 @@
 
      P testErrorInTearDownSuite...
      P                 b                   export
-     D testErrorInTearDownSuite...
      D                 pi
       /free
 
-        run( 'RUCRTTST TSTPGM(QTEMP/TESTPGM18) SRCFILE(QTESTCASES)' );
+        if (TestSuite_isDirty('TESTPGM18': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/TESTPGM18) SRCFILE(QTESTCASES)' );
+        endif;
 
-        run( 'RUCALLTST QTEMP/TESTPGM18' : errorExpected : '*ESCAPE' : msgTxt );
+        run( 'RUCALLTST TESTPGM18' : errorExpected : '*ESCAPE' : msgTxt );
 
         aEqual( 'ERROR. 1 test case, 0 assertion, 0 failure, 1 error.':
                 msgTxt );
@@ -699,7 +775,7 @@
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'TEARDOWNSUITE - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
-        splfLineStartsWith( 'TEARDOWNSUITE (TESTPGM18->TESTPGM18:3900)' );
+        splfLineStartsWith( 'TEARDOWNSUITE (TESTPGM18->TESTPGM18:48' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'ERROR. 1 test case, 0 assertion,'
@@ -712,13 +788,14 @@
 
      P testErrorsInBothSetUpSuiteAndTearDownSuite...
      P                 b                   export
-     D testErrorsInBothSetUpSuiteAndTearDownSuite...
      D                 pi
       /free
 
-        run( 'RUCRTTST TSTPGM(QTEMP/TESTPGM19) SRCFILE(QTESTCASES)' );
+        if (TestSuite_isDirty('TESTPGM19': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/TESTPGM19) SRCFILE(QTESTCASES)' );
+        endif;
 
-        run( 'RUCALLTST QTEMP/TESTPGM19' : errorExpected : '*ESCAPE' : msgTxt );
+        run( 'RUCALLTST TESTPGM19' : errorExpected : '*ESCAPE' : msgTxt );
 
         aEqual( 'ERROR. 0 test case, 0 assertion, 0 failure, 2 errors.':
                 msgTxt );
@@ -735,12 +812,12 @@
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'SETUPSUITE - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
-        splfLineStartsWith( 'SETUPSUITE (TESTPGM19->TESTPGM19:2100)' );
+        splfLineStartsWith( 'SETUPSUITE (TESTPGM19->TESTPGM19:30' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'TEARDOWNSUITE - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
-        splfLineStartsWith( 'TEARDOWNSUITE (TESTPGM19->TESTPGM19:4200)' );
+        splfLineStartsWith( 'TEARDOWNSUITE (TESTPGM19->TESTPGM19:51' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'ERROR. 0 test case, 0 assertion,'
@@ -755,8 +832,9 @@
       //   Helper Procedures
       //----------------------------------------------------------------------
 
-     P run             b
-     D run             pi
+     P run...
+     P                 b
+     D                 pi
      D  cmd                       32767a   const varying
      D  errorExpected                  n   const options(*NoPass)
      D  msgType                      10a   const options(*NoPass)

@@ -1,9 +1,11 @@
-      /if not defined(LIBC)
+      /if not defined LIBC
       /define LIBC
 
       *-------------------------------------------------------------------------
       * Prototypes for C-Functions
       *-------------------------------------------------------------------------
+
+      /include qinclude,ERRORCODE
 
       *
       * string functions
@@ -35,7 +37,7 @@
      D   input                     1024A   const options(*varsize)
      D   output                    1024A   options(*varsize)
      D   len                         10I 0 const
-     D   errorcode                         likeds(errorCode) options(*varsize)
+     D   errorcode                         likeds(errorCode_t) options(*varsize)
 
       *
       * memory functions

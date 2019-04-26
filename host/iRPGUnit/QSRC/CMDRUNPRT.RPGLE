@@ -1,11 +1,26 @@
-      //
-      // Command Line Runner Printing Facilities.
-      //
-      // Design choice: this program should not contain any logic, because it is not tested.
-      //
+
+      // ==========================================================================
+      //  iRPGUnit - Printing Facilities for CMDRUN.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
+      // >>PRE-COMPILER<<
+      //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>IMPORTANT<<
+      //     >>PARM<<  OPTION(*EVENTF);
+      //     >>PARM<<  DBGVIEW(*LIST);
+      //   >>END-IMPORTANT<<
+      //   >>EXECUTE<<
+      // >>END-PRE-COMPILER<<
+      // ==========================================================================
 
      H NoMain
       /include qinclude,H_SPEC
+      /include qinclude,COPYRIGHT
 
       //----------------------------------------------------------------------
       //   Files
@@ -14,35 +29,26 @@
      FQSYSPRT   o    f   80        printer OFLIND(*INOF) UsrOpn
      F                                     InfDS(logFile)
 
+
      D logFile         ds                  likeds(infDS_prtF_t)
 
       //----------------------------------------------------------------------
-      //   Exports
+      //   Prototypes
       //----------------------------------------------------------------------
 
       /include qinclude,CMDRUNPRT
       /include qinclude,FDINFDS_PF
-      /include qinclude,TEMPLATES
       /include qinclude,ERRORCODE
-      /include qsysinc,QSPRILSP
-      /include qsrc,TESTCASE
+      /include qinclude,SYSTEMAPI
+      /include qinclude,TESTUTILS
 
 
       //----------------------------------------------------------------------
-      //   Imports
+      //   Templates
       //----------------------------------------------------------------------
 
-      //----------------------------------------------------------------------
-      //   Private Procedures
-      //----------------------------------------------------------------------
+      /include qinclude,TEMPLATES
 
-      //----------------------------------------------------------------------
-      //   Constants
-      //----------------------------------------------------------------------
-
-      //----------------------------------------------------------------------
-      //   Global Variables
-      //----------------------------------------------------------------------
 
        // Program Information Data Structure.
       /define SDS_EXTENDED
@@ -119,6 +125,10 @@
      P                 b                   export
      D                 pi
      D  testPgmNm                          const like(Object_t.nm)
+
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
       /free
 
         runCmd( 'OVRPRTF FILE(QSYSPRT) '
@@ -126,8 +136,7 @@
              + 'SPLFNAME(' + SPLF_NAME + ')' );
         open QSYSPRT;
 
-        clear errorCode;
-        QSPRILSP(curr_splf: %size(curr_splf): 'SPRL0100': errorCode);
+        QSPRILSP(curr_splf: %size(curr_splf): 'SPRL0100': percolateErrors);
 
       /end-free
      P                 e

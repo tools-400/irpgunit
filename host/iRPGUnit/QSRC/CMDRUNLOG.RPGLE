@@ -1,9 +1,25 @@
-      //
-      // Command Line Runner logging facilities.
-      //
+      // ==========================================================================
+      //  iRPGUnit - Logging Facilities for CMDRUN.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
+      // >>PRE-COMPILER<<
+      //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>IMPORTANT<<
+      //     >>PARM<<  OPTION(*EVENTF);
+      //     >>PARM<<  DBGVIEW(*LIST);
+      //   >>END-IMPORTANT<<
+      //   >>EXECUTE<<
+      // >>END-PRE-COMPILER<<
+      // ==========================================================================
 
      H NoMain
       /include qinclude,H_SPEC
+      /include qinclude,COPYRIGHT
 
       //----------------------------------------------------------------------
       //   Exports
@@ -383,7 +399,7 @@
 
 
      P getFormattedJob...
-     P                 b                   export
+     P                 b
      D                 pi            32A   varying
       /free
 
@@ -396,7 +412,7 @@
 
 
      P getLeftMargin...
-     P                 b                   export
+     P                 b
      D                 pi            32A   varying
 
      D leftMargin      s             32A   varying static

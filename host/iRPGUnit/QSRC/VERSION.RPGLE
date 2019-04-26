@@ -1,14 +1,29 @@
-       //----------------------------------------------------------------------
-       // Product Version Procedures Definitions.
-       //----------------------------------------------------------------------
+      // ==========================================================================
+      //  iRPGUnit - Product Version Procedures Definitions.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
+      // >>PRE-COMPILER<<
+      //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>IMPORTANT<<
+      //     >>PARM<<  OPTION(*EVENTF);
+      //     >>PARM<<  DBGVIEW(*LIST);
+      //   >>END-IMPORTANT<<
+      //   >>EXECUTE<<
+      // >>END-PRE-COMPILER<<
+      // ==========================================================================
 
      H NoMain
       /include qinclude,H_SPEC
+      /include qinclude,COPYRIGHT
 
-
-       //----------------------------------------------------------------------
-       //   IMPORTS
-       //----------------------------------------------------------------------
+      //----------------------------------------------------------------------
+      //   IMPORTS
+      //----------------------------------------------------------------------
 
       /include qinclude,VERSION
 
@@ -16,48 +31,22 @@
       /include qinclude,COPYRIGHT
       /undefine COPYRIGHT_DSPEC
 
-       //----------------------------------------------------------------------
-       //   CONSTANTS
-       //----------------------------------------------------------------------
 
-       //----------------------------------------------------------------------
-       //   GLOBAL VARIABLES
-       //----------------------------------------------------------------------
-
-       //----------------------------------------------------------------------
-       //   PROCEDURES
-       //----------------------------------------------------------------------
-
-     D convertDateToISO...
-     D                 pr            10a   extproc('convertDateToISO')
-     D  euro                         10a   const
-
-       //--------------------------------------------------------------------
-       //        Get Version Number
-       //--------------------------------------------------------------------
      P getVersion...
      P                 b                   export
      D                 pi
      D  version                      20a
      D  date                         10a
 
-     D p_date          c                   1
-
-      /free
-
-         if (%parms() >= p_date);
+         if (%parms() >= 1);
             date = convertDateToISO(cRPGUNIT_DATE);
          endif;
 
          version = cRPGUNIT_VERSION;
 
-      /end-free
      P                 e
 
 
-       //--------------------------------------------------------------------
-       //        Convert Date to ISO Format
-       //--------------------------------------------------------------------
      P convertDateToISO...
      P                 b
      D                 pi            10a
@@ -66,12 +55,9 @@
      D iso             s             10a
      D date            s               d
 
-      /free
-
          date = %date(euro: *EUR);
          iso = %char(date: *ISO);
 
          return iso;
 
-      /end-free
      P                 e

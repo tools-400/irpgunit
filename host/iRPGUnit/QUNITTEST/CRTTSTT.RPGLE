@@ -1,16 +1,30 @@
-      // =====================================================================
-      //
-      // Unit tests for RUCRTTST.
-      //
-      // =====================================================================
-      //   >>PRE-COMPILER<<
-      //     >>CMD<<    CRTBNDCL   PGM(QTEMP/MKCRTTSTT) SRCFILE(&SF);
-      //     >>CMD<<    CALL       PGM(QTEMP/MKCRTTSTT) PARM(&LI);
-      //   >>END-PRE-COMPILER<<
-      // =====================================================================
+      // ==========================================================================
+      //  iRPGUnit SelfTest - Test RUCRTTST.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
+      // >>PRE-COMPILER<<
+      //   >>CRTCMD<<  RUCRTTST TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>IMPORTANT<<
+      //     >>PARM<<  MODULE(&LI/CRTTST    +
+      //                      &LI/LIBL      +
+      //                      &LI/OBJECT    +
+      //                      &LI/PGMMSG    +
+      //                      &LI/SRCMBR    +
+      //                      &LI/STRING    +
+      //                      &LI/TAGTST    +
+      //                      &LI/USRSPC    +
+      //                      );
+      //   >>END-IMPORTANT<<
+      //   >>EXECUTE<<
+      // >>END-PRE-COMPILER<<
+      // ==========================================================================
 
-     H NoMain
-
+     H NoMain Option(*SrcStmt)
 
       //----------------------------------------------------------------------
       //   Exported Procedures
@@ -56,10 +70,10 @@
       //   Imported Procedures
       //----------------------------------------------------------------------
 
-      /include qsrc,TESTCASE
-      /include qinclude,LIBL
-      /include qinclude,CRTTST
-      /include qinclude,TEMPLATES
+      /copy qinclude,ASSERT
+      /copy qinclude,LIBL
+      /copy qinclude,CRTTST
+      /copy qinclude,TEMPLATES
 
 
       //----------------------------------------------------------------------
@@ -103,13 +117,6 @@
      D liblList        ds                  likeds(LiblData_t)
      D newLiblList     ds                  likeds(LiblData_t)
 
-     D QCMDEXC         pr                  ExtPgm('QCMDEXC')
-     D  i_cmd                     32702A   const  options(*varsize)
-     D  i_length                     15P 5 const
-
-     D OVRSRCF         c                   'OVRDBF FILE(QRPGLESRC) +
-     D                                      TOFILE(RPGUNIT/QSRC) +
-     D                                      OVRSCOPE(*CALLLVL)'
 
       //----------------------------------------------------------------------
       //   Program Status Data Structure
@@ -166,15 +173,15 @@
      D                 pi
       /free
 
-        crtRpgModCmd = getCrtRpgModCmd( 'ASSERTT   *CURLIB   ' :
-                                        'QUNITTEST *LIBL     ' :
-                                        'ASSERTT' :
+        crtRpgModCmd = getCrtRpgModCmd( 'SYSTYPES  *CURLIB   ' :
+                                        'QRPGLESRC QSYSINC   ' :
+                                        'SYSTYPES'  :
                                         noCOption :
                                         noDbgView :
                                         noPOption :
                                         noCompileOpt );
-        aEqual( 'CRTRPGMOD MODULE(*CURLIB/ASSERTT) '
-              + 'SRCFILE(*LIBL/QUNITTEST) SRCMBR(ASSERTT)' : crtRpgModCmd );
+        aEqual( 'CRTRPGMOD MODULE(*CURLIB/SYSTYPES) '
+              + 'SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES)' : crtRpgModCmd );
 
       /end-free
      P                 e
@@ -191,15 +198,15 @@
         oneCOption.size = 1;
         oneCOption.option(1) = '*SRCSTMT';
 
-        crtRpgModCmd = getCrtRpgModCmd( 'ASSERTT   *CURLIB   ' :
-                                        'QUNITTEST *LIBL     ' :
-                                        'ASSERTT' :
+        crtRpgModCmd = getCrtRpgModCmd( 'SYSTYPES  *CURLIB   ' :
+                                        'QRPGLESRC QSYSINC   ' :
+                                        'SYSTYPES'  :
                                         oneCOption :
                                         noDbgView :
                                         noPOption :
                                         noCompileOpt );
-        aEqual( 'CRTRPGMOD MODULE(*CURLIB/ASSERTT) '
-              + 'SRCFILE(*LIBL/QUNITTEST) SRCMBR(ASSERTT) '
+        aEqual( 'CRTRPGMOD MODULE(*CURLIB/SYSTYPES) '
+              + 'SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES) '
               + 'OPTION(*SRCSTMT )' : crtRpgModCmd );
 
       /end-free
@@ -218,15 +225,15 @@
         twoCOptions.option(1) = '*SRCSTMT';
         twoCOptions.option(2) = '*NODEBUGIO';
 
-        crtRpgModCmd = getCrtRpgModCmd( 'ASSERTT   *CURLIB   ' :
-                                        'QUNITTEST *LIBL     ' :
-                                        'ASSERTT' :
+        crtRpgModCmd = getCrtRpgModCmd( 'SYSTYPES  *CURLIB   ' :
+                                        'QRPGLESRC QSYSINC   ' :
+                                        'SYSTYPES'  :
                                         twoCOptions :
                                         noDbgView :
                                         noPOption :
                                         noCompileOpt );
-        aEqual( 'CRTRPGMOD MODULE(*CURLIB/ASSERTT) '
-              + 'SRCFILE(*LIBL/QUNITTEST) SRCMBR(ASSERTT) '
+        aEqual( 'CRTRPGMOD MODULE(*CURLIB/SYSTYPES) '
+              + 'SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES) '
               + 'OPTION(*SRCSTMT *NODEBUGIO )' : crtRpgModCmd );
 
       /end-free
@@ -237,15 +244,15 @@
      D                 pi
       /free
 
-        crtRpgModCmd = getCrtRpgModCmd( 'ASSERTT   *CURLIB   ' :
-                                        'QUNITTEST *LIBL     ' :
-                                        'ASSERTT' :
+        crtRpgModCmd = getCrtRpgModCmd( 'SYSTYPES  *CURLIB   ' :
+                                        'QRPGLESRC QSYSINC   ' :
+                                        'SYSTYPES'  :
                                         noCOption :
                                         '*LIST'   :
                                         noPOption :
                                         noCompileOpt );
-        aEqual( 'CRTRPGMOD MODULE(*CURLIB/ASSERTT) '
-              + 'SRCFILE(*LIBL/QUNITTEST) SRCMBR(ASSERTT) '
+        aEqual( 'CRTRPGMOD MODULE(*CURLIB/SYSTYPES) '
+              + 'SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES) '
               + 'DBGVIEW(*LIST)' : crtRpgModCmd );
 
       /end-free

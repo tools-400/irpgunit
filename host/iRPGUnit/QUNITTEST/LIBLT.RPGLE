@@ -1,16 +1,24 @@
-      // =====================================================================
-      //
-      // Unit tests for LIBL.
-      //
-      // =====================================================================
-      //   >>PRE-COMPILER<<
-      //     >>CMD<<    CRTBNDCL   PGM(QTEMP/MKLIBLT) SRCFILE(&SF);
-      //     >>CMD<<    CALL       PGM(QTEMP/MKLIBLT) PARM(&LI);
-      //   >>END-PRE-COMPILER<<
-      // =====================================================================
+      // ==========================================================================
+      //  iRPGUnit SelfTest - Test LIBL.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
+      // >>PRE-COMPILER<<
+      //   >>CRTCMD<<  RUCRTTST TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>IMPORTANT<<
+      //     >>PARM<<  MODULE(&LI/LIBL      +
+      //                      &LI/LIBLC     +
+      //                      );
+      //   >>END-IMPORTANT<<
+      //   >>EXECUTE<<
+      // >>END-PRE-COMPILER<<
+      // ==========================================================================
 
-     H NoMain Option(*SrcStmt) BndDir('QC2LE')
-
+     H NoMain Option(*SrcStmt)
 
       //----------------------------------------------------------------------
       //   Exported Procedures
@@ -32,10 +40,9 @@
       //   Imported Procedures
       //----------------------------------------------------------------------
 
-      /include qsrc,TESTCASE
-      /include qinclude,ASSERT
-      /include qinclude,LIBL
-      /include qinclude,TEMPLATES
+      /copy qinclude,ASSERT
+      /copy qinclude,LIBL
+      /copy qinclude,TEMPLATES
 
      D LIBLC           pr                  extproc('LIBLC')
      D  curLib                       10a
@@ -46,10 +53,6 @@
 
      D EXCP_MSGID      S              7A   import('_EXCP_MSGID')
 
-
-      //----------------------------------------------------------------------
-      //   Private Procedure Prototypes
-      //----------------------------------------------------------------------
 
       //----------------------------------------------------------------------
       //   Global Variables

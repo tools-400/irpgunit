@@ -1,29 +1,37 @@
-      // =====================================================================
-      //
-      // Tests CMDRUNLOG.
-      //
-      // =====================================================================
-      //   >>PRE-COMPILER<<
-      //     >>CMD<<    CRTBNDCL   PGM(QTEMP/MKCMDRUNLT) SRCFILE(&SF);
-      //     >>CMD<<    CALL       PGM(QTEMP/MKCMDRUNLT) PARM(&LI);
-      //   >>END-PRE-COMPILER<<
-      // =====================================================================
+      // ==========================================================================
+      //  iRPGUnit SelfTest - Test CMDRUNLOG.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
+      // >>PRE-COMPILER<<
+      //   >>CRTCMD<<  RUCRTTST TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>IMPORTANT<<
+      //     >>PARM<<  MODULE(&LI/CMDRUNLOG +
+      //                      &LI/STRING    +
+      //                      );
+      //   >>END-IMPORTANT<<
+      //   >>EXECUTE<<
+      // >>END-PRE-COMPILER<<
+      // ==========================================================================
 
      H NoMain Option(*SrcStmt)
-
 
       //----------------------------------------------------------------------
       //   Imported Procedures
       //----------------------------------------------------------------------
 
-      /include qinclude,CMDRUNLOG
-      /include qinclude,TEMPLATES
-      /include qsrc,TESTCASE
+      /copy qinclude,ASSERT
+      /copy qinclude,CMDRUNLOG
+      /copy qinclude,TEMPLATES
 
       // CMDRUNPRTY is imported to mock module CMDRUNPRT. That way, we can
       // test what would have been printed in the spool file, without
       // involving the spool file API.
-      /include qinclude,CMDRUNPRT
+      /copy qinclude,CMDRUNPRT
 
 
       //----------------------------------------------------------------------

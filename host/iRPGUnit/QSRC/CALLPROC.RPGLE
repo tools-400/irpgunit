@@ -1,29 +1,41 @@
-      //
-      // Dynamically call a procedure in a service program.
-      //
+      // ==========================================================================
+      //  iRPGUnit - Dynamically Call a Procedure in a SRVPGM.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
+      // >>PRE-COMPILER<<
+      //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>IMPORTANT<<
+      //     >>PARM<<  OPTION(*EVENTF);
+      //     >>PARM<<  DBGVIEW(*LIST);
+      //   >>END-IMPORTANT<<
+      //   >>EXECUTE<<
+      // >>END-PRE-COMPILER<<
+      // ==========================================================================
 
      H NoMain
       /include qinclude,H_SPEC
+      /include qinclude,COPYRIGHT
 
       //----------------------------------------------------------------------
       //   Exported Procedures
       //----------------------------------------------------------------------
 
       /include qinclude,CALLPROC
-      /include qinclude,RUNNER
-      /include qinclude,TEMPLATES
-
 
       //----------------------------------------------------------------------
       //   Imported Procedures
       //----------------------------------------------------------------------
 
+      /include qinclude,CMDRUNSRV
       /include qinclude,ERRORCODE
-      /include qsysinc,QLEACTBNDP
-      /include qsysinc,QLEGETEXP
-      /include qsysinc,QLICVTTP
       /include qinclude,MILIB
-
+      /include qinclude,SYSTEMAPI
+      /include qinclude,TEMPLATES
 
       //----------------------------------------------------------------------
       //   Private Procedures
@@ -62,6 +74,9 @@
        // System pointer to a service program.
      D srvPgmSP        s               *   procptr
 
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
       /free
 
         if srvPgm.lib = *blank;
@@ -117,6 +132,10 @@
      D exportType      s             10i 0 inz(0)
        // One export type is PROCEDURE.
      D PROCEDURE       c                   const(1)
+
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
       /free
 
         // Get export.

@@ -1,19 +1,25 @@
+      // ==========================================================================
+      //  iRPGUnit - Program message handling.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. Ths program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
       // >>PRE-COMPILER<<
-      //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) +
-      //                 SRCMBR(&SM);
+      //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
       //   >>IMPORTANT<<
       //     >>PARM<<  OPTION(*EVENTF);
       //     >>PARM<<  DBGVIEW(*LIST);
       //   >>END-IMPORTANT<<
       //   >>EXECUTE<<
       // >>END-PRE-COMPILER<<
-
-      //
-      // Extracts message info.
-      //
+      // ==========================================================================
 
      H NoMain
       /include qinclude,H_SPEC
+      /include qinclude,COPYRIGHT
 
       //----------------------------------------------------------------------
       //   Exported Procedures
@@ -27,8 +33,7 @@
       //----------------------------------------------------------------------
 
       /include qinclude,ERRORCODE
-      /include qsysinc,QMHRCVPM
-      /include qsysinc,QMHSNDPM
+      /include qinclude,SYSTEMAPI
       /include qinclude,TEMPLATES
 
 
@@ -113,7 +118,9 @@
      D senderInfo_p    s               *
        // The received message.
      D msg             ds                  likeds(Msg_t)
-
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
       /free
 
         if %parms() > 1;
@@ -177,7 +184,9 @@
 
        // The message reference key.
      D msgKey          s              4a
-
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
       /free
 
         QMHSNDPM( 'CPDA0FF' :
@@ -202,7 +211,9 @@
 
        // The message reference key.
      D msgKey          s              4a
-
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
       /free
 
         QMHSNDPM( 'CPF9897' :
@@ -238,6 +249,9 @@
 
        // The message reference key.
      D msgKey          s              4a
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
       /free
 
         QMHSNDPM( 'CPF9897' :
@@ -264,7 +278,9 @@
 
        // The message reference key.
      D msgKey          s              4a
-
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
       /free
 
         QMHSNDPM( '' :
@@ -288,7 +304,9 @@
 
        // The message reference key.
      D msgKey          s              4a
-
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
       /free
 
         g_status.lastStsMsg = msg;
@@ -329,6 +347,9 @@
      D rawMsgBuf       ds                  qualified
      D  bytRet                       10i 0
      D  bytAvl                       10i 0
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
       /free
 
          QMHSNDPM( '':
@@ -380,6 +401,7 @@
      D msgOffs         s             10i 0
      D msgLen          s             10i 0
      D action          s             10a
+     D errorCode       ds                  likeds(errorCode_t) inz(*likeds)
       /free
 
          if (lowMsgKey = *ALLx'00');
@@ -399,14 +421,14 @@
          endif;
 
          reset errorCode;
-         dow (msg.txt = '' and highKey > lowKey and errorCode.bytesA = 0);
+         dow (msg.txt = '' and highKey > lowKey and errorCode.bytAvl = 0);
             highKey -= 1;
             QMHRCVPM( rawMsgBuf : %size(rawMsgBuf) :
                       ALL_MSG_INFO_WITH_SENDER_INFO :
                       THIS_CALL_STK_ENT : THIS_CALL_STK_LVL : '*ANY' :
                       highMsgKey : NO_WAIT : action : errorCode );
-            if (errorCode.bytesA > 0);
-               if (errorCode.msgID = 'CPF2410');
+            if (errorCode.bytAvl > 0);
+               if (errorCode.excID = 'CPF2410');
             // QMHRCVPM( rawMsgBuf : %size(rawMsgBuf) :
             //           ALL_MSG_INFO_WITH_SENDER_INFO :
             //           THIS_CALL_STK_ENT : THIS_CALL_STK_LVL : '*ESCAPE' :
@@ -446,3 +468,4 @@
 
       /end-free
      P                 e
+

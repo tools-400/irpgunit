@@ -8,86 +8,609 @@
      /*     >>CRTCMD<<  CRTBNDCL      PGM(&LI/&OB) +                        */
      /*                               SRCFILE(&SL/&SF)  +                   */
      /*                               SRCMBR(&SM);                          */
-     /*     >>COMPILE<<                                                     */
+     /*     >>IMPORTANT<<                                                   */
      /*       >>PARM<< DBGVIEW(*LIST);                                      */
-     /*     >>END-COMPILE<<                                                 */
-     /*     >>LINK<<                                                        */
      /*       >>PARM<< DFTACTGRP(*NO);                                      */
      /*       >>PARM<< ACTGRP(*NEW);                                        */
-     /*     >>END-LINK<<                                                    */
+     /*       >>PARM<< OPTION(*EVENTF);                                     */
+     /*     >>END-IMPORTANT<<                                               */
      /*     >>EXECUTE<<                                                     */
      /*   >>END-PRE-COMPILER<<                                              */
      /* =================================================================== */
-             PGM
+             PGM        PARM(&DEVLIB)
+
+             DCL        VAR(&DEVLIB    ) TYPE(*CHAR) LEN(10)
 
              DCL        VAR(&LIB       ) TYPE(*CHAR) LEN(10) VALUE('RPGUNIT')
              DCL        VAR(&SAVF      ) TYPE(*CHAR) LEN(10) VALUE('RPGUNIT')
-             DCL        VAR(&TGTRLS    ) TYPE(*CHAR) LEN(10) VALUE('V6R1M0')
              DCL        VAR(&TEXT      ) TYPE(*CHAR) LEN(50)
              DCL        VAR(&RELEASE   ) TYPE(*CHAR) LEN(20)
              DCL        VAR(&TMPLIB    ) TYPE(*CHAR) LEN(10) VALUE('QTEMP')
              DCL        VAR(&OWNER     ) TYPE(*CHAR) LEN(10) VALUE('QPGMR')
+             DCL        VAR(&TGTRLS    ) TYPE(*CHAR) LEN(10) VALUE('V7R1M0')
+             DCL        VAR(&IS_DEVLIB ) TYPE(*LGL )         VALUE('1')
+
+             DCL        VAR(&QBND      ) TYPE(*CHAR) LEN(10) VALUE('QBND')
+             DCL        VAR(&QBUILD    ) TYPE(*CHAR) LEN(10) VALUE('QBUILD')
+             DCL        VAR(&QCMD      ) TYPE(*CHAR) LEN(10) VALUE('QCMD')
+             DCL        VAR(&QINCLUDE  ) TYPE(*CHAR) LEN(10) VALUE('QINCLUDE')
+             DCL        VAR(&QLLIST    ) TYPE(*CHAR) LEN(10) VALUE('QLLIST')
+             DCL        VAR(&QMISC     ) TYPE(*CHAR) LEN(10) VALUE('QMISC')
+             DCL        VAR(&QPNLGRP   ) TYPE(*CHAR) LEN(10) VALUE('QPNLGRP')
+             DCL        VAR(&QSRC      ) TYPE(*CHAR) LEN(10) VALUE('QSRC')
+             DCL        VAR(&QSYSINC   ) TYPE(*CHAR) LEN(10) VALUE('QSYSINC')
+             DCL        VAR(&QTESTCASES) TYPE(*CHAR) LEN(10) VALUE('QTESTCASES')
+             DCL        VAR(&QUNITTEST ) TYPE(*CHAR) LEN(10) VALUE('QUNITTEST')
+
+             CHGVAR     VAR(&DEVLIB) VALUE(&DEVLIB)
+             MONMSG     MSGID(MCH3601) EXEC(DO)
+               RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
+               SNDPGMMSG  MSGID(CPF9898) MSGF(*LIBL/QCPFMSG) +
+                            MSGDTA('Usage: CALL PGM(A_CRTPKG) PARM(''devLibrary'')') +
+                            TOPGMQ(*PRV (*PGMBDY *NONE *NONE)) +
+                            TOMSGQ(*TOPGMQ) MSGTYPE(*ESCAPE)
+             ENDDO
 
              /* ---------------------------------------------------- */
-             /*  Delete object that are not necessary.               */
+             /*  Create target library.                              */
              /* ---------------------------------------------------- */
-             DLTOBJ OBJ(&LIB/*ALL) OBJTYPE(*MODULE)
-             MONMSG MSGID(CPF2125) /* No object deleted */
-
-             DLTOBJ OBJ(&LIB/*ALL) OBJTYPE(*PGM)
-             MONMSG MSGID(CPF2125) /* No object deleted */
-
-             DLTOBJ OBJ(&LIB/*ALL) OBJTYPE(*SRVPGM)
-             MONMSG MSGID(CPF2125) /* No object deleted */
-
-             DLTF   FILE(&LIB/EVFEVENT)
-             MONMSG MSGID(CPF2105)
-
-             DLTOBJ OBJ(&LIB/*ALL) OBJTYPE(*DTAARA)
-             MONMSG MSGID(CPF2125) /* No object deleted */
+             CRTLIB     LIB(&LIB) TEXT('*** in progress ***')
 
              /* ---------------------------------------------------- */
-             /*  Create member list of QSRC and get release#.        */
+             /*  Create source files.                                */
              /* ---------------------------------------------------- */
-             CRTBNDRPG  PGM(&TMPLIB/CRTMETADTA) +
-                          SRCFILE(*LIBL/QBUILD) SRCMBR(*MODULE) +
-                          DBGVIEW(*LIST) TRUNCNBR(*NO)
-             DLTMOD     MODULE(&TMPLIB/CRTMETADTA)
+             CRTSRCPF   FILE(&LIB/&QBND      ) RCDLEN(112) TEXT('iRPGUnit - Binder Source')
+             CRTSRCPF   FILE(&LIB/&QBUILD    ) RCDLEN(112) TEXT('iRPGUnit - Project Build')
+             CRTSRCPF   FILE(&LIB/&QCMD      ) RCDLEN(112) TEXT('iRPGUnit - Commands')
+             CRTSRCPF   FILE(&LIB/&QINCLUDE  ) RCDLEN(112) TEXT('iRPGUnit - Header Files')
+             CRTSRCPF   FILE(&LIB/&QLLIST    ) RCDLEN(112) TEXT('iRPGUnit - Linked List')
+             CRTSRCPF   FILE(&LIB/&QMISC     ) RCDLEN(112) TEXT('iRPGUnit - Miscellaneous')
+             CRTSRCPF   FILE(&LIB/&QPNLGRP   ) RCDLEN(112) TEXT('iRPGUnit - Panel Groups')
+             CRTSRCPF   FILE(&LIB/&QSRC      ) RCDLEN(112) TEXT('iRPGUnit - Sources')
+             CRTSRCPF   FILE(&LIB/&QSYSINC   ) RCDLEN(112) TEXT('iRPGUnit - System Header Files')
+             CRTSRCPF   FILE(&LIB/&QTESTCASES) RCDLEN(112) TEXT('iRPGUnit - SelfTests Test Cases')
+             CRTSRCPF   FILE(&LIB/&QUNITTEST ) RCDLEN(112) TEXT('iRPGUnit - SelfTests')
 
-             CALL       PGM(&TMPLIB/CRTMETADTA) PARM(&LIB &RELEASE)
+             /* ---------------------------------------------------- */
+             /*  Copy source members: QBND                           */
+             /* ---------------------------------------------------- */
+             CPYF       FROMFILE(&DEVLIB/&QBND) +
+                          TOFILE(&LIB/&QBND) FROMMBR(RUCALLTST) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QBND) +
+                          TOFILE(&LIB/&QBND) FROMMBR(RUCRTTST) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QBND) +
+                          TOFILE(&LIB/&QBND) FROMMBR(RUPGMRMT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QBND) +
+                          TOFILE(&LIB/&QBND) FROMMBR(RUTESTCASE) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+
+             /* ---------------------------------------------------- */
+             /*  Copy source members: QBUILD                         */
+             /* ---------------------------------------------------- */
+             CPYF       FROMFILE(&DEVLIB/&QBUILD) +
+                          TOFILE(&LIB/&QBUILD) FROMMBR(A_CRTPKG) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QBUILD) +
+                          TOFILE(&LIB/&QBUILD) FROMMBR(A_INSTALL) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QBUILD) +
+                          TOFILE(&LIB/&QBUILD) FROMMBR(A_README) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QBUILD) +
+                          TOFILE(&LIB/&QBUILD) FROMMBR(A_SELFTEST) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QBUILD) +
+                          TOFILE(&LIB/&QBUILD) FROMMBR(BUILD) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QBUILD) +
+                          TOFILE(&LIB/&QBUILD) FROMMBR(BUILDHLP) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QBUILD) +
+                          TOFILE(&LIB/&QBUILD) FROMMBR(CRTPKGDBG) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QBUILD) +
+                          TOFILE(&LIB/&QBUILD) FROMMBR(CRTPKGMDT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QBUILD) +
+                          TOFILE(&LIB/&QBUILD) FROMMBR(CRTPKGOWN) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+
+             /* ---------------------------------------------------- */
+             /*  Copy source members: QCMD                           */
+             /* ---------------------------------------------------- */
+             CPYF       FROMFILE(&DEVLIB/&QCMD) +
+                          TOFILE(&LIB/&QCMD) FROMMBR(RUCALLTST) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QCMD) +
+                          TOFILE(&LIB/&QCMD) FROMMBR(RUCRTTST) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+
+             /* ---------------------------------------------------- */
+             /*  Copy source members: QINCLUDE                       */
+             /* ---------------------------------------------------- */
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(ASSERT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(CALLPROC) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(CMDRUN) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(CMDRUNLOG) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(CMDRUNPRT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(CMDRUNSRV) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(COPYRIGHT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(CRTTST) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(ERRNO_H) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(ERRORCODE) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(EXTPRC) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(EXTTST) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(FDINFDS) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(FDINFDS_DB) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(FDINFDS_DF) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(FDINFDS_PF) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(H_SPEC) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(IFSIO_H) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(LIBC_H) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(LIBL) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(MILIB) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(OBJECT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(PGMMSG) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(PGMRMT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(RMTRUNSRV) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(SDS) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(SRCMBR) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(STRING) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(SYSTEMAPI) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(TAGTST) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(TEMPLATES) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(TESTCASE) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(TESTUTILS) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(USRSPC) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(VERSION) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(XMLWRITER) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+
+             /* ---------------------------------------------------- */
+             /*  Copy source members: QLLIST                         */
+             /* ---------------------------------------------------- */
+             CPYF       FROMFILE(&DEVLIB/&QLLIST) +
+                          TOFILE(&LIB/&QLLIST) FROMMBR(CEEAPI_H) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QLLIST) +
+                          TOFILE(&LIB/&QLLIST) FROMMBR(LGPL.3.0) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QLLIST) +
+                          TOFILE(&LIB/&QLLIST) FROMMBR(LIBC_H) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QLLIST) +
+                          TOFILE(&LIB/&QLLIST) FROMMBR(LLIST) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QLLIST) +
+                          TOFILE(&LIB/&QLLIST) FROMMBR(LLIST_H) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QLLIST) +
+                          TOFILE(&LIB/&QLLIST) FROMMBR(LLIST_IN_H) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+
+             /* ---------------------------------------------------- */
+             /*  Copy source members: QMISC                          */
+             /* ---------------------------------------------------- */
+             CPYF       FROMFILE(&DEVLIB/&QMISC) +
+                          TOFILE(&LIB/&QMISC) FROMMBR(JUNIT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QMISC) +
+                          TOFILE(&LIB/&QMISC) FROMMBR(JUNITSMPL) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+
+             /* ---------------------------------------------------- */
+             /*  Copy source members: QPNLGRP                        */
+             /* ---------------------------------------------------- */
+             CPYF       FROMFILE(&DEVLIB/&QPNLGRP) +
+                          TOFILE(&LIB/&QPNLGRP) FROMMBR(RUCALLTST) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QPNLGRP) +
+                          TOFILE(&LIB/&QPNLGRP) FROMMBR(RUCRTTST) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+
+             /* ---------------------------------------------------- */
+             /*  Copy source members: QSRC                           */
+             /* ---------------------------------------------------- */
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(ASSERT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(CALLPROC) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(CMDRUN) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(CMDRUNLOG) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(CMDRUNPRT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(CMDRUNSRV) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(CRTTST) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(EXTPRC) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(EXTTST) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(LIBL) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(OBJECT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(PGMMSG) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(PGMRMT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(RMTRUNSRV) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(RUWSCST) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(SRCMBR) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(STRING) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(TAGTST) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(TEMPLATE) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(TESTUTILS) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(USRSPC) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(VERSION) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(XMLWRITER) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+
+             /* ---------------------------------------------------- */
+             /*  Copy source members: QSYSINC                        */
+             /* ---------------------------------------------------- */
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(APILIST) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(OPNLIST) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QBNLPGMI) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QBNLSPGM) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QCLRPGMI) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QCMDEXC) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QGYCLST) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QGYGTLE) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QGYOLJBL) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QGYOLSPL) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QLEACTBNDP) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QLEGETEXP) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QLGCNVCS) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QLICHGLL) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QLICOBJD) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QLICVTTP) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QMHRCVPM) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QMHSNDPM) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QSPCLOSP) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QSPGETSP) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QSPOPNSP) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QSPRILSP) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QUSCRTUS) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QUSPTRUS) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QUSRJOBI) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QUSROBJD) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QWCRTVCA) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QWDRJOBD) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QWVRCSTK) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+
+             /* ---------------------------------------------------- */
+             /*  Copy source members: QTESTCASES                     */
+             /* ---------------------------------------------------- */
+             CPYF       FROMFILE(&DEVLIB/&QTESTCASES) +
+                          TOFILE(&LIB/&QTESTCASES) FROMMBR(SRVPGM1) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTESTCASES) +
+                          TOFILE(&LIB/&QTESTCASES) FROMMBR(SRVPGM2) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTESTCASES) +
+                          TOFILE(&LIB/&QTESTCASES) FROMMBR(TESTPGM01) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTESTCASES) +
+                          TOFILE(&LIB/&QTESTCASES) FROMMBR(TESTPGM02) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTESTCASES) +
+                          TOFILE(&LIB/&QTESTCASES) FROMMBR(TESTPGM03) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTESTCASES) +
+                          TOFILE(&LIB/&QTESTCASES) FROMMBR(TESTPGM04) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTESTCASES) +
+                          TOFILE(&LIB/&QTESTCASES) FROMMBR(TESTPGM05) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTESTCASES) +
+                          TOFILE(&LIB/&QTESTCASES) FROMMBR(TESTPGM06) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTESTCASES) +
+                          TOFILE(&LIB/&QTESTCASES) FROMMBR(TESTPGM07) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTESTCASES) +
+                          TOFILE(&LIB/&QTESTCASES) FROMMBR(TESTPGM08) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTESTCASES) +
+                          TOFILE(&LIB/&QTESTCASES) FROMMBR(TESTPGM09) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTESTCASES) +
+                          TOFILE(&LIB/&QTESTCASES) FROMMBR(TESTPGM10) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTESTCASES) +
+                          TOFILE(&LIB/&QTESTCASES) FROMMBR(TESTPGM11) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTESTCASES) +
+                          TOFILE(&LIB/&QTESTCASES) FROMMBR(TESTPGM12) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTESTCASES) +
+                          TOFILE(&LIB/&QTESTCASES) FROMMBR(TESTPGM13) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTESTCASES) +
+                          TOFILE(&LIB/&QTESTCASES) FROMMBR(TESTPGM14) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTESTCASES) +
+                          TOFILE(&LIB/&QTESTCASES) FROMMBR(TESTPGM15) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTESTCASES) +
+                          TOFILE(&LIB/&QTESTCASES) FROMMBR(TESTPGM16) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTESTCASES) +
+                          TOFILE(&LIB/&QTESTCASES) FROMMBR(TESTPGM17) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTESTCASES) +
+                          TOFILE(&LIB/&QTESTCASES) FROMMBR(TESTPGM18) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTESTCASES) +
+                          TOFILE(&LIB/&QTESTCASES) FROMMBR(TESTPGM19) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+
+             /* ---------------------------------------------------- */
+             /*  Copy source members: QUNITTEST                      */
+             /* ---------------------------------------------------- */
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(ASSERTT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(CALLPROCT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(CMDRUNLOGT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(CMDRUNT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(CRTTSTT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(EXTPRCT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(EXTTSTT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(JOBLOGT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(LIBLC) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(LIBLT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(PGMMSGT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(RUACPTST) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(RUNT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(SPLF) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(SPLF_H) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(STRINGT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+
+             /* ---------------------------------------------------- */
+             /*  Create iRPGUnit meta data and get version number.   */
+             /* ---------------------------------------------------- */
+             CRTBNDRPG  PGM(&TMPLIB/CRTPKGMDT) +
+                          SRCFILE(&LIB/&QBUILD) SRCMBR(*PGM) +
+                          TRUNCNBR(*NO) DFTACTGRP(*NO) ACTGRP(*CALLER)
+
+             CALL       PGM(&TMPLIB/CRTPKGMDT) PARM(&LIB &RELEASE)
 
              /* ---------------------------------------------------- */
              /*  Re-create objects for the specified target release  */
              /* ---------------------------------------------------- */
-             CRTBNDCL   PGM(&TMPLIB/MKLLIST) SRCFILE(QLLIST)
-             CALL       PGM(&TMPLIB/MKLLIST) PARM(&LIB &TGTRLS)
+             CRTBNDCL   PGM(&TMPLIB/A_INSTALL) +
+                          SRCFILE(&LIB/&QBUILD) SRCMBR(*PGM) +
+                          DFTACTGRP(*NO) ACTGRP(*CALLER)
 
-             CRTBNDCL   PGM(&TMPLIB/MKTESTCASE) SRCFILE(QSRC)
-             CALL       PGM(&TMPLIB/MKTESTCASE) PARM(&LIB &TGTRLS)
+             RMVLIBLE   LIB(&LIB)
+             MONMSG     MSGID(CPF2104)
 
-             CRTBNDCL   PGM(&TMPLIB/MKCRTTST) SRCFILE(QSRC)
-             CALL       PGM(&TMPLIB/MKCRTTST) PARM(&LIB &TGTRLS)
+             ADDLIBLE   LIB(&LIB) POSITION(*FIRST)
 
-             CRTBNDCL   PGM(&TMPLIB/MKCALLTST) SRCFILE(QSRC)
-             CALL       PGM(&TMPLIB/MKCALLTST) PARM(&LIB &TGTRLS)
+             RMVLIBLE   LIB(&DEVLIB)
+             MONMSG     MSGID(CPF2104) EXEC(DO)
+               CHGVAR     VAR(&IS_DEVLIB) VALUE('0')
+             ENDDO
 
-             CRTBNDCL   PGM(&TMPLIB/MKRMTRUN) SRCFILE(QSRC)
-             CALL       PGM(&TMPLIB/MKRMTRUN) PARM(&LIB &TGTRLS)
+             CALL       PGM(&TMPLIB/A_INSTALL) PARM(&LIB 'INSTALL' &TGTRLS)
 
-             CRTBNDCL   PGM(&TMPLIB/MKCMD) SRCFILE(QCMD)
-             CALL       PGM(&TMPLIB/MKCMD) PARM(&LIB &TGTRLS)
+             RMVLIBLE   LIB(&LIB)
+             IF         COND(&IS_DEVLIB) THEN(DO)
+               ADDLIBLE   LIB(&DEVLIB) POSITION(*FIRST)
+             ENDDO
 
-             CRTBNDCL   PGM(&TMPLIB/CRTPKGOWN) SRCFILE(QSRC)
+             /* ---------------------------------------------------- */
+             /*  Change object owner to QPGMR.                       */
+             /* ---------------------------------------------------- */
+             CRTBNDCL   PGM(&TMPLIB/CRTPKGOWN) +
+                          SRCFILE(&LIB/&QBUILD) SRCMBR(*PGM) +
+                          DFTACTGRP(*NO) ACTGRP(*CALLER)
+
              CALL       PGM(&TMPLIB/CRTPKGOWN) PARM(&LIB &TMPLIB &OWNER)
 
-             CRTBNDCL   PGM(&TMPLIB/CRTPKGDBG) SRCFILE(QSRC)
-             CALL       PGM(&TMPLIB/CRTPKGDBG) PARM(&LIB &TMPLIB)
-
              /* ---------------------------------------------------- */
-             /*  Delete object that are not necessary.               */
+             /*  Create target library description.                  */
              /* ---------------------------------------------------- */
-             DLTOBJ OBJ(&LIB/*ALL) OBJTYPE(*MODULE)
-             MONMSG MSGID(CPF2125) /* No object deleted */
+             CHGLIB     LIB(&LIB) TEXT('iRPGUnit Distribution Package - ' *CAT &RELEASE)
 
              /* ---------------------------------------------------- */
              /*  Save install package to save file                   */
@@ -116,33 +639,15 @@
       /*                             (&LIB/EVFEVENT *FILE  ))                  */
 
              SAVLIB     LIB(&LIB) DEV(*SAVF) SAVF(&TMPLIB/&SAVF) +
-                          TGTRLS(&TGTRLS) DTACPR(*HIGH) +
-                          SELECT( +
-                            (*INCLUDE &LIB/RUCALLTST  *PGM)    +
-                            (*INCLUDE &LIB/RUCRTTST   *PGM)    +
-                            (*INCLUDE &LIB/RUPGMRMT   *PGM)    +
-                            (*INCLUDE &LIB/RUTAGTST   *PGM)    +
-                            (*INCLUDE &LIB/LLIST      *SRVPGM) +
-                            (*INCLUDE &LIB/RURUNNER   *SRVPGM) +
-                            (*INCLUDE &LIB/RURUNRMT   *SRVPGM) +
-                            (*INCLUDE &LIB/RUTESTCASE *SRVPGM) +
-                            (*INCLUDE &LIB/QCMD       *FILE)   +
-                            (*INCLUDE &LIB/QTESTCASES *FILE)   +
-                            (*INCLUDE &LIB/QUNITTEST  *FILE)   +
-                            (*INCLUDE &LIB/QINCLUDE   *FILE)   +
-                            (*INCLUDE &LIB/QSRC       *FILE)   +
-                            (*INCLUDE &LIB/RPGUNIT    *JOBD)   +
-                            (*INCLUDE &LIB/RUCALLTST  *CMD)    +
-                            (*INCLUDE &LIB/RUCRTTST   *CMD)    +
-                            (*INCLUDE &LIB/RUCALLTST  *PNLGRP) +
-                            (*INCLUDE &LIB/RUCRTTST   *PNLGRP) +
-                            (*INCLUDE &LIB/RUWSCST    *WSCST))
+                          TGTRLS(&TGTRLS) DTACPR(*HIGH)
 
              DLTF       FILE(&LIB/&SAVF)
              MONMSG     MSGID(CPF2105)
 
              MOVOBJ     OBJ(&TMPLIB/&SAVF) OBJTYPE(*FILE) TOLIB(&LIB)
 
-             DLTPGM     PGM(&TMPLIB/CRTMETADTA)
+             DLTPGM     PGM(&TMPLIB/CRTPKGOWN)
+             DLTPGM     PGM(&TMPLIB/CRTPKGMDT)
+             DLTPGM     PGM(&TMPLIB/A_INSTALL)
 
              ENDPGM

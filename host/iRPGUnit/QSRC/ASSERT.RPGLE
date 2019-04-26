@@ -1,38 +1,40 @@
+      // ==========================================================================
+      //  iRPGUnit - Assertion Facilities.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
       // >>PRE-COMPILER<<
-      //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) +
-      //                 SRCMBR(&SM);
+      //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
       //   >>IMPORTANT<<
       //     >>PARM<<  OPTION(*EVENTF);
       //     >>PARM<<  DBGVIEW(*LIST);
       //   >>END-IMPORTANT<<
       //   >>EXECUTE<<
       // >>END-PRE-COMPILER<<
-
-       //----------------------------------------------------------------------
-       // Assertion procedure definitions.
-       //----------------------------------------------------------------------
+      // ==========================================================================
 
      H NoMain
       /include qinclude,H_SPEC
       /include qinclude,COPYRIGHT
 
-
-       //----------------------------------------------------------------------
-       //   IMPORTS
-       //----------------------------------------------------------------------
+      //----------------------------------------------------------------------
+      //   IMPORTS
+      //----------------------------------------------------------------------
 
       /define RPGUNIT_INTERNAL
       /include qinclude,ASSERT
       /include qinclude,ERRORCODE
       /include qinclude,PGMMSG
-      /include qsysinc,QWVRCSTK
       /include qinclude,TEMPLATES
-      /include qsrc,TESTCASE
+      /include qinclude,SYSTEMAPI
 
-
-       //----------------------------------------------------------------------
-       //   PRIVATE PROTOTYPES
-       //----------------------------------------------------------------------
+      //----------------------------------------------------------------------
+      //   PRIVATE PROTOTYPES
+      //----------------------------------------------------------------------
 
      D doAssert        pr                  extproc('doAssert')
      D  condition                      n   const
@@ -58,29 +60,20 @@
      D                                     extproc('getRealParm_internal_use')
      D  i_value                       2a
 
-       //----------------------------------------------------------------------
-       //   GLOBAL VARIABLES
-       //----------------------------------------------------------------------
+      //----------------------------------------------------------------------
+      //   GLOBAL VARIABLES
+      //----------------------------------------------------------------------
 
-       // Number of assertions called.
+      // Number of assertions called.
      D assertCalled    s             10i 0
 
-       // Latest assertion failure event information. Can be blank if no
-       //  assertion failure event since last assertion.
+      // Latest assertion failure event information. Can be blank if no
+      //  assertion failure event since last assertion.
      D assertFailEvt   ds                  likeds(AssertFailEvtLong_t)
 
-       // Message key of the latest message in the
-       // job log, when a test case was started.
-     D lowMsgKey       s              4a
-
-
-       //----------------------------------------------------------------------
-       //   PROCEDURES
-       //----------------------------------------------------------------------
-
-       //----------------------------------------------------------------------
-       // Assert equality between two alphanumeric variables.
-       //----------------------------------------------------------------------
+      //----------------------------------------------------------------------
+      // Assert equality between two alphanumeric variables.
+      //----------------------------------------------------------------------
      P aEqual...
      P                 b                   export
      D                 pi
@@ -105,9 +98,9 @@
      P                 e
 
 
-       //----------------------------------------------------------------------
-       // Assert equality between two integers.
-       //----------------------------------------------------------------------
+      //----------------------------------------------------------------------
+      // Assert equality between two integers.
+      //----------------------------------------------------------------------
      P iEqual...
      P                 b                   export
      D                 pi
@@ -131,9 +124,9 @@
       /end-free
      P                 e
 
-       //----------------------------------------------------------------------
-       // Assert equality between two alphanumeric variables.
-       //----------------------------------------------------------------------
+      //----------------------------------------------------------------------
+      // Assert equality between two alphanumeric variables.
+      //----------------------------------------------------------------------
      P nEqual...
      P                 b                   export
      D                 pi
@@ -159,9 +152,9 @@
      P                 e
 
 
-       //----------------------------------------------------------------------
-       // Asserts that a condition is true. See prototype.
-       //----------------------------------------------------------------------
+      //----------------------------------------------------------------------
+      // Asserts that a condition is true. See prototype.
+      //----------------------------------------------------------------------
      P assert...
      P                 b                   export
      D                 pi
@@ -176,9 +169,9 @@
      P                 e
 
 
-       //----------------------------------------------------------------------
-       // Signals a test failure and stops the test.
-       //----------------------------------------------------------------------
+      //----------------------------------------------------------------------
+      // Signals a test failure and stops the test.
+      //----------------------------------------------------------------------
      P fail...
      P                 b                   export
      d                 pi
@@ -191,7 +184,8 @@
      P                 e
 
 
-     P doAssert        b
+     P doAssert...
+     P                 b
      D                 pi
      D  condition                      n   const
      D  msgIfFalse                16384a   const varying options(*Varsize)
@@ -227,9 +221,9 @@
      P                 e
 
 
-       //----------------------------------------------------------------------
-       // Clear the latest assertion failure event.
-       //----------------------------------------------------------------------
+      //----------------------------------------------------------------------
+      // Clear the latest assertion failure event.
+      //----------------------------------------------------------------------
      P clrAssertFailEvt...
      P                 b                   export
      D                 pi
@@ -241,9 +235,9 @@
      P                 e
 
 
-       //----------------------------------------------------------------------
-       // Returns the number of time assertions were called. See prototype.
-       //----------------------------------------------------------------------
+      //----------------------------------------------------------------------
+      // Returns the number of time assertions were called. See prototype.
+      //----------------------------------------------------------------------
      P getAssertCalled...
      P                 b                   export
      D                 pi            10i 0
@@ -253,9 +247,9 @@
       /end-free
      P                 e
 
-       //----------------------------------------------------------------------
-       // Return information about the latest assertion failure event.
-       //----------------------------------------------------------------------
+      //----------------------------------------------------------------------
+      // Return information about the latest assertion failure event.
+      //----------------------------------------------------------------------
      P getAssertFailEvt...
      P                 b                   export
      D                 pi
@@ -275,9 +269,9 @@
      P                 e
 
 
-       //----------------------------------------------------------------------
-       // Return information about the latest assertion failure event.
-       //----------------------------------------------------------------------
+      //----------------------------------------------------------------------
+      // Return information about the latest assertion failure event.
+      //----------------------------------------------------------------------
      P getAssertFailEvtLong...
      P                 b                   export
      D                 pi
@@ -290,9 +284,9 @@
      P                 e
 
 
-       //----------------------------------------------------------------------
-       // Resets the counter of the failed assertions.
-       //----------------------------------------------------------------------
+      //----------------------------------------------------------------------
+      // Resets the counter of the failed assertions.
+      //----------------------------------------------------------------------
      P clearAssertCounter...
      P                 b                   export
      D                 pi
@@ -304,41 +298,124 @@
      P                 e
 
 
-       //----------------------------------------------------------------------
-       //  Returns the call stack. Excludes stack entries RURUNNER
-       //  and the lower levels to QCMD.
-       //----------------------------------------------------------------------
+     P assertJobLogContains...
+     P                 b                   export
+     D                 pi
+     D  msgId                         7a   const
+     D  timeLimit                      z   const
+
+      // Job log message field selection for QGYOLJBL API.
+     D fldSelect       ds                  qualified
+     D  listDirection                10a   inz('*PRV')
+     D  qlfJobNm                     26a   inz('*')
+     D  intJobId                     16a   inz(*blank)
+     D  startMsgKey                   4a   inz(x'FFFFFFFF')
+     D  maxMsgLen                    10i 0 inz(0)
+     D  maxMsgHlpLen                 10i 0 inz(0)
+     D  fldIdOff                     10i 0
+     D  fldCnt                       10i 0 inz(1)
+     D  callMsgqNmOff                10i 0
+     D  callMsgqNmLen                10i 0 inz(%size(fldSelect.callMsgqNm))
+     D  fldId1                       10i 0 inz(OLJL_SND_PGM_NM)
+     D  callMsgqNm                    1a   inz('*')
+
+     D listInfo        ds                  likeds(dsOpnList)
+     D msgBasicInfo    ds                  likeds(dsOLJL0100EntHdr)
+     D                                     based(p_msgBasicInfo)
+     D p_msgBasicInfo  s               *
+     D jobLogList      s          32766a
+     D sentTimeStamp   s               z
+     D msgIdx          s             10i 0
+     D msgFound        s               n   inz(*off)
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
+      /free
+
+        fldSelect.fldIdOff = %addr(fldSelect.fldId1) - %addr(fldSelect);
+        fldSelect.callMsgqNmOff =
+                         %addr(fldSelect.callMsgqNm) - %addr(fldSelect);
+
+        QGYOLJBL( jobLogList :
+                  %size( jobLogList ) :
+                  listInfo :
+                  FULL_SYNCHRONOUS_BUILD :
+                  fldSelect :
+                  %size( fldSelect ) :
+                  percolateErrors );
+
+        p_msgBasicInfo = %addr( jobLogList );
+        msgIdx = 1;
+
+        dow 1=1;
+          if msgIdx > listInfo.retRcdCnt;
+            sndEscapeMsgToCaller( 'Insufficient implementation. ' +
+                  'Should use QGYGTLE to retrieve records after ' +
+                               %char( listInfo.retRcdCnt ) + '. ' +
+                                          'Please open an issue.' );
+          endif;
+
+          sentTimeStamp = getSentTimeStamp( msgBasicInfo );
+
+          if sentTimeStamp < timeLimit;
+            leave;
+          endif;
+
+          if msgBasicInfo.msgId = msgId;
+            msgFound = *on;
+            leave;
+          endif;
+
+          // Go to next message in the job log.
+          p_msgBasicInfo = %addr( jobLogList ) + msgBasicInfo.nextEntOff;
+          msgIdx += 1;
+        enddo;
+
+        QGYCLST( listInfo.rqsHdl : percolateErrors );
+
+        assert( msgFound : 'Message ' + msgId + ' not found in the job log.' );
+
+      /end-free
+     P                 e
+
+
+      //----------------------------------------------------------------------
+      //  Returns the call stack. Excludes stack entries RURUNNER
+      //  and the lower levels to QCMD.
+      //----------------------------------------------------------------------
      P getCallStk...
      P                 b
      D                 pi                  likeds(CallStk_t)
      D  startProc                   256a   const varying options(*varsize)
 
-       // Call stack entries.
+      // Call stack entries.
      D callStk         ds                  likeds(CallStk_t) inz
-       // Job id.
+      // Job id.
      D jobIdInfo       ds                  likeds(dsJIDF0100)
-       // Call stack info header.
+      // Call stack info header.
      D hdr             ds                  likeds(dsCSTK0100Hdr)
      D                                     based(hdr_p)
      D hdr_p           s               *
-       // Call stack info entry.
+      // Call stack info entry.
      D ent             ds                  likeds(dsCSTK0100Ent)
      D                                     based(ent_p)
      D ent_p           s               *
-       // Big buffer to receive call stack info.
+      // Big buffer to receive call stack info.
      D rawCallStk      s          16383a
-       // Statement Id.
+      // Statement Id.
      D sttId           s             10a   based(sttId_p)
      D sttId_p         s               *
-       // Procedure name buffer.
+      // Procedure name buffer.
      D procNmBuffer_p  s               *
      D procNmBuffer    s            256a   based(procNmBuffer_p)
-       // Index.
+      // Index.
      D i               s             10i 0
      D maxStkEnt       s             10i 0
      D callStkE        ds                  likeds(CallStkEnt_t)
      D doReturnStckE   s               n   inz(*off)
-
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
       /free
 
         jobIdInfo.jobNm = '*';
@@ -366,7 +443,7 @@
 
         for i = 1 to maxStkEnt;
 
-           if (ent.pgmNm = 'RURUNNER');
+           if (ent.pgmNm = 'RUCALLTST');
               leave;
            endif;
 
@@ -422,77 +499,41 @@
      P                 e
 
 
-     P setLowMessageKey...
-     P                 b                   export
-     D                 pi
-     D  msgKey                        4a   const
-      /free
-
-       lowMsgKey = msgKey;
-
-      /end-free
-     P                 e
 
 
-     P getMonitoredMessage...
-     P                 b                   export
-     D                 pi                  likeds(MsgInfo_t)
-     D  doRmvMsg                       n   const options(*nopass)
 
-     D  msgInfo        ds                  likeds(MsgInfo_t)
-     D  msg            ds                  likeds(Msg_t)
-
-      /free
-
-       if (%parms() >= 1 and %addr(doRmvMsg) <> *null);
-          msg = getLatestEscMsg(lowMsgKey: doRmvMsg);
-       else;
-          msg = getLatestEscMsg(lowMsgKey: *OFF);
-       endif;
-       msgInfo.id     = msg.id;
-       msgInfo.txt    = msg.txt;
-       msgInfo.pgm    = msg.sender.qPgm.nm;
-       msgInfo.mod    = msg.sender.qMod.nm;
-       msgInfo.proc   = msg.sender.procNm;
-       msgInfo.specNb = msg.sender.specNb;
-       Return msgInfo;
-
-      /end-free
-     P                 e
-
-
-       //----------------------------------------------------------------------
-       // Taken from Scott Klement's HTTPAPI.
-       //----------------------------------------------------------------------
-       // getRealSA(): Okay, this one's hard to explain :)
-       //
-       // The original peSoapAction parameter to HTTPAPI was defined as
-       // fixed length "64A CONST".  This was problematic because people
-       // needed to be able to specify longer strings.  So they'd use
-       // XPROC -- but that's really cumbersome.
-       //
-       // I wanted to allow longer SoapAction, but I don't want to break
-       // backward compatibilityÜ  This is where it gets tricky...  how
-       // can old programs pass a 64A, and new programs pass a 16384A
-       // and have the routine work in either case??
-       //
-       // If the parameter is "16384A VARYING" the first two bytes must
-       // be the length of the data.  Since the original peSoapAction
-       // wasn't VARYING, the first two bytes would be actual data.
-       // and due to the nature of a Soap-Action, they'd have to be
-       // human readable.  That means the first character in the
-       // SoapAction would have to be > x'40' (Blank in EBCDIC)
-       //
-       // So a VARYING string that's 16384 long would be hex x'4000'
-       // in the first two bytes, but the lowest valid soap-action would
-       // be x'4040'
-       //
-       // This routine uses that fact to distinguish between the two
-       // types of SoapAction parameters and return the correct result
-       // (is this clever? or ugly?)
-       //
-       // NOTE: This is now used for content-type and useragent as well
-       //----------------------------------------------------------------------
+      //----------------------------------------------------------------------
+      // Taken from Scott Klement's HTTPAPI.
+      //----------------------------------------------------------------------
+      // getRealSA(): Okay, this one's hard to explain :)
+      //
+      // The original peSoapAction parameter to HTTPAPI was defined as
+      // fixed length "64A CONST".  This was problematic because people
+      // needed to be able to specify longer strings.  So they'd use
+      // XPROC -- but that's really cumbersome.
+      //
+      // I wanted to allow longer SoapAction, but I don't want to break
+      // backward compatibility?  This is where it gets tricky...  how
+      // can old programs pass a 64A, and new programs pass a 16384A
+      // and have the routine work in either case??
+      //
+      // If the parameter is "16384A VARYING" the first two bytes must
+      // be the length of the data.  Since the original peSoapAction
+      // wasn't VARYING, the first two bytes would be actual data.
+      // and due to the nature of a Soap-Action, they'd have to be
+      // human readable.  That means the first character in the
+      // SoapAction would have to be > x'40' (Blank in EBCDIC)
+      //
+      // So a VARYING string that's 16384 long would be hex x'4000'
+      // in the first two bytes, but the lowest valid soap-action would
+      // be x'4040'
+      //
+      // This routine uses that fact to distinguish between the two
+      // types of SoapAction parameters and return the correct result
+      // (is this clever? or ugly?)
+      //
+      // NOTE: This is now used for content-type and useragent as well
+      //----------------------------------------------------------------------
      P getRealParm_internal_use...
      P                 b                   export
      D                 pi         16384A   varying
@@ -501,11 +542,25 @@
      D oldStyle        s            256a   based(p_value)
      D newStyle        s          16384a   varying based(p_value)
 
-     C                   eval      p_value = %addr(i_value)
-     C                   if        i_value > x'4000'
-     c                   return    %trim(oldStyle)
-     c                   else
-     c                   return    %trim(newStyle)
-     c                   endif
+       p_value = %addr(i_value);
+       if (i_value > x'4000');
+         return %trim(oldStyle);
+       else;
+         return %trim(newStyle);
+       endif;
      P                 e
 
+
+     P getSentTimeStamp...
+     P                 b
+     D                 pi              z
+     D  msg                                const likeds(dsOLJL0100EntHdr)
+
+     D sentDateAsIso   s              8a
+
+        sentDateAsIso = %char( %date( msg.sentDate : *cymd0) : *iso0 );
+        return %timestamp( sentDateAsIso +
+                           msg.sentTime +
+                           msg.microseconds :
+                           *iso0 );
+     P                 e

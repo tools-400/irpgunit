@@ -1,11 +1,24 @@
-     /**
-      * \brief Retrieve source member of program or module.
-      *
-      * \author Thomas Raddatz
-      * \date   25.11.2013
-      */
+      // ==========================================================================
+      //  iRPGunit - Source Member Utilities.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
+      // >>PRE-COMPILER<<
+      //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>IMPORTANT<<
+      //     >>PARM<<  OPTION(*EVENTF);
+      //     >>PARM<<  DBGVIEW(*LIST);
+      //   >>END-IMPORTANT<<
+      //   >>EXECUTE<<
+      // >>END-PRE-COMPILER<<
+      // ==========================================================================
 
      H nomain
+      /include qinclude,H_SPEC
       /include qinclude,COPYRIGHT
 
        //----------------------------------------------------------------------
@@ -14,12 +27,8 @@
       /include qinclude,SRCMBR
       /include qinclude,TEMPLATES
       /include qinclude,USRSPC
-      /include qsysinc,APILIST
+      /include qinclude,SYSTEMAPI
       /include qinclude,ERRORCODE
-      /include qsysinc,QUSROBJD
-      /include qsysinc,QBNLSPGM
-      /include qsysinc,QBNLPGMI
-      /include qsysinc,QCLRPGMI
 
      D getOPMSourceMember...
      D                 pr            10a
@@ -111,6 +120,7 @@
        // QBNLSPGM and QBNLPGMI items (identical formats)
      D module          ds                  likeds(SPGL0100_t)
      D                                     based(pModule)
+     D errorCode       ds                  likeds(errorCode_t) inz(*likeds)
       /free
 
          clear qSrcMbr;
@@ -118,7 +128,7 @@
          dou '1';
 
             clear errorCode;
-            errorCode.bytesP = %size(errorCode);
+            errorCode.bytPrv = %size(errorCode);
 
             objType = getObjectType(qObj);
 
@@ -139,7 +149,7 @@
             endsl;
 
             count = 0;
-            dow (errorCode.bytesA = 0 and count < g_modList.entCnt);
+            dow (errorCode.bytAvl = 0 and count < g_modList.entCnt);
                count += 1;
                if (count = 1);
                   pModule = g_pModList + g_modList.listOff;
@@ -166,42 +176,30 @@
      P                 e
 
       //----------------------------------------------------------------------
-      //  Returns *OPM, *PGM or *SRVPGM depending on the type
-      //  of a given object.
+      //  Returns the date and time the member was last changed.
       //----------------------------------------------------------------------
-     P getObjectType...
-     P                 b
-     D                 pi            10a
-     D  qObj                               const  likeds(Object_t )
+     P SrcMbr_getLastChgDate...
+     P                 b                   export
+     D                 pi              z
+     D  qSrcFile                           const  likeds(Object_t )
+     D  srcMbr                       10a   const
 
-       // QUSROBJD API.
-     D objd0100        ds                  likeds(objd0100_t)
-
-       // QCLRPGMI API.
-     D pgmi0100        ds                  likeds(pgmi0100_t)
+     D mbrd0100        ds                  likeds(mbrd0100_t) inz
+     D apiDateTime     ds                  qualified
+     D  date                          7a
+     D  time                          6a
+     D lastChgDate     s               z
       /free
 
-         clear errorCode;
-         errorCode.bytesP = %size(errorCode);
+         api_retrieveMemberDescription(
+            mbrd0100: %size(mbrd0100): 'MBRD0100': qSrcFile: srcMbr: '0');
 
-         QUSROBJD(objd0100: %size(objd0100): 'OBJD0100'
-                  : qObj: '*SRVPGM': errorCode);
-         if (errorCode.bytesA > 0);
-            clear errorCode;
-            errorCode.bytesP = %size(errorCode);
-            QCLRPGMI(pgmi0100: %size(pgmi0100): 'PGMI0100': qObj: errorCode);
-            if (errorCode.bytesA > 0);
-               return '';
-            endif;
+         apiDateTime = mbrd0100.srcChgDatTim;
 
-            if (pgmi0100.type = 'B');
-               return TYPE_ILE_PGM;
-            else;
-               return TYPE_OPM_PGM;
-            endif;
-         else;
-            return TYPE_ILE_SRVPGM;
-         endif;
+         lastChgDate = %date(apiDateTime.date: *cymd0) +
+                       %time(apiDateTime.time: *hms0);
+
+         return lastChgDate;
 
       /end-free
      P                 e
@@ -217,14 +215,15 @@
 
        // QCLRPGMI API.
      D pgmi0100        ds                  likeds(pgmi0100_t)
+     D errorCode       ds                  likeds(errorCode_t) inz(*likeds)
       /free
 
          clear qSrcMbr;
 
          clear errorCode;
-         errorCode.bytesP = %size(errorCode);
+         errorCode.bytPrv = %size(errorCode);
          QCLRPGMI(pgmi0100: %size(pgmi0100): 'PGMI0100': qPgm: errorCode);
-         if (errorCode.bytesA > 0);
+         if (errorCode.bytAvl > 0);
             return *OFF;
          endif;
 
@@ -236,3 +235,47 @@
 
       /end-free
      P                 e
+
+
+      //----------------------------------------------------------------------
+      //  Returns *OPM, *PGM or *SRVPGM depending on the type
+      //  of a given object.
+      //----------------------------------------------------------------------
+     P getObjectType...
+     P                 b
+     D                 pi            10a
+     D  qObj                               const  likeds(Object_t )
+
+       // QUSROBJD API.
+     D objd0100        ds                  likeds(objd0100_t)
+
+       // QCLRPGMI API.
+     D pgmi0100        ds                  likeds(pgmi0100_t)
+     D errorCode       ds                  likeds(errorCode_t) inz(*likeds)
+      /free
+
+         clear errorCode;
+         errorCode.bytPrv = %size(errorCode);
+
+         QUSROBJD(objd0100: %size(objd0100): 'OBJD0100'
+                  : qObj: '*SRVPGM': errorCode);
+         if (errorCode.bytAvl > 0);
+            clear errorCode;
+            errorCode.bytPrv = %size(errorCode);
+            QCLRPGMI(pgmi0100: %size(pgmi0100): 'PGMI0100': qObj: errorCode);
+            if (errorCode.bytAvl > 0);
+               return '';
+            endif;
+
+            if (pgmi0100.type = 'B');
+               return TYPE_ILE_PGM;
+            else;
+               return TYPE_OPM_PGM;
+            endif;
+         else;
+            return TYPE_ILE_SRVPGM;
+         endif;
+
+      /end-free
+     P                 e
+

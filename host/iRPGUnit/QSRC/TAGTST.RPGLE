@@ -1,15 +1,24 @@
-     /**
-      * \brief Tag service program as unit test
-      *
-      * The user defined attribute of the object description will be set
-      * to RPGUNIT to mark the service program as a unit test. The
-      * text value will be left as it is (probably blank).
-      *
-      * \author Mihael Schmidt
-      * \date 2010-10-01
-      */
+      // ==========================================================================
+      //  iRPGUnit - Tag Test Service Program.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
+      // >>PRE-COMPILER<<
+      //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>IMPORTANT<<
+      //     >>PARM<<  OPTION(*EVENTF);
+      //     >>PARM<<  DBGVIEW(*LIST);
+      //   >>END-IMPORTANT<<
+      //   >>EXECUTE<<
+      // >>END-PRE-COMPILER<<
+      // ==========================================================================
 
-      *dftactgrp(*no) actgrp(*caller)
+     H nomain
+      /include qinclude,h_spec
       /include qinclude,COPYRIGHT
 
        //----------------------------------------------------------------------
@@ -22,58 +31,21 @@
        //   Prototypes
        //----------------------------------------------------------------------
       /include qinclude,TAGTST
-
-     D QLICOBJD...
-     D                 PR                  extpgm('QLICOBJD')
-     D   rtnLib                      10A
-     D   qObj                        20A   const
-     D   type                        10A   const
-     D   chgObjInf                32767A   const options(*varsize)
-     D   errCode                  32767A   const options(*varsize)
-
-     D main            PR
-     D   object                      10A   const
-     D   library                     10A   const
-     D   srcFile                           const likeds(Object_t)
-     D   srcMbr                      10A   const
-
-       //----------------------------------------------------------------------
-       //   PEP
-       //----------------------------------------------------------------------
-     D RUTAGTST...
-     D                 PI
-     D   object                      10A   const
-     D   library                     10A   const
-     D   srcFile                           const likeds(Object_t)
-     D   srcMbr                      10A   const
-
-      /free
-
-       main(object : library : srcFile : srcMbr );
-
-       *inlr = *on;
-       return;
-      /end-free
-
+      /include qinclude,TEMPLATES
+      /include qsysinc,QLICOBJD
+      /include qinclude,SRCMBR
 
      /**
       * \brief main procedure
       */
-     P main...
-     P                 B
+     P tagTstSrvPgm...
+     P                 B                   export
      D                 PI
-     D   object                      10A   const
-     D   library                     10A   const
-     D   srcFile                           const likeds(Object_t)
+     D   qSrvPgm                           const likeds(Object_t)
+     D   qSrcFile                          const likeds(Object_t)
      D   srcMbr                      10A   const
       *
-     D lib             S             10A
-
-     D srcFileAndMbr...
-     D                 ds                  qualified
-     D   name                        10A
-     D   lib                         10A
-     D   mbr                         10A
+     D rtnLib          S             10A
 
      D objInfo         ds                  qualified
      D   keys                        10I 0
@@ -81,28 +53,37 @@
      D   length                      10I 0
      D   attribute                   30A
 
+     D lastChgDate     s               Z
+     D errorCode       ds                  likeds(errorCode_t) inz(*likeds)
       /free
 
        clear errorCode;
-       errorCode.bytesP = 0;
+       errorCode.bytPrv = 0;
 
        // Change: user defined attribute
        objInfo.keys = 1;
        objInfo.type = 9;
        objInfo.length = 10;
        objInfo.attribute = 'RPGUNIT';
-       QLICOBJD(lib : object + library : '*SRVPGM' : objInfo : errorCode);
+       QLICOBJD(rtnLib : qSrvPgm : '*SRVPGM' : objInfo : errorCode);
 
-       // Change: source file
-       srcFileAndMbr.name = srcFile.nm;
-       srcFileAndMbr.lib = srcFile.lib;
-       srcFileAndMbr.mbr = srcMbr;
-
+       // Change: source file and member
        objInfo.keys = 1;
        objInfo.type = 1;
        objInfo.length = 30;
-       objInfo.attribute = srcFileAndMbr;
-       // QLICOBJD(lib : object + library : '*SRVPGM' : objInfo : errorCode);
+       objInfo.attribute = qSrcFile + srcMbr;
+       QLICOBJD(rtnLib : qSrvPgm : '*SRVPGM' : objInfo : errorCode);
+
+       // Retrieve source member last changed date and time
+       lastChgDate = SrcMbr_getLastChgDate(qSrcFile: srcMbr);
+
+       // Change: last changed date and time
+       objInfo.keys = 1;
+       objInfo.type = 2;
+       objInfo.length = 13;
+       objInfo.attribute = %char(%date(lastChgDate): *cymd0) +
+                           %char(%time(lastChgDate): *hms0);
+       QLICOBJD(rtnLib : qSrvPgm : '*SRVPGM' : objInfo : errorCode);
 
       /end-free
      P                 E

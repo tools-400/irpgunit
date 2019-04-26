@@ -1,16 +1,21 @@
-      // =====================================================================
-      //
-      // Unit tests for JOBLOG.
-      //
-      // =====================================================================
-      //   >>PRE-COMPILER<<
-      //     >>CMD<<    CRTBNDCL   PGM(QTEMP/MKJOBLOGT) SRCFILE(&SF);
-      //     >>CMD<<    CALL       PGM(QTEMP/MKJOBLOGT) PARM(&LI);
-      //   >>END-PRE-COMPILER<<
-      // =====================================================================
+      // ==========================================================================
+      //  iRPGUnit SelfTest - Test JOBLOG.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
+      // >>PRE-COMPILER<<
+      //   >>CRTCMD<<  RUCRTTST TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>IMPORTANT<<
+      //   >>END-IMPORTANT<<
+      //   >>EXECUTE<<
+      // >>END-PRE-COMPILER<<
+      // ==========================================================================
 
      H NoMain Option(*SrcStmt)
-
 
       //----------------------------------------------------------------------
       //   Exported Procedures
@@ -28,10 +33,9 @@
       //   Imported Procedures
       //----------------------------------------------------------------------
 
-      /include qsrc,TESTCASE
-      /include qinclude,ASSERT
-      /include qinclude,JOBLOG
-      /include qinclude,TEMPLATES
+      /copy qinclude,ASSERT
+      /copy qinclude,TESTUTILS
+      /copy qinclude,TEMPLATES
 
 
       //----------------------------------------------------------------------

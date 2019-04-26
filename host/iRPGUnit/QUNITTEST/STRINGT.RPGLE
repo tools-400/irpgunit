@@ -1,18 +1,23 @@
-      // =====================================================================
-      //
-      // Unit tests for STRING.
-      //
-      // =====================================================================
-      //   >>PRE-COMPILER<<
-      //     >>CRTCMD<<  RUCRTTST   TSTPGM(&LI/&OB) SRCFILE(&SF);
-      //     >>COMPILE<<
-      //       >>PARM<< DBGVIEW(*LIST);
-      //     >>END-COMPILE<<
-      //     >>EXECUTE<<
-      //   >>END-PRE-COMPILER<<
-      // =====================================================================
+      // ==========================================================================
+      //  iRPGUnit SelfTest - Test STRING.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
+      // >>PRE-COMPILER<<
+      //   >>CRTCMD<<  RUCRTTST TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>IMPORTANT<<
+      //     >>PARM<<  MODULE(&LI/STRING    +
+      //                      );
+      //   >>END-IMPORTANT<<
+      //   >>EXECUTE<<
+      // >>END-PRE-COMPILER<<
+      // ==========================================================================
 
-     H NoMain Option(*SrcStmt) BndDir('QC2LE')
+     H NoMain Option(*SrcStmt)
 
 
       //----------------------------------------------------------------------
@@ -51,23 +56,9 @@
       //   Imported Procedures
       //----------------------------------------------------------------------
 
-      /include qsrc,TESTCASE
-      /include qinclude,ASSERT
-      /include qinclude,STRING
-      /include qinclude,TEMPLATES
-
-
-      //----------------------------------------------------------------------
-      //   Private Procedure Prototypes
-      //----------------------------------------------------------------------
-
-      //----------------------------------------------------------------------
-      //   Global Variables
-      //----------------------------------------------------------------------
-
-      //----------------------------------------------------------------------
-      //   Set up & Tear down
-      //----------------------------------------------------------------------
+      /copy qinclude,ASSERT
+      /copy qinclude,STRING
+      /copy qinclude,TEMPLATES
 
 
       //----------------------------------------------------------------------

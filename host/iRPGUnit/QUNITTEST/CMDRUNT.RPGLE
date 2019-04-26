@@ -1,29 +1,46 @@
-      // =====================================================================
-      //
-      // Tests CMDRUN.
-      //
-      // =====================================================================
-      //   >>PRE-COMPILER<<
-      //     >>CMD<<    CRTBNDCL   PGM(QTEMP/MKCMDRUNT) SRCFILE(&SF);
-      //     >>CMD<<    CALL       PGM(QTEMP/MKCMDRUNT) PARM(&LI);
-      //   >>END-PRE-COMPILER<<
-      // =====================================================================
+      // ==========================================================================
+      //  iRPGUnit SelfTest - Test CMDRUN.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
+      // >>PRE-COMPILER<<
+      //   >>CRTCMD<<  RUCRTTST TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>IMPORTANT<<
+      //     >>PARM<<  MODULE(&LI/CMDRUN    +
+      //                      &LI/CALLPROC  +
+      //                      &LI/CMDRUNSRV +
+      //                      &LI/EXTTST    +
+      //                      &LI/EXTPRC    +
+      //                      &LI/LIBL      +
+      //                      &LI/LLIST     +
+      //                      &LI/PGMMSG    +
+      //                      &LI/STRING    +
+      //                      &LI/USRSPC    +
+      //                      &LI/XMLWRITER +
+      //                      );
+      //   >>END-IMPORTANT<<
+      //   >>EXECUTE<<
+      // >>END-PRE-COMPILER<<
+      // ==========================================================================
 
      H NoMain Option(*SrcStmt)
-
 
       //----------------------------------------------------------------------
       //   Imported Procedures
       //----------------------------------------------------------------------
 
       // This module mocks the CMDRUNLOG procedures.
-      /include qinclude,CMDRUNLOG
+      /copy qinclude,CMDRUNLOG
 
-      /include qinclude,CMDRUN
-      /include qinclude,PGMMSG
-      /include qinclude,TEMPLATES
-      /include qsrc,TESTCASE
-      /include qllist,LLIST_H
+      /copy qinclude,ASSERT
+      /copy qinclude,CMDRUN
+      /copy qinclude,PGMMSG
+      /copy qinclude,TEMPLATES
+      /copy qllist,llist_h
 
 
       //----------------------------------------------------------------------

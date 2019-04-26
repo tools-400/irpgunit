@@ -1,0 +1,1075 @@
+     /* =================================================================== */
+     /*  Regenerates source member's meta data (type and text).             */
+     /*                                                                     */
+     /*  Usage: CALL MKMETADATA TARGETLIB                                   */
+     /*    where TARGETLIB is the library containing the RPGUnit            */
+     /*    source files.                                                    */
+     /* =================================================================== */
+     /*   >>PRE-COMPILER<<                                                  */
+     /*     >>CRTCMD<<  CRTBNDCL      PGM(&LI/&OB) +                        */
+     /*                               SRCFILE(&SL/&SF)  +                   */
+     /*                               SRCMBR(&SM);                          */
+     /*     >>COMPILE<<                                                     */
+     /*       >>PARM<< DBGVIEW(*LIST);                                      */
+     /*     >>END-COMPILE<<                                                 */
+     /*     >>LINK<<                                                        */
+     /*       >>PARM<< DFTACTGRP(*NO);                                      */
+     /*       >>PARM<< ACTGRP(*NEW);                                        */
+     /*     >>END-LINK<<                                                    */
+     /*     >>EXECUTE<<                                                     */
+     /*   >>END-PRE-COMPILER<<                                              */
+     /* =================================================================== */
+             PGM        PARM(&TARGETLIB)
+
+             DCL        VAR(&TARGETLIB) TYPE(*CHAR) LEN(10) VALUE(RPGUNIT)
+
+             CHGVAR     VAR(&TARGETLIB) VALUE(&TARGETLIB)
+             MONMSG     MSGID(MCH3601) EXEC(SNDPGMMSG MSGID(CPF9898) +
+                          MSGF(QCPFMSG) MSGDTA('Target library +
+                          parameter required.') MSGTYPE(*ESCAPE))
+
+             CHGPFM     FILE(&TARGETLIB/QBND) +
+                          MBR(RUCALLTST) +
+                          SRCTYPE(LNK) +
+                          TEXT('iRPGUnit - Execute Test Suite.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QBND) +
+                          MBR(RUCRTTST) +
+                          SRCTYPE(LNK) +
+                          TEXT('iRPGUnit - Create Test Suite.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QBND) +
+                          MBR(RUPGMRMT) +
+                          SRCTYPE(LNK) +
+                          TEXT('iRPGUnit - Plug-in Test Runner.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QBND) +
+                          MBR(RUTESTCASE) +
+                          SRCTYPE(BND) +
+                          TEXT('iRPGUnit - Public API.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QBUILD) +
+                          MBR(A_CPL.1.0) +
+                          SRCTYPE(TXT) +
+                          TEXT('iRPGUnit - Software license.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QBUILD) +
+                          MBR(A_CRTPKG) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iRPGUnit - Create distribution package.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QBUILD) +
+                          MBR(A_INSTALL) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iRPGUnit - Build the whole framework. Run First.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QBUILD) +
+                          MBR(A_METADATA) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iRPGUnit - Apply source member''s metadata.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QBUILD) +
+                          MBR(A_README) +
+                          SRCTYPE(TXT) +
+                          TEXT('iRPGUnit - History (Author: Tools/400).')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QBUILD) +
+                          MBR(A_README2) +
+                          SRCTYPE(TXT) +
+                          TEXT('iRPGUnit - Readme (Author: Lacton).')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QBUILD) +
+                          MBR(A_SELFTEST) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iRPGUnit - Compile And Run SelfTest')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QBUILD) +
+                          MBR(BUILD) +
+                          SRCTYPE(CMD) +
+                          TEXT('iRPGUnit - Install Utility.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QBUILD) +
+                          MBR(BUILDHLP) +
+                          SRCTYPE(PNLGRP) +
+                          TEXT('iRPGUnit - Install Utility.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QBUILD) +
+                          MBR(CRTPKGDBG) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iRPGUnit - Remove debug data.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QBUILD) +
+                          MBR(CRTPKGMDT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Create iRPGUnit Meta Data.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QBUILD) +
+                          MBR(CRTPKGOWN) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iRPGUnit - Change object owner.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QCMD) +
+                          MBR(MKCMD) +
+                          SRCTYPE(CLLE) +
+                          TEXT('RPGUnit - Build the commands.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QCMD) +
+                          MBR(RUCALLTST) +
+                          SRCTYPE(CMD) +
+                          TEXT('iRPGUnit - Execute Test Suite.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QCMD) +
+                          MBR(RUCRTTST) +
+                          SRCTYPE(CMD) +
+                          TEXT('iRPGUnit - Create Test Suite.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(ASSERT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Assertion Facilities.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(CALLPROC) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Call a procedure in a SRVPGM.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(CMDRUN) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Command line runner.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(CMDRUNLOG) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Logging Facilities for CMDRUN.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(CMDRUNPRT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Printing Facilities for CMDRUN.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(CMDRUNSRV) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Command Line Toolkit.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(COPYRIGHT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit Copyright Disclaimer.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(CRTTST) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Implementation of RUCRTTST command.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(ERRNO_H) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Error Numbers and Prototypes of C Library.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(ERRORCODE) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('API Error Code Data Structure.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(EXTPRC) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Extract Procedures From a SRVPGM.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(EXTTST) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Extract Test Cases.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(FDINFDS) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('File information data structures.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(FDINFDS_DB) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('File information data structures.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(FDINFDS_DF) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('File information data structure: DspF files.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(FDINFDS_PF) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('File information data structure: PrtF files.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(H_SPEC) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit H-Specifications.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(IFSIO_H) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('IFS File IO Prototypes.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(LIBC_H) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('C Library Function Prototypes.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(LIBL) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Library list Utilities.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(MILIB) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('MI Library Function Prototypes.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(OBJECT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Object Utilities.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(PGMMSG) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Program message handling.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(PGMRMT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Plug-in Test Runner.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(RMTRUNSRV) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Plug-in Adapter.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(SDS) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Programm Status Data Structure.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(SRCMBR) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGunit - Source Member Utilities.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(STRING) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - String Utilities.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(SYSTEMAPI) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('System APIs.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(TAGTST) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Tag Test Service Program.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(TEMPLATES) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Type Templates.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(TESTCASE) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Prototype - Public API.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(TESTUTILS) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Utilities.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(USRSPC) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - User Space Utilities.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(VERSION) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Product Version Procedures Definitions.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(XMLWRITER) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - XML File Writer.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QLLIST) +
+                          MBR(CEEAPI_H) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('RPG Next Gen - Linked List : CEE Prototypes.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QLLIST) +
+                          MBR(LGPL.3.0) +
+                          SRCTYPE(TXT) +
+                          TEXT('GNU LESSER GENERAL PUBLIC LICENSE 3.0')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QLLIST) +
+                          MBR(LIBC_H) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('RPG Next Gen - Linked List : C-Library.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QLLIST) +
+                          MBR(LLIST) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('RPG Next Gen - Linked List : Implemenation.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QLLIST) +
+                          MBR(LLIST_H) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('RPG Next Gen - Linked List : Public Prototypes.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QLLIST) +
+                          MBR(LLIST_IN_H) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('RPG Next Gen - Linked List : Internal Prototypes.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QLLIST) +
+                          MBR(MKLLIST) +
+                          SRCTYPE(CLLE) +
+                          TEXT('RPG Next Gen - Build Linked List.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QMISC) +
+                          MBR(JUNIT) +
+                          SRCTYPE(XSD) +
+                          TEXT('Jenkins JUnit Schema.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QMISC) +
+                          MBR(JUNITSMPL) +
+                          SRCTYPE(XML) +
+                          TEXT('Jenkins JUnit Example XML.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QPNLGRP) +
+                          MBR(RUCALLTST) +
+                          SRCTYPE(PNLGRP) +
+                          TEXT('iRPGUnit - Execute Test Suite.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QPNLGRP) +
+                          MBR(RUCRTTST) +
+                          SRCTYPE(PNLGRP) +
+                          TEXT('iRPGUnit - Create Test Suite.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(ASSERT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Assertion Facilities.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(CALLPROC) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Call a procedure in a SRVPGM.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(CMDRUN) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Command line runner.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(CMDRUNLOG) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Logging Facilities for CMDRUN.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(CMDRUNPRT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Printing Facilities for CMDRUN.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(CMDRUNSRV) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Command Line Toolkit.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(CRTTST) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Implementation of RUCRTTST command.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(EXTPRC) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Extract Procedures From a SRVPGM.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(EXTTST) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Extract Test Cases.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(LIBL) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Library list Utilities.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(MKCALLTST) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iRPGUnit - Make command line runner.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(MKCRTTST) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iRPGUnit - Make RUCRTTST program.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(MKMETADATA) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iRPGUnit - Regenerate source member''s metadata.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(MKRMTRUN) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iRPGUnit - Build RURUNRMT (runner toolkit).')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(MKTESTCASE) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iRPGUnit - Build the test case toolkit.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(OBJECT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Object Utilities.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(PGMMSG) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Program message handling.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(PGMRMT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Plug-in Test Runner.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(RMTRUNSRV) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Plug-in Adapter.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(RUWSCST) +
+                          SRCTYPE(TXT) +
+                          TEXT('iRPGUnit - Host print transform table EBCDIC/ASCII')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(SRCMBR) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGunit - Source Member Utilities.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(STRING) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - String Utilities.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(TAGTST) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Tag Test Service Program.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(TEMPLATE) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Empty Unit Test Case.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(TEMPLSQL) +
+                          SRCTYPE(SQLRPGLE) +
+                          TEXT('iRPGUnit - Empty SQL Unit Test Case.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(TESTUTILS) +
+                          SRCTYPE(SQLRPGLE) +
+                          TEXT('iRPGUnit - Utilities.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(USRSPC) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - User Space Utilities.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(VERSION) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Product Version Procedures Definitions.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(XMLWRITER) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - XML File Writer.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(APILIST) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('List API header.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(OPNLIST) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Open List Structure.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QBNLPGMI) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('List ILE program information (QBNLPGMI) API.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QBNLSPGM) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('List ILE service program information API.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QCLRPGMI) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Retrieve Program Information (QCLRPGMI) API.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QCMDEXC) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Execute command.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QGYCLST) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Close list.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QGYGTLE) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Get list entries.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QGYOLJBL) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Open list of job log messages.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QGYOLSPL) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Open list of spooled files.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QLEACTBNDP) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Activate bound program.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QLEGETEXP) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Get export pointer.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QLGCNVCS) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Convert Case (QLGCNVCS, QlgConvertCase) API.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QLICHGLL) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Change Library List (QLICHGLL) API.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QLICOBJD) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Change Object Description (QLICOBJD) API.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QLICVTTP) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Convert obj type to internal hex format.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QMHRCVPM) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Receive program message.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QMHSNDPM) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Send program message.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QSPCLOSP) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Close spooled file.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QSPGETSP) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Get spooled file data.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QSPOPNSP) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Open spooled file.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QSPRILSP) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Retrieve Identity of Last Spooled File Created.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QUSCRTUS) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Create user space.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QUSPTRUS) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Retrieve pointer to user space.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QUSRJOBI) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Retrieve Job Information (QUSRJOBI) API.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QUSROBJD) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Retrieve Object Description (QUSROBJD) API.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QWCRTVCA) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Retrieve current attributes.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QWDRJOBD) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Retrieve Job Description Information (QQWDRJOBD).')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QWVRCSTK) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Retrieve call stack.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
+                          MBR(SRVPGM1) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - EXTPRCT Unit Test Helper.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
+                          MBR(SRVPGM2) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - EXTPRCT Unit Test Helper.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
+                          MBR(TESTPGM01) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
+                          MBR(TESTPGM02) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
+                          MBR(TESTPGM03) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
+                          MBR(TESTPGM04) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
+                          MBR(TESTPGM05) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
+                          MBR(TESTPGM06) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
+                          MBR(TESTPGM07) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
+                          MBR(TESTPGM08) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
+                          MBR(TESTPGM09) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
+                          MBR(TESTPGM10) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
+                          MBR(TESTPGM11) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
+                          MBR(TESTPGM12) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
+                          MBR(TESTPGM13) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
+                          MBR(TESTPGM14) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
+                          MBR(TESTPGM15) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
+                          MBR(TESTPGM16) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
+                          MBR(TESTPGM17) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
+                          MBR(TESTPGM18) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
+                          MBR(TESTPGM19) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(ASSERTT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit SelfTest - Test ASSERT.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(CALLPROCT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit SelfTest - Test CALLPROC.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(CMDRUNLOGT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit SelfTest - Test CMDRUNLOG.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(CMDRUNT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit SelfTest - Test CMDRUN.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(CRTTSTT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit SelfTest - Test RUCRTTST.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(EXTPRCT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit SelfTest - Test EXTPRC.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(EXTTSTT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit SelfTest - Test EXTTST.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(JOBLOGT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit SelfTest - Test JOBLOG.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(LIBLC) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iRPGUnit - LIBL Unit Test Helper.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(LIBLT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit SelfTest - Test LIBL.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(MKACPTST) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iRPGUnit SelfTest - Build the acceptance tests.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(MKCMDRUNLT) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iRPGUnit SelfTest - Build CMDRUNLOGT.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(MKCMDRUNT) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iRPGUnit SelfTest - Build CMDRUNT.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(MKCRTTSTT) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iRPGUnit SelfTest - Build RUCRTTSTT.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(MKEXTPRCT) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iRPGUnit SelfTest - Build EXTPRCT.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(MKEXTTSTT) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iRPGUnit SelfTest - Build EXTTSTT.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(MKJOBLOGT) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iRPGUnit SelfTest - Build JOBLOGT.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(MKLIBLT) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iRPGUnit SelfTest - Build LIBLT.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(MKPGMMSGT) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iRPGUnit SelfTest - Build PGMMSGT.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(MKRPGUNITT) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iiRPGUnit - Build and run all self and acp. tests.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(MKRUNT) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iRPGUnit SelfTest - Build RUNT.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(MKSTRINGT) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iRPGUnit SelfTest - Build STRINGT.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(MKUT) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iRPGUnit SelfTest - Build and run all self tests.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(PGMMSGT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit SelfTest - Test PGMMSG.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(RUACPTST) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit SelfTest - Test PGMMSG.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(RUNT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit SelfTest - Test RUN.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(SPLF) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(SPLF_H) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(STRINGT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit SelfTest - Test STRING.')
+             MONMSG     MSGID(CPF3288)
+
+             ENDPGM

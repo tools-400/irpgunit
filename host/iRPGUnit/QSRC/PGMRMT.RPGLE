@@ -1,14 +1,23 @@
-     /**
-      * \brief Run Remote Unit Test
-      *
-      * This program executes the passed unit test. For execution the
-      * unit test service programs must be in the library list.
-      *
-      * \author Mihael Schmidt, Thomas Raddatz
-      * \date   19.10.2010
-      */
+      // ==========================================================================
+      //  iRPGUnit - Plug-in Test Runner.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
+      // >>PRE-COMPILER<<
+      //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>IMPORTANT<<
+      //     >>PARM<<  OPTION(*EVENTF);
+      //     >>PARM<<  DBGVIEW(*LIST);
+      //   >>END-IMPORTANT<<
+      //   >>EXECUTE<<
+      // >>END-PRE-COMPILER<<
+      // ==========================================================================
 
-      *DftActGrp(*No) ActGrp(*new) BndDir('MY_BND_DIR')
+      /include qinclude,H_SPEC
       /include qinclude,COPYRIGHT
 
       /include qinclude,PGMRMT
@@ -34,17 +43,10 @@
       * Prototypen
       *-------------------------------------------------------------------------
       /include qinclude,RMTRUNSRV
-
       /include qinclude,TEMPLATES
-      /free
 
-         returnValue =
+        returnValue =
             rpgunit_runTestSuite(
                userspace: testSuiteName: procNames:
                order :detail: output: libl: qJobD: rclrsc);
-
-         *inlr = *on;
-
-         return;
-
-      /end-free
+        *inlr = *on;

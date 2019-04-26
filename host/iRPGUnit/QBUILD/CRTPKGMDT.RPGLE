@@ -18,14 +18,14 @@
      FQAFDMBRL  IF   E             DISK    usropn
      F                                     extfile(g_outfile)
       *
-     FQSRC      UF A E             DISK    usropn
-     F                                     rename(QSRC: FQSRC)
+     FQBUILD    UF A E             DISK    usropn
+     F                                     rename(QBUILD: FQBUILD)
      F                                     extfile(g_srcfile)
      F                                     extmbr(g_srcmbr  )
       *
      D g_outfile       S             20A   varying inz('QTEMP/#CRTMBRD')
      D g_srcfile       S             20A   varying inz
-     D g_srcmbr        S             10A   varying inz('MKMETADATA')
+     D g_srcmbr        S             10A   varying inz('A_METADATA')
       *
      D g_copybooks     S             20A   varying inz
       * ------------------------------------
@@ -81,7 +81,7 @@
      D  i_lib                        10A   const  varying
      D  i_file                       10A   const  varying
       *
-      *  Appends a record to QSRC.
+      *  Appends a record to QBUILD.
      D SrcMbr_write...
      D                 PR                  extproc('SrcMbr_write')
      D  i_text                      100A   const  varying options(*varsize)
@@ -240,7 +240,7 @@
             endmon;
 
             // Check existance of output source member
-            g_srcfile = %trim(i_lib) + '/QSRC';
+            g_srcfile = %trim(i_lib) + '/QBUILD';
 
             monitor;
                cmd = 'CHKOBJ OBJ(' + g_srcfile + ') +
@@ -249,19 +249,24 @@
                cmd = 'CLRPFM FILE(' + g_srcfile + ') MBR(' + g_srcmbr + ')';
                qcmdexc(cmd: %len(cmd));
             on-error;
-               cmd = 'ADDPFM FILE(' + g_srcfile + ') MBR(' + g_srcmbr + ') +
-                        TEXT(' + QUOTE +
-                          'RPGUnit - Regenerate source member''s metadata.' +
-                          QUOTE + ') +
-                        SRCTYPE(CLLE)';
+               cmd = 'ADDPFM FILE(' + g_srcfile + ') MBR(' + g_srcmbr + ')';
                qcmdexc(cmd: %len(cmd));
             endmon;
 
+            cmd = 'CHGPFM FILE(' + g_srcfile + ') MBR(' + g_srcmbr + ') +
+                     TEXT(' + QUOTE +
+                       'iRPGUnit - Apply source member''''s metadata.' +
+                       QUOTE + ') +
+                     SRCTYPE(CLLE)';
+            qcmdexc(cmd: %len(cmd));
+
             // Get member list into output file
             File_exportMemberList(i_lib: 'QBND');
+            File_exportMemberList(i_lib: 'QBUILD');
             File_exportMemberList(i_lib: 'QCMD');
             File_exportMemberList(i_lib: 'QINCLUDE');
             File_exportMemberList(i_lib: 'QLLIST' );
+            File_exportMemberList(i_lib: 'QMISC' );
             File_exportMemberList(i_lib: 'QPNLGRP' );
             File_exportMemberList(i_lib: 'QSRC' );
             File_exportMemberList(i_lib: 'QSYSINC' );
@@ -269,8 +274,8 @@
             File_exportMemberList(i_lib: 'QUNITTEST' );
 
             // Write source member ...
-            open QSRC;
-            clear FQSRC;
+            open QBUILD;
+            clear FQBUILD;
 
             // ... header
             for x = 1 to %elem(g_header);
@@ -324,7 +329,7 @@
             // ... footer
             SrcMbr_write('ENDPGM': LEFT_MARGIN);
 
-            close QSRC;
+            close QBUILD;
 
             release = cRPGUNIT_VERSION;
 
@@ -369,7 +374,7 @@
      P                 E
       *
       *===============================================================*
-      *  Appends a record to QSRC.
+      *  Appends a record to QBUILD.
       *===============================================================*
      P SrcMbr_write...
      P                 B
@@ -388,7 +393,7 @@
          SRCDAT = 0;
          SRCDTA = %subst(spaces: 1: i_spaces) + i_text;
 
-         write FQSRC;
+         write FQBUILD;
 
          return;
 

@@ -1,7 +1,16 @@
-      /if defined(RUMODSRC)
+      /if defined(IRPGUNIT_SRCMBR)
       /eof
       /endif
-      /define RUMODSRC
+      /define IRPGUNIT_SRCMBR
+      // ==========================================================================
+      //  iRPGUnit - Command Line Toolkit.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
 
       /include qinclude,TEMPLATES
 
@@ -25,4 +34,12 @@
      D                                     ')
      D  object                             const  likeds(Object_t)
      D  module                             const  likeds(Object_t)
+
+     D SrcMbr_getLastChgDate...
+     D                 pr              z
+     D                                     extproc('SRCMBR_+
+     D                                     SrcMbr_getLastChgDate+
+     D                                     ')
+     D  qSrcFile                           const  likeds(Object_t )
+     D  srcMbr                       10a   const
 

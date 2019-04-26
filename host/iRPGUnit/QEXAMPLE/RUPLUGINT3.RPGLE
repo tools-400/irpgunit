@@ -1,7 +1,12 @@
-      // =====================================================================
-      //  Unit tests that toggle their result depending on the content
-      //  of data area pgmLib/RUPLUGINT3.
-      // =====================================================================
+      // ==========================================================================
+      //  iRPGUnit Dev. of RDP Plugin. OK + Toggle
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
       //    >>PRE-COMPILER<<
       //      >>CRTCMD<<  RUCRTTST    TSTPGM(&LI/&OB) +
       //                              SRCFILE(&SL/&SF) SRCMBR(&SM);
@@ -11,7 +16,7 @@
       //      >>END-COMPILE<<
       //      >>EXECUTE<<
       //    >>END-PRE-COMPILER<<
-      // =====================================================================
+      // ==========================================================================
 
      H NoMain Option(*SrcStmt : *NoDebugIO)
 
@@ -49,10 +54,7 @@
       //   Imported Procedures
       //----------------------------------------------------------------------
 
-      /include qinclude,ASSERT
-      /include qinclude,TEMPLATES
-      /include qsrc,TESTCASE
-
+      /include qinclude,TESTCASE
 
       //----------------------------------------------------------------------
       //   Private Procedures

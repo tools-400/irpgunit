@@ -1,30 +1,46 @@
-      //
-      // Extracts tests.
-      //
+      // ==========================================================================
+      //  iRPGUnit - Extract Test Cases.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
+      // >>PRE-COMPILER<<
+      //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>IMPORTANT<<
+      //     >>PARM<<  OPTION(*EVENTF);
+      //     >>PARM<<  DBGVIEW(*LIST);
+      //   >>END-IMPORTANT<<
+      //   >>EXECUTE<<
+      // >>END-PRE-COMPILER<<
+      // ==========================================================================
 
      H NoMain
       /include qinclude,H_SPEC
+      /include qinclude,COPYRIGHT
 
       //----------------------------------------------------------------------
       //   Exported Procedures
       //----------------------------------------------------------------------
 
       /include qinclude,EXTTST
-      /include qinclude,RUNNER
 
-
-      //----------------------------------------------------------------------
+      //---------------f------------------------------------------------------
       //   Imported Procedures
       //----------------------------------------------------------------------
 
       /include qinclude,CALLPROC
       /include qinclude,EXTPRC
       /include qinclude,TEMPLATES
-      /include qllist,LLIST_H
       /include qinclude,STRING
-      /include qinclude,ERRORCODE
-      /include qllist,LIBC_H
+      /include qllist,llist_h
 
+     D memset          PR              *          extproc('memset')
+     D  i_pDest                        *   value
+     D  i_char                       10I 0 value
+     D  i_count                      10U 0 value
 
       //----------------------------------------------------------------------
       //   Private Procedures

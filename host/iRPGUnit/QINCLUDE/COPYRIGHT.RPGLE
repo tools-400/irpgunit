@@ -1,10 +1,10 @@
       /if not defined(COPYRIGHT_DSPEC)
-     HCopyright('v2.4.3 - 22.02.2019 - +
+     HCopyright('v3.0.0 - 20.04.2019 - +
      H           Copyright (c) 2013-2019 iRPGUnit Project Team')
       /eof
       /endif
      D cRPGUNIT_VERSION...
-     D                 C                   '2.4.3'
+     D                 C                   '3.0.0'
      D cRPGUNIT_DATE...
-     D                 C                   '22.02.2019'
+     D                 C                   '20.04.2019'
 

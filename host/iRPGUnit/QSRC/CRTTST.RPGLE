@@ -1,34 +1,46 @@
-       //----------------------------------------------------------------------
-       // Implementation of RUCRTST Command.
-       //----------------------------------------------------------------------
+      // ==========================================================================
+      //  iRPGUnit - Implementation of RUCRTTST command.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
+      // >>PRE-COMPILER<<
+      //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>IMPORTANT<<
+      //     >>PARM<<  OPTION(*EVENTF);
+      //     >>PARM<<  DBGVIEW(*LIST);
+      //   >>END-IMPORTANT<<
+      //   >>EXECUTE<<
+      // >>END-PRE-COMPILER<<
+      // ==========================================================================
 
       /include qinclude,H_SPEC
       /include qinclude,COPYRIGHT
 
-       //----------------------------------------------------------------------
-       //   IMPORTS
-       //----------------------------------------------------------------------
+      //----------------------------------------------------------------------
+      //   IMPORTS
+      //----------------------------------------------------------------------
 
-      /include qinclude,ERRORCODE
       /include qinclude,STRING
       /include qinclude,PGMMSG
-      /include qsysinc,QCMDEXC
       /include qinclude,TEMPLATES
-      /include qinclude,OSAPI
+      /include qinclude,SYSTEMAPI
+      /include qinclude,TESTUTILS
       /include qinclude,TAGTST
-      /include qsrc,TESTCASE
+      /include qinclude,OBJECT
 
-
-       //----------------------------------------------------------------------
-       //   PUBLIC PROTOTYPES
-       //----------------------------------------------------------------------
+      //----------------------------------------------------------------------
+      //   PUBLIC PROTOTYPES
+      //----------------------------------------------------------------------
 
       /include qinclude,CRTTST
 
-
-       //----------------------------------------------------------------------
-       //   PRIVATE PROTOTYPES
-       //----------------------------------------------------------------------
+      //----------------------------------------------------------------------
+      //   PRIVATE PROTOTYPES
+      //----------------------------------------------------------------------
 
      D crtRpgMod       pr
      D  testPgm                            const likeds(Object_t)
@@ -52,24 +64,16 @@
      D  text                               const like(Text_t    )
 
 
-       //----------------------------------------------------------------------
-       //   CONSTANTS
-       //----------------------------------------------------------------------
-
-       //----------------------------------------------------------------------
-       //   TEMPLATES
-       //----------------------------------------------------------------------
-
-       //----------------------------------------------------------------------
-       //   GLOBAL VARIABLES
-       //----------------------------------------------------------------------
+      //----------------------------------------------------------------------
+      //   GLOBAL VARIABLES
+      //----------------------------------------------------------------------
 
      D srvPgm          ds                  likeds(Object_t)
 
 
-       //----------------------------------------------------------------------
-       //   MAIN PROGRAM
-       //----------------------------------------------------------------------
+      //----------------------------------------------------------------------
+      //   MAIN PROGRAM
+      //----------------------------------------------------------------------
 
      D crtTst...
      D                 pr
@@ -108,11 +112,18 @@
      D i               s             10i 0
      D mbrType         s             10a
      D tmpOpts         ds                  likeds(Options_t)
+     D qSrcFile        ds                  likeds(Object_t)
 
       /free
 
+       qSrcFile = srcFile;
+
+       if (%subst(qSrcFile.lib: 1: 1) = '*');
+          qSrcFile.lib = Object_resolveLibrary(qSrcFile: '*FILE');
+       endif;
+
        if (srcMbr = '*TSTPGM');
-          mbrType = getMemberType(srcFile.nm: srcFile.lib: testPgm);
+          mbrType = getMemberType(qSrcFile.nm: qSrcFile.lib: testPgm);
           if (mbrType = MBR_RPGLE);
              tmpOpts = cOption;
           else;
@@ -142,13 +153,13 @@
             srcMbr2 = srcMbr;
          endif;
 
-         crtRpgMod( testPgm : srcFile : srcMbr2 : cOption : dbgView :
+         crtRpgMod( testPgm : qSrcFile : srcMbr2 : cOption : dbgView :
                     pOption : compileopt );
          srvPgm = crtSrvPgm(
                      testPgm : bndSrvPgm : bndDir : module : bOption :
                      actGrp : text2);
 
-         RUTAGTST(srvPgm.nm : srvPgm.lib : srcFile : testPgm.nm);
+         tagTstSrvPgm(srvPgm : qSrcFile : srcMbr2);
 
          sndCompMsg( 'Test program ' + %trim(srvPgm.nm)
                    + ' created in library ' + %trim(srvPgm.lib) + '.' );
@@ -179,7 +190,7 @@
      D  pOption                            const likeds(Options_t)
      D  compileopt                 5000a   const varying options(*varsize)
 
-       // A command to be executed.
+      // A command to be executed.
      D cmd             s                   like(Cmd_t)
       /free
 
@@ -197,7 +208,7 @@
      D                 pi
      D  testPgm                            const likeds(Object_t)
 
-       // A command to be executed.
+      // A command to be executed.
      D cmd             s                   like(Cmd_t)
       /free
 
@@ -219,16 +230,16 @@
      D  actGrp                             const like(ActivationGroup_t)
      D  text                               const like(Text_t)
 
-       // Export all procedures from the service program.
+      // Export all procedures from the service program.
      D EXPORT_ALL      c                   const('*ALL')
-       // A command to be executed.
+      // A command to be executed.
      D cmd             s                   like(Cmd_t)
-       // Bound Service Programs, with RPGUnit services included.
+      // Bound Service Programs, with RPGUnit services included.
      D bndSrvPgmWithRU...
      D                 ds                  likeds(ObjectArray_t)
-       // Completion message data.
+      // Completion message data.
      D compMsgData     s            256a
-       // Target service program.
+      // Target service program.
      D targetSrvPgm    ds                  likeds(Object_t)
 
       /free
@@ -270,11 +281,11 @@
      D  actGrp                             const like(ActivationGroup_t)
      D  text                               const like(Text_t )
 
-       // Command string accumulator.
+      // Command string accumulator.
      D module          ds                  likeds(modules)
-       // Command string accumulator.
+      // Command string accumulator.
      D cmd             s                   like(Cmd_t)
-       // Counter.
+      // Counter.
      D i               s             10i 0
 
       /free
@@ -336,10 +347,10 @@
      D  pOptions                           const likeds(Options_t)
      D  compileopt                 5000a   const varying options(*varsize)
 
-       // Command string accumulator.
+      // Command string accumulator.
      D cmd             s                   like(Cmd_t)
      D dbgCompileOpt   s                   like(compileOpt)
-       // Counter.
+      // Counter.
      D i               s             10i 0
 
       /free
@@ -400,7 +411,7 @@
      D                 pi                        like(Cmd_t)
      D  testPgm                            const likeds(Object_t)
 
-       // Command string accumulator.
+      // Command string accumulator.
      D cmd             s                   like(Cmd_t)
 
       /free
@@ -419,9 +430,9 @@
      D headToken                           const like(HeadToken_t)
      D array                               const likeds(ObjectArray_t)
 
-       // Serialized Object Array.
+      // Serialized Object Array.
      D serialized      s                   like(SerializedArray_t)
-       // Counter.
+      // Counter.
      D i               s             10i 0
 
       /free
@@ -449,7 +460,7 @@
      D                 pi                        like(SerializedObject_t)
      D  object                             const likeds(Object_t)
 
-       // Serialized object name.
+      // Serialized object name.
      D serialized      s                   like(SerializedObject_t) inz('')
 
       /free
@@ -472,9 +483,9 @@
      D headToken                           const like(HeadToken_t)
      D options                             const likeds(Options_t)
 
-       // Serialized Options.
+      // Serialized Options.
      D serialized      s                   like(SerializedOptions_t)
-       // Counter.
+      // Counter.
      D i               s             10i 0
 
       /free
@@ -504,9 +515,9 @@
      D headToken                           const like(HeadToken_t)
      D text                        5000a   const varying options(*varsize)
 
-       // Serialized Options.
+      // Serialized Options.
      D serialized      s                   like(SerializedString_t)
-       // Counter.
+      // Counter.
      D i               s             10i 0
 
       /free
@@ -542,7 +553,7 @@
      D headToken                     10a   const
      D value                               const like(String_t)
 
-       // Serialized Options.
+      // Serialized Options.
      D serialized      s                   like(SerializedString_t)
 
       /free

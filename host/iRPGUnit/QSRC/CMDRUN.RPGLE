@@ -1,33 +1,24 @@
-      // =================================================================== //
-      //  Utility . . . : RPGUnit                                            //
-      //  Object  . . . : CMDRUN                                             //
-      //  Type  . . . . : *MODULE                                            //
-      //  Description . : RPGUnit - Command line test runner.                //
-      // =================================================================== //
-      //  History:                                                           //
-      //                                                                     //
-      //  Datum       Name          Änderung                                 //
-      //  ----------  ------------  ---------------------------------------  //
-      //  11.11.2013  Th.Raddatz    Renamed and changed parameter            //
-      //                            testProcsToRun to accept up to 250       //
-      //                            procedure names.                         //
-      //                                                                     //
-      // =================================================================== //
-      // >>PRE-COMPILER<<                                                    //
-      //   >>CRTCMD<< CRTRPGMOD    MODULE(&LI/&OB) +                         //
-      //                           SRCFILE(&SL/&SF) +                        //
-      //                           SRCMBR(&SM);                              //
-      //   >>COMPILE<<                                                       //
-      //     >>PARM<< TRUNCNBR(*NO);                                         //
-      //     >>PARM<< DBGVIEW(*LIST);                                        //
-      //   >>END-COMPILE<<                                                   //
-      //   >>EXECUTE<<                                                       //
-      // >>END-PRE-COMPILER<<                                                //
-      // =================================================================== //
+      // ==========================================================================
+      //  iRPGUnit - Command line runner.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
+      // >>PRE-COMPILER<<
+      //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>IMPORTANT<<
+      //     >>PARM<<  OPTION(*EVENTF);
+      //     >>PARM<<  DBGVIEW(*LIST);
+      //   >>END-IMPORTANT<<
+      //   >>EXECUTE<<
+      // >>END-PRE-COMPILER<<
+      // ==========================================================================
 
       /include qinclude,H_SPEC
       /include qinclude,COPYRIGHT
-
 
        //----------------------------------------------------------------------
        //   Exported Procedures
@@ -43,13 +34,16 @@
       /include qinclude,ASSERT
       /include qinclude,CALLPROC
       /include qinclude,CMDRUNLOG
+      /include qinclude,CMDRUNSRV
+      /include qinclude,EXTTST
       /include qinclude,TEMPLATES
       /include qinclude,PGMMSG
-      /include qinclude,RUNNER
-      /include qllist,LLIST_H
       /include qinclude,STRING
       /include qinclude,LIBL
       /include qinclude,SRCMBR
+      /include qinclude,XMLWRITER
+      /include qllist,llist_h
+
 
       //----------------------------------------------------------------------
       //   Private Prototypes
@@ -116,6 +110,9 @@
        // Completion message.
      D msg             s            256a
 
+       // Error message when writing the XML file.
+     D errMsg          s            256a
+
        // Save/set/restore library list
      D savedLibl       ds                  likeds(LiblData_t)
      D mustRestoreLibl...
@@ -138,6 +135,7 @@
      D  libl                               const likeds(LibL_t)
      D  jobd                               const likeds(Object_t)
      D  rclRsc                             const like(rclrsc_t)
+     D  xmlStmf                            const like(stmf_t)
 
       /free
 
@@ -173,6 +171,15 @@
 
        result.assertCnt = getAssertCalled();
 
+       // Return result to xml file
+       if (xmlStmf <> '');
+         monitor;
+           writeXmlFile(xmlStmf : testSuite : testSuiteName : result);
+         on-error;
+           errMsg = rcvMsgTxt('*ESCAPE');
+         endmon;
+       endif;
+
        // Restore library list
        checkAndRestoreLibl(mustRestoreLibl: savedLibl);
 
@@ -197,7 +204,12 @@
        if result.failureCnt = 0 and result.errorCnt = 0;
          sndCompMsg( msg );
        else;
-         sndEscapeMsgAboveCtlBdy( msg );
+         if (errMsg <> '');
+           sndCompMsg( msg );
+           sndEscapeMsgAboveCtlBdy( errMsg );
+         else;
+           sndEscapeMsgAboveCtlBdy( msg );
+         endif;
        endif;
 
        *inlr = *on;

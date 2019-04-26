@@ -1,19 +1,25 @@
-     /* =================================================================== */
-     /*  RPGUnit - Create a test suite.                                     */
-     /* =================================================================== */
-     /*   >>PRE-COMPILER<<                                                  */
-     /*     >>CRTCMD<<  CRTCMD        CMD(&LI/&OB) +                        */
-     /*                               SRCFILE(&SL/&SF)  +                   */
-     /*                               SRCMBR(&SM);                          */
-     /*     >>COMPILE<<                                                     */
-     /*       >>PARM<< PGM(&LI/RUCRTTST);                                   */
-     /*       >>PARM<< HLPPNLGRP(&LI/RUCRTTST);                             */
-     /*       >>PARM<< HLPID(RUCRTTST);                                     */
-     /*     >>END-COMPILE<<                                                 */
-     /*     >>EXECUTE<<                                                     */
-     /*   >>END-PRE-COMPILER<<                                              */
-     /* =================================================================== */
-             CMD        PROMPT('RPGUnit - Create Test')
+     /* ===================================================================== */
+     /*  iRPGUnit - Create Test Suite.                                        */
+     /* ===================================================================== */
+     /*  Copyright (c) 2013-2019 iRPGUnit Project Team                        */
+     /*  All rights reserved. This program and the accompanying materials     */
+     /*  are made available under the terms of the Common Public License v1.0 */
+     /*  which accompanies this distribution, and is available at             */
+     /*  http://www.eclipse.org/legal/cpl-v10.html                            */
+     /* ===================================================================== */
+     /*   >>PRE-COMPILER<<                                                    */
+     /*     >>CRTCMD<<  CRTCMD        CMD(&LI/&OB) +                          */
+     /*                               SRCFILE(&SL/&SF)  +                     */
+     /*                               SRCMBR(&SM);                            */
+     /*     >>COMPILE<<                                                       */
+     /*       >>PARM<< PGM(&LI/RUCRTTST);                                     */
+     /*       >>PARM<< HLPPNLGRP(&LI/RUCRTTST);                               */
+     /*       >>PARM<< HLPID(RUCRTTST);                                       */
+     /*     >>END-COMPILE<<                                                   */
+     /*     >>EXECUTE<<                                                       */
+     /*   >>END-PRE-COMPILER<<                                                */
+     /* ===================================================================== */
+             CMD        PROMPT('iRPGUnit - Create Test Suite')
 
              PARM       KWD(TSTPGM)                          +
                         TYPE(PGM)                            +

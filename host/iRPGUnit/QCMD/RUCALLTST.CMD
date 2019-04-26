@@ -1,19 +1,25 @@
-     /* =================================================================== */
-     /*  RPGUnit - Call a test suite by command line.                       */
-     /* =================================================================== */
-     /*   >>PRE-COMPILER<<                                                  */
-     /*     >>CRTCMD<<  CRTCMD        CMD(&LI/&OB) +                        */
-     /*                               SRCFILE(&SL/&SF)  +                   */
-     /*                               SRCMBR(&SM);                          */
-     /*     >>COMPILE<<                                                     */
-     /*       >>PARM<< PGM(&LI/RUCALLTST);                                  */
-     /*       >>PARM<< HLPPNLGRP(&LI/RUCALLTST);                            */
-     /*       >>PARM<< HLPID(RUCALLTST);                                    */
-     /*     >>END-COMPILE<<                                                 */
-     /*     >>EXECUTE<<                                                     */
-     /*   >>END-PRE-COMPILER<<                                              */
-     /* =================================================================== */
-             CMD        PROMPT('RPGUnit - Call Tests')
+     /* ===================================================================== */
+     /*  iRPGUnit - Execute Test Suite.                                       */
+     /* ===================================================================== */
+     /*  Copyright (c) 2013-2019 iRPGUnit Project Team                        */
+     /*  All rights reserved. This program and the accompanying materials     */
+     /*  are made available under the terms of the Common Public License v1.0 */
+     /*  which accompanies this distribution, and is available at             */
+     /*  http://www.eclipse.org/legal/cpl-v10.html                            */
+     /* ===================================================================== */
+     /*   >>PRE-COMPILER<<                                                    */
+     /*     >>CRTCMD<<  CRTCMD        CMD(&LI/&OB) +                          */
+     /*                               SRCFILE(&SL/&SF)  +                     */
+     /*                               SRCMBR(&SM);                            */
+     /*     >>COMPILE<<                                                       */
+     /*       >>PARM<< PGM(&LI/RUCALLTST);                                    */
+     /*       >>PARM<< HLPPNLGRP(&LI/RUCALLTST);                              */
+     /*       >>PARM<< HLPID(RUCALLTST);                                      */
+     /*     >>END-COMPILE<<                                                   */
+     /*     >>EXECUTE<<                                                       */
+     /*   >>END-PRE-COMPILER<<                                                */
+     /* ===================================================================== */
+             CMD        PROMPT('iRPGUnit - Execute Test Suite')
 
              PARM       KWD(TSTPGM)                          +
                         TYPE(OBJ)                            +
@@ -85,6 +91,13 @@
                                *ALWAYS                       +
                                *ONCE   )                     +
                         PROMPT('Reclaim resources')
+
+             PARM       KWD(XMLSTMF)                         +
+                        TYPE(*CHAR)                          +
+                        LEN(1024)                            +
+                        VARY(*YES *INT2)                     +
+                        CASE(*MIXED)                         +
+                        PROMPT('XML stream file')
 
  OBJ:        QUAL       TYPE(*NAME) LEN(10)
              QUAL       TYPE(*NAME) LEN(10) DFT(*LIBL)       +

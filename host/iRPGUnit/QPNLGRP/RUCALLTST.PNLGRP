@@ -1,22 +1,29 @@
-.* =================================================================== */
-.*  iRPGUnit - Execute Test Suite.                                     */
-.* =================================================================== */
-.*   >>PRE-COMPILER<<                                                  */
-.*     >>CRTCMD<<  CRTPNLGRP  PNLGRP(&LI/&OB) +                        */
-.*                               SRCFILE(&SL/&SF)  +                   */
-.*                               SRCMBR(&SM);                          */
-.*     >>IMPORTANT<<                                                   */
-.*       >>PARM<< OPTION(*EVENTF);                                     */
-.*     >>END-IMPORTANT<<                                               */
-.*     >>EXECUTE<<                                                     */
-.*   >>END-PRE-COMPILER<<                                              */
-.* =================================================================== */
+.* ==========================================================================
+.*  iRPGUnit - Execute Test Suite.
+.* ==========================================================================
+.*  Copyright (c) 2013-2019 iRPGUnit Project Team
+.*  All rights reserved. This program and the accompanying materials
+.*  are made available under the terms of the Common Public License v1.0
+.*  which accompanies this distribution, and is available at
+.*  http://www.eclipse.org/legal/cpl-v10.html
+.* ==========================================================================
+.*   >>PRE-COMPILER<<
+.*     >>CRTCMD<<  CRTPNLGRP  PNLGRP(&LI/&OB) +
+.*                               SRCFILE(&SL/&SF)  +
+.*                               SRCMBR(&SM);
+.*     >>IMPORTANT<<
+.*       >>PARM<< OPTION(*EVENTF);
+.*     >>END-IMPORTANT<<
+.*     >>EXECUTE<<
+.*   >>END-PRE-COMPILER<<
+.* ==========================================================================
 :pnlgrp.
 .*
 :help name=RUCALLTST WIDTH=74.
-RPGUnit Call Tests (RUCALLTST) - Help
+iRPGUnit - Execute Test Suite (RUCALLTST) - Help
 :p.
-The RPGUnit Call Tests (RUCALLTST) command runs a test suite or a test procedure.
+The :HP2.iRPGUnit - Execute Test Suite:EHP2. (RUCALLTST) command runs a test
+suite or a test procedure.
 :ehelp.
 .*
 :help name='RUCALLTST/TSTPGM' WIDTH=64.
@@ -147,6 +154,20 @@ not set the *INLR indicator.
 :pd.Resources are reclaimed after each test case and at the end of the test suite.
 :pt.*ONCE
 :pd.Resources are reclaimed at the end of the test suite.
+:eparml.
+:ehelp.
+.*
+:help name='RUCALLTST/XMLSTMF' WIDTH=64.
+XML stream file (XMLSTMF) - Help
+:xh3.XML stream file (XMLSTMF)
+:p.
+Name of an XML stream file that contains the result of
+the unit test. The XML file is created with a format, which
+can be parsed by the Jenkins build server.
+:parml.
+:pt.xml-stream-file-name
+:pd.Name of the XML stream file that contains the result of
+the unit test.
 :eparml.
 :ehelp.
 .*

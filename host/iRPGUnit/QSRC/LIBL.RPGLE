@@ -1,9 +1,25 @@
-      //
-      // Library list handling.
-      //
+      // ==========================================================================
+      //  iRPGUnit - Library list Utilities.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
+      // >>PRE-COMPILER<<
+      //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>IMPORTANT<<
+      //     >>PARM<<  OPTION(*EVENTF);
+      //     >>PARM<<  DBGVIEW(*LIST);
+      //   >>END-IMPORTANT<<
+      //   >>EXECUTE<<
+      // >>END-PRE-COMPILER<<
+      // ==========================================================================
 
      H NoMain
       /include qinclude,H_SPEC
+      /include qinclude,COPYRIGHT
 
       //----------------------------------------------------------------------
       //   Exported Procedures
@@ -11,17 +27,13 @@
 
       /include qinclude,LIBL
 
-
       //----------------------------------------------------------------------
       //   Imported Procedures
       //----------------------------------------------------------------------
 
       /include qinclude,TEMPLATES
+      /include qinclude,SYSTEMAPI
       /include qinclude,ERRORCODE
-      /include qsysinc,QWDRJOBD
-      /include qsysinc,QUSRJOBI
-      /include qsysinc,QLICHGLL
-
 
       //----------------------------------------------------------------------
       //   Procedure Definitions
@@ -38,6 +50,9 @@
      D  bytAvl                       10I 0
      D jobi0700        ds                  likeds(jobi0700_t) based(pJOBI0700)
      D liblE           s             11a   based(pLiblE)
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
       /free
 
          QUSRJOBI(
@@ -90,6 +105,9 @@
      D  bytAvl                       10I 0
      D jobd0100        ds                  likeds(jobd0100_t) based(pJOBD0100)
      D liblE           s             11a   based(pLiblE)
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
       /free
 
          QWDRJOBD(
@@ -130,6 +148,9 @@
      D  numE                   1      4i 0 inz
      D  lib                    5   2754a   inz dim(250)
      D  libs                   5   2754a
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
       /free
 
          for i = 1 to liblData.libL.numE;

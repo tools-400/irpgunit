@@ -1,12 +1,24 @@
-     /**
-      * \brief Run test suite from remote and fill userspace
-      *
-      *
-      * \author Mihael Schmidt
-      * \date   16.02.2010
-      */
+      // ==========================================================================
+      //  iRPGUnit - Plug-in Adapter.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
+      // >>PRE-COMPILER<<
+      //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>IMPORTANT<<
+      //     >>PARM<<  OPTION(*EVENTF);
+      //     >>PARM<<  DBGVIEW(*LIST);
+      //   >>END-IMPORTANT<<
+      //   >>EXECUTE<<
+      // >>END-PRE-COMPILER<<
+      // ==========================================================================
 
      H nomain
+      /include qinclude,H_SPEC
       /include qinclude,COPYRIGHT
 
       // User space version number 1. Introduced 22.04.2013.
@@ -22,8 +34,9 @@
       *-------------------------------------------------------------------------
       * Prototypes
       *-------------------------------------------------------------------------
-      /include qinclude,RMTRUNSRV
 
+      /include qinclude,RMTRUNSRV
+      /include qinclude,ERRORCODE
 
      D fillUserspace   PR
      D   userspace                         likeds(Object_t ) const
@@ -49,22 +62,16 @@
      D   int1                        10i 0 value
      D   int2                        10i 0 value
 
-      /include qinclude,OSAPI
+      /include qinclude,SYSTEMAPI
       /include qinclude,ASSERT
       /include qinclude,CALLPROC
       /include qinclude,CMDRUNLOG
       /include qinclude,PGMMSG
-      /include qinclude,RUNNER
+      /include qinclude,CMDRUNSRV
       /include qinclude,CMDRUN
-      /include qllist,LLIST_H
       /include qinclude,LIBL
       /include qinclude,SRCMBR
-
-      /if not defined(QUSEC)
-      /define QUSEC
-      /include QSYSINC/QRPGLESRC,QUSEC
-      /endif
-
+      /include qllist,llist_h
 
       *-------------------------------------------------------------------------
       * Type Templates
@@ -284,11 +291,12 @@
      D header          DS                  likeds(tmpl_testSuite) based(usPtr)
      D entry           DS                  likeds(tmpl_testCase_v1) based(eptr)
      D testResult      DS                  likeds(TestResult_t) based(ptr)
+     D errorCode       DS                  likeds(errorCode_t) inz(*likeds)
       /free
 
-       clear QUSEC;
-       QUSBPRV = 0;
-       api_retrieveUserspacePointer(userspace : usPtr : QUSEC);
+       clear errorCode;
+       errorCode.bytPrv = 0;
+       api_retrieveUserspacePointer(userspace : usPtr : errorCode);
 
        splF = getLogSplF();
 

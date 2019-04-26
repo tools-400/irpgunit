@@ -1,26 +1,39 @@
-      // =====================================================================
-      //
-      // Tests RUN.
-      //
-      // =====================================================================
-      //   >>PRE-COMPILER<<
-      //     >>CMD<<    CRTBNDCL   PGM(QTEMP/MKRUNT) SRCFILE(&SF);
-      //     >>CMD<<    CALL       PGM(QTEMP/MKRUNT) PARM(&LI);
-      //   >>END-PRE-COMPILER<<
-      // =====================================================================
+      // ==========================================================================
+      //  iRPGUnit SelfTest - Test RUN.
+      // ==========================================================================
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
+      // ==========================================================================
+      // >>PRE-COMPILER<<
+      //   >>CRTCMD<<  RUCRTTST TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>IMPORTANT<<
+      //     >>PARM<<  MODULE(&LI/CMDRUNSRV +
+      //                      &LI/CALLPROC  +
+      //                      &LI/EXTPRC    +
+      //                      &LI/EXTTST    +
+      //                      &LI/LLIST     +
+      //                      &LI/PGMMSG    +
+      //                      &LI/STRING    +
+      //                      &LI/USRSPC    +
+      //                      );
+      //   >>END-IMPORTANT<<
+      //   >>EXECUTE<<
+      // >>END-PRE-COMPILER<<
+      // ==========================================================================
 
      H NoMain Option(*SrcStmt)
-
 
       //----------------------------------------------------------------------
       //   Imported Procedures
       //----------------------------------------------------------------------
 
-      /include qinclude,PGMMSG
-      /include qinclude,RUNNER
-      /include qinclude,CMDRUNSRV
-      /include qinclude,TEMPLATES
-      /include qsrc,TESTCASE
+      /copy qinclude,PGMMSG
+      /copy qinclude,CMDRUNSRV
+      /copy qinclude,TEMPLATES
+      /copy qinclude,ASSERT
 
 
       //----------------------------------------------------------------------

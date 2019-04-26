@@ -1,5 +1,5 @@
       // ==========================================================================
-      // Service program with only one export.
+      //  iRPGUnit Fixture - SRVPGM with one export.
       // ==========================================================================
       //  Copyright (c) 2013-2019 iRPGUnit Project Team
       //  All rights reserved. This program and the accompanying materials
