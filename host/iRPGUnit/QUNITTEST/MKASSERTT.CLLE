@@ -1,0 +1,60 @@
+      /* =================================================================== */
+      /*  iRPGUnit SelfTest - Build ASSERTT.                                  */
+      /*                                                                     */
+      /*  Usage: CALL MKASSERTT TARGETLIB                                    */
+      /*    where TARGETLIB is the library containing the RPGUnit            */
+      /*    source files.                                                    */
+      /* =================================================================== */
+      /*  Copyright (c) 2013-2019 iRPGUnit Project Team                      */
+      /*  All rights reserved. This program and the accompanying materials   */
+      /*  are made available under the terms of the Common Public License    */
+      /*  v1.0 which accompanies this distribution, and is available at      */
+      /*  http://www.eclipse.org/legal/cpl-v10.html                          */
+      /* =================================================================== */
+      /* >>PRE-COMPILER<<                                                    */
+      /*   >>CRTCMD<< CRTBNDCL     PGM(&LI/&OB) +                            */
+      /*                           SRCFILE(&SL/&SF) +                        */
+      /*                           SRCMBR(&SM);                              */
+      /*   >>COMPILE<<                                                       */
+      /*     >>PARM<< DBGVIEW(*LIST);                                        */
+      /*     >>PARM<< OPTION(*EVENTF);                                       */
+      /*   >>END-COMPILE<<                                                   */
+      /*   >>EXECUTE<<                                                       */
+      /* >>END-PRE-COMPILER<<                                                */
+      /* =================================================================== */
+             PGM        PARM(&TARGETLIB &I_DBGVIEW &I_TGTRLS)
+
+             DCL        VAR(&TARGETLIB) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&I_DBGVIEW) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&I_TGTRLS ) TYPE(*CHAR) LEN(10)
+
+             DCL        VAR(&DBGVIEW  ) TYPE(*CHAR) LEN(10) VALUE('*LIST')
+             DCL        VAR(&TGTRLS   ) TYPE(*CHAR) LEN(10) VALUE(*CURRENT)
+
+             CHGVAR     VAR(&DBGVIEW) VALUE(&I_DBGVIEW)
+             MONMSG     MSGID(MCH3601) EXEC(DO)
+                RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
+             ENDDO
+
+             CHGVAR     VAR(&TGTRLS) VALUE(&I_TGTRLS)
+             MONMSG     MSGID(MCH3601) EXEC(DO)
+                RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
+             ENDDO
+
+             CRTRPGMOD  MODULE(QTEMP/ASSERTT) SRCFILE(QUNITTEST) +
+                          DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
+             CRTRPGMOD  MODULE(QTEMP/ASSERT) SRCFILE(QSRC) +
+                          DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
+             CRTRPGMOD  MODULE(QTEMP/PGMMSG) SRCFILE(QSRC) +
+                          DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
+
+             CRTSRVPGM  SRVPGM(&TARGETLIB/ASSERTT) +
+                          MODULE(QTEMP/ASSERTT +
+                                 QTEMP/ASSERT  +
+                                 QTEMP/PGMMSG) +
+                          EXPORT(*ALL) +
+                          OPTION(*DUPPROC) +
+                          BNDSRVPGM(*LIBL/RUTESTCASE) +
+                          TEXT('RPGUnit SelfTest - Test ASSERT.')
+
+             ENDPGM
