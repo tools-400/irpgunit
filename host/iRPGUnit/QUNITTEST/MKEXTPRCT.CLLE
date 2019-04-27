@@ -1,40 +1,66 @@
-     /* =================================================================== */
-     /*  RPGUnit SelfTest - Build EXTPRCT.                                  */
-     /*                                                                     */
-     /*  Usage: CALL MKEXTPRCT TARGETLIB                                    */
-     /*    where TARGETLIB is the library containing the RPGUnit            */
-     /*    source files.                                                    */
-     /* =================================================================== */
-     /*   >>PRE-COMPILER<<                                                  */
-     /*     >>CRTCMD<<  CRTBNDCL      PGM(&LI/&OB) +                        */
-     /*                               SRCFILE(&SL/&SF)  +                   */
-     /*                               SRCMBR(&SM);                          */
-     /*     >>COMPILE<<                                                     */
-     /*       >>PARM<< DBGVIEW(*LIST);                                      */
-     /*     >>END-COMPILE<<                                                 */
-     /*     >>LINK<<                                                        */
-     /*       >>PARM<< DFTACTGRP(*NO);                                      */
-     /*       >>PARM<< ACTGRP(*NEW);                                        */
-     /*     >>END-LINK<<                                                    */
-     /*     >>EXECUTE<<                                                     */
-     /*   >>END-PRE-COMPILER<<                                              */
-     /* =================================================================== */
-             PGM        PARM(&TARGETLIB)
+      /* =================================================================== */
+      /*  iRPGUnit SelfTest - Build EXTPRCT.                                 */
+      /*                                                                     */
+      /*  Usage: CALL MKEXTPRCT TARGETLIB                                    */
+      /*    where TARGETLIB is the library containing the RPGUnit            */
+      /*    source files.                                                    */
+      /* =================================================================== */
+      /*  Copyright (c) 2013-2019 iRPGUnit Project Team                      */
+      /*  All rights reserved. This program and the accompanying materials   */
+      /*  are made available under the terms of the Common Public License    */
+      /*  v1.0 which accompanies this distribution, and is available at      */
+      /*  http://www.eclipse.org/legal/cpl-v10.html                          */
+      /* =================================================================== */
+      /* >>PRE-COMPILER<<                                                    */
+      /*   >>CRTCMD<< CRTBNDCL     PGM(&LI/&OB) +                            */
+      /*                           SRCFILE(&SL/&SF) +                        */
+      /*                           SRCMBR(&SM);                              */
+      /*   >>COMPILE<<                                                       */
+      /*     >>PARM<< DBGVIEW(*LIST);                                        */
+      /*     >>PARM<< OPTION(*EVENTF);                                       */
+      /*   >>END-COMPILE<<                                                   */
+      /*   >>EXECUTE<<                                                       */
+      /* >>END-PRE-COMPILER<<                                                */
+      /* =================================================================== */
+             PGM        PARM(&TARGETLIB &I_DBGVIEW &I_TGTRLS)
+
              DCL        VAR(&TARGETLIB) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&I_DBGVIEW) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&I_TGTRLS ) TYPE(*CHAR) LEN(10)
 
-             CHGVAR     VAR(&TARGETLIB) VALUE(&TARGETLIB)
-             MONMSG     MSGID(MCH3601) EXEC(SNDPGMMSG MSGID(CPF9898) +
-                          MSGF(QCPFMSG) MSGDTA('Target library +
-                          parameter required.') MSGTYPE(*ESCAPE))
+             DCL        VAR(&DBGVIEW  ) TYPE(*CHAR) LEN(10) VALUE('*LIST')
+             DCL        VAR(&TGTRLS   ) TYPE(*CHAR) LEN(10) VALUE(*CURRENT)
 
-             CRTRPGMOD  MODULE(QTEMP/EXTPRC) SRCFILE(QSRC) +
-                          DBGVIEW(*LIST)
+             CHGVAR     VAR(&DBGVIEW) VALUE(&I_DBGVIEW)
+             MONMSG     MSGID(MCH3601) EXEC(DO)
+                RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
+             ENDDO
+
+             CHGVAR     VAR(&TGTRLS) VALUE(&I_TGTRLS)
+             MONMSG     MSGID(MCH3601) EXEC(DO)
+                RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
+             ENDDO
+
              CRTRPGMOD  MODULE(QTEMP/EXTPRCT) SRCFILE(QUNITTEST) +
-                          DBGVIEW(*LIST)
+                          DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
+             CRTRPGMOD  MODULE(QTEMP/EXTPRC) SRCFILE(QSRC) +
+                          DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
+             CRTRPGMOD  MODULE(QTEMP/OBJECT) SRCFILE(QSRC) +
+                          DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
+             CRTRPGMOD  MODULE(QTEMP/SRCMBR) SRCFILE(QSRC) +
+                          DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
+             CRTRPGMOD  MODULE(QTEMP/USRSPC) SRCFILE(QSRC) +
+                          DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
+
              CRTSRVPGM  SRVPGM(&TARGETLIB/EXTPRCT) +
-                          MODULE(QTEMP/EXTPRCT QTEMP/EXTPRC) +
-                          EXPORT(*ALL) BNDSRVPGM(RURUNNER +
-                          RUTESTCASE) OPTION(*DUPPROC) +
+                          MODULE(QTEMP/EXTPRCT +
+                                 QTEMP/EXTPRC  +
+                                 QTEMP/OBJECT  +
+                                 QTEMP/SRCMBR  +
+                                 QTEMP/USRSPC) +
+                          EXPORT(*ALL) +
+                          OPTION(*DUPPROC) +
+                          BNDSRVPGM(*LIBL/RUTESTCASE) +
                           TEXT('RPGUnit SelfTest - Test EXTPRC.')
 
              ENDPGM
