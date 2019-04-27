@@ -1,6 +1,12 @@
       /* =================================================================== */
       /*   iRPGUnit - Build the whole framework. Run First.                  */
       /* =================================================================== */
+      /*  Copyright (c) 2013-2019 iRPGUnit Project Team                      */
+      /*  All rights reserved. This program and the accompanying materials   */
+      /*  are made available under the terms of the Common Public License    */
+      /*  v1.0 which accompanies this distribution, and is available at      */
+      /*  http://www.eclipse.org/legal/cpl-v10.html                          */
+      /* =================================================================== */
       /*   Installation Instructions:                                        */
       /*                                                                     */
       /*   a) Compile the A_INSTALL CL program:                              */
@@ -126,118 +132,136 @@ FINISHED:
                /* - - - - - - - - - - - - - - - - - - - - */
                /*  Create modules.                        */
                /* - - - - - - - - - - - - - - - - - - - - */
-               CALLSUBR   SUBR(CMPMODS)
+               /* CALLSUBR   SUBR(CMPMODS) TODO: obsolete */
 
                /* - - - - - - - - - - - - - - - - - - - - */
                /*  Create service program RUTESTCASE.     */
                /* - - - - - - - - - - - - - - - - - - - - */
-               CRTSRVPGM  SRVPGM(&LIB/RUTESTCASE) +
-                            MODULE(&LIB/ASSERT     +
-                                   &LIB/PGMMSG     +
-                                   &LIB/VERSION    +
-                                   &LIB/TESTUTILS) +
-                            EXPORT(*SRCFILE) +
-                            SRCFILE(&LIB/QBND) +
-                            SRCMBR(RUTESTCASE) +
-                            ACTGRP(*CALLER) +
-                            ALWUPD(*YES) +
-                            ALWLIBUPD(*YES) +
-                            DETAIL(*NONE) +
-                            TGTRLS(&TGTRLS) +
-                            TEXT('iRPGUnit - Test Suite Toolkit.')
+               CRTBNDCL   PGM(QTEMP/MKTESTCASE) SRCFILE(&LIB/&SRCF_RUNIT) SRCMBR(*PGM)
+               CALL       PGM(QTEMP/MKTESTCASE) PARM(&LIB &DBGVIEW &TGTRLS)
+               /* TODO: obsolete */
+               /* CRTSRVPGM  SRVPGM(&LIB/RUTESTCASE) +                                             +
+                            MODULE(&LIB/ASSERT     +                                               +
+                                   &LIB/PGMMSG     +                                               +
+                                   &LIB/VERSION    +                                               +
+                                   &LIB/TESTUTILS) +                                               +
+                            EXPORT(*SRCFILE) +                                                     +
+                            SRCFILE(&LIB/QBND) +                                                   +
+                            SRCMBR(RUTESTCASE) +                                                   +
+                            ACTGRP(*CALLER) +                                                      +
+                            ALWUPD(*YES) +                                                         +
+                            ALWLIBUPD(*YES) +                                                      +
+                            DETAIL(*NONE) +                                                        +
+                            TGTRLS(&TGTRLS) +                                                      +
+                            TEXT('iRPGUnit - Test Suite Toolkit.')*/
+
+               /* - - - - - - - - - - - - - - - - - - - - */
+               /*  Create commands: RUCALLTST, RUCRTTST   */
+               /* - - - - - - - - - - - - - - - - - - - - */
+               CRTBNDCL   PGM(QTEMP/MKCMD) SRCFILE(&LIB/QCMD) SRCMBR(*PGM)
+               CALL       PGM(QTEMP/MKCMD) PARM(&LIB &DBGVIEW &TGTRLS)
 
                /* - - - - - - - - - - - - - - - - - - - - */
                /*  Create program RUCALLTST.              */
                /* - - - - - - - - - - - - - - - - - - - - */
-               CRTPGM     PGM(&LIB/RUCALLTST) +
-                            MODULE(&LIB/CMDRUN    +
-                                   &LIB/CMDRUNLOG +
-                                   &LIB/CMDRUNPRT +
-                                   &LIB/CMDRUNSRV +
-                                   &LIB/CALLPROC  +
-                                   &LIB/EXTPRC    +
-                                   &LIB/EXTTST    +
-                                   &LIB/LIBL      +
-                                   &LIB/LLIST     +
-                                   &LIB/PGMMSG    +
-                                   &LIB/STRING    +
-                                   &LIB/USRSPC    +
-                                   &LIB/XMLWRITER ) +
-                            ENTMOD(&LIB/CMDRUN) +
-                            BNDSRVPGM(*LIBL/RUTESTCASE) +
-                            ACTGRP(*NEW) +
-                            ALWUPD(*YES) +
-                            ALWLIBUPD(*YES) +
-                            DETAIL(*NONE) +
-                            TGTRLS(&TGTRLS) +
-                            TEXT('iRPGUnit - Execute Test Suite.')
-
-               CRTPNLGRP  PNLGRP(&LIB/RUCALLTST) +
-                            SRCFILE(&LIB/QPNLGRP) SRCMBR(*PNLGRP)
-
-               CRTCMD     CMD(&LIB/RUCALLTST) +
-                            PGM(*LIBL/RUCALLTST) +
-                            SRCFILE(&LIB/QCMD) SRCMBR(*CMD) +
-                            HLPPNLGRP(*LIBL/RUCALLTST) +
-                            HLPID(RUCALLTST)
+               /* CRTBNDCL   PGM(QTEMP/MKCALLTST) SRCFILE(&LIB/&SRCF_RUNIT) SRCMBR(*PGM)           +
+               CALL       PGM(QTEMP/MKCALLTST) PARM(&LIB &DBGVIEW &TGTRLS)*/
+               /* TODO: obsolete */
+               /* CRTPGM     PGM(&LIB/RUCALLTST) +                                                 +
+                            MODULE(&LIB/CMDRUN    +                                                +
+                                   &LIB/CMDRUNLOG +                                                +
+                                   &LIB/CMDRUNPRT +                                                +
+                                   &LIB/CMDRUNSRV +                                                +
+                                   &LIB/CALLPROC  +                                                +
+                                   &LIB/EXTPRC    +                                                +
+                                   &LIB/EXTTST    +                                                +
+                                   &LIB/LIBL      +                                                +
+                                   &LIB/LLIST     +                                                +
+                                   &LIB/PGMMSG    +                                                +
+                                   &LIB/STRING    +                                                +
+                                   &LIB/USRSPC    +                                                +
+                                   &LIB/XMLWRITER ) +                                              +
+                            ENTMOD(&LIB/CMDRUN) +                                                  +
+                            BNDSRVPGM(*LIBL/RUTESTCASE) +                                          +
+                            ACTGRP(*NEW) +                                                         +
+                            ALWUPD(*YES) +                                                         +
+                            ALWLIBUPD(*YES) +                                                      +
+                            DETAIL(*NONE) +                                                        +
+                            TGTRLS(&TGTRLS) +                                                      +
+                            TEXT('iRPGUnit - Execute Test Suite.')                                 +
+                                                                                                   +
+               CRTPNLGRP  PNLGRP(&LIB/RUCALLTST) +                                                 +
+                            SRCFILE(&LIB/QPNLGRP) SRCMBR(*PNLGRP)                                  +
+                                                                                                   +
+               CRTCMD     CMD(&LIB/RUCALLTST) +                                                    +
+                            PGM(*LIBL/RUCALLTST) +                                                 +
+                            SRCFILE(&LIB/QCMD) SRCMBR(*CMD) +                                      +
+                            HLPPNLGRP(*LIBL/RUCALLTST) +                                           +
+                            HLPID(RUCALLTST)                                                      */
 
                /* - - - - - - - - - - - - - - - - - - - - */
                /*  Create program RUCRTTST.               */
                /* - - - - - - - - - - - - - - - - - - - - */
-               CRTPGM     PGM(&LIB/RUCRTTST) +
-                            MODULE(&LIB/CRTTST    +
-                                   &LIB/OBJECT    +
-                                   &LIB/PGMMSG    +
-                                   &LIB/SRCMBR    +
-                                   &LIB/STRING    +
-                                   &LIB/TAGTST    +
-                                   &LIB/USRSPC    ) +
-                            ENTMOD(&LIB/CRTTST) +
-                            BNDSRVPGM(*LIBL/RUTESTCASE) +
-                            ACTGRP(*NEW) +
-                            ALWUPD(*YES) +
-                            ALWLIBUPD(*YES) +
-                            DETAIL(*NONE) +
-                            TGTRLS(&TGTRLS) +
-                            TEXT('iRPGUnit - Create Test Suite.')
-
-               CRTPNLGRP  PNLGRP(&LIB/RUCRTTST) +
-                            SRCFILE(&LIB/QPNLGRP) SRCMBR(*PNLGRP)
-
-               CRTCMD     CMD(&LIB/RUCRTTST) +
-                            PGM(*LIBL/RUCRTTST) +
-                            SRCFILE(&LIB/QCMD) SRCMBR(*CMD) +
-                            HLPPNLGRP(*LIBL/RUCRTTST) +
-                            HLPID(RUCRTTST)
+               /* CRTBNDCL   PGM(QTEMP/MKCRTTST) SRCFILE(&LIB/&SRCF_RUNIT) SRCMBR(*PGM)            +
+               CALL       PGM(QTEMP/MKCRTTST) PARM(&LIB &DBGVIEW &TGTRLS)*/
+               /* TODO: obsolete */
+               /* CRTPGM     PGM(&LIB/RUCRTTST) +                                                  +
+                            MODULE(&LIB/CRTTST    +                                                +
+                                   &LIB/OBJECT    +                                                +
+                                   &LIB/PGMMSG    +                                                +
+                                   &LIB/SRCMBR    +                                                +
+                                   &LIB/STRING    +                                                +
+                                   &LIB/TAGTST    +                                                +
+                                   &LIB/USRSPC    ) +                                              +
+                            ENTMOD(&LIB/CRTTST) +                                                  +
+                            BNDSRVPGM(*LIBL/RUTESTCASE) +                                          +
+                            ACTGRP(*NEW) +                                                         +
+                            ALWUPD(*YES) +                                                         +
+                            ALWLIBUPD(*YES) +                                                      +
+                            DETAIL(*NONE) +                                                        +
+                            TGTRLS(&TGTRLS) +                                                      +
+                            TEXT('iRPGUnit - Create Test Suite.')                                  +
+                                                                                                   +
+               CRTPNLGRP  PNLGRP(&LIB/RUCRTTST) +                                                  +
+                            SRCFILE(&LIB/QPNLGRP) SRCMBR(*PNLGRP)                                  +
+                                                                                                   +
+               CRTCMD     CMD(&LIB/RUCRTTST) +                                                     +
+                            PGM(*LIBL/RUCRTTST) +                                                  +
+                            SRCFILE(&LIB/QCMD) SRCMBR(*CMD) +                                      +
+                            HLPPNLGRP(*LIBL/RUCRTTST) +                                            +
+                            HLPID(RUCRTTST)*/
 
                /* - - - - - - - - - - - - - - - - - - - - */
                /*  Create program RUPGMRMT.               */
                /* - - - - - - - - - - - - - - - - - - - - */
-               CRTPGM     PGM(&LIB/RUPGMRMT) +
-                            MODULE(&LIB/PGMRMT    +
-                                   &LIB/CALLPROC  +
-                                   &LIB/CMDRUN    +
-                                   &LIB/CMDRUNSRV +
-                                   &LIB/CMDRUNPRT +
-                                   &LIB/CMDRUNLOG +
-                                   &LIB/EXTPRC    +
-                                   &LIB/EXTTST    +
-                                   &LIB/LIBL      +
-                                   &LIB/LLIST     +
-                                   &LIB/PGMMSG    +
-                                   &LIB/SRCMBR    +
-                                   &LIB/STRING    +
-                                   &LIB/USRSPC    +
-                                   &LIB/RMTRUNSRV +
-                                   &LIB/XMLWRITER ) +
-                            ENTMOD(&LIB/PGMRMT) +
-                            BNDSRVPGM(*LIBL/RUTESTCASE) +
-                            ACTGRP(*NEW) +
-                            ALWUPD(*YES) +
-                            ALWLIBUPD(*YES) +
-                            DETAIL(*NONE) +
-                            TGTRLS(&TGTRLS) +
-                            TEXT('iRPGUnit - Plug-in Test Runner.')
+               CRTBNDCL   PGM(QTEMP/MKRMTRUN) SRCFILE(&LIB/&SRCF_RUNIT) SRCMBR(*PGM)
+               CALL       PGM(QTEMP/MKRMTRUN) PARM(&LIB &DBGVIEW &TGTRLS)
+               /* TODO: obsolete */
+               /* CRTPGM     PGM(&LIB/RUPGMRMT) +                                                  +
+                            MODULE(&LIB/PGMRMT    +                                                +
+                                   &LIB/CALLPROC  +                                                +
+                                   &LIB/CMDRUN    +                                                +
+                                   &LIB/CMDRUNSRV +                                                +
+                                   &LIB/CMDRUNPRT +                                                +
+                                   &LIB/CMDRUNLOG +                                                +
+                                   &LIB/EXTPRC    +                                                +
+                                   &LIB/EXTTST    +                                                +
+                                   &LIB/LIBL      +                                                +
+                                   &LIB/LLIST     +                                                +
+                                   &LIB/PGMMSG    +                                                +
+                                   &LIB/SRCMBR    +                                                +
+                                   &LIB/STRING    +                                                +
+                                   &LIB/USRSPC    +                                                +
+                                   &LIB/RMTRUNSRV +                                                +
+                                   &LIB/XMLWRITER ) +                                              +
+                            ENTMOD(&LIB/PGMRMT) +                                                  +
+                            BNDSRVPGM(*LIBL/RUTESTCASE) +                                          +
+                            ACTGRP(*NEW) +                                                         +
+                            ALWUPD(*YES) +                                                         +
+                            ALWLIBUPD(*YES) +                                                      +
+                            DETAIL(*NONE) +                                                        +
+                            TGTRLS(&TGTRLS) +                                                      +
+                            TEXT('iRPGUnit - Plug-in Test Runner.')*/
 
                /* - - - - - - - - - - - - - - - - - - - - */
                /*  Create command BUILD.                  */

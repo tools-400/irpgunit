@@ -1,26 +1,25 @@
-     /* =================================================================== */
-     /*  RPGUnit SelfTest - Build and run all tests.                        */
-     /*                                                                     */
-     /*  Usage: CALL MKRPGUNITT TARGETLIB                                   */
-     /*    where TARGETLIB is the library containing the RPGUnit            */
-     /*    source files.                                                    */
-     /* =================================================================== */
-     /*   >>PRE-COMPILER<<                                                  */
-     /*     >>CRTCMD<<  CRTBNDCL      PGM(&LI/&OB) +                        */
-     /*                               SRCFILE(&SL/&SF)  +                   */
-     /*                               SRCMBR(&SM);                          */
-     /*     >>COMPILE<<                                                     */
-     /*       >>PARM<< DBGVIEW(*LIST);                                      */
-     /*     >>END-COMPILE<<                                                 */
-     /*     >>LINK<<                                                        */
-     /*       >>PARM<< DFTACTGRP(*NO);                                      */
-     /*       >>PARM<< ACTGRP(*NEW);                                        */
-     /*     >>END-LINK<<                                                    */
-     /*     >>EXECUTE<<                                                     */
-     /*   >>END-PRE-COMPILER<<                                              */
-     /* =================================================================== */
+      /* =================================================================== */
+      /*  iRPGUnit - Build and run all self and acp. tests.                  */
+      /*                                                                     */
+      /*  Usage: CALL MKRPGUNITT TARGETLIB                                   */
+      /*    where TARGETLIB is the library containing the RPGUnit            */
+      /*    source files.                                                    */
+      /* =================================================================== */
+      /* >>PRE-COMPILER<<                                                    */
+      /*   >>CRTCMD<< CRTBNDCL     PGM(&LI/&OB) +                            */
+      /*                           SRCFILE(&SL/&SF) +                        */
+      /*                           SRCMBR(&SM);                              */
+      /*   >>COMPILE<<                                                       */
+      /*     >>PARM<< DBGVIEW(*LIST);                                        */
+      /*     >>PARM<< OPTION(*EVENTF);                                       */
+      /*   >>END-COMPILE<<                                                   */
+      /*   >>EXECUTE<<                                                       */
+      /* >>END-PRE-COMPILER<<                                                */
+      /* =================================================================== */
              PGM        PARM(&TARGETLIB)
+
              DCL        VAR(&TARGETLIB) TYPE(*CHAR) LEN(10)
+
              /* Was the failure event seen? */
              DCL        VAR(&FAILSEEN) TYPE(*CHAR) LEN(2) VALUE('KO')
 

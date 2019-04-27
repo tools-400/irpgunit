@@ -1,28 +1,40 @@
-     /* =================================================================== */
-     /*  RPGUnit - Make command line runner.                                */
-     /*                                                                     */
-     /*  Usage: CALL MKCALLTST TARGETLIB                                    */
-     /*    where TARGETLIB is the library containing the RPGUnit            */
-     /*    source files.                                                    */
-     /* =================================================================== */
-     /*   >>PRE-COMPILER<<                                                  */
-     /*     >>CRTCMD<<  CRTBNDCL      PGM(&LI/&OB) +                        */
-     /*                               SRCFILE(&SL/&SF)  +                   */
-     /*                               SRCMBR(&SM);                          */
-     /*     >>COMPILE<<                                                     */
-     /*       >>PARM<< DBGVIEW(*LIST);                                      */
-     /*     >>END-COMPILE<<                                                 */
-     /*     >>LINK<<                                                        */
-     /*       >>PARM<< DFTACTGRP(*NO);                                      */
-     /*       >>PARM<< ACTGRP(*NEW);                                        */
-     /*     >>END-LINK<<                                                    */
-     /*     >>EXECUTE<<                                                     */
-     /*   >>END-PRE-COMPILER<<                                              */
-     /* =================================================================== */
-             PGM        PARM(&TARGETLIB &I_TGTRLS)
+      /* =================================================================== */
+      /* iRPGUnit - Make RUCALLTST program.                                  */
+      /*                                                                     */
+      /*  Usage: CALL MKCALLTST TARGETLIB                                    */
+      /*    where TARGETLIB is the library containing the RPGUnit            */
+      /*    source files.                                                    */
+      /* =================================================================== */
+      /*  Copyright (c) 2013-2019 iRPGUnit Project Team                      */
+      /*  All rights reserved. This program and the accompanying materials   */
+      /*  are made available under the terms of the Common Public License    */
+      /*  v1.0 which accompanies this distribution, and is available at      */
+      /*  http://www.eclipse.org/legal/cpl-v10.html                          */
+      /* =================================================================== */
+      /* >>PRE-COMPILER<<                                                    */
+      /*   >>CRTCMD<< CRTBNDCL     PGM(&LI/&OB) +                            */
+      /*                           SRCFILE(&SL/&SF) +                        */
+      /*                           SRCMBR(&SM);                              */
+      /*   >>COMPILE<<                                                       */
+      /*     >>PARM<< DBGVIEW(*LIST);                                        */
+      /*     >>PARM<< OPTION(*EVENTF);                                       */
+      /*   >>END-COMPILE<<                                                   */
+      /*   >>EXECUTE<<                                                       */
+      /* >>END-PRE-COMPILER<<                                                */
+      /* =================================================================== */
+             PGM        PARM(&TARGETLIB &I_DBGVIEW &I_TGTRLS)
+
              DCL        VAR(&TARGETLIB) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&I_DBGVIEW) TYPE(*CHAR) LEN(10)
              DCL        VAR(&I_TGTRLS ) TYPE(*CHAR) LEN(10)
+
+             DCL        VAR(&DBGVIEW  ) TYPE(*CHAR) LEN(10) VALUE('*LIST')
              DCL        VAR(&TGTRLS   ) TYPE(*CHAR) LEN(10) VALUE(*CURRENT)
+
+             CHGVAR     VAR(&DBGVIEW) VALUE(&I_DBGVIEW)
+             MONMSG     MSGID(MCH3601) EXEC(DO)
+                RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
+             ENDDO
 
              CHGVAR     VAR(&TGTRLS) VALUE(&I_TGTRLS)
              MONMSG     MSGID(MCH3601) EXEC(DO)
@@ -34,56 +46,55 @@
                           MSGF(QCPFMSG) MSGDTA('Target library +
                           parameter required.') MSGTYPE(*ESCAPE))
 
-             CRTRPGMOD  MODULE(QTEMP/CALLPROC ) SRCFILE(QSRC) +
-                          OPTION(*SRCSTMT) DBGVIEW(*LIST) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/EXTPRC   ) SRCFILE(QSRC) +
-                          OPTION(*SRCSTMT) DBGVIEW(*LIST) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/EXTTST   ) SRCFILE(QSRC) +
-                          OPTION(*SRCSTMT) DBGVIEW(*LIST) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/STRING   ) SRCFILE(QSRC) +
-                          OPTION(*SRCSTMT) DBGVIEW(*LIST) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/PGMMSG   ) SRCFILE(QSRC) +
-                          OPTION(*SRCSTMT) DBGVIEW(*LIST) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/CMDRUN   ) SRCFILE(QSRC) +
-                          OPTION(*SRCSTMT) DBGVIEW(*LIST) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/CMDRUNLOG) SRCFILE(QSRC) +
-                          OPTION(*SRCSTMT) DBGVIEW(*LIST) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/CMDRUNPRT) SRCFILE(QSRC) +
-                          OPTION(*SRCSTMT) DBGVIEW(*LIST) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/CMDRUNSRV) SRCFILE(QSRC) +
-                          OPTION(*SRCSTMT) DBGVIEW(*LIST) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/LIBL     ) SRCFILE(QSRC) +
-                          OPTION(*SRCSTMT) DBGVIEW(*LIST) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/USRSPC   ) SRCFILE(QSRC) +
-                          OPTION(*SRCSTMT) DBGVIEW(*LIST) TGTRLS(&TGTRLS)
+             CRTBNDCL   PGM(QTEMP/MKLLIST) SRCFILE(&TARGETLIB/QLLIST) SRCMBR(*PGM)
+             CALL       PGM(QTEMP/MKLLIST) PARM(&TARGETLIB &DBGVIEW &TGTRLS)
 
-             CRTSRVPGM  SRVPGM(&TARGETLIB/RURUNNER) +
-                          MODULE(QTEMP/CALLPROC  +
-                                 QTEMP/EXTPRC    +
-                                 QTEMP/EXTTST    +
-                                 QTEMP/PGMMSG    +
-                                 QTEMP/CMDRUNSRV +
-                                 QTEMP/USRSPC    +
-                                 QTEMP/STRING    +
-                                 QTEMP/LLIST)    +
-                          EXPORT(*SRCFILE) +
-                          SRCFILE(QBND) SRCMBR(RUNNERBND) +
-                          BNDSRVPGM(&TARGETLIB/RUTESTCASE) +
-                          TGTRLS(&TGTRLS) +
-                          TEXT('RPGUnit - Runner Toolkit.') +
-                          BNDDIR(QC2LE)
+             CRTRPGMOD  MODULE(QTEMP/CMDRUN) SRCFILE(QSRC) +
+                          DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
+             CRTRPGMOD  MODULE(QTEMP/CMDRUNLOG) SRCFILE(QSRC) +
+                          DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
+             CRTRPGMOD  MODULE(QTEMP/CMDRUNPRT) SRCFILE(QSRC) +
+                          DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
+             CRTRPGMOD  MODULE(QTEMP/CMDRUNSRV) SRCFILE(QSRC) +
+                          DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
+             CRTRPGMOD  MODULE(QTEMP/CALLPROC) SRCFILE(QSRC) +
+                          DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
+             CRTRPGMOD  MODULE(QTEMP/EXTPRC) SRCFILE(QSRC) +
+                          DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
+             CRTRPGMOD  MODULE(QTEMP/EXTTST) SRCFILE(QSRC) +
+                          DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
+             CRTRPGMOD  MODULE(QTEMP/LIBL  ) SRCFILE(QSRC) +
+                          DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
+             CRTRPGMOD  MODULE(QTEMP/PGMMSG) SRCFILE(QSRC) +
+                          DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
+             CRTRPGMOD  MODULE(QTEMP/STRING) SRCFILE(QSRC) +
+                          DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
+             CRTRPGMOD  MODULE(QTEMP/USRSPC) SRCFILE(QSRC) +
+                          DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
+             CRTRPGMOD  MODULE(QTEMP/XMLWRITER) SRCFILE(QSRC) +
+                          DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
 
              CRTPGM     PGM(&TARGETLIB/RUCALLTST) +
-                          MODULE(QTEMP/CMDRUN +
-                                 QTEMP/CMDRUNLOG +
-                                 QTEMP/CMDRUNPRT +
-                                 QTEMP/STRING  +
-                                 QTEMP/LIBL +
-                                 QTEMP/LLIST) +
-                          BNDSRVPGM(&TARGETLIB/RUTESTCASE +
-                                    &TARGETLIB/RURUNNER) +
+                          MODULE(QTEMP/CMDRUN  +
+                                 QTEMP/CMDRUNLOG  +
+                                 QTEMP/CMDRUNPRT  +
+                                 QTEMP/CMDRUNSRV  +
+                                 QTEMP/CALLPROC   +
+                                 QTEMP/EXTPRC     +
+                                 QTEMP/EXTTST     +
+                                 QTEMP/LIBL       +
+                                 QTEMP/LLIST      +
+                                 QTEMP/PGMMSG     +
+                                 QTEMP/STRING     +
+                                 QTEMP/USRSPC     +
+                                 QTEMP/XMLWRITER) +
+                          ENTMOD(QTEMP/CMDRUN) +
+                          BNDSRVPGM(*LIBL/RUTESTCASE) +
                           ACTGRP(*NEW) +
+                          ALWUPD(*YES) +
+                          ALWLIBUPD(*YES) +
+                          DETAIL(*NONE) +
                           TGTRLS(&TGTRLS) +
-                          TEXT('RPGUnit - Execute Test Suite')
+                          TEXT('iRPGUnit - Execute Test Suite.')
 
              ENDPGM

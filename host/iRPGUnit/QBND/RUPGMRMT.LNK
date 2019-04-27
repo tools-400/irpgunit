@@ -13,9 +13,9 @@
 /*     >>PARM<<  MODULE(&LI/PGMRMT    +                                       */
 /*                      &LI/CALLPROC  +                                       */
 /*                      &LI/CMDRUN    +                                       */
-/*                      &LI/CMDRUNSRV +                                       */
-/*                      &LI/CMDRUNPRT +                                       */
 /*                      &LI/CMDRUNLOG +                                       */
+/*                      &LI/CMDRUNPRT +                                       */
+/*                      &LI/CMDRUNSRV +                                       */
 /*                      &LI/EXTPRC    +                                       */
 /*                      &LI/EXTTST    +                                       */
 /*                      &LI/LIBL      +                                       */

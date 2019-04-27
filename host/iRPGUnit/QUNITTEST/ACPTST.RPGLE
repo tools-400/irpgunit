@@ -10,10 +10,10 @@
       // >>PRE-COMPILER<<
       //   >>CRTCMD<<  RUCRTTST TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
       //   >>IMPORTANT<<
-      //     >>PARM<<  MODULE(&LI/SPLF      +
-      //                      &LI/ASSERT    +
+      //     >>PARM<<  MODULE(&LI/ASSERT    +
       //                      &LI/OBJECT    +
       //                      &LI/PGMMSG    +
+      //                      &LI/&LI/SPLF  +
       //                      &LI/SRCMBR    +
       //                      &LI/TESTUTILS +
       //                      &LI/USRSPC    +
