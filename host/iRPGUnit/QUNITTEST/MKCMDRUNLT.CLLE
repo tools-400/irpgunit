@@ -41,6 +41,8 @@
                 RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
              ENDDO
 
+             CRTRPGMOD  MODULE(QTEMP/CMDRUNLOGT) SRCFILE(QUNITTEST) +
+                          DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
              CRTRPGMOD  MODULE(QTEMP/CMDRUNLOG) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
              CRTRPGMOD  MODULE(QTEMP/CMDRUNPRT) SRCFILE(QSRC) +
@@ -49,9 +51,10 @@
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
 
              CRTSRVPGM  SRVPGM(&TARGETLIB/CMDRUNLOGT) +
-                          MODULE(QTEMP/CMDRUNLOG +
-                                 QTEMP/CMDRUNPRT +
-                                 QTEMP/STRING  ) +
+                          MODULE(QTEMP/CMDRUNLOGT +
+                                 QTEMP/CMDRUNLOG  +
+                                 QTEMP/CMDRUNPRT  +
+                                 QTEMP/STRING  )  +
                           EXPORT(*ALL) +
                           OPTION(*DUPPROC) +
                           BNDSRVPGM(*LIBL/RUTESTCASE) +
