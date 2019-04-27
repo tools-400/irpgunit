@@ -36,10 +36,10 @@
                           DBGVIEW(*LIST)
              CRTRPGMOD  MODULE(QTEMP/USRSPC) SRCFILE(QSRC) +
                           DBGVIEW(*LIST)
-             CRTRPGMOD  MODULE(QTEMP/RUACPTST) SRCFILE(QUNITTEST) +
+             CRTRPGMOD  MODULE(QTEMP/ACPTST) SRCFILE(QUNITTEST) +
                           DBGVIEW(*LIST)
-             CRTSRVPGM  SRVPGM(&TARGETLIB/RUACPTST) +
-                          MODULE(QTEMP/RUACPTST QTEMP/JOBLOG +
+             CRTSRVPGM  SRVPGM(&TARGETLIB/ACPTST) +
+                          MODULE(QTEMP/ACPTST QTEMP/JOBLOG +
                           QTEMP/PGMMSG QTEMP/SPLF QTEMP/USRSPC) +
                           EXPORT(*ALL) BNDSRVPGM(RUTESTCASE) +
                           TEXT('RPGUnit SelfTest - Acceptance tests.')

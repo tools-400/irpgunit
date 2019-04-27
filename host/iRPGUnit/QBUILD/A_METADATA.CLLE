@@ -1,7 +1,7 @@
      /* =================================================================== */
      /*  Regenerates source member's meta data (type and text).             */
      /*                                                                     */
-     /*  Usage: CALL MKMETADATA TARGETLIB                                   */
+     /*  Usage: CALL A_METADATA TARGETLIB                                   */
      /*    where TARGETLIB is the library containing the RPGUnit            */
      /*    source files.                                                    */
      /* =================================================================== */
@@ -91,7 +91,7 @@
              CHGPFM     FILE(&TARGETLIB/QBUILD) +
                           MBR(A_SELFTEST) +
                           SRCTYPE(CLLE) +
-                          TEXT('iRPGUnit - Compile And Run SelfTest')
+                          TEXT('iRPGUnit - Compile And Run SelfTests.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QBUILD) +
@@ -497,12 +497,6 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +
-                          MBR(MKMETADATA) +
-                          SRCTYPE(CLLE) +
-                          TEXT('iRPGUnit - Regenerate source member''s metadata.')
-             MONMSG     MSGID(CPF3288)
-
-             CHGPFM     FILE(&TARGETLIB/QSRC) +
                           MBR(MKRMTRUN) +
                           SRCTYPE(CLLE) +
                           TEXT('iRPGUnit - Build RURUNRMT (runner toolkit).')
@@ -775,127 +769,133 @@
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(SRVPGM1) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - EXTPRCT Unit Test Helper.')
+                          TEXT('iRPGUnit Fixture - SRVPGM with one export.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(SRVPGM2) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - EXTPRCT Unit Test Helper.')
+                          TEXT('iRPGUnit Fixture - SRVPGM with two exports.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(TESTPGM01) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+                          TEXT('iRPGUnit Fixture - One empty test case.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(TESTPGM02) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+                          TEXT('iRPGUnit Fixture - One successful test case.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(TESTPGM03) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+                          TEXT('iRPGUnit Fixture - Two failing test cases.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(TESTPGM04) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+                          TEXT('iRPGUnit Fixture - Exported proc is not a test.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(TESTPGM05) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+                          TEXT('iRPGUnit Fixture - Setup and teardown.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(TESTPGM06) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+                          TEXT('iRPGUnit Fixture - Error during test.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(TESTPGM07) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+                          TEXT('iRPGUnit Fixture - Failure in proc called by test.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(TESTPGM08) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+                          TEXT('iRPGUnit Fixture - Missing SRVPGM.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(TESTPGM09) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+                          TEXT('iRPGUnit Fixture - Error in setup.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(TESTPGM10) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+                          TEXT('iRPGUnit Fixture - Error in teardown.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(TESTPGM11) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+                          TEXT('iRPGUnit Fixture - No test case.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(TESTPGM12) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+                          TEXT('iRPGUnit Fixture - SetupSuite and TeardownSuite.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(TESTPGM13) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+                          TEXT('iRPGUnit Fixture - Many tests.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(TESTPGM14) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+                          TEXT('iRPGUnit Fixture - Big integers.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(TESTPGM15) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+                          TEXT('iRPGUnit Fixture - Several assertions.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(TESTPGM16) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+                          TEXT('iRPGUnit Fixture - Setup and teardown.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(TESTPGM17) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+                          TEXT('iRPGUnit Fixture - Error in setupSuite.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(TESTPGM18) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+                          TEXT('iRPGUnit Fixture - Error in tearDownSuite.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(TESTPGM19) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+                          TEXT('iRPGUnit Fixture - Errors in setUp/tearDownSuite.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(ACPTST) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit SelfTest - Acceptance tests.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
@@ -1043,12 +1043,6 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
-                          MBR(RUACPTST) +
-                          SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit SelfTest - Test PGMMSG.')
-             MONMSG     MSGID(CPF3288)
-
-             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(RUNT) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit SelfTest - Test RUN.')
@@ -1057,13 +1051,13 @@
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(SPLF) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+                          TEXT('iRPGUnit - ACPTST Unit Test Helper.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(SPLF_H) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - RUACPTST Unit Test Helper.')
+                          TEXT('iRPGUnit - ACPTST Unit Test Helper.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +

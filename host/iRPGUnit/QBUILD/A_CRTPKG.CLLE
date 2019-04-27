@@ -1,7 +1,7 @@
      /* =================================================================== */
      /*  RPGUnit - Create distribution package.                             */
      /* =================================================================== */
-     /*  Updates the MKMETADATA source member and saves the                 */
+     /*  Updates the A_METADATA source member and saves the                 */
      /*  RPGUNIT library to save file RPGUNIT/RPGUNIT.                      */
      /* =================================================================== */
      /*   >>PRE-COMPILER<<                                                  */
@@ -517,6 +517,9 @@
              /*  Copy source members: QUNITTEST                      */
              /* ---------------------------------------------------- */
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(ACPTST) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(ASSERTT) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
@@ -548,9 +551,6 @@
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(PGMMSGT) +
-                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
-             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
-                          TOFILE(&LIB/&QUNITTEST) FROMMBR(RUACPTST) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(RUNT) +

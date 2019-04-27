@@ -60,8 +60,8 @@
 
        // Call Stack Counter.
        // 1 - QCMDEXC
-       // 2 - RUACPTST.RUN
-       // 3 - RUACPTST.TEST...
+       // 2 - ACPTST.RUN
+       // 3 - ACPTST.TEST...
      D callStkCnt      c                   const(3)
 
        // The message reference key (unique string of characters that identifies

@@ -1,8 +1,7 @@
      /* =================================================================== */
-     /*  RPGUnit - Create distribution package.                             */
+     /*  iRPGUnit - Compile And Run SelfTests.                              */
      /* =================================================================== */
-     /*  Updates the MKMETADATA source member and saves the                 */
-     /*  RPGUNIT library to save file RPGUNIT/RPGUNIT.                      */
+     /*  Compiles and runs all iRPGUnit SelfTests.                          */
      /* =================================================================== */
      /*   >>PRE-COMPILER<<                                                  */
      /*     >>CRTCMD<<  CRTBNDCL      PGM(&LI/&OB) +                        */
@@ -121,7 +120,7 @@
              RUCRTTST   TSTPGM(&LIB/STRINGT   ) SRCFILE(&LIB/&SRCF) DBGVIEW(&DBGVIEW) +
                           BNDDIR(&LIB/&BNDDIR) BOPTION(*DUPPROC)
 
-             RUCRTTST   TSTPGM(&LIB/RUACPTST  ) SRCFILE(&LIB/&SRCF) DBGVIEW(&DBGVIEW) +
+             RUCRTTST   TSTPGM(&LIB/ACPTST    ) SRCFILE(&LIB/&SRCF) DBGVIEW(&DBGVIEW) +
                           BNDDIR(&LIB/&BNDDIR) BOPTION(*DUPPROC)
 
          /* -------------------------------------------- */
@@ -139,7 +138,7 @@
              RUCALLTST  TSTPGM(&LIB/PGMMSGT    ) TSTPRC(*ALL) OUTPUT(*ERROR)
              RUCALLTST  TSTPGM(&LIB/RUNT       ) TSTPRC(*ALL) OUTPUT(*ERROR)
              RUCALLTST  TSTPGM(&LIB/STRINGT    ) TSTPRC(*ALL) OUTPUT(*ERROR)
-             RUCALLTST  TSTPGM(&LIB/RUACPTST   ) TSTPRC(*ALL) OUTPUT(*ERROR)
+             RUCALLTST  TSTPGM(&LIB/ACPTST     ) TSTPRC(*ALL) OUTPUT(*ERROR)
 
          /* -------------------------------------------- */
          /*  Delete modules.                             */

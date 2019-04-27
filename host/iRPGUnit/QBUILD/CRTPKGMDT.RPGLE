@@ -524,7 +524,7 @@
      /* =================================================================== */
      /*  Regenerates source member's meta data (type and text).             */
      /*                                                                     */
-     /*  Usage: CALL MKMETADATA TARGETLIB                                   */
+     /*  Usage: CALL A_METADATA TARGETLIB                                   */
      /*    where TARGETLIB is the library containing the RPGUnit            */
      /*    source files.                                                    */
      /* =================================================================== */

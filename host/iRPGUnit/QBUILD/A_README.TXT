@@ -49,6 +49,21 @@ d) Optionally run the RPGUnit self tests:
               History
 --------------------------------------
 
++==========================================================================+
+|  Notice: Version 2.5 will be the last version with an iRPGUnit library   |
+|          compiled for V6R1. Upcoming versions will be compiled for 7.1,  |
+|          when there is a need for changing the library.                  |
++==========================================================================+
+
+--------------------------
+
+Version 2.5.0 - 06.04.2019
+--------------------------
+ * Added preference options for capturing job log messages.
+ * Fixed problem that warning messages "Unit test ended with errors.
+   Check preference option 'Show result view' and …" was shown to
+   frequently.
+
 Version 2.4.2 - 02.11.2018
 --------------------------
  * Fixed compile issue when installing the utility into a different
