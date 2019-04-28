@@ -41,6 +41,11 @@
                 RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
              ENDDO
 
+             CHGVAR     VAR(&TARGETLIB) VALUE(&TARGETLIB)
+             MONMSG     MSGID(MCH3601) EXEC(SNDPGMMSG MSGID(CPF9898) +
+                          MSGF(QCPFMSG) MSGDTA('Target library +
+                          parameter required.') MSGTYPE(*ESCAPE))
+
              CRTRPGMOD  MODULE(QTEMP/STRINGT) SRCFILE(QUNITTEST) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
              CRTRPGMOD  MODULE(QTEMP/STRING) SRCFILE(QSRC) +
