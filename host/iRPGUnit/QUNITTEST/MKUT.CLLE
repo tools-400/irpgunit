@@ -16,9 +16,24 @@
       /*   >>EXECUTE<<                                                       */
       /* >>END-PRE-COMPILER<<                                                */
       /* =================================================================== */
-             PGM        PARM(&TARGETLIB)
+             PGM        PARM(&TARGETLIB &I_DBGVIEW &I_TGTRLS)
 
              DCL        VAR(&TARGETLIB) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&I_DBGVIEW) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&I_TGTRLS ) TYPE(*CHAR) LEN(10)
+
+             DCL        VAR(&DBGVIEW  ) TYPE(*CHAR) LEN(10) VALUE('*LIST')
+             DCL        VAR(&TGTRLS   ) TYPE(*CHAR) LEN(10) VALUE(*CURRENT)
+
+             CHGVAR     VAR(&DBGVIEW) VALUE(&I_DBGVIEW)
+             MONMSG     MSGID(MCH3601) EXEC(DO)
+                RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
+             ENDDO
+
+             CHGVAR     VAR(&TGTRLS) VALUE(&I_TGTRLS)
+             MONMSG     MSGID(MCH3601) EXEC(DO)
+                RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
+             ENDDO
 
              CHGVAR     VAR(&TARGETLIB) VALUE(&TARGETLIB)
              MONMSG     MSGID(MCH3601) EXEC(SNDPGMMSG MSGID(CPF9898) +
@@ -41,11 +56,12 @@
              CALL       PGM(QTEMP/MKCRTTSTT) PARM(&TARGETLIB)
              RUCALLTST  TSTPGM(&TARGETLIB/CRTTSTT)
 
-             RUCRTTST   TSTPGM(&TARGETLIB/ASSERTT) SRCFILE(QUNITTEST)
+             CRTBNDCL   PGM(QTEMP/MKASSERTT) SRCFILE(QUNITTEST)
+             CALL       PGM(QTEMP/MKASSERTT) PARM(&TARGETLIB)
              RUCALLTST  TSTPGM(&TARGETLIB/ASSERTT)
 
-             RUCRTTST   TSTPGM(&TARGETLIB/CALLPROCT) SRCFILE(QUNITTEST) +
-                          BNDSRVPGM(RURUNNER)
+             CRTBNDCL   PGM(QTEMP/MKCALLPRCT) SRCFILE(QUNITTEST)
+             CALL       PGM(QTEMP/MKCALLPRCT) PARM(&TARGETLIB)
              RUCALLTST  TSTPGM(&TARGETLIB/CALLPROCT)
 
              CRTBNDCL   PGM(QTEMP/MKEXTPRCT) SRCFILE(QUNITTEST)
