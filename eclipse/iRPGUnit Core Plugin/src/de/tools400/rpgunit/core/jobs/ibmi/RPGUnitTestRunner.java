@@ -1054,7 +1054,6 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
                 messages = jobLog.getMessages(-1, -1);
             } else {
                 messages = jobLog.getMessages(jobLog.getLength() - 1, 1);
-                QueuedMessage message = messages[0];
             }
 
             return messages;
