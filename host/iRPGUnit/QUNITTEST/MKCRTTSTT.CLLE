@@ -28,7 +28,7 @@
              DCL        VAR(&I_DBGVIEW) TYPE(*CHAR) LEN(10)
              DCL        VAR(&I_TGTRLS ) TYPE(*CHAR) LEN(10)
 
-             DCL        VAR(&DBGVIEW  ) TYPE(*CHAR) LEN(10) VALUE('*LIST')
+             DCL        VAR(&DBGVIEW  ) TYPE(*CHAR) LEN(10) VALUE('*YES')
              DCL        VAR(&TGTRLS   ) TYPE(*CHAR) LEN(10) VALUE(*CURRENT)
 
              CHGVAR     VAR(&DBGVIEW) VALUE(&I_DBGVIEW)
@@ -46,24 +46,24 @@
                           MSGF(QCPFMSG) MSGDTA('Target library +
                           parameter required.') MSGTYPE(*ESCAPE))
 
-             CRTRPGMOD  MODULE(QTEMP/CRTTSTT) SRCFILE(QUNITTEST) +
-                          OPTION(*SRCSTMT) DBGVIEW(*LIST)
-             CRTRPGMOD  MODULE(QTEMP/CRTTST) SRCFILE(QSRC) +
-                          OPTION(*SRCSTMT) DBGVIEW(*LIST)
-             CRTRPGMOD  MODULE(QTEMP/LIBL) SRCFILE(QSRC) +
-                          OPTION(*SRCSTMT) DBGVIEW(*LIST)
-             CRTRPGMOD  MODULE(QTEMP/OBJECT) SRCFILE(QSRC) +
-                          OPTION(*SRCSTMT) DBGVIEW(*LIST)
-             CRTRPGMOD  MODULE(QTEMP/PGMMSG) SRCFILE(QSRC) +
-                          OPTION(*SRCSTMT) DBGVIEW(*LIST)
-             CRTRPGMOD  MODULE(QTEMP/SRCMBR) SRCFILE(QSRC) +
-                          OPTION(*SRCSTMT) DBGVIEW(*LIST)
-             CRTRPGMOD  MODULE(QTEMP/STRING) SRCFILE(QSRC) +
-                          OPTION(*SRCSTMT) DBGVIEW(*LIST)
-             CRTRPGMOD  MODULE(QTEMP/TAGTST) SRCFILE(QSRC) +
-                          OPTION(*SRCSTMT) DBGVIEW(*LIST)
-             CRTRPGMOD  MODULE(QTEMP/USRSPC) SRCFILE(QSRC) +
-                          OPTION(*SRCSTMT) DBGVIEW(*LIST)
+             CMPMOD     MODULE(QTEMP/CRTTSTT) SRCFILE(QUNITTEST) +
+                          TGTRLS(&TGTRLS) DBGVIEW(&DBGVIEW)
+             CMPMOD     MODULE(QTEMP/CRTTST) SRCFILE(QSRC) +
+                          TGTRLS(&TGTRLS) DBGVIEW(&DBGVIEW)
+             CMPMOD     MODULE(QTEMP/LIBL) SRCFILE(QSRC) +
+                          TGTRLS(&TGTRLS) DBGVIEW(&DBGVIEW)
+             CMPMOD     MODULE(QTEMP/OBJECT) SRCFILE(QSRC) +
+                          TGTRLS(&TGTRLS) DBGVIEW(&DBGVIEW)
+             CMPMOD     MODULE(QTEMP/PGMMSG) SRCFILE(QSRC) +
+                          TGTRLS(&TGTRLS) DBGVIEW(&DBGVIEW)
+             CMPMOD     MODULE(QTEMP/SRCMBR) SRCFILE(QSRC) +
+                          TGTRLS(&TGTRLS) DBGVIEW(&DBGVIEW)
+             CMPMOD     MODULE(QTEMP/STRING) SRCFILE(QSRC) +
+                          TGTRLS(&TGTRLS) DBGVIEW(&DBGVIEW)
+             CMPMOD     MODULE(QTEMP/TAGTST) SRCFILE(QSRC) +
+                          TGTRLS(&TGTRLS) DBGVIEW(&DBGVIEW)
+             CMPMOD     MODULE(QTEMP/USRSPC) SRCFILE(QSRC) +
+                          TGTRLS(&TGTRLS) DBGVIEW(&DBGVIEW)
 
              CRTSRVPGM  SRVPGM(&TARGETLIB/CRTTSTT) +
                           MODULE(QTEMP/CRTTSTT   +

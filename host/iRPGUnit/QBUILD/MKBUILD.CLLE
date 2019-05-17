@@ -1,7 +1,7 @@
       /* =================================================================== */
-      /*  iRPGUnit - Build the commands.                                     */
+      /*  iRPGUnit - Create Install Utility.                                 */
       /*                                                                     */
-      /*  Usage: CALL MKCMD TARGETLIB                                        */
+      /*  Usage: CALL MKBUILD TARGETLIB                                      */
       /*    where TARGETLIB is the library containing the RPGUnit            */
       /*    source files.                                                    */
       /* =================================================================== */
@@ -28,7 +28,7 @@
              DCL        VAR(&I_DBGVIEW) TYPE(*CHAR) LEN(10)
              DCL        VAR(&I_TGTRLS ) TYPE(*CHAR) LEN(10)
 
-             DCL        VAR(&DBGVIEW  ) TYPE(*CHAR) LEN(10) VALUE('*LIST')
+             DCL        VAR(&DBGVIEW  ) TYPE(*CHAR) LEN(10) VALUE('*YES')
              DCL        VAR(&TGTRLS   ) TYPE(*CHAR) LEN(10) VALUE(*CURRENT)
 
              CHGVAR     VAR(&DBGVIEW) VALUE(&I_DBGVIEW)
@@ -44,28 +44,23 @@
              CHGVAR     VAR(&TARGETLIB) VALUE(&TARGETLIB)
              MONMSG     MSGID(MCH3601) EXEC(SNDPGMMSG MSGID(CPF9898) +
                           MSGF(QCPFMSG) MSGDTA('Target library +
-                          parameter required.') MSGTYPE(*ESCAPE))
+                          parameter required') MSGTYPE(*ESCAPE))
 
-             CRTBNDCL   PGM(QTEMP/MKCRTTST) SRCFILE(&TARGETLIB/QSRC) SRCMBR(*PGM)
-             CALL       PGM(QTEMP/MKCRTTST) PARM(&TARGETLIB &DBGVIEW &TGTRLS)
+             CHKOBJ     OBJ(&TARGETLIB/QBUILD) OBJTYPE(*FILE) MBR(CMPMODCPP)
+             MONMSG     MSGID(CPF9801) EXEC(SNDPGMMSG MSGID(CPF9898) +
+                          MSGF(QCPFMSG) MSGDTA('REXX source member +
+                          CMPMODCPP not found') MSGTYPE(*ESCAPE))
 
-             CRTPNLGRP  PNLGRP(&TARGETLIB/RUCRTTST) SRCFILE(QPNLGRP)
+             /* ===================================================== */
+             /*   CMPMOD command.                                     */
+             /* ===================================================== */
 
-             CRTCMD     CMD(&TARGETLIB/RUCRTTST) +
-                          PGM(*LIBL/RUCRTTST) +
-                          SRCFILE(QCMD) +
-                          HLPPNLGRP(*LIBL/RUCRTTST) +
-                          HLPID(RUCRTTST)
-
-             CRTBNDCL   PGM(QTEMP/MKCALLTST) SRCFILE(&TARGETLIB/QSRC) SRCMBR(*PGM)
-             CALL       PGM(QTEMP/MKCALLTST) PARM(&TARGETLIB &DBGVIEW &TGTRLS)
-
-             CRTPNLGRP  PNLGRP(&TARGETLIB/RUCALLTST) SRCFILE(QPNLGRP)
-
-             CRTCMD     CMD(&TARGETLIB/RUCALLTST) +
-                          PGM(*LIBL/RUCALLTST) +
-                          SRCFILE(QCMD) +
-                          HLPPNLGRP(*LIBL/RUCALLTST) +
-                          HLPID(RUCALLTST)
+             CRTPNLGRP  PNLGRP(&TARGETLIB/CMPMODHLP) SRCFILE(*LIBL/QBUILD)
+             CRTCMD     CMD(&TARGETLIB/CMPMOD) SRCFILE(*LIBL/QBUILD) +
+                          PGM(*REXX) +
+                          REXSRCFILE(&TARGETLIB/QBUILD) +
+                          REXSRCMBR(CMPMODCPP) +
+                          HLPPNLGRP(&TARGETLIB/CMPMODHLP) +
+                          HLPID(CMPMOD)
 
              ENDPGM

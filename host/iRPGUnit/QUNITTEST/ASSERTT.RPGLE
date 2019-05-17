@@ -148,7 +148,7 @@
 
         aEqual( 'Expected 5, but was 4.' : assertFailEvt.msg );
 
-        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).sender.qPgm.nm );
+        aEqual( 'RUTESTCASE' : assertFailEvt.callStk.Entry(1).sender.qPgm.nm );
         aEqual( 'ASSERT'     : assertFailEvt.callStk.Entry(1).sender.qMod.nm );
         aEqual( 'iEqual'     : assertFailEvt.callStk.Entry(1).sender.procNm );
 
@@ -219,7 +219,7 @@
         aEqual( 'Expected ''Hello'', but was ''Good bye''.' :
                 assertFailEvt.msg );
 
-        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).sender.qPgm.nm );
+        aEqual( 'RUTESTCASE' : assertFailEvt.callStk.Entry(1).sender.qPgm.nm );
         aEqual( 'ASSERT'     : assertFailEvt.callStk.Entry(1).sender.qMod.nm );
         aEqual( 'aEqual'     : assertFailEvt.callStk.Entry(1).sender.procNm );
 
@@ -323,7 +323,7 @@
 
         aEqual( 'Failure message.' : assertFailEvt.msg );
 
-        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).sender.qPgm.nm );
+        aEqual( 'RUTESTCASE' : assertFailEvt.callStk.Entry(1).sender.qPgm.nm );
         aEqual( 'ASSERT'     : assertFailEvt.callStk.Entry(1).sender.qMod.nm );
         aEqual( 'assert'     : assertFailEvt.callStk.Entry(1).sender.procNm );
 

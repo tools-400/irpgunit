@@ -28,7 +28,7 @@
              DCL        VAR(&I_DBGVIEW) TYPE(*CHAR) LEN(10)
              DCL        VAR(&I_TGTRLS ) TYPE(*CHAR) LEN(10)
 
-             DCL        VAR(&DBGVIEW  ) TYPE(*CHAR) LEN(10) VALUE('*LIST')
+             DCL        VAR(&DBGVIEW  ) TYPE(*CHAR) LEN(10) VALUE('*YES')
              DCL        VAR(&TGTRLS   ) TYPE(*CHAR) LEN(10) VALUE(*CURRENT)
 
              CHGVAR     VAR(&DBGVIEW) VALUE(&I_DBGVIEW)
@@ -46,19 +46,19 @@
                           MSGF(QCPFMSG) MSGDTA('Target library +
                           parameter required.') MSGTYPE(*ESCAPE))
 
-             CRTRPGMOD  MODULE(QTEMP/CRTTST) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/CRTTST) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/OBJECT) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/OBJECT) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/PGMMSG) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/PGMMSG) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/SRCMBR) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/SRCMBR) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/STRING) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/STRING) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/TAGTST) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/TAGTST) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/USRSPC) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/USRSPC) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
 
              CRTPGM     PGM(&TARGETLIB/RUCRTTST) +
@@ -77,5 +77,13 @@
                           DETAIL(*NONE) +
                           TGTRLS(&TGTRLS) +
                           TEXT('iRPGUnit - Create Test Suite.')
+
+             CRTPNLGRP  PNLGRP(&TARGETLIB/RUCRTTST) SRCFILE(QPNLGRP)
+
+             CRTCMD     CMD(&TARGETLIB/RUCRTTST) +
+                          PGM(*LIBL/RUCRTTST) +
+                          SRCFILE(QCMD) +
+                          HLPPNLGRP(*LIBL/RUCRTTST) +
+                          HLPID(RUCRTTST)
 
              ENDPGM

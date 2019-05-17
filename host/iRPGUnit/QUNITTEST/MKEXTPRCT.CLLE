@@ -28,7 +28,7 @@
              DCL        VAR(&I_DBGVIEW) TYPE(*CHAR) LEN(10)
              DCL        VAR(&I_TGTRLS ) TYPE(*CHAR) LEN(10)
 
-             DCL        VAR(&DBGVIEW  ) TYPE(*CHAR) LEN(10) VALUE('*LIST')
+             DCL        VAR(&DBGVIEW  ) TYPE(*CHAR) LEN(10) VALUE('*YES')
              DCL        VAR(&TGTRLS   ) TYPE(*CHAR) LEN(10) VALUE(*CURRENT)
 
              CHGVAR     VAR(&DBGVIEW) VALUE(&I_DBGVIEW)
@@ -46,15 +46,15 @@
                           MSGF(QCPFMSG) MSGDTA('Target library +
                           parameter required.') MSGTYPE(*ESCAPE))
 
-             CRTRPGMOD  MODULE(QTEMP/EXTPRCT) SRCFILE(QUNITTEST) +
+             CMPMOD     MODULE(QTEMP/EXTPRCT) SRCFILE(QUNITTEST) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/EXTPRC) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/EXTPRC) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/OBJECT) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/OBJECT) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/SRCMBR) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/SRCMBR) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/USRSPC) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/USRSPC) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
 
              CRTSRVPGM  SRVPGM(&TARGETLIB/EXTPRCT) +

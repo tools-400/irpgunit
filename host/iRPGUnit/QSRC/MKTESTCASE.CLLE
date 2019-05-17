@@ -28,7 +28,7 @@
              DCL        VAR(&I_DBGVIEW) TYPE(*CHAR) LEN(10)
              DCL        VAR(&I_TGTRLS ) TYPE(*CHAR) LEN(10)
 
-             DCL        VAR(&DBGVIEW  ) TYPE(*CHAR) LEN(10) VALUE('*LIST')
+             DCL        VAR(&DBGVIEW  ) TYPE(*CHAR) LEN(10) VALUE('*YES')
              DCL        VAR(&TGTRLS   ) TYPE(*CHAR) LEN(10) VALUE(*CURRENT)
 
              CHGVAR     VAR(&DBGVIEW) VALUE(&I_DBGVIEW)
@@ -46,16 +46,14 @@
                           MSGF(QCPFMSG) MSGDTA('Target library +
                           parameter required.') MSGTYPE(*ESCAPE))
 
-             CRTRPGMOD  MODULE(QTEMP/ASSERT) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/ASSERT) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/PGMMSG) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/PGMMSG) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/VERSION) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/VERSION) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTSQLRPGI OBJ(QTEMP/TESTUTILS) SRCFILE(QSRC) +
-                          DBGVIEW(*NONE) TGTRLS(&TGTRLS) +
-                          OBJTYPE(*MODULE) RPGPPOPT(*LVL2) +
-                          COMPILEOPT('TRUNCNBR(*NO) DBGVIEW(*ALL)')
+             CMPMOD     MODULE(QTEMP/TESTUTILS) SRCFILE(QSRC) +
+                          DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
 
              CRTSRVPGM  SRVPGM(&TARGETLIB/RUTESTCASE) +
                           MODULE(QTEMP/ASSERT     +

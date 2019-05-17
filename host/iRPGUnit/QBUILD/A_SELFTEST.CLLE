@@ -76,7 +76,32 @@
          /* -------------------------------------------- */
          /*  Create helper modules.                      */
          /* -------------------------------------------- */
-             CALL       PGM(&LIB/A_INSTALL) PARM(&LIB 'CMPMODS')
+             CMPMOD     MODULE(&LIB/ASSERT) SRCFILE(QSRC) DBGVIEW(*YES)
+             CMPMOD     MODULE(&LIB/CALLPROC) SRCFILE(QSRC) DBGVIEW(*YES)
+             CMPMOD     MODULE(&LIB/CMDRUN) SRCFILE(QSRC) DBGVIEW(*YES)
+             CMPMOD     MODULE(&LIB/CMDRUNLOG) SRCFILE(QSRC) DBGVIEW(*YES)
+             CMPMOD     MODULE(&LIB/CMDRUNPRT) SRCFILE(QSRC) DBGVIEW(*YES)
+             CMPMOD     MODULE(&LIB/CMDRUNSRV) SRCFILE(QSRC) DBGVIEW(*YES)
+             CMPMOD     MODULE(&LIB/CRTTST) SRCFILE(QSRC) DBGVIEW(*YES)
+             CMPMOD     MODULE(&LIB/EXTPRC) SRCFILE(QSRC) DBGVIEW(*YES)
+             CMPMOD     MODULE(&LIB/EXTTST) SRCFILE(QSRC) DBGVIEW(*YES)
+             CMPMOD     MODULE(&LIB/LIBL) SRCFILE(QSRC) DBGVIEW(*YES)
+             CMPMOD     MODULE(&LIB/OBJECT) SRCFILE(QSRC) DBGVIEW(*YES)
+             CMPMOD     MODULE(&LIB/PGMMSG) SRCFILE(QSRC) DBGVIEW(*YES)
+             CMPMOD     MODULE(&LIB/PGMRMT) SRCFILE(QSRC) DBGVIEW(*YES)
+             CMPMOD     MODULE(&LIB/RMTRUNSRV) SRCFILE(QSRC) DBGVIEW(*YES)
+             CMPMOD     MODULE(&LIB/SRCMBR) SRCFILE(QSRC) DBGVIEW(*YES)
+             CMPMOD     MODULE(&LIB/STRING) SRCFILE(QSRC) DBGVIEW(*YES)
+             CMPMOD     MODULE(&LIB/TAGTST) SRCFILE(QSRC) DBGVIEW(*YES)
+             CMPMOD     MODULE(&LIB/TESTUTILS) SRCFILE(QSRC) DBGVIEW(*YES)
+             CMPMOD     MODULE(&LIB/USRSPC) SRCFILE(QSRC) DBGVIEW(*YES)
+             CMPMOD     MODULE(&LIB/VERSION) SRCFILE(QSRC) DBGVIEW(*YES)
+             CMPMOD     MODULE(&LIB/XMLWRITER) SRCFILE(QSRC) DBGVIEW(*YES)
+
+             CMPMOD     MODULE(&LIB/LLIST) SRCFILE(QLLIST) DBGVIEW(*YES)
+
+             CMPMOD     MODULE(&LIB/LIBLC) SRCFILE(QUNITTEST) DBGVIEW(*YES)
+             CMPMOD     MODULE(&LIB/SPLF) SRCFILE(QUNITTEST) DBGVIEW(*YES)
 
          /* -------------------------------------------- */
          /*  Create iRPGUnit SelfTest unit tests.        */
@@ -143,7 +168,7 @@
          /* -------------------------------------------- */
          /*  Delete modules.                             */
          /* -------------------------------------------- */
-             CALL       PGM(&LIB/A_INSTALL) PARM(&LIB 'DLTMODS')
+             STRREXPRC SRCMBR(A_INSTALL) SRCFILE(&LIB/QBUILD) PARM('RPGUNIT3 *INSTALL')
 
          /* -------------------------------------------- */
          /*  Remove binding directory.                   */

@@ -28,8 +28,10 @@
              DCL        VAR(&I_DBGVIEW) TYPE(*CHAR) LEN(10)
              DCL        VAR(&I_TGTRLS ) TYPE(*CHAR) LEN(10)
 
-             DCL        VAR(&DBGVIEW  ) TYPE(*CHAR) LEN(10) VALUE('*LIST')
+             DCL        VAR(&DBGVIEW  ) TYPE(*CHAR) LEN(10) VALUE('*YES')
              DCL        VAR(&TGTRLS   ) TYPE(*CHAR) LEN(10) VALUE(*CURRENT)
+
+             DCL        VAR(&SRCLIB   ) TYPE(*CHAR) LEN(10) VALUE(*CURRENT)
 
              CHGVAR     VAR(&DBGVIEW) VALUE(&I_DBGVIEW)
              MONMSG     MSGID(MCH3601) EXEC(DO)
@@ -50,38 +52,38 @@
              CRTBNDCL   PGM(QTEMP/MKLLIST) SRCFILE(&TARGETLIB/QLLIST) SRCMBR(*PGM)
              CALL       PGM(QTEMP/MKLLIST) PARM(&TARGETLIB &DBGVIEW &TGTRLS)
 
-             CRTRPGMOD  MODULE(QTEMP/PGMRMT) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/PGMRMT) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/CALLPROC) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/CALLPROC) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/CMDRUN) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/CMDRUN) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/CMDRUNLOG) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/CMDRUNLOG) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/CMDRUNPRT) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/CMDRUNPRT) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/CMDRUNSRV) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/CMDRUNSRV) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/EXTPRC) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/EXTPRC) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/EXTTST) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/EXTTST) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/LIBL  ) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/LIBL  ) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/PGMMSG) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/PGMMSG) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/SRCMBR) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/SRCMBR) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/STRING) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/STRING) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/USRSPC) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/USRSPC) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/RMTRUNSRV) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/RMTRUNSRV) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
-             CRTRPGMOD  MODULE(QTEMP/XMLWRITER) SRCFILE(QSRC) +
+             CMPMOD     MODULE(QTEMP/XMLWRITER) SRCFILE(QSRC) +
                           DBGVIEW(&DBGVIEW) TGTRLS(&TGTRLS)
 
-             CRTPGM     PGM(&TARGETLIB/RUCRTTST) +
+             CRTPGM     PGM(&TARGETLIB/RUPGMRMT) +
                           MODULE(QTEMP/PGMRMT     +
                                  QTEMP/CALLPROC   +
                                  QTEMP/CMDRUN     +
@@ -93,12 +95,12 @@
                                  QTEMP/LIBL       +
                                  QTEMP/LLIST      +
                                  QTEMP/PGMMSG     +
-                                 QTEMP/SRCMBR     +
-                                 QTEMP/STRING     +
-                                 QTEMP/USRSPC     +
                                  QTEMP/RMTRUNSRV  +
+                                 QTEMP/STRING     +
+                                 QTEMP/SRCMBR     +
+                                 QTEMP/USRSPC     +
                                  QTEMP/XMLWRITER) +
-                          ENTMOD(QTEMP/CMDRUN) +
+                          ENTMOD(QTEMP/PGMRMT) +
                           BNDSRVPGM(*LIBL/RUTESTCASE) +
                           ACTGRP(*NEW) +
                           ALWUPD(*YES) +
@@ -106,5 +108,15 @@
                           DETAIL(*NONE) +
                           TGTRLS(&TGTRLS) +
                           TEXT('iRPGUnit - Execute Test Suite.')
+
+             RTVOBJD    OBJ(*LIBL/QSRC) OBJTYPE(*FILE) RTNLIB(&SRCLIB)
+             CRTWSCST   WSCST(&TARGETLIB/RUWSCST) SRCFILE(&SRCLIB/QSRC)
+
+             DLTJOBD    JOBD(&TARGETLIB/RPGUNIT)
+             MONMSG     MSGID(CPF2105)  /* Object not found */
+
+             CRTJOBD    JOBD(&TARGETLIB/RPGUNIT) +
+                          TEXT('iRPGUnit - Library List For Test Cases') +
+                          INLLIBL(&TARGETLIB)
 
              ENDPGM

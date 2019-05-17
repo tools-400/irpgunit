@@ -30,16 +30,10 @@ Let me know your experiences!
       Installation Instructions
 --------------------------------------
 
-a) Compile the A_INSTALL CL program:
-   CRTBNDCL   PGM(RPGUNIT/A_INSTALL) SRCFILE(RPGUNIT1)
+a) Call the A_INSTALL REXX script with:
+   STRREXPRC SRCMBR(BUILDCPP) SRCFILE(RPGUNIT3/QBUILD) PARM('RPGUNIT3 *INSTALL')
 
-b) Call the installation program:
-   CALL       PGM(RPGUNIT/A_INSTALL) PARM('RPGUNIT')
-
-c) Optionally delete the installation program:
-   DLTPGM     PGM(RPGUNIT/A_INSTALL)
-
-d) Optionally run the RPGUnit self tests:
+b) Optionally run the RPGUnit self tests:
    CRTBNDCL   PGM(RPGUNIT/MKUT) SRCFILE(RPGUNITT1)
    CALL       PGM(RPGUNIT/MKUT) PARM('RPGUNIT')
    DLTPGM     PGM(RPGUNIT/MKUT)

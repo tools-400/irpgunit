@@ -1,0 +1,123 @@
+.* ==========================================================================
+.*  iRPGUnit - Compile module.
+.* ==========================================================================
+.*  Copyright (c) 2013-2019 iRPGUnit Project Team
+.*  All rights reserved. This program and the accompanying materials
+.*  are made available under the terms of the Common Public License v1.0
+.*  which accompanies this distribution, and is available at
+.*  http://www.eclipse.org/legal/cpl-v10.html
+.* ==========================================================================
+.*   >>PRE-COMPILER<<
+.*     >>CRTCMD<<  CRTPNLGRP  PNLGRP(&LI/&OB) +
+.*                               SRCFILE(&SL/&SF)  +
+.*                               SRCMBR(&SM);
+.*     >>IMPORTANT<<
+.*       >>PARM<< OPTION(*EVENTF);
+.*     >>END-IMPORTANT<<
+.*     >>EXECUTE<<
+.*   >>END-PRE-COMPILER<<
+.* ==========================================================================
+:pnlgrp.
+.*
+:help name=CMPMOD WIDTH=74.
+iRPGUnit - Compile Module (CMPMOD) - Help
+:p.
+The :HP2.iRPGUnit - Compile Module:EHP2. (CMPMOD) command compiles
+CLLE, RPGLE and SQLRPGLE modules, when the module does not yet
+exist or when the source is newer than the object.
+:ehelp.
+.*
+:help name='CMPMOD/MODULE' WIDTH=64.
+Module (MODULE) - Help
+:xh3.Module (MODULE)
+:p.
+Specifies the library name and module name for the module
+object you are creating.
+:parml.
+:pt.module-name
+:pd.Enter the name of the module object.
+:eparml.
+:p.
+:parml.
+:pt.library-name
+:pd.Enter the name of the library where the compiled
+module object is to be stored.
+:eparml.
+:ehelp.
+.*
+:help name='CMPMOD/SRCFILE' WIDTH=64.
+Source file (SRCFILE) - Help
+:xh3.Source file (SRCFILE)
+:p.
+Specifies the name of the source file that contains the
+source member to be compiled and the library where the
+source file is stored.
+:parml.
+:pt.source-file-name
+:pd.Enter the name of the source file that contains the
+source member to be compiled.
+:eparml.
+:p.
+:parml.
+:pt.:pk def.*LIBL:epk.
+:pd.The system searches the library list to find the
+library where the source file is stored.
+:pt.library-name
+:pd.Enter the name of the library where the source
+file is stored.
+:eparml.
+:ehelp.
+.*
+:help name='CMPMOD/SRCMBR' WIDTH=64.
+Source member (SRCMBR) - Help
+:xh3.Source member (SRCMBR)
+:p.
+Specifies the name of the member of the source file that
+contains source specifications to be compiled.
+:parml.
+:pt.:pk def.*MODULE:epk.
+:pd.Use the name specified for the MODULE parameter as the
+source file member name.
+:pt.source-file-member-name
+:pd.Enter the name of the member that contains the source
+specifications.
+:eparml.
+:ehelp.
+.*
+:help name='CMPMOD/DBGVIEW' WIDTH=64.
+Debug view (DBGVIEW) - Help
+:xh3.Debug view (DBGVIEW)
+:p.
+Specifies which level of debugging is available for the
+compiled module object, and which source views are
+available for source-level debugging.
+:parml.
+:pt.:pk def.*NO:epk.
+:pd.Disables all of the debug options for debugging the
+compiled module object.
+:pt.*YES
+:pd.Generates the listing view for debugging the compiled
+module object, except of modules of source type SQLRPGLI.
+These objects are created with all debug views.
+:eparml.
+:ehelp.
+.*
+:help name='CMPMOD/TGTRLS' WIDTH=64.
+Target release (TGTRLS) - Help
+:xh3.Target release (TGTRLS)
+:p.
+Specifies the release of the operating system on which you
+intend to use the object being created.
+:parml.
+:pt.:pk def.*CURRENT:epk.
+:pd.The object is to be used on the release of the
+operating system currently running on your system.
+:pt.*PRV
+:pd.The object is to be used on the previous release with
+modification level 0 of the operating system.
+:pt.target-release
+:pd.Specify the release in the format VxRxMx.
+:eparml.
+:ehelp.
+.*
+:epnlgrp.
