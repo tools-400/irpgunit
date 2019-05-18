@@ -92,10 +92,10 @@ Specifies which level of debugging is available for the
 compiled module object, and which source views are
 available for source-level debugging.
 :parml.
-:pt.:pk def.*NO:epk.
+:pt.:pk def.*NONE:epk.
 :pd.Disables all of the debug options for debugging the
 compiled module object.
-:pt.*YES
+:pt.*LIST
 :pd.Generates the listing view for debugging the compiled
 module object, except of modules of source type SQLRPGLI.
 These objects are created with all debug views.

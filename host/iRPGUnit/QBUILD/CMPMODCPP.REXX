@@ -63,7 +63,7 @@
    do
      'CRTRPGMOD MODULE(&objLib/&objName) SRCFILE(&srcFile) SRCMBR(&srcMbr)',
                'DBGVIEW(&dbgView) TRUNCNBR(*NO) TGTRLS(&tgtRls)'
-     'DLTSPLF FILE(&objName) JOB(*) SPLNBR(*LAST)'
+     deleteSpooledFile(objName)
      sendCreatedMessage(objLib, objName)
      EXIT;
    end
@@ -77,7 +77,8 @@
               'OBJTYPE(*MODULE) RPGPPOPT(*LVL2)',
               'COMPILEOPT(''TRUNCNBR(*NO) DBGVIEW('dbgView')'')',
               'DBGVIEW(*NONE) TGTRLS(&tgtRls)'
-     'DLTSPLF FILE(&objName) JOB(*) SPLNBR(*LAST)'
+     deleteSpooledFile(objName)
+     deleteSpooledFile(objName)
      sendCreatedMessage(objLib, objName)
      EXIT;
    end
@@ -86,7 +87,7 @@
    do
      'CRTCLMOD MODULE(&objLib/&objName) SRCFILE(&srcFile) SRCMBR(&srcMbr)',
               'DBGVIEW(&dbgView) TGTRLS(&tgtRls)'
-     'DLTSPLF FILE(&objName) JOB(*) SPLNBR(*LAST)'
+     deleteSpooledFile(objName)
      sendCreatedMessage(objLib, objName)
      EXIT;
    end
@@ -99,6 +100,15 @@
    "MSGTYPE(*ESCAPE)";
 
  EXIT;
+
+deleteSpooledFile:
+   PARSE ARG splfName
+
+     Signal off Error
+     'DLTSPLF FILE('splfName') JOB(*) SPLNBR(*LAST)'
+     Signal on Error
+
+   return ''
 
  /* ------------------------------------------------------------- */
  /* Send "Object created" message.                                */

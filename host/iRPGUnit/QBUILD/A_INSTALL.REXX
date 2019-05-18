@@ -1,3 +1,47 @@
+/* =================================================================== */
+/*  This Rexx script installs the iRPGUnit library.                    */
+/*                                                                     */
+/*  Usage:                                                             */
+/*  a) Add the iRPGUnit library to your library list.                  */
+/*  b) Start the Rexx script with the following command:               */
+/*       STRREXPRC SRCMBR(A_INSTALL) SRCFILE(QBUILD) PARM(prdLib)      */
+/*     where 'prdLib' is the library containing the RPGUnit            */
+/*     source files.                                                   */
+/*                                                                     */
+/*     Script parameters:                                              */
+/*       prdLib   - Name of the iRPGUnit product library.              */
+/*       option   - The possible values are:                           */
+/*                  INSTALL : Default. Installs the iRPGUnit library.  */
+/*                  DLTMODS : Deletes the iRPGUnit modules from the    */
+/*                            specified library (prdLib).              */
+/*       tgtRls   - The possible values are:                           */
+/*                  CURRENT : The objects are compiled with the        */
+/*                            release of the operating system          */
+/*                            currently running on your system.        */
+/*                  PRV     : The objects are compiled for the         */
+/*                            previous release of the operating system */
+/*                            currently running on your system.        */
+/*                  VxRxMx  : Release in the format of VxRxMx.         */
+/*       dbgView  - The possible values are:                           */
+/*                  NONE    : Default. Compiles the obejcts without    */
+/*                            debug views.                             */
+/*                  LIST    : Generates a listing view when compiling  */
+/*                            the objects.                             */
+/* =================================================================== */
+/*   >>PRE-COMPILER<<                                                  */
+/*     >>CRTCMD<<  CRTBNDCL      PGM(&LI/&OB) +                        */
+/*                               SRCFILE(&SL/&SF)  +                   */
+/*                               SRCMBR(&SM);                          */
+/*     >>COMPILE<<                                                     */
+/*       >>PARM<< DBGVIEW(*LIST);                                      */
+/*     >>END-COMPILE<<                                                 */
+/*     >>LINK<<                                                        */
+/*       >>PARM<< DFTACTGRP(*NO);                                      */
+/*       >>PARM<< ACTGRP(*NEW);                                        */
+/*     >>END-LINK<<                                                    */
+/*     >>EXECUTE<<                                                     */
+/*   >>END-PRE-COMPILER<<                                              */
+/* =================================================================== */
 
  /* Register error handler */
  Signal on Error
@@ -9,11 +53,12 @@
  /* The utility that is installed */
  UTILITY = 'iRPGUnit'
 
- PARSE ARG prdLib option tgtrls
+ PARSE ARG prdLib option tgtrls dbgView
 
- prdLib = translate(strip(prdLib))
- option = translate(strip(option))
- tgtRls = translate(strip(tgtRls))
+ prdLib  = translate(strip(prdLib))
+ option  = translate(strip(option))
+ tgtRls  = translate(strip(tgtRls))
+ dbgView = translate(strip(dbgView))
 
  if prdLib = "" then do
    "SNDPGMMSG ",
@@ -24,20 +69,42 @@
      "MSGTYPE(*ESCAPE)"
  end
 
- if option = "" then do
-   option = '*INSTALL'
+ if option = '' then do
+   option = 'INSTALL'
  end
 
- if tgtRls = "" then do
-   tgtRls = '*CURRENT'
+ if (option <> 'INSTALL' & option <> 'DLTMODS') then do
+   "SNDPGMMSG ",
+     "MSGID(CPF9898) ",
+     "MSGF(QCPFMSG) ",
+     "MSGDTA('Invalid option specfied: ''"option"''. Use INSTALL or DLTMODS')",
+     "TOPGMQ(*PRV (*CTLBDY)) ",
+     "MSGTYPE(*ESCAPE)"
+ end
+
+ select
+ when (tgtRls = '' | tgtRls = 'CURRENT') then tgtRls = '*CURRENT'
+ when (tgtRls = 'PRV') then tgtRls = '*PRV'
+ end
+
+ if dbgView = '' then do
+   dbgView = 'NONE'
+ end
+
+ if (dbgView <> 'NONE' & dbgView <> 'LIST') then do
+   "SNDPGMMSG ",
+     "MSGID(CPF9898) ",
+     "MSGF(QCPFMSG) ",
+     "MSGDTA('Invalid debug view specfied: ''"dbgView"''. Use NONE or LIST')",
+     "TOPGMQ(*PRV (*CTLBDY)) ",
+     "MSGTYPE(*ESCAPE)"
  end
 
  /* -------------------------------------------- */
  /*  Install iRPGUnit Library.                   */
  /*  Compiles all iRPGUnit objects from source.  */
  /* -------------------------------------------- */
- if (option = '*INSTALL') then do
-   dbgView = '*YES'
+ if (option = 'INSTALL') then do
    install(prdLib, dbgView, tgtRls)
    EXIT
  end
@@ -46,18 +113,10 @@
  /*  Delete modules.                             */
  /*  Deletes all iRPGUnit modules.               */
  /* -------------------------------------------- */
- if (option = '*DLTMODS') then do
-   dbgView = '*YES'
+ if (option = 'DLTMODS') then do
    deleteModules(prdLib)
    EXIT
  end
-
- "SNDPGMMSG ",
-   "MSGID(CPF9898) ",
-   "MSGF(QCPFMSG) ",
-   "MSGDTA('Invalid ''option'' parameter value: "option". Use *INSTALL or *DLTMODS') ",
-   "TOPGMQ(*PRV (*CTLBDY)) ",
-   "MSGTYPE(*ESCAPE)"
 
  EXIT
 
@@ -67,35 +126,30 @@
  install:
    PARSE ARG prdLib, dbgView, tgtRls
 
-   /* - - - - - - - - - - - - - - - - - - - - */
+   /* - - - - - - - - - - - -   - - - - - - - - */
    /*  Create commands BUILD and CMPMOD.      */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "CRTBNDCL PGM(QTEMP/MKBUILD) SRCFILE("prdLib"/QBUILD) SRCMBR(*PGM)"
-   "CALL PGM(QTEMP/MKBUILD) PARM("prdLib" "dbgView" "tgtRls")"
+   "STRREXPRC SRCMBR(MKBUILD) SRCFILE(QBUILD) PARM('"prdLib" "dbgView" "tgtRls"')"
 
    /* - - - - - - - - - - - - - - - - - - - - */
    /*  Create service program RUTESTCASE.     */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "CRTBNDCL PGM(QTEMP/MKTESTCASE) SRCFILE("prdLib"/QSRC) SRCMBR(*PGM)"
-   "CALL PGM(QTEMP/MKTESTCASE) PARM("prdLib" "dbgView" "tgtRls")"
+   "STRREXPRC SRCMBR(MKTESTCASE) SRCFILE(QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
 
    /* - - - - - - - - - - - - - - - - - - - - */
    /*  Create commands: RUCALLTST             */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "CRTBNDCL PGM(QTEMP/MKCALLTST) SRCFILE("prdLib"/QSRC) SRCMBR(*PGM)"
-   "CALL PGM(QTEMP/MKCALLTST) PARM("prdLib" "dbgView" "tgtRls")"
+   "STRREXPRC SRCMBR(MKCALLTST) SRCFILE(QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
 
    /* - - - - - - - - - - - - - - - - - - - - */
    /*  Create commands: RUCRTTST              */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "CRTBNDCL PGM(QTEMP/MKCRTTST) SRCFILE("prdLib"/QSRC) SRCMBR(*PGM)"
-   "CALL PGM(QTEMP/MKCRTTST) PARM("prdLib" "dbgView" "tgtRls")"
+   "STRREXPRC SRCMBR(MKCRTTST) SRCFILE(QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
 
    /* - - - - - - - - - - - - - - - - - - - - */
    /*  Create program RUPGMRMT (plug-in)      */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "CRTBNDCL PGM(QTEMP/MKRMTRUN) SRCFILE("prdLib"/QSRC) SRCMBR(*PGM)"
-   "CALL PGM(QTEMP/MKRMTRUN) PARM("prdLib" "dbgView" "tgtRls")"
+   "STRREXPRC SRCMBR(MKRMTRUN) SRCFILE(QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
 
    "SNDPGMMSG ",
      "MSGID(CPF9897) ",

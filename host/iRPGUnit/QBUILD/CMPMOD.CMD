@@ -45,8 +45,8 @@
                         LEN(1)                               +
                         MIN(0)                               +
                         DFT(*NO)                             +
-                        SPCVAL((*NO  N)                      +
-                               (*YES Y))                     +
+                        SPCVAL((*NONE  N)                    +
+                               (*LIST  Y))                   +
                         PROMPT('Debug view')
 
              PARM       KWD(TGTRLS)                          +
