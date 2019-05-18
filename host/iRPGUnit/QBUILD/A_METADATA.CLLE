@@ -49,13 +49,7 @@
              CHGPFM     FILE(&TARGETLIB/QBND) +
                           MBR(RUTESTCASE) +
                           SRCTYPE(BND) +
-                          TEXT('iRPGUnit - Public API.')
-             MONMSG     MSGID(CPF3288)
-
-             CHGPFM     FILE(&TARGETLIB/QBUILD) +
-                          MBR(A_CPL.1.0) +
-                          SRCTYPE(TXT) +
-                          TEXT('iRPGUnit - Software license.')
+                          TEXT('iRPGUnit - Test Suite Toolkit.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QBUILD) +
@@ -66,7 +60,7 @@
 
              CHGPFM     FILE(&TARGETLIB/QBUILD) +
                           MBR(A_INSTALL) +
-                          SRCTYPE(CLLE) +
+                          SRCTYPE(REXX) +
                           TEXT('iRPGUnit - Build the whole framework. Run First.')
              MONMSG     MSGID(CPF3288)
 
@@ -83,27 +77,27 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QBUILD) +
-                          MBR(A_README2) +
-                          SRCTYPE(TXT) +
-                          TEXT('iRPGUnit - Readme (Author: Lacton).')
-             MONMSG     MSGID(CPF3288)
-
-             CHGPFM     FILE(&TARGETLIB/QBUILD) +
                           MBR(A_SELFTEST) +
                           SRCTYPE(CLLE) +
                           TEXT('iRPGUnit - Compile And Run SelfTests.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QBUILD) +
-                          MBR(BUILD) +
+                          MBR(CMPMOD) +
                           SRCTYPE(CMD) +
-                          TEXT('iRPGUnit - Install Utility.')
+                          TEXT('iRPGUnit - Compile Module.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QBUILD) +
-                          MBR(BUILDHLP) +
+                          MBR(CMPMODCPP) +
+                          SRCTYPE(REXX) +
+                          TEXT('iRPGUnit - Compile module.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QBUILD) +
+                          MBR(CMPMODHLP) +
                           SRCTYPE(PNLGRP) +
-                          TEXT('iRPGUnit - Install Utility.')
+                          TEXT('iRPGUnit - Compile module.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QBUILD) +
@@ -124,10 +118,10 @@
                           TEXT('iRPGUnit - Change object owner.')
              MONMSG     MSGID(CPF3288)
 
-             CHGPFM     FILE(&TARGETLIB/QCMD) +
-                          MBR(MKCMD) +
+             CHGPFM     FILE(&TARGETLIB/QBUILD) +
+                          MBR(MKBUILD) +
                           SRCTYPE(CLLE) +
-                          TEXT('RPGUnit - Build the commands.')
+                          TEXT('iRPGUnit - Create Install Utility.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QCMD) +
@@ -487,7 +481,7 @@
              CHGPFM     FILE(&TARGETLIB/QSRC) +
                           MBR(MKCALLTST) +
                           SRCTYPE(CLLE) +
-                          TEXT('iRPGUnit - Make command line runner.')
+                          TEXT('iRPGUnit - Make RUCALLTST program.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +
@@ -560,12 +554,6 @@
                           MBR(TEMPLATE) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - Empty Unit Test Case.')
-             MONMSG     MSGID(CPF3288)
-
-             CHGPFM     FILE(&TARGETLIB/QSRC) +
-                          MBR(TEMPLSQL) +
-                          SRCTYPE(SQLRPGLE) +
-                          TEXT('iRPGUnit - Empty SQL Unit Test Case.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +
@@ -965,6 +953,18 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(MKASSERTT) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iRPGUnit SelfTest - Build ASSERTT.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(MKCALLPRCT) +
+                          SRCTYPE(CLLE) +
+                          TEXT('iRPGUnit SelfTest - Build CALLPROCT.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(MKCMDRUNLT) +
                           SRCTYPE(CLLE) +
                           TEXT('iRPGUnit SelfTest - Build CMDRUNLOGT.')
@@ -1015,7 +1015,7 @@
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(MKRPGUNITT) +
                           SRCTYPE(CLLE) +
-                          TEXT('iiRPGUnit - Build and run all self and acp. tests.')
+                          TEXT('iRPGUnit - Build and run all self and acp. tests.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
