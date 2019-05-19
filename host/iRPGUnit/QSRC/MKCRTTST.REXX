@@ -59,8 +59,8 @@
  end
 
  select
- when (dbgView = '' | dbgView = 'NONE') then dbgView = '*NONE'
- when (dbgView = 'LIST') then dbgView = '*LIST'
+ when (dbgView = '' | dbgView = 'NONE' | dbgView = '*NONE') then dbgView = '*NONE'
+ when (dbgView = 'LIST' | dbgView = '*LIST') then dbgView = '*LIST'
  otherwise do
      "SNDPGMMSG ",
        "MSGID(CPF9898) ",
