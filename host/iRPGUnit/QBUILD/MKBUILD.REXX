@@ -41,7 +41,7 @@
  SIGNAL on SYNTAX
 
  /* The utility that is installed */
- UTILITY = 'RUTESTCASE'
+ UTILITY = 'BUILD'
 
  PARSE ARG prdLib dbgView tgtrls
 
@@ -53,7 +53,7 @@
    "SNDPGMMSG ",
      "MSGID(CPF9898) ",
      "MSGF(QCPFMSG) ",
-     "MSGDTA('Usage: STRREXPRC SRCMBR(MKBUILD) SRCFILE(QSRC) PARM(prdLib)')",
+     "MSGDTA('Usage: STRREXPRC SRCMBR(MKBUILD) SRCFILE(QBUILD) PARM(prdLib)')",
      "TOPGMQ(*PRV (*CTLBDY)) ",
      "MSGTYPE(*ESCAPE)"
  end
@@ -81,12 +81,8 @@
  /*  Let's do it!                                */
  /* -------------------------------------------- */
 
- "CMPMOD MODULE(QTEMP/ASSERT   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/PGMMSG   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/VERSION  ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/TESTUTILS) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-
  "CRTPNLGRP  PNLGRP("prdLib"/CMPMODHLP) SRCFILE(*LIBL/QBUILD)"
+
  "CRTCMD CMD("prdLib"/CMPMOD) SRCFILE(*LIBL/QBUILD) ",
         "PGM(*REXX) ",
         "REXSRCFILE("prdLib"/QBUILD) ",
