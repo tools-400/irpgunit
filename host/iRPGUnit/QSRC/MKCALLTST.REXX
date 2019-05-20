@@ -80,16 +80,15 @@
  /* -------------------------------------------- */
  /*  Let's do it!                                */
  /* -------------------------------------------- */
+ "STRREXPRC SRCMBR(MKLLIST) SRCFILE(QLLIST) PARM('"prdLib" "dbgView" "tgtRls"')"
 
- "STRREXPRC SRCMBR(MKCALLTST) SRCFILE(QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
-
- "CMPMOD MODULE(QTEMP/CRTTST   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/OBJECT   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/PGMMSG   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/SRCMBR   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/STRING   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/TAGTST   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/USRSPC   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE(QTEMP/CMDRUN   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE(QTEMP/CMDRUNLOG) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE(QTEMP/CMDRUNPRT) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE(QTEMP/CMDRUNSRV) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE(QTEMP/CALLPRC  ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE(QTEMP/EXTPRC   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE(QTEMP/EXTTST   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE(QTEMP/LIBL     ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE(QTEMP/PGMMSG   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE(QTEMP/STRING   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
@@ -97,27 +96,27 @@
  "CMPMOD MODULE(QTEMP/XMLWRITER) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
  "CRTPGM PGM("prdLib"/RUCALLTST) ",
-        "MODULE(QTEMP/CRTTST     ",
-               "QTEMP/OBJECT     ",
-               "QTEMP/PGMMSG     ",
-               "QTEMP/SRCMBR     ",
-               "QTEMP/STRING     ",
-               "QTEMP/TAGTST     ",
-               "QTEMP/USRSPC     ",
+        "MODULE(QTEMP/CMDRUN  ",
+               "QTEMP/CMDRUNLOG  ",
+               "QTEMP/CMDRUNPRT  ",
+               "QTEMP/CMDRUNSRV  ",
+               "QTEMP/CALLPRC    ",
+               "QTEMP/EXTPRC     ",
+               "QTEMP/EXTTST     ",
                "QTEMP/LIBL       ",
                "QTEMP/LLIST      ",
                "QTEMP/PGMMSG     ",
                "QTEMP/STRING     ",
                "QTEMP/USRSPC     ",
                "QTEMP/XMLWRITER) ",
-        "ENTMOD(QTEMP/CRTTST) ",
+        "ENTMOD(QTEMP/CMDRUN) ",
         "BNDSRVPGM(*LIBL/RUTESTCASE) ",
         "ACTGRP(*NEW) ",
         "ALWUPD(*YES) ",
         "ALWLIBUPD(*YES) ",
         "DETAIL(*NONE) ",
         "TGTRLS("tgtRls") ",
-        "TEXT('iRPGUnit - Create Test Suite.')"
+        "TEXT('iRPGUnit - Execute Test Suite.')"
 
  "CRTPNLGRP  PNLGRP("prdLib"/RUCALLTST) SRCFILE(*LIBL/QPNLGRP)"
 
