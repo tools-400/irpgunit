@@ -81,26 +81,26 @@
  /* -------------------------------------------- */
  /*  Let's do it!                                */
  /* -------------------------------------------- */
- "CMPMOD MODULE(QTEMP/CRTTSTT  ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/CRTTST   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/LIBL     ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/OBJECT   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/PGMMSG   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/SRCMBR   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/STRING   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/TAGTST   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/USRSPC   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/CRTTSTT  ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/CRTTST   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/LIBL     ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/OBJECT   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/SRCMBR   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/STRING   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/TAGTST   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/USRSPC   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
  "CRTSRVPGM  SRVPGM("prdLib"/CRTTSTT) ",
-            "MODULE(QTEMP/CRTTSTT   ",
-                   "QTEMP/CRTTST    ",
-                   "QTEMP/LIBL      ",
-                   "QTEMP/OBJECT    ",
-                   "QTEMP/PGMMSG    ",
-                   "QTEMP/SRCMBR    ",
-                   "QTEMP/STRING    ",
-                   "QTEMP/TAGTST    ",
-                   "QTEMP/USRSPC )  ",
+            "MODULE("prdLib"/CRTTSTT   ",
+                     prdLib"/CRTTST    ",
+                     prdLib"/LIBL      ",
+                     prdLib"/OBJECT    ",
+                     prdLib"/PGMMSG    ",
+                     prdLib"/SRCMBR    ",
+                     prdLib"/STRING    ",
+                     prdLib"/TAGTST    ",
+                     prdLib"/USRSPC )  ",
             "EXPORT(*ALL) ",
             "OPTION(*DUPPROC) ",
             "BNDSRVPGM(*LIBL/RUTESTCASE) ",

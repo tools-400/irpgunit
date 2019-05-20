@@ -80,7 +80,7 @@
  /* -------------------------------------------- */
  /*  Let's do it!                                */
  /* -------------------------------------------- */
- "CMPMOD MODULE(QTEMP/LLIST    ) SRCFILE(QLLIST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/LLIST    ) SRCFILE(QLLIST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
  "SNDPGMMSG ",
    "MSGID(CPF9897) ",

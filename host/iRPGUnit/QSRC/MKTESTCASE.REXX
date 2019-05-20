@@ -81,16 +81,16 @@
  /*  Let's do it!                                */
  /* -------------------------------------------- */
 
- "CMPMOD MODULE(QTEMP/ASSERT   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/PGMMSG   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/VERSION  ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/TESTUTILS) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/ASSERT   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/VERSION  ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/TESTUTILS) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
  "CRTSRVPGM  SRVPGM("prdLib"/RUTESTCASE) ",
-              "MODULE(QTEMP/ASSERT     ",
-                     "QTEMP/PGMMSG     ",
-                     "QTEMP/VERSION    ",
-                     "QTEMP/TESTUTILS) ",
+              "MODULE("prdLib"/ASSERT     ",
+                       prdLib"/PGMMSG     ",
+                       prdLib"/VERSION    ",
+                       prdLib"/TESTUTILS) ",
               "EXPORT(*SRCFILE) ",
               "SRCFILE(QBND) SRCMBR(RUTESTCASE) ",
               "TGTRLS("tgtRls") ",

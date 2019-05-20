@@ -12,7 +12,7 @@
 /*       option   - The possible values are:                           */
 /*                  INSTALL : Default. Installs the iRPGUnit library.  */
 /*                  CLEAN   : Deletes the iRPGUnit modules from        */
-/*                            library QTEMP.                           */
+/*                            library iRPGUnit library.                */
 /*                  CLEANALL: Removes all objects from the iRPGUnit    */
 /*                            product library.                         */
 /*       prdLib   - Name of the iRPGUnit product library.              */
@@ -123,7 +123,7 @@
  /*  Deletes all iRPGUnit modules.               */
  /* -------------------------------------------- */
  if (option = 'CLEAN') then do
-   if (prdLib = '') then prdLib = 'QTEMP'
+   if prdLib = '' then prdLib = PRD_LIB
    clean(prdLib)
    EXIT
  end
@@ -132,6 +132,7 @@
  /*  Cleans the iRPGUnit product library.        */
  /* -------------------------------------------- */
  if (option = 'CLEANALL') then do
+   if prdLib = '' then prdLib = PRD_LIB
    cleanAll(prdLib)
    EXIT
  end
@@ -145,7 +146,9 @@
    PARSE ARG _prdLib, _dbgView, _tgtRls
 
    deleteSelfTests(_prdLib)
-   deleteModules('QTEMP')
+   deleteModules(_prdLib)
+   deleteBuildObjects(_prdLib)
+   deleteIRPGUnit(_prdLib);
 
    /* - - - - - - - - - - - -   - - - - - - - - */
    /*  Create commands BUILD and CMPMOD.      */
@@ -172,7 +175,9 @@
    /* - - - - - - - - - - - - - - - - - - - - */
    "STRREXPRC SRCMBR(MKRMTRUN) SRCFILE(QSRC) PARM('"_prdLib" "_dbgView" "_tgtRls"')"
 
-   deleteModules('QTEMP')
+   deleteSelfTests(_prdLib)
+   deleteModules(_prdLib)
+   deleteBuildObjects(_prdLib)
 
    "SNDPGMMSG ",
      "MSGID(CPF9897) ",
@@ -190,8 +195,8 @@
    PARSE ARG _prdLib
 
    deleteSelfTests(_prdLib)
-
    deleteModules(_prdLib)
+   deleteBuildObjects(_prdLib)
 
    "SNDPGMMSG ",
      "MSGID(CPF9897) ",
@@ -210,6 +215,7 @@
 
    deleteSelfTests(_prdLib)
    deleteModules(_prdLib)
+   deleteBuildObjects(_prdLib)
 
    deleteIRPGUnit(_prdLib);
 
@@ -229,6 +235,7 @@
    PARSE ARG _prdLib
 
    Signal off Error
+
    "DLTCMD CMD("_prdlib"/CMPMOD)"
    "DLTCMD CMD("_prdlib"/RUCALLTST)"
    "DLTCMD CMD("_prdlib"/RUCRTTST)"
@@ -242,8 +249,29 @@
    "DLTPGM PGM("_prdlib"/RUPGMRMT)"
    "DLTSRVPGM SRVPGM("_prdlib"/RUTESTCASE)"
 
+   "DLTUSRSPC USRSPC("_prdlib"/RUPROCLIST)"
+
    "DLTF FILE("_prdlib"/EVFEVENT)"
+
    Signal on Error
+
+   return ''
+
+ /* ------------------------------------------------------------- */
+ /*  Deletes all iRPGUnit build helper objects.                   */
+ /* ------------------------------------------------------------- */
+ deleteBuildObjects:
+   PARSE ARG _prdLib
+
+   Signal off Error
+
+   "DLTPGM PGM("_prdlib"/A_CRTPKG)"
+   "DLTPGM PGM("_prdlib"/A_METADATA)"
+
+   "DLTPGM PGM("_prdlib"/CRTPKGCPR)"
+   "DLTPGM PGM("_prdlib"/CRTPKGDBG)"
+   "DLTPGM PGM("_prdlib"/CRTPKGMDT)"
+   "DLTPGM PGM("_prdlib"/CRTPKGOWN)"
 
    return ''
 
@@ -258,14 +286,7 @@
    bndDir = 'IRPGUNIT'
 
    "DLTBNDDIR BNDDIR("_prdlib"/"bndDir")"
-   "DLTUSRSPC USRSPC("_prdlib"/RUPROCLIST)"
    "DLTUSRSPC USRSPC("_prdlib"/RUSPOOL)"
-
-   Signal on Error
-
-   deleteModules(_prdLib)
-
-   Signal off Error
 
    "DLTSRVPGM SRVPGM("_prdlib"/SRVPGM1)"
    "DLTSRVPGM SRVPGM("_prdlib"/SRVPGM2)"

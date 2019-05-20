@@ -81,24 +81,24 @@
  /* -------------------------------------------- */
  /*  Let's do it!                                */
  /* -------------------------------------------- */
- "CMPMOD MODULE(QTEMP/ACPTSTT  ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/ASSERT   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/OBJECT   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/PGMMSG   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/SPLF     ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/SRCMBR   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/TESTUTILS) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/USRSPC   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/ACPTSTT  ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/ASSERT   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/OBJECT   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/SPLF     ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/SRCMBR   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/TESTUTILS) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/USRSPC   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
  "CRTSRVPGM  SRVPGM("prdLib"/ACPTSTT) ",
-            "MODULE(QTEMP/ACPTSTT   ",
-                   "QTEMP/ASSERT    ",
-                   "QTEMP/OBJECT    ",
-                   "QTEMP/PGMMSG    ",
-                   "QTEMP/SPLF      ",
-                   "QTEMP/SRCMBR    ",
-                   "QTEMP/TESTUTILS ",
-                   "QTEMP/USRSPC)   ",
+            "MODULE("prdLib"/ACPTSTT   ",
+                     prdLib"/ASSERT    ",
+                     prdLib"/OBJECT    ",
+                     prdLib"/PGMMSG    ",
+                     prdLib"/SPLF      ",
+                     prdLib"/SRCMBR    ",
+                     prdLib"/TESTUTILS ",
+                     prdLib"/USRSPC)   ",
             "EXPORT(*ALL) ",
             "OPTION(*DUPPROC) ",
             "BNDSRVPGM(*LIBL/RUTESTCASE) ",

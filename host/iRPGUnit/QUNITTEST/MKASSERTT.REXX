@@ -82,12 +82,12 @@
  /*  Let's do it!                                */
  /* -------------------------------------------- */
 
- "CMPMOD MODULE(QTEMP/ASSERTT  ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/PGMMSG   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/ASSERTT  ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
  "CRTSRVPGM  SRVPGM("prdLib"/ASSERTT) ",
-            "MODULE(QTEMP/ASSERTT ",
-                   "QTEMP/PGMMSG) ",
+            "MODULE("prdLib"/ASSERTT ",
+                     prdLib"/PGMMSG) ",
             "EXPORT(*ALL) ",
             "BNDSRVPGM(*LIBL/RUTESTCASE) ",
             "TEXT('RPGUnit SelfTest - Test ASSERT.')"

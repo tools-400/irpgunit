@@ -81,16 +81,16 @@
  /* -------------------------------------------- */
  /*  Let's do it!                                */
  /* -------------------------------------------- */
- "CMPMOD MODULE(QTEMP/CMDRUNLOGT) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/CMDRUNLOG ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/CMDRUNPRT ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/STRING    ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/CMDRUNLOGT) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/CMDRUNLOG ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/CMDRUNPRT ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/STRING    ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
  "CRTSRVPGM  SRVPGM("prdLib"/CMDRUNLOGT) ",
-            "MODULE(QTEMP/CMDRUNLOGT ",
-                   "QTEMP/CMDRUNLOG  ",
-                   "QTEMP/CMDRUNPRT  ",
-                   "QTEMP/STRING  )  ",
+            "MODULE("prdLib"/CMDRUNLOGT ",
+                     prdLib"/CMDRUNLOG  ",
+                     prdLib"/CMDRUNPRT  ",
+                     prdLib"/STRING  )  ",
             "EXPORT(*ALL) ",
             "OPTION(*DUPPROC) ",
             "BNDSRVPGM(*LIBL/RUTESTCASE) ",

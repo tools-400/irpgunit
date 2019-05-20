@@ -82,23 +82,23 @@
  /* -------------------------------------------- */
  "STRREXPRC SRCMBR(MKLLIST) SRCFILE(QLLIST) PARM('"prdLib" "dbgView" "tgtRls"')"
 
- "CMPMOD MODULE(QTEMP/CRTTST   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/OBJECT   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/PGMMSG   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/SRCMBR   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/STRING   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/TAGTST   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/USRSPC   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/CRTTST   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/OBJECT   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/SRCMBR   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/STRING   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/TAGTST   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/USRSPC   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
  "CRTPGM PGM("prdLib"/RUCRTTST) ",
-        "MODULE(QTEMP/CRTTST     ",
-               "QTEMP/OBJECT     ",
-               "QTEMP/PGMMSG     ",
-               "QTEMP/SRCMBR     ",
-               "QTEMP/STRING     ",
-               "QTEMP/TAGTST     ",
-               "QTEMP/USRSPC   ) ",
-        "ENTMOD(QTEMP/CRTTST) ",
+        "MODULE("prdLib"/CRTTST     ",
+                 prdLib"/OBJECT     ",
+                 prdLib"/PGMMSG     ",
+                 prdLib"/SRCMBR     ",
+                 prdLib"/STRING     ",
+                 prdLib"/TAGTST     ",
+                 prdLib"/USRSPC   ) ",
+        "ENTMOD("prdLib"/CRTTST) ",
         "BNDSRVPGM(*LIBL/RUTESTCASE) ",
         "ACTGRP(*NEW) ",
         "ALWUPD(*YES) ",

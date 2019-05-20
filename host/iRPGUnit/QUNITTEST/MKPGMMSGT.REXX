@@ -81,12 +81,12 @@
  /* -------------------------------------------- */
  /*  Let's do it!                                */
  /* -------------------------------------------- */
- "CMPMOD MODULE(QTEMP/PGMMSGT  ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/PGMMSG   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/PGMMSGT  ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
  "CRTSRVPGM  SRVPGM("prdLib"/PGMMSGT) ",
-            "MODULE(QTEMP/PGMMSGT ",
-                   "QTEMP/PGMMSG) ",
+            "MODULE("prdLib"/PGMMSGT ",
+                     prdLib"/PGMMSG) ",
             "EXPORT(*ALL) ",
             "OPTION(*DUPPROC) ",
             "BNDSRVPGM(*LIBL/RUTESTCASE) ",

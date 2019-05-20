@@ -112,6 +112,9 @@
                           TOFILE(&LIB/&QBUILD) FROMMBR(CMPMODHLP) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QBUILD) +
+                          TOFILE(&LIB/&QBUILD) FROMMBR(CRTPKGCPR) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QBUILD) +
                           TOFILE(&LIB/&QBUILD) FROMMBR(CRTPKGDBG) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QBUILD) +
@@ -122,9 +125,6 @@
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QBUILD) +
                           TOFILE(&LIB/&QBUILD) FROMMBR(MKBUILD) +
-                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
-             CPYF       FROMFILE(&DEVLIB/&QBUILD) +
-                          TOFILE(&LIB/&QBUILD) FROMMBR(UPDCPYRGHT) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
 
              /* ---------------------------------------------------- */
@@ -640,11 +640,11 @@
              /* ---------------------------------------------------- */
              /*  Update copyright information.                       */
              /* ---------------------------------------------------- */
-             CRTBNDRPG  PGM(&TMPLIB/UPDCPYRGHT) +
+             CRTBNDRPG  PGM(&TMPLIB/CRTPKGCPR) +
                           SRCFILE(&LIB/&QBUILD) SRCMBR(*PGM) +
                           TRUNCNBR(*NO) DFTACTGRP(*NO) ACTGRP(*CALLER)
 
-             CALL       PGM(&TMPLIB/UPDCPYRGHT) PARM(&LIB)
+             CALL       PGM(&TMPLIB/CRTPKGCPR) PARM(&LIB)
 
              /* ---------------------------------------------------- */
              /*  Create iRPGUnit meta data and get version number.   */
@@ -726,6 +726,6 @@
 
              DLTPGM     PGM(&TMPLIB/CRTPKGOWN)
              DLTPGM     PGM(&TMPLIB/CRTPKGMDT)
-             DLTPGM     PGM(&TMPLIB/UPDCPYRGHT)
+             DLTPGM     PGM(&TMPLIB/CRTPKGCPR)
 
              ENDPGM

@@ -83,31 +83,31 @@
  /* -------------------------------------------- */
  "STRREXPRC SRCMBR(MKLLIST) SRCFILE(QLLIST) PARM('"prdLib" "dbgView" "tgtRls"')"
 
- "CMPMOD MODULE(QTEMP/CMDRUNT  ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/CMDRUN   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/CALLPRC  ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/CMDRUNSRV) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/EXTPRC   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/EXTTST   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/LIBL     ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/PGMMSG   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/STRING   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/USRSPC   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/XMLWRITER) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/CMDRUNT  ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/CMDRUN   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/CALLPRC  ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/CMDRUNSRV) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/EXTPRC   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/EXTTST   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/LIBL     ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/STRING   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/USRSPC   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/XMLWRITER) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
  "CRTSRVPGM  SRVPGM("prdLib"/CMDRUNT) ",
-            "MODULE(QTEMP/CMDRUNT ",
-                   "QTEMP/CMDRUN ",
-                   "QTEMP/CALLPRC ",
-                   "QTEMP/CMDRUNSRV ",
-                   "QTEMP/EXTPRC ",
-                   "QTEMP/EXTTST ",
-                   "QTEMP/LIBL   ",
-                   "QTEMP/LLIST  ",
-                   "QTEMP/PGMMSG ",
-                   "QTEMP/STRING ",
-                   "QTEMP/USRSPC ",
-                   "QTEMP/XMLWRITER) ",
+            "MODULE("prdLib"/CMDRUNT ",
+                     prdLib"/CMDRUN ",
+                     prdLib"/CALLPRC ",
+                     prdLib"/CMDRUNSRV ",
+                     prdLib"/EXTPRC ",
+                     prdLib"/EXTTST ",
+                     prdLib"/LIBL   ",
+                     prdLib"/LLIST  ",
+                     prdLib"/PGMMSG ",
+                     prdLib"/STRING ",
+                     prdLib"/USRSPC ",
+                     prdLib"/XMLWRITER) ",
             "EXPORT(*ALL) ",
             "OPTION(*DUPPROC) ",
             "BNDSRVPGM(*LIBL/RUTESTCASE) ",

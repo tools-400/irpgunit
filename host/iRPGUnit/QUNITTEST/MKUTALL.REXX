@@ -81,10 +81,10 @@
 
  /* Sanity Check. */
 
- "RUCRTTST TSTPGM(QTEMP/TESTPGM03) SRCFILE(QTESTCASES)"
+ "RUCRTTST TSTPGM("prdLib"/TESTPGM03) SRCFILE(QTESTCASES)"
 
  Signal off Error
- rc = "RUCALLTST  TSTPGM(QTEMP/TESTPGM03)"
+ rc = "RUCALLTST  TSTPGM("prdLib"/TESTPGM03)"
  Signal on Error
 
  if (rc = 0) then do

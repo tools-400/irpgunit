@@ -82,40 +82,40 @@
  /* -------------------------------------------- */
  "STRREXPRC SRCMBR(MKLLIST) SRCFILE(QLLIST) PARM('"prdLib" "dbgView" "tgtRls"')"
 
- "CMPMOD MODULE(QTEMP/PGMRMT   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/CALLPRC  ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/CMDRUN   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/CMDRUNLOG) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/CMDRUNPRT) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/CMDRUNSRV) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/EXTPRC   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/EXTTST   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/LIBL     ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/PGMMSG   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/SRCMBR   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/STRING   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/USRSPC   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/RMTRUNSRV) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE(QTEMP/XMLWRITER) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/PGMRMT   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/CALLPRC  ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/CMDRUN   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/CMDRUNLOG) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/CMDRUNPRT) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/CMDRUNSRV) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/EXTPRC   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/EXTTST   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/LIBL     ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/SRCMBR   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/STRING   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/USRSPC   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/RMTRUNSRV) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/XMLWRITER) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
  "CRTPGM PGM("prdLib"/RUPGMRMT) ",
-        "MODULE(QTEMP/PGMRMT     ",
-               "QTEMP/CALLPRC    ",
-               "QTEMP/CMDRUN     ",
-               "QTEMP/CMDRUNLOG  ",
-               "QTEMP/CMDRUNPRT  ",
-               "QTEMP/CMDRUNSRV  ",
-               "QTEMP/EXTPRC     ",
-               "QTEMP/EXTTST     ",
-               "QTEMP/LIBL       ",
-               "QTEMP/LLIST      ",
-               "QTEMP/PGMMSG     ",
-               "QTEMP/RMTRUNSRV  ",
-               "QTEMP/STRING     ",
-               "QTEMP/SRCMBR     ",
-               "QTEMP/USRSPC     ",
-               "QTEMP/XMLWRITER) ",
-        "ENTMOD(QTEMP/PGMRMT) ",
+        "MODULE("prdLib"/PGMRMT     ",
+                 prdLib"/CALLPRC    ",
+                 prdLib"/CMDRUN     ",
+                 prdLib"/CMDRUNLOG  ",
+                 prdLib"/CMDRUNPRT  ",
+                 prdLib"/CMDRUNSRV  ",
+                 prdLib"/EXTPRC     ",
+                 prdLib"/EXTTST     ",
+                 prdLib"/LIBL       ",
+                 prdLib"/LLIST      ",
+                 prdLib"/PGMMSG     ",
+                 prdLib"/RMTRUNSRV  ",
+                 prdLib"/STRING     ",
+                 prdLib"/SRCMBR     ",
+                 prdLib"/USRSPC     ",
+                 prdLib"/XMLWRITER) ",
+        "ENTMOD("prdLib"/PGMRMT) ",
         "BNDSRVPGM(*LIBL/RUTESTCASE) ",
         "ACTGRP(*NEW) ",
         "ALWUPD(*YES) ",
