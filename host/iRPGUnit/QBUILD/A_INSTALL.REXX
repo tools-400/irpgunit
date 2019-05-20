@@ -13,6 +13,8 @@
 /*                  INSTALL : Default. Installs the iRPGUnit library.  */
 /*                  CLEAN   : Deletes the iRPGUnit modules from        */
 /*                            library QTEMP.                           */
+/*                  CLEANALL: Removes all objects from the iRPGUnit    */
+/*                            product library.                         */
 /*       prdLib   - Name of the iRPGUnit product library.              */
 /*       dbgView  - The possible values are:                           */
 /*                  NONE    : Default. Compiles the obejcts without    */
@@ -52,6 +54,7 @@
 
  /* The utility that is installed */
  UTILITY = 'iRPGUnit'
+ PRD_LIB = 'RPGUNIT'
 
  PARSE ARG option prdLib dbgView tgtrls
 
@@ -69,15 +72,11 @@
      "MSGTYPE(*ESCAPE)"
  end
 
- if prdLib = '' then do
-   prdLib = 'RPGUNIT'
- end
-
  if option = '' then do
    option = 'INSTALL'
  end
 
- if (option <> 'INSTALL' & option <> 'CLEAN') then do
+ if (option <> 'INSTALL' & option <> 'CLEAN' & option <> 'CLEANALL') then do
    "SNDPGMMSG ",
      "MSGID(CPF9898) ",
      "MSGF(QCPFMSG) ",
@@ -114,8 +113,10 @@
  /*  Compiles all iRPGUnit objects from source.  */
  /* -------------------------------------------- */
  if (option = 'INSTALL') then do
-   deleteModules('QTEMP')
+   if prdLib = '' then prdLib = PRD_LIB
+   rc = deleteModules('QTEMP')
    install(prdLib, dbgView, tgtRls)
+   rc = deleteModules('QTEMP')
    EXIT
  end
 
@@ -124,7 +125,16 @@
  /*  Deletes all iRPGUnit modules.               */
  /* -------------------------------------------- */
  if (option = 'CLEAN') then do
-   deleteModules(QTEMP)
+   if (prdLib = '') then prdLib = 'QTEMP'
+   clean(prdLib)
+   EXIT
+ end
+
+ /* -------------------------------------------- */
+ /*  Cleans the iRPGUnit product library.        */
+ /* -------------------------------------------- */
+ if (option = 'CLEANALL') then do
+   cleanAll(prdLib)
    EXIT
  end
 
@@ -134,37 +144,37 @@
  /*  Install the iRPGUNit library.                                */
  /* ------------------------------------------------------------- */
  install:
-   PARSE ARG prdLib, dbgView, tgtRls
+   PARSE ARG _prdLib, _dbgView, _tgtRls
 
    /* - - - - - - - - - - - -   - - - - - - - - */
    /*  Create commands BUILD and CMPMOD.      */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "STRREXPRC SRCMBR(MKBUILD) SRCFILE(QBUILD) PARM('"prdLib" "dbgView" "tgtRls"')"
+   "STRREXPRC SRCMBR(MKBUILD) SRCFILE(QBUILD) PARM('"_prdLib" "_dbgView" "_tgtRls"')"
 
    /* - - - - - - - - - - - - - - - - - - - - */
    /*  Create service program RUTESTCASE.     */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "STRREXPRC SRCMBR(MKTESTCASE) SRCFILE(QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
+   "STRREXPRC SRCMBR(MKTESTCASE) SRCFILE(QSRC) PARM('"_prdLib" "_dbgView" "_tgtRls"')"
 
    /* - - - - - - - - - - - - - - - - - - - - */
    /*  Create commands: RUCALLTST             */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "STRREXPRC SRCMBR(MKCALLTST) SRCFILE(QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
+   "STRREXPRC SRCMBR(MKCALLTST) SRCFILE(QSRC) PARM('"_prdLib" "_dbgView" "_tgtRls"')"
 
    /* - - - - - - - - - - - - - - - - - - - - */
    /*  Create commands: RUCRTTST              */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "STRREXPRC SRCMBR(MKCRTTST) SRCFILE(QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
+   "STRREXPRC SRCMBR(MKCRTTST) SRCFILE(QSRC) PARM('"_prdLib" "_dbgView" "_tgtRls"')"
 
    /* - - - - - - - - - - - - - - - - - - - - */
    /*  Create program RUPGMRMT (plug-in)      */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "STRREXPRC SRCMBR(MKRMTRUN) SRCFILE(QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
+   "STRREXPRC SRCMBR(MKRMTRUN) SRCFILE(QSRC) PARM('"_prdLib" "_dbgView" "_tgtRls"')"
 
    "SNDPGMMSG ",
      "MSGID(CPF9897) ",
      "MSGF(QCPFMSG) ",
-     "MSGDTA('Successfully compiled the "UTILITY" library: "prdLib"')",
+     "MSGDTA('Successfully compiled the "UTILITY" library: "_prdLib"')",
      "TOPGMQ(*PRV (*CTLBDY)) ",
      "MSGTYPE(*INFO)"
 
@@ -174,57 +184,147 @@
  /*  Deletes the modules from the iRPGUnit library.               */
  /* ------------------------------------------------------------- */
  deleteModules:
-   PARSE ARG prdLib
+   PARSE ARG _prdLib
 
    count = 0
 
-   count = count + deleteModule(prdLib, 'ACPTST')
-   count = count + deleteModule(prdLib, 'ASSERT')
-   count = count + deleteModule(prdLib, 'ASSERTT')
-   count = count + deleteModule(prdLib, 'CALLPRC')
-   count = count + deleteModule(prdLib, 'CALLPRCT')
-   count = count + deleteModule(prdLib, 'CMDRUN')
-   count = count + deleteModule(prdLib, 'CMDRUNLOG')
-   count = count + deleteModule(prdLib, 'CMDRUNLOGT')
-   count = count + deleteModule(prdLib, 'CMDRUNPRT')
-   count = count + deleteModule(prdLib, 'CMDRUNSRV')
-   count = count + deleteModule(prdLib, 'CMDRUNT')
-   count = count + deleteModule(prdLib, 'CRTTST')
-   count = count + deleteModule(prdLib, 'CRTTSTT')
-   count = count + deleteModule(prdLib, 'EXTPRC')
-   count = count + deleteModule(prdLib, 'EXTPRCT')
-   count = count + deleteModule(prdLib, 'EXTTST')
-   count = count + deleteModule(prdLib, 'EXTTSTT')
-   count = count + deleteModule(prdLib, 'JOBLOGT')
-   count = count + deleteModule(prdLib, 'LIBL')
-   count = count + deleteModule(prdLib, 'LIBLC')
-   count = count + deleteModule(prdLib, 'LIBLT')
-   count = count + deleteModule(prdLib, 'LLIST')
-   ccount = count + deleteModule(prdLib, 'OBJECT')
-   count = count + deleteModule(prdLib, 'PGMMSG')
-   count = count + deleteModule(prdLib, 'PGMMSGT')
-   count = count + deleteModule(prdLib, 'PGMRMT')
-   count = count + deleteModule(prdLib, 'RMTRUNSRV')
-   count = count + deleteModule(prdLib, 'RUNT')
-   count = count + deleteModule(prdLib, 'SPLF')
-   count = count + deleteModule(prdLib, 'SRCMBR')
-   count = count + deleteModule(prdLib, 'STRING')
-   count = count + deleteModule(prdLib, 'STRINGT')
-   count = count + deleteModule(prdLib, 'TAGTST')
-   count = count + deleteModule(prdLib, 'TESTUTILS')
-   count = count + deleteModule(prdLib, 'USRSPC')
-   count = count + deleteModule(prdLib, 'VERSION')
-   count = count + deleteModule(prdLib, 'XMLWRITER')
+   count = count + deleteModule(_prdLib, 'ACPTSTT')
+   count = count + deleteModule(_prdLib, 'ASSERT')
+   count = count + deleteModule(_prdLib, 'ASSERTT')
+   count = count + deleteModule(_prdLib, 'CALLPRC')
+   count = count + deleteModule(_prdLib, 'CALLPRCT')
+   count = count + deleteModule(_prdLib, 'CMDRUN')
+   count = count + deleteModule(_prdLib, 'CMDRUNLOG')
+   count = count + deleteModule(_prdLib, 'CMDRUNLOGT')
+   count = count + deleteModule(_prdLib, 'CMDRUNPRT')
+   count = count + deleteModule(_prdLib, 'CMDRUNSRV')
+   count = count + deleteModule(_prdLib, 'CMDRUNT')
+   count = count + deleteModule(_prdLib, 'CRTTST')
+   count = count + deleteModule(_prdLib, 'CRTTSTT')
+   count = count + deleteModule(_prdLib, 'EXTPRC')
+   count = count + deleteModule(_prdLib, 'EXTPRCT')
+   count = count + deleteModule(_prdLib, 'EXTTST')
+   count = count + deleteModule(_prdLib, 'EXTTSTT')
+   count = count + deleteModule(_prdLib, 'JOBLOGT')
+   count = count + deleteModule(_prdLib, 'LIBL')
+   count = count + deleteModule(_prdLib, 'LIBLC')
+   count = count + deleteModule(_prdLib, 'LIBLT')
+   count = count + deleteModule(_prdLib, 'LLIST')
+   count = count + deleteModule(_prdLib, 'OBJECT')
+   count = count + deleteModule(_prdLib, 'PGMMSG')
+   count = count + deleteModule(_prdLib, 'PGMMSGT')
+   count = count + deleteModule(_prdLib, 'PGMRMT')
+   count = count + deleteModule(_prdLib, 'RMTRUNSRV')
+   count = count + deleteModule(_prdLib, 'RUNT')
+   count = count + deleteModule(_prdLib, 'SPLF')
+   count = count + deleteModule(_prdLib, 'SRCMBR')
+   count = count + deleteModule(_prdLib, 'STRING')
+   count = count + deleteModule(_prdLib, 'STRINGT')
+   count = count + deleteModule(_prdLib, 'TAGTST')
+   count = count + deleteModule(_prdLib, 'TESTUTILS')
+   count = count + deleteModule(_prdLib, 'USRSPC')
+   count = count + deleteModule(_prdLib, 'VERSION')
+   count = count + deleteModule(_prdLib, 'XMLWRITER')
 
-   count = count + deleteModule(prdLib, 'LLIST')
+   count = count + deleteModule(_prdLib, 'LLIST')
 
-   count = count + deleteModule(prdLib, 'LIBLC')
-   count = count + deleteModule(prdLib, 'SPLF')
+   count = count + deleteModule(_prdLib, 'LIBLC')
+   count = count + deleteModule(_prdLib, 'SPLF')
+
+   return count
+
+ /* ------------------------------------------------------------- */
+ /*  Deletes all unnecessary objects from library iRPGUnit.       */
+ /* ------------------------------------------------------------- */
+ clean:
+   PARSE ARG _prdLib
+
+   bndDir = 'IRPGUNIT'
+
+   Signal off Error
+   "DLTBNDDIR BNDDIR("_prdlib"/"bndDir")"
+
+   "DLTSRVPGM SRVPGM("_prdlib"/SRVPGM1)"
+   "DLTSRVPGM SRVPGM("_prdlib"/SRVPGM2)"
+
+   "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM01)"
+   "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM02)"
+   "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM03)"
+   "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM04)"
+   "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM05)"
+   "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM06)"
+   "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM07)"
+   "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM08)"
+   "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM09)"
+   "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM10)"
+   "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM11)"
+   "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM12)"
+   "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM13)"
+   "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM14)"
+   "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM15)"
+   "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM16)"
+   "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM17)"
+   "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM18)"
+   "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM19)"
+
+   "DLTSRVPGM SRVPGM("_prdlib"/ACPTSTT)"
+   "DLTSRVPGM SRVPGM("_prdlib"/ASSERTT)"
+   "DLTSRVPGM SRVPGM("_prdlib"/CALLPRCT)"
+   "DLTSRVPGM SRVPGM("_prdlib"/CMDRUNLOGT)"
+   "DLTSRVPGM SRVPGM("_prdlib"/CMDRUNT)"
+   "DLTSRVPGM SRVPGM("_prdlib"/CRTTSTT)"
+   "DLTSRVPGM SRVPGM("_prdlib"/EXTPRCT)"
+   "DLTSRVPGM SRVPGM("_prdlib"/EXTTSTT)"
+   "DLTSRVPGM SRVPGM("_prdlib"/JOBLOGT)"
+   "DLTSRVPGM SRVPGM("_prdlib"/LIBLT)"
+   "DLTSRVPGM SRVPGM("_prdlib"/PGMMSGT)"
+   "DLTSRVPGM SRVPGM("_prdlib"/RUNT)"
+   "DLTSRVPGM SRVPGM("_prdlib"/STRINGT)"
+
+   "DLTUSRSPC USRSPC("_prdlib"/RUPROCLIST)"
+   "DLTUSRSPC USRSPC("_prdlib"/RUSPOOL)"
+   Signal on Error
+
+   count = deleteModules(_prdLib)
 
    "SNDPGMMSG ",
      "MSGID(CPF9897) ",
      "MSGF(QCPFMSG) ",
-     "MSGDTA('Successfully removed "count" modules from library: "prdLib"')",
+     "MSGDTA('Successfully removed temporary objects from library: "_prdLib"')",
+     "TOPGMQ(*PRV (*CTLBDY)) ",
+     "MSGTYPE(*INFO)"
+
+   return ''
+
+ /* ------------------------------------------------------------- */
+ /*  Cleans the iRPGUnit product library.                         */
+ /* ------------------------------------------------------------- */
+ cleanAll:
+   PARSE ARG _prdLib
+
+   Signal off Error
+   "DLTCMD CMD("_prdlib"/CMPMOD)"
+   "DLTCMD CMD("_prdlib"/RUCALLTST)"
+   "DLTCMD CMD("_prdlib"/RUCRTTST)"
+
+   "DLTPNLGRP PNLGRP("_prdlib"/CMPMODHLP)"
+   "DLTPNLGRP PNLGRP("_prdlib"/RUCALLTST)"
+   "DLTPNLGRP PNLGRP("_prdlib"/RUCRTTST)"
+
+   "DLTPGM PGM("_prdlib"/RUCALLTST)"
+   "DLTPGM PGM("_prdlib"/RUCRTTST)"
+   "DLTPGM PGM("_prdlib"/RUPGMRMT)"
+   "DLTSRVPGM SRVPGM("_prdlib"/RUTESTCASE)"
+
+   "DLTF FILE("_prdlib"/EVFEVENT)"
+   Signal on Error
+
+   clean(_prdLib)
+
+   "SNDPGMMSG ",
+     "MSGID(CPF9897) ",
+     "MSGF(QCPFMSG) ",
+     "MSGDTA('Successfully cleaned library library: "_prdLib"')",
      "TOPGMQ(*PRV (*CTLBDY)) ",
      "MSGTYPE(*INFO)"
 
@@ -234,10 +334,10 @@
  /*  Deletes a module from the iRPGUnit library.                  */
  /* ------------------------------------------------------------- */
  deleteModule:
-   PARSE ARG prdLib, module
+   PARSE ARG _prdLib, _module
 
    Signal off Error
-   "DLTMOD MODULE("prdLib"/"module")"
+   "DLTMOD MODULE("_prdLib"/"_module")"
    Signal on Error
 
    if (rc = 0) then do

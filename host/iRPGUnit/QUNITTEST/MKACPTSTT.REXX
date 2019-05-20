@@ -4,7 +4,7 @@
 /*  Usage:                                                             */
 /*  a) Add the iRPGUnit library to your library list.                  */
 /*  b) Start the Rexx script with the following command:               */
-/*       STRREXPRC SRCMBR(MKACPTST) SRCFILE(QUNITTEST) PARM(prdLib)    */
+/*       STRREXPRC SRCMBR(MKACPTSTT) SRCFILE(QUNITTEST) PARM(prdLib)   */
 /*     where 'prdLib' is the library containing the RPGUnit            */
 /*     source files.                                                   */
 /*                                                                     */
@@ -41,7 +41,7 @@
  SIGNAL on SYNTAX
 
  /* The utility that is installed */
- UTILITY = 'ACPTST'
+ UTILITY = 'ACPTSTT'
 
  PARSE ARG prdLib dbgView tgtrls
 
@@ -53,13 +53,14 @@
    "SNDPGMMSG ",
      "MSGID(CPF9898) ",
      "MSGF(QCPFMSG) ",
-     "MSGDTA('Usage: STRREXPRC SRCMBR(MKACPTST) SRCFILE(QUNITTEST) PARM(prdLib)')",
+     "MSGDTA('Usage: STRREXPRC SRCMBR(MKACPTSTT) SRCFILE(QUNITTEST) PARM(prdLib)')",
      "TOPGMQ(*PRV (*CTLBDY)) ",
      "MSGTYPE(*ESCAPE)"
  end
 
  select
- when (dbgView = '' | dbgView = 'NONE' | dbgView = '*NONE') then dbgView = '*NONE'
+ when (dbgView = '') then dbgView = '*LIST'
+ when (dbgView = 'NONE' | dbgView = '*NONE') then dbgView = '*NONE'
  when (dbgView = 'LIST' | dbgView = '*LIST') then dbgView = '*LIST'
  otherwise do
      "SNDPGMMSG ",
@@ -80,7 +81,7 @@
  /* -------------------------------------------- */
  /*  Let's do it!                                */
  /* -------------------------------------------- */
- "CMPMOD MODULE(QTEMP/ACPTST   ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE(QTEMP/ACPTSTT  ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE(QTEMP/ASSERT   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE(QTEMP/OBJECT   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE(QTEMP/PGMMSG   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
@@ -89,8 +90,8 @@
  "CMPMOD MODULE(QTEMP/TESTUTILS) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE(QTEMP/USRSPC   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
- "CRTSRVPGM  SRVPGM("prdLib"/ACPTST) ",
-            "MODULE(QTEMP/ACPTST    ",
+ "CRTSRVPGM  SRVPGM("prdLib"/ACPTSTT) ",
+            "MODULE(QTEMP/ACPTSTT   ",
                    "QTEMP/ASSERT    ",
                    "QTEMP/OBJECT    ",
                    "QTEMP/PGMMSG    ",

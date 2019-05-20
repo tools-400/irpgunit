@@ -56,7 +56,8 @@
  end
 
  select
- when (dbgView = '' | dbgView = 'NONE' | dbgView = '*NONE') then dbgView = '*NONE'
+ when (dbgView = '') then dbgView = '*LIST'
+ when (dbgView = 'NONE' | dbgView = '*NONE') then dbgView = '*NONE'
  when (dbgView = 'LIST' | dbgView = '*LIST') then dbgView = '*LIST'
  otherwise do
      "SNDPGMMSG ",

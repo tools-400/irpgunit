@@ -538,7 +538,7 @@
              /*  Copy source members: QUNITTEST                      */
              /* ---------------------------------------------------- */
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
-                          TOFILE(&LIB/&QUNITTEST) FROMMBR(ACPTST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(ACPTSTT) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(ASSERTT) +
@@ -571,7 +571,7 @@
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(LIBLT) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
-                          TOFILE(&LIB/&QUNITTEST) FROMMBR(MKACPTST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(MKACPTSTT) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(MKASSERTT) +
@@ -654,7 +654,7 @@
              ENDDO
 
              STRREXPRC SRCMBR(A_INSTALL) SRCFILE(&LIB/QBUILD) +
-                         PARM('INSTALL RPGUNIT NONE' *BCAT &TGTRLS)
+                         PARM('INSTALL' *BCAT &LIB *BCAT 'NONE' *BCAT &TGTRLS)
 
              RMVLIBLE   LIB(&LIB)
              IF         COND(&IS_DEVLIB) THEN(DO)
