@@ -54,11 +54,6 @@
 
  /* Compile dirty module */
 
- if dbgView = '*YES' then
-   dbgView = '*LIST'
- else
-   dbgView = '*NONE'
-
  if srcType = 'RPGLE' then
    do
      'CRTRPGMOD MODULE(&objLib/&objName) SRCFILE(&srcFile) SRCMBR(&srcMbr)',
