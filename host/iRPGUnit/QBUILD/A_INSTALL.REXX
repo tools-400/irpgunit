@@ -114,9 +114,7 @@
  /* -------------------------------------------- */
  if (option = 'INSTALL') then do
    if prdLib = '' then prdLib = PRD_LIB
-   rc = deleteModules('QTEMP')
    install(prdLib, dbgView, tgtRls)
-   rc = deleteModules('QTEMP')
    EXIT
  end
 
@@ -146,6 +144,9 @@
  install:
    PARSE ARG _prdLib, _dbgView, _tgtRls
 
+   deleteSelfTests(_prdLib)
+   deleteModules('QTEMP')
+
    /* - - - - - - - - - - - -   - - - - - - - - */
    /*  Create commands BUILD and CMPMOD.      */
    /* - - - - - - - - - - - - - - - - - - - - */
@@ -171,6 +172,8 @@
    /* - - - - - - - - - - - - - - - - - - - - */
    "STRREXPRC SRCMBR(MKRMTRUN) SRCFILE(QSRC) PARM('"_prdLib" "_dbgView" "_tgtRls"')"
 
+   deleteModules('QTEMP')
+
    "SNDPGMMSG ",
      "MSGID(CPF9897) ",
      "MSGF(QCPFMSG) ",
@@ -181,68 +184,88 @@
    return ''
 
  /* ------------------------------------------------------------- */
- /*  Deletes the modules from the iRPGUnit library.               */
- /* ------------------------------------------------------------- */
- deleteModules:
-   PARSE ARG _prdLib
-
-   count = 0
-
-   count = count + deleteModule(_prdLib, 'ACPTSTT')
-   count = count + deleteModule(_prdLib, 'ASSERT')
-   count = count + deleteModule(_prdLib, 'ASSERTT')
-   count = count + deleteModule(_prdLib, 'CALLPRC')
-   count = count + deleteModule(_prdLib, 'CALLPRCT')
-   count = count + deleteModule(_prdLib, 'CMDRUN')
-   count = count + deleteModule(_prdLib, 'CMDRUNLOG')
-   count = count + deleteModule(_prdLib, 'CMDRUNLOGT')
-   count = count + deleteModule(_prdLib, 'CMDRUNPRT')
-   count = count + deleteModule(_prdLib, 'CMDRUNSRV')
-   count = count + deleteModule(_prdLib, 'CMDRUNT')
-   count = count + deleteModule(_prdLib, 'CRTTST')
-   count = count + deleteModule(_prdLib, 'CRTTSTT')
-   count = count + deleteModule(_prdLib, 'EXTPRC')
-   count = count + deleteModule(_prdLib, 'EXTPRCT')
-   count = count + deleteModule(_prdLib, 'EXTTST')
-   count = count + deleteModule(_prdLib, 'EXTTSTT')
-   count = count + deleteModule(_prdLib, 'JOBLOGT')
-   count = count + deleteModule(_prdLib, 'LIBL')
-   count = count + deleteModule(_prdLib, 'LIBLC')
-   count = count + deleteModule(_prdLib, 'LIBLT')
-   count = count + deleteModule(_prdLib, 'LLIST')
-   count = count + deleteModule(_prdLib, 'OBJECT')
-   count = count + deleteModule(_prdLib, 'PGMMSG')
-   count = count + deleteModule(_prdLib, 'PGMMSGT')
-   count = count + deleteModule(_prdLib, 'PGMRMT')
-   count = count + deleteModule(_prdLib, 'RMTRUNSRV')
-   count = count + deleteModule(_prdLib, 'RUNT')
-   count = count + deleteModule(_prdLib, 'SPLF')
-   count = count + deleteModule(_prdLib, 'SRCMBR')
-   count = count + deleteModule(_prdLib, 'STRING')
-   count = count + deleteModule(_prdLib, 'STRINGT')
-   count = count + deleteModule(_prdLib, 'TAGTST')
-   count = count + deleteModule(_prdLib, 'TESTUTILS')
-   count = count + deleteModule(_prdLib, 'USRSPC')
-   count = count + deleteModule(_prdLib, 'VERSION')
-   count = count + deleteModule(_prdLib, 'XMLWRITER')
-
-   count = count + deleteModule(_prdLib, 'LLIST')
-
-   count = count + deleteModule(_prdLib, 'LIBLC')
-   count = count + deleteModule(_prdLib, 'SPLF')
-
-   return count
-
- /* ------------------------------------------------------------- */
  /*  Deletes all unnecessary objects from library iRPGUnit.       */
  /* ------------------------------------------------------------- */
  clean:
    PARSE ARG _prdLib
 
-   bndDir = 'IRPGUNIT'
+   deleteSelfTests(_prdLib)
+
+   deleteModules(_prdLib)
+
+   "SNDPGMMSG ",
+     "MSGID(CPF9897) ",
+     "MSGF(QCPFMSG) ",
+     "MSGDTA('Successfully removed temporary objects from library: "_prdLib"')",
+     "TOPGMQ(*PRV (*CTLBDY)) ",
+     "MSGTYPE(*INFO)"
+
+   return ''
+
+ /* ------------------------------------------------------------- */
+ /*  Cleans the iRPGUnit product library.                         */
+ /* ------------------------------------------------------------- */
+ cleanAll:
+   PARSE ARG _prdLib
+
+   deleteSelfTests(_prdLib)
+   deleteModules(_prdLib)
+
+   deleteIRPGUnit(_prdLib);
+
+   "SNDPGMMSG ",
+     "MSGID(CPF9897) ",
+     "MSGF(QCPFMSG) ",
+     "MSGDTA('Successfully cleaned library library: "_prdLib"')",
+     "TOPGMQ(*PRV (*CTLBDY)) ",
+     "MSGTYPE(*INFO)"
+
+   return ''
+
+ /* ------------------------------------------------------------- */
+ /*  Deletes all iRPGUnit self tests from library iRPGUnit.       */
+ /* ------------------------------------------------------------- */
+ deleteIRPGUnit:
+   PARSE ARG _prdLib
 
    Signal off Error
+   "DLTCMD CMD("_prdlib"/CMPMOD)"
+   "DLTCMD CMD("_prdlib"/RUCALLTST)"
+   "DLTCMD CMD("_prdlib"/RUCRTTST)"
+
+   "DLTPNLGRP PNLGRP("_prdlib"/CMPMODHLP)"
+   "DLTPNLGRP PNLGRP("_prdlib"/RUCALLTST)"
+   "DLTPNLGRP PNLGRP("_prdlib"/RUCRTTST)"
+
+   "DLTPGM PGM("_prdlib"/RUCALLTST)"
+   "DLTPGM PGM("_prdlib"/RUCRTTST)"
+   "DLTPGM PGM("_prdlib"/RUPGMRMT)"
+   "DLTSRVPGM SRVPGM("_prdlib"/RUTESTCASE)"
+
+   "DLTF FILE("_prdlib"/EVFEVENT)"
+   Signal on Error
+
+   return ''
+
+ /* ------------------------------------------------------------- */
+ /*  Deletes all iRPGUnit self tests from library iRPGUnit.       */
+ /* ------------------------------------------------------------- */
+ deleteSelfTests:
+   PARSE ARG _prdLib
+
+   Signal off Error
+
+   bndDir = 'IRPGUNIT'
+
    "DLTBNDDIR BNDDIR("_prdlib"/"bndDir")"
+   "DLTUSRSPC USRSPC("_prdlib"/RUPROCLIST)"
+   "DLTUSRSPC USRSPC("_prdlib"/RUSPOOL)"
+
+   Signal on Error
+
+   deleteModules(_prdLib)
+
+   Signal off Error
 
    "DLTSRVPGM SRVPGM("_prdlib"/SRVPGM1)"
    "DLTSRVPGM SRVPGM("_prdlib"/SRVPGM2)"
@@ -281,71 +304,63 @@
    "DLTSRVPGM SRVPGM("_prdlib"/RUNT)"
    "DLTSRVPGM SRVPGM("_prdlib"/STRINGT)"
 
-   "DLTUSRSPC USRSPC("_prdlib"/RUPROCLIST)"
-   "DLTUSRSPC USRSPC("_prdlib"/RUSPOOL)"
    Signal on Error
-
-   count = deleteModules(_prdLib)
-
-   "SNDPGMMSG ",
-     "MSGID(CPF9897) ",
-     "MSGF(QCPFMSG) ",
-     "MSGDTA('Successfully removed temporary objects from library: "_prdLib"')",
-     "TOPGMQ(*PRV (*CTLBDY)) ",
-     "MSGTYPE(*INFO)"
 
    return ''
 
  /* ------------------------------------------------------------- */
- /*  Cleans the iRPGUnit product library.                         */
+ /*  Deletes the modules from the iRPGUnit library.               */
  /* ------------------------------------------------------------- */
- cleanAll:
+ deleteModules:
    PARSE ARG _prdLib
 
    Signal off Error
-   "DLTCMD CMD("_prdlib"/CMPMOD)"
-   "DLTCMD CMD("_prdlib"/RUCALLTST)"
-   "DLTCMD CMD("_prdlib"/RUCRTTST)"
 
-   "DLTPNLGRP PNLGRP("_prdlib"/CMPMODHLP)"
-   "DLTPNLGRP PNLGRP("_prdlib"/RUCALLTST)"
-   "DLTPNLGRP PNLGRP("_prdlib"/RUCRTTST)"
+   "DLTMOD MODULE("_prdLib"/ASSERT)"
+   "DLTMOD MODULE("_prdLib"/ASSERTT)"
+   "DLTMOD MODULE("_prdLib"/CALLPRC)"
+   "DLTMOD MODULE("_prdLib"/CALLPRCT)"
+   "DLTMOD MODULE("_prdLib"/CMDRUN)"
+   "DLTMOD MODULE("_prdLib"/CMDRUNLOG)"
+   "DLTMOD MODULE("_prdLib"/CMDRUNLOGT)"
+   "DLTMOD MODULE("_prdLib"/CMDRUNPRT)"
+   "DLTMOD MODULE("_prdLib"/CMDRUNSRV)"
+   "DLTMOD MODULE("_prdLib"/CMDRUNT)"
+   "DLTMOD MODULE("_prdLib"/CRTTST)"
+   "DLTMOD MODULE("_prdLib"/CRTTSTT)"
+   "DLTMOD MODULE("_prdLib"/EXTPRC)"
+   "DLTMOD MODULE("_prdLib"/EXTPRCT)"
+   "DLTMOD MODULE("_prdLib"/EXTTST)"
+   "DLTMOD MODULE("_prdLib"/EXTTSTT)"
+   "DLTMOD MODULE("_prdLib"/JOBLOGT)"
+   "DLTMOD MODULE("_prdLib"/LIBL)"
+   "DLTMOD MODULE("_prdLib"/LIBLC)"
+   "DLTMOD MODULE("_prdLib"/LIBLT)"
+   "DLTMOD MODULE("_prdLib"/LLIST)"
+   "DLTMOD MODULE("_prdLib"/OBJECT)"
+   "DLTMOD MODULE("_prdLib"/PGMMSG)"
+   "DLTMOD MODULE("_prdLib"/PGMMSGT)"
+   "DLTMOD MODULE("_prdLib"/PGMRMT)"
+   "DLTMOD MODULE("_prdLib"/RMTRUNSRV)"
+   "DLTMOD MODULE("_prdLib"/RUNT)"
+   "DLTMOD MODULE("_prdLib"/SPLF)"
+   "DLTMOD MODULE("_prdLib"/SRCMBR)"
+   "DLTMOD MODULE("_prdLib"/STRING)"
+   "DLTMOD MODULE("_prdLib"/STRINGT)"
+   "DLTMOD MODULE("_prdLib"/TAGTST)"
+   "DLTMOD MODULE("_prdLib"/TESTUTILS)"
+   "DLTMOD MODULE("_prdLib"/USRSPC)"
+   "DLTMOD MODULE("_prdLib"/VERSION)"
+   "DLTMOD MODULE("_prdLib"/XMLWRITER)"
 
-   "DLTPGM PGM("_prdlib"/RUCALLTST)"
-   "DLTPGM PGM("_prdlib"/RUCRTTST)"
-   "DLTPGM PGM("_prdlib"/RUPGMRMT)"
-   "DLTSRVPGM SRVPGM("_prdlib"/RUTESTCASE)"
+   "DLTMOD MODULE("_prdLib"/LLIST)"
 
-   "DLTF FILE("_prdlib"/EVFEVENT)"
+   "DLTMOD MODULE("_prdLib"/LIBLC)"
+   "DLTMOD MODULE("_prdLib"/SPLF)"
+
    Signal on Error
-
-   clean(_prdLib)
-
-   "SNDPGMMSG ",
-     "MSGID(CPF9897) ",
-     "MSGF(QCPFMSG) ",
-     "MSGDTA('Successfully cleaned library library: "_prdLib"')",
-     "TOPGMQ(*PRV (*CTLBDY)) ",
-     "MSGTYPE(*INFO)"
 
    return ''
-
- /* ------------------------------------------------------------- */
- /*  Deletes a module from the iRPGUnit library.                  */
- /* ------------------------------------------------------------- */
- deleteModule:
-   PARSE ARG _prdLib, _module
-
-   Signal off Error
-   "DLTMOD MODULE("_prdLib"/"_module")"
-   Signal on Error
-
-   if (rc = 0) then do
-      return 1
-   end
-   else do
-      return 0
-   end
 
  /* ------------------------------------------------------------- */
  /* Global Error handler                                          */
