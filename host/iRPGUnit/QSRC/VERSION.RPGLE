@@ -38,7 +38,9 @@
      D  version                      20a
      D  date                         10a
 
-         if (%parms() >= 1);
+         if (date = 'xx.xx.xxxx'); // Date of dev. library
+            date = %char(%date(): *iso);
+         else;
             date = convertDateToISO(cRPGUNIT_DATE);
          endif;
 
