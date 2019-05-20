@@ -9,16 +9,16 @@
       // ==========================================================================
 
        // Activate a service program and returns the activation mark.
-     D activateSrvPgm  pr            10i 0 extproc('CALLPROC_activateSrvPgm')
+     D activateSrvPgm  pr            10i 0 extproc('CALLPRC_activateSrvPgm')
      D  srvPgm                             value likeds(Object_t)
 
        // Calls a procedure, using its associated pointer.
-     D callProcByPtr   pr                  extproc('CALLPROC_callProcByPtr')
+     D callProcByPtr   pr                  extproc('CALLPRC_callProcByPtr')
      D  procPtr                        *   const procptr
 
        // Resolve a procedure.
        // Fill the procedure pointer, given its name and activation marker.
-     D rslvProc        pr                  extproc('CALLPROC_rslvProc')
+     D rslvProc        pr                  extproc('CALLPRC_rslvProc')
      D  proc                               likeds(Proc_t)
      D  actMark                            const like(ActMark_t)
 

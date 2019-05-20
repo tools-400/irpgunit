@@ -25,7 +25,7 @@
       //   Exported Procedures
       //----------------------------------------------------------------------
 
-      /include qinclude,CALLPROC
+      /include qinclude,CALLPRC
 
       //----------------------------------------------------------------------
       //   Imported Procedures

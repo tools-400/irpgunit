@@ -31,7 +31,7 @@
       //   Imported Procedures
       //----------------------------------------------------------------------
 
-      /include qinclude,CALLPROC
+      /include qinclude,CALLPRC
       /include qinclude,EXTPRC
       /include qinclude,TEMPLATES
       /include qinclude,STRING

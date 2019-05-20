@@ -31,12 +31,10 @@ Let me know your experiences!
 --------------------------------------
 
 a) Call the A_INSTALL REXX script with:
-   STRREXPRC SRCMBR(BUILDCPP) SRCFILE(RPGUNIT3/QBUILD) PARM('RPGUNIT3 *INSTALL')
+   STRREXPRC SRCMBR(A_INSTALL) SRCFILE(RPGUNIT/QBUILD) PARM('INSTALL')
 
 b) Optionally run the RPGUnit self tests:
-   CRTBNDCL   PGM(RPGUNIT/MKUT) SRCFILE(RPGUNITT1)
-   CALL       PGM(RPGUNIT/MKUT) PARM('RPGUNIT')
-   DLTPGM     PGM(RPGUNIT/MKUT)
+   STRREXPRC SRCMBR(A_SELFTEST) SRCFILE(RPGUNIT/QBUILD) PARM('RPGUNIT')
 
 
 --------------------------------------

@@ -32,7 +32,7 @@
        //----------------------------------------------------------------------
 
       /include qinclude,ASSERT
-      /include qinclude,CALLPROC
+      /include qinclude,CALLPRC
       /include qinclude,CMDRUNLOG
       /include qinclude,CMDRUNSRV
       /include qinclude,EXTTST

@@ -4,16 +4,21 @@
 /*  Usage:                                                             */
 /*  a) Add the iRPGUnit library to your library list.                  */
 /*  b) Start the Rexx script with the following command:               */
-/*       STRREXPRC SRCMBR(A_INSTALL) SRCFILE(QBUILD) PARM(prdLib)      */
+/*       STRREXPRC SRCMBR(A_INSTALL) SRCFILE(QBUILD) PARM(option)      */
 /*     where 'prdLib' is the library containing the RPGUnit            */
 /*     source files.                                                   */
 /*                                                                     */
 /*     Script parameters:                                              */
-/*       prdLib   - Name of the iRPGUnit product library.              */
 /*       option   - The possible values are:                           */
 /*                  INSTALL : Default. Installs the iRPGUnit library.  */
-/*                  DLTMODS : Deletes the iRPGUnit modules from the    */
-/*                            specified library (prdLib).              */
+/*                  CLEAN   : Deletes the iRPGUnit modules from        */
+/*                            library QTEMP.                           */
+/*       prdLib   - Name of the iRPGUnit product library.              */
+/*       dbgView  - The possible values are:                           */
+/*                  NONE    : Default. Compiles the obejcts without    */
+/*                            debug views.                             */
+/*                  LIST    : Generates a listing view when compiling  */
+/*                            the objects.                             */
 /*       tgtRls   - The possible values are:                           */
 /*                  CURRENT : The objects are compiled with the        */
 /*                            release of the operating system          */
@@ -22,11 +27,6 @@
 /*                            previous release of the operating system */
 /*                            currently running on your system.        */
 /*                  VxRxMx  : Release in the format of VxRxMx.         */
-/*       dbgView  - The possible values are:                           */
-/*                  NONE    : Default. Compiles the obejcts without    */
-/*                            debug views.                             */
-/*                  LIST    : Generates a listing view when compiling  */
-/*                            the objects.                             */
 /* =================================================================== */
 /*   >>PRE-COMPILER<<                                                  */
 /*     >>CRTCMD<<  CRTBNDCL      PGM(&LI/&OB) +                        */
@@ -53,45 +53,48 @@
  /* The utility that is installed */
  UTILITY = 'iRPGUnit'
 
- PARSE ARG prdLib option tgtrls dbgView
+ PARSE ARG option prdLib dbgView tgtrls
 
- prdLib  = translate(strip(prdLib))
  option  = translate(strip(option))
- tgtRls  = translate(strip(tgtRls))
+ prdLib  = translate(strip(prdLib))
  dbgView = translate(strip(dbgView))
+ tgtRls  = translate(strip(tgtRls))
 
- if prdLib = "" then do
+ if option = "" then do
    "SNDPGMMSG ",
      "MSGID(CPF9898) ",
      "MSGF(QCPFMSG) ",
-     "MSGDTA('Usage: STRREXPRC SRCMBR(A_INSTALL) SRCFILE(QBUILD) PARM(targetLibrary)')",
+     "MSGDTA('Usage: STRREXPRC SRCMBR(A_INSTALL) SRCFILE(QBUILD) PARM(option)')",
      "TOPGMQ(*PRV (*CTLBDY)) ",
      "MSGTYPE(*ESCAPE)"
+ end
+
+ if prdLib = '' then do
+   prdLib = 'RPGUNIT'
  end
 
  if option = '' then do
    option = 'INSTALL'
  end
 
- if (option <> 'INSTALL' & option <> 'DLTMODS') then do
+ if (option <> 'INSTALL' & option <> 'CLEAN') then do
    "SNDPGMMSG ",
      "MSGID(CPF9898) ",
      "MSGF(QCPFMSG) ",
-     "MSGDTA('Invalid option specfied: ''"option"''. Use INSTALL or DLTMODS')",
+     "MSGDTA('Invalid option specfied: ''"option"''. Use INSTALL or CLEAN')",
      "TOPGMQ(*PRV (*CTLBDY)) ",
      "MSGTYPE(*ESCAPE)"
  end
 
- select
- when (tgtRls = '' | tgtRls = 'CURRENT') then tgtRls = '*CURRENT'
- when (tgtRls = 'PRV') then tgtRls = '*PRV'
+ if dbgView = '' | dbgView = 'NONE' | dbgView = '*NONE' then do
+   dbgView = '*NONE'
  end
 
- if dbgView = '' then do
-   dbgView = 'NONE'
+ if dbgView = 'LIST' | dbgView = '*LIST' then do
+   dbgView = '*LIST'
  end
 
- if (dbgView <> 'NONE' & dbgView <> 'LIST') then do
+ if (dbgView <> '*NONE' & dbgView <> '*LIST') then do
    "SNDPGMMSG ",
      "MSGID(CPF9898) ",
      "MSGF(QCPFMSG) ",
@@ -100,11 +103,18 @@
      "MSGTYPE(*ESCAPE)"
  end
 
+ select
+ when (tgtRls = '' | tgtRls = 'CURRENT') then tgtRls = '*CURRENT'
+ when (tgtRls = 'PRV') then tgtRls = '*PRV'
+ otherwise
+ end
+
  /* -------------------------------------------- */
  /*  Install iRPGUnit Library.                   */
  /*  Compiles all iRPGUnit objects from source.  */
  /* -------------------------------------------- */
  if (option = 'INSTALL') then do
+   deleteModules('QTEMP')
    install(prdLib, dbgView, tgtRls)
    EXIT
  end
@@ -113,8 +123,8 @@
  /*  Delete modules.                             */
  /*  Deletes all iRPGUnit modules.               */
  /* -------------------------------------------- */
- if (option = 'DLTMODS') then do
-   deleteModules(prdLib)
+ if (option = 'CLEAN') then do
+   deleteModules(QTEMP)
    EXIT
  end
 
@@ -171,8 +181,8 @@
    count = count + deleteModule(prdLib, 'ACPTST')
    count = count + deleteModule(prdLib, 'ASSERT')
    count = count + deleteModule(prdLib, 'ASSERTT')
-   count = count + deleteModule(prdLib, 'CALLPROC')
-   count = count + deleteModule(prdLib, 'CALLPROCT')
+   count = count + deleteModule(prdLib, 'CALLPRC')
+   count = count + deleteModule(prdLib, 'CALLPRCT')
    count = count + deleteModule(prdLib, 'CMDRUN')
    count = count + deleteModule(prdLib, 'CMDRUNLOG')
    count = count + deleteModule(prdLib, 'CMDRUNLOGT')

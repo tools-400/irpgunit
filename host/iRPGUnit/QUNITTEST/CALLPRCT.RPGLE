@@ -1,5 +1,5 @@
       // ==========================================================================
-      //  iRPGUnit SelfTest - Test CALLPROC.
+      //  iRPGUnit SelfTest - Test CALLPRC.
       // ==========================================================================
       //  Copyright (c) 2013-2019 iRPGUnit Project Team
       //  All rights reserved. This program and the accompanying materials
@@ -10,7 +10,7 @@
       // >>PRE-COMPILER<<
       //   >>CRTCMD<<  RUCRTTST TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
       //   >>IMPORTANT<<
-      //     >>PARM<<  MODULE(&LI/CALLPROC  +
+      //     >>PARM<<  MODULE(&LI/CALLPRC   +
       //                      &LI/CMDRUNSRV +
       //                      &LI/EXTPRC    +
       //                      &LI/EXTTST    +
@@ -41,7 +41,7 @@
       //----------------------------------------------------------------------
 
       /copy qinclude,ASSERT
-      /copy qinclude,CALLPROC
+      /copy qinclude,CALLPRC
       /copy qinclude,TEMPLATES
 
 

@@ -33,7 +33,7 @@
       //----------------------------------------------------------------------
 
       /include qinclude,ASSERT
-      /include qinclude,CALLPROC
+      /include qinclude,CALLPRC
       /include qinclude,EXTPRC
       /include qinclude,EXTTST
       /include qinclude,PGMMSG

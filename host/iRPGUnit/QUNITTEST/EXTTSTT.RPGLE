@@ -11,7 +11,7 @@
       //   >>CRTCMD<<  RUCRTTST TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
       //   >>IMPORTANT<<
       //     >>PARM<<  MODULE(&LI/EXTTST    +
-      //                      &LI/CALLPROC  +
+      //                      &LI/CALLPRC   +
       //                      &LI/CMDRUNSRV +
       //                      &LI/EXTPRC    +
       //                      &LI/LLIST     +
@@ -31,7 +31,7 @@
       //----------------------------------------------------------------------
 
       /copy qinclude,ASSERT
-      /copy qinclude,CALLPROC
+      /copy qinclude,CALLPRC
       /copy qinclude,EXTTST
       /copy qinclude,EXTPRC
       /copy qinclude,TEMPLATES

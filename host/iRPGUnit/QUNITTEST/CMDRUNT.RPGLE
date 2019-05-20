@@ -11,7 +11,7 @@
       //   >>CRTCMD<<  RUCRTTST TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
       //   >>IMPORTANT<<
       //     >>PARM<<  MODULE(&LI/CMDRUN    +
-      //                      &LI/CALLPROC  +
+      //                      &LI/CALLPRC   +
       //                      &LI/CMDRUNSRV +
       //                      &LI/EXTTST    +
       //                      &LI/EXTPRC    +

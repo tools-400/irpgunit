@@ -64,7 +64,7 @@
 
       /include qinclude,SYSTEMAPI
       /include qinclude,ASSERT
-      /include qinclude,CALLPROC
+      /include qinclude,CALLPRC
       /include qinclude,CMDRUNLOG
       /include qinclude,PGMMSG
       /include qinclude,CMDRUNSRV

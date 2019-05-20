@@ -48,7 +48,7 @@
              MONMSG     MSGID(CPF9801) EXEC(DO) /* Object not found */
                CRTBNDDIR  BNDDIR(&LIB/&BNDDIR) TEXT('iRPGUnit - Binding Directory')
                ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/ASSERT    *MODULE))
-               ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/CALLPROC  *MODULE))
+               ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/CALLPRC   *MODULE))
                ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/CMDRUN    *MODULE))
                ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/CMDRUNLOG *MODULE))
                ADDBNDDIRE BNDDIR(&LIB/&BNDDIR) OBJ((&LIB/CMDRUNPRT *MODULE))
@@ -77,7 +77,7 @@
          /*  Create helper modules.                      */
          /* -------------------------------------------- */
              CMPMOD     MODULE(&LIB/ASSERT) SRCFILE(QSRC) DBGVIEW(*YES)
-             CMPMOD     MODULE(&LIB/CALLPROC) SRCFILE(QSRC) DBGVIEW(*YES)
+             CMPMOD     MODULE(&LIB/CALLPRC) SRCFILE(QSRC) DBGVIEW(*YES)
              CMPMOD     MODULE(&LIB/CMDRUN) SRCFILE(QSRC) DBGVIEW(*YES)
              CMPMOD     MODULE(&LIB/CMDRUNLOG) SRCFILE(QSRC) DBGVIEW(*YES)
              CMPMOD     MODULE(&LIB/CMDRUNPRT) SRCFILE(QSRC) DBGVIEW(*YES)
@@ -109,10 +109,10 @@
              RUCRTTST   TSTPGM(&LIB/ASSERTT   ) SRCFILE(&LIB/&SRCF) DBGVIEW(&DBGVIEW) +
                           BNDDIR(&LIB/&BNDDIR) BOPTION(*DUPPROC)
 
-             RUCRTTST   TSTPGM(&LIB/CALLPROCT ) SRCFILE(&LIB/&SRCF) DBGVIEW(&DBGVIEW) +
+             RUCRTTST   TSTPGM(&LIB/CALLPRCT ) SRCFILE(&LIB/&SRCF) DBGVIEW(&DBGVIEW) +
                           BNDDIR(&LIB/&BNDDIR) BOPTION(*DUPPROC)
 
-             RUCRTTST   TSTPGM(&LIB/CALLPROCT ) SRCFILE(&LIB/&SRCF) DBGVIEW(&DBGVIEW) +
+             RUCRTTST   TSTPGM(&LIB/CALLPRCT ) SRCFILE(&LIB/&SRCF) DBGVIEW(&DBGVIEW) +
                           BNDDIR(&LIB/&BNDDIR) BOPTION(*DUPPROC)
 
              RUCRTTST   TSTPGM(&LIB/CMDRUNLOGT) SRCFILE(&LIB/&SRCF) DBGVIEW(&DBGVIEW) +
@@ -152,7 +152,7 @@
          /*  Run iRPGUnit SelfTest unit tests.           */
          /* -------------------------------------------- */
              RUCALLTST  TSTPGM(&LIB/ASSERTT    ) TSTPRC(*ALL) OUTPUT(*ERROR)
-             RUCALLTST  TSTPGM(&LIB/CALLPROCT  ) TSTPRC(*ALL) OUTPUT(*ERROR)
+             RUCALLTST  TSTPGM(&LIB/CALLPRCT   ) TSTPRC(*ALL) OUTPUT(*ERROR)
              RUCALLTST  TSTPGM(&LIB/CMDRUNLOGT ) TSTPRC(*ALL) OUTPUT(*ERROR)
              RUCALLTST  TSTPGM(&LIB/CMDRUNT    ) TSTPRC(*ALL) OUTPUT(*ERROR)
              RUCALLTST  TSTPGM(&LIB/CRTTSTT    ) TSTPRC(*ALL) OUTPUT(*ERROR)
@@ -168,7 +168,7 @@
          /* -------------------------------------------- */
          /*  Delete modules.                             */
          /* -------------------------------------------- */
-             STRREXPRC SRCMBR(A_INSTALL) SRCFILE(&LIB/QBUILD) PARM('RPGUNIT3 *INSTALL')
+             STRREXPRC SRCMBR(A_INSTALL) SRCFILE(&LIB/QBUILD) PARM('CLEAN')
 
          /* -------------------------------------------- */
          /*  Remove binding directory.                   */
