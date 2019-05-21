@@ -97,6 +97,9 @@
              /*  Copy source members: QBUILD                         */
              /* ---------------------------------------------------- */
              CPYF       FROMFILE(&DEVLIB/&QBUILD) +
+                          TOFILE(&LIB/&QBUILD) FROMMBR(A_CPL.1.0) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QBUILD) +
                           TOFILE(&LIB/&QBUILD) FROMMBR(A_CRTPKG) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QBUILD) +
