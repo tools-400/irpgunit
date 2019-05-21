@@ -339,6 +339,7 @@
 
    "DLTF FILE("_prdlib"/EVFEVENT)"
 
+   "DLTMOD MODULE("_prdLib"/ACPTSTT)"
    "DLTMOD MODULE("_prdLib"/ASSERT)"
    "DLTMOD MODULE("_prdLib"/ASSERTT)"
    "DLTMOD MODULE("_prdLib"/CALLPRC)"
