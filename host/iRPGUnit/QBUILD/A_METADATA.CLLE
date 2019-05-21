@@ -773,7 +773,7 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSYSINC) +
-                          MBR(s) +
+                          MBR(REGEX) +
                           SRCTYPE(RPGLE) +
                           TEXT('Regular Expressions')
              MONMSG     MSGID(CPF3288)
