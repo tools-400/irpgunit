@@ -55,6 +55,8 @@
  /* The utility that is installed */
  UTILITY = 'iRPGUnit'
  PRD_LIB = 'RPGUNIT'
+ DEBUG_VIEW = '*NONE'
+ TARGET_RELEASE = 'V7R1M0'
 
  PARSE ARG option prdLib dbgView tgtrls
 
@@ -63,7 +65,7 @@
  dbgView = translate(strip(dbgView))
  tgtRls  = translate(strip(tgtRls))
 
- if option = "" then do
+ if option = '' then do
    "SNDPGMMSG ",
      "MSGID(CPF9898) ",
      "MSGF(QCPFMSG) ",
@@ -72,28 +74,20 @@
      "MSGTYPE(*ESCAPE)"
  end
 
- if option = '' then do
-   option = 'INSTALL'
- end
-
  if (option <> 'INSTALL' & option <> 'CLEAN' & option <> 'CLEANALL') then do
    "SNDPGMMSG ",
      "MSGID(CPF9898) ",
      "MSGF(QCPFMSG) ",
-     "MSGDTA('Invalid option specfied: ''"option"''. Use INSTALL or CLEAN')",
+     "MSGDTA('Invalid option specfied: ''"option"''. Use INSTALL, CLEAN or CLEANALL')",
      "TOPGMQ(*PRV (*CTLBDY)) ",
      "MSGTYPE(*ESCAPE)"
  end
 
- if dbgView = '' | dbgView = 'NONE' | dbgView = '*NONE' then do
-   dbgView = '*NONE'
- end
-
- if dbgView = 'LIST' | dbgView = '*LIST' then do
-   dbgView = '*LIST'
- end
-
- if (dbgView <> '*NONE' & dbgView <> '*LIST') then do
+ select
+ when dbgView = '' then dbgView = DEBUG_VIEW
+ when dbgView = 'NONE' | dbgView = '*NONE' then dbgView = '*NONE'
+ when dbgView = 'LIST' | dbgView = '*LIST' then dbgView = '*LIST'
+ otherwise
    "SNDPGMMSG ",
      "MSGID(CPF9898) ",
      "MSGF(QCPFMSG) ",
@@ -103,9 +97,20 @@
  end
 
  select
- when (tgtRls = '' | tgtRls = 'CURRENT') then tgtRls = '*CURRENT'
- when (tgtRls = 'PRV') then tgtRls = '*PRV'
+ when (tgtRls = '') then tgtRls = TARGET_RELEASE
+ when (tgtRls = 'CURRENT' | tgtRls = '*CURRENT') then tgtRls = '*CURRENT'
+ when (tgtRls = 'PRV' | tgtRls = '*PRV') then tgtRls = '*PRV'
+ when (length(tgtRls) = 6 &,
+       substr(tgtRls, 1, 1) = 'V' &,
+       substr(tgtRls, 3, 1) = 'R' &,
+       substr(tgtRls, 5, 1) = 'M') then tgtRls = tgtRls /* keep the value */
  otherwise
+   "SNDPGMMSG ",
+     "MSGID(CPF9898) ",
+     "MSGF(QCPFMSG) ",
+     "MSGDTA('Invalid version: ''"tgtRls"''. Use CURRENT, PRV or VxRxMx')",
+     "TOPGMQ(*PRV (*CTLBDY)) ",
+     "MSGTYPE(*ESCAPE)"
  end
 
  /* -------------------------------------------- */
