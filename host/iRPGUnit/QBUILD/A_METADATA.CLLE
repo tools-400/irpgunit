@@ -21,7 +21,7 @@
      /* =================================================================== */
              PGM        PARM(&TARGETLIB)
 
-             DCL        VAR(&TARGETLIB) TYPE(*CHAR) LEN(10) VALUE(RPGUNIT3)
+             DCL        VAR(&TARGETLIB) TYPE(*CHAR) LEN(10) VALUE(RPGUNIT)
 
              CHGVAR     VAR(&TARGETLIB) VALUE(&TARGETLIB)
              MONMSG     MSGID(MCH3601) EXEC(SNDPGMMSG MSGID(CPF9898) +
@@ -77,6 +77,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QBUILD) +
+                          MBR(A_README2) +
+                          SRCTYPE(TXT) +
+                          TEXT('iRPGUnit - Readme (Author: Lacton).')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QBUILD) +
                           MBR(A_SELFTEST) +
                           SRCTYPE(REXX) +
                           TEXT('iRPGUnit - Compile And Run SelfTests.')
@@ -98,6 +104,12 @@
                           MBR(CMPMODHLP) +
                           SRCTYPE(PNLGRP) +
                           TEXT('iRPGUnit - Compile module.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QBUILD) +
+                          MBR(CRTPKGCPR) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Update Copyright Information')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QBUILD) +
@@ -557,6 +569,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(TEMPLSQL) +
+                          SRCTYPE(SQLRPGLE) +
+                          TEXT('iRPGUnit - Empty SQL Unit Test Case.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
                           MBR(TESTUTILS) +
                           SRCTYPE(SQLRPGLE) +
                           TEXT('iRPGUnit - Utilities.')
@@ -752,6 +770,12 @@
                           MBR(QWVRCSTK) +
                           SRCTYPE(RPGLE) +
                           TEXT('Retrieve call stack.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(s) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Regular Expressions')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
