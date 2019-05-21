@@ -49,12 +49,11 @@ b) Optionally run the RPGUnit self tests:
 
 --------------------------
 
-Version 2.5.0 - 06.04.2019
+Version 3.0.0 - 21.05.2019
 --------------------------
  * Added preference options for capturing job log messages.
  * Fixed problem that warning messages "Unit test ended with errors.
-   Check preference option 'Show result view' and …" was shown to
-   frequently.
+   Check preference option 'Show result view' was shown to frequently.
 
 Version 2.4.2 - 02.11.2018
 --------------------------
