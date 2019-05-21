@@ -143,46 +143,47 @@
  /*  Install the iRPGUNit library.                                */
  /* ------------------------------------------------------------- */
  install:
-   PARSE ARG _prdLib, _dbgView, _tgtRls
+   PARSE ARG prdLib, dbgView, tgtRls
 
-   deleteSelfTests(_prdLib)
-   deleteModules(_prdLib)
-   deleteBuildObjects(_prdLib)
-   deleteIRPGUnit(_prdLib);
+   deleteSelfTests(prdLib)
+   deleteSelfTests('QTEMP')
+   deleteModules(prdLib)
+   deleteBuildObjects(prdLib)
+   deleteIRPGUnit(prdLib);
 
    /* - - - - - - - - - - - -   - - - - - - - - */
    /*  Create commands BUILD and CMPMOD.      */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "STRREXPRC SRCMBR(MKBUILD) SRCFILE(QBUILD) PARM('"_prdLib" "_dbgView" "_tgtRls"')"
+   "STRREXPRC SRCMBR(MKBUILD) SRCFILE(QBUILD) PARM('"prdLib" "dbgView" "tgtRls"')"
 
    /* - - - - - - - - - - - - - - - - - - - - */
    /*  Create service program RUTESTCASE.     */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "STRREXPRC SRCMBR(MKTESTCASE) SRCFILE(QSRC) PARM('"_prdLib" "_dbgView" "_tgtRls"')"
+   "STRREXPRC SRCMBR(MKTESTCASE) SRCFILE(QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
 
    /* - - - - - - - - - - - - - - - - - - - - */
    /*  Create commands: RUCALLTST             */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "STRREXPRC SRCMBR(MKCALLTST) SRCFILE(QSRC) PARM('"_prdLib" "_dbgView" "_tgtRls"')"
+   "STRREXPRC SRCMBR(MKCALLTST) SRCFILE(QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
 
    /* - - - - - - - - - - - - - - - - - - - - */
    /*  Create commands: RUCRTTST              */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "STRREXPRC SRCMBR(MKCRTTST) SRCFILE(QSRC) PARM('"_prdLib" "_dbgView" "_tgtRls"')"
+   "STRREXPRC SRCMBR(MKCRTTST) SRCFILE(QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
 
    /* - - - - - - - - - - - - - - - - - - - - */
    /*  Create program RUPGMRMT (plug-in)      */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "STRREXPRC SRCMBR(MKRMTRUN) SRCFILE(QSRC) PARM('"_prdLib" "_dbgView" "_tgtRls"')"
+   "STRREXPRC SRCMBR(MKRMTRUN) SRCFILE(QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
 
-   deleteSelfTests(_prdLib)
-   deleteModules(_prdLib)
-   deleteBuildObjects(_prdLib)
+   deleteSelfTests(prdLib)
+   deleteModules(prdLib)
+   deleteBuildObjects(prdLib)
 
    "SNDPGMMSG ",
      "MSGID(CPF9897) ",
      "MSGF(QCPFMSG) ",
-     "MSGDTA('Successfully compiled the "UTILITY" library: "_prdLib"')",
+     "MSGDTA('Successfully compiled the "UTILITY" library: "prdLib"')",
      "TOPGMQ(*PRV (*CTLBDY)) ",
      "MSGTYPE(*INFO)"
 
@@ -192,16 +193,17 @@
  /*  Deletes all unnecessary objects from library iRPGUnit.       */
  /* ------------------------------------------------------------- */
  clean:
-   PARSE ARG _prdLib
+   PARSE ARG prdLib
 
-   deleteSelfTests(_prdLib)
-   deleteModules(_prdLib)
-   deleteBuildObjects(_prdLib)
+   deleteSelfTests(prdLib)
+   deleteSelfTests('QTEMP')
+   deleteModules(prdLib)
+   deleteBuildObjects(prdLib)
 
    "SNDPGMMSG ",
      "MSGID(CPF9897) ",
      "MSGF(QCPFMSG) ",
-     "MSGDTA('Successfully removed temporary objects from library: "_prdLib"')",
+     "MSGDTA('Successfully removed temporary objects from library: "prdLib"')",
      "TOPGMQ(*PRV (*CTLBDY)) ",
      "MSGTYPE(*INFO)"
 
@@ -211,18 +213,19 @@
  /*  Cleans the iRPGUnit product library.                         */
  /* ------------------------------------------------------------- */
  cleanAll:
-   PARSE ARG _prdLib
+   PARSE ARG prdLib
 
-   deleteSelfTests(_prdLib)
-   deleteModules(_prdLib)
-   deleteBuildObjects(_prdLib)
+   deleteSelfTests(prdLib)
+   deleteSelfTests('QTEMP')
+   deleteModules(prdLib)
+   deleteBuildObjects(prdLib)
 
-   deleteIRPGUnit(_prdLib);
+   deleteIRPGUnit(prdLib);
 
    "SNDPGMMSG ",
      "MSGID(CPF9897) ",
      "MSGF(QCPFMSG) ",
-     "MSGDTA('Successfully cleaned library library: "_prdLib"')",
+     "MSGDTA('Successfully cleaned library library: "prdLib"')",
      "TOPGMQ(*PRV (*CTLBDY)) ",
      "MSGTYPE(*INFO)"
 
@@ -248,10 +251,6 @@
    "DLTPGM PGM("_prdlib"/RUCRTTST)"
    "DLTPGM PGM("_prdlib"/RUPGMRMT)"
    "DLTSRVPGM SRVPGM("_prdlib"/RUTESTCASE)"
-
-   "DLTUSRSPC USRSPC("_prdlib"/RUPROCLIST)"
-
-   "DLTF FILE("_prdlib"/EVFEVENT)"
 
    Signal on Error
 
@@ -287,6 +286,7 @@
 
    "DLTBNDDIR BNDDIR("_prdlib"/"bndDir")"
    "DLTUSRSPC USRSPC("_prdlib"/RUSPOOL)"
+   "DLTUSRSPC USRSPC("_prdlib"/RUPROCLIST)"
 
    "DLTSRVPGM SRVPGM("_prdlib"/SRVPGM1)"
    "DLTSRVPGM SRVPGM("_prdlib"/SRVPGM2)"
@@ -336,6 +336,8 @@
    PARSE ARG _prdLib
 
    Signal off Error
+
+   "DLTF FILE("_prdlib"/EVFEVENT)"
 
    "DLTMOD MODULE("_prdLib"/ASSERT)"
    "DLTMOD MODULE("_prdLib"/ASSERTT)"
