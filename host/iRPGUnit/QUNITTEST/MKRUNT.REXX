@@ -84,7 +84,7 @@
  "STRREXPRC SRCMBR(MKLLIST) SRCFILE(QLLIST) PARM('"prdLib" "dbgView" "tgtRls"')"
 
  "CMPMOD MODULE("prdLib"/RUNT     ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/CALLPROC ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/CALLPRC  ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/CMDRUNSRV) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/EXTPRC   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/EXTTST   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
@@ -94,7 +94,7 @@
 
  "CRTSRVPGM  SRVPGM("prdLib"/RUNT) ",
             "MODULE("prdLib"/RUNT      ",
-                     prdLib"/CALLPROC  ",
+                     prdLib"/CALLPRC   ",
                      prdLib"/CMDRUNSRV ",
                      prdLib"/EXTPRC    ",
                      prdLib"/EXTTST    ",
