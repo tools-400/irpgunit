@@ -53,6 +53,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QBUILD) +
+                          MBR(A_CPL.1.0) +
+                          SRCTYPE(TXT) +
+                          TEXT('iRPGUnit - Software license.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QBUILD) +
                           MBR(A_CRTPKG) +
                           SRCTYPE(CLLE) +
                           TEXT('iRPGUnit - Create distribution package.')
