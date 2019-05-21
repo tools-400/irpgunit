@@ -81,10 +81,18 @@
 
  /* Sanity Check. */
 
- "RUCRTTST TSTPGM("prdLib"/TESTPGM03) SRCFILE(QTESTCASES)"
+ Signal off Error
+ "CHKOBJ OBJ(QTEMP/TESTPGM03) OBJTYPE(*SRVPGM)"
+ Signal on Error
+
+ if (rc = 0) then do
+   "DLTSRVPGM SRVPGM(QTEMP/TESTPGM03)"
+ end
+
+ "RUCRTTST TSTPGM(QTEMP/TESTPGM03) SRCFILE(QTESTCASES)"
 
  Signal off Error
- rc = "RUCALLTST  TSTPGM("prdLib"/TESTPGM03)"
+ "RUCALLTST  TSTPGM(QTEMP/TESTPGM03)"
  Signal on Error
 
  if (rc = 0) then do
@@ -94,6 +102,8 @@
      "MSGDTA('Assertion failure sanity check failed') ",
      "MSGTYPE(*ESCAPE))"
  end
+
+ "DLTSRVPGM SRVPGM(QTEMP/TESTPGM03)"
 
  /* Unit Tests. */
 
