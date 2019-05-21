@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Usage</title>
+</head>
+
+<body>
+<h1>Upgrading From RPGUnit v2.4.2 to v3.0.0</h1>
+All your existing unit test suites should compile and run fine with iRPGUnit 3.0.0. However: 
+<p>
+<table>
+<tr>
+<td class="notice"><b>Test your existing test suites carefully in a sandbox
+                   environment, before upgrading to iRPGUnit 3.0.0.</b></td>
+</tr>
+</table>
+<p>
+The following test cases (compiled with v2.4.2) run fine with iRPGUnit: 
+<ul>
+<li>CMDRUNLOGT</li>
+<li>CMDRUNT</li>
+<li>CRTTSTT</li>
+<li>EXTTSTT</li>
+<li>LIBLT</li>
+<li>PGMMSGT</li>
+<li>STRINGT</li>
+</ul>
+<p>
+The following test cases (compiled with v2.4.2) do not successfully run with iRPGUnit: 
+<ul>
+<li>Test cases <i>testAssertWithFailure</i> of test suite ASSERTT, because of internal changes.</li>
+<li>Test cases <i>testGoodByeIsNotHello</i> of test suite ASSERTT, because of internal changes.</li>
+<li>Test cases <i>testTwoAndTwoIsNotEqualToFive</i> of test suite ASSERTT, because of internal changes.</li>
+<p>
+<li>Test suite <i>CALLPROCT</i>, because service program RURUNNER has been dropped.</li>
+<li>Test suite <i>EXTPRCT</i>, because service program RURUNNER has been dropped.</li>
+<li>Test suite <i>JOBLOGT</i>, because service program RURUNNER has been dropped.</li>
+<li>Test suite <i>RUNT</i>, because service program RURUNNER has been dropped.</li>
+<p>
+<li>Test suite <i>RUACPTST</i>, because source file RPGUNITF1 has been renamed to QTESTCASES. Some test
+    cases succeed, when QTESTCASES is duplicated to RPGUNITF1. Other test cases still fail, because of
+    different statement numbers due to internal changes.</li>
+</ul>
+The old RPGUNIT self-tests can not be compiled with version 3.0.0, because
+the /copy members are no longer found. That is, because the source code of
+RPGUNIT is stored in the IFS, now.
+</ul>
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
