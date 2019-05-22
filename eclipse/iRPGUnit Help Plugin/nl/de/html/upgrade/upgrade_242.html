@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Usage</title>
+</head>
+
+<body>
+<h1>Umsteigen von RPGUnit v2.4.2 nach v3.0.0</h1>
+Alle bestehenden Unit Test Suites sollten sich problemlos mit iRPGUnit 3.0
+ausführen lassen. Dennoch: 
+<p>
+<table>
+<tr>
+<td class="notice"><b>Testen sie ihre bestehenden Test Suites sorgfältig innerhalb einer 
+                      geschützten Testumgebung mit iRPGUnit 3.0, bevor sie endgültig auf 
+                      die neue Version umsteigen.</b></td>
+</tr>
+</table>
+<p>
+Die folgenden RPGUnit Selbsttests (erstellt mit v2.4.2) laufen problemlos mit
+der neuen Version: 
+<ul>
+<li>CMDRUNLOGT</li>
+<li>CMDRUNT</li>
+<li>CRTTSTT</li>
+<li>EXTTSTT</li>
+<li>LIBLT</li>
+<li>PGMMSGT</li>
+<li>STRINGT</li>
+</ul>
+<p>
+Die folgenden RPGUnit Selbsttests (erstellt mit v2.4.2) laufen <b>nicht</b> mit
+der neuen Version: 
+<ul>
+<li>Testfall <i>testAssertWithFailure</i> der Test Suite ASSERTT, aufgrund interner Änderungen.</li>
+<li>Testfall <i>testGoodByeIsNotHello</i> der Test Suite ASSERTT, aufgrund interner Änderungen.</li>
+<li>Testfall <i>testTwoAndTwoIsNotEqualToFive</i> der Test Suite ASSERTT, aufgrund interner Änderungen.</li>
+<p>
+<li>Test Suite <i>CALLPROCT</i>, weil das Serviceprogramm RURUNNER aufgegeben wurde.</li>
+<li>Test Suite <i>EXTPRCT</i>, weil das Serviceprogramm RURUNNER aufgegeben wurde.</li>
+<li>Test Suite <i>JOBLOGT</i>, weil das Serviceprogramm RURUNNER aufgegeben wurde.</li>
+<li>Test Suite <i>RUNT</i>, weil das Serviceprogramm RURUNNER aufgegeben wurde.</li>
+<p>
+<li>Test Suite <i>RUACPTST</i>, weil die Quellendatei RPGUNITF1 nach QTESTCASES umbenannt wurde.
+    Einige Testfälle lassen sich ausführen, wenn QTESTCASES nach RPGUNITF1 dupliziert wird. Dennoch
+    bleiben Testfälle übrig, die aufgrund interner Änderungen fehlschlagen.</li>
+</ul>
+<p>
+<table>
+<tr>
+  <td class="important"><b>Bestehende Test Suites lassen sich nicht mit iRPGUnit 3.0 kompilieren, weil
+                        die Quellendatei TESTCASE sich nun in der Quellendatei QINCLUDE befindet.</b>
+  </td>
+</tr>
+</table>
+<p>
+Das Problem lässt sich wie folgt beheben:
+<ol>
+<li>Öffnen sie die Quellendatei einer vorhandenen v2.x Test Suite.</li>
+<li>Suchen sie die <i>/copy</i> Anweisung, mit welche die Quellenteildatei <i>TESTCASE</i> einbindet.</li>
+<li>Ändern sie die Anweisung, so dass <i>TESTCASE</i> der Quellendatei QINCLUDE referenziert wird.</li>
+</ol>
+<p>
+<b>Beispiel:</b>
+<p>
+<u>Vor iRPGUnit 3.0:</u>
+<code><pre class="indent">
+/copy RPGUNIT1,TESTCASE
+</pre></code> 
+<u>Mit iRPGUnit 3.0:</u>
+<code><pre class="indent">
+/copy QINCLUDE,TESTCASE
+</pre></code> 
+<p>
+EIne weitere Möglichkeit zum Beheben des Problems besteht darin, die Quellenteildatei <i>TESTCASE</i> der
+Quellendatei <i>QINCLUDE</i> in die Quellendatei <i>RPGUNIT1</i> zu kopieren.
+<p>
+<code><pre class="indent">
+CRTSRCPF FILE(RPGUNIT/RPGUNIT1) RCDLEN(112)
+CPYF FROMFILE(RPGUNIT2/RPGUNIT1) TOFILE(RPGUNIT/RPGUNIT1) FROMMBR(TESTCASE) TOMBR(*FROMMBR) MBROPT(*ADD)
+</pre></code> 
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
