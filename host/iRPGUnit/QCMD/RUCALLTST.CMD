@@ -97,6 +97,8 @@
                         LEN(1024)                            +
                         VARY(*YES *INT2)                     +
                         CASE(*MIXED)                         +
+                        DFT(*NONE)                           +
+                        SPCVAL((*NONE ''))                   +
                         PROMPT('XML stream file')
 
  OBJ:        QUAL       TYPE(*NAME) LEN(10)

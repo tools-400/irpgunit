@@ -164,7 +164,52 @@ XML stream file (XMLSTMF) - Help
 Name of an XML stream file that contains the result of
 the unit test. The XML file is created with a format, which
 can be parsed by the Jenkins build server.
+:p.
+You can use the following replacement variables:
+:LINES.
+<TSTPGM> : Name of the test suite (parameter TSTPGM)
+:ELINES.
+:p.
+You can also use almost all variables that are supported by the
+strftime() function, such as:
+:LINES.
+%C : Century number [00-99], the year divided by 100.
+%d : Day of the month [01-31].
+%F : ISO Date Format, same as %Y-%m-%d.
+%g : 2 digit year portion of ISO week date [00,99].
+%H : Hour in 24-hour format [00-23].
+%I : Hour in 12-hour format [01-12].
+%j : Day of the year [001-366].
+%m : Month [01-12].
+%M : Minute [00-59].
+%p : AM or PM string.
+%R : 24-hour time format without seconds, same as %H.%M.
+%S : Second [00-61].
+%T : 24-hour time format with seconds, same as %H.%M.%S.
+%u : Weekday [1,7]. Monday is 1 and Sunday is 7.
+%U : Week number of the year [00-53]. Sunday is first day of week.
+%V : ISO week number of the year [01-53]. Monday is first day of week.
+%w : Weekday [0,6], Sunday is 0.
+%W : Week number of the year [00-53]. Monday is first day of week.
+%y : 2 digit year [00,99].
+:ELINES.
+:p.
+Some replacement variables are not allowed, because they may contain
+illegal characters.
+:p.
+The following XML stream file name:
+:LINES.
+  <TSTPGM>-%F-%T.xml
+:ELINES.
+:p.
+Is resolved as shown below, when parameter TSTPGM is set to 'MYUNITTEST':
+:LINES.
+  MYUNITTEST-2019-05-22-20.58.15.xml
+:ELINES.
+:p.
 :parml.
+:pt.:pk def.*NONE:epk.
+:pd.No XML result stream file is created.
 :pt.xml-stream-file-name
 :pd.Name of the XML stream file that contains the result of
 the unit test.

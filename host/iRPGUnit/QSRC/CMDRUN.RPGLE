@@ -43,7 +43,8 @@
       /include qinclude,SRCMBR
       /include qinclude,XMLWRITER
       /include qllist,llist_h
-
+      /include qsysinc,strftime
+      /include qsysinc,time
 
       //----------------------------------------------------------------------
       //   Private Prototypes
@@ -54,6 +55,13 @@
      D  testProcNm                         const like(ProcNm_t)
      D  testProcsToRun...
      D                                     const likeds(ProcNms_t)
+
+      // Replace all occurences of a given search argument.
+     D replace...
+     D                 pr          2048a   varying
+     D  string                     2048a   const varying options(*varsize)
+     D  searchArg                   512a   const varying options(*varsize)
+     D  replaceArg                  512a   const varying options(*varsize)
 
        // Assert that at least one test case has run during execution.
      D assertHasRunAtLeastOneTestCase...
@@ -137,6 +145,13 @@
      D  rclRsc                             const like(rclrsc_t)
      D  xmlStmf                            const like(stmf_t)
 
+     D tm              ds                  likeds(tm_t) based(pTm)
+     D tmpXmlStmf      s           1024a   inz
+     D size            s             10i 0
+     D xmlStmfRpl...
+     D                 s                   like(xmlStmf)
+     D illegalRplVar   s             10a   varying
+     D illegalMsg      s            128a   varying
       /free
 
        clear result;
@@ -174,7 +189,63 @@
        // Return result to xml file
        if (xmlStmf <> '');
          monitor;
-           writeXmlFile(xmlStmf : testSuite : testSuiteName : result);
+
+           select;
+           when (%scan('%c': xmlStmf) > 0);
+             illegalRplVar = '%c';   // Date/Time in the format of the locale.
+             illegalMsg = 'may contain illegal characters';
+           when (%scan('%D': xmlStmf) > 0);
+             illegalRplVar = '%D';   // Date Format, same as %m/%d/%y.
+             illegalMsg = 'contains forward slashes';
+           when (%scan('%e': xmlStmf) > 0);
+             illegalRplVar = '%e';   // Same as %d, except single digit is
+                                     // preceded by a space [1-31].
+             illegalMsg = 'contains spaces';
+           when (%scan('%G': xmlStmf) > 0);
+             illegalRplVar = '%G';   // 4 digit year portion of ISO week date.
+                                     // Can be negative.
+             illegalMsg = 'can be negative';
+           when (%scan('%n': xmlStmf) > 0);
+             illegalRplVar = '%n';   // Newline character.
+             illegalMsg = 'newline character';
+           when (%scan('%r': xmlStmf) > 0);
+             illegalRplVar = '%r';   // Time in AM/PM format of the locale.
+             illegalMsg = 'may contain illegal characters';
+           when (%scan('%t': xmlStmf) > 0);
+             illegalRplVar = '%t';   // Tab character.
+             illegalMsg = 'tab character';
+           when (%scan('%x': xmlStmf) > 0);
+             illegalRplVar = '%x';   // Date in the format of the locale.
+             illegalMsg = 'may contain illegal characters';
+           when (%scan('%X': xmlStmf) > 0);
+             illegalRplVar = '%X';   // Time in the format of the locale.
+             illegalMsg = 'may contain illegal characters';
+           when (%scan('%Y': xmlStmf) > 0);
+             illegalRplVar = '%Y';   // 4-digit year. Can be negative.
+             illegalMsg = 'can be negative';
+           when (%scan('%%': xmlStmf) > 0);
+             illegalRplVar = '%%';   // % character.
+             illegalMsg = '% character';
+           other;
+             illegalRplVar = '';
+             illegalMsg = '';
+           endsl;
+
+           if (illegalRplVar <> '');
+             errMsg = 'Illegal replacement variable in XML stream file name: ' +
+                      illegalRplVar;
+             if (illegalMsg <> '');
+               errMsg = %trimr(errMsg) + ' (' + illegalMsg + ')';
+             endif;
+           else;
+             pTm = localtime(time(*null));
+             size = strftime(
+                      %addr(tmpXmlStmf): %size(tmpXmlStmf): xmlStmf: tm);
+             xmlStmfRpl = %subst(tmpXmlStmf: 1: size);
+             xmlStmfRpl = replace(xmlStmfRpl: '<TSTPGM>': testSuiteName.nm);
+             xmlStmfRpl = replace(xmlStmfRpl: ':': '.');
+             writeXmlFile(xmlStmfRpl : testSuite : testSuiteName : result);
+           endif;
          on-error;
            errMsg = rcvMsgTxt('*ESCAPE');
          endmon;
@@ -222,6 +293,36 @@
        //----------------------------------------------------------------------
        //   Procedures
        //----------------------------------------------------------------------
+
+     P replace...
+     P                 b
+     D                 pi          2048a   varying
+     D  string                     2048a   const varying options(*varsize)
+     D  searchArg                   512a   const varying options(*varsize)
+     D  replaceArg                  512a   const varying options(*varsize)
+
+     D result          s           2048a   varying
+     D startPos        s             10i 0 inz(1)
+     D x               s             10i 0
+      /free
+
+        result = string;
+
+        x = %scan(searchArg: result: startPos);
+        dow   x > 0;
+          result = %replace(replaceArg: result: x: %len(searchArg));
+          x = x + %len(replaceArg);
+          if (x <= %len(result));
+            x = %scan(searchArg: result: x);
+          else;
+            leave;
+          endif;
+        enddo;
+
+        return result;
+
+      /end-free
+     P                 e
 
      P assertHasRunAtLeastOneTestCase...
      P                 b
