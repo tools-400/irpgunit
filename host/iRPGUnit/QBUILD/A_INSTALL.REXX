@@ -257,6 +257,11 @@
    "DLTPGM PGM("_prdlib"/RUPGMRMT)"
    "DLTSRVPGM SRVPGM("_prdlib"/RUTESTCASE)"
 
+   "DLTJOBD JOBD("_prdLib"/RPGUNIT)"
+   "DLTWSCST WSCST("_prdLib"/RUWSCST)"
+
+   "DLTF FILE("_prdLib"/RPGUNIT)" /* RPGUNIT save file */
+
    Signal on Error
 
    return ''
