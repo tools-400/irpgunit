@@ -22,7 +22,7 @@
 ctl-opt option(*srcstmt);
 ctl-opt nomain;
 
-/include RPGUNIT1,TESTCASE
+/include qinclude,TESTCASE
 
 dcl-proc Test_BadCall export;
    dcl-pr bad_pgm extpgm;
