@@ -25,11 +25,14 @@
              DCL        VAR(&LIB       ) TYPE(*CHAR) LEN(10) VALUE('RPGUNIT')
              DCL        VAR(&SAVF      ) TYPE(*CHAR) LEN(10) VALUE('RPGUNIT')
              DCL        VAR(&TEXT      ) TYPE(*CHAR) LEN(50)
+             DCL        VAR(&OBJD      ) TYPE(*CHAR) LEN(29) VALUE('iRPGUnit Utility')
+             DCL        VAR(&OBJD_LEN  ) TYPE(*INT ) LEN( 4) VALUE(16)
              DCL        VAR(&RELEASE   ) TYPE(*CHAR) LEN(20)
              DCL        VAR(&TMPLIB    ) TYPE(*CHAR) LEN(10) VALUE('QTEMP')
              DCL        VAR(&OWNER     ) TYPE(*CHAR) LEN(10) VALUE('QPGMR')
              DCL        VAR(&TGTRLS    ) TYPE(*CHAR) LEN(10) VALUE('V7R1M0')
              DCL        VAR(&IS_DEVLIB ) TYPE(*LGL )         VALUE('1')
+             DCL        VAR(&TODAY     ) TYPE(*CHAR) LEN(10)
 
              DCL        VAR(&QBND      ) TYPE(*CHAR) LEN(10) VALUE('QBND')
              DCL        VAR(&QBUILD    ) TYPE(*CHAR) LEN(10) VALUE('QBUILD')
@@ -60,7 +63,25 @@
              /* ---------------------------------------------------- */
              /*  Create target library.                              */
              /* ---------------------------------------------------- */
-             CRTLIB     LIB(&LIB) TEXT('*** in progress ***')
+             CHKOBJ     OBJ(&LIB) OBJTYPE(*LIB)
+             MONMSG     MSGID(CPF9801) EXEC(DO)
+               CRTLIB     LIB(&LIB) TEXT('*** in progress ***')
+               RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
+             GOTO       CMDLBL(haveLib)
+             ENDDO
+
+             RTVOBJD    OBJ(&LIB) OBJTYPE(*LIB) TEXT(&TEXT)
+             IF         COND(%sst(&TEXT 1 &OBJD_LEN) *NE &OBJD) THEN(DO)
+               SNDPGMMSG  MSGID(CPF9898) MSGF(*LIBL/QCPFMSG) +
+                            MSGDTA('Cannot use library' *BCAT &LIB *TCAT +
+                                    '. Check object description:' *BCAT &TEXT ) +
+                            TOPGMQ(*PRV (*PGMBDY *NONE *NONE)) +
+                            TOMSGQ(*TOPGMQ) MSGTYPE(*ESCAPE)
+             ENDDO
+
+ haveLib:
+             CHGLIB     LIB(&LIB) TEXT('*** in progress ***')
+             CLRLIB     LIB(&LIB)
 
              /* ---------------------------------------------------- */
              /*  Create source files.                                */
@@ -659,7 +680,7 @@
                           SRCFILE(&LIB/&QBUILD) SRCMBR(*PGM) +
                           TRUNCNBR(*NO) DFTACTGRP(*NO) ACTGRP(*CALLER)
 
-             CALL       PGM(&TMPLIB/CRTPKGCPR) PARM(&LIB)
+             CALL       PGM(&TMPLIB/CRTPKGCPR) PARM(&LIB &TODAY)
 
              /* ---------------------------------------------------- */
              /*  Create iRPGUnit meta data and get version number.   */
@@ -703,13 +724,12 @@
              /* ---------------------------------------------------- */
              /*  Create target library description.                  */
              /* ---------------------------------------------------- */
-             CHGLIB     LIB(&LIB) TEXT('iRPGUnit Distribution Package - ' *CAT &RELEASE)
+             CHGVAR     VAR(&TEXT) VALUE(&OBJD *BCAT '-' *BCAT +
+                                         &RELEASE *BCAT '(' *CAT &TODAY *TCAT ')')
 
              /* ---------------------------------------------------- */
              /*  Save install package to save file                   */
              /* ---------------------------------------------------- */
-             CHGVAR     VAR(&TEXT) +
-                          VALUE('RPGUNIT Distribution Package - ' *CAT &RELEASE)
              CHGLIB     LIB(&LIB) TEXT(&TEXT)
 
              DLTF       FILE(&TMPLIB/&SAVF)

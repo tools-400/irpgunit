@@ -24,7 +24,6 @@
      d g_extFile       s             21a
      d g_member        s             10a
      d g_srcInfo       ds                  likeds(srcInfo_t)
-     d g_now           s               z
 
      d srcInfo_t       ds                  qualified based(pTemplate)
      d  file                  83     92
@@ -73,22 +72,24 @@
      d close...
      d                 pr                  extproc('close')
 
-      // Procedure prototype for procedure 'BUILD_RPLC'
+     d CRTPKGCPR...
+     d                 pr                  extpgm('CRTPKGCPR')
+     d  gi_lib                       10A   const
+     d  go_date                      10A
 
-     d BUILD_RPLC...
-     d                 pr                  extpgm('BUILD_RPLC')
-     d  LPLIB                        10A                                        <-- Library
+     d g_now           s               z
 
-      // Procedure interface for procedure 'BUILD_RPLC'
-
-     d BUILD_RPLC...
+     d CRTPKGCPR...
      d                 pi
-     d  LPLIB                        10A                                        <-- Library
+     d  gi_lib                       10A   const
+     d  go_date                      10A
       /free
 
          g_now = %timestamp();
 
-         replace('QINCLUDE': LPLIB: 'COPYRIGHT': %paddr('replaceDates'));
+         replace('QINCLUDE': gi_lib: 'COPYRIGHT': %paddr('replaceDates'));
+
+         go_date = %char(%date(g_now): *EUR);
 
          *inlr = *on;
 
