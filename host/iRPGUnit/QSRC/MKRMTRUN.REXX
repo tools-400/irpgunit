@@ -124,6 +124,20 @@
         "TGTRLS("tgtRls") ",
         "TEXT('iRPGUnit - Execute Test Suite.')"
 
+ Signal off Error
+
+ "DLTWSCST WSCST("prdLib"/RUWSCST)"
+ "DLTJOBD JOBD("prdLib"/RPGUNIT)"
+
+ Signal on Error
+
+ "CRTWSCST WSCST("prdLib"/RUWSCST) ",
+        "SRCFILE("prdLib"/QSRC)"
+
+ "CRTJOBD JOBD("prdLib"/RPGUNIT) ",
+        "TEXT('iRPGUnit - Library list for test cases') ",
+        "INLLIBL("prdLib")"
+
  "SNDPGMMSG ",
    "MSGID(CPF9897) ",
    "MSGF(QCPFMSG) ",
