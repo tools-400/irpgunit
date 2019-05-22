@@ -168,7 +168,7 @@
       // The file must be stored in *CURLIB.
 
      D clrpfm          pr                  extproc('+
-     D                                     clrpfm+
+     D                                     CLRPFM+
      D                                     ')
         // A file name.
      D  w1fileNm                     10a   const
@@ -185,7 +185,7 @@
       //   rclactgrp( '*ELIGIBLE' );
 
      D rclactgrp       pr                  extproc('+
-     D                                     rclactgrp+
+     D                                     RCLACTGRP+
      D                                     ')
      D  w1actGrpNm                   10a   const
 

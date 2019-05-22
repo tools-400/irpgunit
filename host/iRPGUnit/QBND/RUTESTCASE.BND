@@ -33,8 +33,8 @@ STRPGMEXP  PGMLVL(*CURRENT) SIGNATURE('iRPGUNIT V3.0')
   EXPORT SYMBOL("getAssertCalled")             /* internal self-test API */
   EXPORT SYMBOL("getAssertFailEvt")            /* internal self-test API */
   EXPORT SYMBOL("iEqual")                      /* public API */
-  EXPORT SYMBOL("clrpfm")                      /* public API */
-  EXPORT SYMBOL("rclactgrp")                   /* public API */
+  EXPORT SYMBOL("CLRPFM")                      /* public API */
+  EXPORT SYMBOL("RCLACTGRP")                   /* public API */
   EXPORT SYMBOL("runCmd")                      /* public API */
   EXPORT SYMBOL("clearAssertCounter")          /* internal self-test API */
   EXPORT SYMBOL("nEqual")                      /* public API */
