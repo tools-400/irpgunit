@@ -107,16 +107,15 @@ folgen sie den Anweisungen auf den nachfolgenden Seiten.
 <a id="#installing_the_library" />
 <h2>Installieren der RPGUnit Bibliothek</h2>
 <p>
-Zunächst müssen sie die Sicherungsdatei <i>RPGUNIT.SAVF</i> auf ihren Server übertragen und die 
-Bibliothek <code>RPGUNIT</code> daraus wiederherstellen. Danach kompilieren sie das Programm <code>A_INSTALL</code> 
-und führen es aus, um die erforderlichen Objekte zu erstellen. Die Sicherungsdatei ist Bestandteil der Update Site Zip
-Datei. Sie befindet sich im Verzeichnis <i>/Server</i> der Zip Datei.
+Es gibt mehrere Wege, um die RPGUNIT Bibliothek zu installieren. Der einfachste Weg führt
+über den eingebauten <a href="#embedded_install_dialog">Installationsdialog</a> des iRPGUnit Plugins.
 <p>
+<a id="#embedded_install_dialog" />
 <h3>Verwenden des eingebauten Installationsdialogs</h3>
 <p>
-Die einfachste Weg zur Installation der RPGUNIT Bibliothek bietet der Installationsdialog, welcher von
-der Seite der iRPGUnit Benutzervorgaben aus gestartet werden kann. Allerdings setzt dieser Weg voraus, dass
-es ihnen erlaubt ist, eine FTP Verbindung zu ihrem Server aufzubauen.  
+Die einfachste Weg zur Installation der RPGUNIT Bibliothek führt über der Installationsdialog, welcher von
+der Seite der iRPGUnit Benutzervorgaben aus gestartet werden kann. Voraussetzung hier ist, dass sie
+berechtigt sind eine FTP Verbindung von ihrem PC zu ihrem Server aufzubauen.
 <p>
 Dies sind die auszuführenden Schritte:
 <ul>
@@ -129,9 +128,10 @@ Dies sind die auszuführenden Schritte:
 <li>Klicken sie den [Installieren] Button.</li>
 </ul>
 <p>
-<table class="info">
+<table class="notice">
 <tr><td>Sie müssen die Bibliothek nicht zwingend neu kompilieren. Dies ist nur dann erforderlich,
-        wenn sie die RPGUnit Selbsttest ausführen wollen.</td></tr>
+        wenn sie die RPGUnit Selbsttest ausführen wollen oder wenn sie einer anderen Namen als <i>RPGUNIT</i>
+        für die Bibliothek verwenden möchten.</td></tr>
 </table>
 <p>
 <h3>Übertragen der Sicherungsdatei mit 'upload_savf.bat'</h3>
@@ -184,14 +184,26 @@ Melden sie sich auf ihrem Server an, stellen sie die Bibliothek <code>RPGUNIT</c
 Sicherungsdatei wieder her und fügen sie die Bibliothek ihrer Bibliotheksliste hinzu:
 <pre class="indent">
   RSTLIB SAVLIB(RPGUNIT) DEV(*SAVF) SAVF(QGPL/RPGUNIT)
-  ADDLIBLE RPGUNIT
+  ADDLIBLE LIB(RPGUNIT)
 </pre>
-Kompilieren sie das Installationsprogramm <code>A_INSTALL</code>, um die  
+Führen sie das Rexx Installationsscript <code>A_INSTALL</code> aus, um die  
 RPGUnit Objekte zu erzeugen:
 <pre class="indent">
-  CRTBNDCL PGM(RPGUNIT/A_INSTALL) SRCFILE(RPGUNIT/RPGUNIT1) SRCMBR(*PGM)
-  CALL PGM(RPGUNIT/A_INSTALL) PARM('RPGUNIT')
+  STRREXPRC SRCMBR(A_INSTALL) SRCFILE(QBUILD) PARM('install')
 </pre>
+<p>
+Falls sie sich für einen anderen Bibliotheksnamen entschieden haben, z.B. <i>RPGUNIT3</i>, müssen
+sie diesen wie folgt angeben:
+<pre class="indent">
+  STRREXPRC SRCMBR(A_INSTALL) SRCFILE(QBUILD) PARM('install RPGUNIT3')
+</pre>
+<p>
+Standardmäßig werden die iRPGUnit Objekte ohne Debuginformationen kompiliert. Fügen sie den Parameter <i>list</i>
+hinzu, wenn sie die Objekte mit Debuginformationen erzeugen möchten:
+<pre class="indent">
+  STRREXPRC SRCMBR(A_INSTALL) SRCFILE(QBUILD) PARM('install RPGUNIT list')
+</pre>
+<p>
 Fertig.
 <p>
 <table class="notice">

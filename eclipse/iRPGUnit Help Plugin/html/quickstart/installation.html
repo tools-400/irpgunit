@@ -104,11 +104,10 @@ Select the options you want to install, press the [Next] button and follow the i
 <a id="#installing_the_library" />
 <h2>Installing the RPGUnit Library</h2>
 <p>
-First you need to transfer save file <i>RPGUNIT.SAVF</i> to your server and restore library 
-<code>RPGUNIT</code>. Then compile and execute program <code>A_INSTALL</code> 
-to create the required objects. The save file is part of the update site zip file. You find it 
-in folder <i>/Server</i> of the zip file.
+There are several options to install the library. Your favourite should be the
+<a href="#embedded_install_dialog">install dialog</a> of the iRPGUnit plug-in.
 <p>
+<a id="#embedded_install_dialog" />
 <h3>Using the Embedded Install Dialog</h3>
 <p>
 The most easiest way to install the library is to upload it from the preference page of the iRPGUnit 
@@ -125,9 +124,9 @@ Take these steps to use the embedded installer:
 <li>Click the [Install] button.</li>
 </ul>
 <p>
-<table class="info">
+<table class="notice">
 <tr><td>You do not necessarily need to compile the library unless you want to run
-        the RPGUnit self-test.</td></tr>
+        the RPGUnit self-test or in case you did not use the default library name <i>RPGUNIT</i>.</td></tr>
 </table>
 <p>
 <h3>Transfer Save File With 'upload_savf.bat'</h3>
@@ -180,14 +179,25 @@ Logon to your server, restore library <code>RPGUNIT</code> from the save
 file and add the library to your library list:
 <pre class="indent">
   RSTLIB SAVLIB(RPGUNIT) DEV(*SAVF) SAVF(QGPL/RPGUNIT)
-  ADDLIBLE RPGUNIT
+  ADDLIBLE LIB(RPGUNIT)
 </pre>
-Compile and execute install program <code>A_INSTALL</code> to create the 
+Execute the Rexx install script <code>A_INSTALL</code> to create the 
 RPGUnit objects:
 <pre class="indent">
-  CRTBNDCL PGM(RPGUNIT/A_INSTALL) SRCFILE(RPGUNIT/RPGUNIT1) SRCMBR(*PGM)
-  CALL PGM(RPGUNIT/A_INSTALL) PARM('RPGUNIT')
+  STRREXPRC SRCMBR(A_INSTALL) SRCFILE(QBUILD) PARM('install')
 </pre>
+<p>
+Use the following command if you used a different library name, e.g. <i>RPGUNIT3</i>:
+<pre class="indent">
+  STRREXPRC SRCMBR(A_INSTALL) SRCFILE(QBUILD) PARM('install RPGUNIT3')
+</pre>
+<p>
+By default the iRPGUnit objects are compiled without debug data. Add parameter <i>list</i>
+if you want to compile the objects with debug data:
+<pre class="indent">
+  STRREXPRC SRCMBR(A_INSTALL) SRCFILE(QBUILD) PARM('install RPGUNIT list')
+</pre>
+<p>
 Finished.
 <p>
 <table class="notice">

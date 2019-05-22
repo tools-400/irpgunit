@@ -15,6 +15,10 @@
         <topic href="html/reference/assert.html"               label="assert" />
         <topic href="html/reference/fail.html"                 label="fail"/>
         <topic href="html/reference/getMonitoredMessage.html"  label="getMonitoredMessage"/>
+        <topic href="html/reference/assertJobLogContains.html" label="assertJobLogContains" />
+    </topic>
+    <topic label="Utilities">
+        <topic href="html/reference/getFullTimeStamp.html"     label="getFullTimeStamp" />
     </topic>
     <topic href="html/reference/selftest.html"                 label="Self-Test">
         <topic href="html/reference/getAssertFailEvt.html"     label="getAssertFailEvt"     />
