@@ -1,5 +1,5 @@
       * ===================================================================
-      *  iRPGUnit - Create iRPGUnit Meta Data.
+      *  iRPGUnit - Update Copyright Information
       * ===================================================================
       * >>PRE-COMPILER<<
       *   >>CRTCMD<< CRTBNDRPG    PGM(&LI/&OB) +

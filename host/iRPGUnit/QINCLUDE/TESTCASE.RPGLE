@@ -1,7 +1,7 @@
       /if not defined (IRPGUNIT_TESTCASE)
       /define IRPGUNIT_TESTCASE
       // ==========================================================================
-      //  iRPGUnit - Assertion facilities.
+      //  iRPGUnit - Public API.
       // ==========================================================================
       //  Copyright (c) 2013-2019 iRPGUnit Project Team
       //  All rights reserved. This program and the accompanying materials

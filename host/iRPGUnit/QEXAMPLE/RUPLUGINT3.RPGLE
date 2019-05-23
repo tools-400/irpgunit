@@ -10,10 +10,10 @@
       //    >>PRE-COMPILER<<
       //      >>CRTCMD<<  RUCRTTST    TSTPGM(&LI/&OB) +
       //                              SRCFILE(&SL/&SF) SRCMBR(&SM);
-      //      >>COMPILE<<
+      //      >>IMPORTANT<<
       //        >>PARM<< COPTION(*SRCSTMT *EVENTF);
       //        >>PARM<< DBGVIEW(*LIST);
-      //      >>END-COMPILE<<
+      //      >>END-IMPORTANT<<
       //      >>EXECUTE<<
       //    >>END-PRE-COMPILER<<
       // ==========================================================================

@@ -1,5 +1,5 @@
       // ==========================================================================
-      //  iRPGUnit - Dynamically Call a Procedure in a SRVPGM.
+      //  iRPGUnit - Call a procedure in a SRVPGM.
       // ==========================================================================
       //  Copyright (c) 2013-2019 iRPGUnit Project Team
       //  All rights reserved. This program and the accompanying materials

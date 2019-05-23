@@ -1,7 +1,7 @@
       /if not defined(IRPGUNIT_VERSION)
       /define IRPGUNIT_VERSION
       // ==========================================================================
-      //  iRPGUnit - Product Version Procedures Definitions.
+      //  iRPGUnit - Product Version Utilities.
       // ==========================================================================
       //  Copyright (c) 2013-2019 iRPGUnit Project Team
       //  All rights reserved. This program and the accompanying materials

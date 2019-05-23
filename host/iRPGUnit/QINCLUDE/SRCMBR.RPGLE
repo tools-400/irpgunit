@@ -3,7 +3,7 @@
       /endif
       /define IRPGUNIT_SRCMBR
       // ==========================================================================
-      //  iRPGUnit - Command Line Toolkit.
+      //  iRPGunit - Source Member Utilities.
       // ==========================================================================
       //  Copyright (c) 2013-2019 iRPGUnit Project Team
       //  All rights reserved. This program and the accompanying materials
