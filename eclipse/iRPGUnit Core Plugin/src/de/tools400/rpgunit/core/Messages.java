@@ -97,9 +97,13 @@ public class Messages extends NLS {
     public static String PreferencesPage2_cboCreateReport_toolTipText;
     public static String PreferencesPage2_lblReclaimResources_text;
     public static String PreferencesPage2_cboReclaimResources_toolTipText;
+    public static String PreferencesPage2_lblXmlStmf_text;
+    public static String PreferencesPage2_txtXmlStmf_toolTipText;
     public static String PreferencesPage2_grpOverrideCommandParameters_text;
     public static String PreferencesPage2_chkDisableReport_text;
     public static String PreferencesPage2_chkDisableReport_toolTipText;
+    public static String PreferencesPage2_chkDisableXmlStmf_text;
+    public static String PreferencesPage2_chkDisableXmlStmf_toolTipText;
     public static String PreferencesPage2_grpRuntime_text;
     public static String PreferencesPage2_lblProductLibrary_text;
     public static String PreferencesPage2_lblCheckTestSuite_text;

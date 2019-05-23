@@ -102,6 +102,10 @@ public final class Preferences {
 
     public static final String RECLAIM_RESOURCES_ONCE = "*ONCE"; //$NON-NLS-1$
 
+    public static final String XML_STMF = RMTPGM + ".xmlStmf"; //$NON-NLS-1$
+
+    public static final String XML_STMF_NONE = ""; //$NON-NLS-1$
+
     /**
      * RPGUnit warning messages:
      */
@@ -127,6 +131,15 @@ public final class Preferences {
     public static final Boolean REPORT_DISABLED_TRUE = true;
 
     public static final Boolean REPORT_DISABLED_FALSE = false;
+
+    /**
+     * Values controlling xml stream file enablement:
+     */
+    public static final String XML_STMF_DISABLED = XML_STMF + ".disabled"; //$NON-NLS-1$
+
+    public static final Boolean XML_STMF_DISABLED_TRUE = true;
+
+    public static final Boolean XML_STMF_DISABLED_FALSE = false;
 
     /**
      * Product library.
@@ -280,8 +293,18 @@ public final class Preferences {
         return getReclaimResources();
     }
 
+    public String getXmlStmf() {
+        String tXmlStmf = preferenceStore.getString(XML_STMF);
+        return tXmlStmf;
+    }
+
     public boolean isReportDisabled() {
         boolean tIsDisabled = preferenceStore.getBoolean(REPORT_DISABLED);
+        return tIsDisabled;
+    }
+
+    public boolean isXmlStmfDisabled() {
+        boolean tIsDisabled = preferenceStore.getBoolean(XML_STMF_DISABLED);
         return tIsDisabled;
     }
 
@@ -407,6 +430,10 @@ public final class Preferences {
         saveReportDisabledState(aDisabled);
     }
 
+    public void setXmlStmfDisabled(boolean aDisabled) {
+        saveXmlStmfDisabledState(aDisabled);
+    }
+
     public void setDebugConnectionNew(boolean aCreateNew) {
         saveDebugConnectionState(aCreateNew);
     }
@@ -429,6 +456,10 @@ public final class Preferences {
 
     public void setReclaimResources(String aRclRsc) {
         saveReclaimResources(aRclRsc);
+    }
+
+    public void setXmlStmf(String aXmlStmf) {
+        saveXmlStmf(aXmlStmf);
     }
 
     public boolean useJobDescriptionForLibraryList() {
@@ -515,7 +546,9 @@ public final class Preferences {
         preferenceStore.setDefault(JOBD_LIBRARY, getDefaultJobDescription().getLibrary());
         preferenceStore.setDefault(REPORT_DETAIL, getDefaultDetail());
         preferenceStore.setDefault(REPORT_DISABLED, getDefaultReportDisabledState());
+        preferenceStore.setDefault(XML_STMF_DISABLED, getDefaultXmlStmfDisabledState());
         preferenceStore.setDefault(RECLAIM_RESOURCES, getDefaultReclaimResources());
+        preferenceStore.setDefault(XML_STMF, getDefaultXmlStmf());
 
         // Override command parameters
         preferenceStore.setDefault(OUTPUT, getDefaultOutput());
@@ -627,6 +660,10 @@ public final class Preferences {
         return REPORT_DISABLED_TRUE;
     }
 
+    public boolean getDefaultXmlStmfDisabledState() {
+        return XML_STMF_DISABLED_TRUE;
+    }
+
     public boolean getDefaultConnectionState() {
         return DEBUG_CONNECTION_REUSE;
     }
@@ -654,6 +691,10 @@ public final class Preferences {
 
     public String getDefaultReclaimResources() {
         return RECLAIM_RESOURCES_NO;
+    }
+
+    public String getDefaultXmlStmf() {
+        return XML_STMF_NONE;
     }
 
     public boolean getDefaultShowWarnMessages() {
@@ -748,6 +789,10 @@ public final class Preferences {
         preferenceStore.setValue(REPORT_DISABLED, aDisabled);
     }
 
+    private void saveXmlStmfDisabledState(boolean aDisabled) {
+        preferenceStore.setValue(XML_STMF_DISABLED, aDisabled);
+    }
+
     private void saveDebugConnectionState(boolean aCreateNew) {
         preferenceStore.setValue(DEBUG_CONNECTION, aCreateNew);
     }
@@ -770,6 +815,10 @@ public final class Preferences {
 
     private void saveReclaimResources(String aRclRsc) {
         preferenceStore.setValue(RECLAIM_RESOURCES, aRclRsc);
+    }
+
+    private void saveXmlStmf(String aXmlStmf) {
+        preferenceStore.setValue(XML_STMF, aXmlStmf);
     }
 
     private void saveShowWarningMessage(String aWarningKey, boolean showWarning) {

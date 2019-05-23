@@ -20,4 +20,5 @@
      D  libl                               likeDs(libL_t   ) const
      D  qJobD                              likeDs(Object_t ) const
      D  rclrsc                             like(rclrsc_t   ) const
+     D  xmlStmf                            like(stmf_t     ) const
 

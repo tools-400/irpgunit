@@ -10,12 +10,12 @@
 <body>
 <h1>Voreinstellungen</h1>
 Die Voreinstellungen von RPGUnit sind, wie üblich, über den Menüpfad "Window" -> 
-"Preferences" zu erreichen.
+"Benutzervorgaben" zu erreichen.
 <p class="indent">
 <img src="assets/RPGUnitPreferences.png" width="674" height="626" alt="RPGUnit Preferences">
 </p>
 
-<h3>Run order</h3>
+<h3>Ausführungsfolge</h3>
 Gibt an, in welcher Reihenfolge die Test Cases (Prozeduren) einer Test Suite 
 (Serviceprogramm) ausgeführt werden.<p>
 Die möglichen Werte sind:<p>
@@ -28,7 +28,7 @@ Die möglichen Werte sind:<p>
 </table>
 <p>
 
-<h3>Library list</h3>
+<h3>Bibliotheksliste</h3>
 Gibt an, mit welcher Bibliotheksliste die Test Cases (Prozeduren) einer Test Suite 
 (Serviceprogramm) ausgeführt werden.<p>
 Die möglichen Werte sind:<p>
@@ -44,9 +44,9 @@ Die möglichen Werte sind:<p>
 </table>
 <p>
 
-<h3>Job description</h3>
+<h3>Jobbeschreibung</h3>
 Gibt an, welche Jobbeschreibung zur Ermittlung der Bibliotheksliste herangezogen wird, 
-wenn der Parameter <i>'Library list'</i> auf <i>'*JOBD' steht.</i>>.<p>
+wenn der Parameter <i>'Bibliotheksliste'</i> auf <i>'*JOBD' steht.</i>>.<p>
 Die möglichen Werte sind:<p>
 <table width="80%">
 <colgroup>
@@ -58,7 +58,7 @@ Die möglichen Werte sind:<p>
 </table>
 <p>
 
-<h3>Job description library</h3>
+<h3>Bibliothek der Jobbeschreibung</h3>
 Gibt an, welche Bibliothek nach der zu verwendenen Job Beschreibung durchsucht wird.<p>
 Die möglichen Werte sind:<p>
 <table width="80%">
@@ -70,7 +70,7 @@ Die möglichen Werte sind:<p>
 </table>
 <p>
 
-<h3>Report detail</h3>
+<h3>Detailstufe des Protokolls</h3>
 Gibt an, mit welcher Detailierungsstufe der Ausdruck der Ergebnisse des Unit Tests erfolgt.<p>
 Die möglichen Werte sind:<p>
 <table width="80%">
@@ -82,7 +82,7 @@ Die möglichen Werte sind:<p>
 </table>
 <p>
 
-<h3>Create report</h3>
+<h3>Erstellen Protokoll</h3>
 Gibt an, ob eine Druckausgabe der Ergebnisse des Unit Tests erzeugt wird.<p>
 Die möglichen Werte sind:<p>
 <table width="80%">
@@ -95,7 +95,7 @@ Die möglichen Werte sind:<p>
 </table>
 <p>
 
-<h3>Reclaim resources</h3>
+<h3>Ressourcen zurückfordern</h3>
 Gibt an, ob verwendete Ressourcen zurückgefordert werden. Ressourcen, zum Beispiel offene Dateien, können nach 
 jedem Testfall oder am Ende der Testreihe zurück gefordert werden.<p>
 Dieser Parameter ist hilfreich, wenn innerhalb der Testreihe OPM Programme ohne gesetzter *INLR Bezugszahl aufgerufen werden.<p>
@@ -110,18 +110,23 @@ Die möglichen Werte sind:<p>
 </table>
 <p>
 
-<h3>Disable report</h3>
-Unabhängig von der Einstellung des Parameters <i>'Create report'</i> kann hiermit die Druckausgabe temporär 
-ausgeschaltet werden, sofern <i>'Create report'</i> nicht auf <i>'*NONE'</i> gesetzt ist. Dieser Schalter
-korrespondiert mit der Schaltfläche <i>'Disable RPGUnit report'</i> der <i>'RPGUnit'</i> View.<p>
+<h3>Ausschalten Protokoll</h3>
+Unabhängig von der Einstellung des Parameters <i>'Erstellen Protokoll'</i> kann hiermit die Druckausgabe temporär 
+ausgeschaltet werden, sofern <i>'Erstellen Protokoll'</i> nicht auf <i>'*NONE'</i> gesetzt ist. Dieser Schalter
+korrespondiert mit der Schaltfläche <i>'Testprotokoll aus-/einschalten'</i> der <i>'RPGUnit'</i> View.<p>
+
+<h3>Ausschalten XML Datenstromdatei</h3>
+Unabhängig des Werts des Parameters <i>'XML Datenstromdatei'</i> kann hiermit die Ausgabe der XML Datenstromdatei temporär 
+ausgeschaltet werden
+<p>
 <p>
 
-<h3>Product library</h3>
+<h3>Produktbibliothek</h3>
 Gibt den Namen der RPGUnit Produktbibliothek an. Der hier eingetragene Wert wird verwendet, um dass zur Ausführung 
 der Unit Tests erforderliche Programm 'RUPGMRMT' zu finden.<p>
 <p>
 
-<h3>Check test suite service program</h3>
+<h3>Prüfen Unit Test Serviceprogramm</h3>
 Gibt an, ob zur Ausführung selektierte Serviceprogramme validiert werden.<p>
 Die möglichen Werte sind:<p>
 <table width="80%">
@@ -141,19 +146,19 @@ Die möglichen Werte sind:<p>
 Attribut des Serviceprogramms eingetragen.
 <p>
 
-<h3>Enforce new connection</h3>
+<h3>Erstellen neue Verbindung</h3>
 Gibt an, ob für die Ausführung des Unit Tests eine neue Verbindung erstellt wird oder nicht. Eine neue Verbindung ist
 dann erforderlich, wenn für die Fehlersuche Service Entry Points verwendet werden sollen. Ohne eine neue Verbindung friert die 
 Anwendung beim Erreichen des Service Entry Points ein.<p>
 <p>
 
-<h3>Position editor to line of assertion</h3>
+<h3>Editor auf fehlerhafte Zeile positionieren</h3>
 Gibt an, ob der LPEX Editor beim Laden einer Quellenteidatei auf die fehlerhafte Zeile positioniert wird. Damit 
 diese Einstellung korrekt funktioniert, müssen sie die Option <code>*SRCSTMT</code> in der RPG Quellenteildatei 
 gesetzt haben.
 <p>
 
-<h3>Capture job log</h3>
+<h3>Aufzeichnen Jobprotokoll</h3>
 Gibt an, welche Nachrichten des Jobprotokolls aufgezeichnet und in der <i>Befehlsprotokoll</i> Ansicht angezeigt werden.
 <p>
 <table>
@@ -165,11 +170,11 @@ Gibt an, welche Nachrichten des Jobprotokolls aufgezeichnet und in der <i>Befehl
 </table>
 <p>
 
-<h3>Show result view</h3>
+<h3>Anzeigen Ergebnissicht</h3>
 Gibt an, ob die Ansicht der Ergebnisse eines Unit Tests am Ende des Testlaufs automatisch angezeigt wird.
 <p>
 
-<h3>Reset warning messages</h3>
+<h3>Alle Warnungen zurücksetzen</h3>
 Setzt alle Warnungen zurück, die mit "Nicht noch einmal nachfragen." beantwortet worden sind zurück, so dass diese
 Nachrichten erneut angezeigt werden.
 <p>

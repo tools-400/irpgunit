@@ -138,14 +138,20 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
     private static final int PARM_JOB_DESCRIPTION = 8;
 
     /**
-     * Name of the test case to run, 10. Reclaim resources.
+     * Reclaim resources, 10. parameter of the test suite.
      */
     private static final int PARM_RECLAIM_RESOURCES = 9;
 
     /**
+     * Path of the XML stream file that contains the result, 11. parameter of
+     * the test suite.
+     */
+    private static final int PARM_XML_STMF = 10;
+
+    /**
      * Number of parameters of the remote test driver program.
      */
-    private static final int PARM_NUM_ENTRIES = 10;
+    private static final int PARM_NUM_ENTRIES = 11;
 
     /*
      * User space: Properties of the user space object.
@@ -523,6 +529,13 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
 
         // Parameter 10: Reclaim resources
         parameter[PARM_RECLAIM_RESOURCES] = produceStringParameter(Preferences.getInstance().getReclaimResources(), 10);
+
+        // Parameter 11: XML stream file
+        if (Preferences.getInstance().isXmlStmfDisabled()) {
+            parameter[PARM_XML_STMF] = produceStringParameter(Preferences.XML_STMF_NONE, 1024);
+        } else {
+            parameter[PARM_XML_STMF] = produceStringParameter(Preferences.getInstance().getXmlStmf(), 1024);
+        }
 
         return parameter;
     }

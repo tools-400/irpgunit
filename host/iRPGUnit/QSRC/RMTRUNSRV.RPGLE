@@ -66,11 +66,13 @@
       /include qinclude,ASSERT
       /include qinclude,CALLPRC
       /include qinclude,CMDRUNLOG
+      /include qinclude,CMDRUNV
       /include qinclude,PGMMSG
       /include qinclude,CMDRUNSRV
       /include qinclude,CMDRUN
       /include qinclude,LIBL
       /include qinclude,SRCMBR
+      /include qinclude,XMLWRITER
       /include qllist,llist_h
 
       *-------------------------------------------------------------------------
@@ -182,6 +184,7 @@
      D  libl                               likeDs(libL_t   ) const
      D  qJobD                              likeDs(Object_t ) const
      D  rclrsc                             like(rclrsc_t   ) const
+     D  xmlStmf                            like(stmf_t     ) const
       *
      D returnValue     S             10I 0
       *
@@ -193,6 +196,9 @@
 
        // Generic return code.
      D rc              S             10i 0
+
+       // Error message when writing the XML file.
+     D errMsg          s            256a
 
        // Test event counters.
      D result          DS                  likeds(result_t)
@@ -238,6 +244,16 @@
         tearDownTestSuite( testSuite : result );
 
         result.assertCnt = getAssertCalled();
+
+        // Return result to xml file
+        if (xmlStmf <> '');
+          monitor;
+            writeXmlFile(resolvePathVariables(xmlStmf: testSuiteName)
+                         : testSuite : testSuiteName : result);
+          on-error;
+            errMsg = rcvMsgTxt('*ESCAPE');
+          endmon;
+        endif;
 
         // Return result to plug-in
         fillUserspace(userspace : testSuite : testSuiteName : result);
