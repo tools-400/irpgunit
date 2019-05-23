@@ -28,7 +28,7 @@
 /*                      &LI/XMLWRITER +                                       */
 /*                      );                                                    */
 /*     >>PARM<<  ENTMOD(&LI/PGMRMT);                                          */
-/*     >>PARM<<  BNDSRVPGM(&LI/RUTESTCASE);                                   */
+/*     >>PARM<<  BNDSRVPGM(*LIBL/RUTESTCASE);                                 */
 /*     >>PARM<<  ACTGRP(*NEW);                                                */
 /*     >>PARM<<  ALWUPD(*YES);                                                */
 /*     >>PARM<<  ALWLIBUPD(*YES);                                             */

@@ -19,7 +19,7 @@
 /*                      &LI/USRSPC    +                                       */
 /*                      );                                                    */
 /*     >>PARM<<  ENTMOD(&LI/CRTTST);                                          */
-/*     >>PARM<<  BNDSRVPGM(&LI/RUTESTCASE);                                   */
+/*     >>PARM<<  BNDSRVPGM(*LIBL/RUTESTCASE);                                 */
 /*     >>PARM<<  ACTGRP(*NEW);                                                */
 /*     >>PARM<<  ALWUPD(*YES);                                                */
 /*     >>PARM<<  ALWLIBUPD(*YES);                                             */
