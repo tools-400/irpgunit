@@ -1,6 +1,12 @@
 /* =================================================================== */
-/*  This Rexx builds and runs all iRPGUnit self- and acceptance tests. */
-/*                                                                     */
+/*  iRPGUnit - Build and run all self and acp. tests.                  */
+/* =================================================================== */
+/* Copyright (c) 2013-2019 iRPGUnit Project Team                       */
+/* All rights reserved. This program and the accompanying materials    */
+/* are made available under the terms of the Common Public License v1.0*/
+/* which accompanies this distribution, and is available at            */
+/* http://www.eclipse.org/legal/cpl-v10.html                           */
+/* =================================================================== */
 /*  Usage:                                                             */
 /*  a) Add the iRPGUnit library to your library list.                  */
 /*  b) Start the Rexx script with the following command:               */

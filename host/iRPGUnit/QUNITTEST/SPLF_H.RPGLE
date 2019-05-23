@@ -1,5 +1,5 @@
       // ==========================================================================
-      //  iRPGUnit SelfTest - Spool file test helper.
+      //  iRPGUnit - ACPTSTT Unit Test Helper.
       // ==========================================================================
       //  Copyright (c) 2013-2019 iRPGUnit Project Team
       //  All rights reserved. This program and the accompanying materials
