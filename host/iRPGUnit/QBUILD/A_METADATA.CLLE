@@ -21,7 +21,7 @@
      /* =================================================================== */
              PGM        PARM(&TARGETLIB)
 
-             DCL        VAR(&TARGETLIB) TYPE(*CHAR) LEN(10) VALUE(RPGUNIT)
+             DCL        VAR(&TARGETLIB) TYPE(*CHAR) LEN(10) VALUE(RPGUNITDVP)
 
              CHGVAR     VAR(&TARGETLIB) VALUE(&TARGETLIB)
              MONMSG     MSGID(MCH3601) EXEC(SNDPGMMSG MSGID(CPF9898) +
@@ -32,6 +32,12 @@
                           MBR(RUCALLTST) +
                           SRCTYPE(LNK) +
                           TEXT('iRPGUnit - Execute Test Suite.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QBND) +
+                          MBR(RUCALLTSTV) +
+                          SRCTYPE(LNK) +
+                          TEXT('iRPGUnit - RUCALLTST Validity checking program.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QBND) +
@@ -49,7 +55,7 @@
              CHGPFM     FILE(&TARGETLIB/QBND) +
                           MBR(RUTESTCASE) +
                           SRCTYPE(BND) +
-                          TEXT('iRPGUnit - Test Suite Toolkit.')
+                          TEXT('iRPGUnit - Public API.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QBUILD) +
@@ -191,6 +197,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(CMDRUNV) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - RUCALLTST Validity checking program.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
                           MBR(COPYRIGHT) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit Copyright Disclaimer.')
@@ -235,7 +247,7 @@
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
                           MBR(FDINFDS_DB) +
                           SRCTYPE(RPGLE) +
-                          TEXT('File information data structures.')
+                          TEXT('File information data structure: physical files.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
@@ -343,7 +355,7 @@
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
                           MBR(TESTCASE) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - Prototype - Public API.')
+                          TEXT('iRPGUnit - Public API.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
@@ -361,7 +373,7 @@
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
                           MBR(VERSION) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - Product Version Procedures Definitions.')
+                          TEXT('iRPGUnit - Product Version Utilities.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
@@ -473,6 +485,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(CMDRUNV) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - RUCALLTST Validity checking program.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
                           MBR(CRTTST) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - Implementation of RUCRTTST command.')
@@ -517,7 +535,7 @@
              CHGPFM     FILE(&TARGETLIB/QSRC) +
                           MBR(MKTESTCASE) +
                           SRCTYPE(REXX) +
-                          TEXT('iRPGUnit - Build the test case toolkit.')
+                          TEXT('iRPGUnit - Test Suite Toolkit.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +
@@ -608,6 +626,12 @@
                           MBR(APILIST) +
                           SRCTYPE(RPGLE) +
                           TEXT('List API header.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(LOCALTIME) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('localtime() -- Convert Time')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSYSINC) +
@@ -782,6 +806,18 @@
                           MBR(REGEX) +
                           SRCTYPE(RPGLE) +
                           TEXT('Regular Expressions')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(STRFTIME) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('strftime() -- Convert Date/Time to String')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(TIME) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('time() -- Determine Current Time')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +

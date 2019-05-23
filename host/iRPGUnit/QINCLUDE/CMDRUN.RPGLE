@@ -1,5 +1,7 @@
+      /if not defined(CMDRUN)
+      /define CMDRUN
       // ==========================================================================
-      //  iRPGUnit Prototype - Command line runner.
+      //  iRPGUnit - Command line runner.
       // ==========================================================================
       //  Copyright (c) 2013-2019 iRPGUnit Project Team
       //  All rights reserved. This program and the accompanying materials
@@ -72,3 +74,4 @@
      D  failureCnt                   10i 0
      D  runsCnt                      10i 0
 
+      /endif

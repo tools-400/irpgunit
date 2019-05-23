@@ -49,6 +49,9 @@
       //   Procedure Definitions
       //----------------------------------------------------------------------
 
+      //----------------------------------------------------------------------
+      // Receives the message data of am escape program message.
+      //----------------------------------------------------------------------
      P rcvExcpMsgInfo...
      P                 b                   export
      D                 pi                  likeds(Msg_t)
@@ -65,6 +68,9 @@
      P                 e
 
 
+      //----------------------------------------------------------------------
+      // Receives the message data of a program message.
+      //----------------------------------------------------------------------
      P rcvMsgData...
      P                 b                   export
      D                 pi           256a
@@ -81,6 +87,9 @@
      P                 e
 
 
+      //----------------------------------------------------------------------
+      // Receives the message text of a program message.
+      //----------------------------------------------------------------------
      P rcvMsgTxt...
      P                 b                   export
      D                 pi           256a
@@ -97,6 +106,9 @@
      P                 e
 
 
+      //----------------------------------------------------------------------
+      // Receives a program message.
+      //----------------------------------------------------------------------
      P rcvPgmMsg...
      P                 b                   export
      D                 pi                  likeds(Msg_t)
@@ -174,9 +186,52 @@
      P                 e
 
 
-       //----------------------------------------------------------------------
-       // Send a completion message. See prototype.
-       //----------------------------------------------------------------------
+      //----------------------------------------------------------------------
+      // Send an validation error message. Used by validity checker programs.
+      //----------------------------------------------------------------------
+     P sndVldChkMsg...
+     P                 b                   export
+     D                 pi
+     D  msg                         256a   const varying
+     D  callStkCnt                   10i 0 const
+
+       // The message reference key.
+     D msgKey          s              4a
+     D diagMsg         s            256a   varying
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
+      /free
+
+        diagMsg = '0000' + %trimr(msg);
+
+        QMHSNDPM( 'CPD0006' :
+                  'QCPFMSG   *LIBL' :
+                  %trimr(diagMsg) :
+                  %len(%trimr(diagMsg)) :
+                  '*DIAG' :
+                  CUR_CALL_STK_ENT :
+                  ONE_CALL_STK_LVL_ABOVE + callStkCnt :
+                  msgKey :
+                  percolateErrors );
+
+        QMHSNDPM( 'CPF0002' :
+                  'QCPFMSG   *LIBL' :
+                  '' :
+                  0 :
+                  '*ESCAPE' :
+                  CUR_CALL_STK_ENT :
+                  ONE_CALL_STK_LVL_ABOVE + callStkCnt :
+                  msgKey :
+                  percolateErrors );
+
+      /end-free
+     P                 e
+
+
+      //----------------------------------------------------------------------
+      // Send a completion message. See prototype.
+      //----------------------------------------------------------------------
      P sndCompMsg...
      P                 b                   export
      D                 pi
@@ -203,6 +258,9 @@
      P                 e
 
 
+      //----------------------------------------------------------------------
+      // Send an escape message. See prototype.
+      //----------------------------------------------------------------------
      P sndEscapeMsg...
      P                 b                   export
      D                 pi
@@ -230,6 +288,9 @@
      P                 e
 
 
+      //----------------------------------------------------------------------
+      // Send an escape message. See prototype.
+      //----------------------------------------------------------------------
      P sndEscapeMsgToCaller...
      P                 b                   export
      D                 pi
@@ -242,6 +303,9 @@
      P                 e
 
 
+      //----------------------------------------------------------------------
+      // Send an escape message. See prototype.
+      //----------------------------------------------------------------------
      P sndEscapeMsgAboveCtlBdy...
      P                 b                   export
      D                 pi
@@ -268,9 +332,9 @@
      P                 e
 
 
-       //----------------------------------------------------------------------
-       // Send an information message. See prototype.
-       //----------------------------------------------------------------------
+      //----------------------------------------------------------------------
+      // Send an information message. See prototype.
+      //----------------------------------------------------------------------
      P sndInfoMsg...
      P                 b                   export
      D                 pi
@@ -297,6 +361,9 @@
      P                 e
 
 
+      //----------------------------------------------------------------------
+      // Send a status message. See prototype.
+      //----------------------------------------------------------------------
      P sndStsMsg...
      P                 b                   export
      D                 pi
@@ -325,6 +392,9 @@
      P                 e
 
 
+      //----------------------------------------------------------------------
+      // Restores the previous status message.
+      //----------------------------------------------------------------------
      P rstStsMsg...
      P                 b                   export
      D                 pi
@@ -337,6 +407,9 @@
      P                 e
 
 
+      //----------------------------------------------------------------------
+      // Retrieves the message key of the latest message in the job log.
+      //----------------------------------------------------------------------
      P getHighestMsgKey...
      P                 b                   export
      D                 pi             4a
@@ -379,6 +452,9 @@
      P                 e
 
 
+      //----------------------------------------------------------------------
+      // Retrieves trhe latest escape message between 'highMsgKey' and NOW.
+      //----------------------------------------------------------------------
      P getLatestEscMsg...
      P                 b                   export
      D                 pi                  likeds(Msg_t)

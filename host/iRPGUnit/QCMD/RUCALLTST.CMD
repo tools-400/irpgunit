@@ -9,13 +9,13 @@
      /* ===================================================================== */
      /*   >>PRE-COMPILER<<                                                    */
      /*     >>CRTCMD<<  CRTCMD        CMD(&LI/&OB) +                          */
-     /*                               SRCFILE(&SL/&SF)  +                     */
-     /*                               SRCMBR(&SM);                            */
-     /*     >>COMPILE<<                                                       */
-     /*       >>PARM<< PGM(&LI/RUCALLTST);                                    */
-     /*       >>PARM<< HLPPNLGRP(&LI/RUCALLTST);                              */
+     /*                               SRCFILE(&SL/&SF) SRCMBR(&SM);           */
+     /*     >>IMPORTANT<<                                                     */
+     /*       >>PARM<< PGM(*LIBL/RUCALLTST);                                  */
+     /*       >>PARM<< VLDCKR(*LIBL/RUCALLTSTV);                              */
+     /*       >>PARM<< HLPPNLGRP(*LIBL/RUCALLTST);                            */
      /*       >>PARM<< HLPID(RUCALLTST);                                      */
-     /*     >>END-COMPILE<<                                                   */
+     /*     >>END-IMPORTANT<<                                                 */
      /*     >>EXECUTE<<                                                       */
      /*   >>END-PRE-COMPILER<<                                                */
      /* ===================================================================== */

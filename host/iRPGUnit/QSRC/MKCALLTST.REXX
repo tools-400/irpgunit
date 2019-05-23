@@ -86,6 +86,7 @@
  "CMPMOD MODULE("prdLib"/CMDRUNLOG) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/CMDRUNPRT) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/CMDRUNSRV) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/CMDRUNV  ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/CALLPRC  ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/EXTPRC   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/EXTTST   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
@@ -100,6 +101,7 @@
                  prdLib"/CMDRUNLOG  ",
                  prdLib"/CMDRUNPRT  ",
                  prdLib"/CMDRUNSRV  ",
+                 prdLib"/CMDRUNV    ",
                  prdLib"/CALLPRC    ",
                  prdLib"/EXTPRC     ",
                  prdLib"/EXTTST     ",
@@ -118,11 +120,24 @@
         "TGTRLS("tgtRls") ",
         "TEXT('iRPGUnit - Execute Test Suite.')"
 
+ "CRTPGM PGM("prdLib"/RUCALLTSTV) ",
+        "MODULE("prdLib"/CMDRUNV    ",
+                 prdLib"/PGMMSG)    ",
+        "ENTMOD("prdLib"/CMDRUNV) ",
+        "BNDSRVPGM(*LIBL/RUTESTCASE) ",
+        "ACTGRP(*NEW) ",
+        "ALWUPD(*YES) ",
+        "ALWLIBUPD(*YES) ",
+        "DETAIL(*NONE) ",
+        "TGTRLS("tgtRls") ",
+        "TEXT('iRPGUnit - RUCALLTST Validity checking program.')"
+
  "CRTPNLGRP  PNLGRP("prdLib"/RUCALLTST) SRCFILE(*LIBL/QPNLGRP)"
 
  "CRTCMD CMD("prdLib"/RUCALLTST) ",
         "PGM(*LIBL/RUCALLTST) ",
         "SRCFILE(*LIBL/QCMD) ",
+        "VLDCKR(*LIBL/RUCALLTSTV) ",
         "HLPPNLGRP("prdLib"/RUCALLTST) ",
         "HLPID(RUCALLTST)"
 

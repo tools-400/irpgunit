@@ -39,6 +39,11 @@
      D  msgKey                        4a   const
      D  errorCode                 32767a   const options(*varsize) noopt
 
+     D sndVldChkMsg...
+     D                 pr                  extproc('PGMMSG_sndVldChkMsg')
+     D  msg                         256a   const varying
+     D  callStkCnt                   10i 0 const
+
        // Send a completion message.
      D sndCompMsg      pr                  extproc('PGMMSG_sndCompMsg')
      D  msg                         256a   const

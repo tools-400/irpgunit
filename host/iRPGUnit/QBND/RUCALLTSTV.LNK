@@ -1,5 +1,5 @@
 /* ========================================================================== */
-/*  iRPGUnit - Execute Test Suite.                                            */
+/*  iRPGUnit - RUCALLTST Validity checking program.                           */
 /* ========================================================================== */
 /*  Copyright (c) 2013-2019 iRPGUnit Project Team                             */
 /*  All rights reserved. This program and the accompanying materials          */
@@ -10,29 +10,17 @@
 /* >>PRE-COMPILER<<                                                           */
 /*   >>CRTCMD<<  CRTPGM PGM(&LI/&OB);                                         */
 /*   >>IMPORTANT<<                                                            */
-/*     >>PARM<<  MODULE(&LI/CMDRUN    +                                       */
-/*                      &LI/CMDRUNLOG +                                       */
-/*                      &LI/CMDRUNPRT +                                       */
-/*                      &LI/CMDRUNSRV +                                       */
-/*                      &LI/CMDRUNV   +                                       */
-/*                      &LI/CALLPRC   +                                       */
-/*                      &LI/EXTPRC    +                                       */
-/*                      &LI/EXTTST    +                                       */
-/*                      &LI/LIBL      +                                       */
-/*                      &LI/LLIST     +                                       */
+/*     >>PARM<<  MODULE(&LI/CMDRUNV   +                                       */
 /*                      &LI/PGMMSG    +                                       */
-/*                      &LI/STRING    +                                       */
-/*                      &LI/USRSPC    +                                       */
-/*                      &LI/XMLWRITER +                                       */
 /*                      );                                                    */
-/*     >>PARM<<  ENTMOD(&LI/CMDRUN);                                          */
-/*     >>PARM<<  BNDSRVPGM(*LIBL/RUTESTCASE);                                 */
-/*     >>PARM<<  ACTGRP(*NEW);                                                */
+/*     >>PARM<<  ENTMOD(&LI/CMDRUNV);                                         */
+/*     >>PARM<<  ACTGRP(*CALLER);                                             */
 /*     >>PARM<<  ALWUPD(*YES);                                                */
 /*     >>PARM<<  ALWLIBUPD(*YES);                                             */
-/*     >>PARM<<  TEXT('iRPGUnit - Execute Test Suite.');                      */
+/*     >>PARM<<  TEXT('iRPGUnit - RUCALLTST Validity checking program.');     */
 /*     >>PARM<<  DETAIL(*BASIC);                                              */
 /*   >>END-IMPORTANT<<                                                        */
 /*   >>EXECUTE<<                                                              */
 /* >>END-PRE-COMPILER<<                                                       */
 /* ========================================================================== */
+
