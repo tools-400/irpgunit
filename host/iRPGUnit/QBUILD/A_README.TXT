@@ -27,6 +27,18 @@ Let me know your experiences!
 
 
 --------------------------------------
+      Update to v3.0.0 Notice!
+--------------------------------------
+It is important to know that starting with v3.0.0 source member TESTCASE
+has been moved from source file RPGUNIT1 to source file QINCLUDE. Currently
+iRPGUnit is shipped with a proxy member in file RPGUNIT1 to ensure backward
+compatibility at compile time. This proxy member will be removed after
+31.12.2019 with a later version of iRPGUnit.
+
+Ensure to refactor your test suites in time!</b>
+
+
+--------------------------------------
       Installation Instructions
 --------------------------------------
 

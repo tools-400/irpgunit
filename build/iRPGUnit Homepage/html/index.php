@@ -57,6 +57,20 @@
 		<p/>
 		iRPGUnit features are driven from our ideas and needs, but everybody is encouraged to contribute
 		suggestions and manpower to improve the power of iRPGUnit.
+        <p/>
+        <div style="background-color:lightblue; border: 3px solid red; width:800px;">
+        <p/>
+        <table border="0">
+        <tr><td>
+        <b>Notice:</b> Starting with version 3.0 iRPGUnit requires IBM i OS 7.1!
+        <p/>
+        <b>Notice:</b> It is important to know that starting with v3.0.0 source member TESTCASE has been moved from source file
+                       RPGUNIT1 to source file QINCLUDE. Currently iRPGUnit is shipped with a proxy member in file RPGUNIT1 to
+                       ensure backward compatibility at compile time. This proxy member will be removed after 31.12.2019 with a
+                       later version of iRPGUnit.
+        </td></tr>
+        </table>
+        </div>
 		<p/>
 		<table  border="0" >
 		<tr><td valign="top">
