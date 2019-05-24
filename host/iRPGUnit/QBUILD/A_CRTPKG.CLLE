@@ -48,6 +48,9 @@
              DCL        VAR(&QTESTCASES) TYPE(*CHAR) LEN(10) VALUE('QTESTCASES')
              DCL        VAR(&QUNITTEST ) TYPE(*CHAR) LEN(10) VALUE('QUNITTEST')
 
+             /* TODO: Remove this line at 31.12.2019 */
+             DCL        VAR(&RPGUNIT1  ) TYPE(*CHAR) LEN(10) VALUE('RPGUNIT1')
+
              CHGVAR     VAR(&DEVLIB) VALUE(&DEVLIB)
              MONMSG     MSGID(MCH3601) EXEC(DO)
                RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
@@ -699,6 +702,18 @@
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(STRINGT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+
+             /* TODO: Remove this line at 31.12.2019 */
+             CPYF       FROMFILE(&DEVLIB/&RPGUNIT1) +
+                          TOFILE(&LIB/&RPGUNIT1) FROMMBR(TESTCASE) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+
+             /* ---------------------------------------------------- */
+             /*  Copy source members: RPGUNIT1 (backward compatib.)  */
+             /* ---------------------------------------------------- */
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(ACPTSTT) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
 
              /* ---------------------------------------------------- */
