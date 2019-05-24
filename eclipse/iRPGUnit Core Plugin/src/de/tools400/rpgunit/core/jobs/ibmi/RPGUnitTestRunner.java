@@ -917,6 +917,7 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
                 as400ErrorMsg.append(msgList[j].getID() + " - " + msgList[j].getText() + " "); //$NON-NLS-1$ //$NON-NLS-2$
             }
             RPGUnitCorePlugin.logError(as400ErrorMsg.toString());
+            captureJobLog(program, aServiceProgram, startingMessageKey);
             throw new UnitTestException(
                 Messages.bind(Messages.Unit_test_A_B_ended_unexpected_with_error_message, new Object[] { aServiceProgram.getLibrary(),
                     aServiceProgram.getName(), as400ErrorMsg.toString(), program.getServerJob().toString() }),
@@ -971,7 +972,7 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
 
             newJobLogEntry = jobLogMessage.getID() + " (" + getMessageType(jobLogMessage) + "): " + jobLogMessage.getText(); //$NON-NLS-1$ //$NON-NLS-2$
 
-            String messageHelp = jobLogMessage.getHelp();
+            String messageHelp = jobLogMessage.getMessageHelpReplacement();
             if (!StringHelper.isNullOrEmpty(messageHelp)) {
                 newJobLogEntry += NEW_LINE + messageHelp;
             }
