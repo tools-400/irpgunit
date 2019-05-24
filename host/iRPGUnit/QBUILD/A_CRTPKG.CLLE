@@ -107,6 +107,7 @@
              CRTSRCPF   FILE(&LIB/&QSYSINC   ) RCDLEN(112) TEXT('iRPGUnit - System Header Files')
              CRTSRCPF   FILE(&LIB/&QTESTCASES) RCDLEN(112) TEXT('iRPGUnit - SelfTests Test Cases')
              CRTSRCPF   FILE(&LIB/&QUNITTEST ) RCDLEN(112) TEXT('iRPGUnit - SelfTests')
+             CRTSRCPF   FILE(&LIB/&RPGUNIT1  ) RCDLEN(112) TEXT('iRPGUnit - Backward compatibility')
 
              /* ---------------------------------------------------- */
              /*  Copy source members: QBND                           */
