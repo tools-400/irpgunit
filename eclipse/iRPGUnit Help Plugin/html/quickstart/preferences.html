@@ -103,6 +103,55 @@ The possible values are:<p>
 </table>
 <p>
 
+<h3>XML stream file</h3>
+Specifies the path of an XML stream file that contains the result of the unit test. The 
+XML file is created with a format, which can be parsed by the Jenkins build server. Existing 
+files are replaced.
+<p>
+You can use the following replacement variables to produce
+the name of the XML stream file on the fly:
+<p>
+<u>Command parameters</u>
+<p>
+<table width="80%">
+<colgroup>
+<col width="100">
+</colgroup>
+<tr><td valign="top">&lt;TESTPGM&gt;</td><td>Name of the test test suite.</td></tr>
+<tr><td valign="top">&lt;TESTLIB&gt;</td><td>Name of the library where the test suite is stored.</td></tr>
+</table>
+<p>
+<u>Function strftime()</u>
+<p>
+<table width="80%">
+<colgroup>
+<col width="100">
+</colgroup>
+<tr><td valign="top">%C</td><td>Century number [00-99], the year divided by 100.</td></tr>
+<tr><td valign="top">%d</td><td>Day of the month [01-31].</td></tr>
+<tr><td valign="top">%F</td><td>ISO Date Format, same as %Y-%m-%d.</td></tr>
+<tr><td valign="top">%g</td><td>2 digit year portion of ISO week date [00,99].</td></tr>
+<tr><td valign="top">%H</td><td>Hour in 24-hour format [00-23].</td></tr>
+<tr><td valign="top">%I</td><td>Hour in 12-hour format [01-12].</td></tr>
+<tr><td valign="top">%j</td><td>Day of the year [001-366].</td></tr>
+<tr><td valign="top">%m</td><td>Month [01-12].</td></tr>
+<tr><td valign="top">%M</td><td>Minute [00-59].</td></tr>
+<tr><td valign="top">%p</td><td>AM or PM string.</td></tr>
+<tr><td valign="top">%R</td><td>24-hour time format without seconds, same as %H.%M.</td></tr>
+<tr><td valign="top">%S</td><td>Second [00-61].</td></tr>
+<tr><td valign="top">%T</td><td>24-hour time format with seconds, same as %H.%M.%S.</td></tr>
+<tr><td valign="top">%u</td><td>Weekday [1,7]. Monday is 1 and Sunday is 7.</td></tr>
+<tr><td valign="top">%U</td><td>Week number of the year [00-53]. Sunday is first day of week.</td></tr>
+<tr><td valign="top">%V</td><td>ISO week number of the year [01-53]. Monday is first day of week.</td></tr>
+<tr><td valign="top">%w</td><td>Weekday [0,6], Sunday is 0.</td></tr>
+<tr><td valign="top">%W</td><td>Week number of the year [00-53]. Monday is first day of week.</td></tr>
+<tr><td valign="top">%y</td><td>2 digit year [00,99].</td></tr>
+</table>
+<p>
+The table above shows some but not all variables of the strftime()
+function. Some replacement variables, which are not listed here, are
+not allowed, because their values may produce an invalid path.
+
 <h3>Disable report</h3>
 Temporary disables the report, provided that <i>'Create report'</i> does not specify <i>'*NONE'</i>. This checkbox
 relates to button <i>'Disable iRPGUnit report'</i> of the <i>'iRPGUnit'</i> view.<p>

@@ -110,6 +110,54 @@ Die möglichen Werte sind:<p>
 </table>
 <p>
 
+<h3>XML stream file</h3>
+Gibt den Namen der XML Datenstromdatei an, welche das Ergebnis des Testlaufs enthält. Die Datei wird
+in einem Format erstellt, welches von einem Jenkins Build Server gelesen werden kann. Eine existierende
+Datei wird ohne Rückfrage überschieben.
+<p>
+Folgende Ersatzvariablen können im Dateinamen verwendet werden:
+<p>
+<u>Befehlsparameter</u>
+<p>
+<table width="80%">
+<colgroup>
+<col width="100">
+</colgroup>
+<tr><td valign="top">&lt;TESTPGM&gt;</td><td>Name der Test Suite.</td></tr>
+<tr><td valign="top">&lt;TESTLIB&gt;</td><td>Name der Bibliothek, welche die Test Suite enthält.</td></tr>
+</table>
+<p>
+<u>Funktion strftime()</u>
+<p>
+<table width="80%">
+<colgroup>
+<col width="100">
+</colgroup>
+<tr><td valign="top">%C</td><td>Jahrhundet [00-99], Jahr dividiert durch 100.</td></tr>
+<tr><td valign="top">%d</td><td>Tag des Monats [01-31].</td></tr>
+<tr><td valign="top">%F</td><td>ISO Datumsformat, gleichbedeutend mit %Y-%m-%d.</td></tr>
+<tr><td valign="top">%g</td><td>2 stellige Jahreszahl einer ISO Kalenderwoche [00,99].</td></tr>
+<tr><td valign="top">%H</td><td>Stunde im 24-Stundenformat [00-23].</td></tr>
+<tr><td valign="top">%I</td><td>Stunde im 12-Stundenformat [01-12].</td></tr>
+<tr><td valign="top">%j</td><td>Tag des Jahres [001-366].</td></tr>
+<tr><td valign="top">%m</td><td>Monat [01-12].</td></tr>
+<tr><td valign="top">%M</td><td>Minute [00-59].</td></tr>
+<tr><td valign="top">%p</td><td>AM oder PM.</td></tr>
+<tr><td valign="top">%R</td><td>24-Stundenuhrzeit ohne Sekunden, gleichbedeutend mit %H.%M.</td></tr>
+<tr><td valign="top">%S</td><td>Secunden [00-61].</td></tr>
+<tr><td valign="top">%T</td><td>24-Stundenuhrzeit mit Sekunden, gleichbeutend mit %H.%M.%S.</td></tr>
+<tr><td valign="top">%u</td><td>Tag der Woche [1,7]. Montag ist 1 und Sonntag ist 7.</td></tr>
+<tr><td valign="top">%U</td><td>Kalenderwoche [00-53]. Sonntag ist der erste Tag der Woche.</td></tr>
+<tr><td valign="top">%V</td><td>ISO Kalenderwoche [01-53]. Montag ist der erste Tag der Woche.</td></tr>
+<tr><td valign="top">%w</td><td>Wochentag [0,6], Sonntag ist 0.</td></tr>
+<tr><td valign="top">%W</td><td>Kalenderwoche [00-53]. Monday ist der erste Tag der Woche.</td></tr>
+<tr><td valign="top">%y</td><td>2 stellige Jahreszahl [00,99].</td></tr>
+</table>
+<p>
+Die Tabelle entält einige aber nicht alle Variablen der Funktion strftime(). Einige
+Variablen, die hier nicht gelistet sind, sind nicht erlaubt, weil deren Werte zu 
+einem ungültige Pfadnamen führen würden.
+
 <h3>Ausschalten Protokoll</h3>
 Unabhängig von der Einstellung des Parameters <i>'Erstellen Protokoll'</i> kann hiermit die Druckausgabe temporär 
 ausgeschaltet werden, sofern <i>'Erstellen Protokoll'</i> nicht auf <i>'*NONE'</i> gesetzt ist. Dieser Schalter
