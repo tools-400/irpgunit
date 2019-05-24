@@ -34,6 +34,7 @@
      D                                     ')
      D  object                             const likeds(Object_t)
      D  objType                      10a   const
+     D  mbr                          10a   const options(*nopass)
 
      D TestSuite_exists...
      D                 pr              n

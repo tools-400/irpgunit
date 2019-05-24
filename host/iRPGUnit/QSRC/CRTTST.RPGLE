@@ -113,13 +113,44 @@
      D mbrType         s             10a
      D tmpOpts         ds                  likeds(Options_t)
      D qSrcFile        ds                  likeds(Object_t)
-
+     D libResolved     s             10a
       /free
 
        qSrcFile = srcFile;
 
+       if (not Object_exists(qSrcFile: '*FILE'));
+         sndEscapeMsgAboveCtlBdy(
+            'Source file ' + %trim(qSrcFile.nm) + ' not found in library ' +
+                             %trim(qSrcFile.lib) + '.' );
+       endif;
+
        if (%subst(qSrcFile.lib: 1: 1) = '*');
-          qSrcFile.lib = Object_resolveLibrary(qSrcFile: '*FILE');
+         libResolved = Object_resolveLibrary(qSrcFile: '*FILE');
+       else;
+         if (not Object_exists(qSrcFile: '*FILE'));
+           libResolved = '';
+         else;
+           libResolved = qSrcFile.lib;
+         endif;
+       endif;
+
+       if (libResolved = '');
+         sndEscapeMsgAboveCtlBdy(
+           'Library ' + %trim(qSrcFile.lib) + ' not found.' );
+       endif;
+
+       qSrcFile.lib = libResolved;
+
+       if (srcMbr = '*TSTPGM');
+         srcMbr2 = testPgm.nm;
+       else;
+         srcMbr2 = srcMbr;
+       endif;
+
+       if (not Object_exists(qSrcFile: '*FILE': srcMbr2));
+         sndEscapeMsgAboveCtlBdy(
+            'Member ' + %trim(srcMbr2) + ' not found in source file ' +
+                        %trim(qSrcFile.lib) + '/' + %trim(qSrcFile.nm) + '.' );
        endif;
 
        if (srcMbr = '*TSTPGM');
@@ -141,16 +172,11 @@
        endif;
 
        monitor;
+
          if text <> '*BLANK' and not startsWith('RPGUnit' : text);
             text2 = 'RPGUnit - ' + text;
          else;
             text2 = text;
-         endif;
-
-         if (srcMbr = '*TSTPGM');
-            srcMbr2 = testPgm.nm;
-         else;
-            srcMbr2 = srcMbr;
          endif;
 
          crtRpgMod( testPgm : qSrcFile : srcMbr2 : cOption : dbgView :

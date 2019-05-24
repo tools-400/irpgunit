@@ -517,6 +517,9 @@
                           TOFILE(&LIB/&QSYSINC) FROMMBR(QUSRJOBI) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QUSRMBRD) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
                           TOFILE(&LIB/&QSYSINC) FROMMBR(QUSROBJD) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSYSINC) +

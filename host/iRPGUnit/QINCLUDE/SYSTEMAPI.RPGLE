@@ -258,20 +258,6 @@
      D  errorCode                 32767A         options(*nopass)
      D  findMember                    1A   const options(*nopass)
       *
-      *  MBRD0100 Format
-     D mbrd0100_t...
-     D                 DS                  qualified               based(pDummy)
-     D  bytRet                       10I 0
-     D  bytAvl                       10I 0
-     D  qFile                        20A
-     D  mbr                          10A
-     D  attr                         10A
-     D  srcType                      10A
-     D  crtDatTim                    13A
-     D  srcChgDatTim                 13A
-     D  text                         50A
-     D  isSrcFile                      N
-      *
      D api_retrieveSystemValue...
      D                 PR                  extpgm('QWCRSVAL')
      D  receiver                  65535A   options(*varsize)
@@ -453,6 +439,7 @@
       /include qsysinc,QUSCRTUS
       /include qsysinc,QUSPTRUS
       /include qsysinc,QUSRJOBI
+      /include qsysinc,QUSRMBRD
       /include qsysinc,QUSROBJD
       /include qsysinc,QWDRJOBD
       /include qsysinc,QWVRCSTK
