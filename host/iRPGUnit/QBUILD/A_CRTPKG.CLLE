@@ -17,10 +17,11 @@
      /*     >>EXECUTE<<                                                     */
      /*   >>END-PRE-COMPILER<<                                              */
      /* =================================================================== */
-             PGM        PARM(&DEVLIB &I_PRDLIB)
+             PGM        PARM(&DEVLIB &I_PRDLIB &I_DBGVIEW)
 
              DCL        VAR(&DEVLIB    ) TYPE(*CHAR) LEN(10)
              DCL        VAR(&I_PRDLIB  ) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&I_DBGVIEW ) TYPE(*CHAR) LEN(10)
 
              DCL        VAR(&LIB       ) TYPE(*CHAR) LEN(10) VALUE('RPGUNIT')
              DCL        VAR(&SAVF      ) TYPE(*CHAR) LEN(10) VALUE('RPGUNIT')
@@ -57,6 +58,11 @@
              ENDDO
 
              CHGVAR     VAR(&LIB) VALUE(&I_PRDLIB)
+             MONMSG     MSGID(MCH3601) EXEC(DO)
+               RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
+             ENDDO
+
+             CHGVAR     VAR(&DBGVIEW) VALUE(&I_DBGVIEW)
              MONMSG     MSGID(MCH3601) EXEC(DO)
                RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
              ENDDO
@@ -520,6 +526,9 @@
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
                           TOFILE(&LIB/&QSYSINC) FROMMBR(REGEX) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(STAT) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
                           TOFILE(&LIB/&QSYSINC) FROMMBR(STRFTIME) +
