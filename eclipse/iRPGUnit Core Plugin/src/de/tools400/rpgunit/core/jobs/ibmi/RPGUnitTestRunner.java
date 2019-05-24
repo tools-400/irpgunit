@@ -914,7 +914,12 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             AS400Message[] msgList = program.getMessageList();
             StringBuilder as400ErrorMsg = new StringBuilder();
             for (int j = 0; j < msgList.length; j++) {
-                as400ErrorMsg.append(msgList[j].getID() + " - " + msgList[j].getText() + " "); //$NON-NLS-1$ //$NON-NLS-2$
+                as400ErrorMsg.append(msgList[j].getID() + " - " + msgList[j].getText()); //$NON-NLS-1$
+                String messageHelp = msgList[j].getHelp();
+                if (!StringHelper.isNullOrEmpty(messageHelp)) {
+                    as400ErrorMsg.append(" "); //$NON-NLS-1$
+                    as400ErrorMsg.append(messageHelp);
+                }
             }
             RPGUnitCorePlugin.logError(as400ErrorMsg.toString());
             captureJobLog(program, aServiceProgram, startingMessageKey);
