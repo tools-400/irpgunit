@@ -694,7 +694,7 @@ public final class Preferences {
     }
 
     public String getDefaultXmlStmf() {
-        return XML_STMF_NONE;
+return "/tmp/iRPGUnit_<TSTPGM>-%F.%T.log";
     }
 
     public boolean getDefaultShowWarnMessages() {
