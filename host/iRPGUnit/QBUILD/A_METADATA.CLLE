@@ -809,8 +809,8 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSYSINC) +
-                          MBR(REGEX) +
-                          SRCTYPE(STAT) +
+                          MBR(STAT) +
+                          SRCTYPE(RPGLE) +
                           TEXT('stat() -- Get File Information')
              MONMSG     MSGID(CPF3288)
 
