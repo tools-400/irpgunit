@@ -163,15 +163,19 @@ XML stream file (XMLSTMF) - Help
 :p.
 Name of an XML stream file that contains the result of
 the unit test. The XML file is created with a format, which
-can be parsed by the Jenkins build server.
+can be parsed by the Jenkins build server. Existing files
+are replaced.
 :p.
-You can use the following replacement variables:
+You can use the following replacement variables to produce
+the name of the XML stream file on the fly:
+:p.
+:HP1.Command parameters:EHP1.
 :LINES.
-<TSTPGM> : Name of the test suite (parameter TSTPGM)
+<TSTPGM> : Name of the test test suite.
+<TSTLIB> : Name of the library where the test suite is stored.
 :ELINES.
 :p.
-You can also use almost all variables that are supported by the
-strftime() function, such as:
+:HP1.Function strftime():EHP1.
 :LINES.
 %C : Century number [00-99], the year divided by 100.
 %d : Day of the month [01-31].
@@ -194,8 +198,9 @@ strftime() function, such as:
 %y : 2 digit year [00,99].
 :ELINES.
 :p.
-Some replacement variables are not allowed, because they may contain
-illegal characters.
+The table above shows some but not all variables of the strftime()
+function. Some replacement variables, which are not listed here, are
+not allowed, because they may contain illegal characters.
 :p.
 The following XML stream file name:
 :LINES.

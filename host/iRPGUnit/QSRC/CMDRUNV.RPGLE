@@ -34,6 +34,7 @@
       /include qinclude,PGMMSG
       /include qsysinc,strftime
       /include qsysinc,time
+      /include qsysinc,stat
 
       //----------------------------------------------------------------------
       //   Private Prototypes
@@ -42,9 +43,19 @@
       // Replace all occurences of a given search argument.
      D replace...
      D                 pr          2048a   varying
-     D  string                     2048a   const varying options(*varsize)
-     D  searchArg                   512a   const varying options(*varsize)
-     D  replaceArg                  512a   const varying options(*varsize)
+     D                                     extproc('replace')
+     D  i_string                   2048a   const varying options(*varsize)
+     D  i_searchArg                 512a   const varying options(*varsize)
+     D  i_replaceArg                512a   const varying options(*varsize)
+
+     D validateReplacementVariables...
+     D                 pr           256a   varying
+     D  i_xmlStmf                          const like(stmf_t)
+
+     D getDirectory...
+     D                 pr                  like(stmf_t)
+     D                                     extproc('getDirectory')
+     D i_path                              const like(stmf_t)
 
        //----------------------------------------------------------------------
        //   Main Procedure
@@ -52,59 +63,133 @@
 
      D cmdRunV...
      D                 pi
-     D  testSuiteName                      const likeds(Object_t)
-     D  testProcs                          const likeds(ProcNms_t)
-     D  order                              const like(order_t)
-     D  detail                             const like(detail_t)
-     D  output                             const like(output_t)
-     D  libl                               const likeds(LibL_t)
-     D  jobd                               const likeds(Object_t)
-     D  rclRsc                             const like(rclrsc_t)
-     D  xmlStmf                            const like(stmf_t)
+     D  gi_testSuite                       const likeds(Object_t)
+     D  gi_testProcs                       const likeds(ProcNms_t)
+     D  gi_order                           const like(order_t)
+     D  gi_detail                          const like(detail_t)
+     D  gi_output                          const like(output_t)
+     D  gi_libl                            const likeds(LibL_t)
+     D  gi_jobd                            const likeds(Object_t)
+     D  gi_rclRsc                          const like(rclrsc_t)
+     D  gi_xmlStmf                         const like(stmf_t)
 
-     D errMsg          s            256a
-     D illegalRplVar   s             10a   varying
-     D illegalMsg      s            128a   varying
-     D xmlStmfRpl      s                   like(xmlStmf)
+     D errMsg          s            256a   varying
       /free
 
-       // Return result to xml file
-       if (xmlStmf <> '');
+       if (gi_xmlStmf <> '');
+
+         errMsg = validateXmlStmf(gi_xmlStmf);
+         if (errMsg <> '');
+           sndVldChkMsg( errMsg : 2 );
+         endif;
+
+       endif;
+
+       *inlr = *on;
+
+       return;
+
+      /end-free
+
+
+       //----------------------------------------------------------------------
+       //   Procedures
+       //----------------------------------------------------------------------
+
+     P validateXmlStmf...
+     P                 b                   export
+     D                 pi           256a   varying
+     D  i_xmlStmf                          const like(stmf_t)
+
+     D errMsg          s            256a   varying
+     D xmlStmfRpl      s                   like(i_xmlStmf)
+     D dir             s                   like(i_xmlStmf)
+     D st_stat         ds                  likeds(st_stat_t)
+
+     D testSuite       ds                  likeds(object_t )
+      /free
+
+         // Validate replacement variables
+         errMsg = validateReplacementVariables(i_xmlStmf);
+         if (errMsg <> '');
+           return errMsg;
+         endif;
+
+         // Replace variables
+         monitor;
+           xmlStmfRpl = resolvePathVariables(i_xmlStmf : testSuite);
+         on-error;
+           errMsg = rcvMsgTxt('*ESCAPE');
+           if (errMsg <> '');
+             return errMsg;
+           endif;
+         endmon;
+
+         // Ensure all replacement variables have been replaced
+         if (%scan('<': xmlStmfRpl) > 0 or %scan('>': xmlStmfRpl) > 0);
+           errMsg = 'Not all replacement variables have been replaced. +
+                     Check parameter TSTPGM.';
+           return errMsg;
+         endif;
+
+         // Ensure directory exists
+         dir = getDirectory(xmlStmfRpl);
+         if (stat(dir: st_stat)  < 0);
+           errMsg = 'Directory does not exist. +
+                     Check parameter TSTPGM.';
+           return errMsg;
+         endif;
+
+         return '';
+
+      /end-free
+     P                 e
+
+     P validateReplacementVariables...
+     P                 b
+     D                 pi           256a   varying
+     D  i_xmlStmf                          const like(stmf_t)
+
+     D errMsg          s            256a   varying
+
+     D illegalRplVar   s             10a   varying
+     D illegalMsg      s            128a   varying
+      /free
 
          select;
-         when (%scan('%c': xmlStmf) > 0);
+         when (%scan('%c': i_xmlStmf) > 0);
            illegalRplVar = '%c';   // Date/Time in the format of the locale.
            illegalMsg = 'may contain illegal characters';
-         when (%scan('%D': xmlStmf) > 0);
+         when (%scan('%D': i_xmlStmf) > 0);
            illegalRplVar = '%D';   // Date Format, same as %m/%d/%y.
            illegalMsg = 'contains forward slashes';
-         when (%scan('%e': xmlStmf) > 0);
+         when (%scan('%e': i_xmlStmf) > 0);
            illegalRplVar = '%e';   // Same as %d, except single digit is
            // preceded by a space [1-31].
            illegalMsg = 'contains spaces';
-         when (%scan('%G': xmlStmf) > 0);
+         when (%scan('%G': i_xmlStmf) > 0);
            illegalRplVar = '%G';   // 4 digit year portion of ISO week date.
            // Can be negative.
            illegalMsg = 'can be negative';
-         when (%scan('%n': xmlStmf) > 0);
+         when (%scan('%n': i_xmlStmf) > 0);
            illegalRplVar = '%n';   // Newline character.
            illegalMsg = 'newline character';
-         when (%scan('%r': xmlStmf) > 0);
+         when (%scan('%r': i_xmlStmf) > 0);
            illegalRplVar = '%r';   // Time in AM/PM format of the locale.
            illegalMsg = 'may contain illegal characters';
-         when (%scan('%t': xmlStmf) > 0);
+         when (%scan('%t': i_xmlStmf) > 0);
            illegalRplVar = '%t';   // Tab character.
            illegalMsg = 'tab character';
-         when (%scan('%x': xmlStmf) > 0);
+         when (%scan('%x': i_xmlStmf) > 0);
            illegalRplVar = '%x';   // Date in the format of the locale.
            illegalMsg = 'may contain illegal characters';
-         when (%scan('%X': xmlStmf) > 0);
+         when (%scan('%X': i_xmlStmf) > 0);
            illegalRplVar = '%X';   // Time in the format of the locale.
            illegalMsg = 'may contain illegal characters';
-         when (%scan('%Y': xmlStmf) > 0);
+         when (%scan('%Y': i_xmlStmf) > 0);
            illegalRplVar = '%Y';   // 4-digit year. Can be negative.
            illegalMsg = 'can be negative';
-         when (%scan('%%': xmlStmf) > 0);
+         when (%scan('%%': i_xmlStmf) > 0);
            illegalRplVar = '%%';   // % character.
            illegalMsg = '% character';
          other;
@@ -118,37 +203,18 @@
            if (illegalMsg <> '');
              errMsg = %trimr(errMsg) + ' (' + illegalMsg + ')';
            endif;
-           sndVldChkMsg( errMsg : 2 );
          endif;
 
-         monitor;
-           xmlStmfRpl = resolvePathVariables(xmlStmf : testSuiteName);
-         on-error;
-           errMsg = rcvMsgTxt('*ESCAPE');
-         endmon;
-
-         if (errMsg <> '');
-           sndVldChkMsg( errMsg : 2 );
-         endif;
-
-         if (%scan('<': xmlStmfRpl) > 0 or %scan('>': xmlStmfRpl) > 0);
-           errMsg = 'Not all replacement variables have been replaced';
-           sndVldChkMsg( errMsg : 2 );
-         endif;
-
-       endif;
-
-       *inlr = *on;
-
-       return;
+        return errMsg;
 
       /end-free
+     P                 e
 
      P resolvePathVariables...
      P                 b                   export
      D                 pi                  like(stmf_t)
-     D  path                               const like(stmf_t)
-     D  testSuiteName                      const likeds(Object_t)
+     D  i_path                             const like(stmf_t)
+     D  i_estSuite                         const likeds(Object_t)
 
      D resolvedPath    s                   like(stmf_t)
 
@@ -159,11 +225,12 @@
 
         pTm = localtime(time(*null));
         size = strftime(
-                 %addr(tmpPathBuf): %size(tmpPathBuf): path: tm);
+                 %addr(tmpPathBuf): %size(tmpPathBuf): i_path: tm);
         resolvedPath = %subst(tmpPathBuf: 1: size);
-        resolvedPath = replace(resolvedPath: '<TSTPGM>': testSuiteName.nm);
-        resolvedPath = replace(resolvedPath: '<TSTLIB>': testSuiteName.lib);
+        resolvedPath = replace(resolvedPath: '<TSTPGM>': i_estSuite.nm);
+        resolvedPath = replace(resolvedPath: '<TSTLIB>': i_estSuite.lib);
         resolvedPath = replace(resolvedPath: ':': '.');
+        resolvedPath = replace(resolvedPath: %char(BACK_SLASH): '/');
 
         return resolvedPath;
 
@@ -173,24 +240,24 @@
      P replace...
      P                 b
      D                 pi          2048a   varying
-     D  string                     2048a   const varying options(*varsize)
-     D  searchArg                   512a   const varying options(*varsize)
-     D  replaceArg                  512a   const varying options(*varsize)
+     D  i_string                   2048a   const varying options(*varsize)
+     D  i_searchArg                 512a   const varying options(*varsize)
+     D  i_replaceArg                512a   const varying options(*varsize)
 
      D result          s           2048a   varying
      D startPos        s             10i 0 inz(1)
      D x               s             10i 0
-     D theSearchArg    s                   like(searchArg)
+     D theSearchArg    s                   like(i_searchArg)
      D UC              c                   'ABCDEFGHIJKLMNOPQRSTUVWXYC'
      D LC              c                   'abcdefghijklmnopqrstuvwxyz'
       /free
 
-        result = string;
+        result = i_string;
 
-        theSearchArg = %xlate(LC: UC: searchArg);
+        theSearchArg = %xlate(LC: UC: i_searchArg);
         exsr performReplace;
 
-        theSearchArg = %xlate(UC: LC: searchArg);
+        theSearchArg = %xlate(UC: LC: i_searchArg);
         exsr performReplace;
 
         return result;
@@ -199,8 +266,8 @@
 
           x = %scan(theSearchArg: result: startPos);
           dow   x > 0;
-            result = %replace(replaceArg: result: x: %len(theSearchArg));
-            x = x + %len(replaceArg);
+            result = %replace(i_replaceArg: result: x: %len(theSearchArg));
+            x = x + %len(i_replaceArg);
             if (x <= %len(result));
               x = %scan(theSearchArg: result: x);
             else;
@@ -209,6 +276,41 @@
           enddo;
 
         endsr;
+
+      /end-free
+     P                 e
+
+     P getDirectory...
+     P                 b
+     D                 pi                  like(stmf_t)
+     D i_path                              const like(stmf_t)
+
+     D directory       s                   like(stmf_t)
+
+     D tPath           s                   like(i_path)
+     D char            s              1a
+     D pathLength      s             10i 0
+     D x               s             10i 0
+      * ---------------------------------------------------------
+      /free
+
+         tPath = %trimr(i_path);
+
+         char = %subst(tPath: %len(tPath): 1);
+         if (char = %char(SLASH));
+           return i_path;
+         else;
+           pathLength = %len(tPath);
+           for  x = pathLength downto 1;
+             char = %subst(tPath: x: 1);
+             if (char = %char(COLON) or char = %char(SLASH));
+               tPath = %subst(tPath: 1: x);
+               return tPath;
+             endif;
+           endfor;
+         endif;
+
+         return directory;
 
       /end-free
      P                 e

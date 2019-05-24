@@ -809,6 +809,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(REGEX) +
+                          SRCTYPE(STAT) +
+                          TEXT('stat() -- Get File Information')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
                           MBR(STRFTIME) +
                           SRCTYPE(RPGLE) +
                           TEXT('strftime() -- Convert Date/Time to String')

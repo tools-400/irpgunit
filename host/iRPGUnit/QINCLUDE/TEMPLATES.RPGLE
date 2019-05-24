@@ -35,6 +35,10 @@
      D MBR_SQLRPGLE    c                   const('SQLRPGLE')
      D PARM_DBGVIEW    c                   const('DBGVIEW')
 
+     D SLASH           c                   u'002F'
+     D BACK_SLASH      c                   u'005C'
+     D COLON           c                   u'003A'
+
      D order_t         s             10a   template
      D detail_t        s             10a   template
      D output_t        s             10a   template

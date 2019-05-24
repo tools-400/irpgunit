@@ -108,10 +108,10 @@
      D testSuite       ds                  likeds(TestSuite_t)
 
        // Completion message.
-     D msg             s            256a
+     D msg             s            256a   varying
 
        // Error message when writing the XML file.
-     D errMsg          s            256a
+     D errMsg          s            256a   varying
 
        // Save/set/restore library list
      D savedLibl       ds                  likeds(LiblData_t)

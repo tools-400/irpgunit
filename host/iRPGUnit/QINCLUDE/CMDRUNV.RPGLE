@@ -12,21 +12,30 @@
 
        // The entry point of RUCALLTST. Parameters are provided by RUCALLTST command.
      D cmdRunV         pr                  extpgm('CMDRUNV')
-     D  testSuiteName                      const likeds(Object_t)
-     D  testProcs                          const likeds(ProcNms_t)
-     D  order                              const like(order_t)
-     D  detail                             const like(detail_t)
-     D  output                             const like(output_t)
-     D  libl                               const likeds(LibL_t)
-     D  jobd                               const likeds(Object_t)
-     D  rclRsc                             const like(rclrsc_t)
-     D  xmlStmf                            const like(stmf_t)
+     D  gi_testSuite                       const likeds(Object_t)
+     D  gi_testProcs                       const likeds(ProcNms_t)
+     D  gi_order                           const like(order_t)
+     D  gi_detail                          const like(detail_t)
+     D  gi_output                          const like(output_t)
+     D  gi_libl                            const likeds(LibL_t)
+     D  gi_jobd                            const likeds(Object_t)
+     D  gi_rclRsc                          const like(rclrsc_t)
+     D  gi_xmlStmf                         const like(stmf_t)
 
-      // Replace stream file path variables.
+     D validateXmlStmf...
+     D                 pr           256a   varying
+     D                                     extproc('CMDRUNV_+
+     D                                     validateXmlStmf+
+     D                                     ')
+     D  i_xmlStmf                          const like(stmf_t)
+
      D resolvePathVariables...
      D                 pr                  like(stmf_t)
-     D  path                               const like(stmf_t)
-     D  testSuiteName                      const likeds(Object_t)
+     D                                     extproc('CMDRUNV_+
+     D                                     resolvePathVariables+
+     D                                     ')
+     D  i_path                             const like(stmf_t)
+     D  i_testSuite                        const likeds(Object_t)
 
       /include qinclude,CMDRUN
       /endif

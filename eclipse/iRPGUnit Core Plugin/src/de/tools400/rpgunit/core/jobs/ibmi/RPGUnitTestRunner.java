@@ -1066,7 +1066,10 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             if (count <= 0) {
                 messages = jobLog.getMessages(-1, -1);
             } else {
-                messages = jobLog.getMessages(jobLog.getLength() - 1, 1);
+                if (count > jobLog.getLength()) {
+                    count = jobLog.getLength();
+                }
+                messages = jobLog.getMessages(jobLog.getLength() - count, count);
             }
 
             return messages;
