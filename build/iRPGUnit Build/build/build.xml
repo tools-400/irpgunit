@@ -420,7 +420,7 @@
 		
 		<echo>Copying A_README.TXT ...</echo>
 		<copy todir="${build.upload.dir.web.eclipse.assets}">
-			<fileset dir="${workspace.home}\${build.project.server}\RPGUNIT1">
+			<fileset dir="${workspace.home}\${build.project.server}\QBUILD">
 				<include name="A_README.TXT" />
 			</fileset>
 		</copy>
