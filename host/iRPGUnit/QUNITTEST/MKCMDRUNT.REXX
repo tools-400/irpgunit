@@ -91,6 +91,7 @@
 
  "CMPMOD MODULE("prdLib"/CMDRUNT  ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/CMDRUN   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/CMDRUNV  ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/CALLPRC  ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/CMDRUNSRV) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/EXTPRC   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
@@ -104,6 +105,7 @@
  "CRTSRVPGM  SRVPGM("prdLib"/CMDRUNT) ",
             "MODULE("prdLib"/CMDRUNT ",
                      prdLib"/CMDRUN ",
+                     prdLib"/CMDRUNV",
                      prdLib"/CALLPRC ",
                      prdLib"/CMDRUNSRV ",
                      prdLib"/EXTPRC ",
