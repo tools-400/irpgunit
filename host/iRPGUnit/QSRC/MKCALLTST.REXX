@@ -112,7 +112,7 @@
                  prdLib"/USRSPC     ",
                  prdLib"/XMLWRITER) ",
         "ENTMOD("prdLib"/CMDRUN) ",
-        "BNDSRVPGM(*LIBL/RUTESTCASE) ",
+        "BNDSRVPGM("prdLib"/RUTESTCASE) ",
         "ACTGRP(*NEW) ",
         "ALWUPD(*YES) ",
         "ALWLIBUPD(*YES) ",
@@ -124,7 +124,7 @@
         "MODULE("prdLib"/CMDRUNV    ",
                  prdLib"/PGMMSG)    ",
         "ENTMOD("prdLib"/CMDRUNV) ",
-        "BNDSRVPGM(*LIBL/RUTESTCASE) ",
+        "BNDSRVPGM("prdLib"/RUTESTCASE) ",
         "ACTGRP(*NEW) ",
         "ALWUPD(*YES) ",
         "ALWLIBUPD(*YES) ",
@@ -135,9 +135,9 @@
  "CRTPNLGRP  PNLGRP("prdLib"/RUCALLTST) SRCFILE(*LIBL/QPNLGRP)"
 
  "CRTCMD CMD("prdLib"/RUCALLTST) ",
-        "PGM(*LIBL/RUCALLTST) ",
+        "PGM("prdLib"/RUCALLTST) ",
         "SRCFILE(*LIBL/QCMD) ",
-        "VLDCKR(*LIBL/RUCALLTSTV) ",
+        "VLDCKR("prdLib"/RUCALLTSTV) ",
         "HLPPNLGRP("prdLib"/RUCALLTST) ",
         "HLPID(RUCALLTST)"
 

@@ -99,7 +99,7 @@
                  prdLib"/TAGTST     ",
                  prdLib"/USRSPC   ) ",
         "ENTMOD("prdLib"/CRTTST) ",
-        "BNDSRVPGM(*LIBL/RUTESTCASE) ",
+        "BNDSRVPGM("prdLib"/RUTESTCASE) ",
         "ACTGRP(*NEW) ",
         "ALWUPD(*YES) ",
         "ALWLIBUPD(*YES) ",
@@ -110,7 +110,7 @@
  "CRTPNLGRP  PNLGRP("prdLib"/RUCRTTST) SRCFILE(*LIBL/QPNLGRP)"
 
  "CRTCMD CMD("prdLib"/RUCRTTST) ",
-        "PGM(*LIBL/RUCRTTST) ",
+        "PGM("prdLib"/RUCRTTST) ",
         "SRCFILE(*LIBL/QCMD) ",
         "HLPPNLGRP("prdLib"/RUCRTTST) ",
         "HLPID(RUCRTTST)"

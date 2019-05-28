@@ -11,8 +11,8 @@
      /*     >>CRTCMD<<  CRTCMD        CMD(&LI/&OB) +                          */
      /*                               SRCFILE(&SL/&SF) SRCMBR(&SM);           */
      /*     >>IMPORTANT<<                                                     */
-     /*       >>PARM<< PGM(*LIBL/RUCRTTST);                                   */
-     /*       >>PARM<< HLPPNLGRP(*LIBL/RUCRTTST);                             */
+     /*       >>PARM<< PGM(&LI/RUCRTTST);                                     */
+     /*       >>PARM<< HLPPNLGRP(&LI/RUCRTTST);                               */
      /*       >>PARM<< HLPID(RUCRTTST);                                       */
      /*     >>END-IMPORTANT<<                                                 */
      /*     >>EXECUTE<<                                                       */

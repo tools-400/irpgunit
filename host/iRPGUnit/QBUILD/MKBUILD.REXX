@@ -93,9 +93,9 @@
 
  "CRTCMD CMD("prdLib"/CMPMOD) SRCFILE(*LIBL/QBUILD) ",
         "PGM(*REXX) ",
-        "REXSRCFILE(*LIBL/QBUILD) ",
+        "REXSRCFILE("prdLib"/QBUILD) ",
         "REXSRCMBR(CMPMODCPP) ",
-        "HLPPNLGRP(*LIBL/CMPMODHLP) ",
+        "HLPPNLGRP("prdLib"/CMPMODHLP) ",
         "HLPID(CMPMOD)"
 
  "SNDPGMMSG ",

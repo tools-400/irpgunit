@@ -118,7 +118,7 @@
                  prdLib"/USRSPC     ",
                  prdLib"/XMLWRITER) ",
         "ENTMOD("prdLib"/PGMRMT) ",
-        "BNDSRVPGM(*LIBL/RUTESTCASE) ",
+        "BNDSRVPGM("prdLib"/RUTESTCASE) ",
         "ACTGRP(*NEW) ",
         "ALWUPD(*YES) ",
         "ALWLIBUPD(*YES) ",

@@ -95,7 +95,7 @@
                      prdLib"/PGMMSG) ",
             "EXPORT(*ALL) ",
             "OPTION(*DUPPROC) ",
-            "BNDSRVPGM(*LIBL/RUTESTCASE) ",
+            "BNDSRVPGM("prdLib"/RUTESTCASE) ",
             "TEXT('RPGUnit SelfTest - Test PGMMSG.')"
 
  "SNDPGMMSG ",

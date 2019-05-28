@@ -95,7 +95,7 @@
             "MODULE("prdLib"/ASSERTT ",
                      prdLib"/PGMMSG) ",
             "EXPORT(*ALL) ",
-            "BNDSRVPGM(*LIBL/RUTESTCASE) ",
+            "BNDSRVPGM("prdLib"/RUTESTCASE) ",
             "TEXT('RPGUnit SelfTest - Test ASSERT.')"
 
  "SNDPGMMSG ",

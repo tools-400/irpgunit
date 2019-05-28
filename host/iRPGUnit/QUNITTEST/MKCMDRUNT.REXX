@@ -118,7 +118,7 @@
                      prdLib"/XMLWRITER) ",
             "EXPORT(*ALL) ",
             "OPTION(*DUPPROC) ",
-            "BNDSRVPGM(*LIBL/RUTESTCASE) ",
+            "BNDSRVPGM("prdLib"/RUTESTCASE) ",
             "TEXT('RPGUnit SelfTest - Test CMDRUN.')"
 
  "SNDPGMMSG ",
