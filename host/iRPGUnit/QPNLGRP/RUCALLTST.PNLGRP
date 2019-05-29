@@ -163,7 +163,7 @@ XML stream file (XMLSTMF) - Help
 :p.
 Name of an XML stream file that contains the result of
 the unit test. The XML file is created with a format, which
-can be parsed by the Jenkins build server. Existing files
+can be parsed by a Jenkins build server. Existing files
 are replaced.
 :p.
 You can use the following replacement variables to produce
