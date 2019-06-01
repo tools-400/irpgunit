@@ -48,6 +48,7 @@ import de.tools400.rpgunit.core.helpers.StringHelper;
 import de.tools400.rpgunit.core.helpers.SystemConnectionHelper;
 import de.tools400.rpgunit.core.preferences.Preferences;
 import de.tools400.rpgunit.core.swt.widgets.NumericOnlyVerifyListener;
+import de.tools400.rpgunit.core.swt.widgets.UpperCaseOnlyVerifier;
 import de.tools400.rpgunit.core.upload.ProductLibraryUploader;
 import de.tools400.rpgunit.core.upload.StatusMessageReceiver;
 
@@ -117,7 +118,7 @@ public class UploadRPGUnitLibraryDialog extends Dialog implements StatusMessageR
         txtUploadLibrary.setLayoutData(gdProductLibrary);
         txtUploadLibrary.setToolTipText(Messages.Tooltip_UploadLibrary);
         txtUploadLibrary.setTextLimit(10);
-        // txtUploadLibrary.addVerifyListener(new UpperCaseOnlyVerifier());
+        txtUploadLibrary.addVerifyListener(new UpperCaseOnlyVerifier());
 
         tableStatus = new Table(mainArea, SWT.BORDER | SWT.MULTI);
         final GridData gd_tableStatus = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
