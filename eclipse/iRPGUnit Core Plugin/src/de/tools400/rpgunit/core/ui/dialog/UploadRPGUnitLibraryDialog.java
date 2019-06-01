@@ -19,6 +19,8 @@ import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -57,11 +59,13 @@ public class UploadRPGUnitLibraryDialog extends Dialog implements StatusMessageR
     private IBMiConnectionCombo systemHostCombo;
     private Text txtFtpPort;
     private Text txtUploadLibrary;
+    private Text txtAspDeviceName;
     private Table tableStatus;
 
     private IBMiConnection iSeriesConnection;
     private int ftpPortNumber;
     private String productLibraryName;
+    private String aspDeviceName;
 
     private Preferences preferences;
     private Button btnOK;
@@ -110,7 +114,7 @@ public class UploadRPGUnitLibraryDialog extends Dialog implements StatusMessageR
 
         Label lblUploadLibrary = new Label(mainArea, SWT.NONE);
         lblUploadLibrary.setText(Messages.Label_UploadLibrary);
-        lblUploadLibrary.setToolTipText(Messages.PreferencesPage2_txtProductLibrary_toolTipText);
+        lblUploadLibrary.setToolTipText(Messages.Tooltip_FTP_port_number);
 
         txtUploadLibrary = new Text(mainArea, SWT.BORDER);
         GridData gdProductLibrary = new GridData();
@@ -119,6 +123,18 @@ public class UploadRPGUnitLibraryDialog extends Dialog implements StatusMessageR
         txtUploadLibrary.setToolTipText(Messages.Tooltip_UploadLibrary);
         txtUploadLibrary.setTextLimit(10);
         txtUploadLibrary.addVerifyListener(new UpperCaseOnlyVerifier());
+
+        Label lblAspDeviceName = new Label(mainArea, SWT.NONE);
+        lblAspDeviceName.setText(Messages.Label_AspDeviceName);
+        lblAspDeviceName.setToolTipText(Messages.Tooltip_AspDeviceName);
+
+        txtAspDeviceName = new Text(mainArea, SWT.BORDER);
+        GridData gdAspDeviceName = new GridData();
+        gdAspDeviceName.widthHint = 120;
+        txtAspDeviceName.setLayoutData(gdAspDeviceName);
+        txtAspDeviceName.setToolTipText(Messages.Tooltip_AspDeviceName);
+        txtAspDeviceName.setTextLimit(10);
+        txtAspDeviceName.addVerifyListener(new UpperCaseOnlyVerifier());
 
         tableStatus = new Table(mainArea, SWT.BORDER | SWT.MULTI);
         final GridData gd_tableStatus = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
@@ -150,6 +166,15 @@ public class UploadRPGUnitLibraryDialog extends Dialog implements StatusMessageR
                 }
                 if (event.keyCode == 'c') {
                     ClipboardHelper.setTableItemsText(tableStatus.getSelection());
+                }
+            }
+        });
+
+        tableStatus.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseDoubleClick(MouseEvent e) {
+                if (e.button == 1) {
+                    copyStatusLinesToClipboard(tableStatus.getSelection());
                 }
             }
         });
@@ -209,6 +234,13 @@ public class UploadRPGUnitLibraryDialog extends Dialog implements StatusMessageR
                 validateInput();
             }
         });
+
+        txtAspDeviceName.addModifyListener(new ModifyListener() {
+            @Override
+            public void modifyText(ModifyEvent arg0) {
+                validateInput();
+            }
+        });
     }
 
     @Override
@@ -243,6 +275,12 @@ public class UploadRPGUnitLibraryDialog extends Dialog implements StatusMessageR
         } else {
             txtUploadLibrary.setText(preferences.getUploadLibraryName());
         }
+
+        if (!StringHelper.isNullOrEmpty(aspDeviceName)) {
+            txtAspDeviceName.setText(aspDeviceName);
+        } else {
+            txtAspDeviceName.setText(preferences.getAspDeviceName());
+        }
     }
 
     private void storeScreenValues() {
@@ -250,6 +288,7 @@ public class UploadRPGUnitLibraryDialog extends Dialog implements StatusMessageR
         preferences.setUploadConnectionName(systemHostCombo.getISeriesConnection().getConnectionName());
         preferences.setUploadFtpPortNumber(ftpPortNumber);
         preferences.setUploadLibraryName(productLibraryName);
+        preferences.setAspDeviceName(aspDeviceName);
     }
 
     private void selectConnection(String hostName) {
@@ -294,7 +333,7 @@ public class UploadRPGUnitLibraryDialog extends Dialog implements StatusMessageR
 
         storeScreenValues();
 
-        ProductLibraryUploader uploader = new ProductLibraryUploader(getShell(), iSeriesConnection, ftpPortNumber, productLibraryName);
+        ProductLibraryUploader uploader = new ProductLibraryUploader(getShell(), iSeriesConnection, ftpPortNumber, productLibraryName, aspDeviceName);
         uploader.setStatusMessageReceiver(this);
 
         try {
@@ -302,6 +341,7 @@ public class UploadRPGUnitLibraryDialog extends Dialog implements StatusMessageR
             systemHostCombo.setEnabled(false);
             txtFtpPort.setEnabled(false);
             txtUploadLibrary.setEnabled(false);
+            txtAspDeviceName.setEnabled(false);
             btnOK.setEnabled(false);
             btnCancel.setEnabled(false);
 
@@ -313,6 +353,7 @@ public class UploadRPGUnitLibraryDialog extends Dialog implements StatusMessageR
             systemHostCombo.setEnabled(true);
             txtFtpPort.setEnabled(true);
             txtUploadLibrary.setEnabled(true);
+            txtAspDeviceName.setEnabled(true);
             btnOK.setEnabled(false);
             btnCancel.setEnabled(true);
         }
@@ -324,6 +365,7 @@ public class UploadRPGUnitLibraryDialog extends Dialog implements StatusMessageR
         tableStatus.removeAll();
 
         productLibraryName = null;
+        aspDeviceName = null;
         iSeriesConnection = null;
         ftpPortNumber = -1;
 
@@ -344,6 +386,7 @@ public class UploadRPGUnitLibraryDialog extends Dialog implements StatusMessageR
 
         if (btnOK.isEnabled()) {
             productLibraryName = txtUploadLibrary.getText();
+            aspDeviceName = txtAspDeviceName.getText();
             iSeriesConnection = systemHostCombo.getISeriesConnection();
             ftpPortNumber = IntHelper.tryParseInt(txtFtpPort.getText());
             setStatus(Messages.bind(Messages.Ready_to_transfer_library_A_to_host_B_using_port_C,
@@ -375,7 +418,27 @@ public class UploadRPGUnitLibraryDialog extends Dialog implements StatusMessageR
 
     @Override
     protected Point getInitialSize() {
-        return new Point(600, 400);
+        return new Point(600, 450);
+    }
+
+    protected void copyStatusLinesToClipboard(TableItem[] tableItems) {
+
+        if (tableItems.length == 1) {
+            copyStatusLineToClipboard(tableItems[0]);
+        } else {
+            ClipboardHelper.setTableItemsText(tableItems);
+        }
+    }
+
+    protected void copyStatusLineToClipboard(TableItem tableItem) {
+
+        if (tableItem != null) {
+            String text = tableItem.getText();
+            if (text.startsWith(Messages.Server_job_colon)) {
+                text = text.substring(Messages.Server_job_colon.length());
+            }
+            ClipboardHelper.setText(text.trim());
+        }
     }
 
     /**
@@ -385,6 +448,7 @@ public class UploadRPGUnitLibraryDialog extends Dialog implements StatusMessageR
 
         private Table table;
         private MenuItem menuItemCopySelected;
+        private MenuItem menuItemCopyAll;
 
         public TableContextMenu(Table table) {
             this.table = table;
@@ -404,11 +468,15 @@ public class UploadRPGUnitLibraryDialog extends Dialog implements StatusMessageR
             if (!((menuItemCopySelected == null) || (menuItemCopySelected.isDisposed()))) {
                 menuItemCopySelected.dispose();
             }
+            if (!((menuItemCopyAll == null) || (menuItemCopyAll.isDisposed()))) {
+                menuItemCopyAll.dispose();
+            }
         }
 
         private void createMenuItems() {
 
             createMenuItemCopySelected();
+            createMenuItemCopyAll();
         }
 
         private void createMenuItemCopySelected() {
@@ -418,7 +486,19 @@ public class UploadRPGUnitLibraryDialog extends Dialog implements StatusMessageR
             menuItemCopySelected.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    ClipboardHelper.setTableItemsText(table.getItems());
+                    copyStatusLinesToClipboard(table.getSelection());
+                }
+            });
+        }
+
+        private void createMenuItemCopyAll() {
+
+            menuItemCopyAll = new MenuItem(getMenu(), SWT.NONE);
+            menuItemCopyAll.setText(Messages.ActionLabel_Copy_all);
+            menuItemCopyAll.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    copyStatusLinesToClipboard(table.getItems());
                 }
             });
         }

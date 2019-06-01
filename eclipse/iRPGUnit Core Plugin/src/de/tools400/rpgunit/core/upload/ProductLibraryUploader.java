@@ -33,6 +33,7 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import de.tools400.rpgunit.core.Messages;
 import de.tools400.rpgunit.core.RPGUnitCorePlugin;
 import de.tools400.rpgunit.core.helpers.StringHelper;
+import de.tools400.rpgunit.core.preferences.Preferences;
 import de.tools400.rpgunit.core.ui.dialog.SignOnDialog;
 import de.tools400.rpgunit.core.utils.ExceptionHelper;
 
@@ -49,19 +50,21 @@ public class ProductLibraryUploader {
     private String hostName;
     private int ftpPort;
     private String libraryName;
+    private String aspDeviceName;
 
     private AS400 as400;
     private CommandCall commandCall;
 
     private StatusMessageReceiver statusMessageReceiver;
 
-    public ProductLibraryUploader(Shell shell, IBMiConnection iSeriesConnection, int ftpPort, String libraryName) {
+    public ProductLibraryUploader(Shell shell, IBMiConnection iSeriesConnection, int ftpPort, String libraryName, String aspDeviceName) {
 
         this.shell = shell;
         this.iSeriesConnection = iSeriesConnection;
         this.hostName = iSeriesConnection.getHostName();
         this.ftpPort = ftpPort;
         this.libraryName = libraryName;
+        this.aspDeviceName = aspDeviceName;
     }
 
     public void setStatusMessageReceiver(StatusMessageReceiver statusMessageReceiver) {
@@ -80,7 +83,7 @@ public class ProductLibraryUploader {
             String saveFileName = libraryName;
 
             setStatus(Messages.bind(Messages.Checking_library_A_for_existence, libraryName));
-            if (!checkLibraryPrecondition(libraryName)) {
+            if (!checkLibraryPrecondition(libraryName, aspDeviceName)) {
                 setError(Messages.bind(Messages.Library_A_does_already_exist, libraryName));
             } else {
                 setStatus(Messages.bind(Messages.Checking_file_B_in_library_A_for_existence, new String[] { workLibrary, saveFileName }));
@@ -109,7 +112,7 @@ public class ProductLibraryUploader {
                             }
 
                             setStatus(Messages.bind(Messages.Restoring_library_A, libraryName));
-                            if (!restoreLibrary(workLibrary, saveFileName, libraryName)) {
+                            if (!restoreLibrary(workLibrary, saveFileName, libraryName, aspDeviceName)) {
                                 setError(Messages.bind(Messages.Could_not_restore_library_A, libraryName));
                             }
 
@@ -144,6 +147,7 @@ public class ProductLibraryUploader {
                     commandCall = new CommandCall(as400);
                     if (commandCall != null) {
                         setStatus(Messages.bind(Messages.Connected_to_host_A, hostName));
+                        setStatus(Messages.Server_job_colon + " " + commandCall.getServerJob().toString());
                         return true;
                     } else {
                         setError(Messages.bind(Messages.Could_not_connect_to_host_A, hostName));
@@ -165,18 +169,16 @@ public class ProductLibraryUploader {
         }
     }
 
-    private boolean checkLibraryPrecondition(String libraryName) {
+    private boolean checkLibraryPrecondition(String libraryName, String aspDeviceName) {
 
         while (libraryExists(libraryName)) {
-            if (!MessageDialog.openQuestion(
-                shell,
-                Messages.DialogTitle_Delete_Object,
+            if (!MessageDialog.openQuestion(shell, Messages.DialogTitle_Delete_Object,
                 Messages.bind(Messages.Library_A_does_already_exist, libraryName) + "\n\n"
                     + Messages.bind(Messages.Question_Do_you_want_to_delete_library_A, libraryName))) {
                 return false;
             }
             setStatus(Messages.bind(Messages.Deleting_library_A, libraryName));
-            deleteLibrary(libraryName, true);
+            deleteLibrary(libraryName, aspDeviceName, true);
         }
 
         return true;
@@ -191,11 +193,11 @@ public class ProductLibraryUploader {
         return true;
     }
 
-    private boolean deleteLibrary(String libraryName, boolean logErrors) {
+    private boolean deleteLibrary(String libraryName, String aspDeviceName, boolean logErrors) {
 
         String cpfMsg;
 
-        cpfMsg = executeCommand("DLTLIB LIB(" + libraryName + ")", logErrors);
+        cpfMsg = executeCommand(produceDeleteLibraryCommand(libraryName, aspDeviceName), logErrors);
         if (!cpfMsg.equals("")) {
             return false;
         }
@@ -206,11 +208,9 @@ public class ProductLibraryUploader {
     private boolean checkSaveFilePrecondition(String workLibrary, String saveFileName) {
 
         while (saveFileExists(workLibrary, saveFileName)) {
-            if (!MessageDialog.openQuestion(
-                shell,
-                Messages.DialogTitle_Delete_Object,
-                Messages.bind(Messages.File_B_in_library_A_does_already_exist, new String[] { workLibrary, saveFileName }) + "\n\n"
-                    + Messages.bind(Messages.Question_Do_you_want_to_delete_object_A_B_type_C, new String[] { workLibrary, saveFileName, "*FILE" }))) {
+            if (!MessageDialog.openQuestion(shell, Messages.DialogTitle_Delete_Object,
+                Messages.bind(Messages.File_B_in_library_A_does_already_exist, new String[] { workLibrary, saveFileName }) + "\n\n" + Messages
+                    .bind(Messages.Question_Do_you_want_to_delete_object_A_B_type_C, new String[] { workLibrary, saveFileName, "*FILE" }))) {
                 return false;
             }
             setStatus(Messages.bind(Messages.Deleting_object_A_B_of_type_C, new String[] { workLibrary, saveFileName, "*FILE" }));
@@ -247,7 +247,7 @@ public class ProductLibraryUploader {
         return true;
     }
 
-    private boolean restoreLibrary(String workLibrary, String saveFileName, String libraryName) throws Exception {
+    private boolean restoreLibrary(String workLibrary, String saveFileName, String libraryName, String aspDeviceName) throws Exception {
 
         AS400 system = commandCall.getSystem();
         Job serverJob = commandCall.getServerJob();
@@ -260,8 +260,7 @@ public class ProductLibraryUploader {
             startingMessageDate = startingMessages[0].getDate().getTime();
         }
 
-        String cpfMsg = executeCommand("RSTLIB SAVLIB(" + SAVED_LIBRARY + ") DEV(*SAVF) SAVF(" + workLibrary + "/" + saveFileName + ") RSTLIB("
-            + libraryName + ")", true);
+        String cpfMsg = executeCommand(produceRestoreLibraryCommand(workLibrary, saveFileName, libraryName, aspDeviceName), true);
         if (!cpfMsg.equals("")) {
             if (cpfMsg.equals("CPF3773")) {
 
@@ -373,6 +372,39 @@ public class ProductLibraryUploader {
         } catch (Exception e) {
             return "CPF0000";
         }
+    }
+
+    private String produceRestoreLibraryCommand(String workLibrary, String saveFileName, String libraryName, String aspDeviceName) {
+
+        String command = "RSTLIB SAVLIB(" + SAVED_LIBRARY + ") DEV(*SAVF) SAVF(" + workLibrary + "/" + saveFileName + ") RSTLIB(" + libraryName + ")";
+        if (isASPDeviceSpecified(aspDeviceName)) {
+            command += " RSTASPDEV(" + aspDeviceName + ")";
+        }
+
+        return command;
+    }
+
+    private String produceDeleteLibraryCommand(String productLibrary, String aspDevice) {
+
+        String command = "DLTLIB LIB(" + productLibrary + ")";
+        if (isASPDeviceSpecified(aspDevice)) {
+            command += " ASPDEV(*)";
+        }
+
+        return command;
+    }
+
+    private boolean isASPDeviceSpecified(String aspDevice) {
+
+        if (StringHelper.isNullOrEmpty(aspDevice)) {
+            return false;
+        }
+
+        if (Preferences.getInstance().getDefaultAspDeviceName().equals(aspDevice)) {
+            return false;
+        }
+
+        return true;
     }
 
     private void setStatus(String message) {

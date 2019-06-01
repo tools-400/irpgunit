@@ -20,6 +20,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 
 import de.tools400.rpgunit.core.Messages;
 import de.tools400.rpgunit.core.RPGUnitCorePlugin;
+import de.tools400.rpgunit.core.helpers.StringHelper;
 import de.tools400.rpgunit.core.model.ibmi.I5ObjectName;
 import de.tools400.rpgunit.core.preferences.internal.PreferencesChangeListener;
 
@@ -149,6 +150,13 @@ public final class Preferences {
     public static final String PRODUCT_LIBRARY = SYSTEM + ".productLibrary"; //$NON-NLS-1$
 
     public static final String PRODUCT_LIBRARY_LIBL = "*LIBL"; //$NON-NLS-1$
+
+    /**
+     * ASP device name.
+     */
+    public static final String ASP_DEVICE_NAME = SYSTEM + ".aspDeviceName"; //$NON-NLS-1$
+
+    public static final String ASP_DEVICE_NAME_DEFAULT = "*DEFAULT"; //$NON-NLS-1$
 
     /**
      * Check test suite service program.
@@ -313,6 +321,11 @@ public final class Preferences {
         return tProductLibrary;
     }
 
+    public String getAspDeviceName() {
+        String tProductLibrary = preferenceStore.getString(ASP_DEVICE_NAME);
+        return tProductLibrary;
+    }
+
     public String getCheckTestSuite() {
         String tCheckTestSuite = preferenceStore.getString(CHECK_TEST_SUITE);
         return tCheckTestSuite;
@@ -446,6 +459,10 @@ public final class Preferences {
         saveProductLibrary(aProduductLibrary);
     }
 
+    public void setAspDeviceName(String anAspDeviceName) {
+        saveAspDeviceName(anAspDeviceName);
+    }
+
     public void setCheckTestSuite(String aCheckTestSuite) {
         saveCheckTestSuite(aCheckTestSuite);
     }
@@ -555,6 +572,7 @@ public final class Preferences {
 
         // Runtime
         preferenceStore.setDefault(PRODUCT_LIBRARY, getDefaultProductLibrary());
+        preferenceStore.setDefault(ASP_DEVICE_NAME, getDefaultAspDeviceName());
         preferenceStore.setDefault(CHECK_TEST_SUITE, getDefaultCheckTestSuite());
 
         // Debug
@@ -689,12 +707,16 @@ public final class Preferences {
         return PRODUCT_LIBRARY_LIBL;
     }
 
+    public String getDefaultAspDeviceName() {
+        return ASP_DEVICE_NAME_DEFAULT;
+    }
+
     public String getDefaultReclaimResources() {
         return RECLAIM_RESOURCES_NO;
     }
 
     public String getDefaultXmlStmf() {
-return "/tmp/iRPGUnit_<TSTPGM>-%F.%T.log";
+        return "/tmp/iRPGUnit_<TSTPGM>-%F.%T.log";
     }
 
     public boolean getDefaultShowWarnMessages() {
@@ -803,6 +825,14 @@ return "/tmp/iRPGUnit_<TSTPGM>-%F.%T.log";
 
     private void saveProductLibrary(String aProductLibrary) {
         preferenceStore.setValue(PRODUCT_LIBRARY, aProductLibrary);
+    }
+
+    private void saveAspDeviceName(String anAspDeviveName) {
+        if (StringHelper.isNullOrEmpty(anAspDeviveName)) {
+            preferenceStore.setValue(ASP_DEVICE_NAME, getDefaultAspDeviceName());
+        } else {
+            preferenceStore.setValue(ASP_DEVICE_NAME, anAspDeviveName);
+        }
     }
 
     private void saveCheckTestSuite(String aCheckTestSuite) {

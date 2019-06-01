@@ -20,6 +20,7 @@ public class Messages extends NLS {
     public static String AbstractRemoteAction_0;
     public static String Transfer_RPGUnit_Library;
     public static String ActionLabel_Copy;
+    public static String ActionLabel_Copy_all;
     public static String DialogTitle_Sign_On;
 
     public static String Invalid_host_version;
@@ -65,6 +66,7 @@ public class Messages extends NLS {
     public static String Please_specify_a_valid_FTP_port_number;
     public static String Please_enter_a_valid_library_name;
     public static String Ready_to_transfer_library_A_to_host_B_using_port_C;
+    public static String Server_job_colon;
     public static String Enter_a_host_name;
     public static String Enter_a_user_name;
     public static String Enter_a_password;
@@ -139,6 +141,8 @@ public class Messages extends NLS {
     public static String Tooltip_FTP_port_number;
     public static String Label_UploadLibrary;
     public static String Tooltip_UploadLibrary;
+    public static String Label_AspDeviceName;
+    public static String Tooltip_AspDeviceName;
     public static String Label_UploadButton;
     public static String Tooltip_UploadButton;
     public static String Label_CloseButton;
