@@ -136,7 +136,7 @@
          dir = getDirectory(xmlStmfRpl);
          if (stat(dir: st_stat)  < 0);
            errMsg = 'Directory does not exist. +
-                     Check parameter TSTPGM.';
+                     Check parameter ''XML stream file'' (XMLSTMF).';
            return errMsg;
          endif;
 
