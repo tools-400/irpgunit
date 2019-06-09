@@ -152,7 +152,7 @@
          testSuite = loadTestSuite( testSuiteName );
        on-error;
          checkAndRestoreLibl(mustRestoreLibl: savedLibl);
-         raiseRUError( 'Error while loading the test suite in '
+         raiseRUError( 'Error while loading test suite '
                      + fmtObjNm(testSuiteName) + '.' );
        endmon;
 
