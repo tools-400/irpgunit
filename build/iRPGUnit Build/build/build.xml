@@ -255,6 +255,8 @@
 	<target name="downloadIBMiLibrary" depends="ftpCredentialsIBMi" description="Download library from IBM i">
 
 		<echo>Downloading save file ${IBMi.ftp.savefile.name} ...</echo>
+		<echo>Server: ${IBMi.ftp.server}</echo>
+		<echo>User:   ${IBMi.ftp.user}</echo>
 
 		<mkdir dir="${local.download.directory}" />
 
