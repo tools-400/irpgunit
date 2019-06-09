@@ -34,6 +34,7 @@
 
       /include qinclude,ASSERT
       /include qinclude,CALLPRC
+      /include qinclude,CMDRUNLOG
       /include qinclude,EXTPRC
       /include qinclude,EXTTST
       /include qinclude,PGMMSG
@@ -83,10 +84,16 @@
      D  msg                         256a   const varying
       /free
 
+        monitor;
+          logRuntimeError( 'Runtime error: ' + msg );
+        on-error;
+          // ignore errors
+        endmon;
+
         sndEscapeMsgAboveCtlBdy( 'RPGUnit Error. ' + msg );
 
       /end-free
-     P raiseRUError    e
+     P                 e
 
 
        //----------------------------------------------------------------------

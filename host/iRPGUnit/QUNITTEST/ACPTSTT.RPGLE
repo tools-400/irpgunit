@@ -13,7 +13,7 @@
       //     >>PARM<<  MODULE(&LI/ASSERT    +
       //                      &LI/OBJECT    +
       //                      &LI/PGMMSG    +
-      //                      &LI/&LI/SPLF  +
+      //                      &LI/SPLF      +
       //                      &LI/SRCMBR    +
       //                      &LI/TESTUTILS +
       //                      &LI/USRSPC    +
@@ -201,11 +201,11 @@
                 msgTxt );
 
         opnSplf( 'RPGUNIT' : 'TESTPGM03' );
-        splfLineStartsWith( '*** Tests from TESTPGM03 ***' );
+        splfLineStartsWith( '*** Tests of TESTPGM03 ***' );
         splfSkipLine();  // Skip "Date"
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
-        splfSkipLine();  // Skip "iRPGUnit : RADDATZ"
+        splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'TESTFALSE - FAILURE' );
         splfLineStartsWith( 'Expected 5, but was 4.' );
@@ -299,11 +299,11 @@
         assertJobLogContains( 'MCH1211' : testStartTime );
 
         opnSplf( 'RPGUNIT' : 'TESTPGM06' );
-        splfLineStartsWith( '*** Tests from TESTPGM06 ***' );
+        splfLineStartsWith( '*** Tests of TESTPGM06 ***' );
         splfSkipLine();  // Skip "Date"
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
-        splfSkipLine();  // Skip "iRPGUnit : RADDATZ"
+        splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'TESTERROR - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
@@ -333,11 +333,11 @@
                 msgTxt );
 
         opnSplf( 'RPGUNIT' : 'TESTPGM07' );
-        splfLineStartsWith( '*** Tests from TESTPGM07 ***' );
+        splfLineStartsWith( '*** Tests of TESTPGM07 ***' );
         splfSkipLine();  // Skip "Date"
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
-        splfSkipLine();  // Skip "iRPGUnit : RADDATZ"
+        splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'TESTSTACK - FAILURE' );
         splfLineStartsWith( 'Expected 5, but was 4.' );
@@ -367,11 +367,19 @@
 
         run( 'RUCALLTST TESTPGM08' : errorExpected : '*ESCAPE' : msgTxt );
 
-        opnSplf( 'RPGUNIT' : 'TESTPGM08' );
-
         aEqual( 'RPGUnit Error.'
-              + ' Error while loading the test suite in *LIBL/TESTPGM08.' :
+              + ' Error while loading test suite *LIBL/TESTPGM08.' :
                 msgTxt );
+
+        opnSplf( 'RPGUNIT' : 'TESTPGM08' );
+        splfLineStartsWith( '*** Tests of TESTPGM08 ***' );
+        splfSkipLine();  // Skip "Date"
+        splfSkipLine();  // Skip "Job"
+        splfSkipLine();  // Skip "User"
+        splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
+        splfSkipLine();  // Skip [blank line]
+        splfLineStartsWith( 'Runtime error: +
+                             Error while loading test suite *LIBL/TESTPGM08.' );
 
         cloSplf();
 
@@ -398,11 +406,11 @@
         aEqual( 'teardown'     : rcvMsgData('*INFO') );    // Teardown should be called anyway
 
         opnSplf( 'RPGUNIT' : 'TESTPGM09' );
-        splfLineStartsWith( '*** Tests from TESTPGM09 ***' );
+        splfLineStartsWith( '*** Tests of TESTPGM09 ***' );
         splfSkipLine();  // Skip "Date"
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
-        splfSkipLine();  // Skip "iRPGUnit : RADDATZ"
+        splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'TEST - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
@@ -432,11 +440,11 @@
                 msgTxt );
 
         opnSplf( 'RPGUNIT' : 'TESTPGM10' );
-        splfLineStartsWith( '*** Tests from TESTPGM10 ***' );
+        splfLineStartsWith( '*** Tests of TESTPGM10 ***' );
         splfSkipLine();  // Skip "Date"
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
-        splfSkipLine();  // Skip "iRPGUnit : RADDATZ"
+        splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'TEST - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
@@ -542,11 +550,11 @@
                 msgTxt );
 
         opnSplf( 'RPGUNIT' : 'TESTPGM14' );
-        splfLineStartsWith( '*** Tests from TESTPGM14 ***' );
+        splfLineStartsWith( '*** Tests of TESTPGM14 ***' );
         splfSkipLine();  // Skip "Date"
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
-        splfSkipLine();  // Skip "iRPGUnit : RADDATZ"
+        splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'TEST_DIFFERENT - FAILURE' );
         splfLineStartsWith( 'Expected 123456789012345678901234567890'
@@ -582,11 +590,11 @@
                 msgTxt );
 
         opnSplf( 'RPGUNIT' : 'TESTPGM15' );
-        splfLineStartsWith( '*** Tests from TESTPGM15 ***' );
+        splfLineStartsWith( '*** Tests of TESTPGM15 ***' );
         splfSkipLine();  // Skip "Date"
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
-        splfSkipLine();  // Skip "iRPGUnit : RADDATZ"
+        splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'TESTTRUE - Success' );
         splfLineStartsWith( '1 assertions' );
@@ -656,11 +664,11 @@
         aEqual( 'teardown'     : rcvMsgData('*INFO') );
 
         opnSplf( 'RPGUNIT' : 'TESTPGM05' );
-        splfLineStartsWith( '*** Tests from TESTPGM05 ***' );
+        splfLineStartsWith( '*** Tests of TESTPGM05 ***' );
         splfSkipLine();  // Skip "Date"
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
-        splfSkipLine();  // Skip "iRPGUnit : RADDATZ"
+        splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'TEST2 - FAILURE' );
         splfLineStartsWith( 'test2' );
@@ -693,11 +701,11 @@
                 msgTxt );
 
         opnSplf( 'RPGUNIT' : 'TESTPGM05' );
-        splfLineStartsWith( '*** Tests from TESTPGM05 ***' );
+        splfLineStartsWith( '*** Tests of TESTPGM05 ***' );
         splfSkipLine();  // Skip "Date"
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
-        splfSkipLine();  // Skip "iRPGUnit : RADDATZ"
+        splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'NON_EXISTING_TEST - ERROR' );
         splfLineStartsWith( 'Test procedure not found.' );
@@ -729,11 +737,11 @@
         aEqual( 'teardownSuite' : rcvMsgData('*INFO') );    // Call 'teardownSuite' anyway.
 
         opnSplf( 'RPGUNIT' : 'TESTPGM17' );
-        splfLineStartsWith( '*** Tests from TESTPGM17 ***' );
+        splfLineStartsWith( '*** Tests of TESTPGM17 ***' );
         splfSkipLine();  // Skip "Date"
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
-        splfSkipLine();  // Skip "iRPGUnit : RADDATZ"
+        splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'SETUPSUITE - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
@@ -767,11 +775,11 @@
         aEqual( 'teardownSuite' : rcvMsgData('*INFO') );    // Error.
 
         opnSplf( 'RPGUNIT' : 'TESTPGM18' );
-        splfLineStartsWith( '*** Tests from TESTPGM18 ***' );
+        splfLineStartsWith( '*** Tests of TESTPGM18 ***' );
         splfSkipLine();  // Skip "Date"
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
-        splfSkipLine();  // Skip "iRPGUnit : RADDATZ"
+        splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'TEARDOWNSUITE - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
@@ -804,11 +812,11 @@
         aEqual( 'teardownSuite' : rcvMsgData('*INFO') );    // Another error.
 
         opnSplf( 'RPGUNIT' : 'TESTPGM19' );
-        splfLineStartsWith( '*** Tests from TESTPGM19 ***' );
+        splfLineStartsWith( '*** Tests of TESTPGM19 ***' );
         splfSkipLine();  // Skip "Date"
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
-        splfSkipLine();  // Skip "iRPGUnit : RADDATZ"
+        splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'SETUPSUITE - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );

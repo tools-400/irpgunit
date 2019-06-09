@@ -48,6 +48,13 @@
      D                                     ')
      D  sender                             const likeds(MsgSender_t)
 
+       // Log runtime error.
+     D logRuntimeError...
+     D                 pr                  extproc('CMDRUNLOG_+
+     D                                     logRuntimeError+
+     D                                     ')
+     D  line                       2048a   const varying options(*varsize)
+
        // Formats a call stack entry.
      D fmtStackEntry   pr                  like(Line_t)
      D                                     extproc('CMDRUNLOG_+

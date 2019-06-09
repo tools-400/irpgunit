@@ -224,12 +224,11 @@
         if not hdrWasPrinted;
           getVersion(version: date);
           opnPrt( srvPgm );
-          logRawLine( '*** Tests from ' + %trim(srvPgm.nm) + ' ***' +
-                      ' (iRPGUnit v' + %trim(version) + ')' );
-          logRawLine('Date : ' + %char(%date()) + ' / ' + %char(%time(): *HMS));
-          logRawLine('Job  : ' + getFormattedJob());
-          logRawLine('User : ' + %trimR(sds.currUser));
-          logRawLine('iRPGUnit : ' + %trimR(sds.currUser));
+          logRawLine( '*** Tests of ' + %trim(srvPgm.nm) + ' ***');
+          logRawLine('Date     : ' + %char(%date())+' / '+%char(%time():*HMS));
+          logRawLine('Job      : ' + getFormattedJob());
+          logRawLine('User     : ' + %trimR(sds.currUser));
+          logRawLine('iRPGUnit : ' + 'v' + %trim(version));
           linefeed();
           hdrWasPrinted = *on;
         endif;
@@ -317,6 +316,21 @@
       /free
 
           line = fmtStackEntry( sender );
+          logRawLine( line );
+
+      /end-free
+     P                 e
+
+
+       //----------------------------------------------------------------------
+       // Log runtime error.
+       //----------------------------------------------------------------------
+     P logRuntimeError...
+     P                 b                   export
+     D                 pi
+     D  line                       2048a   const varying options(*varsize)
+      /free
+
           logRawLine( line );
 
       /end-free
