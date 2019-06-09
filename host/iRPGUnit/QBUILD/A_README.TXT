@@ -65,8 +65,10 @@ Version 3.0.0 - 09.06.2019
 --------------------------
  * Added preference options for capturing job log messages.
  * Added unit test RUPLUGINT8. All OK.
+ * Added runtime error message to spooled file output.
  * Fixed problem that warning messages "Unit test ended with errors.
    Check preference option 'Show result view' was shown to frequently.
+ * Fixed spooled file header (iRPGUnit version information).
 
 Version 2.4.2 - 02.11.2018
 --------------------------
