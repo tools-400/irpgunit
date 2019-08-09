@@ -31,6 +31,22 @@
      D  string                             const like(String_t)
      D                                           options(*varsize)
 
+     D contains...
+     D                 pr              N
+     D                                     extproc('STRING_contains')
+     D  text                               const like(String_t)
+     D                                           options(*varsize)
+     D  string                             const like(String_t)
+     D                                           options(*varsize)
+
+     D compare...
+     D                 pr              N
+     D                                     extproc('STRING_compare')
+     D  generic                            const like(String_t)
+     D                                           options(*varsize)
+     D  string                             const like(String_t)
+     D                                           options(*varsize)
+
      D isQuoted...
      D                 pr              n
      D                                     extproc('STRING_isQuoted')

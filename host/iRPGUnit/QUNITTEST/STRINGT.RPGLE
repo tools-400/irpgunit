@@ -51,6 +51,21 @@
      D testSpacesTooLong...
      D                 pr                  extproc('testSpacesTooLong')
 
+     D testContains...
+     D                 pr                  extproc('testContains')
+
+     D testCompare...
+     D                 pr                  extproc('testCompare')
+
+
+      //----------------------------------------------------------------------
+      //   Global Constants
+      //----------------------------------------------------------------------
+
+     D FOX             c                    'The quick brown fox jumps over +
+     D                                      the lazy dog.'
+
+
 
       //----------------------------------------------------------------------
       //   Imported Procedures
@@ -309,6 +324,113 @@
         // Check.
 
         aEqual(expected: actual);
+
+      /end-free
+     P                 e
+
+
+     P testContains...
+     P                 b                   export
+     D                 pi
+
+     D result          s               n
+      /free
+
+        // Check not found.
+
+        result = contains( 'foo bar' : FOX);
+        assert( not result :
+          'contains() must return FALSE, +
+           because string does not contain ''foo bar''' );
+
+        // Check.
+
+        result = contains( 'The' : FOX);
+        assert( result :
+          'contains() must return TRUE, because string starts with ''The''' );
+
+        result = contains( 'quick' : FOX);
+        assert( result :
+          'contains() must return TRUE, because string contains ''quick''' );
+
+        result = contains( 'dog.' : FOX);
+        assert( result :
+          'contains() must return TRUE, because string ends with ''dog.''' );
+
+        // Check ignore case.
+
+        result = contains( 'THE' : FOX);
+        assert( result :
+          'contains() must return TRUE, because string starts with ''The''' );
+
+        result = contains( 'QUICK' : FOX);
+        assert( result :
+          'contains() must return TRUE, because string contains ''quick''' );
+
+        result = contains( 'DOG.' : FOX);
+        assert( result :
+          'contains() must return TRUE, because string ends with ''dog.''' );
+
+      /end-free
+     P                 e
+
+
+     P testCompare...
+     P                 b                   export
+     D                 pi
+
+     D result          s               n
+      /free
+
+        // Check not found.
+
+        result = compare( 'foo bar' : FOX);
+        assert( not result :
+          'compare() must return FALSE, +
+           because string does not match ''foo bar''' );
+
+        result = compare( 'Foo*' : FOX);
+        assert( not result :
+          'compare() must return FALSE, +
+           because string does not start with ''Foo''' );
+
+        result = compare( '*foo-bar*' : FOX);
+        assert( not result :
+          'compare() must return FALSE, +
+           because string does not contain ''foo-bar''' );
+
+        result = compare( '*bar.' : FOX);
+        assert( not result :
+          'compare() must return FALSE, +
+           because string does not end with ''bar.''' );
+
+        // Check.
+
+        result = compare( 'The*' : FOX);
+        assert( result :
+          'compare() must return TRUE, because string starts with ''The''' );
+
+        result = compare( '*quick*' : FOX);
+        assert( result :
+          'compare() must return TRUE, because string contains ''quick''' );
+
+        result = compare( '*dog.' : FOX);
+        assert( result :
+          'compare() must return TRUE, because string ends with ''dog.''' );
+
+        // Check ignore case.
+
+        result = compare( 'THE*' : FOX);
+        assert( result :
+          'compare() must return TRUE, because string starts with ''The''' );
+
+        result = compare( '*QUICK*' : FOX);
+        assert( result :
+          'compare() must return TRUE, because string contains ''quick''' );
+
+        result = compare( '*DOG.' : FOX);
+        assert( result :
+          'compare() must return TRUE, because string ends with ''dog.''' );
 
       /end-free
      P                 e

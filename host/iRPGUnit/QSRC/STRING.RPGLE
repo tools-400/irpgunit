@@ -95,9 +95,6 @@
      D                                           options(*varsize)
      D  string                             const like(String_t)
      D                                           options(*varsize)
-
-      // Return value
-     D startsWith      s               N   inz(*OFF)
       /free
 
          if (%len(string) = 0  or
@@ -123,9 +120,6 @@
      D                                           options(*varsize)
      D  string                             const like(String_t)
      D                                           options(*varsize)
-
-      // Return value
-     D endsWith        s               N   inz(*OFF)
       /free
 
          if (%len(string) = 0  or
@@ -140,6 +134,79 @@
          endif;
 
          return *ON;
+
+      /end-free
+     P                 e
+
+
+     P contains...
+     P                 b                   export
+     D                 pi              N
+     D  text                               const like(String_t)
+     D                                           options(*varsize)
+     D  string                             const like(String_t)
+     D                                           options(*varsize)
+      /free
+
+         if (%len(string) = 0  or
+             %len(text) = 0  or
+             %len(string) < %len(text));
+            return *OFF;
+         endif;
+
+         if (%scan(uCase(text): uCase(string)) = 0);
+            return *OFF;
+         endif;
+
+         return *ON;
+
+      /end-free
+     P                 e
+
+
+     P compare...
+     P                 b                   export
+     D                 pi              N
+     D  generic                            const like(String_t)
+     D                                           options(*varsize)
+     D  string                             const like(String_t)
+     D                                           options(*varsize)
+
+     D state           s              1a
+     D text            s                   like(generic)
+      /free
+
+         select;
+         when startsWith( '*' : generic) and endsWith('*' : generic );
+           state ='G'; // *generic*
+           text = %subst(generic: 2: %len(generic) - 2);
+         when startsWith( '*' : generic);
+           state ='E'; // ends with
+           text = %subst(generic: 2);
+         when endsWith( '*' : generic);
+           state ='S'; // starts with
+           text = %subst(generic: 1: %len(generic) - 1);
+         other;
+           state = 'M'; // exact match
+           text = generic;
+         endsl;
+
+         if (%len(string) = 0  or
+             %len(text) = 0  or
+             %len(string) < %len(text));
+            return *OFF;
+         endif;
+
+         select;
+         when (state = 'G');
+            return  contains( text : string );
+         when (state = 'S');
+            return startsWith( text : string );
+         when (state = 'E');
+            return endsWith( text : string );
+         other;
+            return uCase(text) = uCase(string);
+         endsl;
 
       /end-free
      P                 e
@@ -240,7 +307,6 @@
      D  char                          1a   value options(*nopass)
 
      D p_char          c                   2
-     D i               s             10i 0
      D rtnSpaces       s           5120a   static
      D rtnChars        s                   static like(rtnSpaces)
 
