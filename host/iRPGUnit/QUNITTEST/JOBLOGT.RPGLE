@@ -61,7 +61,7 @@
       //----------------------------------------------------------------------
 
      P setUp           b                   export
-     D setUp           pi
+     D                 pi
       /free
 
         testStartTime = getFullTimeStamp();
@@ -69,12 +69,11 @@
         clear assertCntAfter;
 
       /end-free
-     P setUp           e
+     P                 e
 
 
      P testNoMsgInJobLog...
      P                 b                   export
-     D testNoMsgInJobLog...
      D                 pi
 
      D assertFailEvt   ds                  likeds(AssertFailEvt_t)
@@ -103,13 +102,11 @@
                 assertFailEvt.msg );
 
       /end-free
-     P testNoMsgInJobLog...
      P                 e
 
 
      P testMsgInJobLog...
      P                 b                   export
-     D testMsgInJobLog...
      D                 pi
       /free
 
@@ -128,7 +125,6 @@
         iEqual( assertCntBefore + 1 : assertCntAfter );
 
       /end-free
-     P testMsgInJobLog...
      P                 e
 
 
@@ -137,7 +133,7 @@
       //----------------------------------------------------------------------
 
      P sndMCH1211Msg   b
-     D sndMCH1211Msg   pi
+     D                 pi
 
      D zero            s             10i 0 inz(0)
      D x               s             10i 0 inz(1)
@@ -150,4 +146,4 @@
         endmon;
 
       /end-free
-     P sndMCH1211Msg   e
+     P                 e
