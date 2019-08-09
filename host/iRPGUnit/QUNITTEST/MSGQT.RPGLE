@@ -30,6 +30,11 @@
      D                 pr                  extproc('testNoMsgInMessageQueue')
      D testMsgInMessageQueue...
      D                 pr                  extproc('testMsgInMessageQueue')
+     D testMsgTooOldInMessageQueue...
+     D                 pr                  extproc('+
+     D                                     testMsgTooOldInMessageQueue')
+     D testSpecialValueEmpty...
+     D                 pr                  extproc('testSpecialValueEmpty')
 
 
       //----------------------------------------------------------------------
@@ -136,6 +141,9 @@
         aEqual( 'Message not found in message queue.' :
                 assertFailEvt.msg );
 
+        assertMessageQueueContains( MSG_QUEUE_NM : MSG_QUEUE_LB :
+          '*EMPTY' : *omit : *omit : testStartTime );
+
       /end-free
      P                 e
 
@@ -147,18 +155,37 @@
 
         // Setup.
 
-        sndQueueMsg(MSG_QUEUE_NM : MSG_QUEUE_LB : 'MSGQT - iRPGUnit' );
+        sndQueueMsg(MSG_QUEUE_NM : MSG_QUEUE_LB : 'MSGQT - iRPGUnit' + '.1' );
+        assertCntBefore = getAssertCalled();
+
+        sndQueueMsg(MSG_QUEUE_NM : MSG_QUEUE_LB : 'MSGQT - iRPGUnit' + '.2' );
+        assertCntBefore = getAssertCalled();
+
+        sndQueueMsg(MSG_QUEUE_NM : MSG_QUEUE_LB : 'MSGQT - iRPGUnit' + '.3' );
         assertCntBefore = getAssertCalled();
 
         // Run.
 
+        // exact match
         assertMessageQueueContains( MSG_QUEUE_NM : MSG_QUEUE_LB :
-          *omit : 'MSGQT - iRPGUnit' : *omit : testStartTime );
+          *omit : 'MSGQT - iRPGUnit.1' : *omit : testStartTime );
+
+        // any message starting with 'MSGQT'
+        assertMessageQueueContains( MSG_QUEUE_NM : MSG_QUEUE_LB :
+          *omit : 'MSGQT*' : *omit : testStartTime );
+
+        // any message starting containing 'iRPGUnit'
+        assertMessageQueueContains( MSG_QUEUE_NM : MSG_QUEUE_LB :
+          *omit : '*iRPGUnit*' : *omit : testStartTime );
+
+        // message ending with '.2'
+        assertMessageQueueContains( MSG_QUEUE_NM : MSG_QUEUE_LB :
+          *omit : '*.2' : *omit : testStartTime );
 
         // Check.
 
         assertCntAfter = getAssertCalled();
-        iEqual( assertCntBefore + 1 : assertCntAfter );
+        iEqual( assertCntBefore + 4 : assertCntAfter );
 
       /end-free
      P                 e
@@ -207,6 +234,45 @@
         iEqual( assertCntBefore + 2 : assertCntAfter );
         aEqual( 'Message not found in message queue.' :
                 assertFailEvt.msg );
+
+      /end-free
+     P                 e
+
+
+     P testSpecialValueEmpty...
+     P                 b                   export
+     D                 pi
+
+     D assertFailEvt   ds                  likeds(AssertFailEvt_t)
+     D msgInfo         ds                  likeds(MsgInfo_t)
+      /free
+
+        // Setup.
+
+        assertCntBefore = getAssertCalled();
+
+        // Run.
+
+        monitor;
+          assertMessageQueueContains( MSG_QUEUE_NM : MSG_QUEUE_LB :
+            '*EMPTY' : 'MSGQUEUET*' : *omit : testStartTime );
+          fail('Other parameters must be omitted when msgId = *EMPTY');
+        on-error;
+          // Exception message, as expected.
+          assertFailEvt  = getAssertFailEvt();
+          assertCntAfter = getAssertCalled();
+          msgInfo = getMonitoredMessage();
+        endmon;
+
+        // Check.
+
+        iEqual( assertCntBefore : assertCntAfter );
+        aEqual( '' : assertFailEvt.msg );
+        aEqual( 'All other selection parameters must +
+                 be omitted, when msgId is set to ''*EMPTY''' : msgInfo.txt);
+
+        assertMessageQueueContains( MSG_QUEUE_NM : MSG_QUEUE_LB :
+          '*EMPTY' : *omit : *omit : testStartTime );
 
       /end-free
      P                 e

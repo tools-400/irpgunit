@@ -361,10 +361,14 @@
 
         dow 1=1;
           if msgIdx > listInfo.retRcdCnt;
-            sndEscapeMsgToCaller( 'Insufficient implementation. ' +
-                  'Should use QGYGTLE to retrieve records after ' +
-                               %char( listInfo.retRcdCnt ) + '. ' +
-                                          'Please open an issue.' );
+            if listInfo.totalRcdCnt > listInfo.retRcdCnt;
+              sndEscapeMsgToCaller( 'Insufficient implementation. ' +
+                    'Should use QGYGTLE to retrieve records after ' +
+                                 %char( listInfo.retRcdCnt ) + '. ' +
+                                            'Please open an issue.' );
+            else;
+              leave;
+            endif;
           endif;
 
           sentTimeStamp = getSentTimeJobLogMsg( msgBasicInfo );
@@ -484,6 +488,13 @@
           fldSelect.fldId(fldSelect.fldCnt) = LSTM_MSG_HELP_WITH_RPL_DATA;
         endif;
 
+        if (checkMsgId);
+          if msgId = '*EMPTY' and checkCount > 1;
+            sndEscapeMsgToCaller('All other selection parameters must be +
+                                  omitted, when msgId is set to ''*EMPTY''');
+          endif;
+        endif;
+
         QGYOLMSG( msgQueueList :
                   %size( msgQueueList ) :
                   listInfo :
@@ -501,12 +512,20 @@
         checkMatch = 0;
         p_fldInfo = *null;
 
-        dow listInfo.totalRcdCnt > 0 and msgIdx <= listInfo.retRcdCnt;
+        if checkMsgId and msgId = '*EMPTY' and listInfo.totalRcdCnt = 0;
+          return;
+        endif;
+
+        dow listInfo.totalRcdCnt > 0;
           if msgIdx > listInfo.retRcdCnt;
-            sndEscapeMsgToCaller( 'Insufficient implementation. ' +
-                  'Should use QGYGTLE to retrieve records after ' +
-                               %char( listInfo.retRcdCnt ) + '. ' +
-                                          'Please open an issue.' );
+            if listInfo.totalRcdCnt > listInfo.retRcdCnt;
+              sndEscapeMsgToCaller( 'Insufficient implementation. ' +
+                    'Should use QGYGTLE to retrieve records after ' +
+                                 %char( listInfo.retRcdCnt ) + '. ' +
+                                            'Please open an issue.' );
+            else;
+              leave;
+            endif;
           endif;
 
           sentTimeStamp = getSentTimeMsgQMsg( msgBasicInfo );
@@ -515,7 +534,7 @@
             leave;
           endif;
 
-          if checkMsgId and msgBasicInfo.msgId = msgId;
+          if checkMsgId;
             checkMatch += 1;
           endif;
 

@@ -172,39 +172,45 @@
      D  string                             const like(String_t)
      D                                           options(*varsize)
 
-     D state           s              1a
+     D T_ANY           c                   1
+     D T_GENERIC       c                   2
+     D T_STARTSWITH    c                   3
+     D T_ENDSWITH      c                   4
+     D T_MATCH         c                   5
+
+     D state           s             10i 0
      D text            s                   like(generic)
       /free
 
          select;
+         when generic = '*';
+           state = T_ANY; // Anything but not empty
+           text = '*';
          when startsWith( '*' : generic) and endsWith('*' : generic );
-           state ='G'; // *generic*
+           state = T_GENERIC;
            text = %subst(generic: 2: %len(generic) - 2);
          when startsWith( '*' : generic);
-           state ='E'; // ends with
+           state = T_ENDSWITH;
            text = %subst(generic: 2);
          when endsWith( '*' : generic);
-           state ='S'; // starts with
+           state = T_STARTSWITH;
            text = %subst(generic: 1: %len(generic) - 1);
          other;
-           state = 'M'; // exact match
+           state = T_MATCH;
            text = generic;
          endsl;
 
-         if (%len(string) = 0  or
-             %len(text) = 0  or
-             %len(string) < %len(text));
-            return *OFF;
-         endif;
-
          select;
-         when (state = 'G');
+         when (state = T_ANY);
+            return %len(string) > 1;
+         when (state = T_GENERIC);
             return  contains( text : string );
-         when (state = 'S');
+         when (state = T_STARTSWITH);
             return startsWith( text : string );
-         when (state = 'E');
+         when (state = T_ENDSWITH);
             return endsWith( text : string );
          other;
+            // Exact match
             return uCase(text) = uCase(string);
          endsl;
 

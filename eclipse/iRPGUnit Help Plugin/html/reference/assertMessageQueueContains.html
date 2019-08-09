@@ -16,16 +16,28 @@
 <b>Description:</b>
 <p class="indent">
 Checks whether a given message queue contains the specified message between NOW and <i>timeLimit</i>. The
-message is identified by any combination of ID, message text or message help. Message test and
-message help can be specified as *generic* strings values.<br>
+message is identified by any combination of ID, message text or message help. Unused selection parameters
+must be omitted.
+</p>
+<p class="indent">
+Message ID can be set to <i>*EMPTY</i> to test whether a message queue is empty. All other parameters must be omitted.<br>
+Message text and message help can be specified as *generic* strings values.<br/>
 The value of <i>timeLimit</i> should be created with <a href="./getFullTimestamp.html">getFullTimeStamp()</a>.
 </p>
-<b>Example:</b>
+<b>Example 1:</b>
 <p>
 <code><pre class="indent">
 testStartTime = getFullTimeStamp();
 // run the test, that is expected to add the message to the message queue
 assertMessageQueueContains( 'QMSGQT' : 'QTEMP' : *omit : 'MSGQT - iRPGUnit' : *omit : testStartTime );
+</pre></code>
+</p>
+<b>Example 2:</b>
+<p>
+<code><pre class="indent">
+testStartTime = getFullTimeStamp();
+// run the test, that is expected to add no messages to the message queue
+assertMessageQueueContains( 'QMSGQT' : 'QTEMP' : '*EMPTY' : *omit : *omit : testStartTime );
 </pre></code>
 </p>
 <p>

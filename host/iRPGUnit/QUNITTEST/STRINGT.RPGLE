@@ -432,6 +432,20 @@
         assert( result :
           'compare() must return TRUE, because string ends with ''dog.''' );
 
+        // Check special cases
+
+        result = compare( '*' : FOX);
+        assert( result :
+          'compare() must return TRUE, because string is not empty');
+
+        result = compare( '*' : '');
+        assert( not result :
+          'compare() must return FALSE, because string is empty');
+
+        result = compare( '' : '');
+        assert( result :
+          'compare() must return TRUE, because both strings are empty');
+
       /end-free
      P                 e
 
