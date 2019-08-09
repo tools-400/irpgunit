@@ -31,16 +31,10 @@
 /*                  VxRxMx  : Release in the format of VxRxMx.         */
 /* =================================================================== */
 /*   >>PRE-COMPILER<<                                                  */
-/*     >>CRTCMD<<  CRTBNDCL      PGM(&LI/&OB) +                        */
-/*                               SRCFILE(&SL/&SF)  +                   */
-/*                               SRCMBR(&SM);                          */
-/*     >>COMPILE<<                                                     */
-/*       >>PARM<< DBGVIEW(*LIST);                                      */
-/*     >>END-COMPILE<<                                                 */
-/*     >>LINK<<                                                        */
-/*       >>PARM<< DFTACTGRP(*NO);                                      */
-/*       >>PARM<< ACTGRP(*NEW);                                        */
-/*     >>END-LINK<<                                                    */
+/*     >>CRTCMD<<  STRREXPRC SRCMBR(&SM) SRCFILE(&SL/&SF);             */
+/*     >>IMPORTANT<<                                                   */
+/*       >>PARM<< PARM('INSTALL &LI');                                 */
+/*     >>END-IMPORTANT<<                                               */
 /*     >>EXECUTE<<                                                     */
 /*   >>END-PRE-COMPILER<<                                              */
 /* =================================================================== */
