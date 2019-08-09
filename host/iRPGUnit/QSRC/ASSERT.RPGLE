@@ -501,7 +501,7 @@
         checkMatch = 0;
         p_fldInfo = *null;
 
-        dow listInfo.totalRcdCnt > 0;
+        dow listInfo.totalRcdCnt > 0 and msgIdx <= listInfo.retRcdCnt;
           if msgIdx > listInfo.retRcdCnt;
             sndEscapeMsgToCaller( 'Insufficient implementation. ' +
                   'Should use QGYGTLE to retrieve records after ' +
@@ -520,27 +520,27 @@
           endif;
 
           if (msgBasicInfo.retFldCnt > 0);
-            p_fldInfo = p_msgBasicInfo + msgBasicInfo.retFldOff;
+            p_fldInfo = %addr( msgQueueList ) + msgBasicInfo.retFldOff;
             for i = 1 to msgBasicInfo.retFldCnt;
               if fldInfo.dataLen > 0;
                 p_fldData = p_fldInfo + %size(fldInfo);
                 select;
                 when fldInfo.fldId = LSTM_MSG_WITH_RPL_DATA;
                   if checkMsgText;
-                    if contains(msgText: %subst(fldData: 1: fldInfo.dataLen));
+                    if compare(msgText: %subst(fldData: 1: fldInfo.dataLen));
                       checkMatch += 1;
                     endif;
                   endif;
                 when fldInfo.fldId = LSTM_MSG_HELP_WITH_RPL_DATA;
                   if checkMsgHelp;
-                    if contains(msgHelp: %subst(fldData: 1: fldInfo.dataLen));
+                    if compare(msgHelp: %subst(fldData: 1: fldInfo.dataLen));
                       checkMatch += 1;
                     endif;
                   endif;
                 endsl;
               endif;
 
-              p_fldInfo += fldInfo.fldInfoLen;
+              p_fldInfo = %addr( msgQueueList ) + fldInfo.nextFldOff;
             endfor;
           endif;
 
