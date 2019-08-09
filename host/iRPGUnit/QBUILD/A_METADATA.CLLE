@@ -21,7 +21,7 @@
      /* =================================================================== */
              PGM        PARM(&TARGETLIB)
 
-             DCL        VAR(&TARGETLIB) TYPE(*CHAR) LEN(10) VALUE(RPGUNITDVP)
+             DCL        VAR(&TARGETLIB) TYPE(*CHAR) LEN(10) VALUE(RPGUNIT)
 
              CHGVAR     VAR(&TARGETLIB) VALUE(&TARGETLIB)
              MONMSG     MSGID(MCH3601) EXEC(SNDPGMMSG MSGID(CPF9898) +
@@ -683,6 +683,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QGYOLMSG) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Open List of Messages.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
                           MBR(QGYOLSPL) +
                           SRCTYPE(RPGLE) +
                           TEXT('Open list of spooled files.')
@@ -776,6 +782,12 @@
                           MBR(QUSRJOBI) +
                           SRCTYPE(RPGLE) +
                           TEXT('Retrieve Job Information (QUSRJOBI) API.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QUSRMBRD) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Retrieve Member Description (QUSRMBRD) API')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSYSINC) +
@@ -1079,6 +1091,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(MKMSGQT) +
+                          SRCTYPE(REXX) +
+                          TEXT('iRPGUnit SelfTest - Build MSGQT.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(MKPGMMSGT) +
                           SRCTYPE(REXX) +
                           TEXT('iRPGUnit SelfTest - Build PGMMSGT.')
@@ -1106,6 +1124,12 @@
                           MBR(MKUTALL) +
                           SRCTYPE(REXX) +
                           TEXT('iRPGUnit - Build and run all self and acp. tests.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(MSGQT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit SelfTest - Test Message Queue.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +

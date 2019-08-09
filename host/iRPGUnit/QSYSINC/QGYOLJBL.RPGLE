@@ -37,12 +37,12 @@
      D fldId                         10i 0
      D dataType                       1a
      D dataSts                        1a
-     D                               14a
+     D reserved_1                    14a
      D dataLen                       10i 0
 
        // Number of records to return:
        // - All records are built synchronously in the list by the main job.
-     D FULL_SYNCHRONOUS_BUILD...
+     D OLJL_FULL_SYNCHRONOUS_BUILD...
      D                 c                   const(-1)
 
        // Field Identifiers:

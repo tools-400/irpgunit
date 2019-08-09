@@ -30,6 +30,7 @@
       /include qinclude,ERRORCODE
       /include qinclude,PGMMSG
       /include qinclude,TEMPLATES
+      /include qinclude,STRING
       /include qinclude,SYSTEMAPI
 
       //----------------------------------------------------------------------
@@ -55,10 +56,21 @@
      D getParm         pr         16384a   varying
      D                                     extproc('getRealParm_internal_use')
      D  i_value                       2a   const
+
      D getRealParm_internal_use...
      D                 pr         16384a   varying
      D                                     extproc('getRealParm_internal_use')
      D  i_value                       2a
+
+     D getSentTimeJobLogMsg...
+     D                 pr              z
+     D                                     extproc('getSentTimeJobLogMsg')
+     D  msg                                const likeds(dsOLJL0100EntHdr)
+
+     D getSentTimeMsgQMsg...
+     D                 pr              z
+     D                                     extproc('getSentTimeMsgQMsg')
+     D  msg                                const likeds(dsLSTM0100EntHdr)
 
       //----------------------------------------------------------------------
       //   GLOBAL VARIABLES
@@ -339,7 +351,7 @@
         QGYOLJBL( jobLogList :
                   %size( jobLogList ) :
                   listInfo :
-                  FULL_SYNCHRONOUS_BUILD :
+                  OLJL_FULL_SYNCHRONOUS_BUILD :
                   fldSelect :
                   %size( fldSelect ) :
                   percolateErrors );
@@ -355,7 +367,7 @@
                                           'Please open an issue.' );
           endif;
 
-          sentTimeStamp = getSentTimeStamp( msgBasicInfo );
+          sentTimeStamp = getSentTimeJobLogMsg( msgBasicInfo );
 
           if sentTimeStamp < timeLimit;
             leave;
@@ -374,6 +386,177 @@
         QGYCLST( listInfo.rqsHdl : percolateErrors );
 
         assert( msgFound : 'Message ' + msgId + ' not found in the job log.' );
+
+      /end-free
+     P                 e
+
+
+     P assertMessageQueueContains...
+     P                 b                   export
+     D                 pi
+     D  userOrQueue                  10a   const
+     D  library                      10a   const options(*omit)
+     D  msgId                         7a   const options(*omit)
+     D  msgText                     132a   const varying options(*omit)
+     D  msgHelp                     256a   const varying options(*omit)
+     D  timeLimit                      z   const
+
+      // Message queue message field selection for QGYOLMSG API.
+     D fldSelect       ds                  qualified
+     D  listDirection                10a   inz('*PRV')
+     D  reserved_1                    2a   inz
+     D  severity                     10i 0 inz(0)
+     D  maxMsgLen                    10i 0 inz(132)
+     D  maxMsgHlpLen                 10i 0 inz(0)
+     D  selectOff                    10i 0
+     D  selectCnt                    10i 0 inz(1)
+     D  strMsgKeyOff                 10i 0
+     D  fldIdOff                     10i 0
+     D  fldCnt                       10i 0 inz(0)
+     D  msgSelect                    10a   inz('*ALL')
+     D  strMsgKey1                    4a   inz(x'FFFFFFFF')
+     D  fldId                        10i 0 dim(4) inz
+
+     D checkMsgId      s               n   inz(*off)
+     D checkMsgText    s               n   inz(*off)
+     D checkMsgHelp    s               n   inz(*off)
+     D checkCount      s             10i 0 inz(0)
+     D checkMatch      s             10i 0 inz(0)
+
+     D msgQueueInf     ds                  likeds(dsUserQueueInf)
+     D msgQueuesUsed   ds                  likeds(dsMsgQueuesUsed)
+     D listInfo        ds                  likeds(dsOpnList)
+     D msgBasicInfo    ds                  likeds(dsLSTM0100EntHdr)
+     D                                     based(p_msgBasicInfo)
+     D p_msgBasicInfo  s               *
+     D fldInfo         ds                  likeds(dsLSTM0100FldHdr)
+     D                                     based(p_fldInfo)
+     D p_fldInfo       s               *
+     D fldData         s          32766a   based(p_fldData)
+     D p_fldData       s               *
+
+     D i               s             10i 0
+     D msgQueueList    s          32766a
+     D sentTimeStamp   s               z
+     D msgIdx          s             10i 0
+     D msgFound        s               n   inz(*off)
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
+      /free
+
+        fldSelect.selectOff = %addr(fldSelect.msgSelect) - %addr(fldSelect);
+        fldSelect.strMsgKeyOff = %addr(fldSelect.strMsgKey1) - %addr(fldSelect);
+        fldSelect.fldIdOff = %addr(fldSelect.fldId) - %addr(fldSelect);
+
+        clear msgQueueInf;
+        if (%parms() >= %parmnum(library) and %addr(library) <> *null);
+          msgQueueInf.ind = LSTM_MSG_QUEUE_NAME;
+          msgQueueInf.userOrQueueNm = userOrQueue;
+          msgQueueInf.libraryNm = library;
+        else;
+          msgQueueInf.ind = LSTM_USER_NAME;
+          msgQueueInf.userOrQueueNm = userOrQueue;
+        endif;
+
+        fldSelect.fldCnt = 1;
+        fldSelect.fldId(fldSelect.fldCnt) = LSTM_RPLY_STATUS;
+
+        fldSelect.fldCnt += 1;
+        fldSelect.fldId(fldSelect.fldCnt) = LSTM_SND_USER_PROFILE;
+
+        if (%parms() >= %parmnum(msgId) and %addr(msgId) <> *null);
+          checkMsgId = *on;
+          checkCount += 1;
+        endif;
+
+        if (%parms() >= %parmnum(msgText) and %addr(msgText) <> *null);
+          checkMsgText = *on;
+          checkCount += 1;
+          fldSelect.fldCnt += 1;
+          fldSelect.fldId(fldSelect.fldCnt) = LSTM_MSG_WITH_RPL_DATA;
+        endif;
+
+        if (%parms() >= %parmnum(msgHelp) and %addr(msgHelp) <> *null);
+          checkMsgHelp = *on;
+          checkCount += 1;
+          fldSelect.fldCnt += 1;
+          fldSelect.fldId(fldSelect.fldCnt) = LSTM_MSG_HELP_WITH_RPL_DATA;
+        endif;
+
+        QGYOLMSG( msgQueueList :
+                  %size( msgQueueList ) :
+                  listInfo :
+                  OLJL_FULL_SYNCHRONOUS_BUILD :
+                  LSTM_SORT_NONE :
+                  fldSelect :
+                  %size( fldSelect ) :
+                  msgQueueInf :
+                  msgQueuesUsed :
+                  percolateErrors );
+
+        p_msgBasicInfo = %addr( msgQueueList );
+        msgIdx = 1;
+
+        checkMatch = 0;
+        p_fldInfo = *null;
+
+        dow listInfo.totalRcdCnt > 0;
+          if msgIdx > listInfo.retRcdCnt;
+            sndEscapeMsgToCaller( 'Insufficient implementation. ' +
+                  'Should use QGYGTLE to retrieve records after ' +
+                               %char( listInfo.retRcdCnt ) + '. ' +
+                                          'Please open an issue.' );
+          endif;
+
+          sentTimeStamp = getSentTimeMsgQMsg( msgBasicInfo );
+
+          if sentTimeStamp < timeLimit;
+            leave;
+          endif;
+
+          if checkMsgId and msgBasicInfo.msgId = msgId;
+            checkMatch += 1;
+          endif;
+
+          if (msgBasicInfo.retFldCnt > 0);
+            p_fldInfo = p_msgBasicInfo + msgBasicInfo.retFldOff;
+            for i = 1 to msgBasicInfo.retFldCnt;
+              if fldInfo.dataLen > 0;
+                p_fldData = p_fldInfo + %size(fldInfo);
+                select;
+                when fldInfo.fldId = LSTM_MSG_WITH_RPL_DATA;
+                  if checkMsgText;
+                    if contains(msgText: %subst(fldData: 1: fldInfo.dataLen));
+                      checkMatch += 1;
+                    endif;
+                  endif;
+                when fldInfo.fldId = LSTM_MSG_HELP_WITH_RPL_DATA;
+                  if checkMsgHelp;
+                    if contains(msgHelp: %subst(fldData: 1: fldInfo.dataLen));
+                      checkMatch += 1;
+                    endif;
+                  endif;
+                endsl;
+              endif;
+
+              p_fldInfo += fldInfo.fldInfoLen;
+            endfor;
+          endif;
+
+          if checkMatch = checkCount;
+            msgFound = *on;
+            leave;
+          endif;
+
+          // Go to next message in the job log.
+          p_msgBasicInfo = %addr( msgQueueList ) + msgBasicInfo.nextEntOff;
+          msgIdx += 1;
+        enddo;
+
+        QGYCLST( listInfo.rqsHdl : percolateErrors );
+
+        assert( msgFound : 'Message not found in message queue.' );
 
       /end-free
      P                 e
@@ -499,7 +682,34 @@
      P                 e
 
 
+     P getSentTimeJobLogMsg...
+     P                 b
+     D                 pi              z
+     D  msg                                const likeds(dsOLJL0100EntHdr)
 
+     D sentDateAsIso   s              8a
+
+        sentDateAsIso = %char( %date( msg.sentDate : *cymd0) : *iso0 );
+        return %timestamp( sentDateAsIso +
+                           msg.sentTime +
+                           msg.microseconds :
+                           *iso0 );
+     P                 e
+
+
+     P getSentTimeMsgQMsg...
+     P                 b
+     D                 pi              z
+     D  msg                                const likeds(dsLSTM0100EntHdr)
+
+     D sentDateAsIso   s              8a
+
+        sentDateAsIso = %char( %date( msg.sentDate : *cymd0) : *iso0 );
+        return %timestamp( sentDateAsIso +
+                           msg.sentTime +
+                           msg.microseconds :
+                           *iso0 );
+     P                 e
 
 
       //----------------------------------------------------------------------
@@ -550,17 +760,3 @@
        endif;
      P                 e
 
-
-     P getSentTimeStamp...
-     P                 b
-     D                 pi              z
-     D  msg                                const likeds(dsOLJL0100EntHdr)
-
-     D sentDateAsIso   s              8a
-
-        sentDateAsIso = %char( %date( msg.sentDate : *cymd0) : *iso0 );
-        return %timestamp( sentDateAsIso +
-                           msg.sentTime +
-                           msg.microseconds :
-                           *iso0 );
-     P                 e

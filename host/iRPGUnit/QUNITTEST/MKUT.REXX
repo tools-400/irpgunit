@@ -96,6 +96,7 @@
  executeUnitTest('MKEXTPRCT', 'EXTPRCT')
  executeUnitTest('MKEXTTSTT', 'EXTTSTT')
  executeUnitTest('MKJOBLOGT', 'JOBLOGT')
+ executeUnitTest('MKMSGQT', 'MSGQT')
  executeUnitTest('MKRUNT', 'RUNT')
  executeUnitTest('MKCMDRUNT', 'CMDRUNT')
  executeUnitTest('MKCMDRUNLT', 'CMDRUNLOGT')

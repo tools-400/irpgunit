@@ -423,6 +423,7 @@
       /include qsysinc,QGYGTLE
       /include qsysinc,QGYCLST
       /include qsysinc,QGYOLJBL
+      /include qsysinc,QGYOLMSG
       /include qsysinc,QGYOLSPL
       /include qsysinc,QLEACTBNDP
       /include qsysinc,QLEGETEXP

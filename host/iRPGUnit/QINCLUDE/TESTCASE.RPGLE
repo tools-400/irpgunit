@@ -131,6 +131,29 @@
      D  timeLimit                      z   const
 
 
+      // assertMessageQueueContains -- General Purpose Assertion
+      //
+      // Checks whether a given message queue contains the specified message ID between
+      // NOW and 'timeLimit'.
+      //
+      // Examples:
+      //   assertMessageQueueContains( 'MCH1211' : %timestamp() - %minutes(2) );
+      //
+      // Messages:
+      //   Message 'msgId' not found in the job log.
+
+     D assertMessageQueueContains...
+     D                 pr                  extproc('+
+     D                                     assertMessageQueueContains+
+     D                                     ')
+     D  userOrQueue                  10a   const
+     D  library                      10a   const options(*omit)
+     D  msgId                         7a   const options(*omit)
+     D  msgText                     132a   const varying options(*omit)
+     D  msgHelp                     256a   const varying options(*omit)
+     D  timeLimit                      z   const
+
+
       // fail -- Fail test
       //
       // Produces an error and appends the specified 'message' to the test

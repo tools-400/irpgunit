@@ -10,7 +10,8 @@
 /* >>PRE-COMPILER<<                                                           */
 /*   >>CRTCMD<<  CRTSRVPGM SRVPGM(&LI/&OB);                                   */
 /*   >>IMPORTANT<<                                                            */
-/*     >>PARM<<  MODULE(&LI/ASSERT &LI/PGMMSG &LI/VERSION &LI/TESTUTILS);     */
+/*     >>PARM<<  MODULE(&LI/ASSERT &LI/PGMMSG &LI/VERSION &LI/TESTUTILS +     */
+/*                      &LI/STRING);                                          */
 /*     >>PARM<<  EXPORT(*SRCFILE);                                            */
 /*     >>PARM<<  SRCFILE(&LI/QBND);                                           */
 /*     >>PARM<<  SRCMBR(RUTESTCASE);                                          */
@@ -51,6 +52,7 @@ STRPGMEXP  PGMLVL(*CURRENT) SIGNATURE('iRPGUNIT V3.0')
   EXPORT SYMBOL("getAssertFailEvtLong")        /* internal self-test API */
   EXPORT SYMBOL("assertJobLogContains")        /* public API */
   EXPORT SYMBOL("getFullTimeStamp")            /* public API */
+  EXPORT SYMBOL("assertMessageQueueContains")  /* public API */
 
 ENDPGMEXP
 

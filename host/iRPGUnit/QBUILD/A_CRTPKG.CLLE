@@ -469,6 +469,9 @@
                           TOFILE(&LIB/&QSYSINC) FROMMBR(QGYOLJBL) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QGYOLMSG) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
                           TOFILE(&LIB/&QSYSINC) FROMMBR(QGYOLSPL) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
@@ -648,6 +651,9 @@
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(LIBLT) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(MSGQT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(MKACPTSTT) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
@@ -676,6 +682,9 @@
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(MKLIBLT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(MKMSGQT) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(MKPGMMSGT) +
@@ -737,6 +746,11 @@
                           TRUNCNBR(*NO) DFTACTGRP(*NO) ACTGRP(*CALLER)
 
              CALL       PGM(&TMPLIB/CRTPKGMDT) PARM(&LIB &RELEASE)
+
+             CPYF       FROMFILE(&LIB/&QBUILD) +
+                          TOFILE(&DEVLIB/&QBUILD) +
+                          FROMMBR(A_METADATA) TOMBR(*FROMMBR) +
+                          MBROPT(*REPLACE)
 
              /* ---------------------------------------------------- */
              /*  Re-create objects for the specified target release  */

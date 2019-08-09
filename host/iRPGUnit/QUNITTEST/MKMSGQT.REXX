@@ -1,5 +1,5 @@
 /* =================================================================== */
-/*  iRPGUnit SelfTest - Build JOBLOGT.                                 */
+/*  iRPGUnit SelfTest - Build MSGQT.                                   */
 /* =================================================================== */
 /* Copyright (c) 2013-2019 iRPGUnit Project Team                       */
 /* All rights reserved. This program and the accompanying materials    */
@@ -10,7 +10,7 @@
 /*  Usage:                                                             */
 /*  a) Add the iRPGUnit library to your library list.                  */
 /*  b) Start the Rexx script with the following command:               */
-/*       STRREXPRC SRCMBR(MKJOBLOGT) SRCFILE(QUNITTEST) PARM(prdLib)   */
+/*       STRREXPRC SRCMBR(MKMSGQT) SRCFILE(QUNITTEST) PARM(prdLib)     */
 /*     where 'prdLib' is the library containing the RPGUnit            */
 /*     source files.                                                   */
 /*                                                                     */
@@ -47,7 +47,7 @@
  SIGNAL on SYNTAX
 
  /* The utility that is installed */
- UTILITY = 'JOBLOGT'
+ UTILITY = 'MSGQT'
 
  PARSE ARG prdLib dbgView tgtrls
 
@@ -59,7 +59,7 @@
    "SNDPGMMSG ",
      "MSGID(CPF9898) ",
      "MSGF(QCPFMSG) ",
-     "MSGDTA('Usage: STRREXPRC SRCMBR(MKJOBLOGT) SRCFILE(QUNITTEST) PARM(prdLib)')",
+     "MSGDTA('Usage: STRREXPRC SRCMBR(MKMSGQT) SRCFILE(QUNITTEST) PARM(prdLib)')",
      "TOPGMQ(*PRV (*CTLBDY)) ",
      "MSGTYPE(*ESCAPE)"
  end
@@ -87,16 +87,16 @@
  /* -------------------------------------------- */
  /*  Let's do it!                                */
  /* -------------------------------------------- */
- "CMPMOD MODULE("prdLib"/JOBLOGT  ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/MSGQT    ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/ASSERT   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
- "CRTSRVPGM  SRVPGM("prdLib"/JOBLOGT) ",
-            "MODULE("prdLib"/JOBLOGT) ",
+ "CRTSRVPGM  SRVPGM("prdLib"/MSGQT)  ",
+            "MODULE("prdLib"/MSGQT)  ",
             "EXPORT(*ALL) ",
             "OPTION(*DUPPROC) ",
             "BNDSRVPGM("prdLib"/RUTESTCASE) ",
-            "TEXT('RPGUnit SelfTest - Test ASSERT (job log).')"
+            "TEXT('iRPGUnit SelfTest - Test Message Queue.')"
 
  "SNDPGMMSG ",
    "MSGID(CPF9897) ",

@@ -372,6 +372,7 @@
    "DLTMOD MODULE("_prdLib"/LIBLC)"
    "DLTMOD MODULE("_prdLib"/LIBLT)"
    "DLTMOD MODULE("_prdLib"/LLIST)"
+   "DLTMOD MODULE("_prdLib"/MSGQT)"
    "DLTMOD MODULE("_prdLib"/OBJECT)"
    "DLTMOD MODULE("_prdLib"/PGMMSG)"
    "DLTMOD MODULE("_prdLib"/PGMMSGT)"
