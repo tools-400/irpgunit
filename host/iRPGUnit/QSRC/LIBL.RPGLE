@@ -200,7 +200,8 @@
 
           select;
           when (libl.numE = 1);
-             if (libl.lib(1) = '*JOBD');
+             select;
+             when (libl.lib(1) = '*JOBD');
                 if (jobd.nm = '*DFT');
                    jobd.nm = 'RPGUNIT';
                    jobd.lib = testPgmLib;
@@ -208,7 +209,12 @@
                 loadedLibl = loadLibl(jobd);
                 restoreLibl(loadedLibl);
                 return *ON;
-             endif;
+             when (libl.lib(1) = '*CURRENT');
+                // keep current library list
+             other;
+                changeLibl('*CRTDFT': libL);
+                return *ON;
+             endsl;
 
           when (libl.numE > 1);
              changeLibl('*CRTDFT': libL);
