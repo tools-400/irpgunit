@@ -154,10 +154,10 @@
 
         monitor;
            msgKey = getHighestMsgKey();
-           aEqual( '122'     : assertFailEvt.callStk.Entry(1).sender.specNb );  // IFS Compile
+           aEqual( '134'     : assertFailEvt.callStk.Entry(1).sender.specNb );  // IFS Compile
         on-error;
            getLatestEscMsg(msgKey: *ON);
-           aEqual( '12200'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
+           aEqual( '13400'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
         endmon;
 
         aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(2).sender.qPgm.nm );
@@ -225,10 +225,10 @@
 
         monitor;
            msgKey = getHighestMsgKey();
-           aEqual( '95'      : assertFailEvt.callStk.Entry(1).sender.specNb );
+           aEqual( '107'     : assertFailEvt.callStk.Entry(1).sender.specNb );
         on-error;
            getLatestEscMsg(msgKey: *ON);
-           aEqual( '9500'    : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
+           aEqual( '10700'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
         endmon;
 
         aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(2).sender.qPgm.nm );
@@ -329,10 +329,10 @@
 
         monitor;
            msgKey = getHighestMsgKey();
-           aEqual( '165'     : assertFailEvt.callStk.Entry(1).sender.specNb );  // IFS Compile
+           aEqual( '177'     : assertFailEvt.callStk.Entry(1).sender.specNb );  // IFS Compile
         on-error;
            getLatestEscMsg(msgKey: *ON);
-           aEqual( '16500'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
+           aEqual( '17700'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
         endmon;
 
         aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(2).sender.qPgm.nm );
