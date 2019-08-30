@@ -6,12 +6,16 @@ The "build.xml" Ant script must run in the same JRE of the workspace,
 to make the "eclipse.refreshLocal" tag work properly.
 
 
-
 Preparation
 ===========
-
-1. Open file "build.properties" of the project "Build".
-2. Increment version number of property "build.version".
+1. Create library on IBM i:
+     * CRTBNDCL PGM(RPGUNITDVP/A_CRTPKG) 
+         SRCFILE(RPGUNITDVP/QBUILD) 
+         DFTACTGRP(*NO) ACTGRP(*NEW) DBGVIEW(*LIST)
+     * CALL PGM(A_CRTPKG) PARM('RPGUNITDVP')
+2. Run target "downloadIBMiLibrary" of build.xml. 
+3. Open file "build.properties" of the project "Build".
+4. Increment version number of property "build.version".
 
 
 Creating the Update Site
