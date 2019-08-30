@@ -48,6 +48,8 @@
              DCL        VAR(&QTESTCASES) TYPE(*CHAR) LEN(10) VALUE('QTESTCASES')
              DCL        VAR(&QUNITTEST ) TYPE(*CHAR) LEN(10) VALUE('QUNITTEST')
 
+             DCL        VAR(&CCSID     ) TYPE(*CHAR) LEN( 4) VALUE('273')
+
              /* TODO: Remove this line at 31.12.2019 */
              DCL        VAR(&RPGUNIT1  ) TYPE(*CHAR) LEN(10) VALUE('RPGUNIT1')
 
@@ -96,18 +98,30 @@
              /* ---------------------------------------------------- */
              /*  Create source files.                                */
              /* ---------------------------------------------------- */
-             CRTSRCPF   FILE(&LIB/&QBND      ) RCDLEN(112) TEXT('iRPGUnit - Binder Source')
-             CRTSRCPF   FILE(&LIB/&QBUILD    ) RCDLEN(112) TEXT('iRPGUnit - Project Build')
-             CRTSRCPF   FILE(&LIB/&QCMD      ) RCDLEN(112) TEXT('iRPGUnit - Commands')
-             CRTSRCPF   FILE(&LIB/&QINCLUDE  ) RCDLEN(112) TEXT('iRPGUnit - Header Files')
-             CRTSRCPF   FILE(&LIB/&QLLIST    ) RCDLEN(112) TEXT('iRPGUnit - Linked List')
-             CRTSRCPF   FILE(&LIB/&QMISC     ) RCDLEN(112) TEXT('iRPGUnit - Miscellaneous')
-             CRTSRCPF   FILE(&LIB/&QPNLGRP   ) RCDLEN(112) TEXT('iRPGUnit - Panel Groups')
-             CRTSRCPF   FILE(&LIB/&QSRC      ) RCDLEN(112) TEXT('iRPGUnit - Sources')
-             CRTSRCPF   FILE(&LIB/&QSYSINC   ) RCDLEN(112) TEXT('iRPGUnit - System Header Files')
-             CRTSRCPF   FILE(&LIB/&QTESTCASES) RCDLEN(112) TEXT('iRPGUnit - SelfTests Test Cases')
-             CRTSRCPF   FILE(&LIB/&QUNITTEST ) RCDLEN(112) TEXT('iRPGUnit - SelfTests')
-             CRTSRCPF   FILE(&LIB/&RPGUNIT1  ) RCDLEN(112) TEXT('iRPGUnit - Backward compatibility')
+             CRTSRCPF   FILE(&LIB/&QBND      ) RCDLEN(112) CCSID(&CCSID) +
+                        TEXT('iRPGUnit - Binder Source')
+             CRTSRCPF   FILE(&LIB/&QBUILD    ) RCDLEN(112) CCSID(&CCSID) +
+                        TEXT('iRPGUnit - Project Build')
+             CRTSRCPF   FILE(&LIB/&QCMD      ) RCDLEN(112) CCSID(&CCSID) +
+                        TEXT('iRPGUnit - Commands')
+             CRTSRCPF   FILE(&LIB/&QINCLUDE  ) RCDLEN(112) CCSID(&CCSID) +
+                        TEXT('iRPGUnit - Header Files')
+             CRTSRCPF   FILE(&LIB/&QLLIST    ) RCDLEN(112) CCSID(&CCSID) +
+                        TEXT('iRPGUnit - Linked List')
+             CRTSRCPF   FILE(&LIB/&QMISC     ) RCDLEN(112) CCSID(&CCSID) +
+                        TEXT('iRPGUnit - Miscellaneous')
+             CRTSRCPF   FILE(&LIB/&QPNLGRP   ) RCDLEN(112) CCSID(&CCSID) +
+                        TEXT('iRPGUnit - Panel Groups')
+             CRTSRCPF   FILE(&LIB/&QSRC      ) RCDLEN(112) CCSID(&CCSID) +
+                        TEXT('iRPGUnit - Sources')
+             CRTSRCPF   FILE(&LIB/&QSYSINC   ) RCDLEN(112) CCSID(&CCSID) +
+                        TEXT('iRPGUnit - System Header Files')
+             CRTSRCPF   FILE(&LIB/&QTESTCASES) RCDLEN(112) CCSID(&CCSID) +
+                        TEXT('iRPGUnit - SelfTests Test Cases')
+             CRTSRCPF   FILE(&LIB/&QUNITTEST ) RCDLEN(112) CCSID(&CCSID) +
+                        TEXT('iRPGUnit - SelfTests')
+             CRTSRCPF   FILE(&LIB/&RPGUNIT1  ) RCDLEN(112) CCSID(&CCSID) +
+                        TEXT('iRPGUnit - Backward compatibility')
 
              /* ---------------------------------------------------- */
              /*  Copy source members: QBND                           */
