@@ -23,11 +23,11 @@
  *   Creating the Update site
  *   ========================
  *
- *   1. Open "build.properties" of project "Java Scoped Template Variables Build".
- *   2. Increment version number of property "build.version".
- *   3. Execute target "build".
- *   4. Create plug-in: Right-click 'site.xml', select 'PDE Tools -> Build Site'.
- *   5. Execute target "createSourceForgeFiles".
+ *   1. Update version number in "build.properties" of project "iRPGUnit Build".
+ *   2. Execute target "build".
+ *   3. Create plug-in: Right-click 'site.xml', select 'PDE Tools -> Build Site'.
+ *   4. Execute target "createSourceForgeFiles".
+ *   5. Execute target "uploadSourceForgeFiles".
  *   6. Check-in source code.
  *   7. Create version tag.
  *
