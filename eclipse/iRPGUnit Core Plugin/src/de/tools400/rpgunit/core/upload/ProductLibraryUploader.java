@@ -82,48 +82,52 @@ public class ProductLibraryUploader {
             String workLibrary = REMOTE_WORK_LIBRARY;
             String saveFileName = libraryName;
 
-            setStatus(Messages.bind(Messages.Checking_library_A_for_existence, libraryName));
-            if (!checkLibraryPrecondition(libraryName, aspDeviceName)) {
-                setError(Messages.bind(Messages.Library_A_does_already_exist, libraryName));
+            if (!setASPDeviceName(aspDeviceName)) {
+                setError(Messages.bind(Messages.Could_not_set_asp_device_name_to_A, aspDeviceName));
             } else {
-                setStatus(Messages.bind(Messages.Checking_file_B_in_library_A_for_existence, new String[] { workLibrary, saveFileName }));
-                if (!checkSaveFilePrecondition(workLibrary, saveFileName)) {
-                    setError(Messages.bind(Messages.File_B_in_library_A_does_already_exist, new String[] { workLibrary, saveFileName }));
+                setStatus(Messages.bind(Messages.Checking_library_A_for_existence, libraryName));
+                if (!checkLibraryPrecondition(libraryName, aspDeviceName)) {
+                    setError(Messages.bind(Messages.Library_A_does_already_exist, libraryName));
                 } else {
-
-                    setStatus(Messages.bind(Messages.Creating_save_file_B_in_library_A, new String[] { workLibrary, saveFileName }));
-                    if (!createSaveFile(workLibrary, saveFileName, true)) {
-                        setError(Messages.bind(Messages.Could_not_create_save_file_B_in_library_A, new String[] { workLibrary, saveFileName }));
+                    setStatus(Messages.bind(Messages.Checking_file_B_in_library_A_for_existence, new String[] { workLibrary, saveFileName }));
+                    if (!checkSaveFilePrecondition(workLibrary, saveFileName)) {
+                        setError(Messages.bind(Messages.File_B_in_library_A_does_already_exist, new String[] { workLibrary, saveFileName }));
                     } else {
 
-                        try {
+                        setStatus(Messages.bind(Messages.Creating_save_file_B_in_library_A, new String[] { workLibrary, saveFileName }));
+                        if (!createSaveFile(workLibrary, saveFileName, true)) {
+                            setError(Messages.bind(Messages.Could_not_create_save_file_B_in_library_A, new String[] { workLibrary, saveFileName }));
+                        } else {
 
-                            setStatus(Messages.bind(Messages.Sending_save_file_to_host_A, hostName));
-                            setStatus(Messages.bind(Messages.Using_Ftp_port_number, new Integer(ftpPort)));
-                            AS400FTP client = new AS400FTP(as400);
+                            try {
 
-                            URL fileUrl = FileLocator.toFileURL(RPGUnitCorePlugin.getInstallURL());
-                            File file = new File(fileUrl.getPath() + LOCAL_SAVE_FILE_FOLDER + File.separator + SAVE_FILE_NAME);
-                            client.setPort(ftpPort);
-                            client.setDataTransferType(FTP.BINARY);
-                            if (client.connect()) {
-                                client.put(file, "/QSYS.LIB/" + workLibrary + ".LIB/" + saveFileName + ".FILE");
-                                client.disconnect();
+                                setStatus(Messages.bind(Messages.Sending_save_file_to_host_A, hostName));
+                                setStatus(Messages.bind(Messages.Using_Ftp_port_number, new Integer(ftpPort)));
+                                AS400FTP client = new AS400FTP(as400);
+
+                                URL fileUrl = FileLocator.toFileURL(RPGUnitCorePlugin.getInstallURL());
+                                File file = new File(fileUrl.getPath() + LOCAL_SAVE_FILE_FOLDER + File.separator + SAVE_FILE_NAME);
+                                client.setPort(ftpPort);
+                                client.setDataTransferType(FTP.BINARY);
+                                if (client.connect()) {
+                                    client.put(file, "/QSYS.LIB/" + workLibrary + ".LIB/" + saveFileName + ".FILE");
+                                    client.disconnect();
+                                }
+
+                                setStatus(Messages.bind(Messages.Restoring_library_A, libraryName));
+                                if (!restoreLibrary(workLibrary, saveFileName, libraryName, aspDeviceName)) {
+                                    setError(Messages.bind(Messages.Could_not_restore_library_A, libraryName));
+                                }
+
+                            } catch (Exception e) {
+                                setError(Messages.bind(Messages.Could_not_send_save_file_to_host_A, hostName), e);
+                            } finally {
+
+                                setStatus(Messages.bind(Messages.Deleting_object_A_B_of_type_C, new String[] { workLibrary, saveFileName, "*FILE" }));
+                                deleteSaveFile(workLibrary, saveFileName, true);
                             }
 
-                            setStatus(Messages.bind(Messages.Restoring_library_A, libraryName));
-                            if (!restoreLibrary(workLibrary, saveFileName, libraryName, aspDeviceName)) {
-                                setError(Messages.bind(Messages.Could_not_restore_library_A, libraryName));
-                            }
-
-                        } catch (Exception e) {
-                            setError(Messages.bind(Messages.Could_not_send_save_file_to_host_A, hostName), e);
-                        } finally {
-
-                            setStatus(Messages.bind(Messages.Deleting_object_A_B_of_type_C, new String[] { workLibrary, saveFileName, "*FILE" }));
-                            deleteSaveFile(workLibrary, saveFileName, true);
                         }
-
                     }
                 }
             }
@@ -167,6 +171,20 @@ public class ProductLibraryUploader {
             as400.disconnectAllServices();
             setStatus(Messages.bind(Messages.Disconnected_from_host_A, hostName));
         }
+    }
+
+    private boolean setASPDeviceName(String aspDeviceName) {
+
+        if (!isASPDeviceSpecified(aspDeviceName)) {
+            return true;
+        }
+
+        String cpfMsg = executeCommand("SETASPGRP ASPGRP(" + aspDeviceName + ")", true);
+        if (cpfMsg.equals("")) {
+            return true;
+        }
+
+        return false;
     }
 
     private boolean checkLibraryPrecondition(String libraryName, String aspDeviceName) {

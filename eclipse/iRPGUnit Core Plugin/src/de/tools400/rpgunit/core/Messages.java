@@ -151,6 +151,7 @@ public class Messages extends NLS {
     public static String DialogTitle_Delete_Object;
     public static String Connected_to_host_A;
     public static String Could_not_connect_to_host_A;
+    public static String Could_not_set_asp_device_name_to_A;
     public static String Checking_library_A_for_existence;
     public static String Library_A_does_already_exist;
     public static String Question_Do_you_want_to_delete_library_A;
