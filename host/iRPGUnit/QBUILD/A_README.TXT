@@ -53,22 +53,27 @@ b) Optionally run the RPGUnit self tests:
               History
 --------------------------------------
 
+--------------------------
+
+Version 3.0.0 - 09.09.2019
+--------------------------
+ * First version after merging ILEUnit of Mihael Schmidt with iRPGUnit.
+
 +==========================================================================+
 |  Notice: Version 2.5 will be the last version with an iRPGUnit library   |
 |          compiled for V6R1. Upcoming versions will be compiled for 7.1,  |
 |          when there is a need for changing the library.                  |
 +==========================================================================+
 
+Version 2.5.0 - 08.04.2019
 --------------------------
-
-Version 3.0.0 - 09.06.2019
---------------------------
- * Added preference options for capturing job log messages.
- * Added unit test RUPLUGINT8. All OK.
- * Added runtime error message to spooled file output.
- * Fixed problem that warning messages "Unit test ended with errors.
-   Check preference option 'Show result view' was shown to frequently.
- * Fixed spooled file header (iRPGUnit version information).
+ * Fixed problem of replacement variables that were not replaced by
+   the substitution data.
+ * Added option "Format job log entries".
+ * Fixed missing name of sending program.
+ * Fixed missing statement number of receiving program.
+ * Added preference option for capturing job log messages.
+ * Fixed problem that the "show view warning" was displayed to often.
 
 Version 2.4.2 - 02.11.2018
 --------------------------
