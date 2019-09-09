@@ -211,8 +211,8 @@ public class RunUnitTestAction implements ICMOneNGObjectAction, IValidityCheck {
 
     }
 
-    private IQSYSServiceProgram loadServiceProgram(IBMiConnection connection, ICMOneNGNFSObject cmoneNFSObject)
-        throws SystemMessageException, InterruptedException {
+    private IQSYSServiceProgram loadServiceProgram(IBMiConnection connection, ICMOneNGNFSObject cmoneNFSObject) throws SystemMessageException,
+        InterruptedException {
 
         String object = cmoneNFSObject.getObject();
         String library = cmoneNFSObject.getObjectLibrary();

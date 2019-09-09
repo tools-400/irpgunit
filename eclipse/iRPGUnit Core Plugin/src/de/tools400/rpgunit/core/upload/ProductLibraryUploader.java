@@ -172,7 +172,9 @@ public class ProductLibraryUploader {
     private boolean checkLibraryPrecondition(String libraryName, String aspDeviceName) {
 
         while (libraryExists(libraryName)) {
-            if (!MessageDialog.openQuestion(shell, Messages.DialogTitle_Delete_Object,
+            if (!MessageDialog.openQuestion(
+                shell,
+                Messages.DialogTitle_Delete_Object,
                 Messages.bind(Messages.Library_A_does_already_exist, libraryName) + "\n\n"
                     + Messages.bind(Messages.Question_Do_you_want_to_delete_library_A, libraryName))) {
                 return false;
@@ -208,9 +210,11 @@ public class ProductLibraryUploader {
     private boolean checkSaveFilePrecondition(String workLibrary, String saveFileName) {
 
         while (saveFileExists(workLibrary, saveFileName)) {
-            if (!MessageDialog.openQuestion(shell, Messages.DialogTitle_Delete_Object,
-                Messages.bind(Messages.File_B_in_library_A_does_already_exist, new String[] { workLibrary, saveFileName }) + "\n\n" + Messages
-                    .bind(Messages.Question_Do_you_want_to_delete_object_A_B_type_C, new String[] { workLibrary, saveFileName, "*FILE" }))) {
+            if (!MessageDialog.openQuestion(
+                shell,
+                Messages.DialogTitle_Delete_Object,
+                Messages.bind(Messages.File_B_in_library_A_does_already_exist, new String[] { workLibrary, saveFileName }) + "\n\n"
+                    + Messages.bind(Messages.Question_Do_you_want_to_delete_object_A_B_type_C, new String[] { workLibrary, saveFileName, "*FILE" }))) {
                 return false;
             }
             setStatus(Messages.bind(Messages.Deleting_object_A_B_of_type_C, new String[] { workLibrary, saveFileName, "*FILE" }));

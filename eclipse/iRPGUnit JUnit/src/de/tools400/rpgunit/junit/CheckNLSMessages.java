@@ -110,8 +110,8 @@ public class CheckNLSMessages {
 
             // Check
             System.out.println("Testing: " + nlsMessageConstant);
-            assertTrue("ERROR:" + localeInfo + "NLS string must not be NULL or empty: " + nlsMessageConstant,
-                messageText != null && messageText.trim().length() > 0);
+            assertTrue("ERROR:" + localeInfo + "NLS string must not be NULL or empty: " + nlsMessageConstant, messageText != null
+                && messageText.trim().length() > 0);
             assertFalse("ERROR:" + localeInfo + "NLS String must not end with spaces: " + nlsMessageConstant, messageText.endsWith(" "));
             assertNotNull("ERROR:" + localeInfo + "Message text must not be [null]. Missing property: " + nlsMessageConstant + "("
                 + nlsMessagesObject.getClass().getName() + ")", messageText);

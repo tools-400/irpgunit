@@ -838,9 +838,8 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
 
             I5ObjectName tJobDescription = getJobDescription(aUnitTestServiceprogram);
             if (!isJobDescriptionAvailable(tJobDescription)) {
-                throw new UnitTestException(
-                    Messages.bind(Messages.Can_not_execute_unit_test_A_B_due_to_missing_job_description_C,
-                        new Object[] { aUnitTestServiceprogram.getLibrary(), aUnitTestServiceprogram.getName(), tJobDescription.toString() }),
+                throw new UnitTestException(Messages.bind(Messages.Can_not_execute_unit_test_A_B_due_to_missing_job_description_C, new Object[] {
+                    aUnitTestServiceprogram.getLibrary(), aUnitTestServiceprogram.getName(), tJobDescription.toString() }),
                     UnitTestException.Type.unexpectedError);
             }
         }
@@ -925,8 +924,7 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             captureJobLog(program, aServiceProgram, startingMessageKey);
             throw new UnitTestException(
                 Messages.bind(Messages.Unit_test_A_B_ended_unexpected_with_error_message, new Object[] { aServiceProgram.getLibrary(),
-                    aServiceProgram.getName(), as400ErrorMsg.toString(), program.getServerJob().toString() }),
-                UnitTestException.Type.unexpectedError);
+                    aServiceProgram.getName(), as400ErrorMsg.toString(), program.getServerJob().toString() }), UnitTestException.Type.unexpectedError);
         }
 
         if (Preferences.DEBUG_CAPTURE_JOBLOG_ALL.equals(captureJobLog)) {
@@ -947,8 +945,8 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss"); //$NON-NLS-1$
 
         String now = formatter.format(new Date());
-        String newJobLogEntry = Messages.bind(Messages.A_Result_of_iRPGUnit_Test_Case_B_served_by_server_job_C,
-            new Object[] { now, aServiceProgram, program.getServerJob() });
+        String newJobLogEntry = Messages.bind(Messages.A_Result_of_iRPGUnit_Test_Case_B_served_by_server_job_C, new Object[] { now, aServiceProgram,
+            program.getServerJob() });
         logMessage(newJobLogEntry);
 
         QueuedMessage[] jobLogMessages = getJobLog(program.getServerJob(), startingMessageKey, -1);
@@ -982,11 +980,13 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
                 newJobLogEntry += NEW_LINE + messageHelp;
             }
 
-            newJobLogEntry += NEW_LINE + createProgramEntry(formatted, Messages.Sending, jobLogMessage.getFromProgram(),
-                jobLogMessage.getSendingModuleName(), jobLogMessage.getSendingProcedureName(), jobLogMessage.getSendingStatementNumbers());
+            newJobLogEntry += NEW_LINE
+                + createProgramEntry(formatted, Messages.Sending, jobLogMessage.getFromProgram(), jobLogMessage.getSendingModuleName(),
+                    jobLogMessage.getSendingProcedureName(), jobLogMessage.getSendingStatementNumbers());
 
-            newJobLogEntry += NEW_LINE + createProgramEntry(formatted, Messages.Receiving, jobLogMessage.getReceivingProgramName(),
-                jobLogMessage.getReceivingModuleName(), jobLogMessage.getReceivingProcedureName(), jobLogMessage.getReceiverStatementNumbers());
+            newJobLogEntry += NEW_LINE
+                + createProgramEntry(formatted, Messages.Receiving, jobLogMessage.getReceivingProgramName(), jobLogMessage.getReceivingModuleName(),
+                    jobLogMessage.getReceivingProcedureName(), jobLogMessage.getReceiverStatementNumbers());
 
             logMessage(newJobLogEntry);
         }
@@ -1107,13 +1107,13 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
         String message;
         if (formatted) {
             label = "   " + label;
-            message = Messages.bind(Messages.A_program_B_module_C_procedure_D_statement_E_FORMATTED,
-                new Object[] { label, getValueOrNull(programName), label, getValueOrNull(moduleName), label, getValueOrNull(procedureName), label,
-                    getValueOrNull(statement) });
+            message = Messages.bind(Messages.A_program_B_module_C_procedure_D_statement_E_FORMATTED, new Object[] { label,
+                getValueOrNull(programName), label, getValueOrNull(moduleName), label, getValueOrNull(procedureName), label,
+                getValueOrNull(statement) });
         } else {
-            message = Messages.bind(Messages.A_program_B_module_C_procedure_D_statement_E_UNFORMATTED,
-                new Object[] { label, getValueOrNull(programName), label, getValueOrNull(moduleName), label, getValueOrNull(procedureName), label,
-                    getValueOrNull(statement) });
+            message = Messages.bind(Messages.A_program_B_module_C_procedure_D_statement_E_UNFORMATTED, new Object[] { label,
+                getValueOrNull(programName), label, getValueOrNull(moduleName), label, getValueOrNull(procedureName), label,
+                getValueOrNull(statement) });
         }
 
         return message.toString();
