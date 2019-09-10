@@ -46,7 +46,7 @@
  *
  *     2.2 Run target 'downloadIBMiLibrary' of build.xml.
  *
- *     3 CReating the update site
+ *     3 Creating the update site
  *     3.1 On the PC run target 'build' of file 'build.xml'.
  *     3.2 Right-click 'site.xml', select 'PDE Tools -> Build Site'.
  *     3.3 On the PC run target 'createSourceForgeFiles' of file 'build.xml'.
