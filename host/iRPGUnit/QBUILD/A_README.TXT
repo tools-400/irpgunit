@@ -57,10 +57,18 @@ b) Optionally run the RPGUnit self tests:
 
 Version 3.0.0 - 09.09.2019
 --------------------------
- * First version after merging ILEUnit of Mihael Schmidt with iRPGUnit.
+ * Merged ILEUnit (Mihael Schmidt) with iRPGUnit.
+ * Added option to create a XML stream file for capturing the result
+   of a unit test, which can be read by the Jenkins build server.
+ * Added option to upload the iRPGUnit product library to a named ASP device.
+ * Added runtime error message to spooled file output.
+ * Changed A_INSTALL from CLLE to Rexx.
+ * Changed MK* from CLLE to Rexx.
+ * Renamed source files to more intuitive names.
+ * Bug fixes.
 
 +==========================================================================+
-|  Notice: Version 2.5 will be the last version with an iRPGUnit library   |
+|  Notice: Version 2.5 is the last version with an iRPGUnit library        |
 |          compiled for V6R1. Upcoming versions will be compiled for 7.1,  |
 |          when there is a need for changing the library.                  |
 +==========================================================================+
