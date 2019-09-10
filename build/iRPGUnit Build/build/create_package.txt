@@ -2,31 +2,51 @@
 Info
 ====
 
-The "build.xml" Ant script must run in the same JRE of the workspace,
-to make the "eclipse.refreshLocal" tag work properly.
+The 'build.xml' Ant script must run in the same JRE of the workspace,
+to make the 'eclipse.refreshLocal' tag work properly.
 
+Building the Project
+====================
 
-Preparation
-===========
-1. Create library on IBM i:
-     * CRTBNDCL PGM(RPGUNITDVP/A_CRTPKG) 
-         SRCFILE(RPGUNITDVP/QBUILD) 
-         DFTACTGRP(*NO) ACTGRP(*NEW) DBGVIEW(*LIST)
-     * CALL PGM(A_CRTPKG) PARM('RPGUNITDVP')
-2. Run target "downloadIBMiLibrary" of build.xml. 
-3. Open file "build.properties" of the project "Build".
-4. Increment version number of property "build.version".
+1. Preparation
+--------------
+1.1 Run JUnit test 'CheckNLSMessages'.
+1.2 Check for missing copyright headers.
+    Search all Java files for regular expression:
+      (?s)\A((?!copyright).)*\Z
+1.3 Change the version number in COPYRIGHT.RPGLE.
+1.4 Push all changes of the i Project to your IBM i.
+1.5 Update document 'iRPGUnit.doc' and also save it as
+    'iRPGUnit for RDi 8.0.pdf'.
+1.6 Refresh project 'iRPGUnit Core Plugin'.
+1.7 Increment version number of property 'build.version' in
+    file 'build.properties'.
 
+2. Creating the Library
+-----------------------
+2.1 Execute the following commands on your IBM i:
 
-Creating the Update Site
-========================
+    ADDLIBLE LIB(RPGUNITDVP)
 
-1. Update version number in "build.properties".
-2. Execute target "build".
-3. Create plug-in: Right-click 'site.xml', select 'PDE Tools -> Build Site'.
-4. Execute target "createSourceForgeFiles".
-5. Execute target "uploadSourceForgeFiles".
-6. Check-in source code.
-7. Create version tag.
+    CRTBNDCL PGM(RPGUNITDVP/A_CRTPKG) 
+      SRCFILE(RPGUNITDVP/QBUILD) 
+      DFTACTGRP(*NO) ACTGRP(*NEW) DBGVIEW(*LIST)
+       
+    CALL PGM(A_CRTPKG) PARM('RPGUNITDVP')
+     
+2.2 Run target 'downloadIBMiLibrary' of build.xml. 
+
+3. Creating the Update Site
+---------------------------
+
+3.1 Run target 'build' of file 'build.xml'.
+3.2 Right-click 'site.xml', select 'PDE Tools -> Build Site'.
+3.3 Run target 'createSourceForgeFiles' of file 'build.xml'.
+3.4 Run target 'uploadSourceForgeFiles' of file 'build.xml'.
+3.5 Check the green 'Download' button on SourceForge. It must point
+    to the local update site file, e.g.:
+      iRPGUnit for RDi 8.0+ (v2.5.0.r Update Site).zip
+3.6 Check-in source code.
+3.7 Create version tag, e.g.: v002.004.001.r
 
 See also: build.xml

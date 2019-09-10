@@ -1,35 +1,61 @@
 <!--
  * =====================================================================
- *   Dependencies:
- *   You need the Eclipse "iSphere Help Builder" project to create  
- *   the web help pages.
- *   The Eclipse "iSphere Help Builder" project is part of the "iSphere"
- *   project at SourceForge:  https://sourceforge.net/projects/isphere/
- * =====================================================================
- *   This Ant script must run in the same JRE of the workspace,
- *   to make the "eclipse.refreshLocal" tag work properly.
+ *   This Ant script helps you to create an upload the project's 
+ *   update site. Before you can run the script, you need to copy
+ *   'template_ftp.properties' to 'ftp.properties' and change the
+ *   properties to meet your needs.
  *
- *   The classpath must include the following jars for executing
- *   this build script:
- *      commons-net-3.3-patched.jar
- *      jsch-0.1.51.jar
+ *   In order to use all features of the script, you need to
+ *   have the 'iSphere Ant Plugin' installed and the 'iSphere Help Builder'
+ *   project in your workspace.
  *
- *   The following jar files are loaded dynamically, because they
- *   are part of a task def contribution or class path:
- *      ant-contrib-1.0b3.jar
- *      junit.jar
- *      org.hamcrest.core_1.1.0.v20090501071000.jar
+ *   The main switches to control the build process are:
  *
- *   Creating the Update site
- *   ========================
+ *     build.version       - project version number
+ *     build.help.enabled  - specifies whether to build the help pages
+ *     build.dryrun        - specifies whether to apply changes to SourceForge
  *
- *   1. Update version number in "build.properties" of project "iRPGUnit Build".
- *   2. Execute target "build".
- *   3. Create plug-in: Right-click 'site.xml', select 'PDE Tools -> Build Site'.
- *   4. Execute target "createSourceForgeFiles".
- *   5. Execute target "uploadSourceForgeFiles".
- *   6. Check-in source code.
- *   7. Create version tag.
+ *   See also: build.properties
+ *
+ *   Here are the steps to create a new version of the plug-in:
+ *
+ *     1 Preparation
+ *     1.1 On the PC run the 'CheckNLSMessages' JUnit test to check
+ *         for missing or obsolete message property entries.
+ *     1.2 On the PC search java sources for missing copyright header.
+ *         Menu: Search -> File -> (?s)\A((?!copyright).)*\Z
+ *               Check: Regular expression
+ *     1.3 On the PC change version number in COPYRIGHT.RPGLE.
+ *     1.4 On the PC push changes of project's i Project to the AS/400.
+ *     1.5 On the PC update document 'iRPGUnit.doc' and also save it as 
+ *         'iRPGUnit for RDi 8.0.pdf'.
+ *     1.6 Refresh project 'iRPGUnit Core Plugin'.
+ *     1.7 On the PC increment version number of property 'build.version'
+ *         in file 'build.properties'.
+ *
+ *     2 Creating the library
+ *     2.1 On the IBM i run the following commands:
+ *
+ *           ADDLIBLE LIB(RPGUNITDVP)
+ *
+ *           CRTBNDCL PGM(RPGUNITDVP/A_CRTPKG) 
+ *             SRCFILE(RPGUNITDVP/QBUILD) 
+ *             DFTACTGRP(*NO) ACTGRP(*NEW) DBGVIEW(*LIST)
+ *
+ *           CALL PGM(A_CRTPKG) PARM('RPGUNITDVP')
+ *
+ *     2.2 Run target 'downloadIBMiLibrary' of build.xml.
+ *
+ *     3 CReating the update site
+ *     3.1 On the PC run target 'build' of file 'build.xml'.
+ *     3.2 Right-click 'site.xml', select 'PDE Tools -> Build Site'.
+ *     3.3 On the PC run target 'createSourceForgeFiles' of file 'build.xml'.
+ *     3.4 On the PC run target 'uploadSourceForgeFiles' of file 'build.xml'.
+ *     3.5 Check the green 'Download' button on SourceForge. It must point
+ *         to the local update site file, e.g.: 
+ *           iRPGUnit for RDi 8.0+ (v2.5.0.r Update Site).zip
+ *     3.6 Check-in source code.
+ *     3.7 Create version tag, e.g.: v002.004.001.r
  *
  * ===================================================================== -->
 <project name="iRPGUnit Build" default="build" basedir=".">
