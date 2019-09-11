@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
+import com.ibm.as400.access.QueuedMessage;
 import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
@@ -346,15 +347,18 @@ public class UploadRPGUnitLibraryDialog extends Dialog implements StatusMessageR
             btnCancel.setEnabled(false);
 
             if (!uploader.run()) {
+                appendJobLog(uploader.getJobLog());
+                btnOK.setEnabled(true);
                 return;
             }
+
+            btnOK.setEnabled(false);
 
         } finally {
             systemHostCombo.setEnabled(true);
             txtFtpPort.setEnabled(true);
             txtUploadLibrary.setEnabled(true);
             txtAspDeviceName.setEnabled(true);
-            btnOK.setEnabled(false);
             btnCancel.setEnabled(true);
         }
     }
@@ -393,6 +397,15 @@ public class UploadRPGUnitLibraryDialog extends Dialog implements StatusMessageR
                 new Object[] { productLibraryName, iSeriesConnection.getHostName(), ftpPortNumber }));
         }
 
+    }
+
+    private void appendJobLog(QueuedMessage[] jobLog) {
+
+        setStatus(Messages.JobLog_Headline);
+
+        for (QueuedMessage jobLogEntry : jobLog) {
+            setStatus(jobLogEntry.toString());
+        }
     }
 
     private boolean isSpecialValue(String value) {

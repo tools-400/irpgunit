@@ -32,6 +32,7 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 import de.tools400.rpgunit.core.Messages;
 import de.tools400.rpgunit.core.RPGUnitCorePlugin;
+import de.tools400.rpgunit.core.helpers.JobLogHelper;
 import de.tools400.rpgunit.core.helpers.StringHelper;
 import de.tools400.rpgunit.core.preferences.Preferences;
 import de.tools400.rpgunit.core.ui.dialog.SignOnDialog;
@@ -54,6 +55,9 @@ public class ProductLibraryUploader {
 
     private AS400 as400;
     private CommandCall commandCall;
+
+    private QueuedMessage[] jobLog;
+    private byte[] startingMessageKey;
 
     private StatusMessageReceiver statusMessageReceiver;
 
@@ -139,7 +143,18 @@ public class ProductLibraryUploader {
         }
     }
 
-    public boolean connect() {
+    public QueuedMessage[] getJobLog() {
+
+        if (jobLog == null) {
+            jobLog = new QueuedMessage[0];
+        }
+
+        return jobLog;
+    }
+
+    private boolean connect() {
+
+        startingMessageKey = null;
 
         SignOnDialog signOnDialog = new SignOnDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), hostName,
             iSeriesConnection.getUserID());
@@ -152,6 +167,7 @@ public class ProductLibraryUploader {
                     if (commandCall != null) {
                         setStatus(Messages.bind(Messages.Connected_to_host_A, hostName));
                         setStatus(Messages.Server_job_colon + " " + commandCall.getServerJob().toString());
+                        startingMessageKey = JobLogHelper.getNewestMessageKey(commandCall.getServerJob());
                         return true;
                     } else {
                         setError(Messages.bind(Messages.Could_not_connect_to_host_A, hostName));
@@ -165,9 +181,15 @@ public class ProductLibraryUploader {
         return false;
     }
 
-    public void disconnect() {
+    private void disconnect() {
 
         if (as400 != null && as400.isConnected()) {
+            try {
+                jobLog = JobLogHelper.getJobLog(commandCall.getServerJob(), startingMessageKey);
+            } catch (Exception e) {
+                jobLog = null;
+                RPGUnitCorePlugin.logError("Failed loading job log.", e);
+            }
             as400.disconnectAllServices();
             setStatus(Messages.bind(Messages.Disconnected_from_host_A, hostName));
         }

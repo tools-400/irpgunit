@@ -166,6 +166,7 @@ public class Messages extends NLS {
     public static String Restoring_library_A;
     public static String Could_not_restore_library_A;
     public static String Disconnected_from_host_A;
+    public static String JobLog_Headline;
 
     public static String Question_Do_you_want_to_delete_object_A_B_type_C;
     public static String Deleting_object_A_B_of_type_C;
