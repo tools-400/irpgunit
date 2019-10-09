@@ -19,7 +19,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import de.tools400.rpgunit.core.RPGUnitCorePlugin;
 import de.tools400.rpgunit.core.jobs.local.RunUnitTestsJob;
 import de.tools400.rpgunit.core.preferences.Preferences;
-import de.tools400.rpgunit.core.ui.view.IInputProvider;
 import de.tools400.rpgunit.core.ui.view.RPGUnitView;
 
 public class RunUnitTestHandler implements ISelectionHandler {
@@ -42,7 +41,7 @@ public class RunUnitTestHandler implements ISelectionHandler {
                 return null;
             }
 
-            ((IInputProvider)tView).setInput(null, false);
+            tView.prepareForRunningUnitTestCases();
 
             RunUnitTestsJob tJob = new RunUnitTestsJob(aShell, tView, (IStructuredSelection)aSelection);
             tJob.schedule();

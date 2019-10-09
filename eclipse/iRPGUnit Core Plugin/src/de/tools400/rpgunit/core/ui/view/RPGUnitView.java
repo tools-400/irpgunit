@@ -223,26 +223,32 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
     }
 
     /**
+     * Handler procedure: "Run RPGUnit Test"
+     */
+    public void prepareForRunningUnitTestCases() {
+        setInput(null, false);
+    }
+
+    /**
      * Handler procedure: Button "Rerun All RPGUnit Test Cases"
      */
-    public UnitTestSuite[] getAllUnitTestCases() {
+    public UnitTestSuite[] prepareForRerunningAllUnitTestCases() {
+
         if (getViewerInput() == null) {
             UnitTestSuite[] tResults = new UnitTestSuite[] {};
             return tResults;
         }
 
         setIsSelectedOfAllTestCases(true);
-        return getViewerInput().getTestResults();
-    }
+        updateHeader(header, null);
 
-    public IStructuredSelection getSelectedItems() {
-        return (IStructuredSelection)viewer.getSelection();
+        return getViewerInput().getTestResults();
     }
 
     /**
      * Handler procedure: Button "Rerun Selected RPGUnit Test Cases"
      */
-    public UnitTestSuite[] getSelectedUnitTestCases() {
+    public UnitTestSuite[] prepareForRerunningSelectedUnitTestCases() {
 
         UnitTestSuite[] tResults = new UnitTestSuite[] {};
 
@@ -294,11 +300,13 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
             }
         }
 
-        // UnitTestSuite[] tSelectedUnitTestSuitesArray = new
-        // UnitTestSuite[tSelectedUnitTestSuites.size()];
-        // return
-        // tSelectedUnitTestSuites.values().toArray(tSelectedUnitTestSuitesArray);
+        updateHeader(header, null);
+
         return tAllUnitTestCases;
+    }
+
+    public IStructuredSelection getSelectedItems() {
+        return (IStructuredSelection)viewer.getSelection();
     }
 
     @Override

@@ -19,6 +19,6 @@ public class RerunAllUnitTestsHandler extends AbstractRerunUnitTestsHandler {
      */
     @Override
     protected UnitTestSuite[] getSelectedUseCases(ExecutionEvent anEvent) {
-        return getView(anEvent).getAllUnitTestCases();
+        return getView(anEvent).prepareForRerunningAllUnitTestCases();
     }
 }

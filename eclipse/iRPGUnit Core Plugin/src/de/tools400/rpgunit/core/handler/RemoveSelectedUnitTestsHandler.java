@@ -18,7 +18,7 @@ public class RemoveSelectedUnitTestsHandler extends AbstractUnitTestsHandler {
 
     @Override
     public Object execute(ExecutionEvent anEvent) {
-        UnitTestSuite[] tSelectedUnitTestSuites = getView(anEvent).getSelectedUnitTestCases();
+        UnitTestSuite[] tSelectedUnitTestSuites = getView(anEvent).prepareForRerunningSelectedUnitTestCases();
 
         ArrayList<UnitTestSuite> tUnitTestSuites = new ArrayList<UnitTestSuite>();
         for (UnitTestSuite tUnitTestSuite : tSelectedUnitTestSuites) {
