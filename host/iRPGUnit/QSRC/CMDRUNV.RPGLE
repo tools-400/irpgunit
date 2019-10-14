@@ -78,7 +78,7 @@
 
        if (gi_xmlStmf <> '');
 
-         errMsg = validateXmlStmf(gi_xmlStmf);
+         errMsg = validateXmlStmf(gi_xmlStmf: gi_testSuite);
          if (errMsg <> '');
            sndVldChkMsg( errMsg : 2 );
          endif;
@@ -100,13 +100,12 @@
      P                 b                   export
      D                 pi           256a   varying
      D  i_xmlStmf                          const like(stmf_t)
+     D  i_testSuite                        const likeds(object_t )
 
      D errMsg          s            256a   varying
      D xmlStmfRpl      s                   like(i_xmlStmf)
      D dir             s                   like(i_xmlStmf)
      D st_stat         ds                  likeds(st_stat_t)
-
-     D testSuite       ds                  likeds(object_t )
       /free
 
          // Validate replacement variables
@@ -117,7 +116,7 @@
 
          // Replace variables
          monitor;
-           xmlStmfRpl = resolvePathVariables(i_xmlStmf : testSuite);
+           xmlStmfRpl = resolvePathVariables(i_xmlStmf : i_testSuite);
          on-error;
            errMsg = rcvMsgTxt('*ESCAPE');
            if (errMsg <> '');
@@ -214,7 +213,7 @@
      P                 b                   export
      D                 pi                  like(stmf_t)
      D  i_path                             const like(stmf_t)
-     D  i_estSuite                         const likeds(Object_t)
+     D  i_testSuite                         const likeds(Object_t)
 
      D resolvedPath    s                   like(stmf_t)
 
@@ -227,8 +226,8 @@
         size = strftime(
                  %addr(tmpPathBuf): %size(tmpPathBuf): i_path: tm);
         resolvedPath = %subst(tmpPathBuf: 1: size);
-        resolvedPath = replace(resolvedPath: '<TSTPGM>': i_estSuite.nm);
-        resolvedPath = replace(resolvedPath: '<TSTLIB>': i_estSuite.lib);
+        resolvedPath = replace(resolvedPath: '<TSTPGM>': i_testSuite.nm);
+        resolvedPath = replace(resolvedPath: '<TSTLIB>': i_testSuite.lib);
         resolvedPath = replace(resolvedPath: ':': '.');
         resolvedPath = replace(resolvedPath: %char(BACK_SLASH): '/');
 

@@ -28,6 +28,7 @@
      D                                     validateXmlStmf+
      D                                     ')
      D  i_xmlStmf                          const like(stmf_t)
+     D  i_testSuite                        const likeds(object_t )
 
      D resolvePathVariables...
      D                 pr                  like(stmf_t)
