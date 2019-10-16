@@ -29,6 +29,7 @@ public class DisplayReportEnabler implements IRPGUnitViewSelectionChanged {
             tDisplayReportState.setEnabled(true);
             RPGUnitSpooledFileViewer.getDefault().getSpooledFilesStore().setSpooledFiles(aSpooledFiles);
         } else {
+            RPGUnitSpooledFileViewer.getDefault().getSpooledFilesStore().setSpooledFiles(new IRPGUnitSpooledFile[0]);
             tDisplayReportState.setEnabled(false);
         }
     }
