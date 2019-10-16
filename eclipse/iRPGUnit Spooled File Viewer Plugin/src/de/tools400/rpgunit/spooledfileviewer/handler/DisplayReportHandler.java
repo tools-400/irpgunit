@@ -11,6 +11,8 @@ package de.tools400.rpgunit.spooledfileviewer.handler;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
@@ -19,6 +21,7 @@ import com.ibm.as400.access.SpooledFile;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 import de.tools400.rpgunit.core.extensions.view.IRPGUnitSpooledFile;
+import de.tools400.rpgunit.spooledfileviewer.Messages;
 import de.tools400.rpgunit.spooledfileviewer.RPGUnitSpooledFileViewer;
 import de.tools400.rpgunit.spooledfileviewer.ui.editor.SpooledFileEditor;
 import de.tools400.rpgunit.spooledfileviewer.ui.editor.SpooledFileEditorInput;
@@ -29,6 +32,10 @@ public class DisplayReportHandler extends AbstractHandler {
     public Object execute(ExecutionEvent anEvent) throws ExecutionException {
 
         IRPGUnitSpooledFile[] tReportFiles = RPGUnitSpooledFileViewer.getDefault().getSpooledFilesStore().getSpooledFiles();
+        if (tReportFiles == null || tReportFiles.length == 0) {
+            MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Error, Messages.No_spooled_file_available);
+            return null;
+        }
 
         for (IRPGUnitSpooledFile tReportFile : tReportFiles) {
             if (tReportFile != null) {
