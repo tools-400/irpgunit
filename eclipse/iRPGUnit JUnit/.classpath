@@ -5,5 +5,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/iRPGUnit Core Plugin"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/iRPGUnit CMOne Integration Plugin"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/iRPGUnit iSphere Integration Plugin"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/iRPGUnit Spooled File Viewer Plugin"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

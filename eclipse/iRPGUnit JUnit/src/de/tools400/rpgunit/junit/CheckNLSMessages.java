@@ -23,9 +23,9 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 
-import org.junit.Test;
-
 import junit.framework.JUnit4TestAdapter;
+
+import org.junit.Test;
 
 /**
  * <b>JUnit 4 Test Case</b>
@@ -58,6 +58,8 @@ public class CheckNLSMessages {
     public void testNLSMessages() throws Exception {
         checkMessagesForLocales(de.tools400.rpgunit.core.Messages.class, "messages");
         checkMessagesForLocales(de.tools400.rpgunit.cmone.Messages.class, "messages");
+        checkMessagesForLocales(de.tools400.rpgunit.isphere.Messages.class, "messages");
+        checkMessagesForLocales(de.tools400.rpgunit.spooledfileviewer.Messages.class, "messages");
 
         System.out.println("** Finished testing NLS messages **");
     }
