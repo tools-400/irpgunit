@@ -62,9 +62,11 @@
 
        if (%parms() >= p_xmlStmf and %addr(gi_xmlStmf) <> *null);
          xmlStmf = %trimr(gi_xmlStmf);
-         errMsg = validateXmlStmf(xmlStmf: gi_testSuite);
-         if (errMsg <> '');
-           sndEscapeMsgAboveCtlBdy( errMsg  );
+         if (xmlStmf <> '');
+           errMsg = validateXmlStmf(xmlStmf: gi_testSuite);
+           if (errMsg <> '');
+             sndEscapeMsgAboveCtlBdy( errMsg  );
+           endif;
          endif;
        else;
          xmlStmf = '';
