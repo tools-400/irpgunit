@@ -11,12 +11,13 @@ package de.tools400.rpgunit.isphere.action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
-import biz.isphere.core.Messages;
 import biz.isphere.core.spooledfiles.SpooledFile;
 
 import com.ibm.etools.iseries.rse.ui.actions.popupmenu.ISeriesAbstractQSYSPopupMenuAction;
 
 import de.tools400.rpgunit.core.extensions.testcase.IRPGUnitTestCaseItem;
+import de.tools400.rpgunit.core.extensions.view.IRPGUnitSpooledFile;
+import de.tools400.rpgunit.isphere.Messages;
 import de.tools400.rpgunit.isphere.factory.ISphereFactory;
 
 public abstract class AbstractSpooledFileAction extends ISeriesAbstractQSYSPopupMenuAction {
@@ -30,8 +31,13 @@ public abstract class AbstractSpooledFileAction extends ISeriesAbstractQSYSPopup
         for (int i = 0; i < selection.length; i++) {
             if (selection[i] instanceof IRPGUnitTestCaseItem) {
                 IRPGUnitTestCaseItem testCaseItem = (IRPGUnitTestCaseItem)selection[i];
-                SpooledFile spooledFile = ISphereFactory.createSpooledFile(testCaseItem.getSpooledFile());
-                message = execute(spooledFile);
+                IRPGUnitSpooledFile rpgunitSpooledFile = testCaseItem.getSpooledFile();
+                if (rpgunitSpooledFile != null) {
+                    SpooledFile spooledFile = ISphereFactory.createSpooledFile(rpgunitSpooledFile);
+                    message = execute(spooledFile);
+                } else {
+                    message = Messages.No_spooled_file_available;
+                }
             }
             if (message != null) {
                 MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Error, message);
