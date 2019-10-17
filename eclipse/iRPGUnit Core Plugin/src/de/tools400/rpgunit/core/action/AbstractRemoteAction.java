@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2016 iRPGUnit Project Team
+ * Copyright (c) 2013-2019 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,6 @@ import de.tools400.rpgunit.core.ui.dialog.ObjectsInErrorListDialog;
 public abstract class AbstractRemoteAction<T> implements IObjectActionDelegate {
 
     private StructuredSelection _selectedItems;
-
     private List<IObjectInError> _errObj;
 
     public AbstractRemoteAction() {
@@ -46,17 +45,22 @@ public abstract class AbstractRemoteAction<T> implements IObjectActionDelegate {
         List<I5ServiceProgram> tList = new ArrayList<I5ServiceProgram>();
         _errObj = new ArrayList<IObjectInError>();
 
+        IHost hostOfFirstObject = null;
+
         Iterator<?> theSet = ((IStructuredSelection)selection).iterator();
 
         while (theSet.hasNext()) {
             Object obj = theSet.next();
-            if (obj instanceof IQSYSServiceProgram && isValidItem(obj, _errObj)) {
+            if (hostOfFirstObject == null) {
+                hostOfFirstObject = getHost(obj);
+            }
+            if (obj instanceof IQSYSServiceProgram && isValidItem(obj, hostOfFirstObject, _errObj)) {
                 tList.add(produceRemoteObject((IQSYSServiceProgram)obj));
-            } else if (obj instanceof QSYSRemoteProcedure && isValidItem(obj, _errObj)) {
+            } else if (obj instanceof QSYSRemoteProcedure && isValidItem(obj, hostOfFirstObject, _errObj)) {
                 produceOrUpdateRemoteObject(tList, (QSYSRemoteProcedure)obj);
             }
-            _selectedItems = new StructuredSelection(tList);
         }
+        _selectedItems = new StructuredSelection(tList);
     }
 
     @Override
@@ -86,7 +90,7 @@ public abstract class AbstractRemoteAction<T> implements IObjectActionDelegate {
         return _selectedItems;
     }
 
-    protected abstract boolean isValidItem(Object anObject, List<IObjectInError> anErrObjList);
+    protected abstract boolean isValidItem(Object anObject, IHost aHost, List<IObjectInError> anErrObjList);
 
     protected abstract I5ServiceProgram produceRemoteObject(IQSYSServiceProgram aRemoteObject);
 

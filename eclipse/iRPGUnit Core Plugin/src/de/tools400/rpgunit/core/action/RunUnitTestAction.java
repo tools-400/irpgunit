@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2017 iRPGUnit Project Team
+ * Copyright (c) 2013-2019 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -70,9 +71,34 @@ public class RunUnitTestAction extends AbstractRemoteAction<IQSYSServiceProgram>
     }
 
     @Override
-    protected boolean isValidItem(Object anObject, List<IObjectInError> anErrObjList) {
+    protected boolean isValidItem(Object anObject, IHost aHost, List<IObjectInError> anErrObjList) {
+
+        if (!isValidHost(anObject, aHost, anErrObjList)) {
+            return false;
+        }
 
         if (!isSupportedObject(anObject, anErrObjList)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean isValidHost(Object anObject, IHost aHost, List<IObjectInError> anErrObjList) {
+
+        if (aHost == null || aHost.getName() == null) {
+            anErrObjList.add(new ObjectInError(anObject, Messages.Host_of_first_selected_object_not_found));
+            return false;
+        }
+
+        IHost host = getHost(anObject);
+        if (host == null || host.getName() == null) {
+            anErrObjList.add(new ObjectInError(anObject, Messages.Host_not_found));
+            return false;
+        }
+
+        if (!aHost.getName().equals(host.getName())) {
+            anErrObjList.add(new ObjectInError(anObject, Messages.Cannot_execute_test_cases_from_different_connections));
             return false;
         }
 
@@ -85,10 +111,10 @@ public class RunUnitTestAction extends AbstractRemoteAction<IQSYSServiceProgram>
 
         if (anObject instanceof IQSYSServiceProgram) {
             errorMessage = checkServiceProgram((IQSYSServiceProgram)anObject);
-        }
-
-        if (anObject instanceof QSYSRemoteProcedure) {
+        } else if (anObject instanceof QSYSRemoteProcedure) {
             errorMessage = checkRemoteProcedure((QSYSRemoteProcedure)anObject);
+        } else {
+            errorMessage = Messages.bind(Messages.Object_type_A_not_supported, anObject.getClass().getSimpleName());
         }
 
         if (errorMessage == null) {

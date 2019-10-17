@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2016 iRPGUnit Project Team
+ * Copyright (c) 2013-2019 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,10 @@ public class Messages extends NLS {
     public static String Module_is_not_a_QSYSRemoteProgramModule;
     public static String Object_is_not_a_IQSYSServiceProgram;
     public static String Run_Unit_Test;
+    public static String Host_of_first_selected_object_not_found;
+    public static String Host_not_found;
+    public static String Cannot_execute_test_cases_from_different_connections;
+    public static String Object_type_A_not_supported;
 
     public static String EditableSourceMember_0;
     public static String EditableSourceMember_1;
