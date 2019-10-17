@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2018 iRPGUnit Project Team
+ * Copyright (c) 2013-2019 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,10 @@
 package de.tools400.rpgunit.core.ui.view;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.jface.action.Action;
@@ -406,13 +408,34 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
         boolean hasItems = false;
         IStructuredSelection tSelectedItems = (IStructuredSelection)tSelectedObject;
         for (Object tSelectedItem : tSelectedItems.toArray()) {
-            if ((tSelectedItem instanceof UnitTestSuite) || (tSelectedItem instanceof UnitTestCase)) {
-                hasItems = true;
-            } else {
+            if (!((tSelectedItem instanceof UnitTestSuite) || (tSelectedItem instanceof UnitTestCase))) {
                 return false;
             }
         }
-        return hasItems;
+        return !hasAmbiguousSelection(tSelectedItems);
+    }
+
+    private boolean hasAmbiguousSelection(IStructuredSelection aSelectedItems) {
+
+        Set<UnitTestSuite> unitTestSuites = new HashSet<UnitTestSuite>();
+
+        for (Object tSelectedItem : aSelectedItems.toArray()) {
+            if ((tSelectedItem instanceof UnitTestCase)) {
+                UnitTestCase unitTestCase = (UnitTestCase)tSelectedItem;
+                unitTestSuites.add(unitTestCase.getUnitTestSuite());
+            }
+        }
+
+        for (Object tSelectedItem : aSelectedItems.toArray()) {
+            if ((tSelectedItem instanceof UnitTestSuite)) {
+                UnitTestSuite unitTestSuite = (UnitTestSuite)tSelectedItem;
+                if (unitTestSuites.contains(unitTestSuite)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     protected boolean hasSelectedItemsWithSourceMember() {
