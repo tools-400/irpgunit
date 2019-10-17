@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2016 iRPGUnit Project Team
+ * Copyright (c) 2013-2019 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,8 +41,8 @@ public class RPGUnitViewDelegateRdi implements IRPGUnitViewDelegate {
     }
 
     public ISourceProviderService getSourceProviderService() {
-        ISourceProviderService sourceProviderService = (ISourceProviderService)workbenchPartSite.getWorkbenchWindow().getService(
-            ISourceProviderService.class);
+        ISourceProviderService sourceProviderService = (ISourceProviderService)workbenchPartSite.getWorkbenchWindow()
+            .getService(ISourceProviderService.class);
         return sourceProviderService;
     }
 
@@ -93,7 +93,7 @@ public class RPGUnitViewDelegateRdi implements IRPGUnitViewDelegate {
 
         ISourceProviderService sourceProviderService = getSourceProviderService();
 
-        // Enable/disable command: RerunSelectedUnitTests
+        // Enable/disable command: RerunAllUnitTests
         RerunAllUnitTestsCommandState tAllProvider = (RerunAllUnitTestsCommandState)sourceProviderService
             .getSourceProvider(RerunAllUnitTestsCommandState.STATE);
         if (aNumItems > 0) {
