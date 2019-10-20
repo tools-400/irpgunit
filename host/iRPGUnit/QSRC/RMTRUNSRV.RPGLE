@@ -425,7 +425,7 @@
             entry.lenExcpMessage = %len(testResult.failure.msg);
             entry.excpMessage = testResult.failure.msg;
             entry.specNb =
-                  failure.callStk.entry(failure.callStk.numE).sender.specNb;
+                  failure.callStk.entry(1).sender.specNb;
 
             entry.execTime = -1;
             entry.length = %size(entry);
@@ -533,7 +533,7 @@
                min(%len(testResult.failure.msg): %len(entry.excpMessage));
             entry.excpMessage = testResult.failure.msg;
             entry.specNb =
-                  failure.callStk.entry(failure.callStk.numE).sender.specNb;
+                  failure.callStk.entry(1).sender.specNb;
 
             pexct = %addr(entry.excpMessage) + entry.lenExcpMessage;
             execTime = -1;
