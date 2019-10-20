@@ -4,7 +4,7 @@
 /*  Usage:                                                             */
 /*  a) Add the iRPGUnit library to your library list.                  */
 /*  b) Start the Rexx script with the following command:               */
-/*       STRREXPRC SRCMBR(MKCALLTST) SRCFILE(QSRC) PARM(prdLib)        */
+/*       STRREXPRC SRCMBR(MKRMTRUN) SRCFILE(QSRC) PARM(prdLib)         */
 /*     where 'prdLib' is the library containing the RPGUnit            */
 /*     source files.                                                   */
 /*                                                                     */
