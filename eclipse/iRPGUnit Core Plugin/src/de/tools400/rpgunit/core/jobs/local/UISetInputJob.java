@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2016 iRPGUnit Project Team
+ * Copyright (c) 2013-2019 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,11 @@ public class UISetInputJob extends UIJob {
 
     @Override
     public IStatus runInUIThread(IProgressMonitor aMonitor) {
-        view.setInput(input, true);
+        if (view.getInput() == null) {
+            view.setInput(this.input, true);
+        } else {
+            view.setInput(view.getInput(), false);
+        }
         return Status.OK_STATUS;
     }
 

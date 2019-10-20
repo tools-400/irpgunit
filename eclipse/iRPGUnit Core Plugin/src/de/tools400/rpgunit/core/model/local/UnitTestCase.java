@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2017 iRPGUnit Project Team
+ * Copyright (c) 2013-2019 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 import de.tools400.rpgunit.core.Messages;
 import de.tools400.rpgunit.core.extensions.testcase.IRPGUnitTestCaseItem;
 import de.tools400.rpgunit.core.extensions.view.IRPGUnitSpooledFile;
+import de.tools400.rpgunit.core.jobs.ibmi.RPGUnitTestRunner;
 import de.tools400.rpgunit.core.model.ibmi.I5ServiceProgram;
 
 public class UnitTestCase implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IUnitTestItemWithSourceMember, IPropertySource {
@@ -32,35 +33,30 @@ public class UnitTestCase implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IU
 
     private static final String PROPERTY_ID_STATEMENT_NUMBER = "statementNumber"; //$NON-NLS-1$
 
-    private static final String OUTCOME_ERROR = "E"; //$NON-NLS-1$
-
-    private static final String OUTCOME_FAILURE = "F"; //$NON-NLS-1$
-
-    private static final String OUTCOME_SUCCESS = "S"; //$NON-NLS-1$
-
+    private UnitTestSuite unitTestSuite;
     private String procedure;
+    private boolean isSelected = false;
+    private boolean isExpanded = false;
+    private UnitTestExecutionTimeFormatter executionTimeFormatter;
 
-    private String outcome;
-
-    private long executionTime = 0;
-
+    /* Run Statistics */
+    private int assertions;
+    private List<UnitTestCallStackEntry> callStackEntries;
+    private String errorMessage;
+    private long executionTime;
+    private Date lastRunDate;
+    private Outcome outcome;
     private String statementNumber;
 
-    private int assertions;
+    public UnitTestCase(String aProcedure) {
+        this.unitTestSuite = null;
+        this.procedure = aProcedure.trim();
+        this.isSelected = false;
+        this.isExpanded = false;
+        this.executionTimeFormatter = new UnitTestExecutionTimeFormatter();
 
-    private String errorMessage;
-
-    private List<UnitTestCallStackEntry> callStackEntries;
-
-    private boolean isSelected = false;
-
-    private Date lastRunDate = null;
-
-    private UnitTestSuite unitTestSuite;
-
-    private boolean isExpanded = false;
-
-    private UnitTestExecutionTimeFormatter executionTimeFormatter;
+        this.callStackEntries = new ArrayList<UnitTestCallStackEntry>();
+    }
 
     public boolean isExecutable() {
 
@@ -68,23 +64,16 @@ public class UnitTestCase implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IU
             return true;
         }
 
-        return false;
+        throw new IllegalAccessError("There should never be a procedure not starting with 'test'.");
     }
 
-    public UnitTestCase(String aProcedure) {
-        this.unitTestSuite = null;
-        this.procedure = aProcedure.trim();
-        this.callStackEntries = new ArrayList<UnitTestCallStackEntry>();
-        this.executionTimeFormatter = new UnitTestExecutionTimeFormatter();
-    }
-
-    public void setIsSelected(boolean anIsSelected) {
+    public void setSelected(boolean anIsSelected) {
         if (isSelected == anIsSelected) {
             return;
         }
 
         isSelected = anIsSelected;
-        unitTestSuite.countSelected(anIsSelected);
+        unitTestSuite.updateCountSelected(anIsSelected);
     }
 
     public boolean isSelected() {
@@ -107,33 +96,65 @@ public class UnitTestCase implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IU
 
     @Override
     public boolean isSuccessful() {
-        return OUTCOME_SUCCESS.equals(outcome);
+        return Outcome.SUCCESS.equals(outcome);
     }
 
     @Override
     public boolean isFailure() {
-        return OUTCOME_FAILURE.equals(outcome);
+        return Outcome.FAILURE.equals(outcome);
     }
 
     @Override
     public boolean isError() {
-        return OUTCOME_ERROR.equals(outcome);
+        return Outcome.ERROR.equals(outcome);
     }
 
-    public void setOutcome(String anOutcome) {
-        String tOutcome = anOutcome.trim();
-        if (OUTCOME_SUCCESS.equals(tOutcome) || OUTCOME_FAILURE.equals(tOutcome) || OUTCOME_ERROR.equals(tOutcome)) {
-            this.outcome = tOutcome;
+    @Override
+    public boolean isExpanded() {
+        return isExpanded;
+    }
+
+    @Override
+    public void setExpanded(boolean isExpanded) {
+        this.isExpanded = isExpanded;
+    }
+
+    /**
+     * Sets the outcome. Called only by the @link {@link RPGUnitTestRunner}.
+     * 
+     * @param anOutcomeId - Id of the outcome as returned by RUPGMRMT.
+     */
+    public void setOutcome(String anOutcomeId) {
+        Outcome tOutcome = Outcome.find(anOutcomeId);
+        if (tOutcome != null) {
+            setOutcome(tOutcome);
         } else {
-            throw new IllegalArgumentException("Illegal argument: " + tOutcome //$NON-NLS-1$
-                + " 'Outcome' must match 'S' (success) or 'F' (failure) or 'E' (error)."); //$NON-NLS-1$
+            throw new IllegalArgumentException("Illegal argument 'anOutcomeId': " + anOutcomeId); //$NON-NLS-1$
         }
+    }
+
+    public Outcome getOutcome() {
+        return outcome;
+    }
+
+    private void setOutcome(Outcome anOutcome) {
+        this.outcome = anOutcome;
+    }
+
+    public Date getLastRunDate() {
+        return lastRunDate;
     }
 
     public long getExecutionTime() {
         return executionTime;
     }
 
+    /**
+     * Sets the number of assertions. Called only by the @link
+     * {@link RPGUnitTestRunner}.
+     * 
+     * @param anAssertions - NUmber of assertions as returned by RUPGMRMT.
+     */
     public void setAssertions(int anAssertions) {
         this.assertions = anAssertions;
     }
@@ -142,7 +163,8 @@ public class UnitTestCase implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IU
         return assertions;
     }
 
-    protected void setUnitTestSuite(UnitTestSuite aUnitTestSuite) {
+    /* Intentionally set restricted to 'package-private' */
+    void setUnitTestSuite(UnitTestSuite aUnitTestSuite) {
         this.unitTestSuite = aUnitTestSuite;
     }
 
@@ -168,6 +190,11 @@ public class UnitTestCase implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IU
         }
     }
 
+    /**
+     * Sets the message. Called only by the @link {@link RPGUnitTestRunner}.
+     * 
+     * @param aMessage - Message as returned by RUPGMRMT.
+     */
     public void setMessage(String aMessage) {
         errorMessage = aMessage.trim();
     }
@@ -176,8 +203,14 @@ public class UnitTestCase implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IU
         return errorMessage;
     }
 
-    public void setStatementNumber(String aStatement) {
-        statementNumber = aStatement.trim();
+    /**
+     * Sets the statement number. Called only by the @link
+     * {@link RPGUnitTestRunner}.
+     * 
+     * @param aStatementNumber - Statement number as returned by RUPGMRMT.
+     */
+    public void setStatementNumber(String aStatementNumber) {
+        statementNumber = aStatementNumber.trim();
     }
 
     public String getStatementNumberText() {
@@ -193,6 +226,14 @@ public class UnitTestCase implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IU
         return lastRunDate != null;
     }
 
+    /**
+     * Sets the date and duration of the last run. Called only by the @link
+     * {@link RPGUnitTestRunner}.
+     * 
+     * @param lastRunDate - Date last run as returned by RUPGMRMT
+     * @param executionTime - Execution time in milliseconds as returned by
+     *        RUPGMRMT.
+     */
     public void setStatistics(Date lastRunDate, long executionTime) {
         this.lastRunDate = lastRunDate;
         this.executionTime = executionTime;
@@ -203,16 +244,12 @@ public class UnitTestCase implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IU
         this.executionTime = -1;
     }
 
-    @Override
-    public boolean isExpanded() {
-        return isExpanded;
-    }
-
-    @Override
-    public void setExpanded(boolean isExpanded) {
-        this.isExpanded = isExpanded;
-    }
-
+    /**
+     * Adds a call stack entry. Called only by the @link
+     * {@link RPGUnitTestRunner}.
+     * 
+     * @param aCallStackEntry - Call stack entry as returned by RUPGMRMT.
+     */
     public void addCallStackEntry(UnitTestCallStackEntry aCallStackEntry) {
         aCallStackEntry.setUnitTestCase(this);
         callStackEntries.add(aCallStackEntry);
@@ -220,6 +257,31 @@ public class UnitTestCase implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IU
 
     public List<UnitTestCallStackEntry> getCallStack() {
         return callStackEntries;
+    }
+
+    /* Intentionally set restricted to 'package-private' */
+    void updateUnitTestResult(UnitTestCase aUnitTestCase) {
+
+        setAssertions(aUnitTestCase.assertions);
+        setMessage(aUnitTestCase.errorMessage);
+        setStatistics(aUnitTestCase.getLastRunDate(), aUnitTestCase.getExecutionTime());
+        setOutcome(aUnitTestCase.getOutcome());
+        setStatementNumber(aUnitTestCase.getStatementNumberText());
+
+        callStackEntries.clear();
+        for (UnitTestCallStackEntry tUnitTestCallStackEntry : aUnitTestCase.getCallStack()) {
+            addCallStackEntry(tUnitTestCallStackEntry);
+        }
+    }
+
+    public void cancel() {
+
+        setAssertions(0);
+        setMessage(""); //$NON-NLS-1$ ;
+        resetStatistics();
+        setOutcome(Outcome.CANCELED);
+        setStatementNumber(""); //$NON-NLS-1$
+        callStackEntries.clear();
     }
 
     /*
@@ -271,13 +333,7 @@ public class UnitTestCase implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IU
         } else if (PROPERTY_ID_EXECUTION_TIME.equals(id)) {
             return executionTimeFormatter.formatExecutionTime(executionTime) + " s"; //$NON-NLS-1$
         } else if (PROPERTY_ID_OUTCOME.equals(id)) {
-            if (isSuccessful()) {
-                return "SUCCESS"; //$NON-NLS-1$
-            } else if (isFailure()) {
-                return "FAILED"; //$NON-NLS-1$
-            } else {
-                return "ERROR"; //$NON-NLS-1$
-            }
+            return outcome.getLabel();
         }
 
         return null;

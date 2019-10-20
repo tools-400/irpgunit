@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2016 iRPGUnit Project Team
+ * Copyright (c) 2013-2019 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,8 @@
 package de.tools400.rpgunit.core.jobs.ibmi;
 
 import java.beans.PropertyVetoException;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
@@ -73,7 +73,7 @@ public abstract class AbstractUnitTestRunner {
         return testResult;
     }
 
-    public UnitTestSuite runRemoteUnitTestCase(I5ServiceProgram aServiceProgram, ArrayList<String> aListOfProcedure) throws Exception {
+    public UnitTestSuite runRemoteUnitTestCases(I5ServiceProgram aServiceProgram, List<String> aListOfProcedure) throws Exception {
         UnitTestSuite testResult = runRemoteUnitTests(aServiceProgram, aListOfProcedure);
         return testResult;
     }
@@ -204,7 +204,7 @@ public abstract class AbstractUnitTestRunner {
         return tParameter;
     }
 
-    protected ProgramParameter produceVarlenStringArrayParameter(ArrayList<String> aListOfStrings, int aLength) throws Exception {
+    protected ProgramParameter produceVarlenStringArrayParameter(List<String> aListOfStrings, int aLength) throws Exception {
 
         // aLength = length of RPG array item 'procedure name'
         byte[] tBytes = new byte[((aLength + 2) * aListOfStrings.size()) + 2];
@@ -323,7 +323,7 @@ public abstract class AbstractUnitTestRunner {
      *        for all test cases.
      * @throws Exception
      */
-    protected abstract void prepareTest(I5ServiceProgram aServiceProgram, ArrayList<String> aListOfProcedure) throws Exception;
+    protected abstract void prepareTest(I5ServiceProgram aServiceProgram, List<String> aListOfProcedure) throws Exception;
 
     /**
      * Executes a prepared unit test suite or unit test case case.
@@ -343,7 +343,7 @@ public abstract class AbstractUnitTestRunner {
      *         </ul>
      * @throws Exception
      */
-    protected abstract int executeTest(I5ServiceProgram aServiceProgram, ArrayList<String> aListOfProcedure, String[] aLibraryList) throws Exception;
+    protected abstract int executeTest(I5ServiceProgram aServiceProgram, List<String> aListOfProcedure, String[] aLibraryList) throws Exception;
 
     /**
      * Retrieves the result of the unit test case.
@@ -355,7 +355,7 @@ public abstract class AbstractUnitTestRunner {
      * @return Result of the unit test case.
      * @throws Exception
      */
-    protected abstract UnitTestSuite retrieveUnitTestResult(I5ServiceProgram aServiceProgram, ArrayList<String> aListOfProcedure) throws Exception;
+    protected abstract UnitTestSuite retrieveUnitTestResult(I5ServiceProgram aServiceProgram, List<String> aListOfProcedure) throws Exception;
 
     /**
      * Frees the unit test case and returns all allocated resources.
@@ -365,9 +365,9 @@ public abstract class AbstractUnitTestRunner {
      * @param aProcedure Unit test case that is executed or <code>null</code>
      *        for all test cases.
      */
-    protected abstract void cleanUpTest(I5ServiceProgram aServiceProgram, ArrayList<String> aListOfProcedure);
+    protected abstract void cleanUpTest(I5ServiceProgram aServiceProgram, List<String> aListOfProcedure);
 
-    private UnitTestSuite runRemoteUnitTests(I5ServiceProgram aServiceprogram, ArrayList<String> aListOfProcedures) throws Exception {
+    private UnitTestSuite runRemoteUnitTests(I5ServiceProgram aServiceprogram, List<String> aListOfProcedures) throws Exception {
 
         UnitTestSuite testResult = null;
 
@@ -400,7 +400,7 @@ public abstract class AbstractUnitTestRunner {
         return testResult;
     }
 
-    private void cleanUp(I5ServiceProgram aServiceProgram, ArrayList<String> aListOfProcedures) throws SystemMessageException {
+    private void cleanUp(I5ServiceProgram aServiceProgram, List<String> aListOfProcedures) throws SystemMessageException {
         cleanUpTest(aServiceProgram, aListOfProcedures);
         disconnectSystem();
     }

@@ -8,6 +8,7 @@
 
 package de.tools400.rpgunit.core.ui.view;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -59,11 +60,11 @@ import de.tools400.rpgunit.core.extensions.view.SelectionChangedContributionsHan
 import de.tools400.rpgunit.core.handler.EditRemoteSourceMemberHandler;
 import de.tools400.rpgunit.core.model.ibmi.I5ServiceProgram;
 import de.tools400.rpgunit.core.model.local.IUnitTestTreeItem;
+import de.tools400.rpgunit.core.model.local.Outcome;
 import de.tools400.rpgunit.core.model.local.UnitTestCallStackEntry;
 import de.tools400.rpgunit.core.model.local.UnitTestCase;
 import de.tools400.rpgunit.core.model.local.UnitTestExecutionTimeFormatter;
 import de.tools400.rpgunit.core.model.local.UnitTestSuite;
-import de.tools400.rpgunit.core.model.local.UnitTestViewerRoot;
 import de.tools400.rpgunit.core.preferences.Preferences;
 import de.tools400.rpgunit.core.ui.warning.WarningMessage;
 import de.tools400.rpgunit.core.utils.ExceptionHelper;
@@ -236,15 +237,29 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
      */
     public UnitTestSuite[] prepareForRerunningAllUnitTestCases() {
 
-        if (getViewerInput() == null) {
-            UnitTestSuite[] tResults = new UnitTestSuite[] {};
-            return tResults;
+        if (getInput() == null) {
+            return new UnitTestSuite[0];
         }
 
-        setIsSelectedOfAllTestCases(true);
+        // TODO: remove debug code for-loop
+        // Deselect all test cases
+        UnitTestSuite[] unitTestSuites = getInput();
+        for (UnitTestSuite unitTestSuite : unitTestSuites) {
+            UnitTestCase[] unitTestCases = unitTestSuite.getUnitTestCases();
+            for (UnitTestCase unitTestCase : unitTestCases) {
+                if (unitTestCase.isSelected()) {
+                    throw new IllegalArgumentException("There should be no selected test cases at all.");
+                }
+            }
+        }
+
+        viewer.setSelection(null);
+
+        clearRuns();
+
         updateHeader(header, null);
 
-        return getViewerInput().getTestResults();
+        return getInput();
     }
 
     /**
@@ -252,9 +267,9 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
      */
     public UnitTestSuite[] prepareForRerunningSelectedUnitTestCases() {
 
-        UnitTestSuite[] tResults = new UnitTestSuite[] {};
+        UnitTestSuite[] tResults = new UnitTestSuite[0];
 
-        if (getViewerInput() == null) {
+        if (getInput() == null) {
             return tResults;
         }
 
@@ -262,9 +277,6 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
         if (!(tSelectedObject instanceof IStructuredSelection)) {
             return tResults;
         }
-
-        setIsSelectedOfAllTestCases(false);
-        UnitTestSuite[] tAllUnitTestCases = getViewerInput().getTestResults();
 
         IStructuredSelection tSelectedItems = (IStructuredSelection)tSelectedObject;
 
@@ -282,7 +294,7 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
                 if (!tSelectedUnitTestSuites.containsKey(tSrvPgm)) {
                     tSelectedUnitTestSuites.put(tSrvPgm, tTestCase.getUnitTestSuite());
                 }
-                tTestCase.setIsSelected(true);
+                tTestCase.setSelected(true);
             }
         }
 
@@ -298,13 +310,24 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
                 if (!tSelectedUnitTestSuites.containsKey(tSrvPgm)) {
                     tSelectedUnitTestSuites.put(tSrvPgm, tUnitTestSuite);
                 }
-                tUnitTestSuite.setIsSelected(true);
             }
         }
 
+        UnitTestSuite[] tUnitTestSuites = tSelectedUnitTestSuites.values().toArray(new UnitTestSuite[tSelectedUnitTestSuites.size()]);
+        Arrays.sort(tUnitTestSuites);
+
+        clearRuns();
+
         updateHeader(header, null);
 
-        return tAllUnitTestCases;
+        return tUnitTestSuites;
+    }
+
+    private void clearRuns() {
+
+        for (UnitTestSuite tUnitTestSuite : getInput()) {
+            tUnitTestSuite.setRuns(0);
+        }
     }
 
     public IStructuredSelection getSelectedItems() {
@@ -319,10 +342,16 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
     @Override
     public void setInput(Object aTestResults, boolean showViewWarning) {
 
-        UnitTestSuite[] testResults = (UnitTestSuite[])aTestResults;
+        if (aTestResults != null && !(aTestResults instanceof UnitTestSuite[])) {
+            throw new IllegalArgumentException("'aRestResults' is not of type UnitTestSuite[]."); //$NON-NLS-1$
+        }
 
-        updateHeader(header, testResults);
-        updateViewer(viewer, testResults);
+        UnitTestSuite[] tTestResults = (UnitTestSuite[])aTestResults;
+
+        ISelection selection = viewer.getSelection();
+
+        updateHeader(header, tTestResults);
+        updateViewer(viewer, tTestResults);
 
         IRPGUnitViewDelegate tDelegate = getViewDelegate();
         tDelegate.enableRerunAllUnitTestsButton(numItems);
@@ -333,19 +362,18 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
         tDelegate.enableExpandAllButton(numItems);
 
         UpdateTestResultContributionsHandler tHandler = new UpdateTestResultContributionsHandler();
-        tHandler.execute(testResults);
+        tHandler.execute(tTestResults);
 
         // Fire "selectionChanged" event to update selected spooled files of
         // spooled file viewer. First deselect the selection to clear the
         // properties view. Then set the selection to update the report in the
         // spooled file viewer.
-        ISelection selection = viewer.getSelection();
-        viewer.setSelection(null);
+        // viewer.setSelection(null);
         if (selection != null) {
             viewer.setSelection(selection);
         }
 
-        if (testResults != null && showViewWarning) {
+        if (tTestResults != null && showViewWarning) {
             if (header.hasErrors() && !Preferences.getInstance().isShowResultView()) {
                 WarningMessage.openWarning(getSite().getShell(), Preferences.WARN_MESSAGE_UNIT_TEST_ENDED_WITH_ERRORS,
                     Messages.Unit_test_ended_with_errors);
@@ -354,8 +382,8 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
     }
 
     @Override
-    public Object getInput() {
-        return null;
+    public UnitTestSuite[] getInput() {
+        return (UnitTestSuite[])viewer.getInput();
     }
 
     @Override
@@ -373,7 +401,7 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
 
     protected boolean hasSelectedUnitTestSuites() {
 
-        if (getViewerInput() == null) {
+        if (getInput() == null) {
             return false;
         }
 
@@ -391,12 +419,13 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
                 return false;
             }
         }
+
         return hasItems;
     }
 
     protected boolean hasSelectedUnitTestCasesOrUnitTestSuites() {
 
-        if (getViewerInput() == null) {
+        if (getInput() == null) {
             return false;
         }
 
@@ -412,6 +441,7 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
                 return false;
             }
         }
+
         return !hasAmbiguousSelection(tSelectedItems);
     }
 
@@ -440,7 +470,7 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
 
     protected boolean hasSelectedItemsWithSourceMember() {
 
-        if (getViewerInput() == null) {
+        if (getInput() == null) {
             return false;
         }
 
@@ -459,6 +489,7 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
                 return false;
             }
         }
+
         return hasItems;
     }
 
@@ -484,7 +515,7 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
             return;
         }
 
-        aViewer.setInput(new UnitTestViewerRoot(testResults));
+        aViewer.setInput(testResults);
         updateTreeItemsExpandedStatus(aViewer, aViewer.getTree().getItems());
         aViewer.refresh(true);
     }
@@ -516,28 +547,6 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
         aViewer.refresh();
     }
 
-    /**
-     * ^Sets the "isSelected" flag of all test cases shown in the tree viewer.
-     * 
-     * @param anIsSelected
-     * @return
-     */
-    private void setIsSelectedOfAllTestCases(boolean anIsSelected) {
-
-        UnitTestSuite[] tAllUnitTestSuits = getViewerInput().getTestResults();
-        for (int i = 0; i < tAllUnitTestSuits.length; i++) {
-            UnitTestSuite tUnitTestResult = tAllUnitTestSuits[i];
-            tUnitTestResult.removeNonExecutableTestCases();
-            tUnitTestResult.setIsSelected(anIsSelected);
-        }
-
-        setInput(tAllUnitTestSuits, false);
-    }
-
-    private UnitTestViewerRoot getViewerInput() {
-        return (UnitTestViewerRoot)viewer.getInput();
-    }
-
     /*
      * Internal classes.
      */
@@ -567,22 +576,13 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
         @Override
         public Image getImage(Object element) {
             if (element instanceof UnitTestCase) {
-                UnitTestCase test = (UnitTestCase)element;
-                if (test.isSuccessful()) {
-                    return RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_TEST_SUCCESS);
-                } else if (test.isFailure()) {
-                    return RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_TEST_FAILED);
-                } else {
-                    return RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_TEST_ERROR);
-                }
+                UnitTestCase unitTestCase = (UnitTestCase)element;
+                Outcome outcome = unitTestCase.getOutcome();
+                return outcome.getImage();
             } else if (element instanceof UnitTestSuite) {
-                if (((UnitTestSuite)element).getNumberErrors() > 0) {
-                    return RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_TEST_ERROR);
-                } else if (((UnitTestSuite)element).getNumberFailures() > 0) {
-                    return RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_TEST_FAILED);
-                } else {
-                    return RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_TEST_SUCCESS);
-                }
+                UnitTestSuite unitTestSuite = (UnitTestSuite)element;
+                Outcome outcome = unitTestSuite.getOutcome();
+                return outcome.getImage();
             } else {
                 return null;
             }
@@ -637,10 +637,10 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
 
         @Override
         public Object[] getChildren(Object parentElement) {
-            if (parentElement instanceof UnitTestViewerRoot) {
-                return ((UnitTestViewerRoot)parentElement).getTestResults();
+            if (parentElement instanceof UnitTestSuite[]) {
+                return (UnitTestSuite[])parentElement;
             } else if (parentElement instanceof UnitTestSuite) {
-                return ((UnitTestSuite)parentElement).getUnitsTestCases();
+                return ((UnitTestSuite)parentElement).getUnitTestCases();
             } else if (parentElement instanceof UnitTestCase) {
                 return ((UnitTestCase)parentElement).getCallStack().toArray();
             } else {
@@ -651,7 +651,7 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
         @Override
         public Object getParent(Object element) {
             if (element instanceof UnitTestSuite) {
-                return viewer.getInput();
+                return getInput();
             } else if (element instanceof UnitTestCase) {
                 return ((UnitTestCase)element).getUnitTestSuite();
             } else if (element instanceof UnitTestCallStackEntry) {
@@ -989,19 +989,20 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
             return hasErrors;
         }
 
-        private void update(UnitTestSuite[] results) {
+        private void update(UnitTestSuite[] aUnitTestSuites) {
+
             int numberRuns = 0;
             int numberErrors = 0;
             int numberFailures = 0;
             int numberAssertions = 0;
             int numberTestCases = 0;
 
-            for (UnitTestSuite unitTestResult : results) {
-                numberRuns += unitTestResult.getRuns();
-                numberErrors += unitTestResult.getNumberErrors();
-                numberFailures += unitTestResult.getNumberFailures();
-                numberAssertions += unitTestResult.getNumberAssertions();
-                numberTestCases += unitTestResult.getNumberTestCases();
+            for (UnitTestSuite tUnitTestSuite : aUnitTestSuites) {
+                numberRuns += tUnitTestSuite.getRuns();
+                numberErrors += tUnitTestSuite.getNumberErrors();
+                numberFailures += tUnitTestSuite.getNumberFailures();
+                numberAssertions += tUnitTestSuite.getNumberAssertions();
+                numberTestCases += tUnitTestSuite.getNumberTestCases();
             }
 
             runs.setText(String.valueOf(numberRuns) + "/" + String.valueOf(numberTestCases)); //$NON-NLS-1$

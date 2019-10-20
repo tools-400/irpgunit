@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2017 iRPGUnit Project Team
+ * Copyright (c) 2013-2019 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,10 +9,8 @@
 package de.tools400.rpgunit.core.model.local;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
@@ -25,8 +23,8 @@ import de.tools400.rpgunit.core.extensions.testcase.IRPGUnitTestCaseItem;
 import de.tools400.rpgunit.core.extensions.view.IRPGUnitSpooledFile;
 import de.tools400.rpgunit.core.model.ibmi.I5ServiceProgram;
 
-public class UnitTestSuite implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IUnitTestItemWithSourceMember, Comparable<UnitTestSuite>,
-    IPropertySource {
+public class UnitTestSuite
+    implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IUnitTestItemWithSourceMember, Comparable<UnitTestSuite>, IPropertySource {
 
     private static final String PROPERTY_ID_EXECUTION_TIME = "executionTime"; //$NON-NLS-1$
 
@@ -43,97 +41,40 @@ public class UnitTestSuite implements IRPGUnitTestCaseItem, IUnitTestTreeItem, I
     private static final String PROPERTY_ID_SERVICE_PROGRAM = "serviceProgram"; //$NON-NLS-1$
 
     private I5ServiceProgram serviceprogram;
-
-    private int numberAssertions;
-
-    private int numberFailures;
-
-    private int numberErrors;
-
-    private int numberSelectedTestCases = 0;
-
-    private int runs = 0;
-
-    private int numberTestCases = 0;
-
-    private boolean isSelected = false;
+    private boolean isIncompleteProcedureList = false;
+    private UnitTestExecutionTimeFormatter executionTimeFormatter;
+    private Map<String, UnitTestCase> unitTestCases;
 
     private boolean isExpanded = false;
 
-    private boolean isIncompleteProcedureList = false;
-
+    private Outcome outcome;
+    private int numberAssertions;
+    private int numberFailures;
+    private int numberErrors;
+    private int runs;
     private UnitTestReportFile spooledFile;
+
+    private int numberTestCases;
+    private int numberSelectedTestCases;
 
     private EditableSourceMember editableSourceMember;
 
-    private Map<String, UnitTestCase> unitTestCases = new TreeMap<String, UnitTestCase>();
-
-    private UnitTestExecutionTimeFormatter executionTimeFormatter;
-
     public UnitTestSuite(I5ServiceProgram input) {
         setServiceProgram(input);
-        setIsSelected(false);
         setIncompleteProcedureList(false);
 
         this.executionTimeFormatter = new UnitTestExecutionTimeFormatter();
-    }
+        this.unitTestCases = new TreeMap<String, UnitTestCase>();
 
-    public void setIsSelected(boolean anIsSelected) {
-
-        if (isSelected == anIsSelected) {
-            return;
-        }
-
-        isSelected = anIsSelected;
-
-        if (isSelected) {
-            for (UnitTestCase tUnitTestCase : unitTestCases.values()) {
-                if (isIncompleteProcedureList) {
-                    tUnitTestCase.setIsSelected(true);
-                } else {
-                    tUnitTestCase.setIsSelected(false);
-                }
-            }
-        }
-    }
-
-    public void removeNonExecutableTestCases() {
-
-        Set<String> toBeRemoved = new HashSet<String>();
-
-        for (String key : unitTestCases.keySet()) {
-            UnitTestCase unitTestCase = unitTestCases.get(key);
-            if (!unitTestCase.isExecutable()) {
-                toBeRemoved.add(key);
-            }
-        }
-
-        for (String key : toBeRemoved) {
-            unitTestCases.remove(key);
-        }
+        this.isExpanded = false;
     }
 
     public void setIncompleteProcedureList(boolean anIsIncomplete) {
         isIncompleteProcedureList = anIsIncomplete;
     }
 
-    protected void countSelected(boolean anIsSelected) {
-        if (anIsSelected) {
-            numberSelectedTestCases++;
-        } else {
-            numberSelectedTestCases--;
-        }
-
-        if (numberSelectedTestCases > 0) {
-            setIsSelected(false);
-        }
-    }
-
-    public boolean isSelected() {
-        return isSelected;
-    }
-
     public boolean isPartiallySelected() {
+
         if (unitTestCases == null || unitTestCases.size() == 0) {
             return false;
         }
@@ -191,22 +132,22 @@ public class UnitTestSuite implements IRPGUnitTestCaseItem, IUnitTestTreeItem, I
         return -1;
     }
 
-    public void addUnitTestCase(UnitTestCase aUnitTestCase) {
-        aUnitTestCase.setUnitTestSuite(this);
-        unitTestCases.put(aUnitTestCase.getKey(), aUnitTestCase);
-        if (aUnitTestCase.isFailure()) {
-            numberFailures++;
-        } else if (aUnitTestCase.isError()) {
-            numberErrors++;
-        }
-
-        numberAssertions = numberAssertions + aUnitTestCase.getAssertions();
-        isSelected = false;
-    }
-
-    public UnitTestCase[] getUnitsTestCases() {
+    public UnitTestCase[] getUnitTestCases() {
         UnitTestCase[] tTestCases = new UnitTestCase[unitTestCases.size()];
         return unitTestCases.values().toArray(tTestCases);
+    }
+
+    public String[] getSelectedUnitTestProcedureNames() {
+
+        ArrayList<String> tSelectedUnitTestProcedureNames = new ArrayList<String>();
+        for (UnitTestCase tUnitTestCase : getUnitTestCases()) {
+            if (tUnitTestCase.isSelected()) {
+                tSelectedUnitTestProcedureNames.add(tUnitTestCase.getProcedure());
+                tUnitTestCase.setSelected(false);
+            }
+        }
+
+        return tSelectedUnitTestProcedureNames.toArray(new String[tSelectedUnitTestProcedureNames.size()]);
     }
 
     public void setServiceProgram(I5ServiceProgram input) {
@@ -239,12 +180,14 @@ public class UnitTestSuite implements IRPGUnitTestCaseItem, IUnitTestTreeItem, I
     }
 
     public void updateUnitTestResult(UnitTestSuite aUnitTestSuite) {
+
         setRuns(aUnitTestSuite.getRuns());
         setNumberTestCases(aUnitTestSuite.getNumberTestCases());
         setSpooledFile(aUnitTestSuite.getSpooledFile());
-        UnitTestCase[] tNewCases = aUnitTestSuite.getUnitsTestCases();
+        UnitTestCase[] tNewCases = aUnitTestSuite.getUnitTestCases();
+
         for (int i = 0; i < tNewCases.length; i++) {
-            updateTestCase(tNewCases[i]);
+            updateOrAddUnitTestCase(tNewCases[i]);
         }
     }
 
@@ -325,36 +268,90 @@ public class UnitTestSuite implements IRPGUnitTestCaseItem, IUnitTestTreeItem, I
         return true;
     }
 
-    private void updateTestCase(UnitTestCase unitTestCase) {
-        removeTestCaseIfExists(unitTestCase);
-        addUnitTestCase(unitTestCase);
+    public void cancel() {
+
+        clearOutcome();
+
+        for (UnitTestCase tUnitTestCase : getUnitTestCases()) {
+            removeUnitTestStatistics(tUnitTestCase);
+            tUnitTestCase.cancel();
+            addUnitTestStatistics(tUnitTestCase);
+            clearOutcome();
+        }
+
+        outcome = Outcome.max(Outcome.CANCELED, this.outcome);
     }
 
     private boolean existTestCase(UnitTestCase unitTestCase) {
         return unitTestCases.containsKey(unitTestCase.getKey());
     }
 
-    private void removeTestCaseIfExists(UnitTestCase aUnitTestCase) {
+    public void addUnitTestCase(UnitTestCase aUnitTestCase) {
+
+        aUnitTestCase.setUnitTestSuite(this);
+        unitTestCases.put(aUnitTestCase.getKey(), aUnitTestCase);
+        addUnitTestStatistics(aUnitTestCase);
+
+        clearOutcome();
+    }
+
+    private void updateUnitTestCase(UnitTestCase aUnitTestCase) {
+
+        UnitTestCase tUnitTestCase = unitTestCases.get(aUnitTestCase.getKey());
+        removeUnitTestStatistics(tUnitTestCase);
+        tUnitTestCase.updateUnitTestResult(aUnitTestCase);
+        addUnitTestStatistics(aUnitTestCase);
+        clearOutcome();
+    }
+
+    private void updateOrAddUnitTestCase(UnitTestCase aUnitTestCase) {
+
+        System.out.println("... Updating result: " + aUnitTestCase.getProcedure());
         if (existTestCase(aUnitTestCase)) {
-            removeTestCase(aUnitTestCase);
+            updateUnitTestCase(aUnitTestCase);
+        } else {
+            addUnitTestCase(aUnitTestCase);
         }
     }
 
-    private void removeTestCase(UnitTestCase aUnitTestCase) {
-        UnitTestCase tTestCase = unitTestCases.get(aUnitTestCase.getKey());
+    private void addUnitTestStatistics(UnitTestCase aUnitTestCase) {
+        if (aUnitTestCase.isError()) {
+            numberErrors++;
+        } else if (aUnitTestCase.isFailure()) {
+            numberFailures++;
+        }
+        numberAssertions += aUnitTestCase.getAssertions();
+    }
 
-        if (tTestCase.isSelected()) {
+    private void removeUnitTestStatistics(UnitTestCase aUnitTestCase) {
+        if (aUnitTestCase.isError()) {
+            numberErrors--;
+        } else if (aUnitTestCase.isFailure()) {
+            numberFailures--;
+        }
+        numberAssertions -= aUnitTestCase.getAssertions();
+    }
+
+    /* Intentionally restricted access to 'package-private' */
+    void updateCountSelected(boolean anIsSelected) {
+        if (anIsSelected) {
+            numberSelectedTestCases++;
+        } else {
             numberSelectedTestCases--;
         }
+    }
 
-        if (tTestCase.isFailure()) {
-            numberFailures--;
-        } else if (tTestCase.isError()) {
-            numberErrors--;
+    private void clearOutcome() {
+        this.outcome = null;
+    }
+
+    public Outcome getOutcome() {
+        if (outcome == null) {
+            for (UnitTestCase tUnitTestCase : getUnitTestCases()) {
+                outcome = Outcome.max(outcome, tUnitTestCase.getOutcome());
+            }
         }
-
-        numberAssertions = numberAssertions - tTestCase.getAssertions();
-        unitTestCases.remove(tTestCase.getKey());
+        return outcome;
     }
 
     @Override
@@ -405,12 +402,11 @@ public class UnitTestSuite implements IRPGUnitTestCaseItem, IUnitTestTreeItem, I
         } else if (PROPERTY_ID_RUNS.equals(id)) {
             return Integer.toString(getRuns()) + "/" + Integer.toString(getNumberTestCases()); //$NON-NLS-1$
         } else if (PROPERTY_ID_OUTCOME.equals(id)) {
-            if (isSuccessful()) {
-                return Messages.SUCCESS;
-            } else if (isFailure()) {
-                return Messages.FAILED;
+            Outcome tOutcome = getOutcome();
+            if (tOutcome == null) {
+                return "[null]"; //$NON-NLS-1$
             } else {
-                return Messages.ERROR;
+                return tOutcome.getLabel();
             }
         }
 

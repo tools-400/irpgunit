@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2016 iRPGUnit Project Team
+ * Copyright (c) 2013-2019 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,8 @@ public class RPGUnitCorePlugin extends AbstractUIPlugin {
     public static final String IMAGE_FAILURE = "failure16.png"; //$NON-NLS-1$
     public static final String IMAGE_ERROR = "error16.png"; //$NON-NLS-1$
 
+    public static final String IMAGE_TEST_NOT_YET_RUN = "test_not_yet_run16.gif"; //$NON-NLS-1$
+    public static final String IMAGE_TEST_CANCELED = "test_canceled16.gif"; //$NON-NLS-1$
     public static final String IMAGE_TEST_SUCCESS = "test_success16.gif"; //$NON-NLS-1$
     public static final String IMAGE_TEST_FAILED = "test_failed16.gif"; //$NON-NLS-1$
     public static final String IMAGE_TEST_ERROR = "test_error16.gif"; //$NON-NLS-1$
@@ -177,6 +179,8 @@ public class RPGUnitCorePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_RPGUNIT_OK, getImageDescriptor(IMAGE_RPGUNIT_OK));
         reg.put(IMAGE_RPGUNIT_ERROR, getImageDescriptor(IMAGE_RPGUNIT_ERROR));
 
+        reg.put(IMAGE_TEST_NOT_YET_RUN, getImageDescriptor(IMAGE_TEST_NOT_YET_RUN));
+        reg.put(IMAGE_TEST_CANCELED, getImageDescriptor(IMAGE_TEST_CANCELED));
         reg.put(IMAGE_TEST_SUCCESS, getImageDescriptor(IMAGE_TEST_SUCCESS));
         reg.put(IMAGE_TEST_FAILED, getImageDescriptor(IMAGE_TEST_FAILED));
         reg.put(IMAGE_TEST_ERROR, getImageDescriptor(IMAGE_TEST_ERROR));

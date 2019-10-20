@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2016 iRPGUnit Project Team
+ * Copyright (c) 2013-2019 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.part.ViewPart;
@@ -37,12 +38,8 @@ public abstract class AbstractRunUnitTestsJob extends Job {
 
     private UnitTestSuite[] results;
 
-    protected AbstractRunUnitTestsJob() {
-        super("Run Unit Tests"); //$NON-NLS-1$
-    }
-
     private AbstractRunUnitTestsJob(Shell aShell, ViewPart aView) {
-        this();
+        super("Run Unit Tests");
         shell = aShell;
         view = aView;
         results = null;
@@ -82,7 +79,6 @@ public abstract class AbstractRunUnitTestsJob extends Job {
 
                 UnitTestSuite tUnitTestSuite = new UnitTestSuite(selectedObject);
                 tSelectedObjects.add(tUnitTestSuite);
-                tUnitTestSuite.setIsSelected(true);
                 tUnitTestSuite.setIncompleteProcedureList(false);
 
                 String[] procedures = selectedObject.getProcedures();
@@ -90,7 +86,7 @@ public abstract class AbstractRunUnitTestsJob extends Job {
                     UnitTestCase tUnitTestCase = new UnitTestCase(tProcedureName);
                     tUnitTestSuite.addUnitTestCase(tUnitTestCase);
                     tUnitTestSuite.setIncompleteProcedureList(true);
-                    tUnitTestCase.setIsSelected(true);
+                    tUnitTestCase.setSelected(true);
                 }
             }
         }
@@ -100,7 +96,7 @@ public abstract class AbstractRunUnitTestsJob extends Job {
     }
 
     @Override
-    protected IStatus run(IProgressMonitor arg0) {
+    protected IStatus run(IProgressMonitor monitor) {
 
         if (!(view instanceof ICursorProvider)) {
             RPGUnitCorePlugin.logError("Illegal argument passed to constructor of " + this.getClass().getSimpleName() //$NON-NLS-1$
@@ -114,7 +110,17 @@ public abstract class AbstractRunUnitTestsJob extends Job {
             return Status.CANCEL_STATUS;
         }
 
-        return execute();
+        UnitTestSuite[] unitTestSuites = getUnitTestSuites();
+
+        try {
+            resetStatistics();
+            setCursor(new Cursor(null, SWT.CURSOR_WAIT));
+            IStatus status = asyncExecute(unitTestSuites, monitor);
+            return status;
+        } finally {
+            returnResultToView(unitTestSuites);
+            setCursor(new Cursor(null, SWT.CURSOR_ARROW));
+        }
     }
 
     protected UnitTestSuite[] getUnitTestSuites() {
@@ -140,11 +146,11 @@ public abstract class AbstractRunUnitTestsJob extends Job {
 
     protected void resetStatistics() {
         for (UnitTestSuite tUnitTestSuite : getUnitTestSuites()) {
-            for (UnitTestCase tUnitTestcase : tUnitTestSuite.getUnitsTestCases()) {
+            for (UnitTestCase tUnitTestcase : tUnitTestSuite.getUnitTestCases()) {
                 tUnitTestcase.resetStatistics();
             }
         }
     }
 
-    protected abstract IStatus execute();
+    protected abstract IStatus asyncExecute(UnitTestSuite[] unitTestSuites, IProgressMonitor monitor);
 }

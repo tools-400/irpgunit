@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2016 iRPGUnit Project Team
+ * Copyright (c) 2013-2019 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,13 +8,12 @@
 
 package de.tools400.rpgunit.core.jobs.local;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.part.ViewPart;
 
@@ -53,29 +52,73 @@ public class RunUnitTestsJob extends AbstractRunUnitTestsJob {
     }
 
     @Override
-    protected IStatus execute() {
+    protected IStatus asyncExecute(UnitTestSuite[] unitTestSuites, IProgressMonitor monitor) {
 
-        setCursor(new Cursor(null, SWT.CURSOR_WAIT));
+        monitor.beginTask("Testing ...", unitTestSuites.length);
 
-        try {
+        DoExecute executer = new DoExecute(unitTestSuites, monitor);
+        executer.start();
 
-            resetStatistics();
+        while (executer.isAlive()) {
 
-            for (UnitTestSuite tUnitTestSuite : getUnitTestSuites()) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+            }
 
-                if (tUnitTestSuite.isSelected() || tUnitTestSuite.isPartiallySelected()) {
+        }
 
+        monitor.done();
+
+        return executer.getStatus();
+    }
+
+    private class DoExecute extends Thread {
+
+        private UnitTestSuite[] unitTestSuites;
+        private IProgressMonitor monitor;
+
+        private IStatus status;
+
+        public DoExecute(UnitTestSuite[] unitTestSuites, IProgressMonitor monitor) {
+            this.unitTestSuites = unitTestSuites;
+            this.monitor = monitor;
+            this.status = null;
+        }
+
+        public IStatus getStatus() {
+            return status;
+        }
+
+        @Override
+        public void run() {
+
+            status = Status.OK_STATUS;
+
+            for (UnitTestSuite tUnitTestSuite : unitTestSuites) {
+
+                if (monitor.isCanceled()) {
+                    System.out.println("Canceling test suite: " + tUnitTestSuite.getServiceProgram().getName());
+                    cancelJob(tUnitTestSuite);
+                } else {
+
+                    // TODO: remove thread sleep
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e1) {
+                    }
+
+                    System.out.println("Executing test suite (" + tUnitTestSuite.getServiceProgram().getName() + ") ...");
                     I5ServiceProgram tUnitTestServiceProgram = tUnitTestSuite.getServiceProgram();
 
                     RPGUnitTestRunner tRunner = new RPGUnitTestRunner(tUnitTestServiceProgram.getLibrary().getConnection());
                     if (!tRunner.isAvailable()) {
-                        displayError(
-                            ERROR_TITLE,
+                        displayError(ERROR_TITLE,
                             Messages.bind(Messages.Can_not_execute_unit_test_due_to_missing_unit_test_runner,
                                 new Object[] { tUnitTestServiceProgram.getLibrary(), tUnitTestServiceProgram.getName(), tRunner.toString(),
                                     Preferences.getInstance().getProductLibrary() }));
 
-                        return Status.CANCEL_STATUS;
+                        cancelJob(tUnitTestSuite);
                     }
 
                     try {
@@ -83,14 +126,8 @@ public class RunUnitTestsJob extends AbstractRunUnitTestsJob {
                         UnitTestSuite tUnitTestResult = null;
 
                         if (tUnitTestSuite.isPartiallySelected()) {
-                            ArrayList<String> tUnitTestCasesSelected = new ArrayList<String>();
-
-                            for (UnitTestCase tUnitTestCase : tUnitTestSuite.getUnitsTestCases()) {
-                                if (tUnitTestCase.isSelected()) {
-                                    tUnitTestCasesSelected.add(tUnitTestCase.getProcedure());
-                                }
-                            }
-                            tUnitTestResult = tRunner.runRemoteUnitTestCase(tUnitTestServiceProgram, tUnitTestCasesSelected);
+                            tUnitTestResult = tRunner.runRemoteUnitTestCases(tUnitTestServiceProgram,
+                                Arrays.asList(tUnitTestSuite.getSelectedUnitTestProcedureNames()));
                         } else {
                             tUnitTestResult = tRunner.runRemoteUnitTestSuite(tUnitTestServiceProgram);
                         }
@@ -106,26 +143,37 @@ public class RunUnitTestsJob extends AbstractRunUnitTestsJob {
                         } else {
                             displayError(ERROR_TITLE, ute.getLocalizedMessage());
                         }
-                        return Status.CANCEL_STATUS;
+                        cancelJob(tUnitTestSuite);
 
                     } catch (Exception e) {
-                        displayError(
-                            ERROR_TITLE,
-                            Messages.bind(Messages.The_unit_test_A_has_not_finished_successful_B, new Object[] { tUnitTestServiceProgram.toString(),
-                                e.getLocalizedMessage() }));
-                        return Status.CANCEL_STATUS;
+                        displayError(ERROR_TITLE, Messages.bind(Messages.The_unit_test_A_has_not_finished_successful_B,
+                            new Object[] { tUnitTestServiceProgram.toString(), e.getLocalizedMessage() }));
+                        cancelJob(tUnitTestSuite);
+                    } finally {
+                        deselectUnitTestCases(tUnitTestSuite);
                     }
-                } else {
-                    tUnitTestSuite.setRuns(0);
+
+                    System.out.println("... Updating: worked (" + tUnitTestSuite.getServiceProgram().getName() + ")");
+                    monitor.worked(1);
                 }
+
             }
 
-            returnResultToView(getUnitTestSuites());
-
-            return Status.OK_STATUS;
-
-        } finally {
-            setCursor(new Cursor(null, SWT.CURSOR_ARROW));
         }
+
+        private void cancelJob(UnitTestSuite aUnitTestSuite) {
+            aUnitTestSuite.cancel();
+            monitor.setCanceled(true);
+            status = Status.CANCEL_STATUS;
+        }
+
+        private void deselectUnitTestCases(UnitTestSuite aUnitTestSuite) {
+            for (UnitTestCase tUnitTestCase : aUnitTestSuite.getUnitTestCases()) {
+                if (tUnitTestCase.isSelected()) {
+                    tUnitTestCase.setSelected(false);
+                }
+            }
+        }
+
     }
 }

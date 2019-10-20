@@ -111,34 +111,7 @@ public abstract class AbstractRemoteAction<T> implements IObjectActionDelegate {
     }
 
     protected void displayInvalidObjects(List<IObjectInError> anObjects) {
-
         ObjectsInErrorListDialog dialog = new ObjectsInErrorListDialog(UIUtils.getShell(), anObjects.toArray(new IObjectInError[anObjects.size()]));
         dialog.open();
-
-        // StringBuffer tObjects = new StringBuffer();
-        // for (Iterator<IObjectInError> tIter = anObjects.iterator();
-        // tIter.hasNext();) {
-        //
-        // IObjectInError tObject = tIter.next();
-        //
-        // if (tObjects.length() > 0) {
-        // tObjects.append("\n"); //$NON-NLS-1$
-        // }
-        //
-        // tObjects.append(tObject.getErrorMessage());
-        //
-        // if (tObject instanceof IQSYSResource) {
-        // IQSYSResource tResource = (IQSYSResource)tObject;
-        // tObjects.append("- " + tResource.getFullName() + " (" +
-        // tResource.getType() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        // } else if (tObject instanceof QSYSRemoteProcedure) {
-        // QSYSRemoteProcedure tProcedure = (QSYSRemoteProcedure)tObject;
-        // tObjects.append("- " + tProcedure.getProcedureName() + "()");
-        // //$NON-NLS-1$ //$NON-NLS-2$
-        // }
-        // }
-        //
-        // UIUtils.displayError(Messages.AbstractRemoteAction_0 +
-        // tObjects.toString());
     }
 }

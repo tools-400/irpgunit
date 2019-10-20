@@ -58,9 +58,11 @@ public class Messages extends NLS {
     public static String Errors;
     public static String Failures;
     public static String Runs;
+    public static String CANCELED;
     public static String SUCCESS;
     public static String FAILED;
     public static String ERROR;
+    public static String NOT_YET_RUN;
     public static String No_spooled_file_viewer_installed;
     public static String Could_not_open_the_iSphere_spooled_file_viewer;
     public static String Could_not_open_the_RPGUnit_spooled_file_viewer;
