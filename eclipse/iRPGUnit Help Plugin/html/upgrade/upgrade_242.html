@@ -9,6 +9,16 @@
 
 <body>
 <h1>Upgrading From RPGUnit v2.4.2 to v3.0.0</h1>
+The most important thing you need to know is, that iRPGUnit 3.* requires at least
+an IBM i 7.1 operating system. Older versions are no longer supported.
+<p>
+You need to update your RPGUNIT product library when upgrading the plug-in to 3.0.0, in
+order to take advantage of all new features.
+<p>
+But it is not a show stopper when you updated the plug-in and afterwards notice that you
+cannot update the library for whatever reasons. The plug-in can run with a 2.* library.
+However some new features may not be available, such as the new XML stream file output.
+<p>
 All your existing unit test suites should run fine with iRPGUnit 3.0.0. However: 
 <p>
 <table>
@@ -29,7 +39,7 @@ The following RPGUnit self-tests (compiled with v2.4.2) run fine with iRPGUnit:
 <li>STRINGT</li>
 </ul>
 <p>
-The following RPGUnit self-tests (compiled with v2.4.2) do <b>not</b>b> run with iRPGUnit: 
+The following RPGUnit self-tests (compiled with v2.4.2) do <b>not</b> run with iRPGUnit: 
 <ul>
 <li>Test case <i>testAssertWithFailure</i> of test suite ASSERTT, because of internal changes.</li>
 <li>Test case <i>testGoodByeIsNotHello</i> of test suite ASSERTT, because of internal changes.</li>
