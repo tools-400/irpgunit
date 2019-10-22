@@ -54,7 +54,7 @@ public class RunUnitTestsJob extends AbstractRunUnitTestsJob {
     @Override
     protected IStatus asyncExecute(UnitTestSuite[] unitTestSuites, IProgressMonitor monitor) {
 
-        monitor.beginTask("Testing ...", unitTestSuites.length);
+        monitor.beginTask(Messages.UnitTestJob_Running, unitTestSuites.length);
 
         DoExecute executer = new DoExecute(unitTestSuites, monitor);
         executer.start();
@@ -97,18 +97,20 @@ public class RunUnitTestsJob extends AbstractRunUnitTestsJob {
 
             for (UnitTestSuite tUnitTestSuite : unitTestSuites) {
 
+                // TODO: remove thread sleep
+                // try {
+                // Thread.sleep(1500);
+                // } catch (InterruptedException e1) {
+                // }
+
                 if (monitor.isCanceled()) {
-                    System.out.println("Canceling test suite: " + tUnitTestSuite.getServiceProgram().getName());
+                    // TODO: System.out.println("Canceling test suite: " +
+                    // tUnitTestSuite.getServiceProgram().getName());
                     cancelJob(tUnitTestSuite);
                 } else {
 
-                    // TODO: remove thread sleep
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e1) {
-                    }
-
-                    System.out.println("Executing test suite (" + tUnitTestSuite.getServiceProgram().getName() + ") ...");
+                    // TODO: System.out.println("Executing test suite (" +
+                    // tUnitTestSuite.getServiceProgram().getName() + ") ...");
                     I5ServiceProgram tUnitTestServiceProgram = tUnitTestSuite.getServiceProgram();
 
                     RPGUnitTestRunner tRunner = new RPGUnitTestRunner(tUnitTestServiceProgram.getLibrary().getConnection());
@@ -153,7 +155,8 @@ public class RunUnitTestsJob extends AbstractRunUnitTestsJob {
                         deselectUnitTestCases(tUnitTestSuite);
                     }
 
-                    System.out.println("... Updating: worked (" + tUnitTestSuite.getServiceProgram().getName() + ")");
+                    // TODO: System.out.println("... Updating: worked (" +
+                    // tUnitTestSuite.getServiceProgram().getName() + ")");
                     monitor.worked(1);
                 }
 
@@ -163,6 +166,7 @@ public class RunUnitTestsJob extends AbstractRunUnitTestsJob {
 
         private void cancelJob(UnitTestSuite aUnitTestSuite) {
             aUnitTestSuite.cancel();
+            monitor.setTaskName(Messages.UnitTestJob_Canceling);
             monitor.setCanceled(true);
             status = Status.CANCEL_STATUS;
         }

@@ -845,7 +845,6 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
                 if (!(e2 instanceof UnitTestCallStackEntry)) {
                     throw new IllegalAccessError("Unexpected comparison of UnitTestCallStackEntry with " + e1.getClass().getSimpleName()); //$NON-NLS-1$
                 }
-                System.out.println(((UnitTestCallStackEntry)e1).getProcedure());
                 return 0;
             }
 
@@ -1021,7 +1020,9 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
                 hasErrors = false;
             }
 
-            if (hasErrors) {
+            if (numberRuns == 0) {
+                setTitleImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_RPGUNIT_CANCELED));
+            } else if (hasErrors) {
                 setTitleImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_RPGUNIT_ERROR));
             } else {
                 setTitleImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_RPGUNIT_OK));

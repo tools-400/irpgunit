@@ -306,7 +306,8 @@ public class UnitTestSuite
 
     private void updateOrAddUnitTestCase(UnitTestCase aUnitTestCase) {
 
-        System.out.println("... Updating result: " + aUnitTestCase.getProcedure());
+        // TODO: System.out.println("... Updating result: " +
+        // aUnitTestCase.getProcedure());
         if (existTestCase(aUnitTestCase)) {
             updateUnitTestCase(aUnitTestCase);
         } else {

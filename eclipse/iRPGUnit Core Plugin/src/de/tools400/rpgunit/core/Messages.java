@@ -135,6 +135,9 @@ public class Messages extends NLS {
     public static String PreferencesPage2_chkFormatJobLog_text;
     public static String PreferencesPage2_chkFormatJobLog_toolTipText;
 
+    public static String UnitTestJob_Running;
+    public static String UnitTestJob_Canceling;
+
     public static String Label_Host_name_colon;
     public static String Tooltip_Host_name;
     public static String Label_Signon_User_colon;

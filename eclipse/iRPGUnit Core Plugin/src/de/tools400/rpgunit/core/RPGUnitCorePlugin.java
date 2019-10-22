@@ -26,6 +26,7 @@ public class RPGUnitCorePlugin extends AbstractUIPlugin {
     public static final String IMAGE_RPGUNIT = "rpgunit16.png"; //$NON-NLS-1$
     public static final String IMAGE_RPGUNIT_OK = "rpgunit16ok.png"; // $NON-NLS-1$
     public static final String IMAGE_RPGUNIT_ERROR = "rpgunit16error.png"; //$NON-NLS-1$
+    public static final String IMAGE_RPGUNIT_CANCELED = "rpgunit16canceled.png"; //$NON-NLS-1$
 
     public static final String IMAGE_ASSERTION = "assertions16.png"; //$NON-NLS-1$
     public static final String IMAGE_FAILURE = "failure16.png"; //$NON-NLS-1$
@@ -178,6 +179,7 @@ public class RPGUnitCorePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_RPGUNIT, getImageDescriptor(IMAGE_RPGUNIT));
         reg.put(IMAGE_RPGUNIT_OK, getImageDescriptor(IMAGE_RPGUNIT_OK));
         reg.put(IMAGE_RPGUNIT_ERROR, getImageDescriptor(IMAGE_RPGUNIT_ERROR));
+        reg.put(IMAGE_RPGUNIT_CANCELED, getImageDescriptor(IMAGE_RPGUNIT_CANCELED));
 
         reg.put(IMAGE_TEST_NOT_YET_RUN, getImageDescriptor(IMAGE_TEST_NOT_YET_RUN));
         reg.put(IMAGE_TEST_CANCELED, getImageDescriptor(IMAGE_TEST_CANCELED));
