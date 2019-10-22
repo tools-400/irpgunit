@@ -30,7 +30,7 @@
      H NoMain Option(*SrcStmt : *NoDebugIO)
      FQSYSPRT   O    F   80        printer usropn oflind(*in70)
 
-      /include qsrc,TESTCASE
+      /include qinclude,TESTCASE                  iRPGUnit Test Suite
 
      D sds            sds                  qualified
      D  pgmName                1     10a
