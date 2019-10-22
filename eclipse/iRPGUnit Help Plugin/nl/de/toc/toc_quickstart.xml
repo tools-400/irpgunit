@@ -3,12 +3,8 @@
 
 <toc label="Schnellstart" link_to="toc/toc.xml#quickstart"> 
 	<topic href="html/quickstart/installation.html"  label="Installation" />
- 	<topic href="html/quickstart/preferences.html"   label="Voreinstellungen" >
-    	<topic href="html/quickstart/preferences_cmone.html"   label="CMOne Integration" />
- 	</topic>
-	<topic href="html/quickstart/usage.html"         label="Anwendung" >
-    	<topic href="html/quickstart/usage_cmone.html"   label="Mit CMOne" />
- 	</topic>
+ 	<topic href="html/quickstart/preferences.html"   label="Voreinstellungen" />
+	<topic href="html/quickstart/usage.html"         label="Anwendung" />
     <topic href="html/quickstart/debug.html"         label="Debugging Test Cases" />
 	<topic href="html/quickstart/notices.html"       label="Hinweise" />
 	<topic href="html/quickstart/contributors.html"  label="Mitwirkende" />

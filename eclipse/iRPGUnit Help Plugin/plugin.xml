@@ -18,6 +18,9 @@
             file="toc/toc_reference.xml">
       </toc>
       <toc
+            file="toc/toc_integration.xml">
+      </toc>
+      <toc
             file="toc/toc_appendix.xml">
       </toc>
    </extension>

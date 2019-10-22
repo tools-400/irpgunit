@@ -12,6 +12,9 @@
    <topic label="API Reference">
       <anchor id="reference" />
    </topic>
+   <topic label="Integration">
+      <anchor id="integration" />
+   </topic>
    <topic label="Appendix">
       <anchor id="appendix" />
    </topic>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="Integration" link_to="toc/toc.xml#integration"> 
+	<topic href="html/integration/cmone/usage_cmone.html"                         label="CMOne" >
+	 	<topic href="html/integration/cmone/preferences/preferences_cmone.html"   label="Preferences" />
+ 	</topic>
+</toc>
