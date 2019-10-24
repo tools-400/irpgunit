@@ -299,6 +299,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(OSVERSION) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - OS Version Utilities.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
                           MBR(PGMMSG) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - Program message handling.')
@@ -542,6 +548,12 @@
                           MBR(OBJECT) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - Object Utilities.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(OSVERSION) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - OS Version Procedures Definitions.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +

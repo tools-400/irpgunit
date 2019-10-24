@@ -413,6 +413,43 @@
      D  qualUsName                   20A   const
      D  errorCode                 32767A         options(*varsize)
 
+     D api_retrieveProductInfo...
+     D                 PR                  extpgm('QSZRTVPR')
+     D  receiver                  32767A         options(*varsize)
+     D  length                       10I 0 const
+     D  format                        8A   const
+     D  productInfo               32767A   const options(*varsize)
+     D  errorCode                 32767A         options(*varsize)
+
+      *
+     d prdi0100_t      ds                  qualified template
+     d  productID              1      7A
+     d  releaseLvl             8     13A
+     d  productOpt            14     17A
+     d  loadID                18     27A
+
+     d prdr0100_t      ds                  qualified template
+     d  bytRet                 1      4I 0
+     d  bytAvl                 5      8I 0
+     d  reserved_1             9     12I 0
+     d  productID             13     19A
+     d  releaseLvl            20     25A
+     d  productOpt            26     29A
+     d  loadID                30     33A
+     d  loadType              34     43A
+     d  symLoadState          44     53A
+     d  loadErrInd            54     63A
+     d  loadState             64     65A
+     d  supportedFlag         66     66A
+     d  regType               67     68A
+     d  regValue              69     82A
+     d  reserved_2            83     84A
+     d  offsAddInf            85     88I 0
+     d  priLangLoadID         89     92A
+     d  minTgtRls             93     98A
+     d  minVRM                99    104A
+     d  reqMetBasOptV        105    105A
+     d  level                106    108A
 
       /include qsysinc,APILIST
       /include qsysinc,OPNLIST

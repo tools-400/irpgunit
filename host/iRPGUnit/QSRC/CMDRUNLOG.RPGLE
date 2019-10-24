@@ -36,6 +36,7 @@
       /include qinclude,TEMPLATES
       /include qinclude,STRING
       /include qinclude,VERSION
+      /include qinclude,OSVERSION
 
 
       //----------------------------------------------------------------------
@@ -229,6 +230,7 @@
           logRawLine('Job      : ' + getFormattedJob());
           logRawLine('User     : ' + %trimR(sds.currUser));
           logRawLine('iRPGUnit : ' + 'v' + %trim(version));
+          logRawLine('IBM i    : ' + OS_getVersion());
           linefeed();
           hdrWasPrinted = *on;
         endif;

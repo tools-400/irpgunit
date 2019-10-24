@@ -27,6 +27,7 @@ ctl-opt DECEDIT('0.') NOMAIN;
 /include qinclude,ASSERT
 /include qinclude,PGMMSG
 /include qinclude,CMDRUN
+/include qinclude,OSVERSION
 /include qinclude,LIBL
 /include qinclude,LIBC_H
 /include qinclude,IFSIO_H
@@ -147,7 +148,7 @@ dcl-proc writeProperties;
   endif;
   rc =  write(fileHandle : %addr(text : *data) : %len(text));
 
-  text = TAB + TAB + '<property name="os.version" value="' + getOsVersion() + '"/>' + CRLF;
+  text = TAB + TAB + '<property name="os.version" value="' + OS_getVersion() + '"/>' + CRLF;
   text += TAB + TAB + '<property name="irpgunit.version" value="' + cRPGUNIT_VERSION + '"/>' + CRLF;
 
   text += TAB + '</properties>' + CRLF;
@@ -320,38 +321,6 @@ dcl-proc resolveObjectPath;
   return resolvedObject;
 end-proc;
 
-
-dcl-proc getOsVersion;
-  dcl-pi *n char(6) end-pi;
-
-  dcl-pr sys_retrieveProductInfo extpgm('QSZRTVPR');
-    receiver char(108) options(*varsize);
-    length int(10) const;
-    format char(8) const;
-    productInfo char(100) options(*varsize) const;
-    errocode likeds(errorCode_t);
-  end-pr;
-
-  dcl-s data char(108);
-  dcl-ds productInfo qualified;
-    productId char(7);
-    releaseLevel char(6);
-    productOption char(4);
-    loadId char(10);
-  end-ds;
-  dcl-ds errorCode likeds(errorCode_t);
-
-  productInfo.productId = '*OPSYS';
-  productInfo.releaseLevel = '*CUR';
-  productInfo.productOption = '0000';
-  productInfo.loadId = '*CODE';
-
-  clear errorCode;
-
-  sys_retrieveProductInfo(
-     data : %size(data) : 'PRDR0100' : productInfo : errorCode);
-  return %subst(data : 20 : 6);
-end-proc;
 
 
 dcl-proc getServerName;
