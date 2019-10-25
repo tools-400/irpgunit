@@ -62,6 +62,14 @@
      D                                     ')
      D  sender                             const likeds(MsgSender_t)
 
+       // Log library list.
+     D logLibraryList...
+     D                 pr
+     D                                     extproc('CMDRUNLOG_+
+     D                                     logLibraryList+
+     D                                     ')
+     D  libraryList                        const likeds(LiblData_t)
+
        // Set the logging context.
      D setLogContext   pr                  extproc('CMDRUNLOG_+
      D                                     setLogContext+

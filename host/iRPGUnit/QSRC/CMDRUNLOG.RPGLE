@@ -27,7 +27,6 @@
 
       /include qinclude,CMDRUNLOG
 
-
       //----------------------------------------------------------------------
       //   Imports
       //----------------------------------------------------------------------
@@ -37,7 +36,6 @@
       /include qinclude,STRING
       /include qinclude,VERSION
       /include qinclude,OSVERSION
-
 
       //----------------------------------------------------------------------
       //   Private Procedures
@@ -64,7 +62,6 @@
      D separator       c                   const(' - ')
      D lineSeparator   c                   const('-----------------------')
 
-
       //----------------------------------------------------------------------
       //   Global Variables
       //----------------------------------------------------------------------
@@ -85,10 +82,6 @@
       /define SDS_EXTENDED
       /include qinclude,SDS
       /undefine SDS_EXTENDED
-
-      //----------------------------------------------------------------------
-      //   Procedures
-      //----------------------------------------------------------------------
 
        //----------------------------------------------------------------------
        // Linefeed.
@@ -226,11 +219,12 @@
           getVersion(version: date);
           opnPrt( srvPgm );
           logRawLine( '*** Tests of ' + %trim(srvPgm.nm) + ' ***');
-          logRawLine('Date     : ' + %char(%date())+' / '+%char(%time():*HMS));
-          logRawLine('Job      : ' + getFormattedJob());
-          logRawLine('User     : ' + %trimR(sds.currUser));
-          logRawLine('iRPGUnit : ' + 'v' + %trim(version));
-          logRawLine('IBM i    : ' + OS_getVersion());
+          logRawLine('Date        : ' + %char(%date())
+                                      + ' / '+%char(%time():*HMS));
+          logRawLine('Job         : ' + getFormattedJob());
+          logRawLine('User        : ' + %trimR(sds.currUser));
+          logRawLine('iRPGUnit    : ' + 'v' + %trim(version));
+          logRawLine('IBM i       : ' + OS_getVersion());
           linefeed();
           hdrWasPrinted = *on;
         endif;
@@ -334,6 +328,64 @@
       /free
 
           logRawLine( line );
+
+      /end-free
+     P                 e
+
+
+       //----------------------------------------------------------------------
+       // Log library list.
+       //----------------------------------------------------------------------
+     P logLibraryList...
+     P                 b                   export
+     D                 pi
+     D  libraryList                        const likeds(LiblData_t)
+
+     D i               s             10i 0
+     D seq             s              4s 0
+
+     D line            s             80a   varying
+
+     D item            ds                  qualified
+     D  seq                    1      4a
+     D  name                   6     15a
+      /free
+
+          line = 'Cur. Library: ' + libraryList.curLib;
+          logRawLine( line );
+
+          if (libraryList.libL.numE = 0);
+             line = 'Library list: *NONE';
+             logRawLine( line );
+             linefeed();
+             return;
+          endif;
+
+          i = 1;
+          seq = 10;
+
+          dow (i <= libraryList.libL.numE);
+
+             if (i = 1);
+                line = 'Library list: ';
+             endif;
+
+             clear item;
+             item.seq = %editc(seq: '3');
+             item.name = libraryList.libL.lib(i);
+
+             line = line + item + '   ';
+
+             if (%rem(i: 3) = 0 or i = libraryList.libL.numE);
+                logRawLine( line );
+                line = '              ';
+             endif;
+
+             i += 1;
+             seq += 10;
+          enddo;
+
+          linefeed();
 
       /end-free
      P                 e
