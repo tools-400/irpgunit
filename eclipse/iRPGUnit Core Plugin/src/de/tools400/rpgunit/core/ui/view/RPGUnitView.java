@@ -375,7 +375,8 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
 
         if (tTestResults != null && showViewWarning) {
             if (header.hasErrors() && !Preferences.getInstance().isShowResultView()) {
-                WarningMessage.openWarning(getSite().getShell(), Preferences.WARN_MESSAGE_UNIT_TEST_ENDED_WITH_ERRORS,
+                WarningMessage.openWarning(getSite().getShell(),
+                    Preferences.WARN_MESSAGE_UNIT_TEST_ENDED_WITH_ERRORS,
                     Messages.Unit_test_ended_with_errors);
             }
         }
@@ -916,8 +917,10 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
             col1.setLayout(rl_col1);
             Label label = new Label(col1, SWT.NONE);
             label.setText(Messages.Runs + ":"); //$NON-NLS-1$
+            label.setToolTipText(Messages.Runs_toolTipText);
             runs = new Label(col1, SWT.NONE);
             runs.setText("0"); //$NON-NLS-1$
+            runs.setToolTipText(Messages.Runs_toolTipText);
 
             Composite col2 = new Composite(statistics, SWT.NONE);
             GridData gd_col2 = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
@@ -929,8 +932,10 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
             label.setImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_ERROR));
             label = new Label(col2, SWT.NONE);
             label.setText(Messages.Errors + ":"); //$NON-NLS-1$
+            label.setToolTipText(Messages.Errors_toolTipText);
             errors = new Label(col2, SWT.NONE);
             errors.setText("0"); //$NON-NLS-1$
+            errors.setToolTipText(Messages.Errors_toolTipText);
 
             Composite col3 = new Composite(statistics, SWT.NONE);
             GridData gd_col3 = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
@@ -942,8 +947,10 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
             label.setImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_FAILURE));
             label = new Label(col3, SWT.NONE);
             label.setText(Messages.Failures + ":"); //$NON-NLS-1$
+            label.setToolTipText(Messages.Failures_toolTipText);
             failures = new Label(col3, SWT.NONE);
             failures.setText("0"); //$NON-NLS-1$
+            failures.setToolTipText(Messages.Failures_toolTipText);
 
             Composite col4 = new Composite(statistics, SWT.NONE);
             GridData gd_col4 = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
@@ -955,8 +962,10 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
             label.setImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_ASSERTION));
             label = new Label(col4, SWT.NONE);
             label.setText(Messages.Assertions + ":"); //$NON-NLS-1$
+            label.setToolTipText(Messages.Assertions_toolTipText);
             assertions = new Label(col4, SWT.NONE);
             assertions.setText("0"); //$NON-NLS-1$
+            assertions.setToolTipText(Messages.Assertions_toolTipText);
 
             Composite col5 = new Composite(statistics, SWT.BORDER | SWT.NO_FOCUS);
             col5.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));

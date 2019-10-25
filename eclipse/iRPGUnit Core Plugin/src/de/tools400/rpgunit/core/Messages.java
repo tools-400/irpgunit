@@ -55,9 +55,13 @@ public class Messages extends NLS {
     public static String Source_member;
     public static String Test_suite;
     public static String Assertions;
+    public static String Assertions_toolTipText;
     public static String Errors;
+    public static String Errors_toolTipText;
     public static String Failures;
+    public static String Failures_toolTipText;
     public static String Runs;
+    public static String Runs_toolTipText;
     public static String CANCELED;
     public static String SUCCESS;
     public static String FAILED;
