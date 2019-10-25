@@ -228,6 +228,8 @@
                       + fmtObjNm(testSuiteName) + '.' );
         endmon;
 
+       logLibraryList(getLibl());
+
         if testSuite.testCasesCnt = 0;
           checkAndRestoreLibl(mustRestoreLibl: savedLibl);
           raiseRUError( 'No test case found in service program '
