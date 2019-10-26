@@ -775,10 +775,10 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
                 Object tElement = tSelection.getFirstElement();
                 if (tElement instanceof UnitTestSuite) {
                     String message;
-                    if (PluginCheck.hasPlugin(RPGUNIT_SPOOLED_FILE_VIEWER_PLUGIN_ID)) {
-                        message = launchRPGUnitSpooledFileViewer(anEvent);
-                    } else if (PluginCheck.hasPlugin(RPGUNIT_ISPHERE_INTEGRATION_PLUGIN_ID)) {
+                    if (PluginCheck.hasPlugin(RPGUNIT_ISPHERE_INTEGRATION_PLUGIN_ID)) {
                         message = launchISphereSpooledFileViewer(anEvent);
+                    } else if (PluginCheck.hasPlugin(RPGUNIT_SPOOLED_FILE_VIEWER_PLUGIN_ID)) {
+                        message = launchRPGUnitSpooledFileViewer(anEvent);
                     } else {
                         message = Messages.No_spooled_file_viewer_installed;
                     }
