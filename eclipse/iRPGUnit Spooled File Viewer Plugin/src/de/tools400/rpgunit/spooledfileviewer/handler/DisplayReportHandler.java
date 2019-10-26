@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2016 iRPGUnit Project Team
+ * Copyright (c) 2013-2019 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,10 @@ public class DisplayReportHandler extends AbstractHandler {
                     AS400 tSystem = IBMiConnection.getConnection(tReportFile.getConnectionName()).getAS400ToolboxObject();
                     SpooledFile tSpooledFile = new SpooledFile(tSystem, tReportFile.getName(), tReportFile.getNumber(), tReportFile.getJobName(),
                         tReportFile.getJobUser(), tReportFile.getJobNumber());
+                    if (tSpooledFile.getCreateDate() == null || tSpooledFile.getCreateDate().length() == 0) {
+                        MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Error, Messages.No_spooled_file_available);
+                        return null;
+                    }
                     SpooledFileEditorInput tEditorInput = new SpooledFileEditorInput(tReportFile.getTestSuite(), tSpooledFile);
 
                     IWorkbenchPage tPage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();

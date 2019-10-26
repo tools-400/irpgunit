@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2016 iRPGUnit Project Team
+ * Copyright (c) 2013-2019 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,13 @@ package de.tools400.rpgunit.isphere.factory;
 import java.sql.Time;
 import java.util.Date;
 
-import biz.isphere.base.internal.IBMiHelper;
-import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
-import biz.isphere.core.spooledfiles.SpooledFile;
-
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.PrintObject;
 import com.ibm.as400.access.QSYSObjectPathName;
 
+import biz.isphere.base.internal.IBMiHelper;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.spooledfiles.SpooledFile;
 import de.tools400.rpgunit.core.extensions.view.IRPGUnitSpooledFile;
 
 public final class ISphereFactory {
@@ -39,8 +38,12 @@ public final class ISphereFactory {
             int splfNumber = reportFile.getNumber();
 
             AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
-            com.ibm.as400.access.SpooledFile toolboxSpooledFile = new com.ibm.as400.access.SpooledFile(system, splfName, splfNumber, jobName,
-                jobUser, jobNumber);
+            com.ibm.as400.access.SpooledFile toolboxSpooledFile = new com.ibm.as400.access.SpooledFile(system, splfName, splfNumber, jobName, jobUser,
+                jobNumber);
+
+            if (toolboxSpooledFile.getCreateDate() == null || toolboxSpooledFile.getCreateDate().length() == 0) {
+                return null;
+            }
 
             _spooledFile = new SpooledFile();
             _spooledFile.setAS400(toolboxSpooledFile.getSystem());
