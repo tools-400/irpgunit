@@ -386,7 +386,9 @@
              numRows += 1;
           endif;
 
-          numRows = %max(numRows: MIN_NUM_ROWS);
+          if (numRows < MIN_NUM_ROWS);
+             numRows = MIN_NUM_ROWS;
+          endif;
 
           for row = 1 to numRows;
 
