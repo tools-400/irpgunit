@@ -335,13 +335,33 @@
 
        //----------------------------------------------------------------------
        // Log library list.
+       // Prints the library list in an arry of 3 items in a row by
+       // number of rows required. The minimum number of rows is 5:
+       //
+       // Output for up to 5 libraries:
+       //   Cur. library: LLLLLLLLLL
+       //   Library list: nnnn LLLLLLLLLL
+       //                 ...
+       //                 nnnn LLLLLLLLLL
+       //
+       // Output for 5+ libraries:
+       //   Cur. library: LLLLLLLLLL
+       //   Library list: nnnn LLLLLLLLLL   nnnn LLLLLLLLLL   nnnn LLLLLLLLLL
+       //                 ...
+       //                 nnnn LLLLLLLLLL   nnnn LLLLLLLLLL   nnnn LLLLLLLLLL
        //----------------------------------------------------------------------
      P logLibraryList...
      P                 b                   export
      D                 pi
      D  libraryList                        const likeds(LiblData_t)
 
-     D i               s             10i 0
+     D MIN_NUM_ROWS    c                   5
+     D STEP_WIDTH      c                   10
+
+     D numRows         s             10i 0
+     D row             s             10i 0
+     D column          s             10i 0
+     D x               s             10i 0
      D seq             s              4s 0
 
      D line            s             80a   varying
@@ -351,7 +371,7 @@
      D  name                   6     15a
       /free
 
-          line = 'Cur. Library: ' + libraryList.curLib;
+          line = 'Cur. library: ' + libraryList.curLib;
           logRawLine( line );
 
           if (libraryList.libL.numE = 0);
@@ -361,29 +381,36 @@
              return;
           endif;
 
-          i = 1;
-          seq = 10;
+          numRows = %div(libraryList.libL.numE: 3);
+          if (numRows * 3 <> libraryList.libL.numE);
+             numRows += 1;
+          endif;
 
-          dow (i <= libraryList.libL.numE);
+          numRows = %max(numRows: MIN_NUM_ROWS);
 
-             if (i = 1);
+          for row = 1 to numRows;
+
+             if (row = 1);
                 line = 'Library list: ';
              endif;
 
-             clear item;
-             item.seq = %editc(seq: '3');
-             item.name = libraryList.libL.lib(i);
+             for column = 0 to 2;
 
-             line = line + item + '   ';
+                x = row + (column * numRows);
+                if (x <= libraryList.libL.numE);
+                   seq = (row * STEP_WIDTH) + (column * (numRows * STEP_WIDTH));
+                   clear item;
+                   item.seq = %editc(seq: '3');
+                   item.name = libraryList.libL.lib(x);
+                   line = line + item + '   ';
+                endif;
 
-             if (%rem(i: 3) = 0 or i = libraryList.libL.numE);
-                logRawLine( line );
-                line = '              ';
-             endif;
+             endfor;
 
-             i += 1;
-             seq += 10;
-          enddo;
+             logRawLine( line );
+             line = '              ';
+
+          endfor;
 
           linefeed();
 
