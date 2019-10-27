@@ -368,6 +368,7 @@
    "DLTMOD MODULE("_prdLib"/LLIST)"
    "DLTMOD MODULE("_prdLib"/MSGQT)"
    "DLTMOD MODULE("_prdLib"/OBJECT)"
+   "DLTMOD MODULE("_prdLib"/OSVERSION)"
    "DLTMOD MODULE("_prdLib"/PGMMSG)"
    "DLTMOD MODULE("_prdLib"/PGMMSGT)"
    "DLTMOD MODULE("_prdLib"/PGMRMT)"
