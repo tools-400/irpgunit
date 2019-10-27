@@ -221,14 +221,13 @@
         monitor;
           savedLibl = getLibl();
           mustRestoreLibl = setTestSuiteLibl(libl: qJobD: testSuiteName.lib);
+          logLibraryList(getLibl());
           testSuite = loadTestSuite( testSuiteName );
         on-error;
           checkAndRestoreLibl(mustRestoreLibl: savedLibl);
           raiseRUError( 'Error while loading test suite '
                       + fmtObjNm(testSuiteName) + '.' );
         endmon;
-
-       logLibraryList(getLibl());
 
         if testSuite.testCasesCnt = 0;
           checkAndRestoreLibl(mustRestoreLibl: savedLibl);
