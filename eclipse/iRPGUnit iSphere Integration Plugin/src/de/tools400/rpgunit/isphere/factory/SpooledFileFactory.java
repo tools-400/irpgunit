@@ -20,7 +20,7 @@ import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributio
 import biz.isphere.core.spooledfiles.SpooledFile;
 import de.tools400.rpgunit.core.extensions.view.IRPGUnitSpooledFile;
 
-public final class ISphereFactory {
+public final class SpooledFileFactory {
 
     public static SpooledFile createSpooledFile(IRPGUnitSpooledFile reportFile) {
 

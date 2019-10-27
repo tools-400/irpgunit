@@ -17,7 +17,7 @@ import biz.isphere.core.spooledfiles.SpooledFile;
 import de.tools400.rpgunit.core.extensions.testcase.IRPGUnitTestCaseItem;
 import de.tools400.rpgunit.core.extensions.view.IRPGUnitSpooledFile;
 import de.tools400.rpgunit.isphere.Messages;
-import de.tools400.rpgunit.isphere.factory.ISphereFactory;
+import de.tools400.rpgunit.isphere.factory.SpooledFileFactory;
 
 public abstract class AbstractSpooledFileAction extends ISeriesAbstractQSYSPopupMenuAction {
 
@@ -32,7 +32,7 @@ public abstract class AbstractSpooledFileAction extends ISeriesAbstractQSYSPopup
                 IRPGUnitTestCaseItem testCaseItem = (IRPGUnitTestCaseItem)selection[i];
                 IRPGUnitSpooledFile rpgunitSpooledFile = testCaseItem.getSpooledFile();
                 if (rpgunitSpooledFile != null) {
-                    SpooledFile spooledFile = ISphereFactory.createSpooledFile(rpgunitSpooledFile);
+                    SpooledFile spooledFile = SpooledFileFactory.createSpooledFile(rpgunitSpooledFile);
                     if (spooledFile != null) {
                         message = execute(spooledFile);
                     } else {
