@@ -11,10 +11,12 @@
       //   >>CRTCMD<<  RUCRTTST TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
       //   >>IMPORTANT<<
       //     >>PARM<<  MODULE(&LI/ASSERT    +
+      //                      &LI/LIBL      +
       //                      &LI/OBJECT    +
       //                      &LI/PGMMSG    +
       //                      &LI/SPLF      +
       //                      &LI/SRCMBR    +
+      //                      &LI/STRING    +
       //                      &LI/TESTUTILS +
       //                      &LI/USRSPC    +
       //                      );
@@ -30,6 +32,7 @@
       //   Exported Procedures
       //----------------------------------------------------------------------
 
+     D setUpSuite      pr                  extproc('setUpSuite')
      D setUp           pr                  extproc('setUp')
      D tearDown        pr                  extproc('tearDown')
 
@@ -77,6 +80,7 @@
       //----------------------------------------------------------------------
 
       /include qinclude,ASSERT
+      /include qinclude,LIBL
       /include qinclude,OBJECT
       /include qinclude,PGMMSG
       /include qinclude,SYSTEMAPI
@@ -114,11 +118,37 @@
 
        // Message text.
      D msgTxt          s            256a
+     D numRows         s             10i 0
 
 
       //----------------------------------------------------------------------
       //   Test Procedures
       //----------------------------------------------------------------------
+
+     P setUpSuite...
+     P                 b                   export
+     D                 pi
+
+     D libraryList     ds                  likeds(LiblData_t) inz
+     D MIN_NUM_ROWS    c                   5
+      /free
+
+        libraryList = getLibl();
+
+        numRows = %div(libraryList.libL.numE: 3);
+        if (numRows * 3 <> libraryList.libL.numE);
+           numRows += 1;
+        endif;
+
+        if (numRows < MIN_NUM_ROWS);
+           numRows = MIN_NUM_ROWS;
+           if (numRows > libraryList.libL.numE);
+             numRows = libraryList.libL.numE;
+           endif;
+        endif;
+
+      /end-free
+     P                 e
 
      P setUp...
      P                 b                   export
@@ -189,6 +219,7 @@
      P testFailures...
      P                 b                   export
      D                 pi
+     D i               s             10i 0
       /free
 
         if (TestSuite_isDirty('TESTPGM03': 'QTEMP'));
@@ -206,7 +237,17 @@
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
         splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
+        splfSkipLine();  // Skip "IBM i       : V7R3M0"
         splfSkipLine();  // Skip [blank line]
+
+        splfSkipLine();  // Skip "Cur. library: *CRTDFT"
+        i = numRows;
+        dow (i > 0);
+          splfSkipLine();  // Skip lines of library list
+          i -= 1;
+        enddo;
+        splfSkipLine();  // Skip [blank line]
+
         splfLineStartsWith( 'TESTFALSE - FAILURE' );
         splfLineStartsWith( 'Expected 5, but was 4.' );
         splfLineStartsWith( 'iEqual' );
@@ -283,7 +324,7 @@
      D                 pi
 
      D testStartTime   s               z
-
+     D i               s             10i 0
       /free
 
         if (TestSuite_isDirty('TESTPGM06': 'QTEMP'));
@@ -304,7 +345,17 @@
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
         splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
+        splfSkipLine();  // Skip "IBM i       : V7R3M0"
         splfSkipLine();  // Skip [blank line]
+
+        splfSkipLine();  // Skip "Cur. library: *CRTDFT"
+        i = numRows;
+        dow (i > 0);
+          splfSkipLine();  // Skip lines of library list
+          i -= 1;
+        enddo;
+        splfSkipLine();  // Skip [blank line]
+
         splfLineStartsWith( 'TESTERROR - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
         splfLineStartsWith( 'TESTERROR (TESTPGM06->TESTPGM06:23' );
@@ -321,6 +372,7 @@
      P testStackTrace...
      P                 b                   export
      D                 pi
+     D i               s             10i 0
       /free
 
         if (TestSuite_isDirty('TESTPGM07': 'QTEMP'));
@@ -338,7 +390,17 @@
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
         splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
+        splfSkipLine();  // Skip "IBM i       : V7R3M0"
         splfSkipLine();  // Skip [blank line]
+
+        splfSkipLine();  // Skip "Cur. library: *CRTDFT"
+        i = numRows;
+        dow (i > 0);
+          splfSkipLine();  // Skip lines of library list
+          i -= 1;
+        enddo;
+        splfSkipLine();  // Skip [blank line]
+
         splfLineStartsWith( 'TESTSTACK - FAILURE' );
         splfLineStartsWith( 'Expected 5, but was 4.' );
         splfLineStartsWith( 'iEqual' );
@@ -357,6 +419,7 @@
      P testMissingObject...
      P                 b                   export
      D                 pi
+     D i               s             10i 0
       /free
 
         if (TestSuite_exists('TESTPGM08': 'QTEMP'));
@@ -377,7 +440,17 @@
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
         splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
+        splfSkipLine();  // Skip "IBM i       : V7R3M0"
         splfSkipLine();  // Skip [blank line]
+
+        splfSkipLine();  // Skip "Cur. library: *CRTDFT"
+        i = numRows;
+        dow (i > 0);
+          splfSkipLine();  // Skip lines of library list
+          i -= 1;
+        enddo;
+        splfSkipLine();  // Skip [blank line]
+
         splfLineStartsWith( 'Runtime error: +
                              Error while loading test suite *LIBL/TESTPGM08.' );
 
@@ -390,6 +463,7 @@
      P testErrorDuringSetup...
      P                 b                   export
      D                 pi
+     D i               s             10i 0
       /free
 
         if (TestSuite_isDirty('TESTPGM09': 'QTEMP'));
@@ -411,7 +485,17 @@
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
         splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
+        splfSkipLine();  // Skip "IBM i       : V7R3M0"
         splfSkipLine();  // Skip [blank line]
+
+        splfSkipLine();  // Skip "Cur. library: *CRTDFT"
+        i = numRows;
+        dow (i > 0);
+          splfSkipLine();  // Skip lines of library list
+          i -= 1;
+        enddo;
+        splfSkipLine();  // Skip [blank line]
+
         splfLineStartsWith( 'TEST - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
         splfLineStartsWith( 'SETUP (TESTPGM09->TESTPGM09:30' );
@@ -428,6 +512,7 @@
      P testErrorDuringTearDown...
      P                 b                   export
      D                 pi
+     D i               s             10i 0
       /free
 
         if (TestSuite_isDirty('TESTPGM10': 'QTEMP'));
@@ -445,7 +530,17 @@
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
         splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
+        splfSkipLine();  // Skip "IBM i       : V7R3M0"
         splfSkipLine();  // Skip [blank line]
+
+        splfSkipLine();  // Skip "Cur. library: *CRTDFT"
+        i = numRows;
+        dow (i > 0);
+          splfSkipLine();  // Skip lines of library list
+          i -= 1;
+        enddo;
+        splfSkipLine();  // Skip [blank line]
+
         splfLineStartsWith( 'TEST - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
         splfLineStartsWith( 'TEARDOWN (TESTPGM10->TESTPGM10:28' );
@@ -538,6 +633,7 @@
      P testBigInteger...
      P                 b                   export
      D                 pi
+     D i               s             10i 0
       /free
 
         if (TestSuite_isDirty('TESTPGM14': 'QTEMP'));
@@ -554,8 +650,18 @@
         splfSkipLine();  // Skip "Date"
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
-        splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
+        splfSkipLine();  // Skip "iRPGUnit    : v3.0.0"
+        splfSkipLine();  // Skip "IBM i       : V7R3M0"
         splfSkipLine();  // Skip [blank line]
+
+        splfSkipLine();  // Skip "Cur. library: *CRTDFT"
+        i = numRows;
+        dow (i > 0);
+          splfSkipLine();  // Skip lines of library list
+          i -= 1;
+        enddo;
+        splfSkipLine();  // Skip [blank line]
+
         splfLineStartsWith( 'TEST_DIFFERENT - FAILURE' );
         splfLineStartsWith( 'Expected 123456789012345678901234567890'
                           + '1, but was 12345678901234567890' );
@@ -575,6 +681,7 @@
      P testForceSpoolOnSuccess...
      P                 b                   export
      D                 pi
+     D i               s             10i 0
       /free
 
         if (TestSuite_isDirty('TESTPGM15': 'QTEMP'));
@@ -595,7 +702,17 @@
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
         splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
+        splfSkipLine();  // Skip "IBM i       : V7R3M0"
         splfSkipLine();  // Skip [blank line]
+
+        splfSkipLine();  // Skip "Cur. library: *CRTDFT"
+        i = numRows;
+        dow (i > 0);
+          splfSkipLine();  // Skip lines of library list
+          i -= 1;
+        enddo;
+        splfSkipLine();  // Skip [blank line]
+
         splfLineStartsWith( 'TESTTRUE - Success' );
         splfLineStartsWith( '1 assertions' );
         splfLineStartsWith( '-----------------------' );
@@ -647,6 +764,7 @@
      P testChooseTest...
      P                 b                   export
      D                 pi
+     D i               s             10i 0
       /free
 
         if (TestSuite_isDirty('TESTPGM05': 'QTEMP'));
@@ -669,7 +787,17 @@
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
         splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
+        splfSkipLine();  // Skip "IBM i       : V7R3M0"
         splfSkipLine();  // Skip [blank line]
+
+        splfSkipLine();  // Skip "Cur. library: *CRTDFT"
+        i = numRows;
+        dow (i > 0);
+          splfSkipLine();  // Skip lines of library list
+          i -= 1;
+        enddo;
+        splfSkipLine();  // Skip [blank line]
+
         splfLineStartsWith( 'TEST2 - FAILURE' );
         splfLineStartsWith( 'test2' );
         // New, due to new procedure doFail():
@@ -688,6 +816,7 @@
      P testChooseNonExistingTest...
      P                 b                   export
      D                 pi
+     D i               s             10i 0
       /free
 
         if (TestSuite_isDirty('TESTPGM05': 'QTEMP'));
@@ -706,7 +835,17 @@
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
         splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
+        splfSkipLine();  // Skip "IBM i       : V7R3M0"
         splfSkipLine();  // Skip [blank line]
+
+        splfSkipLine();  // Skip "Cur. library: *CRTDFT"
+        i = numRows;
+        dow (i > 0);
+          splfSkipLine();  // Skip lines of library list
+          i -= 1;
+        enddo;
+        splfSkipLine();  // Skip [blank line]
+
         splfLineStartsWith( 'NON_EXISTING_TEST - ERROR' );
         splfLineStartsWith( 'Test procedure not found.' );
         splfLineStartsWith( '-----------------------' );
@@ -722,6 +861,7 @@
      P testErrorInSetUpSuite...
      P                 b                   export
      D                 pi
+     D i               s             10i 0
       /free
 
         if (TestSuite_isDirty('TESTPGM17': 'QTEMP'));
@@ -742,7 +882,17 @@
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
         splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
+        splfSkipLine();  // Skip "IBM i       : V7R3M0"
         splfSkipLine();  // Skip [blank line]
+
+        splfSkipLine();  // Skip "Cur. library: *CRTDFT"
+        i = numRows;
+        dow (i > 0);
+          splfSkipLine();  // Skip lines of library list
+          i -= 1;
+        enddo;
+        splfSkipLine();  // Skip [blank line]
+
         splfLineStartsWith( 'SETUPSUITE - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
         splfLineStartsWith( 'SETUPSUITE (TESTPGM17->TESTPGM17:30' );
@@ -759,6 +909,7 @@
      P testErrorInTearDownSuite...
      P                 b                   export
      D                 pi
+     D i               s             10i 0
       /free
 
         if (TestSuite_isDirty('TESTPGM18': 'QTEMP'));
@@ -780,7 +931,17 @@
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
         splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
+        splfSkipLine();  // Skip "IBM i       : V7R3M0"
         splfSkipLine();  // Skip [blank line]
+
+        splfSkipLine();  // Skip "Cur. library: *CRTDFT"
+        i = numRows;
+        dow (i > 0);
+          splfSkipLine();  // Skip lines of library list
+          i -= 1;
+        enddo;
+        splfSkipLine();  // Skip [blank line]
+
         splfLineStartsWith( 'TEARDOWNSUITE - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
         splfLineStartsWith( 'TEARDOWNSUITE (TESTPGM18->TESTPGM18:48' );
@@ -797,6 +958,7 @@
      P testErrorsInBothSetUpSuiteAndTearDownSuite...
      P                 b                   export
      D                 pi
+     D i               s             10i 0
       /free
 
         if (TestSuite_isDirty('TESTPGM19': 'QTEMP'));
@@ -817,7 +979,17 @@
         splfSkipLine();  // Skip "Job"
         splfSkipLine();  // Skip "User"
         splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
+        splfSkipLine();  // Skip "IBM i       : V7R3M0"
         splfSkipLine();  // Skip [blank line]
+
+        splfSkipLine();  // Skip "Cur. library: *CRTDFT"
+        i = numRows;
+        dow (i > 0);
+          splfSkipLine();  // Skip lines of library list
+          i -= 1;
+        enddo;
+        splfSkipLine();  // Skip [blank line]
+
         splfLineStartsWith( 'SETUPSUITE - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
         splfLineStartsWith( 'SETUPSUITE (TESTPGM19->TESTPGM19:30' );
