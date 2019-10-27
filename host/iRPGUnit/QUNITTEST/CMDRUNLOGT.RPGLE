@@ -11,6 +11,8 @@
       //   >>CRTCMD<<  RUCRTTST TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
       //   >>IMPORTANT<<
       //     >>PARM<<  MODULE(&LI/CMDRUNLOG +
+      //                      &LI/LIBL      +
+      //                      &LI/OSVERSION +
       //                      &LI/STRING    +
       //                      );
       //   >>END-IMPORTANT<<
@@ -26,6 +28,7 @@
 
       /copy qinclude,ASSERT
       /copy qinclude,CMDRUNLOG
+      /copy qinclude,LIBL
       /copy qinclude,TEMPLATES
 
       // CMDRUNPRTY is imported to mock module CMDRUNPRT. That way, we can
@@ -38,6 +41,7 @@
       //   Test Case Prototypes
       //----------------------------------------------------------------------
 
+     D setUpSuite      pr                  extproc('setUpSuite')
      D setUp           pr                  extproc('setUp')
      D tearDown        pr                  extproc('tearDown')
 
@@ -94,7 +98,7 @@
       //----------------------------------------------------------------------
 
      P setUp           b                   export
-     D setUp           pi
+     D                 pi
       /free
 
         clear logIdx;
@@ -112,7 +116,7 @@
 
 
      P tearDown        b                   export
-     D tearDown        pi
+     D                 pi
       /free
 
         logCompMsg( *blank : 0 : 0 );    // Close log in all cases.
@@ -123,7 +127,6 @@
 
      P testLogSuccessWith1Assertion...
      P                 b                   export
-     D testLogSuccessWith1Assertion...
      D                 pi
 
      D oneAssertion    c                   const(1)
@@ -142,11 +145,11 @@
 
         assert( logWasOpened : 'Log was not opened' );
         aEqual( MARGIN + '*** Tests of MY_SRVPGM ***         ' : logLine(1)  );
-        aEqual( MARGIN + 'successful_test_with_one_asser     ' : logLine(9)  );
-        aEqual( MARGIN + 'tion - Success                     ' : logLine(10) );
-        aEqual( MARGIN + '  1 assertions                     ' : logLine(11) );
-        aEqual( MARGIN + '-----------------------            ' : logLine(12) );
-        iEqual( 13 : logIdx );
+        aEqual( MARGIN + 'successful_test_with_one_asser     ' : logLine(10)  );
+        aEqual( MARGIN + 'tion - Success                     ' : logLine(11) );
+        aEqual( MARGIN + '  1 assertions                     ' : logLine(12) );
+        aEqual( MARGIN + '-----------------------            ' : logLine(13) );
+        iEqual( 14 : logIdx );
 
       /end-free
      P                 e
@@ -154,7 +157,6 @@
 
      P testLogSuccessWith2Assertions...
      P                 b                   export
-     D testLogSuccessWith2Assertions...
      D                 pi
 
      D twoAssertions   c                   const(2)
@@ -172,11 +174,11 @@
         // Controls.
 
         aEqual( MARGIN + '*** Tests of MY_SRVPGM ***        ' : logLine(1)  );
-        aEqual( MARGIN + 'successful_test_with_two_asser    ' : logLine(9)  );
-        aEqual( MARGIN + 'tions - Success                   ' : logLine(10) );
-        aEqual( MARGIN + '  2 assertions                    ' : logLine(11) );
-        aEqual( MARGIN + '-----------------------           ' : logLine(12) );
-        iEqual( 13 : logIdx );
+        aEqual( MARGIN + 'successful_test_with_two_asser    ' : logLine(10) );
+        aEqual( MARGIN + 'tions - Success                   ' : logLine(11) );
+        aEqual( MARGIN + '  2 assertions                    ' : logLine(12) );
+        aEqual( MARGIN + '-----------------------           ' : logLine(13) );
+        iEqual( 14 : logIdx );
 
       /end-free
      P                 e
@@ -184,7 +186,6 @@
 
      P testLog2Successes...
      P                 b                   export
-     D testLog2Successes...
      D                 pi
 
      D testNm2         s                   like(TestNm)
@@ -204,14 +205,14 @@
         // Controls.
 
         aEqual( MARGIN + '*** Tests of MY_SRVPGM ***    ' : logLine(1)  );
-        aEqual( MARGIN + 'successful_test_1 - Success   ' : logLine(9)  );
-        aEqual( MARGIN + '  0 assertions                ' : logLine(10) );
-        aEqual( MARGIN + '-----------------------       ' : logLine(11) );
-        aEqual( MARGIN + ''                               : logLine(12) );
-        aEqual( MARGIN + 'successful_test_2 - Success   ' : logLine(13) );
-        aEqual( MARGIN + '  0 assertions                ' : logLine(14) );
-        aEqual( MARGIN + '-----------------------       ' : logLine(15) );
-        iEqual( 16 : logIdx );
+        aEqual( MARGIN + 'successful_test_1 - Success   ' : logLine(10) );
+        aEqual( MARGIN + '  0 assertions                ' : logLine(11) );
+        aEqual( MARGIN + '-----------------------       ' : logLine(12) );
+        aEqual( MARGIN + ''                               : logLine(13) );
+        aEqual( MARGIN + 'successful_test_2 - Success   ' : logLine(14) );
+        aEqual( MARGIN + '  0 assertions                ' : logLine(15) );
+        aEqual( MARGIN + '-----------------------       ' : logLine(16) );
+        iEqual( 17 : logIdx );
 
       /end-free
      P                 e
@@ -219,7 +220,6 @@
 
      P testLogFailureWithoutSpecNb...
      P                 b                   export
-     D testLogFailureWithoutSpecNb...
      D                 pi
 
      D failure         ds                  likeds(AssertFailEvtLong_t) inz
@@ -243,13 +243,13 @@
 
         assert( logWasOpened : 'Log was not opened' );
         aEqual( MARGIN + '*** Tests of MY_SRVPGM ***        ' : logLine(1)  );
-        aEqual( MARGIN + 'failure_without_spec_nb - FAIL    ' : logLine(9)  );
-        aEqual( MARGIN + 'URE                               ' : logLine(10) );
-        aEqual( MARGIN + '  failure_without_spec_nb (MY_    ' : logLine(11) );
-        aEqual( MARGIN + 'SRVPGM->MY_SRVPGM:*N)             ' : logLine(12) );
-        aEqual( MARGIN + '-----------------------           ' : logLine(13) );
-        aEqual( MARGIN + '                                  ' : logLine(14) );
-        iEqual( 14 : logIdx );
+        aEqual( MARGIN + 'failure_without_spec_nb - FAIL    ' : logLine(10) );
+        aEqual( MARGIN + 'URE                               ' : logLine(11) );
+        aEqual( MARGIN + '  failure_without_spec_nb (MY_    ' : logLine(12) );
+        aEqual( MARGIN + 'SRVPGM->MY_SRVPGM:*N)             ' : logLine(13) );
+        aEqual( MARGIN + '-----------------------           ' : logLine(14) );
+        aEqual( MARGIN + '                                  ' : logLine(15) );
+        iEqual( 15 : logIdx );
 
       /end-free
      P                 e
@@ -257,7 +257,6 @@
 
      P testLogErrorWithoutMsgId...
      P                 b                   export
-     D testLogErrorWithoutMsgId...
      D                 pi
 
      D excpMsgInfo     ds                  likeds(Msg_t)
@@ -281,11 +280,11 @@
 
         assert( logWasOpened : 'Log was not opened' );
         aEqual( MARGIN + '*** Tests of MY_SRVPGM ***        ' : logLine(1)  );
-        aEqual( MARGIN + 'error_with_missing_msg_id - ERROR ' : logLine(9)  );
-        aEqual( MARGIN + 'Error message.                    ' : logLine(10) );
-        aEqual( MARGIN + '  error_proc (ERRORPGM->:1000)    ' : logLine(11) );
-        aEqual( MARGIN + '-----------------------           ' : logLine(12) );
-        iEqual( 13 : logIdx );
+        aEqual( MARGIN + 'error_with_missing_msg_id - ERROR ' : logLine(10) );
+        aEqual( MARGIN + 'Error message.                    ' : logLine(11) );
+        aEqual( MARGIN + '  error_proc (ERRORPGM->:1000)    ' : logLine(12) );
+        aEqual( MARGIN + '-----------------------           ' : logLine(13) );
+        iEqual( 14 : logIdx );
 
       /end-free
      P                 e
@@ -293,7 +292,6 @@
 
      P testLogErrorWithoutExcpInfoOrigin...
      P                 b                   export
-     D testLogErrorWithoutExcpInfoOrigin...
      D                 pi
 
      D excpMsgInfo     ds                  likeds(Msg_t)
@@ -316,17 +314,17 @@
         // Controls.
 
         aEqual( MARGIN + '*** Tests of MY_SRVPGM ***        ' : logLine(1)  );
-        aEqual( MARGIN + 'error_without_origin_info - ERROR ' : logLine(9)  );
-        aEqual( MARGIN + 'CPF1234 - Error message.          ' : logLine(10) );
-        aEqual( MARGIN + '-----------------------           ' : logLine(11) );
-        iEqual( 12 : logIdx );
+        aEqual( MARGIN + 'error_without_origin_info - ERROR ' : logLine(10) );
+        aEqual( MARGIN + 'CPF1234 - Error message.          ' : logLine(11) );
+        aEqual( MARGIN + '-----------------------           ' : logLine(12) );
+        iEqual( 13 : logIdx );
 
       /end-free
      P                 e
 
 
      P testLogCompMsg  b                   export
-     D testLogCompMsg  pi
+     D                 pi
       /free
 
         // Execution.
@@ -337,8 +335,8 @@
 
         assert( logWasOpened : 'Log was not opened' );
         aEqual( MARGIN + '*** Tests of MY_SRVPGM ***        ' : logLine(1)  );
-        aEqual( MARGIN + 'Completion message                ' : logLine(9) );
-        iEqual( 9 : logIdx );
+        aEqual( MARGIN + 'Completion message                ' : logLine(10) );
+        iEqual( 10 : logIdx );
         assert( logWasClosed : 'Log was not closed' );
 
       /end-free
@@ -346,7 +344,7 @@
 
 
      P testLogRawLine  b                   export
-     D testLogRawLine  pi
+     D                 pi
       /free
 
         // Execution.
@@ -355,8 +353,8 @@
 
         // Controls.
 
-        aEqual( MARGIN + 'A short text                      ' : logLine(9) );
-        iEqual( 9 : logIdx );
+        aEqual( MARGIN + 'A short text                      ' : logLine(10) );
+        iEqual( 10 : logIdx );
 
       /end-free
      P                 e
@@ -364,7 +362,6 @@
 
      P testLogRawLineWithWrapping...
      P                 b                   export
-     D testLogRawLineWithWrapping...
      D                 pi
 
      D longText        s            256a
@@ -385,9 +382,9 @@
 
               //          1111111111222222222233333333334
               // 1234567890123456789012345678901234567890
-        aEqual( MARGIN + 'A very very very very very ver' : logLine(9) );
-        aEqual( MARGIN + 'y very very long text' : logLine(10) );
-        iEqual( 10 : logIdx );
+        aEqual( MARGIN + 'A very very very very very ver' : logLine(10) );
+        aEqual( MARGIN + 'y very very long text' : logLine(11) );
+        iEqual( 11 : logIdx );
 
       /end-free
      P                 e
@@ -399,7 +396,7 @@
 
        // Procedure to mock module CMDRUNPRT.
      P clsPrt          b                   export
-     D clsPrt          pi
+     D                 pi
       /free
 
         logWasClosed = *on;
@@ -410,7 +407,7 @@
 
        // Procedure to mock module CMDRUNPRT.
      P getPrtWidth     b                   export
-     D getPrtWidth     pi            10i 0
+     D                 pi            10i 0
       /free
 
         return 40;
@@ -421,7 +418,7 @@
 
        // Procedure to mock module CMDRUNPRT.
      P opnPrt          b                   export
-     D opnPrt          pi
+     D                 pi
      D  testPgmNm                          const like(Object_t.nm)
       /free
 
@@ -434,7 +431,7 @@
 
        // Procedure to mock module CMDRUNPRT.
      P getSplf         b                   export
-     D getSplf         pi                  likeds(splF_t)
+     D                 pi                  likeds(splF_t)
 
      D splF            ds                  likeds(splF_t)
       /free
@@ -452,7 +449,7 @@
 
        // Procedure to mock module CMDRUNPRT.
      P prtLine         b                   export
-     D prtLine         pi
+     D                 pi
      D  line                         80a   const
       /free
 
