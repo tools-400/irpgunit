@@ -2,7 +2,7 @@
 <feature
       id="de.tools400.rpgunit.isphere"
       label="iRPGUnit iSphere Integration (optional)"
-      version="3.0.0.b005"
+      version="3.0.0.b006"
       provider-name="iRPGUnit Project Team"
       plugin="de.tools400.rpgunit.core">
 
@@ -24,7 +24,7 @@
    </url>
 
    <requires>
-      <import feature="de.tools400.rpgunit.core" version="3.0.0.b005" match="greaterOrEqual"/>
+      <import feature="de.tools400.rpgunit.core" version="3.0.0.b006" match="greaterOrEqual"/>
    </requires>
 
    <plugin

@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/de.tools400.rpgunit.core_3.0.0.b005.jar" id="de.tools400.rpgunit.core" version="3.0.0.b005">
+   <feature url="features/de.tools400.rpgunit.core_3.0.0.b006.jar" id="de.tools400.rpgunit.core" version="3.0.0.b006">
       <category name="de.tools400.rpgunit"/>
    </feature>
-   <feature url="features/de.tools400.rpgunit.core.help_3.0.0.b005.jar" id="de.tools400.rpgunit.core.help" version="3.0.0.b005">
+   <feature url="features/de.tools400.rpgunit.core.help_3.0.0.b006.jar" id="de.tools400.rpgunit.core.help" version="3.0.0.b006">
       <category name="de.tools400.rpgunit"/>
    </feature>
-   <feature url="features/de.tools400.rpgunit.isphere_3.0.0.b005.jar" id="de.tools400.rpgunit.isphere" version="3.0.0.b005">
+   <feature url="features/de.tools400.rpgunit.isphere_3.0.0.b006.jar" id="de.tools400.rpgunit.isphere" version="3.0.0.b006">
       <category name="de.tools400.rpgunit.integration"/>
    </feature>
-   <feature url="features/de.tools400.rpgunit.spooledfileviewer_3.0.0.b005.jar" id="de.tools400.rpgunit.spooledfileviewer" version="3.0.0.b005">
+   <feature url="features/de.tools400.rpgunit.spooledfileviewer_3.0.0.b006.jar" id="de.tools400.rpgunit.spooledfileviewer" version="3.0.0.b006">
       <category name="de.tools400.rpgunit.additions"/>
    </feature>
-   <feature url="features/de.tools400.rpgunit.cmone_3.0.0.b005.jar" id="de.tools400.rpgunit.cmone" version="3.0.0.b005">
+   <feature url="features/de.tools400.rpgunit.cmone_3.0.0.b006.jar" id="de.tools400.rpgunit.cmone" version="3.0.0.b006">
       <category name="de.tools400.rpgunit.integration"/>
    </feature>
    <category-def name="de.tools400.rpgunit" label="iRPGUnit for IBM i">
