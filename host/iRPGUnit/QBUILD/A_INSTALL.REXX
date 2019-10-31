@@ -326,9 +326,12 @@
    "DLTSRVPGM SRVPGM("_prdlib"/EXTTSTT)"
    "DLTSRVPGM SRVPGM("_prdlib"/JOBLOGT)"
    "DLTSRVPGM SRVPGM("_prdlib"/LIBLT)"
+   "DLTSRVPGM SRVPGM("_prdlib"/MSGQT)"
    "DLTSRVPGM SRVPGM("_prdlib"/PGMMSGT)"
    "DLTSRVPGM SRVPGM("_prdlib"/RUNT)"
    "DLTSRVPGM SRVPGM("_prdlib"/STRINGT)"
+
+   "DLTSRVPGM SRVPGM("_prdlib"/SCRIPTST)"
 
    Signal on Error
 
@@ -350,6 +353,7 @@
    "DLTMOD MODULE("_prdLib"/CALLPRC)"
    "DLTMOD MODULE("_prdLib"/CALLPRCT)"
    "DLTMOD MODULE("_prdLib"/CMDRUN)"
+   "DLTMOD MODULE("_prdLib"/CMDRUNT)"
    "DLTMOD MODULE("_prdLib"/CMDRUNLOG)"
    "DLTMOD MODULE("_prdLib"/CMDRUNLOGT)"
    "DLTMOD MODULE("_prdLib"/CMDRUNPRT)"
@@ -388,6 +392,8 @@
 
    "DLTMOD MODULE("_prdLib"/LIBLC)"
    "DLTMOD MODULE("_prdLib"/SPLF)"
+
+   "DLTMOD MODULE("_prdlib"/SCRIPTST)"
 
    Signal on Error
 

@@ -731,6 +731,9 @@
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(SPLF) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(SCRIPTST) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(SPLF_H) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
@@ -843,5 +846,10 @@
              DLTPGM     PGM(&TMPLIB/CRTPKGOWN)
              DLTPGM     PGM(&TMPLIB/CRTPKGMDT)
              DLTPGM     PGM(&TMPLIB/CRTPKGCPR)
+
+             SNDPGMMSG  MSGID(CPF9897) MSGF(*LIBL/QCPFMSG) +
+                          MSGDTA('*** Successfully create RPGUNIT library ***') +
+                          TOPGMQ(*PRV (*PGMBDY *NONE *NONE)) +
+                          TOMSGQ(*TOPGMQ) MSGTYPE(*INFO)
 
              ENDPGM
