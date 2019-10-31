@@ -10,7 +10,7 @@
 <body>
 <h1>Upgrading From RPGUnit v2.4.2 to v3.0.0</h1>
 The most important thing you need to know is, that iRPGUnit 3.* requires at least
-an IBM i 7.1 operating system. Older versions are no longer supported.
+IBM i 7.1. Older versions are no longer supported.
 <p>
 You need to update your RPGUNIT product library when upgrading the plug-in to 3.0.0, in
 order to take advantage of all new features.
@@ -88,6 +88,8 @@ to source file <i>RPGUNIT1</i>.
 CRTSRCPF FILE(RPGUNIT/RPGUNIT1) RCDLEN(112)
 CPYF FROMFILE(RPGUNIT2/RPGUNIT1) TOFILE(RPGUNIT/RPGUNIT1) FROMMBR(TESTCASE) TOMBR(*FROMMBR) MBROPT(*ADD)
 </pre></code> 
+<p>
+For a period of transition iRPGUnit is shipped with a duplicate of member TESTCASE in file RPGUNIT1.
 <p>
 <iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
 </body>
