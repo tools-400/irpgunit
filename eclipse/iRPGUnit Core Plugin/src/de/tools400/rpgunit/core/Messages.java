@@ -178,6 +178,7 @@ public class Messages extends NLS {
     public static String Using_Ftp_port_number;
     public static String Restoring_library_A;
     public static String Could_not_restore_library_A;
+    public static String Successfully_restored_iRPGUnit_library;
     public static String Disconnected_from_host_A;
     public static String JobLog_Headline;
 

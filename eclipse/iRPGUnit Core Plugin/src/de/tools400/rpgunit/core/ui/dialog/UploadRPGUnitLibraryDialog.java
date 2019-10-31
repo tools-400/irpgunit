@@ -431,7 +431,7 @@ public class UploadRPGUnitLibraryDialog extends Dialog implements StatusMessageR
 
     @Override
     protected Point getInitialSize() {
-        return new Point(600, 450);
+        return new Point(600, 460);
     }
 
     protected void copyStatusLinesToClipboard(TableItem[] tableItems) {
