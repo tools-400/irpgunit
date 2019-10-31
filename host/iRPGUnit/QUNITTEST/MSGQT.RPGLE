@@ -11,6 +11,7 @@
       //   >>CRTCMD<<  RUCRTTST TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM) +
       //                 COPTION(*EVENTF);
       //   >>IMPORTANT<<
+      //     >>PARM<<  MODULE(&LI/PGMMSG);
       //   >>END-IMPORTANT<<
       //   >>EXECUTE<<
       // >>END-PRE-COMPILER<<
@@ -42,6 +43,7 @@
       //----------------------------------------------------------------------
 
       /copy qinclude,ASSERT
+      /copy qinclude,PGMMSG
       /copy qinclude,TESTUTILS
       /copy qinclude,TEMPLATES
 
@@ -250,6 +252,7 @@
         // Setup.
 
         assertCntBefore = getAssertCalled();
+        setLowMessageKey(getHighestMsgKey());
 
         // Run.
 

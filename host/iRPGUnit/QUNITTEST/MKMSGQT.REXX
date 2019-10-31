@@ -92,7 +92,7 @@
  "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
  "CRTSRVPGM  SRVPGM("prdLib"/MSGQT)  ",
-            "MODULE("prdLib"/MSGQT)  ",
+            "MODULE("prdLib"/MSGQT "prdLib"/PGMMSG)  ",
             "EXPORT(*ALL) ",
             "OPTION(*DUPPROC) ",
             "BNDSRVPGM("prdLib"/RUTESTCASE) ",
