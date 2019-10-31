@@ -87,19 +87,19 @@
 
  /* Self-Tests. */
 
- executeUnitTest('MKLIBLT', 'LIBLT')
- executeUnitTest('MKPGMMSGT', 'PGMMSGT')
- executeUnitTest('MKSTRINGT', 'STRINGT')
- executeUnitTest('MKCRTTSTT', 'CRTTSTT')
  executeUnitTest('MKASSERTT', 'ASSERTT')
  executeUnitTest('MKCALLPRCT', 'CALLPRCT')
+ executeUnitTest('MKCMDRUNLT', 'CMDRUNLOGT')
+ executeUnitTest('MKCMDRUNT', 'CMDRUNT')
+ executeUnitTest('MKCRTTSTT', 'CRTTSTT')
  executeUnitTest('MKEXTPRCT', 'EXTPRCT')
  executeUnitTest('MKEXTTSTT', 'EXTTSTT')
  executeUnitTest('MKJOBLOGT', 'JOBLOGT')
+ executeUnitTest('MKLIBLT', 'LIBLT')
  executeUnitTest('MKMSGQT', 'MSGQT')
+ executeUnitTest('MKPGMMSGT', 'PGMMSGT')
  executeUnitTest('MKRUNT', 'RUNT')
- executeUnitTest('MKCMDRUNT', 'CMDRUNT')
- executeUnitTest('MKCMDRUNLT', 'CMDRUNLOGT')
+ executeUnitTest('MKSTRINGT', 'STRINGT')
 
  "SNDPGMMSG ",
    "MSGID(CPF9897) ",
