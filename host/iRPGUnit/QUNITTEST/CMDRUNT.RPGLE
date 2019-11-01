@@ -10,13 +10,18 @@
       // >>PRE-COMPILER<<
       //   >>CRTCMD<<  RUCRTTST TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
       //   >>IMPORTANT<<
+      //     >>PARM<<  BOPTION(*DUPPROC);
       //     >>PARM<<  MODULE(&LI/CMDRUN    +
       //                      &LI/CALLPRC   +
+      //                      &LI/CMDRUNLOG +
+      //                      &LI/CMDRUNPRT +
       //                      &LI/CMDRUNSRV +
+      //                      &LI/CMDRUNV   +
       //                      &LI/EXTTST    +
       //                      &LI/EXTPRC    +
       //                      &LI/LIBL      +
       //                      &LI/LLIST     +
+      //                      &LI/OSVERSION +
       //                      &LI/PGMMSG    +
       //                      &LI/STRING    +
       //                      &LI/USRSPC    +

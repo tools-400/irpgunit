@@ -11,10 +11,13 @@
       //   >>CRTCMD<<  RUCRTTST TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
       //   >>IMPORTANT<<
       //     >>PARM<<  MODULE(&LI/CALLPRC   +
+      //                      &LI/CMDRUNLOG +
+      //                      &LI/CMDRUNPRT +
       //                      &LI/CMDRUNSRV +
       //                      &LI/EXTPRC    +
       //                      &LI/EXTTST    +
       //                      &LI/LLIST     +
+      //                      &LI/OSVERSION +
       //                      &LI/PGMMSG    +
       //                      &LI/STRING    +
       //                      &LI/USRSPC    +
