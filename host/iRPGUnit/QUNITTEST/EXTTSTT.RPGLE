@@ -12,9 +12,12 @@
       //   >>IMPORTANT<<
       //     >>PARM<<  MODULE(&LI/EXTTST    +
       //                      &LI/CALLPRC   +
+      //                      &LI/CMDRUNLOG +
+      //                      &LI/CMDRUNPRT +
       //                      &LI/CMDRUNSRV +
       //                      &LI/EXTPRC    +
       //                      &LI/LLIST     +
+      //                      &LI/OSVERSION +
       //                      &LI/PGMMSG    +
       //                      &LI/STRING    +
       //                      &LI/USRSPC    +
