@@ -74,6 +74,21 @@
      D                 pr                  extproc('testErrorsInBothSetUpSuiteA+
      D                                     ndTearDownSuite')
 
+      // Output *NONE
+
+     D testSuccessNoOutput...
+     D                 pr                  extproc('testSuccessNoOutput')
+     D testFailuresNoOutput...
+     D                 pr                  extproc('testFailuresNoOutput')
+     D testErrorNoOutput...
+     D                 pr                  extproc('testErrorNoOutput')
+     D testMissingObjectNoOutput...
+     D                 pr                  extproc('testMissingObjectNoOutput')
+     D testNoTestCaseNoOutput...
+     D                 pr                  extproc('testNoTestCaseNoOutput')
+
+     D testDltSplFs...
+     D                 pr                  extproc('testDltSplFs')
 
       //----------------------------------------------------------------------
       //   Imported Procedures
@@ -1008,6 +1023,153 @@
      P                 e
 
 
+     P testSuccessNoOutput...
+     P                 b                   export
+     D                 pi
+      /free
+
+        if (TestSuite_isDirty('TESTPGM02': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/TESTPGM02) SRCFILE(QTESTCASES)' );
+        endif;
+
+        dltSplFs( 'RPGUNIT' : 'TESTPGM02' );
+
+        run( 'RUCALLTST TESTPGM02 OUTPUT(*NONE)' : noError : '*COMP' : msgTxt );
+
+        aEqual( 'Success. 1 test case, 1 assertion, 0 failure, 0 error.':
+                msgTxt );
+
+        assert( dltSplFs( 'RPGUNIT' : 'TESTPGM02' ) = 0 :
+                'Unexpected spooled file' );
+
+      /end-free
+     P                 e
+
+
+     P testFailuresNoOutput...
+     P                 b                   export
+     D                 pi
+     D i               s             10i 0
+      /free
+
+        if (TestSuite_isDirty('TESTPGM03': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/TESTPGM03) SRCFILE(QTESTCASES)' );
+        endif;
+
+        dltSplFs( 'RPGUNIT' : 'TESTPGM03' );
+
+        run( 'RUCALLTST TESTPGM03 OUTPUT(*NONE)' : errorExpected : '*ESCAPE' :
+             msgTxt );
+
+        aEqual( 'FAILURE. 2 test cases, 2 assertions, 2 failures, 0 error.':
+                msgTxt );
+
+        assert( dltSplFs( 'RPGUNIT' : 'TESTPGM03' ) = 0 :
+                'Unexpected spooled file' );
+
+      /end-free
+     P                 e
+
+
+     P testErrorNoOutput...
+     P                 b                   export
+     D                 pi
+      /free
+
+        if (TestSuite_isDirty('TESTPGM06': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/TESTPGM06) SRCFILE(QTESTCASES)' );
+        endif;
+
+        dltSplFs( 'RPGUNIT' : 'TESTPGM06' );
+
+        run( 'RUCALLTST TESTPGM06 OUTPUT(*NONE)' : errorExpected : '*ESCAPE' :
+             msgTxt );
+
+        aEqual( 'ERROR. 1 test case, 0 assertion, 0 failure, 1 error.':
+                msgTxt );
+
+        assert( dltSplFs( 'RPGUNIT' : 'TESTPGM06' ) = 0 :
+                'Unexpected spooled file' );
+
+      /end-free
+     P                 e
+
+
+     P testMissingObjectNoOutput...
+     P                 b                   export
+     D                 pi
+     D i               s             10i 0
+      /free
+
+        if (TestSuite_exists('TESTPGM08': 'QTEMP'));
+           runcmd( 'DLTSRVPGM SRVPGM(QTEMP/TESTPGM08)' ); // Must not exists!
+        endif;
+
+        dltSplFs( 'RPGUNIT' : 'TESTPGM08' );
+
+        callp(e) run( 'DLTSRVPGM TESTPGM08 OUTPUT(*NONE)' );    // No TESTPGM08.
+
+        run( 'RUCALLTST TESTPGM08 OUTPUT(*NONE)' : errorExpected : '*ESCAPE' :
+             msgTxt );
+
+        aEqual( 'RPGUnit Error.'
+              + ' Error while loading test suite *LIBL/TESTPGM08.' :
+                msgTxt );
+
+        assert( dltSplFs( 'RPGUNIT' : 'TESTPGM08' ) = 0 :
+                'Unexpected spooled file' );
+
+      /end-free
+     P                 e
+
+
+     P testNoTestCaseNoOutput...
+     P                 b                   export
+     D                 pi
+      /free
+
+        if (TestSuite_isDirty('TESTPGM11': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/TESTPGM11) SRCFILE(QTESTCASES)' );
+        endif;
+
+        dltSplFs( 'RPGUNIT' : 'TESTPGM11' );
+
+        run( 'RUCALLTST TESTPGM11 OUTPUT(*NONE)' : errorExpected : '*ESCAPE' :
+             msgTxt );
+
+        aEqual( 'RPGUnit Error.'
+              + ' No test case found in service program *LIBL/TESTPGM11.' :
+                msgTxt );
+
+        assert( dltSplFs( 'RPGUNIT' : 'TESTPGM11' ) = 0 :
+                'Unexpected spooled file' );
+
+      /end-free
+     P                 e
+
+
+     P testDltSplFs...
+     P                 b                   export
+     D                 pi
+      /free
+
+        if (TestSuite_isDirty('TESTPGM02': 'QTEMP'));
+           runcmd( 'RUCRTTST TSTPGM(QTEMP/TESTPGM02) SRCFILE(QTESTCASES)' );
+        endif;
+
+        dltSplFs( 'RPGUNIT' : 'TESTPGM02' );
+
+        run( 'RUCALLTST TESTPGM02' : noError : '*COMP' : msgTxt );
+        run( 'RUCALLTST TESTPGM02' : noError : '*COMP' : msgTxt );
+        run( 'RUCALLTST TESTPGM02' : noError : '*COMP' : msgTxt );
+
+        assert( dltSplFs( 'RPGUNIT' : 'TESTPGM02' ) = 3 :
+                'Spooled file not found' );
+
+      /end-free
+     P                 e
+
+
       //----------------------------------------------------------------------
       //   Helper Procedures
       //----------------------------------------------------------------------
@@ -1035,3 +1197,4 @@
 
       /end-free
      P                 e
+
