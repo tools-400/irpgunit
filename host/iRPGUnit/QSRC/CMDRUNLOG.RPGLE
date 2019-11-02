@@ -311,8 +311,8 @@
      D line            s            256a   varying
       /free
 
-          line = fmtStackEntry( sender );
-          logRawLine( line );
+        line = fmtStackEntry( sender );
+        logRawLine( line );
 
       /end-free
      P                 e
@@ -327,7 +327,11 @@
      D  line                       2048a   const varying options(*varsize)
       /free
 
-          logRawLine( line );
+        if (g_output = OUTPUT_NONE);
+           return;
+        endif;
+
+        logRawLine( line );
 
       /end-free
      P                 e
@@ -371,50 +375,54 @@
      D  name                   6     15a
       /free
 
-          line = 'Cur. library: ' + libraryList.curLib;
+        if (g_output = OUTPUT_NONE);
+          return;
+        endif;
+
+        line = 'Cur. library: ' + libraryList.curLib;
+        logRawLine( line );
+
+        if (libraryList.libL.numE = 0);
+          line = 'Library list: *NONE';
           logRawLine( line );
+          linefeed();
+          return;
+        endif;
 
-          if (libraryList.libL.numE = 0);
-             line = 'Library list: *NONE';
-             logRawLine( line );
-             linefeed();
-             return;
+        numRows = %div(libraryList.libL.numE: 3);
+        if (numRows * 3 <> libraryList.libL.numE);
+          numRows += 1;
+        endif;
+
+        if (numRows < MIN_NUM_ROWS);
+          numRows = MIN_NUM_ROWS;
+        endif;
+
+        for row = 1 to numRows;
+
+          if (row = 1);
+            line = 'Library list: ';
           endif;
 
-          numRows = %div(libraryList.libL.numE: 3);
-          if (numRows * 3 <> libraryList.libL.numE);
-             numRows += 1;
-          endif;
+          for column = 0 to 2;
 
-          if (numRows < MIN_NUM_ROWS);
-             numRows = MIN_NUM_ROWS;
-          endif;
-
-          for row = 1 to numRows;
-
-             if (row = 1);
-                line = 'Library list: ';
-             endif;
-
-             for column = 0 to 2;
-
-                x = row + (column * numRows);
-                if (x <= libraryList.libL.numE);
-                   seq = (row * STEP_WIDTH) + (column * (numRows * STEP_WIDTH));
-                   clear item;
-                   item.seq = %editc(seq: '3');
-                   item.name = libraryList.libL.lib(x);
-                   line = line + item + '   ';
-                endif;
-
-             endfor;
-
-             logRawLine( line );
-             line = '              ';
+            x = row + (column * numRows);
+            if (x <= libraryList.libL.numE);
+              seq = (row * STEP_WIDTH) + (column * (numRows * STEP_WIDTH));
+              clear item;
+              item.seq = %editc(seq: '3');
+              item.name = libraryList.libL.lib(x);
+              line = line + item + '   ';
+            endif;
 
           endfor;
 
-          linefeed();
+          logRawLine( line );
+          line = '              ';
+
+        endfor;
+
+        linefeed();
 
       /end-free
      P                 e
