@@ -20,6 +20,10 @@
      D                 pr                  extproc('splfLineStartsWith')
      D  expString                   256a   const varying
 
-     DsplfSkipLine...
+     D splfSkipLine...
      D                 pr                  extproc('splfSkipLine')
+
+     D dltSplfs        pr            10i 0 extproc('dltSplfs')
+     D  splfNm                       10a   const
+     D  usrData                      10a   const
 

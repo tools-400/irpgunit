@@ -156,6 +156,119 @@
      P                 e
 
 
+     P dltSplfs...
+     P                 b                   export
+     D                 pi            10i 0
+     D  splfNm                             const like(UsrNm_t)
+     D  usrData                      10a   const
+
+       // Retrieve only one record.
+     D ONE_RECORD      c                   const(1)
+       // Retrieve spool files from all jobs.
+     D ALL_JOBS        c                   const(*blank)
+       // Do not retrieve any record.
+     D NO_RETRIEVAL    c                   const(*zero)
+       // The entire list is build synchronously.
+     D BUILD_ENTIRE_LIST_SYNCHRONOUSLY...
+     D                 c                   const(-1)
+       // Latest spool file id.
+     D latestSplfId    ds                  likeds(SplfId_t)
+       // Latest spool file info from QGYOLSPL API.
+     D latestSplfInfo  ds                  likeds(dsOSPL0300)
+       // Open list information for QGYOLSPL API.
+     D listInfo        ds                  likeds(dsOpnList)
+       // Open list handle.
+     D opnListHdl      s                   like(dsOpnList.rqsHdl)
+       // Current spool file record index.
+     D rcdIdx          s             10i 0
+       // Spool file sorting information.
+     D sortInfo        ds                  likeds(SortInfo_t)
+       // Spool file filtering information, according to OSPF0100 format.
+     D filterInfo      ds                  qualified
+     D  usrNmCnt                     10i 0 inz(1)
+     D   usrNm                       10a
+     D                                2a   inz(x'00')
+     D  outqNmCnt                    10i 0 inz(1)
+     D   outqNm                      10a   inz('*ALL')
+     D   outqLibNm                   10a   inz(*blank)
+     D  formType                     10a   inz('*ALL')
+     D  usrData                      10a
+     D  statusCnt                    10i 0 inz(1)
+     D   splfStatus                  10a   inz('*READY')
+     D                                2a   inz(x'00')
+     D  deviceNmCnt                  10i 0 inz(1)
+     D   deviceNm                    10a   inz('*ALL')
+     D                                2a   inz(x'00')
+
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
+
+     D cmd             s            512a   varying
+     D countDeleted    s             10i 0
+      /free
+
+        filterInfo.usrNm   = rtvJobUsrNm();
+        filterInfo.usrData = usrData;
+
+        sortInfo = *allx'00';
+
+        QGYOLSPL( latestSplfInfo :
+                  NO_RETRIEVAL :
+                  listInfo :
+                  BUILD_ENTIRE_LIST_SYNCHRONOUSLY :
+                  sortInfo :
+                  filterInfo :
+                  ALL_JOBS :
+                  'OSPL0300' :
+                  percolateErrors );
+
+        if ( listInfo.retRcdCnt <> 0 );
+          fail( 'QGYOLSPL unexpectedly returned a record' );
+        endif;
+
+        if ( listInfo.infoCompInd <> 'C' );
+          fail( 'QGYOLSPL could not retrieve complete info. ' +
+                'Indicator=' + listInfo.infoCompInd );
+        endif;
+
+        if ( listInfo.firstRcdIdx <> 0 );
+          fail( 'QGYOLSPL unexpectedly returned a first record' );
+        endif;
+
+        for rcdIdx = 1 to listInfo.totalRcdCnt;
+
+          opnListHdl = listInfo.rqsHdl;
+
+          QGYGTLE( latestSplfInfo :
+                   %size(latestSplfInfo) :
+                   opnListHdl :
+                   listInfo :
+                   ONE_RECORD :
+                   rcdIdx :
+                   percolateErrors );
+
+          if (splfNm = latestSplfInfo.splfNm);
+            cmd = 'DLTSPLF FILE(' + %trim(latestSplfInfo.splfNm) + ') +
+                   JOB(' + %trim(latestSplfInfo.jobNb) + '/' +
+                           %trim(latestSplfInfo.usrNm) + '/' +
+                           %trim(latestSplfInfo.jobNm) + ') +
+                   SPLNBR(' + %char(latestSplfInfo.splfNb) + ')';
+
+            qcmdexc( cmd: %len(cmd) );
+            countDeleted += 1;
+          endif;
+
+        endfor;
+
+        QGYCLST( listInfo.rqsHdl : percolateErrors );
+
+        return countDeleted;
+
+      /end-free
+     P                 e
+
+
      P findInSpool...
      P                 b
      D                 pi              *
