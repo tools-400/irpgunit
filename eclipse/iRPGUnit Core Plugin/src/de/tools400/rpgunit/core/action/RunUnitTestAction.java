@@ -45,6 +45,8 @@ public class RunUnitTestAction extends AbstractRemoteAction<IQSYSServiceProgram>
 
     private static final String RPGUNIT_LABEL = "RPGUNIT"; //$NON-NLS-1$
 
+    private static final String IRPGUNIT_LABEL = "IRPGUNIT"; //$NON-NLS-1$
+
     private static final String TEST_PROC_NAME_PREFIX = "TEST";
 
     static long lastWarnMsg = 0;
@@ -146,8 +148,8 @@ public class RunUnitTestAction extends AbstractRemoteAction<IQSYSServiceProgram>
             return Messages.Description_of_service_program_is_missing;
         }
 
-        if (!tDescription.toUpperCase().startsWith(RPGUNIT_LABEL)) {
-            return Messages.bind(Messages.Description_of_service_program_does_not_start_with_A, RPGUNIT_LABEL);
+        if (!tDescription.toUpperCase().startsWith(RPGUNIT_LABEL) && !tDescription.toUpperCase().startsWith(IRPGUNIT_LABEL)) {
+            return Messages.bind(Messages.Description_of_service_program_does_not_start_with_A_or_B, RPGUNIT_LABEL, IRPGUNIT_LABEL);
         }
 
         return null;
@@ -158,14 +160,15 @@ public class RunUnitTestAction extends AbstractRemoteAction<IQSYSServiceProgram>
         String tUserDefinedAttribute = aServiceprogram.getUserDefinedAttribute();
         if (tUserDefinedAttribute == null && ((Calendar.getInstance().getTimeInMillis() - lastWarnMsg) > 1000 || lastWarnMsg == 0)) {
             Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-            WarningMessage.openWarning(shell, Preferences.WARN_MESSAGE_USER_DEFINED_ATTRIBUTE,
+            WarningMessage.openWarning(shell,
+                Preferences.WARN_MESSAGE_USER_DEFINED_ATTRIBUTE,
                 Messages.User_defined_attribute_not_retrieved_See_APAR_SE55976_for_details);
             lastWarnMsg = Calendar.getInstance().getTimeInMillis();
         }
 
-        if (!RPGUNIT_LABEL.equalsIgnoreCase(tUserDefinedAttribute)) {
+        if (!RPGUNIT_LABEL.equalsIgnoreCase(tUserDefinedAttribute) && !IRPGUNIT_LABEL.equalsIgnoreCase(tUserDefinedAttribute)) {
             // Requires PTF for APAR SE55976
-            return Messages.bind(Messages.User_defined_attribute_of_service_program_is_not_set_to_A, RPGUNIT_LABEL);
+            return Messages.bind(Messages.User_defined_attribute_of_service_program_is_not_set_to_A_or_B, RPGUNIT_LABEL, IRPGUNIT_LABEL);
         }
 
         return null;

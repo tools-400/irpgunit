@@ -205,6 +205,30 @@
      P                 e
 
       //----------------------------------------------------------------------
+      //  Returns the description of a given source member.
+      //----------------------------------------------------------------------
+     P SrcMbr_getDescription...
+     P                 b                   export
+     D                 pi            50a   varying
+     D  qSrcFile                           const  likeds(Object_t )
+     D  srcMbr                       10a   const
+
+     D mbrd0100        ds                  likeds(mbrd0100_t) inz
+     D apiDateTime     ds                  qualified
+     D  date                          7a
+     D  time                          6a
+     D lastChgDate     s               z
+      /free
+
+         api_retrieveMemberDescription(
+            mbrd0100: %size(mbrd0100): 'MBRD0100': qSrcFile: srcMbr: '0');
+
+         return mbrd0100.text;
+
+      /end-free
+     P                 e
+
+      //----------------------------------------------------------------------
       //  Returns the source member of a given OPM program.
       //----------------------------------------------------------------------
      P getOPMSourceMember...

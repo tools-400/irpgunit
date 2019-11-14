@@ -66,6 +66,21 @@ Text 'description' (TEXT) - Help
 :p.
 Allows you to enter text that briefly describes the RPGUnit
 test case and its function.
+:parml.
+:pt.:pk def.*SRCMBRTXT:epk.
+:pd.The text of the source member is used.  This is the default.
+:pt.:pk def.*BLANK:epk.
+:pd.No text appears.
+:pt.:pk def.*DEFAULT:epk.
+:pd.The description is set to 'RPGUnit - Test Case'.
+:pt.description
+:pd.Enter the text that briefly describes the function of the
+RPGUnit test case. The text can be a maximum of 50 characters
+and must be enclosed in apostrophes. When the description does
+not start with 'RPGUnit', it is changed to do so. 'RPGUnit' is
+a marker that is checked when preference option 'Check test
+suite service program' is set to '*TEXT' in the RDi plug-in.
+:eparml.
 :ehelp.
 .*
 :help name='RUCRTTST/COPTION' WIDTH=64.

@@ -27,6 +27,7 @@
       /include qinclude,STRING
       /include qinclude,PGMMSG
       /include qinclude,TEMPLATES
+      /include qinclude,SRCMBR
       /include qinclude,SYSTEMAPI
       /include qinclude,TESTUTILS
       /include qinclude,TAGTST
@@ -107,8 +108,8 @@
      D  pOption                            const likeds(Options_t)
      D  compileopt                 5000a   const varying options(*varsize)
 
-     D text2           s                   like(text) inz
-     D srcMbr2         s                   like(srcMbr) inz
+     D textRslv        s                   like(text) inz
+     D srcMbrRslv      s                   like(srcMbr) inz
      D i               s             10i 0
      D mbrType         s             10a
      D tmpOpts         ds                  likeds(Options_t)
@@ -142,14 +143,14 @@
        qSrcFile.lib = libResolved;
 
        if (srcMbr = '*TSTPGM');
-         srcMbr2 = testPgm.nm;
+         srcMbrRslv = testPgm.nm;
        else;
-         srcMbr2 = srcMbr;
+         srcMbrRslv = srcMbr;
        endif;
 
-       if (not Object_exists(qSrcFile: '*FILE': srcMbr2));
+       if (not Object_exists(qSrcFile: '*FILE': srcMbrRslv));
          sndEscapeMsgAboveCtlBdy(
-            'Member ' + %trim(srcMbr2) + ' not found in source file ' +
+            'Member ' + %trim(srcMbrRslv) + ' not found in source file ' +
                         %trim(qSrcFile.lib) + '/' + %trim(qSrcFile.nm) + '.' );
        endif;
 
@@ -173,19 +174,26 @@
 
        monitor;
 
-         if text <> '*BLANK' and not startsWith('RPGUnit' : text);
-            text2 = 'RPGUnit - ' + text;
-         else;
-            text2 = text;
-         endif;
+         select;
+         when text = '*SRCMBRTXT';
+            textRslv = SrcMbr_getDescription(qSrcFile: srcMbrRslv);
+         when text = '*BLANK';
+            textRslv = '';
+         when text = '*DEFAULT';
+            textRslv = 'RPGUnit - Test Case';
+         when not startsWith('RPGUnit' : text);
+            textRslv = 'RPGUnit - ' + text;
+         other;
+            textRslv = text;
+         endsl;
 
-         crtRpgMod( testPgm : qSrcFile : srcMbr2 : cOption : dbgView :
+         crtRpgMod( testPgm : qSrcFile : srcMbrRslv : cOption : dbgView :
                     pOption : compileopt );
          srvPgm = crtSrvPgm(
                      testPgm : bndSrvPgm : bndDir : module : bOption :
-                     actGrp : text2);
+                     actGrp : textRslv);
 
-         tagTstSrvPgm(srvPgm : qSrcFile : srcMbr2);
+         tagTstSrvPgm(srvPgm : qSrcFile : srcMbrRslv);
 
          sndCompMsg( 'Test program ' + %trim(srvPgm.nm)
                    + ' created in library ' + %trim(srvPgm.lib) + '.' );

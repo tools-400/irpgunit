@@ -40,8 +40,10 @@
                         TYPE(*CHAR)                          +
                         LEN(50)                              +
                         VARY(*YES *INT2)                     +
-                        DFT('RPGUnit - Test Case')           +
-                        SPCVAL(*BLANK)                       +
+                        DFT(*SRCMBRTXT)                      +
+                        SPCVAL((*SRCMBRTXT)                  +
+                               (*BLANK    )                  +
+                               (*DEFAULT  ))                 +
                         PROMPT('Text ''description''')
 
              PARM       KWD(COPTION)                         +
