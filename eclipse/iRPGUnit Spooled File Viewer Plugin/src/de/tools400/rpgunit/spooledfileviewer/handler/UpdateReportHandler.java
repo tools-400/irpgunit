@@ -13,6 +13,7 @@ import org.eclipse.ui.PlatformUI;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Exception;
+import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.SpooledFile;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
@@ -48,8 +49,11 @@ public class UpdateReportHandler implements IRPGUnitUpdateTestResult {
                 } catch (Exception e) {
                     if (e instanceof AS400Exception) {
                         AS400Exception as400Exception = (AS400Exception)e;
-                        if (e.getMessage().startsWith("CPF3344")) {
-                            return;
+                        AS400Message[] messages = as400Exception.getAS400MessageList();
+                        for (AS400Message message : messages) {
+                            if ("CPF3344".equals(message.getID())) {
+                                return;
+                            }
                         }
                     }
                     RPGUnitSpooledFileViewer.logError("Could not open spooled file: " + tReportFile.getName(), e); //$NON-NLS-1$
