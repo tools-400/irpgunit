@@ -14,8 +14,8 @@
 /*       dbgView  - The possible values are:                           */
 /*                  LIST    : Default. Generates a listing view when   */
 /*                            compiling the objects.                   */
-/*                  NONE    : Default. Compiles the obejcts without    */
-/*                            debug views.                             */
+/*                  NONE    : Compiles the obejcts without debug       */
+/*                            views.                                   */
 /*       tgtRls   - The possible values are:                           */
 /*                  CURRENT : The objects are compiled with the        */
 /*                            release of the operating system          */
