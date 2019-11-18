@@ -8,12 +8,12 @@
       //  which accompanies this distribution, and is available at
       //  http://www.eclipse.org/legal/cpl-v10.html
       // ==========================================================================
-     HCopyright('v3.0.1 - xx.xx.xxxx - +
+     HCopyright('v3.1.0 - xx.xx.xxxx - +
      H           Copyright (c) 2013-xxxx iRPGUnit Project Team')
       /eof
       /endif
      D cRPGUNIT_VERSION...
-     D                 C                   '3.0.1'
+     D                 C                   '3.1.0'
      D cRPGUNIT_DATE...
      D                 C                   'xx.xx.xxxx'
 
