@@ -60,12 +60,16 @@
 
  select
  when (dbgView = '' | dbgView = 'NONE' | dbgView = '*NONE') then dbgView = '*NONE'
+ when (dbgView = 'ALL' | dbgView = '*ALL') then dbgView = '*ALL'
+ when (dbgView = 'STMT' | dbgView = '*STMT') then dbgView = '*STMT'
+ when (dbgView = 'SOURCE' | dbgView = '*SOURCE') then dbgView = '*SOURCE'
  when (dbgView = 'LIST' | dbgView = '*LIST') then dbgView = '*LIST'
+ when (dbgView = 'COPY' | dbgView = '*COPY') then dbgView = '*COPY'
  otherwise do
      "SNDPGMMSG ",
        "MSGID(CPF9898) ",
        "MSGF(QCPFMSG) ",
-       "MSGDTA('Invalid debug view specfied: ''"dbgView"''. Use NONE or LIST')",
+       "MSGDTA('Invalid debug view specfied: ''"dbgView"''.')",
        "TOPGMQ(*PRV (*CTLBDY)) ",
        "MSGTYPE(*ESCAPE)"
    end

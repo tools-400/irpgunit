@@ -12,7 +12,7 @@
 /*     Script parameters:                                              */
 /*       prdLib   - Name of the iRPGUnit product library.              */
 /*       dbgView  - The possible values are:                           */
-/*                  LIST    : Default. Generates a listing view when   */
+/*                  ALL     : Default. Generates all debug views when  */
 /*                            compiling the objects.                   */
 /*                  NONE    : Compiles the obejcts without debug       */
 /*                            views.                                   */
@@ -60,17 +60,17 @@
  end
 
  select
- when (dbgView = '' | dbgView = 'LIST' | dbgView = '*LIST') then dbgView = '*LIST'
+ when (dbgView = '' | dbgView = 'ALL' | dbgView = '*ALL') then dbgView = '*ALL'
  when (dbgView = 'STMT' | dbgView = '*STMT') then dbgView = '*STMT'
  when (dbgView = 'SOURCE' | dbgView = '*SOURCE') then dbgView = '*SOURCE'
+ when (dbgView = 'LIST' | dbgView = '*LIST') then dbgView = '*LIST'
  when (dbgView = 'COPY' | dbgView = '*COPY') then dbgView = '*COPY'
- when (dbgView = 'ALL' | dbgView = '*ALL') then dbgView = '*ALL'
  when (dbgView = 'NONE' | dbgView = '*NONE') then dbgView = '*NONE'
  otherwise do
      "SNDPGMMSG ",
        "MSGID(CPF9898) ",
        "MSGF(QCPFMSG) ",
-       "MSGDTA('Invalid debug view specfied: ''"dbgView"''. Use NONE or LIST')",
+       "MSGDTA('Invalid debug view specfied: ''"dbgView"''.')",
        "TOPGMQ(*PRV (*CTLBDY)) ",
        "MSGTYPE(*ESCAPE)"
    end

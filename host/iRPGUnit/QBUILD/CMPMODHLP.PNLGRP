@@ -95,10 +95,22 @@ available for source-level debugging.
 :pt.:pk def.*NONE:epk.
 :pd.Disables all of the debug options for debugging the
 compiled module object.
+:pt.*STMT
+:pd.Allows the module object to be debugged using the Line
+Numbers or Statement Numbers of the compiler listing.
+:pt.*SOURCE
+:pd.Generates the source view for debugging the compiled
+module object.
 :pt.*LIST
 :pd.Generates the listing view for debugging the compiled
 module object, except of modules of source type SQLRPGLI.
 These objects are created with all debug views.
+:pt.*COPY
+:pd.Generates the source and copy views for debugging the
+compiled module object.
+:pt.*ALL
+:pd.Generates the listing, source and copy views for
+debugging the compiled module object.
 :eparml.
 :ehelp.
 .*

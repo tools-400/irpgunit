@@ -42,11 +42,15 @@
 
              PARM       KWD(DBGVIEW)                         +
                         TYPE(*CHAR)                          +
-                        LEN(1)                               +
+                        LEN(10)                              +
                         MIN(0)                               +
-                        DFT(*NO)                             +
-                        SPCVAL((*NONE  N)                    +
-                               (*LIST  Y))                   +
+                        DFT(*NONE)                           +
+                        SPCVAL((*STMT)                       +
+                               (*SOURCE)                     +
+                               (*LIST)                       +
+                               (*COPY)                       +
+                               (*ALL)                        +
+                               (*NONE))                      +
                         PROMPT('Debug view')
 
              PARM       KWD(TGTRLS)                          +
