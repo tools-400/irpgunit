@@ -140,8 +140,10 @@ public abstract class AbstractRunUnitTestsJob extends Job {
     }
 
     protected void returnResultToView(UnitTestSuite[] tUnitTestResults) {
-        UISetInputJob tSetInputJob = new UISetInputJob((IInputProvider)view, tUnitTestResults);
-        tSetInputJob.schedule();
+        if (view instanceof IInputProvider) {
+            UISetInputJob tSetInputJob = new UISetInputJob((IInputProvider)view, tUnitTestResults);
+            tSetInputJob.schedule();
+        }
     }
 
     protected void resetStatistics() {
