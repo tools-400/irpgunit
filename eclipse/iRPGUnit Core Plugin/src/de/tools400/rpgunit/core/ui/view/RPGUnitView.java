@@ -342,6 +342,10 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
     @Override
     public void setInput(Object aTestResults, boolean showViewWarning) {
 
+        if (isDisposed()) {
+            return;
+        }
+
         if (aTestResults != null && !(aTestResults instanceof UnitTestSuite[])) {
             throw new IllegalArgumentException("'aRestResults' is not of type UnitTestSuite[]."); //$NON-NLS-1$
         }
@@ -375,8 +379,7 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
 
         if (tTestResults != null && showViewWarning) {
             if (header.hasErrors() && !Preferences.getInstance().isShowResultView()) {
-                WarningMessage.openWarning(getSite().getShell(),
-                    Preferences.WARN_MESSAGE_UNIT_TEST_ENDED_WITH_ERRORS,
+                WarningMessage.openWarning(getSite().getShell(), Preferences.WARN_MESSAGE_UNIT_TEST_ENDED_WITH_ERRORS,
                     Messages.Unit_test_ended_with_errors);
             }
         }
@@ -389,6 +392,9 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
 
     @Override
     public void setCursor(Cursor aCursor) {
+        if (isDisposed()) {
+            return;
+        }
         mainPanel.setCursor(aCursor);
     }
 
@@ -1042,8 +1048,16 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
         }
     }
 
+    private boolean isDisposed() {
+        return mainPanel.isDisposed();
+    }
+
     @Override
     public void dispose() {
+
+        if (isDisposed()) {
+            return;
+        }
 
         Preferences preferences = Preferences.getInstance();
         preferences.removePropertyChangeListener(captureJobLogOffAction);
