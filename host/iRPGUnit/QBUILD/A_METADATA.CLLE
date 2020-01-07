@@ -1157,6 +1157,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(SCRIPTST) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit SelfTest - Test MK* Scripts.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(SPLF) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - ACPTSTT Unit Test Helper.')
