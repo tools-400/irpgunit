@@ -645,7 +645,7 @@
 
         for i = 1 to maxStkEnt;
 
-           if (ent.pgmNm = 'RUCALLTST');
+           if (ent.pgmNm = 'RUCALLTST' or ent.pgmNm = 'RUPGMRMT');
               leave;
            endif;
 
@@ -679,8 +679,12 @@
 
            // Skip all procedures until we saw the
            // assertion procedure
-           if (callStkE.sender.procNm = startProc);
+           if (callStkE.sender.qPgm.nm = 'RUTESTCASE' and
+               callStkE.sender.qMod.nm = 'ASSERT' and
+               callStkE.sender.procNm = startProc);
               doReturnStckE = *on;
+              ent_p += ent.len;
+              iter;
            endif;
 
            if (not doReturnStckE);

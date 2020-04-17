@@ -265,13 +265,11 @@
 
         splfLineStartsWith( 'TESTFALSE - FAILURE' );
         splfLineStartsWith( 'Expected 5, but was 4.' );
-        splfLineStartsWith( 'iEqual' );
         splfLineStartsWith( 'TESTFALSE (TESTPGM03->TESTPGM03:22' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'TESTFALSE2 - FAILURE' );
         splfLineStartsWith( 'Expected 6, but was 4.' );
-        splfLineStartsWith( 'iEqual' );
         splfLineStartsWith( 'TESTFALSE2 (TESTPGM03->TESTPGM03:31' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
@@ -418,7 +416,6 @@
 
         splfLineStartsWith( 'TESTSTACK - FAILURE' );
         splfLineStartsWith( 'Expected 5, but was 4.' );
-        splfLineStartsWith( 'iEqual' );
         splfLineStartsWith( 'FAILINGPROC (TESTPGM07->TESTPGM07:22' );
         splfLineStartsWith( 'TESTSTACK (TESTPGM07->TESTPGM07:31' );
         splfLineStartsWith( '-----------------------' );
@@ -681,7 +678,6 @@
         splfLineStartsWith( 'Expected 123456789012345678901234567890'
                           + '1, but was 12345678901234567890' );
         splfLineStartsWith( '12345678900.' );
-        splfLineStartsWith( 'iEqual' );
         splfLineStartsWith( 'TEST_DIFFERENT (TESTPGM14->TESTPGM14:31');
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
@@ -815,8 +811,6 @@
 
         splfLineStartsWith( 'TEST2 - FAILURE' );
         splfLineStartsWith( 'test2' );
-        // New, due to new procedure doFail():
-        splfLineStartsWith( 'fail (RUTESTCASE->ASSERT' );
         splfLineStartsWith( 'TEST2 (TESTPGM05' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]

@@ -125,7 +125,6 @@
 
      D excpWasSeen     s               n
      D assertFailEvt   ds                  likeds(AssertFailEvt_t)
-     D msgKey          s              4a
 
       /free
 
@@ -148,22 +147,16 @@
 
         aEqual( 'Expected 5, but was 4.' : assertFailEvt.msg );
 
-        aEqual( 'RUTESTCASE' : assertFailEvt.callStk.Entry(1).sender.qPgm.nm );
-        aEqual( 'ASSERT'     : assertFailEvt.callStk.Entry(1).sender.qMod.nm );
-        aEqual( 'iEqual'     : assertFailEvt.callStk.Entry(1).sender.procNm );
+        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).sender.qPgm.nm );
+        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).sender.qMod.nm );
+        aEqual( 'testTwoAndTwoIsNotEqualToFive' :
+                               assertFailEvt.callStk.Entry(1).sender.procNm );
 
         monitor;
-           msgKey = getHighestMsgKey();
            aEqual( '134'     : assertFailEvt.callStk.Entry(1).sender.specNb );  // IFS Compile
         on-error;
-           getLatestEscMsg(msgKey: *ON);
            aEqual( '13400'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
         endmon;
-
-        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(2).sender.qPgm.nm );
-        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(2).sender.qMod.nm );
-        aEqual( 'testTwoAndTwoIsNotEqualToFive' :
-                               assertFailEvt.callStk.Entry(2).sender.procNm );
 
       /end-free
      P                 e
@@ -194,7 +187,6 @@
 
      D excpWasSeen     s               n
      D assertFailEvt   ds                  likeds(AssertFailEvt_t)
-     D msgKey          s              4a
 
       /free
 
@@ -219,22 +211,16 @@
         aEqual( 'Expected ''Hello'', but was ''Good bye''.' :
                 assertFailEvt.msg );
 
-        aEqual( 'RUTESTCASE' : assertFailEvt.callStk.Entry(1).sender.qPgm.nm );
-        aEqual( 'ASSERT'     : assertFailEvt.callStk.Entry(1).sender.qMod.nm );
-        aEqual( 'aEqual'     : assertFailEvt.callStk.Entry(1).sender.procNm );
+        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).sender.qPgm.nm );
+        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).sender.qMod.nm );
+        aEqual( 'testGoodByeIsNotHello' :
+                               assertFailEvt.callStk.Entry(1).sender.procNm );
 
         monitor;
-           msgKey = getHighestMsgKey();
-           aEqual( '107'     : assertFailEvt.callStk.Entry(1).sender.specNb );
+           aEqual( '196'     : assertFailEvt.callStk.Entry(1).sender.specNb );
         on-error;
-           getLatestEscMsg(msgKey: *ON);
-           aEqual( '10700'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
+           aEqual( '19600'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
         endmon;
-
-        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(2).sender.qPgm.nm );
-        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(2).sender.qMod.nm );
-        aEqual( 'testGoodByeIsNotHello' :
-                               assertFailEvt.callStk.Entry(2).sender.procNm );
 
       /end-free
      P                 e
@@ -303,7 +289,6 @@
      D                 pi
 
      D assertFailEvt   ds                  likeds(AssertFailEvt_t)
-     D msgKey          s              4a
 
       /free
 
@@ -323,22 +308,16 @@
 
         aEqual( 'Failure message.' : assertFailEvt.msg );
 
-        aEqual( 'RUTESTCASE' : assertFailEvt.callStk.Entry(1).sender.qPgm.nm );
-        aEqual( 'ASSERT'     : assertFailEvt.callStk.Entry(1).sender.qMod.nm );
-        aEqual( 'assert'     : assertFailEvt.callStk.Entry(1).sender.procNm );
+        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).sender.qPgm.nm );
+        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).sender.qMod.nm );
+        aEqual( 'testAssertWithFailure'
+                             : assertFailEvt.callStk.Entry(1).sender.procNm );
 
         monitor;
-           msgKey = getHighestMsgKey();
-           aEqual( '177'     : assertFailEvt.callStk.Entry(1).sender.specNb );  // IFS Compile
+           aEqual( '298'     : assertFailEvt.callStk.Entry(1).sender.specNb );  // IFS Compile
         on-error;
-           getLatestEscMsg(msgKey: *ON);
-           aEqual( '17700'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
+           aEqual( '29800'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
         endmon;
-
-        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(2).sender.qPgm.nm );
-        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(2).sender.qMod.nm );
-        aEqual( 'testAssertWithFailure'
-                             : assertFailEvt.callStk.Entry(2).sender.procNm );
 
       /end-free
      P                 e

@@ -203,8 +203,8 @@
         aEqual( TEST_CASE_FAILURE : result.outcome );
         aEqual( 'My Failure Message' : result.failure.msg );
         // New, due to new procedure doFail():
-        aEqual( 'fail' : result.failure.callStk.entry(1).sender.procNm );
-        aEqual( 'TEST_FAIL' : result.failure.callStk.entry(2).sender.procNm );
+        // aEqual( 'fail' : result.failure.callStk.entry(1).sender.procNm );
+        aEqual( 'TEST_FAIL' : result.failure.callStk.entry(1).sender.procNm );
 
       /end-free
      P                 e
