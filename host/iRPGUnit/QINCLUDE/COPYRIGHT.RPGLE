@@ -13,7 +13,7 @@
       /eof
       /endif
      D cRPGUNIT_VERSION...
-     D                 C                   '3.1.0'
+     D                 C                   '3.2.0'
      D cRPGUNIT_DATE...
      D                 C                   'xx.xx.xxxx'
 
