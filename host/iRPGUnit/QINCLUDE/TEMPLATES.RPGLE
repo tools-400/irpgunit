@@ -26,6 +26,13 @@
      D OUTPUT_ERROR    c                   '*ERROR'
      D OUTPUT_ALLWAYS  c                   '*ALLWAYS'
 
+     D LIBRARY_LIST_JOBD...
+     D                 c                   '*JOBD'
+     D LIBRARY_LIST_CURRENT...
+     D                 c                   '*CURRENT'
+
+     D JOBD_DEFAULT    c                   '*DFT'
+
      D RCLRSC_NO       c                   '*NO'
      D RCLRSC_ALWAYS   c                   '*ALWAYS'
      D RCLRSC_ONCE     c                   '*ONCE'
