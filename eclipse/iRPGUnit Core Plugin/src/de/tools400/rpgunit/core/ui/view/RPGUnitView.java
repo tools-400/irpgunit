@@ -441,7 +441,6 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
             return false;
         }
 
-        boolean hasItems = false;
         IStructuredSelection tSelectedItems = (IStructuredSelection)tSelectedObject;
         for (Object tSelectedItem : tSelectedItems.toArray()) {
             if (!((tSelectedItem instanceof UnitTestSuite) || (tSelectedItem instanceof UnitTestCase))) {
