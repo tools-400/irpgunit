@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2019 iRPGUnit Project Team
+ * Copyright (c) 2013-2020 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,8 +34,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
@@ -122,7 +122,7 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
         viewer.setContentProvider(new UnitTestContentProvider());
         viewer.setLabelProvider(new UnitTestTreeLabelProvider());
 
-        viewer.setSorter(new UnitTestSorter());
+        viewer.setComparator(new UnitTestSorter());
         viewer.addSelectionChangedListener(new UnitTestSelectionChangedListener());
         viewer.addTreeListener(new UnitTestTreeViewerListener());
         viewer.addDoubleClickListener(new UnitTestDoubleClickListener());
@@ -844,7 +844,7 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
 
     }
 
-    class UnitTestSorter extends ViewerSorter {
+    class UnitTestSorter extends ViewerComparator {
         @Override
         public int compare(Viewer viewer, Object e1, Object e2) {
 
