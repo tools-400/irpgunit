@@ -1084,7 +1084,7 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
 
         @Override
         public boolean isEnabled() {
-            return !preferences.DEBUG_CAPTURE_JOBLOG_OFF.equals(preferences.getCaptureJobLog());
+            return !Preferences.DEBUG_CAPTURE_JOBLOG_OFF.equals(preferences.getCaptureJobLog());
         }
 
         @Override
