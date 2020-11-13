@@ -79,9 +79,7 @@
        //   Program Status Data Structure
        //----------------------------------------------------------------------
 
-      /define SDS_EXTENDED
       /include qinclude,SDS
-      /undefine SDS_EXTENDED
 
        //----------------------------------------------------------------------
        // Linefeed.

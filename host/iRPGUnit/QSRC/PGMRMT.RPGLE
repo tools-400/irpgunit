@@ -31,9 +31,12 @@
        //----------------------------------------------------------------------
 
       /include qinclude,TEMPLATES
+      /include qinclude,ASSERT
       /include qinclude,CMDRUNV
       /include qinclude,PGMMSG
       /include qinclude,RMTRUNSRV
+
+      /include qinclude,SDS
 
        //----------------------------------------------------------------------
        //   Main Procedure
@@ -59,6 +62,8 @@
      D xmlStmf         s                          like(stmf_t)
      D errMsg          s            256a   varying
       /free
+
+       initialize(sds);
 
        if (%parms() >= p_xmlStmf and %addr(gi_xmlStmf) <> *null);
          xmlStmf = %trimr(gi_xmlStmf);

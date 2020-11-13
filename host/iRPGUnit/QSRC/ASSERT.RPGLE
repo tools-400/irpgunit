@@ -33,9 +33,14 @@
       /include qinclude,STRING
       /include qinclude,SYSTEMAPI
 
+      /include qinclude,SDS
+
       //----------------------------------------------------------------------
       //   PRIVATE PROTOTYPES
       //----------------------------------------------------------------------
+
+     D checkInstance   pr                  extproc('checkInstance')
+     D  toCallStacKE                 10i 0 const
 
      D doAssert        pr                  extproc('doAssert')
      D  condition                      n   const
@@ -82,6 +87,58 @@
       // Latest assertion failure event information. Can be blank if no
       //  assertion failure event since last assertion.
      D assertFailEvt   ds                  likeds(AssertFailEvtLong_t)
+
+     D status          ds                  qualified
+     D  qJob                               likeds(Job_t)
+     D  qCaller                            likeds(Object_t)
+
+      //----------------------------------------------------------------------
+      // Initializes the Assert module.
+      //----------------------------------------------------------------------
+     P initialize...
+     P                 b                   export
+     D                 pi
+     D  sds                                const likeds(sds_t)
+
+      /free
+
+        status.qJob.name = sds.job;
+        status.qJob.user = sds.user;
+        status.qJob.nbr = %char(sds.nbr);
+
+        status.qCaller.nm = sds.pgmName;
+        status.qCaller.lib = sds.pgmLib;
+
+      /end-free
+     P                 e
+
+      //----------------------------------------------------------------------
+      // Check, whether this instance of RUTESTCASE.
+      //----------------------------------------------------------------------
+     P checkInstance...
+     P                 b                   export
+     D                 pi
+     D  toCallStacKE                 10i 0 const
+
+     D msg             s            256a   varying
+      /free
+
+        if (not (status.qJob.name = sds.job and
+                 status.qJob.user = sds.user and
+                 status.qJob.nbr = %char(sds.nbr) and
+                 // status.qCaller.nm = sds.pgmName and
+                 status.qCaller.lib = sds.pgmLib));
+           msg = 'Invalid RUTESTCASE service program. +
+                  Make sure that there are no duplicate iRPGUnit +
+                  objects in the library list. +
+                  Compare the library list with the product library +
+                  on the iRPGUnit preference page.';
+           // sndEscapeMsg(msg: toCallStacKE);
+           sndEscapeMsgAboveCtlBdy(msg);
+        endif;
+
+      /end-free
+     P                 e
 
       //----------------------------------------------------------------------
       // Assert equality between two alphanumeric variables.
@@ -204,6 +261,8 @@
      D  toCallStacKE                 10i 0 const
      D  startProc                   256a   const varying options(*varsize)
       /free
+
+        checkInstance(toCallStacKE);
 
         assertCalled += 1;
         clrAssertFailEvt();

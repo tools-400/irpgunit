@@ -54,9 +54,11 @@ STRPGMEXP  PGMLVL(*CURRENT) SIGNATURE('iRPGUNIT V3.0')
   EXPORT SYMBOL("getFullTimeStamp")            /* public API */
   EXPORT SYMBOL("assertMessageQueueContains")  /* public API */
 
+  EXPORT SYMBOL("ASSERT_initialize")           /* internally used procedure */
+
 ENDPGMEXP
 
-STRPGMEXP  PGMLVL(*CURRENT) SIGNATURE('iRPGUNIT V2.0')
+STRPGMEXP  PGMLVL(*PRV) SIGNATURE('iRPGUNIT V2.0')
 
   EXPORT SYMBOL("aEqual")
   EXPORT SYMBOL("assert")

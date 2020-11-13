@@ -45,6 +45,8 @@
       /include qinclude,XMLWRITER
       /include qllist,llist_h
 
+      /include qinclude,SDS
+
       //----------------------------------------------------------------------
       //   Private Prototypes
       //----------------------------------------------------------------------
@@ -140,6 +142,8 @@
      D illegalRplVar   s             10a   varying
      D illegalMsg      s            128a   varying
       /free
+
+       initialize(sds);
 
        clear result;
        setLogContext( testSuiteName : detail : output );

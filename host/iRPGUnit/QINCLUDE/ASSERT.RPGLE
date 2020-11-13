@@ -10,12 +10,22 @@
       //  http://www.eclipse.org/legal/cpl-v10.html
       // ==========================================================================
 
+
+      /include qinclude,SDS
       /include qinclude,TESTCASE
+
+       //----------------------------------------------------------------------
+       //   Procedure Prototypes of Internal Procedures
+       //----------------------------------------------------------------------
+     D initialize...
+     D                 pr                  extproc('ASSERT_+
+     D                                     initialize+
+     D                                     ')
+     D  sds                                const likeds(sds)
 
        //----------------------------------------------------------------------
        //   Procedure Prototypes
        //----------------------------------------------------------------------
-
      D clrAssertFailEvt...
      D                 pr                  extproc('+
      D                                     clrAssertFailEvt+

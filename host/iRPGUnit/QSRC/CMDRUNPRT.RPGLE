@@ -51,9 +51,7 @@
 
 
        // Program Information Data Structure.
-      /define SDS_EXTENDED
       /include qinclude,SDS
-      /undefine SDS_EXTENDED
 
        // Line for printing in log.
      D SPLF_NAME       c                   'RPGUNIT'

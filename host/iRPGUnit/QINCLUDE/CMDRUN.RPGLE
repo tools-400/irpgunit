@@ -10,6 +10,8 @@
       //  http://www.eclipse.org/legal/cpl-v10.html
       // ==========================================================================
 
+      /include qinclude,TEMPLATES
+
        // Call a named procedure, logging any error with CMDLOG.
      D callWithLogging...
      D                 pr            10i 0 extproc('CMDRUN_callWithLogging')
