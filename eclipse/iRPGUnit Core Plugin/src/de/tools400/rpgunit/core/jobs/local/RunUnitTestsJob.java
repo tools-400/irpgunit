@@ -121,43 +121,44 @@ public class RunUnitTestsJob extends AbstractRunUnitTestsJob {
                                     Preferences.getInstance().getProductLibrary() }));
 
                         cancelJob(tUnitTestSuite);
+                    } else {
+
+                        try {
+
+                            UnitTestSuite tUnitTestResult = null;
+
+                            if (tUnitTestSuite.isPartiallySelected()) {
+                                tUnitTestResult = tRunner.runRemoteUnitTestCases(tUnitTestServiceProgram,
+                                    Arrays.asList(tUnitTestSuite.getSelectedUnitTestProcedureNames()));
+                            } else {
+                                tUnitTestResult = tRunner.runRemoteUnitTestSuite(tUnitTestServiceProgram);
+                            }
+
+                            if (tUnitTestResult != null) {
+                                tUnitTestSuite.updateUnitTestResult(tUnitTestResult);
+                            }
+
+                        } catch (UnitTestException ute) {
+                            if (ute.getType() == UnitTestException.Type.noTestCases) {
+                                displayError(ERROR_TITLE,
+                                    Messages.bind(Messages.The_object_A_does_not_contain_any_test_cases, tUnitTestServiceProgram.getName()));
+                            } else {
+                                displayError(ERROR_TITLE, ute.getLocalizedMessage());
+                            }
+                            cancelJob(tUnitTestSuite);
+
+                        } catch (Exception e) {
+                            displayError(ERROR_TITLE, Messages.bind(Messages.The_unit_test_A_has_not_finished_successful_B,
+                                new Object[] { tUnitTestServiceProgram.toString(), e.getLocalizedMessage() }));
+                            cancelJob(tUnitTestSuite);
+                        } finally {
+                            deselectUnitTestCases(tUnitTestSuite);
+                        }
+
+                        // TODO: System.out.println("... Updating: worked (" +
+                        // tUnitTestSuite.getServiceProgram().getName() + ")");
+                        monitor.worked(1);
                     }
-
-                    try {
-
-                        UnitTestSuite tUnitTestResult = null;
-
-                        if (tUnitTestSuite.isPartiallySelected()) {
-                            tUnitTestResult = tRunner.runRemoteUnitTestCases(tUnitTestServiceProgram,
-                                Arrays.asList(tUnitTestSuite.getSelectedUnitTestProcedureNames()));
-                        } else {
-                            tUnitTestResult = tRunner.runRemoteUnitTestSuite(tUnitTestServiceProgram);
-                        }
-
-                        if (tUnitTestResult != null) {
-                            tUnitTestSuite.updateUnitTestResult(tUnitTestResult);
-                        }
-
-                    } catch (UnitTestException ute) {
-                        if (ute.getType() == UnitTestException.Type.noTestCases) {
-                            displayError(ERROR_TITLE,
-                                Messages.bind(Messages.The_object_A_does_not_contain_any_test_cases, tUnitTestServiceProgram.getName()));
-                        } else {
-                            displayError(ERROR_TITLE, ute.getLocalizedMessage());
-                        }
-                        cancelJob(tUnitTestSuite);
-
-                    } catch (Exception e) {
-                        displayError(ERROR_TITLE, Messages.bind(Messages.The_unit_test_A_has_not_finished_successful_B,
-                            new Object[] { tUnitTestServiceProgram.toString(), e.getLocalizedMessage() }));
-                        cancelJob(tUnitTestSuite);
-                    } finally {
-                        deselectUnitTestCases(tUnitTestSuite);
-                    }
-
-                    // TODO: System.out.println("... Updating: worked (" +
-                    // tUnitTestSuite.getServiceProgram().getName() + ")");
-                    monitor.worked(1);
                 }
 
             }

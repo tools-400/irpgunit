@@ -9,6 +9,7 @@
 package de.tools400.rpgunit.core.jobs.ibmi;
 
 import java.beans.PropertyVetoException;
+import java.net.SocketException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -80,11 +81,15 @@ public abstract class AbstractUnitTestRunner {
 
     public boolean isAvailable() {
         boolean tAvailable = false;
+        String connectionName = null;
         try {
             IBMiConnection tConnection = runner.getLibrary().getConnection();
+            connectionName = tConnection.getConnectionName();
             ObjectList objects = new ObjectList(tConnection.getAS400ToolboxObject(), getLibrary().getName(), getName(), getType());
             objects.load();
             tAvailable = objects.getObjects().hasMoreElements();
+        } catch (SocketException e) {
+            RPGUnitCorePlugin.logError("Socket error in connection '" + connectionName + "' lost.", e); //$NON-NLS-1$ //$NON-NLS-2$
         } catch (Exception e) {
             RPGUnitCorePlugin.logError("Error during check for unit test case runner.", e); //$NON-NLS-1$
         }
