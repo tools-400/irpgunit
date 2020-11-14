@@ -116,20 +116,20 @@
      P endsWith...
      P                 b                   export
      D                 pi              N
-     D  prefix                             const like(String_t)
+     D  suffix                             const like(String_t)
      D                                           options(*varsize)
      D  string                             const like(String_t)
      D                                           options(*varsize)
       /free
 
          if (%len(string) = 0  or
-             %len(prefix) = 0  or
-             %len(string) < %len(prefix));
+             %len(suffix) = 0  or
+             %len(string) < %len(suffix));
             return *OFF;
          endif;
 
-         if (uCase(prefix) <>
-             uCase(%subst(string: %len(string)-%len(prefix)+1: %len(prefix))));
+         if (uCase(suffix) <>
+             uCase(%subst(string: %len(string)-%len(suffix)+1: %len(suffix))));
             return *OFF;
          endif;
 

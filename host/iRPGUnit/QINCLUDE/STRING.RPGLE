@@ -26,7 +26,7 @@
      D endsWith...
      D                 pr              N
      D                                     extproc('STRING_endsWith')
-     D  prefix                             const like(String_t)
+     D  suffix                             const like(String_t)
      D                                           options(*varsize)
      D  string                             const like(String_t)
      D                                           options(*varsize)
