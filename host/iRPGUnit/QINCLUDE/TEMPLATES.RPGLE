@@ -240,7 +240,7 @@
      D SerializedString_t...
      D                 s           5136a   based(template) varying
 
-
+       // Program Status Data Structure.
      D sds_t           ds                  based(template) qualified
      D  pgmName                1     10A
      D  pgmStat               11     15S 0
