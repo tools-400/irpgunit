@@ -124,7 +124,8 @@
 
  "CRTPGM PGM("prdLib"/RUCALLTSTV) ",
         "MODULE("prdLib"/CMDRUNV    ",
-                 prdLib"/PGMMSG)    ",
+                 prdLib"/PGMMSG     ",
+                 prdLib"/STRING)    ",
         "ENTMOD("prdLib"/CMDRUNV) ",
         "BNDSRVPGM("prdLib"/RUTESTCASE) ",
         "ACTGRP(*NEW) ",

@@ -143,7 +143,7 @@
      D illegalMsg      s            128a   varying
       /free
 
-       initialize(sds);
+       registerStartPgm(sds.pgmLib: sds.pgmName);
 
        clear result;
        setLogContext( testSuiteName : detail : output );

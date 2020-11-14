@@ -63,7 +63,7 @@
      D errMsg          s            256a   varying
       /free
 
-       initialize(sds);
+       registerStartPgm(sds.pgmLib: sds.pgmName);
 
        if (%parms() >= p_xmlStmf and %addr(gi_xmlStmf) <> *null);
          xmlStmf = %trimr(gi_xmlStmf);

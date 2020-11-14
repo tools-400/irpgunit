@@ -17,11 +17,12 @@
        //----------------------------------------------------------------------
        //   Procedure Prototypes of Internal Procedures
        //----------------------------------------------------------------------
-     D initialize...
+     D registerStartPgm...
      D                 pr                  extproc('ASSERT_+
-     D                                     initialize+
+     D                                     registerStartPgm+
      D                                     ')
-     D  sds                                const likeds(sds)
+     D  lib                          10a   const
+     D  pgm                          10a   const
 
        //----------------------------------------------------------------------
        //   Procedure Prototypes

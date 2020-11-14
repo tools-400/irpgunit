@@ -15,6 +15,13 @@
      D  string                             const like(String_t)
      D                                           options(*varsize)
 
+     D leftStr...
+     D                 pr                  like(String_t)
+     D                                     extproc('STRING_leftStr')
+     D  string                             const like(String_t)
+     D                                           options(*varsize)
+     D  length                       10i 0 const
+
      D startsWith...
      D                 pr              N
      D                                     extproc('STRING_startsWith')

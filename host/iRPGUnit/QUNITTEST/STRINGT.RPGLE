@@ -101,6 +101,47 @@
       /end-free
      P                 e
 
+     P testLeftStr...
+     P                 b                   export
+     D                 pi
+
+     D HELLO_WORLD     c                   'Hello World'
+
+     D errMsgInfo      ds                  likeds(MsgInfo_t) inz
+      /free
+
+        // Setup.
+
+        // Run.
+
+        // Check.
+
+        assert(leftStr(HELLO_WORLD: %len(HELLO_WORLD) + 1) = HELLO_WORLD:
+               'Expected the complete input string (length > len(input))');
+
+        assert(leftStr(HELLO_WORLD: %len(HELLO_WORLD)) = HELLO_WORLD:
+               'Expected the complete input string (length = len(input))');
+
+        assert(leftStr(HELLO_WORLD: 5) = 'Hello':
+               'Expected: Hello');
+
+        assert(leftStr(HELLO_WORLD: 0) = '':
+               'Expected: empty string');
+
+        monitor;
+           assert(leftStr(HELLO_WORLD: -1) = '':
+                  'Expected RNX0100: Length or start position is out of range');
+           fail( 'Expected to see a RPG runtime exception' );
+        on-error;
+           errMsgInfo = getMonitoredMessage(*ON);
+           assert(errMsgInfo.id = 'RNX0100':
+                  'Expected RNX0100: Length or start position is out of range');
+        endmon;
+
+
+      /end-free
+     P                 e
+
      P testStartsWith...
      P                 b                   export
      D                 pi

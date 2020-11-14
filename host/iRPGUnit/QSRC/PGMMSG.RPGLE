@@ -33,6 +33,7 @@
       //----------------------------------------------------------------------
 
       /include qinclude,ERRORCODE
+      /include qinclude,STRING
       /include qinclude,SYSTEMAPI
       /include qinclude,TEMPLATES
 
@@ -244,6 +245,7 @@
      D                                     inz(*likeds)
       /free
 
+        // CPDA0FF with severity 0.
         QMHSNDPM( 'CPDA0FF' :
                   'QCPFMSG   *LIBL' :
                   %trimr(msg) :
@@ -267,17 +269,23 @@
      D  msg                         256a   const
      D  callStkCnt                   10i 0 const
 
-       // The message reference key.
+     D finalMsg        s            256a   varying
      D msgKey          s              4a
      D percolateErrors...
      D                 ds                  likeds(percolateErrors_t)
      D                                     inz(*likeds)
       /free
 
-        QMHSNDPM( 'CPF9897' :
+        finalMsg = %trimr(msg);
+        if (endsWith('.': finalMsg));
+           finalMsg = leftStr(finalMsg: %len(finalMsg) - 1);
+        endif;
+
+        // CPF9898 with severity 40.
+        QMHSNDPM( 'CPF9898' :
                   'QCPFMSG   *LIBL' :
-                  %trimr(msg) :
-                  %len(%trimr(msg)) :
+                  finalMsg :
+                  %len(finalMsg) :
                   '*ESCAPE' :
                   CUR_CALL_STK_ENT :
                   ONE_CALL_STK_LVL_ABOVE + callStkCnt :
@@ -311,14 +319,20 @@
      D                 pi
      D  msg                         256a   const
 
-       // The message reference key.
+     D finalMsg        s            256a   varying
      D msgKey          s              4a
      D percolateErrors...
      D                 ds                  likeds(percolateErrors_t)
      D                                     inz(*likeds)
       /free
 
-        QMHSNDPM( 'CPF9897' :
+        finalMsg = %trimr(msg);
+        if (endsWith('.': finalMsg));
+           finalMsg = leftStr(finalMsg: %len(finalMsg) - 1);
+        endif;
+
+        // CPF9898 with severity 40.
+        QMHSNDPM( 'CPF9898' :
                   'QCPFMSG   *LIBL' :
                   %trimr(msg) :
                   %len(%trimr(msg)) :
@@ -347,6 +361,7 @@
      D                                     inz(*likeds)
       /free
 
+        // Send an immediate *INFO message without message ID
         QMHSNDPM( '' :
                   'QCPFMSG   *LIBL' :
                   %trimr(msg) :
@@ -378,6 +393,7 @@
 
         g_status.lastStsMsg = msg;
 
+        // CPDA0FF with severity 40.
         QMHSNDPM( 'CPDA0FF' :
                   'QCPFMSG   *LIBL' :
                   %trimr(msg) :
@@ -425,6 +441,7 @@
      D                                     inz(*likeds)
       /free
 
+        // Send an immediate *INFO message without message ID
          QMHSNDPM( '':
                    'QCPFMSG   *LIBL' :
                    msg :

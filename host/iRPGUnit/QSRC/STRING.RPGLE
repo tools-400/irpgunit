@@ -88,6 +88,28 @@
      P                 e
 
 
+     P leftStr...
+     P                 b                   export
+     D                 pi                  like(String_t)
+     D  string                             const like(String_t)
+     D                                           options(*varsize)
+     D  length                       10i 0 const
+
+     D subString       s                   like(string)
+      /free
+
+         if (length <= %len(string));
+            subString = %subst(string: 1: length);
+         else;
+            subString = string;
+         endif;
+
+         return subString;
+
+      /end-free
+     P                 e
+
+
      P startsWith...
      P                 b                   export
      D                 pi              N
