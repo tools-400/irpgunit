@@ -21,6 +21,9 @@
             file="toc/toc_integration.xml">
       </toc>
       <toc
+            file="toc/toc_troubleshooting.xml">
+      </toc>
+      <toc
             file="toc/toc_appendix.xml">
       </toc>
    </extension>
