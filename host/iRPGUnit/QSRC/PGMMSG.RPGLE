@@ -269,23 +269,17 @@
      D  msg                         256a   const
      D  callStkCnt                   10i 0 const
 
-     D finalMsg        s            256a   varying
      D msgKey          s              4a
      D percolateErrors...
      D                 ds                  likeds(percolateErrors_t)
      D                                     inz(*likeds)
       /free
 
-        finalMsg = %trimr(msg);
-        if (endsWith('.': finalMsg));
-           finalMsg = leftStr(finalMsg: %len(finalMsg) - 1);
-        endif;
-
-        // CPF9898 with severity 40.
-        QMHSNDPM( 'CPF9898' :
+        // CPF9897 with severity 40.
+        QMHSNDPM( 'CPF9897' :
                   'QCPFMSG   *LIBL' :
-                  finalMsg :
-                  %len(finalMsg) :
+                  msg :
+                  %len(msg) :
                   '*ESCAPE' :
                   CUR_CALL_STK_ENT :
                   ONE_CALL_STK_LVL_ABOVE + callStkCnt :
@@ -319,20 +313,14 @@
      D                 pi
      D  msg                         256a   const
 
-     D finalMsg        s            256a   varying
      D msgKey          s              4a
      D percolateErrors...
      D                 ds                  likeds(percolateErrors_t)
      D                                     inz(*likeds)
       /free
 
-        finalMsg = %trimr(msg);
-        if (endsWith('.': finalMsg));
-           finalMsg = leftStr(finalMsg: %len(finalMsg) - 1);
-        endif;
-
-        // CPF9898 with severity 40.
-        QMHSNDPM( 'CPF9898' :
+        // CPF9897 with severity 40.
+        QMHSNDPM( 'CPF9897' :
                   'QCPFMSG   *LIBL' :
                   %trimr(msg) :
                   %len(%trimr(msg)) :
