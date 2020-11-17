@@ -1,37 +1,37 @@
       // ==========================================================================
-      //  iRPGUnit SelfTest - Test RUN.
+       //  iRPGUnit SelfTest - Test RUN.
       // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
+       //  Copyright (c) 2013-2019 iRPGUnit Project Team
+       //  All rights reserved. This program and the accompanying materials
+       //  are made available under the terms of the Common Public License v1.0
+       //  which accompanies this distribution, and is available at
+       //  http://www.eclipse.org/legal/cpl-v10.html
       // ==========================================================================
-      // >>PRE-COMPILER<<
-      //   >>CRTCMD<<  RUCRTTST TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
-      //   >>IMPORTANT<<
-      //     >>PARM<<  MODULE(&LI/CMDRUNLOG +
-      //                      &LI/CMDRUNPRT +
-      //                      &LI/CMDRUNSRV +
-      //                      &LI/CALLPRC   +
-      //                      &LI/EXTPRC    +
-      //                      &LI/EXTTST    +
-      //                      &LI/LLIST     +
-      //                      &LI/OSVERSION +
-      //                      &LI/PGMMSG    +
-      //                      &LI/STRING    +
-      //                      &LI/USRSPC    +
-      //                      );
-      //   >>END-IMPORTANT<<
-      //   >>EXECUTE<<
-      // >>END-PRE-COMPILER<<
+       // >>PRE-COMPILER<<
+       //   >>CRTCMD<<  RUCRTTST TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+       //   >>IMPORTANT<<
+       //     >>PARM<<  MODULE(&LI/CMDRUNLOG +
+       //                      &LI/CMDRUNPRT +
+       //                      &LI/CMDRUNSRV +
+       //                      &LI/CALLPRC   +
+       //                      &LI/EXTPRC    +
+       //                      &LI/EXTTST    +
+       //                      &LI/LLIST     +
+       //                      &LI/OSVERSION +
+       //                      &LI/PGMMSG    +
+       //                      &LI/STRING    +
+       //                      &LI/USRSPC    +
+       //                      );
+       //   >>END-IMPORTANT<<
+       //   >>EXECUTE<<
+       // >>END-PRE-COMPILER<<
       // ==========================================================================
 
      H NoMain Option(*SrcStmt)
 
-      //----------------------------------------------------------------------
-      //   Imported Procedures
-      //----------------------------------------------------------------------
+       //----------------------------------------------------------------------
+       //   Imported Procedures
+       //----------------------------------------------------------------------
 
       /copy qinclude,PGMMSG
       /copy qinclude,CMDRUNSRV
@@ -39,9 +39,9 @@
       /copy qinclude,ASSERT
 
 
-      //----------------------------------------------------------------------
-      //   Exported Procedures
-      //----------------------------------------------------------------------
+       //----------------------------------------------------------------------
+       //   Exported Procedures
+       //----------------------------------------------------------------------
 
      D setUpSuite      pr
      D setup           pr
@@ -80,9 +80,9 @@
      D                 pr
 
 
-      //----------------------------------------------------------------------
-      //   Private Procedures
-      //----------------------------------------------------------------------
+       //----------------------------------------------------------------------
+       //   Private Procedures
+       //----------------------------------------------------------------------
 
      D raiseError      pr
      D setup_proc      pr
@@ -100,21 +100,17 @@
      D  procNm                       64a   const varying
 
 
-      //----------------------------------------------------------------------
-      //   Constants
-      //----------------------------------------------------------------------
+       //----------------------------------------------------------------------
+       //   Constants
+       //----------------------------------------------------------------------
 
      D noSetUp         ds                  likeds(Proc_t) inz
      D noTearDown      ds                  likeds(Proc_t) inz
 
 
-      //----------------------------------------------------------------------
-      //   Global Variables
-      //----------------------------------------------------------------------
-
-     D pgmStatusDS    sds                  qualified
-     D  lib                          10a   Overlay(pgmStatusDS:81)
-     D  pgmNm                        10a   Overlay(pgmStatusDS:334)
+       //----------------------------------------------------------------------
+       //   Global Variables
+       //----------------------------------------------------------------------
 
        // Execution trace (and its current index).
      D execTrace       s            256a   Dim(64)
@@ -131,18 +127,24 @@
      D setUpSuiteWasCalled...
      D                 s               n
 
+       //----------------------------------------------------------------------
+       //   Program Status Data Structure
+       //----------------------------------------------------------------------
 
-      //----------------------------------------------------------------------
-      //   Test Definitions
-      //----------------------------------------------------------------------
+      /copy qinclude,SDS
+
+
+       //----------------------------------------------------------------------
+       //   Test Definitions
+       //----------------------------------------------------------------------
 
      P setUpSuite      b                   export
      D setUpSuite      pi
       /free
 
-        // Used by test_loadTestSuite...
+       // Used by test_loadTestSuite...
 
-        setUpSuiteWasCalled = *on;
+       setUpSuiteWasCalled = *on;
 
       /end-free
      P                 e
@@ -152,13 +154,13 @@
      D setUp           pi
       /free
 
-        // Clear global variables.
+       // Clear global variables.
 
-        clear execTrace;
-        execTraceIdx = 1;
-        clear result;
-        clear setUpSuiteWasCalled;
-        clear testProc;
+       clear execTrace;
+       execTraceIdx = 1;
+       clear result;
+       clear setUpSuiteWasCalled;
+       clear testProc;
 
       /end-free
      P                 e
@@ -170,16 +172,16 @@
      D                 pi
       /free
 
-        // Execution.
+       // Execution.
 
-        testProc.procPtr = %paddr( test_proc );
-        testProc.procNm = 'test_proc';
-        result = runTestProc( testProc : noSetUp : noTearDown );
+       testProc.procPtr = %paddr( test_proc );
+       testProc.procNm = 'test_proc';
+       result = runTestProc( testProc : noSetUp : noTearDown );
 
-        // Controls.
+       // Controls.
 
-        aEqual( 'test_proc was called' : execTrace(1) );
-        aEqual( TEST_CASE_SUCCESS : result.outcome );
+       aEqual( 'test_proc was called' : execTrace(1) );
+       aEqual( TEST_CASE_SUCCESS : result.outcome );
 
       /end-free
      P                 e
@@ -191,20 +193,20 @@
      D                 pi
       /free
 
-        // Execution.
+       // Execution.
 
-        testProc.procPtr = %paddr( test_fail );
-        testProc.procNm = 'test_fail';
-        result = runTestProc( testProc : noSetUp : noTearDown );
+       testProc.procPtr = %paddr( test_fail );
+       testProc.procNm = 'test_fail';
+       result = runTestProc( testProc : noSetUp : noTearDown );
 
-        // Controls.
+       // Controls.
 
-        aEqual( 'test_fail was called' : execTrace(1) );
-        aEqual( TEST_CASE_FAILURE : result.outcome );
-        aEqual( 'My Failure Message' : result.failure.msg );
-        // New, due to new procedure doFail():
-        // aEqual( 'fail' : result.failure.callStk.entry(1).sender.procNm );
-        aEqual( 'TEST_FAIL' : result.failure.callStk.entry(1).sender.procNm );
+       aEqual( 'test_fail was called' : execTrace(1) );
+       aEqual( TEST_CASE_FAILURE : result.outcome );
+       aEqual( 'My Failure Message' : result.failure.msg );
+       // New, due to new procedure doFail():
+       // aEqual( 'fail' : result.failure.callStk.entry(1).sender.procNm );
+       aEqual( 'TEST_FAIL' : result.failure.callStk.entry(1).sender.procNm );
 
       /end-free
      P                 e
@@ -216,17 +218,17 @@
      D                 pi
       /free
 
-        // Execution.
+       // Execution.
 
-        testProc.procPtr = %paddr( test_error );
-        testProc.procNm = 'test_error';
-        result = runTestProc( testProc : noSetUp : noTearDown );
+       testProc.procPtr = %paddr( test_error );
+       testProc.procNm = 'test_error';
+       result = runTestProc( testProc : noSetUp : noTearDown );
 
-        // Controls.
+       // Controls.
 
-        aEqual( 'test_error was called' : execTrace(1) );
-        aEqual( TEST_CASE_ERROR : result.outcome );
-        aEqual( 'RAISEERROR' : result.error.sender.procNm );
+       aEqual( 'test_error was called' : execTrace(1) );
+       aEqual( TEST_CASE_ERROR : result.outcome );
+       aEqual( 'RAISEERROR' : result.error.sender.procNm );
 
       /end-free
      P                 e
@@ -238,23 +240,23 @@
      D                 pi
       /free
 
-        // Execution.
+       // Execution.
 
-        testProc.procPtr = %paddr( test_proc );
-        testProc.procNm = 'test_proc';
+       testProc.procPtr = %paddr( test_proc );
+       testProc.procNm = 'test_proc';
 
-        setupProc.procPtr = %paddr( setup_proc );
-        setupProc.procNm = 'setup_proc';
+       setupProc.procPtr = %paddr( setup_proc );
+       setupProc.procNm = 'setup_proc';
 
-        result = runTestProc( testProc :
-                              setupProc :
-                              noTearDown );
+       result = runTestProc( testProc :
+                             setupProc :
+                             noTearDown );
 
-        // Controls.
+       // Controls.
 
-        aEqual( 'setup_proc was called' : execTrace(1) );
-        aEqual( 'test_proc was called'  : execTrace(2) );
-        aEqual( TEST_CASE_SUCCESS : result.outcome );
+       aEqual( 'setup_proc was called' : execTrace(1) );
+       aEqual( 'test_proc was called'  : execTrace(2) );
+       aEqual( TEST_CASE_SUCCESS : result.outcome );
 
       /end-free
      P                 e
@@ -266,9 +268,9 @@
      D                 pi
       /free
 
-        // Execution.
+       // Execution.
 
-        monitor;
+       monitor;
 
           testProc.procPtr = %paddr( test_proc );
           testProc.procNm = 'test_proc';
@@ -279,16 +281,16 @@
           result = runTestProc( testProc :
                                 setupProc :
                                 noTearDown );
-        on-error;
+       on-error;
           fail( 'runTestProc should not raise an error' );
-        endmon;
+       endmon;
 
-        // Controls.
+       // Controls.
 
-        aEqual( 'setup_with_error was called' : execTrace(1) );
-        aEqual( *blank                        : execTrace(2) );    // test_proc not called.
-        aEqual( TEST_CASE_ERROR : result.outcome );
-        aEqual( 'RAISEERROR' : result.error.sender.procNm );
+       aEqual( 'setup_with_error was called' : execTrace(1) );
+       aEqual( *blank                        : execTrace(2) );    // test_proc not called.
+       aEqual( TEST_CASE_ERROR : result.outcome );
+       aEqual( 'RAISEERROR' : result.error.sender.procNm );
 
       /end-free
      P                 e
@@ -300,23 +302,23 @@
      D                 pi
       /free
 
-        // Execution.
+       // Execution.
 
-        testProc.procPtr = %paddr( test_proc );
-        testProc.procNm = 'test_proc';
+       testProc.procPtr = %paddr( test_proc );
+       testProc.procNm = 'test_proc';
 
-        tearDownProc.procPtr = %paddr( teardown_proc );
-        tearDownProc.procNm = 'teardown_proc';
+       tearDownProc.procPtr = %paddr( teardown_proc );
+       tearDownProc.procNm = 'teardown_proc';
 
-        result = runTestProc( testProc :
-                              noSetUp :
-                              tearDownProc );
+       result = runTestProc( testProc :
+                             noSetUp :
+                             tearDownProc );
 
-        // Controls.
+       // Controls.
 
-        aEqual( 'test_proc was called'     : execTrace(1) );
-        aEqual( 'teardown_proc was called' : execTrace(2) );
-        aEqual( TEST_CASE_SUCCESS : result.outcome );
+       aEqual( 'test_proc was called'     : execTrace(1) );
+       aEqual( 'teardown_proc was called' : execTrace(2) );
+       aEqual( TEST_CASE_SUCCESS : result.outcome );
 
       /end-free
      P                 e
@@ -328,29 +330,29 @@
      D                 pi
       /free
 
-        // Execution.
+       // Execution.
 
-        monitor;
+       monitor;
 
-        testProc.procPtr = %paddr( test_proc );
-        testProc.procNm = 'test_proc';
+          testProc.procPtr = %paddr( test_proc );
+          testProc.procNm = 'test_proc';
 
-        tearDownProc.procPtr = %paddr( teardown_with_error );
-        tearDownProc.procNm = 'teardown_with_error';
+          tearDownProc.procPtr = %paddr( teardown_with_error );
+          tearDownProc.procNm = 'teardown_with_error';
 
           result = runTestProc( testProc :
                                 noSetUp :
                                 tearDownProc );
-        on-error;
+       on-error;
           fail( 'runTestProc should not raise an error' );
-        endmon;
+       endmon;
 
-        // Controls.
+       // Controls.
 
-        aEqual( 'test_proc was called'           : execTrace(1) );
-        aEqual( 'teardown_with_error was called' : execTrace(2) );
-        aEqual( TEST_CASE_ERROR : result.outcome );
-        aEqual( 'RAISEERROR' : result.error.sender.procNm );
+       aEqual( 'test_proc was called'           : execTrace(1) );
+       aEqual( 'teardown_with_error was called' : execTrace(2) );
+       aEqual( TEST_CASE_ERROR : result.outcome );
+       aEqual( 'RAISEERROR' : result.error.sender.procNm );
 
       /end-free
      P                 e
@@ -362,23 +364,23 @@
      D                 pi
       /free
 
-        // Execution.
+       // Execution.
 
-        testProc.procPtr = %paddr( test_fail );
-        testProc.procNm = 'test_fail';
+       testProc.procPtr = %paddr( test_fail );
+       testProc.procNm = 'test_fail';
 
-        tearDownProc.procPtr = %paddr( teardown_proc );
-        tearDownProc.procNm = 'teardown_proc';
+       tearDownProc.procPtr = %paddr( teardown_proc );
+       tearDownProc.procNm = 'teardown_proc';
 
-        result = runTestProc( testProc :
-                              noSetUp :
-                              tearDownProc );
+       result = runTestProc( testProc :
+                             noSetUp :
+                             tearDownProc );
 
-        // Controls.
+       // Controls.
 
-        aEqual( 'test_fail was called'     : execTrace(1) );
-        aEqual( 'teardown_proc was called' : execTrace(2) );
-        aEqual( TEST_CASE_FAILURE : result.outcome );
+       aEqual( 'test_fail was called'     : execTrace(1) );
+       aEqual( 'teardown_proc was called' : execTrace(2) );
+       aEqual( TEST_CASE_FAILURE : result.outcome );
 
       /end-free
      P                 e
@@ -390,33 +392,33 @@
      D                 pi
       /free
 
-        // Execution.
+       // Execution.
 
-        monitor;
+       monitor;
 
-        testProc.procPtr = %paddr( test_proc );
-        testProc.procNm = 'test_proc';
+          testProc.procPtr = %paddr( test_proc );
+          testProc.procNm = 'test_proc';
 
-        setupProc.procPtr = %paddr( setup_with_error );
-        setupProc.procNm = 'setup_with_error';
+          setupProc.procPtr = %paddr( setup_with_error );
+          setupProc.procNm = 'setup_with_error';
 
-        tearDownProc.procPtr = %paddr( teardown_proc );
-        tearDownProc.procNm = 'teardown_proc';
+          tearDownProc.procPtr = %paddr( teardown_proc );
+          tearDownProc.procNm = 'teardown_proc';
 
           result = runTestProc( testProc :
                                 setupProc :
                                 tearDownProc    );
-        on-error;
+       on-error;
           fail( 'runTestProc should not raise an error' );
-        endmon;
+       endmon;
 
-        // Controls.
+       // Controls.
 
-        aEqual( 'setup_with_error was called' : execTrace(1) );
-        // test_proc not called.
-        aEqual( 'teardown_proc was called'    : execTrace(2) );
-        aEqual( TEST_CASE_ERROR : result.outcome );
-        aEqual( 'RAISEERROR' : result.error.sender.procNm );
+       aEqual( 'setup_with_error was called' : execTrace(1) );
+       // test_proc not called.
+       aEqual( 'teardown_proc was called'    : execTrace(2) );
+       aEqual( TEST_CASE_ERROR : result.outcome );
+       aEqual( 'RAISEERROR' : result.error.sender.procNm );
 
       /end-free
      P                 e
@@ -432,26 +434,26 @@
 
       /free
 
-        // Setup.
+       // Setup.
 
-        setUpSuiteWasCalled = *off;
-        srvPgm.nm  = pgmStatusDS.pgmNm;
-        srvPgm.lib = pgmStatusDS.lib;
+       setUpSuiteWasCalled = *off;
+       srvPgm.nm  = sds.pgmName;
+       srvPgm.lib = sds.pgmLib;
 
-        // Execution.
+       // Execution.
 
-        testSuite = loadTestSuite( srvPgm );
+       testSuite = loadTestSuite( srvPgm );
 
-        // Controls.
+       // Controls.
 
-        assert( setUpSuiteWasCalled = *off :
-                'setUpSuite called by loadTestSuite' );
-        aEqual( 'SETUPSUITE' : testSuite.setUpSuite.procNm );
-        assert( %paddr(setUpSuite) = testSuite.setUpSuite.procPtr :
-                'Wrong SetUpSuite procedure pointer' );
-        aEqual( 'SETUP' : testSuite.setUp.procNm );
-        assert( %paddr(setUp) = testSuite.setUp.procPtr :
-                'Wrong SetUp procedure pointer' );
+       assert( setUpSuiteWasCalled = *off :
+               'setUpSuite called by loadTestSuite' );
+       aEqual( 'SETUPSUITE' : testSuite.setUpSuite.procNm );
+       assert( %paddr(setUpSuite) = testSuite.setUpSuite.procPtr :
+               'Wrong SetUpSuite procedure pointer' );
+       aEqual( 'SETUP' : testSuite.setUp.procNm );
+       assert( %paddr(setUp) = testSuite.setUp.procPtr :
+               'Wrong SetUp procedure pointer' );
 
       /end-free
      P                 e
@@ -468,20 +470,20 @@
 
       /free
 
-        // Setup.
+       // Setup.
 
-        testSuite.testCasesCnt = 1;
-        testSuite.testList = %addr( testCase );
-        testCase(1).procNm  =        'test_proc' ;
-        testCase(1).procPtr = %paddr( test_proc );
+       testSuite.testCasesCnt = 1;
+       testSuite.testList = %addr( testCase );
+       testCase(1).procNm  =        'test_proc' ;
+       testCase(1).procPtr = %paddr( test_proc );
 
-        // Execution.
+       // Execution.
 
-        testResult = runTest( testSuite : 1 );
+       testResult = runTest( testSuite : 1 );
 
-        // Controls.
+       // Controls.
 
-        aEqual( TEST_CASE_SUCCESS : testResult.outcome );
+       aEqual( TEST_CASE_SUCCESS : testResult.outcome );
 
       /end-free
      P                 e
@@ -497,20 +499,20 @@
      D testResult      ds                  likeds(TestResult_t)
       /free
 
-        // Setup.
+       // Setup.
 
-        testSuite.testCasesCnt = 1;
-        testSuite.testList = %addr( testCase );
-        testCase(1).procNm  =        'test_fail' ;
-        testCase(1).procPtr = %paddr( test_fail );
+       testSuite.testCasesCnt = 1;
+       testSuite.testList = %addr( testCase );
+       testCase(1).procNm  =        'test_fail' ;
+       testCase(1).procPtr = %paddr( test_fail );
 
-        // Execution.
+       // Execution.
 
-        testResult = runTest( testSuite : 1 );
+       testResult = runTest( testSuite : 1 );
 
-        // Controls.
+       // Controls.
 
-        aEqual( TEST_CASE_FAILURE : testResult.outcome );
+       aEqual( TEST_CASE_FAILURE : testResult.outcome );
 
       /end-free
      P                 e
@@ -525,28 +527,28 @@
      D testCase        ds                  Dim(1) likeds(Proc_t)
       /free
 
-        // Setup.
+       // Setup.
 
-        testSuite.setUp.procNm  =        'setup_proc';
-        testSuite.setUp.procPtr = %paddr( setup_proc );
+       testSuite.setUp.procNm  =        'setup_proc';
+       testSuite.setUp.procPtr = %paddr( setup_proc );
 
-        testSuite.testCasesCnt = 1;
-        testSuite.testList = %addr( testCase );
-        testCase(1).procNm  =        'test_proc' ;
-        testCase(1).procPtr = %paddr( test_proc );
+       testSuite.testCasesCnt = 1;
+       testSuite.testList = %addr( testCase );
+       testCase(1).procNm  =        'test_proc' ;
+       testCase(1).procPtr = %paddr( test_proc );
 
-        testSuite.tearDown.procNm  =        'teardown_proc' ;
-        testSuite.tearDown.procPtr = %paddr( teardown_proc );
+       testSuite.tearDown.procNm  =        'teardown_proc' ;
+       testSuite.tearDown.procPtr = %paddr( teardown_proc );
 
-        // Execution.
+       // Execution.
 
-        runTest( testSuite : 1 );
+       runTest( testSuite : 1 );
 
-        // Controls.
+       // Controls.
 
-        aEqual( 'setup_proc was called'    : execTrace(1) );
-        aEqual( 'test_proc was called'     : execTrace(2) );
-        aEqual( 'teardown_proc was called' : execTrace(3) );
+       aEqual( 'setup_proc was called'    : execTrace(1) );
+       aEqual( 'test_proc was called'     : execTrace(2) );
+       aEqual( 'teardown_proc was called' : execTrace(3) );
 
       /end-free
      P                 e
@@ -561,13 +563,13 @@
 
       /free
 
-        clear testSuite;
+       clear testSuite;
 
-        monitor;
+       monitor;
           rclTestSuite( testSuite );
-        on-error;
+       on-error;
           fail( 'rclTestSuite should tolerate a blank test suite' );
-        endmon;
+       endmon;
 
       /end-free
      P                 e
@@ -582,12 +584,12 @@
 
       /free
 
-        clear testSuite;
-        testSuite.testList = %alloc(10);
+       clear testSuite;
+       testSuite.testList = %alloc(10);
 
-        rclTestSuite( testSuite );
+       rclTestSuite( testSuite );
 
-        assert( testSuite.testList = *null : 'Test list not deallocated' );
+       assert( testSuite.testList = *null : 'Test list not deallocated' );
 
       /end-free
      P                 e
@@ -602,21 +604,21 @@
 
       /free
 
-        clear testSuite;
-        testSuite.tearDownSuite.procPtr = %paddr( tearDownSuite_success );
+       clear testSuite;
+       testSuite.tearDownSuite.procPtr = %paddr( tearDownSuite_success );
 
-        rclTestSuite( testSuite );
+       rclTestSuite( testSuite );
 
-        assert( *blank = execTrace(1) :
-                'Should not have called tearDownSuite' );
+       assert( *blank = execTrace(1) :
+               'Should not have called tearDownSuite' );
 
       /end-free
      P                 e
 
 
-      //----------------------------------------------------------------------
-      //   Support Procedure Definitions
-      //----------------------------------------------------------------------
+       //----------------------------------------------------------------------
+       //   Support Procedure Definitions
+       //----------------------------------------------------------------------
 
      P raiseError      b
      D raiseError      pi
@@ -625,7 +627,7 @@
 
       /free
 
-        zero = 1 / zero;
+       zero = 1 / zero;
 
       /end-free
      P                 e
@@ -635,7 +637,7 @@
      D setup_proc      pi
       /free
 
-        traceCall( 'setup_proc' );
+       traceCall( 'setup_proc' );
 
       /end-free
      P                 e
@@ -649,8 +651,8 @@
      D x               s             10i 0 inz(0)
       /free
 
-        traceCall( 'setup_with_error' );
-        raiseError();
+       traceCall( 'setup_with_error' );
+       raiseError();
 
       /end-free
      P                 e
@@ -660,7 +662,7 @@
      D teardown_proc   pi
       /free
 
-        traceCall( 'teardown_proc' );
+       traceCall( 'teardown_proc' );
 
       /end-free
      P                 e
@@ -674,8 +676,8 @@
      D x               s             10i 0 inz(0)
       /free
 
-        traceCall( 'teardown_with_error' );
-        raiseError();
+       traceCall( 'teardown_with_error' );
+       raiseError();
 
       /end-free
      P                 e
@@ -687,7 +689,7 @@
      D                 pi
       /free
 
-        traceCall( 'tearDownSuite_success' );
+       traceCall( 'tearDownSuite_success' );
 
       /end-free
      P                 e
@@ -699,8 +701,8 @@
      D x               s             10i 0 inz(0)
       /free
 
-        traceCall( 'test_error' );
-        raiseError();
+       traceCall( 'test_error' );
+       raiseError();
 
       /end-free
      P                 e
@@ -710,8 +712,8 @@
      D test_fail       pi
       /free
 
-        traceCall( 'test_fail' );
-        fail( 'My Failure Message' );
+       traceCall( 'test_fail' );
+       fail( 'My Failure Message' );
 
       /end-free
      P                 e
@@ -721,7 +723,7 @@
      D test_proc       pi
       /free
 
-        traceCall( 'test_proc' );
+       traceCall( 'test_proc' );
 
       /end-free
      P                 e
@@ -731,8 +733,8 @@
      D  procNm                       64a   const varying
       /free
 
-        execTrace(execTraceIdx) = procNm + ' was called';
-        execTraceIdx += 1;
+       execTrace(execTraceIdx) = procNm + ' was called';
+       execTraceIdx += 1;
 
       /end-free
      P                 e

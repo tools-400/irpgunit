@@ -122,9 +122,8 @@
       //   Program Status Data Structure
       //----------------------------------------------------------------------
 
-     D sds            SDS                  qualified
-     D  pgmName                1     10A
-     D  pgmLib                81     90A
+      /copy qinclude,SDS
+
 
       //----------------------------------------------------------------------
       //   Test Procedures

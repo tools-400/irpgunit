@@ -117,11 +117,6 @@
      D mockProcArray   s                   Dim(2) like(ProcNm_t)
      D mockProcNmList  ds                  likeds(ProcNmList_t)
 
-     D pgmStatusDS    sds                  qualified
-     D  lib                          10a   Overlay(pgmStatusDS:81)
-     D  pgmNm                        10a   Overlay(pgmStatusDS:334)
-
-
       //----------------------------------------------------------------------
       //   Global Variable
       //----------------------------------------------------------------------
@@ -131,6 +126,12 @@
      D mockProcCnt     s             10i 0
        // Expected test procedure.
      D expTestProc     ds                  likeds(Proc_t)
+
+      //----------------------------------------------------------------------
+      //   Program Status Data Structure
+      //----------------------------------------------------------------------
+
+      /copy qinclude,SDS
 
 
       //----------------------------------------------------------------------
@@ -351,8 +352,8 @@
         // I use the 'self-shunt' pattern here. The test program tries to activate itself to g
         // own Activation Mark.
 
-        srvPgm.nm = pgmStatusDS.pgmNm;
-        srvPgm.lib = pgmStatusDS.lib;
+        srvPgm.nm = sds.pgmName;
+        srvPgm.lib = sds.pgmLib;
         actMark = activateSrvPgm( srvPgm );
 
         // Set up TestSuite.
