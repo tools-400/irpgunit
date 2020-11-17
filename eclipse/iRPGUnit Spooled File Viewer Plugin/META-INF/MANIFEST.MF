@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iRPGUnit Spooled File Viewer (recommended)
 Bundle-SymbolicName: de.tools400.rpgunit.spooledfileviewer;singleton:=true
-Bundle-Version: 3.2.0.r
+Bundle-Version: 3.3.0.r
 Bundle-Activator: de.tools400.rpgunit.spooledfileviewer.RPGUnitSpooledFileViewer
 Bundle-Vendor: iRPGUnit Project Team
 Require-Bundle: org.eclipse.ui,

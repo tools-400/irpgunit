@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iRPGUnit Help (recommended)
 Bundle-SymbolicName: de.tools400.rpgunit.core.help;singleton:=true
-Bundle-Version: 3.2.0.r
+Bundle-Version: 3.3.0.r
 Bundle-Vendor: iRPGUnit Project Team
