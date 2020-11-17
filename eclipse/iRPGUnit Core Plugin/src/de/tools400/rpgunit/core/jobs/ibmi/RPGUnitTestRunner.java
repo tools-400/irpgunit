@@ -33,6 +33,7 @@ import de.tools400.rpgunit.core.Messages;
 import de.tools400.rpgunit.core.RPGUnitCorePlugin;
 import de.tools400.rpgunit.core.exceptions.InvalidVersionException;
 import de.tools400.rpgunit.core.handler.UnitTestException;
+import de.tools400.rpgunit.core.helpers.QueuedMessageHelper;
 import de.tools400.rpgunit.core.helpers.StringHelper;
 import de.tools400.rpgunit.core.model.ibmi.I5Library;
 import de.tools400.rpgunit.core.model.ibmi.I5LibraryList;
@@ -48,7 +49,6 @@ import de.tools400.rpgunit.core.preferences.Preferences;
 @SuppressWarnings("unused")
 public class RPGUnitTestRunner extends AbstractUnitTestRunner {
 
-    private static final String IBM_NULL = "*N"; //$NON-NLS-1$
     private static final String NEW_LINE = "\n"; //$NON-NLS-1$
 
     public static final String RUNNER_OUTCOME_NOT_YET_RUN = "*";
@@ -845,9 +845,8 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
 
             I5ObjectName tJobDescription = getJobDescription(aUnitTestServiceprogram);
             if (!isJobDescriptionAvailable(tJobDescription)) {
-                throw new UnitTestException(
-                    Messages.bind(Messages.Can_not_execute_unit_test_A_B_due_to_missing_job_description_C,
-                        new Object[] { aUnitTestServiceprogram.getLibrary(), aUnitTestServiceprogram.getName(), tJobDescription.toString() }),
+                throw new UnitTestException(Messages.bind(Messages.Can_not_execute_unit_test_A_B_due_to_missing_job_description_C, new Object[] {
+                    aUnitTestServiceprogram.getLibrary(), aUnitTestServiceprogram.getName(), tJobDescription.toString() }),
                     UnitTestException.Type.unexpectedError);
             }
         }
@@ -908,7 +907,7 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
         String captureJobLog = Preferences.getInstance().getCaptureJobLog();
         byte[] startingMessageKey = new byte[] { 0x00, 0x00, 0x00, 0x00 };
         if (!Preferences.DEBUG_CAPTURE_JOBLOG_OFF.equals(captureJobLog)) {
-            QueuedMessage[] jobLogMessages = getJobLog(program.getServerJob(), MessageQueue.NEWEST, 1);
+            QueuedMessage[] jobLogMessages = getNewestJobLogEntry(program.getServerJob());
             if (jobLogMessages.length > 0) {
                 startingMessageKey = jobLogMessages[0].getKey();
             }
@@ -932,8 +931,7 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             captureJobLog(program, aServiceProgram, startingMessageKey);
             throw new UnitTestException(
                 Messages.bind(Messages.Unit_test_A_B_ended_unexpected_with_error_message, new Object[] { aServiceProgram.getLibrary(),
-                    aServiceProgram.getName(), as400ErrorMsg.toString(), program.getServerJob().toString() }),
-                UnitTestException.Type.unexpectedError);
+                    aServiceProgram.getName(), as400ErrorMsg.toString(), program.getServerJob().toString() }), UnitTestException.Type.unexpectedError);
         }
 
         if (Preferences.DEBUG_CAPTURE_JOBLOG_ALL.equals(captureJobLog)) {
@@ -954,8 +952,8 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss"); //$NON-NLS-1$
 
         String now = formatter.format(new Date());
-        String newJobLogEntry = Messages.bind(Messages.A_Result_of_iRPGUnit_Test_Case_B_served_by_server_job_C,
-            new Object[] { now, aServiceProgram, program.getServerJob() });
+        String newJobLogEntry = Messages.bind(Messages.A_Result_of_iRPGUnit_Test_Case_B_served_by_server_job_C, new Object[] { now, aServiceProgram,
+            program.getServerJob() });
         logMessage(newJobLogEntry);
 
         QueuedMessage[] jobLogMessages = getJobLog(program.getServerJob(), startingMessageKey, -1);
@@ -989,11 +987,13 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
                 newJobLogEntry += NEW_LINE + messageHelp;
             }
 
-            newJobLogEntry += NEW_LINE + createProgramEntry(formatted, Messages.Sending, jobLogMessage.getFromProgram(),
-                jobLogMessage.getSendingModuleName(), jobLogMessage.getSendingProcedureName(), jobLogMessage.getSendingStatementNumbers());
+            newJobLogEntry += NEW_LINE
+                + createProgramEntry(formatted, Messages.Sending, jobLogMessage.getFromProgram(), jobLogMessage.getSendingModuleName(),
+                    jobLogMessage.getSendingProcedureName(), jobLogMessage.getSendingStatementNumbers());
 
-            newJobLogEntry += NEW_LINE + createProgramEntry(formatted, Messages.Receiving, jobLogMessage.getReceivingProgramName(),
-                jobLogMessage.getReceivingModuleName(), jobLogMessage.getReceivingProcedureName(), jobLogMessage.getReceiverStatementNumbers());
+            newJobLogEntry += NEW_LINE
+                + createProgramEntry(formatted, Messages.Receiving, jobLogMessage.getReceivingProgramName(), jobLogMessage.getReceivingModuleName(),
+                    jobLogMessage.getReceivingProcedureName(), jobLogMessage.getReceiverStatementNumbers());
 
             logMessage(newJobLogEntry);
         }
@@ -1011,39 +1011,11 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
     }
 
     private String getMessageType(QueuedMessage message) {
+        return QueuedMessageHelper.getMessageType(message);
+    }
 
-        int type = message.getType();
-
-        switch (type) {
-        case QueuedMessage.COMPLETION:
-            return "*COMP"; //$NON-NLS-1$
-        case QueuedMessage.DIAGNOSTIC:
-            return "*DIAG"; //$NON-NLS-1$
-        case QueuedMessage.INFORMATIONAL:
-            return "*INFO"; //$NON-NLS-1$
-        case QueuedMessage.INQUIRY:
-            return "*INQUIRY"; //$NON-NLS-1$
-        case QueuedMessage.SENDERS_COPY:
-            return "*COPY"; //$NON-NLS-1$
-        case QueuedMessage.REQUEST:
-        case QueuedMessage.REQUEST_WITH_PROMPTING:
-            return "*REQUEST"; //$NON-NLS-1$
-        case QueuedMessage.NOTIFY:
-        case QueuedMessage.NOTIFY_NOT_HANDLED:
-            return "*NOTIFY"; //$NON-NLS-1$
-        case QueuedMessage.ESCAPE:
-        case QueuedMessage.ESCAPE_NOT_HANDLED:
-            return "*ESCAPE"; //$NON-NLS-1$
-        case QueuedMessage.REPLY_FROM_SYSTEM_REPLY_LIST:
-        case QueuedMessage.REPLY_MESSAGE_DEFAULT_USED:
-        case QueuedMessage.REPLY_NOT_VALIDITY_CHECKED:
-        case QueuedMessage.REPLY_SYSTEM_DEFAULT_USED:
-        case QueuedMessage.REPLY_VALIDITY_CHECKED:
-            return "*REPLY"; //$NON-NLS-1$
-
-        default:
-            return IBM_NULL; // $NON-NLS-1$
-        }
+    private QueuedMessage[] getNewestJobLogEntry(Job serverJob) throws Exception {
+        return getJobLog(serverJob, MessageQueue.NEWEST, 1);
     }
 
     private QueuedMessage[] getJobLog(Job serverJob, byte[] startingMessageKey, int count) throws Exception {
@@ -1114,13 +1086,13 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
         String message;
         if (formatted) {
             label = "   " + label;
-            message = Messages.bind(Messages.A_program_B_module_C_procedure_D_statement_E_FORMATTED,
-                new Object[] { label, getValueOrNull(programName), label, getValueOrNull(moduleName), label, getValueOrNull(procedureName), label,
-                    getValueOrNull(statement) });
+            message = Messages.bind(Messages.A_program_B_module_C_procedure_D_statement_E_FORMATTED, new Object[] { label,
+                getValueOrNull(programName), label, getValueOrNull(moduleName), label, getValueOrNull(procedureName), label,
+                getValueOrNull(statement) });
         } else {
-            message = Messages.bind(Messages.A_program_B_module_C_procedure_D_statement_E_UNFORMATTED,
-                new Object[] { label, getValueOrNull(programName), label, getValueOrNull(moduleName), label, getValueOrNull(procedureName), label,
-                    getValueOrNull(statement) });
+            message = Messages.bind(Messages.A_program_B_module_C_procedure_D_statement_E_UNFORMATTED, new Object[] { label,
+                getValueOrNull(programName), label, getValueOrNull(moduleName), label, getValueOrNull(procedureName), label,
+                getValueOrNull(statement) });
         }
 
         return message.toString();
@@ -1129,7 +1101,7 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
     private String getValueOrNull(String value) {
 
         if (StringHelper.isNullOrEmpty(value)) {
-            return IBM_NULL; // $NON-NLS-1$
+            return QueuedMessageHelper.IBM_NULL;
         }
 
         return value.trim();
