@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2018 iRPGUnit Project Team
+ * Copyright (c) 2013-2020 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -122,6 +122,7 @@ public class ProductLibraryUploader {
                                 if (!restoreLibrary(workLibrary, saveFileName, libraryName, aspDeviceName)) {
                                     setError(Messages.bind(Messages.Could_not_restore_library_A, libraryName));
                                 } else {
+                                    updateLibrary(libraryName);
                                     setStatus(Messages.bind(Messages.Successfully_restored_iRPGUnit_library, libraryName));
                                 }
 
@@ -214,8 +215,7 @@ public class ProductLibraryUploader {
     private boolean checkLibraryPrecondition(String libraryName, String aspDeviceName) {
 
         while (libraryExists(libraryName)) {
-            if (!MessageDialog.openQuestion(shell,
-                Messages.DialogTitle_Delete_Object,
+            if (!MessageDialog.openQuestion(shell, Messages.DialogTitle_Delete_Object,
                 Messages.bind(Messages.Library_A_does_already_exist, libraryName) + "\n\n"
                     + Messages.bind(Messages.Question_Do_you_want_to_delete_library_A, libraryName))) {
                 return false;
@@ -251,8 +251,7 @@ public class ProductLibraryUploader {
     private boolean checkSaveFilePrecondition(String workLibrary, String saveFileName) {
 
         while (saveFileExists(workLibrary, saveFileName)) {
-            if (!MessageDialog.openQuestion(shell,
-                Messages.DialogTitle_Delete_Object,
+            if (!MessageDialog.openQuestion(shell, Messages.DialogTitle_Delete_Object,
                 Messages.bind(Messages.File_B_in_library_A_does_already_exist, new String[] { workLibrary, saveFileName }) + "\n\n" + Messages
                     .bind(Messages.Question_Do_you_want_to_delete_object_A_B_type_C, new String[] { workLibrary, saveFileName, "*FILE" }))) {
                 return false;
@@ -348,6 +347,19 @@ public class ProductLibraryUploader {
         }
 
         return true;
+    }
+
+    private void updateLibrary(String libraryName) {
+
+        if (SAVED_LIBRARY.equals(libraryName)) {
+            return;
+        }
+
+        setStatus(Messages.bind(Messages.Updating_objects_of_library_A, libraryName));
+
+        if (!executeCommand(libraryName + "/UPDLIB LIB(" + libraryName + ")", true).equals("")) {
+            MessageDialog.openWarning(shell, Messages.Warning, Messages.bind(Messages.Library_RPGUNIT_has_been_restored_to_A_but_objects_could_not_be_updated_Try_to_run_command_UPDLIB_A_by_hand_and_check_the_job_log, libraryName));
+        }
     }
 
     private boolean checkFile(AS400 system, String library, String fileName) {

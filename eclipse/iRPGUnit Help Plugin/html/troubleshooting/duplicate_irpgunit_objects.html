@@ -4,15 +4,19 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
-	<title>Duplicate RUTESTCASE Service Program</title>
+	<title>Error: Duplicate iRPGUnit Objects</title>
 </head>
 
 <body>
-<h1>Duplicate RUTESTCASE Service Program</h1>
+<h1>Error: Duplicate iRPGUnit Objects</h1>
+<p>
+<h2>Symptom</h1>
 <p>
 This page explain why the following error message is shown and how to solve the problem:
 <p class="indent">
-<img class="noborder" src="./assets/duplicate_RUTESTCASE_error_message.png">
+<img class="noborder" src="./assets/duplicate_irpgunit_objects_message.png">
+<p>
+<h2>Reason</h1>
 <p>
 The reason for this problem is that the iRPGUnit start program RUCALLTST or RUPGMRMT uses
 a different RUCALLTST service as your test suite. For example, that happens, when:
@@ -24,9 +28,16 @@ a different RUCALLTST service as your test suite. For example, that happens, whe
 <p>
 In this case the relationships between the objects look like this:
 <p>
-<img class="noborder" src="./assets/error_duplicate_RUTESTCASE.png">
+<img class="noborder" src="./assets/duplicate_irpgunit_objects.png">
 <p>
-Change the RSE connection and replace library RPGUNITDVP with library RPGUNIT3 in order to solve the problem.
+<h2>Solution</h1>
+<p>
+There are two options to solve the problem:
+<p>
+<ol>
+<li>Change the RSE connection and replace the iRPGUnit library with the library specified on the preferences page.</li>
+<li>Go to the preferences page and change the product library to <i>*LIBL</i>.</li>
+</ol>
 <p>
 <iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
 </body>

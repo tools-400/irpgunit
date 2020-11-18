@@ -1,0 +1,42 @@
+.* ==========================================================================
+.*  iRPGUnit - Update RPGUNIT library.
+.* ==========================================================================
+.*  Copyright (c) 2013-2020 iRPGUnit Project Team
+.*  All rights reserved. This program and the accompanying materials
+.*  are made available under the terms of the Common Public License v1.0
+.*  which accompanies this distribution, and is available at
+.*  http://www.eclipse.org/legal/cpl-v10.html
+.* ==========================================================================
+.*   >>PRE-COMPILER<<
+.*     >>CRTCMD<<  CRTPNLGRP  PNLGRP(&LI/&OB) +
+.*                               SRCFILE(&SL/&SF)  +
+.*                               SRCMBR(&SM);
+.*     >>IMPORTANT<<
+.*       >>PARM<< OPTION(*EVENTF);
+.*     >>END-IMPORTANT<<
+.*     >>EXECUTE<<
+.*   >>END-PRE-COMPILER<<
+.* ==========================================================================
+:pnlgrp.
+.*
+:help name=UPDLIB WIDTH=74.
+iRPGUnit - Update Library (UPDLIB) - Help
+:p.
+The :HP2.iRPGUnit - Update Library:EHP2. (UPDLIB) command updates
+the references of iRPGUnit programs and commands after the iRPGUnit
+library has been renamed or restored to a different name.
+:ehelp.
+.*
+:help name='UPDLIB/LIB' WIDTH=64.
+Library (LIB) - Help
+:xh3.Library (LIB)
+:p.
+Specifies the name of the iRPGUnit library that must be updated, because
+it has been renamed or restored to another name.
+:parml.
+:pt.library-name
+:pd.Enter the name of the library that needs to be updated.
+:eparml.
+:ehelp.
+.*
+:epnlgrp.

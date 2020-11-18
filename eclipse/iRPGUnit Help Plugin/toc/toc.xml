@@ -3,11 +3,12 @@
 
 <toc label="iRPGUnit">
    <topic label="Introduction" href="html/introduction/introduction.html" />
-   <topic label="Quickstart">
-      <anchor id="quickstart" />
-   </topic>
+   <topic label="Installation" href="html/installation/installation.html" />
    <topic label="Upgrade Instructions" >
       <anchor id="upgrading" />
+   </topic>
+   <topic label="Quickstart">
+      <anchor id="quickstart" />
    </topic>
    <topic label="API Reference">
       <anchor id="reference" />

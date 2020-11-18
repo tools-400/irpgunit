@@ -179,6 +179,8 @@ public class Messages extends NLS {
     public static String Restoring_library_A;
     public static String Could_not_restore_library_A;
     public static String Successfully_restored_iRPGUnit_library;
+    public static String Updating_objects_of_library_A;
+    public static String Library_RPGUNIT_has_been_restored_to_A_but_objects_could_not_be_updated_Try_to_run_command_UPDLIB_A_by_hand_and_check_the_job_log;
     public static String Disconnected_from_host_A;
     public static String JobLog_Headline;
 
