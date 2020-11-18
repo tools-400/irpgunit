@@ -98,6 +98,15 @@
         "HLPPNLGRP("prdLib"/CMPMODHLP) ",
         "HLPID(CMPMOD)"
 
+ "CRTPNLGRP  PNLGRP("prdLib"/UPDLIBHLP) SRCFILE(*LIBL/QBUILD)"
+
+ "CRTCMD CMD("prdLib"/UPDLIB) SRCFILE(*LIBL/QBUILD) ",
+        "PGM(*REXX) ",
+        "REXSRCFILE("prdLib"/QBUILD) ",
+        "REXSRCMBR(UPDLIBCPP) ",
+        "HLPPNLGRP("prdLib"/UPDLIBHLP) ",
+        "HLPID(UPDLIB)"
+
  "SNDPGMMSG ",
    "MSGID(CPF9897) ",
    "MSGF(QCPFMSG) ",
