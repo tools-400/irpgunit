@@ -187,6 +187,15 @@
              CPYF       FROMFILE(&DEVLIB/&QBUILD) +
                           TOFILE(&LIB/&QBUILD) FROMMBR(MKBUILD) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QBUILD) +
+                          TOFILE(&LIB/&QBUILD) FROMMBR(UPDLIB) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QBUILD) +
+                          TOFILE(&LIB/&QBUILD) FROMMBR(UPDLIBCPP) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QBUILD) +
+                          TOFILE(&LIB/&QBUILD) FROMMBR(UPDLIBHLP) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
 
              /* ---------------------------------------------------- */
              /*  Copy source members: QCMD                           */
