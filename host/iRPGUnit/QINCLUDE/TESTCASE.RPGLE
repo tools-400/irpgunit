@@ -112,6 +112,65 @@
       /endif
 
 
+      // fail -- Fail test
+      //
+      // Produces an error and appends the specified 'message' to the test
+      // report. The test case is terminated.
+      //
+      // Example:
+      //   monitor;
+      //     call PGM();
+      //     fail( 'PGM should have thrown an exception' );
+      //   on-error;
+      //     // Exception seen. Success.
+      //   endmon;
+      //
+      // Messages:
+      //   PGM should have thrown an exception
+
+     D fail            pr                  extproc('+
+     D                                     fail+
+     D                                     ')
+      /if defined(RPGUNIT_INTERNAL)
+     D  msg                         256a   const
+      /else
+     D  msg                       16384a   const varying options(*Varsize)
+      /endif
+
+
+      // getMonitoredMsg -- Get Monitored Message.
+      //
+      // Retrieves the latest *ESCAPE message from the job log. Usually
+      // called within the 'on-error' section of a 'monitor' block.
+      //
+      // Example:
+      //   monitor;
+      //     a = 10;
+      //     b = 0;     // Attempt made to divide by zero for
+      //     c = a / b; // fixed point operation. (MCH1211)
+      //     fail( 'Division by zero did not raise an error.' );
+      //   on-error;
+      //     msgInfo = getMonitoredMsg(*ON); // remove message
+      //   endmon;                           // from job log
+      //
+      //   aEqual( 'MCH1211': msgInfo.Id );
+
+     D getMonitoredMessage...
+     D                 pr                  likeds(MsgInfo_t)
+     D                                     extproc('+
+     D                                     getMonitoredMessage+
+     D                                     ')
+     D  doRmvMsg                       n   const options(*nopass)
+
+     D MsgInfo_t       ds                  qualified based(template)
+     D  id                            7a
+     D  txt                         256a   varying
+     D  pgm                          10a
+     D  mod                          10a
+     D  proc                        256a   varying
+     D  specNb                       10a
+
+
       // assertJobLogContains -- General Purpose Assertion
       //
       // Checks whether the job log contains the specified message ID between
@@ -154,35 +213,23 @@
      D  timeLimit                      z   const
 
 
-      // fail -- Fail test
-      //
-      // Produces an error and appends the specified 'message' to the test
-      // report. The test case is terminated.
-      //
-      // Example:
-      //   monitor;
-      //     call PGM();
-      //     fail( 'PGM should have thrown an exception' );
-      //   on-error;
-      //     // Exception seen. Success.
-      //   endmon;
-      //
-      // Messages:
-      //   PGM should have thrown an exception
-
-     D fail            pr                  extproc('+
-     D                                     fail+
-     D                                     ')
-      /if defined(RPGUNIT_INTERNAL)
-     D  msg                         256a   const
-      /else
-     D  msg                       16384a   const varying options(*Varsize)
-      /endif
-
-
       // ------------------------------------
       //  CL Commands of module TESTUTILS.
       // ------------------------------------
+
+
+      // getFullTimeStamp -- Get Full Timestamp
+      //
+      // Returns the full current timestamp, without rounding the
+      // microseconds like %timestamp() does.
+      //
+      // Example:
+      //   tmStmp = getFullTimeStamp();
+
+     D getFullTimeStamp...
+     D                 pr              z   extproc('+
+     D                                     getFullTimeStamp+
+     D                                     ')
 
 
       // clrpfm -- Clear Physical File
@@ -295,59 +342,12 @@
      D                                     ')
 
 
-      // getMonitoredMsg -- Get Monitored Message.
-      //
-      // Retrieves the latest *ESCAPE message from the job log. Usually
-      // called within the 'on-error' section of a 'monitor' block.
-      //
-      // Example:
-      //   monitor;
-      //     a = 10;
-      //     b = 0;     // Attempt made to divide by zero for
-      //     c = a / b; // fixed point operation. (MCH1211)
-      //     fail( 'Division by zero did not raise an error.' );
-      //   on-error;
-      //     msgInfo = getMonitoredMsg(*ON); // remove message
-      //   endmon;                           // from job log
-      //
-      //   aEqual( 'MCH1211': msgInfo.Id );
-
-     D getMonitoredMessage...
-     D                 pr                  likeds(MsgInfo_t)
-     D                                     extproc('+
-     D                                     getMonitoredMessage+
-     D                                     ')
-     D  doRmvMsg                       n   const options(*nopass)
-
-     D MsgInfo_t       ds                  qualified based(template)
-     D  id                            7a
-     D  txt                         256a   varying
-     D  pgm                          10a
-     D  mod                          10a
-     D  proc                        256a   varying
-     D  specNb                       10a
-
-
-      // getFullTimeStamp -- Get Full Timestamp
-      //
-      // Returns the full current timestamp, without rounding the
-      // microseconds like %timestamp() does.
-      //
-      // Example:
-      //   tmStmp = getFullTimeStamp();
-
-     D getFullTimeStamp...
-     D                 pr              z   extproc('+
-     D                                     getFullTimeStamp+
-     D                                     ')
-
-
       // getMemberType -- Get Member Type.
       //
       // Returns the source type of a given source member.
       //
       // Example:
-      //   srcType = getMemberType('QSRC': 'TOOLS400': 'RUWSCST');
+      //   srcType = getMemberType('QINCLUDE': 'RPGUNIT': 'ASSERT');
 
      D getMemberType...
      D                 pr            10a
@@ -365,7 +365,7 @@
       // is considered to be returned by getMonitoredMessage().
       //
       // This procedure is automatically called by the iRPGUnit, before
-      // executing a unit test.
+      // executing a unit test. Use this procedure with care.
       //
       // Example:
       //   setLowMessageKey(msgKey);
@@ -374,6 +374,6 @@
      D                 pr                  extproc('+
      D                                     setLowMessageKey+
      D                                     ')
-     D  msgKey                        4a   const
+     D  msgKey                        4a   const options(*nopass)
 
       /endif

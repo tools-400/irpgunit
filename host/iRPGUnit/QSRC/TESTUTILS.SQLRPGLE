@@ -205,10 +205,16 @@
      P setLowMessageKey...
      P                 b                   export
      D                 pi
-     D  msgKey                        4a   const
+     D  msgKey                        4a   const options(*nopass)
+
+     D p_msgKey        c                   1
       /free
 
-       g_lowMsgKey = msgKey;
+       if (%parms() >= p_msgKey);
+          g_lowMsgKey = msgKey;
+       else;
+          g_lowMsgKey = getHighestMsgKey();
+       endif;
 
       /end-free
      P                 e
