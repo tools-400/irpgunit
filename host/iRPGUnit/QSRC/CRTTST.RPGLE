@@ -327,8 +327,6 @@
         module = addTestCaseModule( modules : testPgm );
 
         cmd = 'CRTSRVPGM SRVPGM(' + serializeObjectName( testPgm ) + ') ';
-        // cmd += 'MODULE(QTEMP/' + %trim(testPgm.nm) + ') ';
-        // cmd += 'MODULE(' + serializeObjectName( testPgm ) + ') ';
         cmd += serializeObjectArray( 'MODULE'    : module    );
         cmd += serializeObjectArray( 'BNDSRVPGM' : bndSrvPgm );
         cmd += serializeObjectArray( 'BNDDIR'    : bndDir    );
@@ -389,18 +387,12 @@
 
       /free
 
-        // cmd = 'CRTRPGMOD MODULE(QTEMP/' + %trim(testPgm.nm) + ') ';
-
         // source type determines the compile command
         select;
           // RPGLE
           when getMemberType(srcFile.nm: srcFile.lib: testPgm) = MBR_RPGLE;
             cmd = 'CRTRPGMOD MODULE(' + serializeObjectName( testPgm ) + ') ';
-
-       //     if srcFile <> *blank;
-              cmd += 'SRCFILE(' + serializeObjectName( srcFile ) + ') ';
-       //     endif;
-
+            cmd += 'SRCFILE(' + serializeObjectName( srcFile ) + ') ';
             cmd += serializeValue( 'SRCMBR' : srcMbr );
             cmd += serializeOptions( 'OPTION' : cOptions );
             cmd += serializeValue( 'DBGVIEW' : dbgView );
@@ -408,11 +400,7 @@
           // SQLRPGLE
           when getMemberType(srcFile.nm: srcFile.lib: testPgm) = MBR_SQLRPGLE;
             cmd = 'CRTSQLRPGI OBJ(' + serializeObjectName( testPgm ) + ') ';
-
-       //     if srcFile <> *blank;
-              cmd += 'SRCFILE(' + serializeObjectName( srcFile ) + ') ';
-       //     endif;
-
+            cmd += 'SRCFILE(' + serializeObjectName( srcFile ) + ') ';
             cmd += serializeValue( 'SRCMBR' : srcMbr );
             cmd += serializeOptions( 'OPTION' : pOptions );
             cmd += serializeValue('OBJTYPE': '*MODULE');
