@@ -36,24 +36,21 @@
  /* -------------------------------------------- */
 
  /* Update programs */
- "UPDPGM PGM(RUCALLTST ) MODULE(*NONE) BNDSRVPGM(("library"/RUTESTCASE)) ",
-   "SRVPGMLIB("library")"
+ "UPDPGM PGM("library"/RUCALLTST) MODULE(*NONE) SRVPGMLIB("library")"
 
- "UPDPGM PGM(RUCRTTST  ) MODULE(*NONE) BNDSRVPGM(("library"/RUTESTCASE)) ",
-   "SRVPGMLIB("library")"
+ "UPDPGM PGM("library"/RUCRTTST) MODULE(*NONE) SRVPGMLIB("library")"
 
- "UPDPGM PGM(RUPGMRMT  ) MODULE(*NONE) BNDSRVPGM(("library"/RUTESTCASE)) ",
-   "SRVPGMLIB("library")"
+ "UPDPGM PGM("library"/RUPGMRMT) MODULE(*NONE) SRVPGMLIB("library")"
 
  /* Update commands */
- "CHGCMD CMD(CMPMOD) PGM(*REXX) REXSRCFILE("library"/QBUILD) ",
+ "CHGCMD CMD("library"/CMPMOD) PGM(*REXX) REXSRCFILE("library"/QBUILD) ",
    "HLPPNLGRP("library"/CMPMODHLP)"
 
  "CHGCMD CMD("library"/RUCALLTST) PGM("library"/RUCALLTST) ",
    "HLPPNLGRP("library"/RUCALLTST) ",
    "VLDCKR("library"/RUCALLTSTV)"
 
- "CHGCMD CMD(RUCRTTST) PGM("library"/RUCRTTST) ",
+ "CHGCMD CMD("library"/RUCRTTST) PGM("library"/RUCRTTST) ",
    "HLPPNLGRP("library"/RUCRTTST)"
 
  /* Done */
