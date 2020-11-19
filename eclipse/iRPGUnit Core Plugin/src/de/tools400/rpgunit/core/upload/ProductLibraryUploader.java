@@ -77,6 +77,8 @@ public class ProductLibraryUploader {
 
     public boolean run() {
 
+        boolean isUploadedFine = false;;
+
         try {
 
             if (!connect()) {
@@ -122,12 +124,18 @@ public class ProductLibraryUploader {
                                 if (!restoreLibrary(workLibrary, saveFileName, libraryName, aspDeviceName)) {
                                     setError(Messages.bind(Messages.Could_not_restore_library_A, libraryName));
                                 } else {
-                                    updateLibrary(libraryName);
-                                    setStatus(Messages.bind(Messages.Successfully_restored_iRPGUnit_library, libraryName));
+                                    if (!updateLibrary(libraryName)){
+                                        MessageDialog.openError(shell, Messages.Warning, Messages.bind(Messages.Library_RPGUNIT_has_been_restored_to_A_but_objects_could_not_be_updated_Try_to_run_command_UPDLIB_A_by_hand_and_check_the_job_log, libraryName));
+                                        isUploadedFine = false;
+                                    } else {
+                                        setStatus(Messages.bind(Messages.Successfully_restored_iRPGUnit_library, libraryName));
+                                        isUploadedFine = true;
+                                    }
                                 }
 
                             } catch (Exception e) {
                                 setError(Messages.bind(Messages.Could_not_send_save_file_to_host_A, hostName), e);
+                                isUploadedFine = false;
                             } finally {
 
                                 setStatus(Messages.bind(Messages.Deleting_object_A_B_of_type_C, new String[] { workLibrary, saveFileName, "*FILE" }));
@@ -139,7 +147,7 @@ public class ProductLibraryUploader {
                 }
             }
 
-            return true;
+            return isUploadedFine;
 
         } finally {
             disconnect();
@@ -349,17 +357,19 @@ public class ProductLibraryUploader {
         return true;
     }
 
-    private void updateLibrary(String libraryName) {
+    private boolean updateLibrary(String libraryName) {
 
         if (SAVED_LIBRARY.equals(libraryName)) {
-            return;
+            return true;
         }
 
         setStatus(Messages.bind(Messages.Updating_objects_of_library_A, libraryName));
 
         if (!executeCommand(libraryName + "/UPDLIB LIB(" + libraryName + ")", true).equals("")) {
-            MessageDialog.openWarning(shell, Messages.Warning, Messages.bind(Messages.Library_RPGUNIT_has_been_restored_to_A_but_objects_could_not_be_updated_Try_to_run_command_UPDLIB_A_by_hand_and_check_the_job_log, libraryName));
+            return false;
         }
+        
+        return true;
     }
 
     private boolean checkFile(AS400 system, String library, String fileName) {
