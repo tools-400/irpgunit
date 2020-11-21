@@ -509,11 +509,7 @@
                       THIS_CALL_STK_ENT : THIS_CALL_STK_LVL : '*ANY' :
                       highMsgKey : NO_WAIT : action : errorCode );
             if (errorCode.bytAvl > 0);
-               if (errorCode.excID = 'CPF2410');
-            // QMHRCVPM( rawMsgBuf : %size(rawMsgBuf) :
-            //           ALL_MSG_INFO_WITH_SENDER_INFO :
-            //           THIS_CALL_STK_ENT : THIS_CALL_STK_LVL : '*ESCAPE' :
-            //           NO_MSG_KEY : NO_WAIT : REMOVE_MSG : percolateErrors );
+               if (errorCode.excID = 'CPF2410'); // Message key not found
                   reset errorCode;
                endif;
             else;
