@@ -1,29 +1,29 @@
       // ==========================================================================
-      //  iRPGUnit - Assertion Facilities.
+       //  iRPGUnit - Assertion Facilities.
       // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
+       //  Copyright (c) 2013-2019 iRPGUnit Project Team
+       //  All rights reserved. This program and the accompanying materials
+       //  are made available under the terms of the Common Public License v1.0
+       //  which accompanies this distribution, and is available at
+       //  http://www.eclipse.org/legal/cpl-v10.html
       // ==========================================================================
-      // >>PRE-COMPILER<<
-      //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
-      //   >>IMPORTANT<<
-      //     >>PARM<<  OPTION(*EVENTF);
-      //     >>PARM<<  DBGVIEW(*LIST);
-      //   >>END-IMPORTANT<<
-      //   >>EXECUTE<<
-      // >>END-PRE-COMPILER<<
+       // >>PRE-COMPILER<<
+       //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+       //   >>IMPORTANT<<
+       //     >>PARM<<  OPTION(*EVENTF);
+       //     >>PARM<<  DBGVIEW(*LIST);
+       //   >>END-IMPORTANT<<
+       //   >>EXECUTE<<
+       // >>END-PRE-COMPILER<<
       // ==========================================================================
 
      H NoMain
       /include qinclude,H_SPEC
       /include qinclude,COPYRIGHT
 
-      //----------------------------------------------------------------------
-      //   IMPORTS
-      //----------------------------------------------------------------------
+       //----------------------------------------------------------------------
+       //   IMPORTS
+       //----------------------------------------------------------------------
 
       /define RPGUNIT_INTERNAL
       /include qinclude,ASSERT
@@ -35,9 +35,9 @@
 
       /include qinclude,SDS
 
-      //----------------------------------------------------------------------
-      //   PRIVATE PROTOTYPES
-      //----------------------------------------------------------------------
+       //----------------------------------------------------------------------
+       //   PRIVATE PROTOTYPES
+       //----------------------------------------------------------------------
 
      D checkStartPgm   pr                  extproc('checkStartPgm')
 
@@ -76,24 +76,24 @@
      D                                     extproc('getSentTimeMsgQMsg')
      D  msg                                const likeds(dsLSTM0100EntHdr)
 
-      //----------------------------------------------------------------------
-      //   GLOBAL VARIABLES
-      //----------------------------------------------------------------------
+       //----------------------------------------------------------------------
+       //   GLOBAL VARIABLES
+       //----------------------------------------------------------------------
 
-      // Number of assertions called.
+       // Number of assertions called.
      D assertCalled    s             10i 0
 
-      // Latest assertion failure event information. Can be blank if no
-      //  assertion failure event since last assertion.
+       // Latest assertion failure event information. Can be blank if no
+       //  assertion failure event since last assertion.
      D assertFailEvt   ds                  likeds(AssertFailEvtLong_t)
 
      D status          ds                  qualified
      D  qStartPgm                          likeds(Object_t)
 
-      //----------------------------------------------------------------------
-      // Registers the start program RUPGMRMT or RUCALLTST for
-      // using the RUTESTCASE service program.
-      //----------------------------------------------------------------------
+       //----------------------------------------------------------------------
+       // Registers the start program RUPGMRMT or RUCALLTST for
+       // using the RUTESTCASE service program.
+       //----------------------------------------------------------------------
      P registerStartPgm...
      P                 b                   export
      D                 pi
@@ -102,17 +102,17 @@
 
       /free
 
-        status.qStartPgm.nm = pgm;
-        status.qStartPgm.lib = lib;
+       status.qStartPgm.nm = pgm;
+       status.qStartPgm.lib = lib;
 
       /end-free
      P                 e
 
-      //----------------------------------------------------------------------
-      // Check, whether this instance of RUTESTCASE has been registered
-      // with a start program. If that is not the case, the start progam
-      // uses another RUTESTCASE service  program, which leads to errors.
-      //----------------------------------------------------------------------
+       //----------------------------------------------------------------------
+       // Check, whether this instance of RUTESTCASE has been registered
+       // with a start program. If that is not the case, the start progam
+       // uses another RUTESTCASE service  program, which leads to errors.
+       //----------------------------------------------------------------------
      P checkStartPgm...
      P                 b                   export
      D                 pi
@@ -120,23 +120,23 @@
      D msg             s            256a   varying
       /free
 
-        if (status.qStartPgm.lib <> sds.pgmLib);
-           msg = 'Start program RUCALLTST or RUPGMRMT was not +
-                  registered with service program ' +
-                  %trim(sds.pgmLib) + '/' + %trim(sds.pgmName) + '. +
-                  Make sure that there are no duplicate iRPGUnit +
-                  objects in the library list. +
-                  Compare the library list with the product library +
-                  on the iRPGUnit preference page.';
-           sndEscapeMsgAboveCtlBdy(msg);
-        endif;
+       if (status.qStartPgm.lib <> sds.pgmLib);
+         msg = 'Start program RUCALLTST or RUPGMRMT was not +
+                registered with service program ' +
+                %trim(sds.pgmLib) + '/' + %trim(sds.pgmName) + '. +
+                Make sure that there are no duplicate iRPGUnit +
+                objects in the library list. +
+                Compare the library list with the product library +
+                on the iRPGUnit preference page.';
+         sndEscapeMsgAboveCtlBdy(msg);
+       endif;
 
       /end-free
      P                 e
 
-      //----------------------------------------------------------------------
-      // Assert equality between two alphanumeric variables.
-      //----------------------------------------------------------------------
+       //----------------------------------------------------------------------
+       // Assert equality between two alphanumeric variables.
+       //----------------------------------------------------------------------
      P aEqual...
      P                 b                   export
      D                 pi
@@ -148,22 +148,22 @@
 
       /free
 
-        if (%parms() >= 3 and %addr(fieldName) <> *NULL);
-           msg = %trim(fieldName) + ': ';
-        endif;
+       if (%parms() >= 3 and %addr(fieldName) <> *NULL);
+         msg = %trim(fieldName) + ': ';
+       endif;
 
-        msg = msg
-            + 'Expected ' + QUOTE + %trimr(expected) + QUOTE + ','
-            + ' but was ' + QUOTE + %trimr(actual  ) + QUOTE + '.';
-        doAssert(expected = actual: msg: ONE_CALL_STK_LVL_ABOVE: 'aEqual');
+       msg = msg
+           + 'Expected ' + QUOTE + %trimr(expected) + QUOTE + ','
+           + ' but was ' + QUOTE + %trimr(actual  ) + QUOTE + '.';
+       doAssert(expected = actual: msg: ONE_CALL_STK_LVL_ABOVE: 'aEqual');
 
       /end-free
      P                 e
 
 
-      //----------------------------------------------------------------------
-      // Assert equality between two integers.
-      //----------------------------------------------------------------------
+       //----------------------------------------------------------------------
+       // Assert equality between two integers.
+       //----------------------------------------------------------------------
      P iEqual...
      P                 b                   export
      D                 pi
@@ -175,21 +175,21 @@
 
       /free
 
-        if (%parms() >= 3 and %addr(fieldName) <> *NULL);
-           msg = %trim(fieldName) + ': ';
-        endif;
+       if (%parms() >= 3 and %addr(fieldName) <> *NULL);
+         msg = %trim(fieldName) + ': ';
+       endif;
 
-        msg = msg
-            + 'Expected ' + %char(expected) + ','
-            + ' but was ' + %char(actual  ) + '.';
-        doAssert(expected = actual: msg: ONE_CALL_STK_LVL_ABOVE: 'iEqual');
+       msg = msg
+           + 'Expected ' + %char(expected) + ','
+           + ' but was ' + %char(actual  ) + '.';
+       doAssert(expected = actual: msg: ONE_CALL_STK_LVL_ABOVE: 'iEqual');
 
       /end-free
      P                 e
 
-      //----------------------------------------------------------------------
-      // Assert equality between two alphanumeric variables.
-      //----------------------------------------------------------------------
+       //----------------------------------------------------------------------
+       // Assert equality between two alphanumeric variables.
+       //----------------------------------------------------------------------
      P nEqual...
      P                 b                   export
      D                 pi
@@ -201,23 +201,23 @@
 
       /free
 
-        if (%parms() >= 3 and %addr(fieldName) <> *NULL);
-           msg = %trim(fieldName) + ': ';
-        endif;
+       if (%parms() >= 3 and %addr(fieldName) <> *NULL);
+         msg = %trim(fieldName) + ': ';
+       endif;
 
-        msg = msg
-            + 'Expected ' + QUOTE + expected + QUOTE + ','
-            + ' but was ' + QUOTE + actual   + QUOTE + '.';
-        doAssert(expected = actual: msg: ONE_CALL_STK_LVL_ABOVE: 'nEqual');
+       msg = msg
+           + 'Expected ' + QUOTE + expected + QUOTE + ','
+           + ' but was ' + QUOTE + actual   + QUOTE + '.';
+       doAssert(expected = actual: msg: ONE_CALL_STK_LVL_ABOVE: 'nEqual');
 
 
       /end-free
      P                 e
 
 
-      //----------------------------------------------------------------------
-      // Asserts that a condition is true. See prototype.
-      //----------------------------------------------------------------------
+       //----------------------------------------------------------------------
+       // Asserts that a condition is true. See prototype.
+       //----------------------------------------------------------------------
      P assert...
      P                 b                   export
      D                 pi
@@ -225,23 +225,23 @@
      D  msgIfFalse                  256a   const
       /free
 
-        doAssert(
-           condition: getParm(msgIfFalse): ONE_CALL_STK_LVL_ABOVE: 'assert');
+       doAssert(
+          condition: getParm(msgIfFalse): ONE_CALL_STK_LVL_ABOVE: 'assert');
 
       /end-free
      P                 e
 
 
-      //----------------------------------------------------------------------
-      // Signals a test failure and stops the test.
-      //----------------------------------------------------------------------
+       //----------------------------------------------------------------------
+       // Signals a test failure and stops the test.
+       //----------------------------------------------------------------------
      P fail...
      P                 b                   export
      d                 pi
      D  msg                         256a   const
       /free
 
-        doFail(getParm(msg): TWO_CALL_STK_LVL_ABOVE: 'fail');
+       doFail(getParm(msg): TWO_CALL_STK_LVL_ABOVE: 'fail');
 
       /end-free
      P                 e
@@ -256,14 +256,14 @@
      D  startProc                   256a   const varying options(*varsize)
       /free
 
-        checkStartPgm();
+       checkStartPgm();
 
-        assertCalled += 1;
-        clrAssertFailEvt();
+       assertCalled += 1;
+       clrAssertFailEvt();
 
-        if not condition;
-          doFail( msgIfFalse :  toCallStacKE + 1: startProc);
-        endif;
+       if not condition;
+         doFail( msgIfFalse :  toCallStacKE + 1: startProc);
+       endif;
 
       /end-free
      P                 e
@@ -277,81 +277,81 @@
      D  startProc                   256a   const varying options(*varsize)
       /free
 
-        assertFailEvt.msg = %trimR( msg );
-        assertFailEvt.callStk = getCallStk(startProc);
+       assertFailEvt.msg = %trimR( msg );
+       assertFailEvt.callStk = getCallStk(startProc);
 
-        sndEscapeMsg( msg : toCallStacKE + 1 );
+       sndEscapeMsg( msg : toCallStacKE + 1 );
 
       /end-free
      P                 e
 
 
-      //----------------------------------------------------------------------
-      // Clear the latest assertion failure event.
-      //----------------------------------------------------------------------
+       //----------------------------------------------------------------------
+       // Clear the latest assertion failure event.
+       //----------------------------------------------------------------------
      P clrAssertFailEvt...
      P                 b                   export
      D                 pi
       /free
 
-        clear assertFailEvt;
+       clear assertFailEvt;
 
       /end-free
      P                 e
 
 
-      //----------------------------------------------------------------------
-      // Returns the number of time assertions were called. See prototype.
-      //----------------------------------------------------------------------
+       //----------------------------------------------------------------------
+       // Returns the number of time assertions were called. See prototype.
+       //----------------------------------------------------------------------
      P getAssertCalled...
      P                 b                   export
      D                 pi            10i 0
       /free
-        return assertCalled;
+       return assertCalled;
 
       /end-free
      P                 e
 
-      //----------------------------------------------------------------------
-      // Return information about the latest assertion failure event.
-      //----------------------------------------------------------------------
+       //----------------------------------------------------------------------
+       // Return information about the latest assertion failure event.
+       //----------------------------------------------------------------------
      P getAssertFailEvt...
      P                 b                   export
      D                 pi
      D                                     likeds(AssertFailEvt_t)
 
-      // Assert Failure Event of version 1
+       // Assert Failure Event of version 1
      D assertFailEvt_v1...
      D                 ds                  likeds(assertFailEvt_t) inz
       /free
 
-        assertFailEvt_v1.msg = assertFailEvt.msg;
-        assertFailEvt_v1.callStk = assertFailEvt.callStk;
+       assertFailEvt_v1.msg = assertFailEvt.msg;
+       assertFailEvt_v1.callStk = assertFailEvt.callStk;
 
-        return assertFailEvt_v1;
+       return assertFailEvt_v1;
 
       /end-free
      P                 e
 
 
-      //----------------------------------------------------------------------
-      // Return information about the latest assertion failure event.
-      //----------------------------------------------------------------------
+       //----------------------------------------------------------------------
+       // Return information about the latest assertion failure event.
+       //----------------------------------------------------------------------
      P getAssertFailEvtLong...
      P                 b                   export
      D                 pi
      D                                     likeds(AssertFailEvtLong_t)
       /free
 
-        return assertFailEvt;
+       return assertFailEvt;
 
       /end-free
      P                 e
 
 
-      //----------------------------------------------------------------------
-      // Resets the counter of the failed assertions.
-      //----------------------------------------------------------------------
+       //----------------------------------------------------------------------
+       // Resets the counter of the failed assertions.
+       //----------------------------------------------------------------------
      P clearAssertCounter...
      P                 b                   export
      D                 pi
@@ -363,13 +363,17 @@
      P                 e
 
 
+       //----------------------------------------------------------------------
+       // Searches the job log backwards for a specific message key, starting
+       // with the most recent message and back to a given timestamp.
+       //----------------------------------------------------------------------
      P assertJobLogContains...
      P                 b                   export
      D                 pi
      D  msgId                         7a   const
      D  timeLimit                      z   const
 
-      // Job log message field selection for QGYOLJBL API.
+       // Job log message field selection for QGYOLJBL API.
      D fldSelect       ds                  qualified
      D  listDirection                10a   inz('*PRV')
      D  qlfJobNm                     26a   inz('*')
@@ -397,57 +401,62 @@
      D                                     inz(*likeds)
       /free
 
-        fldSelect.fldIdOff = %addr(fldSelect.fldId1) - %addr(fldSelect);
-        fldSelect.callMsgqNmOff =
-                         %addr(fldSelect.callMsgqNm) - %addr(fldSelect);
+       fldSelect.fldIdOff = %addr(fldSelect.fldId1) - %addr(fldSelect);
+       fldSelect.callMsgqNmOff =
+                        %addr(fldSelect.callMsgqNm) - %addr(fldSelect);
 
-        QGYOLJBL( jobLogList :
-                  %size( jobLogList ) :
-                  listInfo :
-                  OLJL_FULL_SYNCHRONOUS_BUILD :
-                  fldSelect :
-                  %size( fldSelect ) :
-                  percolateErrors );
+       QGYOLJBL( jobLogList :
+                 %size( jobLogList ) :
+                 listInfo :
+                 OLJL_FULL_SYNCHRONOUS_BUILD :
+                 fldSelect :
+                 %size( fldSelect ) :
+                 percolateErrors );
 
-        p_msgBasicInfo = %addr( jobLogList );
-        msgIdx = 1;
+       p_msgBasicInfo = %addr( jobLogList );
+       msgIdx = 1;
 
-        dow 1=1;
-          if msgIdx > listInfo.retRcdCnt;
-            if listInfo.totalRcdCnt > listInfo.retRcdCnt;
-              sndEscapeMsgToCaller( 'Insufficient implementation. ' +
-                    'Should use QGYGTLE to retrieve records after ' +
-                                 %char( listInfo.retRcdCnt ) + '. ' +
-                                            'Please open an issue.' );
-            else;
-              leave;
-            endif;
-          endif;
+       dow 1=1;
+         if msgIdx > listInfo.retRcdCnt;
+           if listInfo.totalRcdCnt > listInfo.retRcdCnt;
+             sndEscapeMsgToCaller( 'Insufficient implementation. ' +
+                   'Should use QGYGTLE to retrieve records after ' +
+                                %char( listInfo.retRcdCnt ) + '. ' +
+                                           'Please open an issue.' );
+           else;
+             leave;
+           endif;
+         endif;
 
-          sentTimeStamp = getSentTimeJobLogMsg( msgBasicInfo );
+         sentTimeStamp = getSentTimeJobLogMsg( msgBasicInfo );
 
-          if sentTimeStamp < timeLimit;
-            leave;
-          endif;
+         if sentTimeStamp < timeLimit;
+           leave;
+         endif;
 
-          if msgBasicInfo.msgId = msgId;
-            msgFound = *on;
-            leave;
-          endif;
+         if msgBasicInfo.msgId = msgId;
+           msgFound = *on;
+           leave;
+         endif;
 
-          // Go to next message in the job log.
-          p_msgBasicInfo = %addr( jobLogList ) + msgBasicInfo.nextEntOff;
-          msgIdx += 1;
-        enddo;
+         // Go to next message in the job log.
+         p_msgBasicInfo = %addr( jobLogList ) + msgBasicInfo.nextEntOff;
+         msgIdx += 1;
+       enddo;
 
-        QGYCLST( listInfo.rqsHdl : percolateErrors );
+       QGYCLST( listInfo.rqsHdl : percolateErrors );
 
-        assert( msgFound : 'Message ' + msgId + ' not found in the job log.' );
+       assert( msgFound : 'Message ' + msgId + ' not found in the job log.' );
 
       /end-free
      P                 e
 
 
+       //----------------------------------------------------------------------
+       // Searches a given message queue backwards for a message identified
+       // by 'Id', 'text' or 'help text' starting with the most recent message
+       // and back to a given timestamp.
+       //----------------------------------------------------------------------
      P assertMessageQueueContains...
      P                 b                   export
      D                 pi
@@ -458,7 +467,7 @@
      D  msgHelp                     256a   const varying options(*omit)
      D  timeLimit                      z   const
 
-      // Message queue message field selection for QGYOLMSG API.
+       // Message queue message field selection for QGYOLMSG API.
      D fldSelect       ds                  qualified
      D  listDirection                10a   inz('*PRV')
      D  reserved_1                    2a   inz
@@ -502,168 +511,168 @@
      D                                     inz(*likeds)
       /free
 
-        fldSelect.selectOff = %addr(fldSelect.msgSelect) - %addr(fldSelect);
-        fldSelect.strMsgKeyOff = %addr(fldSelect.strMsgKey1) - %addr(fldSelect);
-        fldSelect.fldIdOff = %addr(fldSelect.fldId) - %addr(fldSelect);
+       fldSelect.selectOff = %addr(fldSelect.msgSelect) - %addr(fldSelect);
+       fldSelect.strMsgKeyOff = %addr(fldSelect.strMsgKey1) - %addr(fldSelect);
+       fldSelect.fldIdOff = %addr(fldSelect.fldId) - %addr(fldSelect);
 
-        clear msgQueueInf;
-        if (%parms() >= %parmnum(library) and %addr(library) <> *null);
-          msgQueueInf.ind = LSTM_MSG_QUEUE_NAME;
-          msgQueueInf.userOrQueueNm = userOrQueue;
-          msgQueueInf.libraryNm = library;
-        else;
-          msgQueueInf.ind = LSTM_USER_NAME;
-          msgQueueInf.userOrQueueNm = userOrQueue;
-        endif;
+       clear msgQueueInf;
+       if (%parms() >= %parmnum(library) and %addr(library) <> *null);
+         msgQueueInf.ind = LSTM_MSG_QUEUE_NAME;
+         msgQueueInf.userOrQueueNm = userOrQueue;
+         msgQueueInf.libraryNm = library;
+       else;
+         msgQueueInf.ind = LSTM_USER_NAME;
+         msgQueueInf.userOrQueueNm = userOrQueue;
+       endif;
 
-        fldSelect.fldCnt = 1;
-        fldSelect.fldId(fldSelect.fldCnt) = LSTM_RPLY_STATUS;
+       fldSelect.fldCnt = 1;
+       fldSelect.fldId(fldSelect.fldCnt) = LSTM_RPLY_STATUS;
 
-        fldSelect.fldCnt += 1;
-        fldSelect.fldId(fldSelect.fldCnt) = LSTM_SND_USER_PROFILE;
+       fldSelect.fldCnt += 1;
+       fldSelect.fldId(fldSelect.fldCnt) = LSTM_SND_USER_PROFILE;
 
-        if (%parms() >= %parmnum(msgId) and %addr(msgId) <> *null);
-          checkMsgId = *on;
-          checkCount += 1;
-        endif;
+       if (%parms() >= %parmnum(msgId) and %addr(msgId) <> *null);
+         checkMsgId = *on;
+         checkCount += 1;
+       endif;
 
-        if (%parms() >= %parmnum(msgText) and %addr(msgText) <> *null);
-          checkMsgText = *on;
-          checkCount += 1;
-          fldSelect.fldCnt += 1;
-          fldSelect.fldId(fldSelect.fldCnt) = LSTM_MSG_WITH_RPL_DATA;
-        endif;
+       if (%parms() >= %parmnum(msgText) and %addr(msgText) <> *null);
+         checkMsgText = *on;
+         checkCount += 1;
+         fldSelect.fldCnt += 1;
+         fldSelect.fldId(fldSelect.fldCnt) = LSTM_MSG_WITH_RPL_DATA;
+       endif;
 
-        if (%parms() >= %parmnum(msgHelp) and %addr(msgHelp) <> *null);
-          checkMsgHelp = *on;
-          checkCount += 1;
-          fldSelect.fldCnt += 1;
-          fldSelect.fldId(fldSelect.fldCnt) = LSTM_MSG_HELP_WITH_RPL_DATA;
-        endif;
+       if (%parms() >= %parmnum(msgHelp) and %addr(msgHelp) <> *null);
+         checkMsgHelp = *on;
+         checkCount += 1;
+         fldSelect.fldCnt += 1;
+         fldSelect.fldId(fldSelect.fldCnt) = LSTM_MSG_HELP_WITH_RPL_DATA;
+       endif;
 
-        if (checkMsgId);
-          if msgId = '*EMPTY' and checkCount > 1;
-            sndEscapeMsgToCaller('All other selection parameters must be +
-                                  omitted, when msgId is set to ''*EMPTY''');
-          endif;
-        endif;
+       if (checkMsgId);
+         if msgId = '*EMPTY' and checkCount > 1;
+           sndEscapeMsgToCaller('All other selection parameters must be +
+                                 omitted, when msgId is set to ''*EMPTY''');
+         endif;
+       endif;
 
-        QGYOLMSG( msgQueueList :
-                  %size( msgQueueList ) :
-                  listInfo :
-                  OLJL_FULL_SYNCHRONOUS_BUILD :
-                  LSTM_SORT_NONE :
-                  fldSelect :
-                  %size( fldSelect ) :
-                  msgQueueInf :
-                  msgQueuesUsed :
-                  percolateErrors );
+       QGYOLMSG( msgQueueList :
+                 %size( msgQueueList ) :
+                 listInfo :
+                 OLJL_FULL_SYNCHRONOUS_BUILD :
+                 LSTM_SORT_NONE :
+                 fldSelect :
+                 %size( fldSelect ) :
+                 msgQueueInf :
+                 msgQueuesUsed :
+                 percolateErrors );
 
-        p_msgBasicInfo = %addr( msgQueueList );
-        msgIdx = 1;
+       p_msgBasicInfo = %addr( msgQueueList );
+       msgIdx = 1;
 
-        checkMatch = 0;
-        p_fldInfo = *null;
+       checkMatch = 0;
+       p_fldInfo = *null;
 
-        if checkMsgId and msgId = '*EMPTY' and listInfo.totalRcdCnt = 0;
-          return;
-        endif;
+       if checkMsgId and msgId = '*EMPTY' and listInfo.totalRcdCnt = 0;
+         return;
+       endif;
 
-        dow listInfo.totalRcdCnt > 0;
-          if msgIdx > listInfo.retRcdCnt;
-            if listInfo.totalRcdCnt > listInfo.retRcdCnt;
-              sndEscapeMsgToCaller( 'Insufficient implementation. ' +
-                    'Should use QGYGTLE to retrieve records after ' +
-                                 %char( listInfo.retRcdCnt ) + '. ' +
-                                            'Please open an issue.' );
-            else;
-              leave;
-            endif;
-          endif;
+       dow listInfo.totalRcdCnt > 0;
+         if msgIdx > listInfo.retRcdCnt;
+           if listInfo.totalRcdCnt > listInfo.retRcdCnt;
+             sndEscapeMsgToCaller( 'Insufficient implementation. ' +
+                   'Should use QGYGTLE to retrieve records after ' +
+                                %char( listInfo.retRcdCnt ) + '. ' +
+                                           'Please open an issue.' );
+           else;
+             leave;
+           endif;
+         endif;
 
-          sentTimeStamp = getSentTimeMsgQMsg( msgBasicInfo );
+         sentTimeStamp = getSentTimeMsgQMsg( msgBasicInfo );
 
-          if sentTimeStamp < timeLimit;
-            leave;
-          endif;
+         if sentTimeStamp < timeLimit;
+           leave;
+         endif;
 
-          if checkMsgId;
-            checkMatch += 1;
-          endif;
+         if checkMsgId;
+           checkMatch += 1;
+         endif;
 
-          if (msgBasicInfo.retFldCnt > 0);
-            p_fldInfo = %addr( msgQueueList ) + msgBasicInfo.retFldOff;
-            for i = 1 to msgBasicInfo.retFldCnt;
-              if fldInfo.dataLen > 0;
-                p_fldData = p_fldInfo + %size(fldInfo);
-                select;
-                when fldInfo.fldId = LSTM_MSG_WITH_RPL_DATA;
-                  if checkMsgText;
-                    if compare(msgText: %subst(fldData: 1: fldInfo.dataLen));
-                      checkMatch += 1;
-                    endif;
-                  endif;
-                when fldInfo.fldId = LSTM_MSG_HELP_WITH_RPL_DATA;
-                  if checkMsgHelp;
-                    if compare(msgHelp: %subst(fldData: 1: fldInfo.dataLen));
-                      checkMatch += 1;
-                    endif;
-                  endif;
-                endsl;
-              endif;
+         if (msgBasicInfo.retFldCnt > 0);
+           p_fldInfo = %addr( msgQueueList ) + msgBasicInfo.retFldOff;
+           for i = 1 to msgBasicInfo.retFldCnt;
+             if fldInfo.dataLen > 0;
+               p_fldData = p_fldInfo + %size(fldInfo);
+               select;
+               when fldInfo.fldId = LSTM_MSG_WITH_RPL_DATA;
+                 if checkMsgText;
+                   if compare(msgText: %subst(fldData: 1: fldInfo.dataLen));
+                     checkMatch += 1;
+                   endif;
+                 endif;
+               when fldInfo.fldId = LSTM_MSG_HELP_WITH_RPL_DATA;
+                 if checkMsgHelp;
+                   if compare(msgHelp: %subst(fldData: 1: fldInfo.dataLen));
+                     checkMatch += 1;
+                   endif;
+                 endif;
+               endsl;
+             endif;
 
-              p_fldInfo = %addr( msgQueueList ) + fldInfo.nextFldOff;
-            endfor;
-          endif;
+             p_fldInfo = %addr( msgQueueList ) + fldInfo.nextFldOff;
+           endfor;
+         endif;
 
-          if checkMatch = checkCount;
-            msgFound = *on;
-            leave;
-          endif;
+         if checkMatch = checkCount;
+           msgFound = *on;
+           leave;
+         endif;
 
-          // Go to next message in the job log.
-          p_msgBasicInfo = %addr( msgQueueList ) + msgBasicInfo.nextEntOff;
-          msgIdx += 1;
-        enddo;
+         // Go to next message in the job log.
+         p_msgBasicInfo = %addr( msgQueueList ) + msgBasicInfo.nextEntOff;
+         msgIdx += 1;
+       enddo;
 
-        QGYCLST( listInfo.rqsHdl : percolateErrors );
+       QGYCLST( listInfo.rqsHdl : percolateErrors );
 
-        assert( msgFound : 'Message not found in message queue.' );
+       assert( msgFound : 'Message not found in message queue.' );
 
       /end-free
      P                 e
 
 
-      //----------------------------------------------------------------------
-      //  Returns the call stack. Excludes stack entries RURUNNER
-      //  and the lower levels to QCMD.
-      //----------------------------------------------------------------------
+       //----------------------------------------------------------------------
+       //  Returns the call stack. Excludes stack entries RURUNNER
+       //  and the lower levels to QCMD.
+       //----------------------------------------------------------------------
      P getCallStk...
      P                 b
      D                 pi                  likeds(CallStk_t)
      D  startProc                   256a   const varying options(*varsize)
 
-      // Call stack entries.
+       // Call stack entries.
      D callStk         ds                  likeds(CallStk_t) inz
-      // Job id.
+       // Job id.
      D jobIdInfo       ds                  likeds(dsJIDF0100)
-      // Call stack info header.
+       // Call stack info header.
      D hdr             ds                  likeds(dsCSTK0100Hdr)
      D                                     based(hdr_p)
      D hdr_p           s               *
-      // Call stack info entry.
+       // Call stack info entry.
      D ent             ds                  likeds(dsCSTK0100Ent)
      D                                     based(ent_p)
      D ent_p           s               *
-      // Big buffer to receive call stack info.
+       // Big buffer to receive call stack info.
      D rawCallStk      s          16383a
-      // Statement Id.
+       // Statement Id.
      D sttId           s             10a   based(sttId_p)
      D sttId_p         s               *
-      // Procedure name buffer.
+       // Procedure name buffer.
      D procNmBuffer_p  s               *
      D procNmBuffer    s            256a   based(procNmBuffer_p)
-      // Index.
+       // Index.
      D i               s             10i 0
      D maxStkEnt       s             10i 0
      D callStkE        ds                  likeds(CallStkEnt_t)
@@ -673,91 +682,95 @@
      D                                     inz(*likeds)
       /free
 
-        jobIdInfo.jobNm = '*';
-        jobIdInfo.usrNm = *blank;
-        jobIdInfo.jobNb = *blank;
-        jobIdInfo.intJobId = *blank;
-        jobIdInfo.reserved = *loval;
-        jobIdInfo.threadInd = 1;
-        jobIdInfo.threadId  = *loval;
+       jobIdInfo.jobNm = '*';
+       jobIdInfo.usrNm = *blank;
+       jobIdInfo.jobNb = *blank;
+       jobIdInfo.intJobId = *blank;
+       jobIdInfo.reserved = *loval;
+       jobIdInfo.threadInd = 1;
+       jobIdInfo.threadId  = *loval;
 
-        QWVRCSTK( rawCallStk :
-                  %size(rawCallStk) :
-                  'CSTK0100' :
-                  jobIdInfo :
-                  'JIDF0100' :
-                  percolateErrors );
+       QWVRCSTK( rawCallStk :
+                 %size(rawCallStk) :
+                 'CSTK0100' :
+                 jobIdInfo :
+                 'JIDF0100' :
+                 percolateErrors );
 
-        hdr_p = %addr(rawCallStk);
-        ent_p = hdr_p + hdr.callStkOff;
+       hdr_p = %addr(rawCallStk);
+       ent_p = hdr_p + hdr.callStkOff;
 
-        maxStkEnt = hdr.nbCallStkEntRtn - 2;
-        if (maxStkEnt > MAX_CALL_STK_SIZE);
-           maxStkEnt = MAX_CALL_STK_SIZE;
-        endif;
+       maxStkEnt = hdr.nbCallStkEntRtn - 2;
+       if (maxStkEnt > MAX_CALL_STK_SIZE);
+         maxStkEnt = MAX_CALL_STK_SIZE;
+       endif;
 
-        for i = 1 to maxStkEnt;
+       for i = 1 to maxStkEnt;
 
-           if (ent.pgmNm = 'RUCALLTST' or ent.pgmNm = 'RUPGMRMT');
-              leave;
-           endif;
+         if (ent.pgmNm = 'RUCALLTST' or ent.pgmNm = 'RUPGMRMT');
+           leave;
+         endif;
 
-           clear callStkE;
+         clear callStkE;
 
-           if (i = maxStkEnt);
-              callStkE.level = 0;
-              callStkE.sender.procNm = CALL_STACK_INCOMPLETE;
+         if (i = maxStkEnt);
+           callStkE.level = 0;
+           callStkE.sender.procNm = CALL_STACK_INCOMPLETE;
+         else;
+           callStkE.level = 0;
+           callStkE.sender.qPgm.nm = ent.pgmNm;
+           callStkE.sender.qPgm.lib = ent.pgmLibNm;
+           callStkE.sender.qMod.nm = ent.modNm;
+           callStkE.sender.qMod.lib = ent.modLibNm;
+
+           if ent.procNmLen <> 0;
+             procNmBuffer_p = ent_p + ent.dsplToProcNm;
+             callStkE.sender.procNm =
+                %subst( procNmBuffer: 1: ent.procNmLen );
            else;
-              callStkE.level = 0;
-              callStkE.sender.qPgm.nm = ent.pgmNm;
-              callStkE.sender.qPgm.lib = ent.pgmLibNm;
-              callStkE.sender.qMod.nm = ent.modNm;
-              callStkE.sender.qMod.lib = ent.modLibNm;
-
-              if ent.procNmLen <> 0;
-                 procNmBuffer_p = ent_p + ent.dsplToProcNm;
-                 callStkE.sender.procNm =
-                    %subst( procNmBuffer: 1: ent.procNmLen );
-              else;
-                 callStkE.sender.procNm = '';
-              endif;
-
-              if ent.nbSttId > 0;
-                 sttId_p = ent_p + ent.dsplToSttId;
-                 callStkE.sender.specNb = %trimL(%trim(sttId): '0');
-              else;
-                 callStkE.sender.specNb = '*N';
-              endif;
+             callStkE.sender.procNm = '';
            endif;
 
-           // Skip all procedures until we saw the
-           // assertion procedure
-           if (callStkE.sender.qPgm.nm = 'RUTESTCASE' and
-               callStkE.sender.qMod.nm = 'ASSERT' and
-               callStkE.sender.procNm = startProc);
-              doReturnStckE = *on;
-              ent_p += ent.len;
-              iter;
+           if ent.nbSttId > 0;
+             sttId_p = ent_p + ent.dsplToSttId;
+             callStkE.sender.specNb = %trimL(%trim(sttId): '0');
+           else;
+             callStkE.sender.specNb = '*N';
            endif;
+         endif;
 
-           if (not doReturnStckE);
-              ent_p += ent.len;
-              iter;
-           endif;
-
-           callStk.numE += 1;
-           callStk.entry(callStk.numE) = callStkE;
-
+         // Skip all procedures until we saw the
+         // assertion procedure
+         if (callStkE.sender.qPgm.nm = 'RUTESTCASE' and
+             callStkE.sender.qMod.nm = 'ASSERT' and
+             callStkE.sender.procNm = startProc);
+           doReturnStckE = *on;
            ent_p += ent.len;
+           iter;
+         endif;
 
-        endfor;
+         if (not doReturnStckE);
+           ent_p += ent.len;
+           iter;
+         endif;
 
-        return callStk;
+         callStk.numE += 1;
+         callStk.entry(callStk.numE) = callStkE;
+
+         ent_p += ent.len;
+
+       endfor;
+
+       return callStk;
 
       /end-free
      P                 e
 
 
+       //----------------------------------------------------------------------
+       // Converts the time a job log entry was added from the internal
+       // format CYMD to the ISO format.
+       //----------------------------------------------------------------------
      P getSentTimeJobLogMsg...
      P                 b
      D                 pi              z
@@ -765,14 +778,18 @@
 
      D sentDateAsIso   s              8a
 
-        sentDateAsIso = %char( %date( msg.sentDate : *cymd0) : *iso0 );
-        return %timestamp( sentDateAsIso +
-                           msg.sentTime +
-                           msg.microseconds :
-                           *iso0 );
+       sentDateAsIso = %char( %date( msg.sentDate : *cymd0) : *iso0 );
+       return %timestamp( sentDateAsIso +
+                          msg.sentTime +
+                          msg.microseconds :
+                          *iso0 );
      P                 e
 
 
+       //----------------------------------------------------------------------
+       // Converts the time a message was sent from the internal
+       // format CYMD to the ISO format.
+       //----------------------------------------------------------------------
      P getSentTimeMsgQMsg...
      P                 b
      D                 pi              z
@@ -780,46 +797,46 @@
 
      D sentDateAsIso   s              8a
 
-        sentDateAsIso = %char( %date( msg.sentDate : *cymd0) : *iso0 );
-        return %timestamp( sentDateAsIso +
-                           msg.sentTime +
-                           msg.microseconds :
-                           *iso0 );
+       sentDateAsIso = %char( %date( msg.sentDate : *cymd0) : *iso0 );
+       return %timestamp( sentDateAsIso +
+                          msg.sentTime +
+                          msg.microseconds :
+                          *iso0 );
      P                 e
 
 
-      //----------------------------------------------------------------------
-      // Taken from Scott Klement's HTTPAPI.
-      //----------------------------------------------------------------------
-      // getRealSA(): Okay, this one's hard to explain :)
-      //
-      // The original peSoapAction parameter to HTTPAPI was defined as
-      // fixed length "64A CONST".  This was problematic because people
-      // needed to be able to specify longer strings.  So they'd use
-      // XPROC -- but that's really cumbersome.
-      //
-      // I wanted to allow longer SoapAction, but I don't want to break
-      // backward compatibility?  This is where it gets tricky...  how
-      // can old programs pass a 64A, and new programs pass a 16384A
-      // and have the routine work in either case??
-      //
-      // If the parameter is "16384A VARYING" the first two bytes must
-      // be the length of the data.  Since the original peSoapAction
-      // wasn't VARYING, the first two bytes would be actual data.
-      // and due to the nature of a Soap-Action, they'd have to be
-      // human readable.  That means the first character in the
-      // SoapAction would have to be > x'40' (Blank in EBCDIC)
-      //
-      // So a VARYING string that's 16384 long would be hex x'4000'
-      // in the first two bytes, but the lowest valid soap-action would
-      // be x'4040'
-      //
-      // This routine uses that fact to distinguish between the two
-      // types of SoapAction parameters and return the correct result
-      // (is this clever? or ugly?)
-      //
-      // NOTE: This is now used for content-type and useragent as well
-      //----------------------------------------------------------------------
+       //----------------------------------------------------------------------
+       // Taken from Scott Klement's HTTPAPI.
+       //----------------------------------------------------------------------
+       // getRealSA(): Okay, this one's hard to explain :)
+       //
+       // The original peSoapAction parameter to HTTPAPI was defined as
+       // fixed length "64A CONST".  This was problematic because people
+       // needed to be able to specify longer strings.  So they'd use
+       // XPROC -- but that's really cumbersome.
+       //
+       // I wanted to allow longer SoapAction, but I don't want to break
+       // backward compatibility?  This is where it gets tricky...  how
+       // can old programs pass a 64A, and new programs pass a 16384A
+       // and have the routine work in either case??
+       //
+       // If the parameter is "16384A VARYING" the first two bytes must
+       // be the length of the data.  Since the original peSoapAction
+       // wasn't VARYING, the first two bytes would be actual data.
+       // and due to the nature of a Soap-Action, they'd have to be
+       // human readable.  That means the first character in the
+       // SoapAction would have to be > x'40' (Blank in EBCDIC)
+       //
+       // So a VARYING string that's 16384 long would be hex x'4000'
+       // in the first two bytes, but the lowest valid soap-action would
+       // be x'4040'
+       //
+       // This routine uses that fact to distinguish between the two
+       // types of SoapAction parameters and return the correct result
+       // (is this clever? or ugly?)
+       //
+       // NOTE: This is now used for content-type and useragent as well
+       //----------------------------------------------------------------------
      P getRealParm_internal_use...
      P                 b                   export
      D                 pi         16384A   varying
