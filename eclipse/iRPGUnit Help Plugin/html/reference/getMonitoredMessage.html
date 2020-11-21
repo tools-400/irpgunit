@@ -18,6 +18,18 @@
 Retrieves the latest *ESCAPE message from the job log. Usually
 called within the 'on-error' section of a 'monitor' block.
 </p>
+<b>Return value:</b>
+<p class="indent">
+Returns a data structure with the following information:
+<table>
+<tr><td>id    </td><td>-</td><td>Message ID.</td></tr>
+<tr><td>text  </td><td>-</td><td>First level text.</td></tr>
+<tr><td>pgm   </td><td>-</td><td>Sender: program name.</td></tr>
+<tr><td>mod   </td><td>-</td><td>Sender: module name.</td></tr>
+<tr><td>proc  </td><td>-</td><td>Sender: procedure name.</td></tr>
+<tr><td>specNb</td><td>-</td><td>Sender: statement number.</td></tr>
+</table>
+</p>
 <b>Example:</b>
 <p>
 <code><pre class="indent">

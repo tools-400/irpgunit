@@ -15,14 +15,20 @@
 </p>
 <b>Description:</b>
 <p class="indent">
-Returns the source type of a given source member.
+Set the starting point for retrieving messages from the job log starting
+with the message after the message identified by the specified message key.<br>
+If parameter <i>msgKey</i> is omitted, a dummy message is appended to the
+job log and its key is returned. The dummy message is then removed.
+</p>
+<b>Return value:</b>
+<p class="indent">
+void
 </p>
 <b>Example:</b>
 <p>
 <code><pre class="indent">
-<span class="r-cmt">// Set the starting point for retrieving</span>
-<span class="r-cmt">// messages from the job log after the</span>
-<span class="r-cmt">// last message in the job log.</span>
+<span class="r-cmt">// Sets the starting point for retrieving</span>
+<span class="r-cmt">// messages from the job beyond <i>now</i>.</span>
 
 setLowMessageKey();
 
