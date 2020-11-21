@@ -68,10 +68,10 @@ Allows you to enter text that briefly describes the RPGUnit
 test case and its function.
 :parml.
 :pt.:pk def.*SRCMBRTXT:epk.
-:pd.The text of the source member is used.  This is the default.
-:pt.:pk def.*BLANK:epk.
+:pd.The text of the source member is used.
+:pt.*BLANK
 :pd.No text appears.
-:pt.:pk def.*DEFAULT:epk.
+:pt.*DEFAULT
 :pd.The description is set to 'RPGUnit - Test Case'.
 :pt.description
 :pd.Enter the text that briefly describes the function of the
@@ -132,12 +132,34 @@ Module (MODULE) - Help
 :p.
 Refer to the MODULE parameter in CRTSRVPGM command help.
 :ehelp.
-.*
+.* --------------------------------------
+.*  Additional parameters
+.* --------------------------------------
 :help name='RUCRTTST/ACTGRP' WIDTH=64.
 Activation group (ACTGRP) - Help
 :xh3.Activation group (ACTGRP)
 :p.
 Refer to the ACTGRP parameter in CRTSRVPGM command help.
+:ehelp.
+.*
+:help name='RUCRTTST/RPGPPOPT' WIDTH=64.
+'Pre-compiler RPGPPOPT (RPGPPOPT) - Help
+:xh3.'Pre-compiler RPGPPOPT (RPGPPOPT)
+:p.
+Refer to the RPGPPOPT parameter in CRTSRVPGM command help but
+notice special value :HP2.*DEFAULT:EHP2..
+:p.
+Values:
+:parml.
+:pt.:pk def.*DEFAULT:epk.
+:pd.Use the current default of the CRTSQLRPGI command.
+:pt.*NONE
+:pd.Refer to the RPGPPOPT parameter in CRTSRVPGM command help.
+:pt.*LVL1
+:pd.Refer to the RPGPPOPT parameter in CRTSRVPGM command help.
+:pt.*LVL2
+:pd.Refer to the RPGPPOPT parameter in CRTSRVPGM command help.
+:eparml.
 :ehelp.
 .*
 :help name='RUCRTTST/POPTION' WIDTH=64.

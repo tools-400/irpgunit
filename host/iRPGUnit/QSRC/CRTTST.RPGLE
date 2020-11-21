@@ -49,6 +49,7 @@
      D  srcMbr                             const like(SrcMbr_t.mbr)
      D  cOption                            const likeds(Options_t)
      D  dbgView                            const like(DbgView_t)
+     D  pRpgPpOpt                          const like(RpgPpOpt_t)
      D  pOption                            const likeds(Options_t)
      D  compileopt                 5000a   const varying options(*varsize)
 
@@ -89,6 +90,7 @@
      D  bOption                            const likeds(Options_t)
      D  actGrp                             const like(ActivationGroup_t)
      D  module                             const likeds(ObjectArray_t)
+     D  pRpgPpOpt                          const like(RpgPpOpt_t)
      D  pOption                            const likeds(Options_t)
      D  compileopt                 5000a   const varying options(*varsize)
 
@@ -105,6 +107,7 @@
      D  bOption                            const likeds(Options_t)
      D  actGrp                             const like(ActivationGroup_t)
      D  module                             const likeds(ObjectArray_t)
+     D  pRpgPpOpt                          const like(RpgPpOpt_t)
      D  pOption                            const likeds(Options_t)
      D  compileopt                 5000a   const varying options(*varsize)
 
@@ -188,7 +191,7 @@
          endsl;
 
          crtRpgMod( testPgm : qSrcFile : srcMbrRslv : cOption : dbgView :
-                    pOption : compileopt );
+                    pRpgPpOpt : pOption : compileopt );
          srvPgm = crtSrvPgm(
                      testPgm : bndSrvPgm : bndDir : module : bOption :
                      actGrp : textRslv);
@@ -221,6 +224,7 @@
      D  srcMbr                             const like(SrcMbr_t.mbr)
      D  cOption                            const likeds(Options_t)
      D  dbgView                            const like(DbgView_t)
+     D  pRpgPpOpt                          const like(RpgPpOpt_t)
      D  pOption                            const likeds(Options_t)
      D  compileopt                 5000a   const varying options(*varsize)
 
@@ -229,7 +233,7 @@
       /free
 
          cmd = getCrtRpgModCmd( testPgm : srcFile : srcMbr : cOption : dbgView:
-                                pOption : compileopt );
+                                pRpgPpOpt : pOption : compileopt );
          sndInfoMsg( cmd );
          qcmdexc( cmd : %len(cmd) );
 
@@ -376,6 +380,7 @@
      D  srcMbr                             const like(SrcMbr_t.mbr)
      D  cOptions                           const likeds(Options_t)
      D  dbgView                            const like(DbgView_t)
+     D  pRpgPpOpt                          const like(RpgPpOpt_t)
      D  pOptions                           const likeds(Options_t)
      D  compileopt                 5000a   const varying options(*varsize)
 
@@ -405,6 +410,10 @@
             cmd += serializeOptions( 'OPTION' : pOptions );
             cmd += serializeValue('OBJTYPE': '*MODULE');
             cmd += serializeValue( 'DBGVIEW' : '*NONE');
+
+            if (pRpgPpOpt <> '*DEFAULT');
+              cmd += serializeValue( 'RPGPPOPT' : pRpgPpOpt);
+            endif;
 
             if compileopt <> *blank;
               dbgCompileOpt = removeQuotes(compileOpt);

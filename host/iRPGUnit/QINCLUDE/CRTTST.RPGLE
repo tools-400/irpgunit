@@ -24,6 +24,7 @@
      D  srcMbr                             const like(SrcMbr_t.mbr)
      D  cOptions                           const likeds(Options_t)
      D  dbgView                      10a   const
+     D  pRpgPpOpt                          const like(RpgPpOpt_t)
      D  pOptions                           const likeds(Options_t)
      D  compileopt                 5000a   const varying options(*varsize)
 

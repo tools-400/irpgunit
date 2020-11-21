@@ -124,6 +124,18 @@
                           PMTCTL(*PMTRQS)                    +
                           PROMPT('Module')
 
+             PARM       KWD(RPGPPOPT)                        +
+                          TYPE(*CHAR)                        +
+                          LEN(10)                            +
+                          DFT(*DEFAULT)                      +
+                          RSTD(*YES)                         +
+                          VALUES(*DEFAULT                    +
+                                 *NONE                       +
+                                 *LVL1                       +
+                                 *LVL2)                      +
+                          PMTCTL(*PMTRQS)                    +
+                          PROMPT('Pre-compiler RPGPPOPT')
+
              PARM       KWD(POPTION)                         +
                           TYPE(*CHAR)                        +
                           LEN(10)                            +

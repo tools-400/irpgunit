@@ -112,6 +112,9 @@
 
        // MsgInfo_t is and must be defined in member TESTCASE!
 
+       // SQL pre-compiler option RPGPPOPT
+     D RpgPpOpt_t      s             10a
+
        // Object qualified Name.
      D Object_t        ds                  qualified template
      D  nm                           10a
