@@ -1,7 +1,7 @@
 /* =================================================================== */
-/*  iRPGUnit SelfTest - Build and run all self tests.                  */
+/*  iRPGUnit SelfTest - Build UTILST.                                  */
 /* =================================================================== */
-/* Copyright (c) 2013-2019 iRPGUnit Project Team                       */
+/* Copyright (c) 2013-2020 iRPGUnit Project Team                       */
 /* All rights reserved. This program and the accompanying materials    */
 /* are made available under the terms of the Common Public License v1.0*/
 /* which accompanies this distribution, and is available at            */
@@ -10,7 +10,7 @@
 /*  Usage:                                                             */
 /*  a) Add the iRPGUnit library to your library list.                  */
 /*  b) Start the Rexx script with the following command:               */
-/*       STRREXPRC SRCMBR(MKUT) SRCFILE(QUNITTEST) PARM(prdLib)        */
+/*       STRREXPRC SRCMBR(MKUTILST) SRCFILE(QUNITTEST) PARM(prdLib)    */
 /*     where 'prdLib' is the library containing the RPGUnit            */
 /*     source files.                                                   */
 /*                                                                     */
@@ -46,6 +46,9 @@
  SIGNAL on NOVALUE
  SIGNAL on SYNTAX
 
+ /* The utility that is installed */
+ UTILITY = 'UTILST'
+
  PARSE ARG prdLib dbgView tgtrls
 
  prdLib  = translate(strip(prdLib))
@@ -56,7 +59,7 @@
    "SNDPGMMSG ",
      "MSGID(CPF9898) ",
      "MSGF(QCPFMSG) ",
-     "MSGDTA('Usage: STRREXPRC SRCMBR(MKUT) SRCFILE(QUNITTEST) PARM(prdLib)')",
+     "MSGDTA('Usage: STRREXPRC SRCMBR(MKUTILST) SRCFILE(QUNITTEST) PARM(prdLib)')",
      "TOPGMQ(*PRV (*CTLBDY)) ",
      "MSGTYPE(*ESCAPE)"
  end
@@ -87,43 +90,24 @@
  /* -------------------------------------------- */
  /*  Let's do it!                                */
  /* -------------------------------------------- */
+ "CMPMOD MODULE("prdLib"/UTILST ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/PGMMSG ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
- /* Self-Tests. */
-
- executeUnitTest('MKASSERTT', 'ASSERTT')
- executeUnitTest('MKCALLPRCT', 'CALLPRCT')
- executeUnitTest('MKCMDRUNLT', 'CMDRUNLOGT')
- executeUnitTest('MKCMDRUNT', 'CMDRUNT')
- executeUnitTest('MKCRTTSTT', 'CRTTSTT')
- executeUnitTest('MKEXTPRCT', 'EXTPRCT')
- executeUnitTest('MKEXTTSTT', 'EXTTSTT')
- executeUnitTest('MKJOBLOGT', 'JOBLOGT')
- executeUnitTest('MKLIBLT', 'LIBLT')
- executeUnitTest('MKMSGQT', 'MSGQT')
- executeUnitTest('MKPGMMSGT', 'PGMMSGT')
- executeUnitTest('MKRUNT', 'RUNT')
- executeUnitTest('MKSTRINGT', 'STRINGT')
- executeUnitTest('MKUTILST', 'TESTUTILST')
+ "CRTSRVPGM  SRVPGM("prdLib"/UTILST) ",
+            "MODULE("prdLib"/PGMMSG) ",
+            "EXPORT(*ALL) ",
+            "OPTION(*DUPPROC) ",
+            "BNDSRVPGM("prdLib"/RUTESTCASE) ",
+            "TEXT('RPGUnit SelfTest - Test TESTUTILS.')"
 
  "SNDPGMMSG ",
    "MSGID(CPF9897) ",
    "MSGF(QCPFMSG) ",
-   "MSGDTA('Successfully executed self-tests: "prdLib"')",
+   "MSGDTA('Successfully compiled "UTILITY" in library: "prdLib"')",
    "TOPGMQ(*PRV (*CTLBDY)) ",
    "MSGTYPE(*INFO)"
 
  EXIT
-
- /* ------------------------------------------------------------- */
- /* Executes a given test case.                                   */
- /* ------------------------------------------------------------- */
- executeUnitTest:
-   PARSE ARG buildScript, unitTest
-
-   "STRREXPRC SRCMBR("buildScript") SRCFILE(QUNITTEST) PARM('"prdLib" "dbgView" "tgtRls"')"
-   "RUCALLTST  TSTPGM("prdLib"/"unitTest")"
-
-   return ''
 
  /* ------------------------------------------------------------- */
  /* Global Error handler                                          */
@@ -132,7 +116,7 @@
    "SNDPGMMSG ",
      "MSGID(CPF9898) ",
      "MSGF(QCPFMSG) ",
-     "MSGDTA('ERROR: Failed to run self-tests. Check the job log for details') ",
+     "MSGDTA('ERROR: Failed to install "UTILITY". Check the job log for details') ",
      "TOPGMQ(*PRV (*CTLBDY)) ",
      "MSGTYPE(*ESCAPE)"
 
