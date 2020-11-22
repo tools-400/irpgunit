@@ -82,6 +82,8 @@
 
        // No debugging view given by user.
      D noDbgView       c                   const(*blank)
+       // RPG preprocessor options.
+     D rpgPpOptLvl2    c                   const('*LVL2')
        // No export option.
      D noExport        c                   const(*blank)
        // No text.
@@ -174,9 +176,10 @@
 
         crtRpgModCmd = getCrtRpgModCmd( 'SYSTYPES  *CURLIB   ' :
                                         'QRPGLESRC QSYSINC   ' :
-                                        'SYSTYPES'  :
+                                        'SYSTYPES' :
                                         noCOption :
                                         noDbgView :
+                                        rpgPpOptLvl2 :
                                         noPOption :
                                         noCompileOpt );
         aEqual( 'CRTRPGMOD MODULE(*CURLIB/SYSTYPES) '
@@ -202,6 +205,7 @@
                                         'SYSTYPES'  :
                                         oneCOption :
                                         noDbgView :
+                                        rpgPpOptLvl2 :
                                         noPOption :
                                         noCompileOpt );
         aEqual( 'CRTRPGMOD MODULE(*CURLIB/SYSTYPES) '
@@ -229,6 +233,7 @@
                                         'SYSTYPES'  :
                                         twoCOptions :
                                         noDbgView :
+                                        rpgPpOptLvl2 :
                                         noPOption :
                                         noCompileOpt );
         aEqual( 'CRTRPGMOD MODULE(*CURLIB/SYSTYPES) '
@@ -248,6 +253,7 @@
                                         'SYSTYPES'  :
                                         noCOption :
                                         '*LIST'   :
+                                        rpgPpOptLvl2 :
                                         noPOption :
                                         noCompileOpt );
         aEqual( 'CRTRPGMOD MODULE(*CURLIB/SYSTYPES) '
