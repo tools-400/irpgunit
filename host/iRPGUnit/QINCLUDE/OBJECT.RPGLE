@@ -36,6 +36,13 @@
      D  objType                      10a   const
      D  mbr                          10a   const options(*nopass)
 
+     D Object_qName...
+     D                 pr            21a   varying
+     D                                     extproc('OBJECT_+
+     D                                     Object_qName+
+     D                                     ')
+     D  object                             const likeds(Object_t)
+
      D TestSuite_exists...
      D                 pr              n
      D                                     extproc('OBJECT_+

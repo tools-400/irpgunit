@@ -221,6 +221,24 @@
      P                 e
 
       //----------------------------------------------------------------------
+      //  Returns the qualified object name.
+      //----------------------------------------------------------------------
+     P Object_qName...
+     P                 b                   export
+     D                 pi            21a   varying
+     D  object                             const likeds(Object_t)
+
+     D qName           s             21a   varying
+      /free
+
+       qName = %trim(object.lib) + '/' + %trim(object.nm);
+
+       return qName;
+
+      /end-free
+     P                 e
+
+      //----------------------------------------------------------------------
       //  Returns the object description of a given object.
       //----------------------------------------------------------------------
      P retrieveObjectDescription...
