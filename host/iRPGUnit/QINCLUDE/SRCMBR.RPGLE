@@ -51,3 +51,11 @@
      D  qSrcFile                           const  likeds(Object_t )
      D  srcMbr                       10a   const
 
+     D SrcMbr_getType...
+     D                 pr            10a   varying
+     D                                     extproc('SRCMBR_+
+     D                                     SrcMbr_getType+
+     D                                     ')
+     D  qSrcFile                           const  likeds(Object_t )
+     D  srcMbr                       10a   const
+
