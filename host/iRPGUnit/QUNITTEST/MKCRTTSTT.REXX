@@ -1,5 +1,5 @@
 /* =================================================================== */
-/*  iRPGUnit SelfTest - Build RUCRTTSTT.                               */
+/*  iRPGUnit SelfTest - Build CRTTSTT.                                 */
 /* =================================================================== */
 /* Copyright (c) 2013-2019 iRPGUnit Project Team                       */
 /* All rights reserved. This program and the accompanying materials    */

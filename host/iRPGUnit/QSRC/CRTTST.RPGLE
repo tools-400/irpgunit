@@ -1,5 +1,5 @@
       // ==========================================================================
-      //  iRPGUnit - Implementation of RUCRTTST command.
+      //  iRPGUnit - Implementation of RUCRT* commands.
       // ==========================================================================
       //  Copyright (c) 2013-2019 iRPGUnit Project Team
       //  All rights reserved. This program and the accompanying materials
@@ -20,6 +20,7 @@
       /include qinclude,H_SPEC
       /include qinclude,COPYRIGHT
 
+
       //----------------------------------------------------------------------
       //   IMPORTS
       //----------------------------------------------------------------------
@@ -32,38 +33,16 @@
       /include qinclude,TESTUTILS
       /include qinclude,TAGTST
       /include qinclude,OBJECT
+      /include qinclude,ERRORCODE
+
+      /include qsysinc,QCAPCMD
+
 
       //----------------------------------------------------------------------
       //   PUBLIC PROTOTYPES
       //----------------------------------------------------------------------
 
       /include qinclude,CRTTST
-
-      //----------------------------------------------------------------------
-      //   PRIVATE PROTOTYPES
-      //----------------------------------------------------------------------
-
-     D crtRpgMod       pr
-     D  testPgm                            const likeds(Object_t)
-     D  srcFile                            const likeds(Object_t)
-     D  srcMbr                             const like(SrcMbr_t.mbr)
-     D  cOption                            const likeds(Options_t)
-     D  dbgView                            const like(DbgView_t)
-     D  pRpgPpOpt                          const like(RpgPpOpt_t)
-     D  pOption                            const likeds(Options_t)
-     D  compileopt                 5000a   const varying options(*varsize)
-
-     D dltMod          pr
-     D  testPgm                            const likeds(Object_t)
-
-     D crtSrvPgm       pr                  likeds(Object_t)
-     D  testPgm                            const likeds(Object_t)
-     D  bndSrvPgm                          const likeds(ObjectArray_t)
-     D  bndDir                             const likeds(ObjectArray_t)
-     D  module                             const likeds(ObjectArray_t)
-     D  bOption                            const likeds(Options_t)
-     D  actGrp                             const like(ActivationGroup_t)
-     D  text                               const like(Text_t    )
 
 
       //----------------------------------------------------------------------
@@ -77,24 +56,8 @@
       //   MAIN PROGRAM
       //----------------------------------------------------------------------
 
-     D crtTst...
-     D                 pr
-     D  testPgm                            const likeds(Object_t)
-     D  srcFile                            const likeds(Object_t)
-     D  srcMbr                             const like(SrcMbr_t.mbr)
-     D  text                               const like(Text_t)
-     D  cOption                            const likeds(Options_t)
-     D  dbgView                            const like(DbgView_t)
-     D  bndSrvPgm                          const likeds(ObjectArray_t)
-     D  bndDir                             const likeds(ObjectArray_t)
-     D  bOption                            const likeds(Options_t)
-     D  actGrp                             const like(ActivationGroup_t)
-     D  module                             const likeds(ObjectArray_t)
-     D  pRpgPpOpt                          const like(RpgPpOpt_t)
-     D  pOption                            const likeds(Options_t)
-     D  compileopt                 5000a   const varying options(*varsize)
-
-     D crtTst...
+     P crtTst...
+     P                 b                   export
      D                 pi
      D  testPgm                            const likeds(Object_t)
      D  srcFile                            const likeds(Object_t)
@@ -106,21 +69,28 @@
      D  bndDir                             const likeds(ObjectArray_t)
      D  bOption                            const likeds(Options_t)
      D  actGrp                             const like(ActivationGroup_t)
-     D  module                             const likeds(ObjectArray_t)
+     D  bModules                           const likeds(ObjectArray_t)
      D  pRpgPpOpt                          const like(RpgPpOpt_t)
      D  pOption                            const likeds(Options_t)
      D  compileopt                 5000a   const varying options(*varsize)
 
+     D module          ds                  likeds(bModules) inz
+     D srcType         s             10a   varying
      D textRslv        s                   like(text) inz
-     D srcMbrRslv      s                   like(srcMbr) inz
      D i               s             10i 0
      D mbrType         s             10a
-     D tmpOpts         ds                  likeds(Options_t)
-     D qSrcFile        ds                  likeds(Object_t)
-     D libResolved     s             10a
+     D tmpOpts         ds                  likeds(Options_t) inz
+     D qSrcFile        ds                  likeds(Object_t) inz
+     D libRslv         s             10a
+     D startCompileTime...
+     D                 s               z
+     D modulesCreated  ds                  likeds(ObjectArray_t) inz
+
+     D isError         s               n
       /free
 
        qSrcFile = srcFile;
+       module = resolveLibraries(bModules);
 
        if (not Object_exists(qSrcFile: '*FILE'));
          sndEscapeMsgAboveCtlBdy(
@@ -129,31 +99,25 @@
        endif;
 
        if (%subst(qSrcFile.lib: 1: 1) = '*');
-         libResolved = Object_resolveLibrary(qSrcFile: '*FILE');
+         libRslv = Object_resolveLibrary(qSrcFile: '*FILE');
        else;
          if (not Object_exists(qSrcFile: '*FILE'));
-           libResolved = '';
+           libRslv = '';
          else;
-           libResolved = qSrcFile.lib;
+           libRslv = qSrcFile.lib;
          endif;
        endif;
 
-       if (libResolved = '');
+       if (libRslv = '');
          sndEscapeMsgAboveCtlBdy(
            'Library ' + %trim(qSrcFile.lib) + ' not found.' );
        endif;
 
-       qSrcFile.lib = libResolved;
+       qSrcFile.lib = libRslv;
 
-       if (srcMbr = '*TSTPGM');
-         srcMbrRslv = testPgm.nm;
-       else;
-         srcMbrRslv = srcMbr;
-       endif;
-
-       if (not Object_exists(qSrcFile: '*FILE': srcMbrRslv));
+       if (not Object_exists(qSrcFile: '*FILE': srcMbr));
          sndEscapeMsgAboveCtlBdy(
-            'Member ' + %trim(srcMbrRslv) + ' not found in source file ' +
+            'Member ' + %trim(srcMbr) + ' not found in source file ' +
                         %trim(qSrcFile.lib) + '/' + %trim(qSrcFile.nm) + '.' );
        endif;
 
@@ -175,11 +139,13 @@
           endfor;
        endif;
 
+       isError = *off;
+
        monitor;
 
          select;
          when text = '*SRCMBRTXT';
-            textRslv = SrcMbr_getDescription(qSrcFile: srcMbrRslv);
+            textRslv = SrcMbr_getDescription(qSrcFile: srcMbr);
          when text = '*BLANK';
             textRslv = '';
          when text = '*DEFAULT';
@@ -190,30 +156,284 @@
             textRslv = text;
          endsl;
 
-         crtRpgMod( testPgm : qSrcFile : srcMbrRslv : cOption : dbgView :
-                    pRpgPpOpt : pOption : compileopt );
+         srcType = SrcMbr_getType( qSrcFile : srcMbr );
+
+         startCompileTime = %timestamp();
+
+         select;
+         when (srcType = MBR_RPGLE or srcType = MBR_SQLRPGLE);
+           addModule( module : testPgm : *on); // Add to position #1.
+           // QDEVTOOLS/QLNCMSG RNS9305 - Module &1 placed in library &2.
+           crtRpgMod( testPgm : qSrcFile : srcMbr : cOption : dbgView :
+                      pRpgPpOpt : pOption : compileopt );
+           modulesCreated = getCreatedModulesFromJobLog(
+                              MOD_CRT_RPG : startCompileTime );
+           addModules( module : modulesCreated );
+         when (srcType = MBR_CBLLE or srcType = MBR_SQLCBLLE);
+           // There is no test case module to add for Cobol ==> See: *PGMID
+           // QDEVTOOLS/QLNCMSG LNC0899 - Module &1 placed in library &2.
+           crtCblMod( testPgm : qSrcFile : srcMbr : cOption : dbgView :
+                      pOption : compileopt );
+           modulesCreated = getCreatedModulesFromJobLog(
+                              MOD_CRT_CBL : startCompileTime );
+           addModules( module : modulesCreated );
+         other;
+           sndEscapeMsgAboveCtlBdy(
+             'Source type ' + addQuotes(srcType) + ' is not supported.' );
+         endsl;
+
          srvPgm = crtSrvPgm(
                      testPgm : bndSrvPgm : bndDir : module : bOption :
                      actGrp : textRslv);
 
-         tagTstSrvPgm(srvPgm : qSrcFile : srcMbrRslv);
+         tagTstSrvPgm(srvPgm : qSrcFile : srcMbr);
 
          sndCompMsg( 'Test program ' + %trim(srvPgm.nm)
                    + ' created in library ' + %trim(srvPgm.lib) + '.' );
 
        on-error;
-         sndEscapeMsgAboveCtlBdy( 'Unable to create test '
-                                  + %trim(testPgm.nm) + '.' );
+         isError = *on;
        endmon;
 
        monitor;
-         dltMod( testPgm );
+         deleteModules( modulesCreated );
        on-error;
        endmon;
+
+       if (isError);
+         sndEscapeMsgAboveCtlBdy( 'Unable to create test '
+                                  + %trim(testPgm.nm) + '.' );
+       endif;
 
        *inlr = *on;
 
       /end-free
+     P                 e
+
+
+     P resolveLibraries...
+     P                 b
+     D                 pi                  likeds(ObjectArray_t)
+     D  modules                            const likeds(ObjectArray_t)
+
+     D i               s             10i 0
+     D rtnModules      ds                  likeds(modules) inz
+     D libResolved     s             10a
+      /free
+
+       clear rtnModules;
+
+       for i = 1 to modules.size;
+
+         if (startsWith( '*' : modules.object(i).lib));
+           libResolved = Object_resolveLibrary(modules.object(i): '*MODULE');
+         else;
+           libResolved = modules.object(i).lib;
+         endif;
+
+         if (libResolved = '');
+           sndEscapeMsgAboveCtlBdy( 'Could not resolve module '
+                                  +  Object_qName(modules.object(i)) );
+         endif;
+
+         rtnModules.size += 1;
+         rtnModules.object(rtnModules.size).nm = modules.object(i).nm;
+         rtnModules.object(rtnModules.size).lib = libResolved;
+       endfor;
+
+       return rtnModules;
+
+      /end-free
+     P                 e
+
+
+     P getCreatedModulesFromJobLog...
+     P                 b
+     D                 pi                  likeds(ObjectArray_t)
+     D  crtMsgId                      7a   const
+     D  startCompileTime...
+     D                                 z   const
+
+       // Job log message field selection for QGYOLJBL API.
+     D fldSelect       ds                  qualified
+     D  listDirection                10a   inz('*PRV')
+     D  qlfJobNm                     26a   inz('*')
+     D  intJobId                     16a   inz(*blank)
+     D  startMsgKey                   4a   inz(x'FFFFFFFF')
+     D  maxMsgLen                    10i 0 inz(0)
+     D  maxMsgHlpLen                 10i 0 inz(0)
+     D  fldIdOff                     10i 0
+     D  fldCnt                       10i 0 inz(1)
+     D  callMsgqNmOff                10i 0
+     D  callMsgqNmLen                10i 0 inz(%size(fldSelect.callMsgqNm))
+     D  fldId1                       10i 0 inz(OLJL_RPL_DATA)
+     D  callMsgqNm                    1a   inz('*')
+
+     D listInfo        ds                  likeds(dsOpnList)
+     D msgBasicInfo    ds                  likeds(dsOLJL0100EntHdr)
+     D                                     based(p_msgBasicInfo)
+     D p_msgBasicInfo  s               *
+     D msgFldInfo      ds                  likeds(dsOLJL0100FldHdr)
+     D                                     based(pMsgFldInfo)
+     D pMsgFldInfo     s               *
+     D sentDateAsIso   s              8a
+     D msgSendTime     s               z
+     D jobLogList      s          32766a
+     D msgIdx          s             10i 0
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
+     D i               s             10i 0
+     D module          ds                  likeds(Object_t) inz
+
+     D pMsgData        s               *
+
+     D RNS9305         ds                  qualified based(pMsgData)
+     D  mod                          10a
+     D  lib                          10a
+
+     D LNC0899         ds                  qualified based(pMsgData)
+     D  length                        5i 0
+     D  data                         10a
+
+     D modules         ds                  likeds(ObjectArray_t) inz
+      /free
+
+       fldSelect.fldIdOff = %addr(fldSelect.fldId1) - %addr(fldSelect);
+       fldSelect.callMsgqNmOff =
+                        %addr(fldSelect.callMsgqNm) - %addr(fldSelect);
+
+       QGYOLJBL( jobLogList :
+                 %size( jobLogList ) :
+                 listInfo :
+                 OLJL_FULL_SYNCHRONOUS_BUILD :
+                 fldSelect :
+                 %size( fldSelect ) :
+                 percolateErrors );
+
+       p_msgBasicInfo = %addr( jobLogList );
+       msgIdx = 1;
+
+       dow 1=1;
+         if msgIdx > listInfo.retRcdCnt;
+           if listInfo.totalRcdCnt > listInfo.retRcdCnt;
+             sndEscapeMsgAboveCtlBdy(
+                   'Insufficient implementation. ' +
+                   'Should use QGYGTLE to retrieve records after ' +
+                                %char( listInfo.retRcdCnt ) + '. ' +
+                                           'Please open an issue.' );
+           else;
+             leave;
+           endif;
+         endif;
+
+         sentDateAsIso = %char( %date( msgBasicInfo.sentDate: *cymd0) : *iso0 );
+         msgSendTime = %timestamp( sentDateAsIso
+                                 + msgBasicInfo.sentTime
+                                 + msgBasicInfo.microseconds: *iso0 );
+         if (startCompileTime >= msgSendTime);
+           leave;
+         endif;
+
+         if (msgBasicInfo.msgId = crtMsgId);
+
+           pMsgFldInfo = %addr( jobLogList ) + msgBasicInfo.retFldOff;
+
+           pMsgData = pMsgFldInfo + %size(msgFldInfo);
+
+           select;
+           when (crtMsgId = MOD_CRT_RPG);
+             module.nm = RNS9305.mod;
+             module.lib = RNS9305.lib;
+             addModule( modules : module );
+           when (crtMsgId = MOD_CRT_CBL);
+             module.nm = %subst(LNC0899.data: 1: LNC0899.length);
+             pMsgData += LNC0899.length + %size(LNC0899.length); // push pointer to next *VARY field
+             module.lib = %subst(LNC0899.data: 1: LNC0899.length);
+             addModule( modules : module );
+           endsl;
+         endif;
+
+         // Go to next message in the job log.
+         p_msgBasicInfo = %addr( jobLogList ) + msgBasicInfo.nextEntOff;
+         msgIdx += 1;
+       enddo;
+
+       QGYCLST( listInfo.rqsHdl : percolateErrors );
+
+       return modules;
+
+      /end-free
+     P                 e
+
+
+     P addModules...
+     P                 b
+     D                 pi
+     D  modules                                  likeds(ObjectArray_t)
+     D  items                                    likeds(ObjectArray_t)
+
+     D i               s             10i 0
+
+      /free
+
+       for i = 1 to items.size;
+         addModule( modules : items.object(i) );
+       endfor;
+
+      /end-free
+     P                 e
+
+
+     p addModule...
+     p                 b
+     d                 pi
+     d  modules                                  likeds(ObjectArray_t)
+     D  module                             const likeds(Object_t)
+     D  isFirstMod                     n   const options(*nopass)
+
+     d p_isFirstMod    c                         3
+
+     d i               s             10i 0
+     d r               s             10i 0
+
+      /free
+
+       if (%parms() > p_isFirstMod);
+         // First remove module (if found)
+         for i = 1 to modules.size;
+           if (module.nm = modules.object(i).nm and
+               module.lib = modules.object(i).lib);
+             r = i;
+           endif;
+           if (r < i);
+             modules.object(r) = modules.object(i);
+             clear modules.object(i);
+             r = i;
+           endif;
+         endfor;
+         if (r < i);
+           modules.size -= (i - r);
+         endif;
+         // Shift modules 1 item up
+         for i = modules.size downto 1;
+           modules.object(i + 1) = modules.object(i);
+         endfor;
+         modules.object(1) = module;
+       else;
+         for i = 1 to modules.size;
+           if (module.nm = modules.object(i).nm and
+               module.lib = modules.object(i).lib);
+             return;
+           endif;
+         endfor;
+       endif;
+
+       modules.size += 1;
+       modules.object(modules.size) = module;
+
+      /end-free
+     p                 e
 
 
      P crtRpgMod...
@@ -230,6 +450,7 @@
 
       // A command to be executed.
      D cmd             s                   like(Cmd_t)
+
       /free
 
          cmd = getCrtRpgModCmd( testPgm : srcFile : srcMbr : cOption : dbgView:
@@ -241,17 +462,46 @@
      P                 e
 
 
-     P dltMod...
+     P crtCblMod...
      P                 b
      D                 pi
      D  testPgm                            const likeds(Object_t)
+     D  srcFile                            const likeds(Object_t)
+     D  srcMbr                             const like(SrcMbr_t.mbr)
+     D  cOption                            const likeds(Options_t)
+     D  dbgView                            const like(DbgView_t)
+     D  pOption                            const likeds(Options_t)
+     D  compileopt                 5000a   const varying options(*varsize)
 
       // A command to be executed.
      D cmd             s                   like(Cmd_t)
+
       /free
 
-         cmd = getDltModCmd( testPgm );
+         cmd = getCrtCblModCmd( testPgm : srcFile : srcMbr : cOption : dbgView:
+                                pOption : compileopt );
+         sndInfoMsg( cmd );
          qcmdexc( cmd : %len(cmd) );
+
+      /end-free
+     P                 e
+
+
+     P deleteModules...
+     P                 b
+     D                 pi
+     D  modules                            const likeds(ObjectArray_t)
+
+
+     D i               s             10i 0
+     D cmd             s                   like(Cmd_t)
+
+      /free
+
+       for i = 1 to modules.size;
+         cmd = getDltModCmd( modules.object(i) );
+         qcmdexc( cmd : %len(cmd) );
+       endfor;
 
       /end-free
      P                 e
@@ -320,18 +570,12 @@
      D  text                               const like(Text_t )
 
       // Command string accumulator.
-     D module          ds                  likeds(modules)
-      // Command string accumulator.
      D cmd             s                   like(Cmd_t)
-      // Counter.
-     D i               s             10i 0
 
       /free
 
-        module = addTestCaseModule( modules : testPgm );
-
         cmd = 'CRTSRVPGM SRVPGM(' + serializeObjectName( testPgm ) + ') ';
-        cmd += serializeObjectArray( 'MODULE'    : module    );
+        cmd += serializeObjectArray( 'MODULE'    : modules   );
         cmd += serializeObjectArray( 'BNDSRVPGM' : bndSrvPgm );
         cmd += serializeObjectArray( 'BNDDIR'    : bndDir    );
         cmd += serializeOptions( 'OPTION' : options );
@@ -343,30 +587,38 @@
           cmd += 'EXPORT(' + %trim(export) + ') ';
         endif;
 
+        cmd = formatCommand(cmd);
+
         return cmd;
 
       /end-free
      P                 e
 
-     P addTestCaseModule...
-     P                 b                   export
-     D                 pi                        likeds(ObjectArray_t)
-     D  modules                            const likeds(ObjectArray_t)
-     D  testCase                           const likeds(Object_t)
+     p formatCommand...
+     p                 b
+     d                 pi                  like(Cmd_t)
+     d  cmd                                const like(Cmd_t)
 
-     D rtnModules      ds                  likeDs(ObjectArray_t) inz
-     D i               s             10i 0 inz
+     d optCtrlBlk      ds                  likeds(QCAPCMD_optCtrlBlk_t)
+
+     d rtnCmd          s          32702a
+     d rtnCmdLenAvl    s             10i 0
+     d errCode         ds                  likeds(percolateErrors_t)
+     d                                     inz(*likeds)
       /free
 
-         rtnModules.size = 1;
-         rtnModules.object(rtnModules.size) = testCase;
+       clear optCtrlBlk;
+       optCtrlBlk.typeCmdPrc = 1;     // QCMDCHK API
+       optCtrlBlk.DBCS_data = '0';    // ignore DBCS
+       optCtrlBlk.prmtAction = '0';   // never prompt
+       optCtrlBlk.cmdStrSyntax = '0'; // AS/400 Syntax
+       optCtrlBlk.msgRtvKey = '';     // no msg key
+       optCtrlBlk.res_01 = *ALLx'00';
 
-         for i = 1 to modules.size;
-            rtnModules.size = rtnModules.size + 1;
-            rtnModules.object(rtnModules.size) = modules.object(i);
-         endfor;
+       QCAPCMD( cmd : %len(cmd) : optCtrlBlk : %size(optCtrlBlk) : 'CPOP0100'
+              : rtnCmd : %len(rtnCmd) : rtnCmdLenAvl : errCode);
 
-         return rtnModules;
+       return %subst(rtnCmd: 1: rtnCmdLenAvl);
 
       /end-free
      P                 e
@@ -428,8 +680,72 @@
 
          // something we don't know about yet
          other;
-            cmd = 'RUCRTTST: Unknown source member type';
+            cmd = 'RUCRTRPG: Unknown source member type';
          endsl;
+
+        cmd = formatCommand(cmd);
+
+        return cmd;
+
+      /end-free
+     P                 e
+
+
+     P getCrtCblModCmd...
+     P                 b                   export
+     D                 pi                        like(Cmd_t)
+     D  testPgm                            const likeds(Object_t)
+     D  srcFile                            const likeds(Object_t)
+     D  srcMbr                             const like(SrcMbr_t.mbr)
+     D  cOptions                           const likeds(Options_t)
+     D  dbgView                            const like(DbgView_t)
+     D  pOptions                           const likeds(Options_t)
+     D  compileopt                 5000a   const varying options(*varsize)
+
+      // Command string accumulator.
+     D cmd             s                   like(Cmd_t)
+     D dbgCompileOpt   s                   like(compileOpt)
+      // Counter.
+     D i               s             10i 0
+
+      /free
+
+        // source type determines the compile command
+        select;
+          // CBLLE
+          when getMemberType(srcFile.nm: srcFile.lib: testPgm) = MBR_CBLLE;
+            cmd = 'CRTCBLMOD MODULE(*PGMID) ';
+            cmd += 'SRCFILE(' + serializeObjectName( srcFile ) + ') ';
+            cmd += serializeValue( 'SRCMBR' : srcMbr );
+            cmd += serializeOptions( 'OPTION' : cOptions );
+            cmd += serializeValue( 'DBGVIEW' : dbgView );
+
+          // SQLCBLLE
+          when getMemberType(srcFile.nm: srcFile.lib: testPgm) = MBR_SQLCBLLE;
+            cmd = 'CRTSQLCBLI OBJ(' + serializeObjectName( testPgm ) + ') ';
+            cmd += 'SRCFILE(' + serializeObjectName( srcFile ) + ') ';
+            cmd += serializeValue( 'SRCMBR' : srcMbr );
+            cmd += serializeOptions( 'OPTION' : pOptions );
+            cmd += serializeValue('OBJTYPE': '*MODULE');
+            cmd += serializeValue( 'DBGVIEW' : '*NONE');
+
+            if compileopt <> *blank;
+              dbgCompileOpt = removeQuotes(compileOpt);
+              if (%scan( PARM_DBGVIEW + '(' : uCase( compileOpt )) = 0);
+                dbgCompileOpt += ' ' + serializeValue( 'DBGVIEW' : dbgView );
+              endif;
+            else;
+              dbgCompileOpt = serializeValue( 'DBGVIEW' : dbgView);
+            endif;
+
+            cmd += serializeString( 'COMPILEOPT' : dbgCompileOpt);
+
+         // something we don't know about yet
+         other;
+            cmd = 'RUCRTCBL: Unknown source member type';
+         endsl;
+
+        cmd = formatCommand(cmd);
 
         return cmd;
 
@@ -438,7 +754,7 @@
 
 
      P getDltModCmd...
-     P                 b                   export
+     P                 b
      D                 pi                        like(Cmd_t)
      D  testPgm                            const likeds(Object_t)
 
@@ -449,6 +765,8 @@
 
         cmd = 'DLTMOD MODULE(' + serializeObjectName( testPgm ) + ') ';
 
+        cmd = formatCommand(cmd);
+
         return cmd;
 
       /end-free
@@ -456,7 +774,7 @@
 
 
      PserializeObjectArray...
-     P                 b                   export
+     P                 b
      D                 pi                        like(SerializedArray_t)
      D headToken                           const like(HeadToken_t)
      D array                               const likeds(ObjectArray_t)
@@ -509,7 +827,7 @@
 
 
      PserializeOptions...
-     P                 b                   export
+     P                 b
      D                 pi                        like(SerializedOptions_t)
      D headToken                           const like(HeadToken_t)
      D options                             const likeds(Options_t)
@@ -541,7 +859,7 @@
      P                 e
 
      PserializeString...
-     P                 b                   export
+     P                 b
      D                 pi                        like(SerializedString_t)
      D headToken                           const like(HeadToken_t)
      D text                        5000a   const varying options(*varsize)
@@ -579,7 +897,7 @@
      P                 e
 
      PserializeValue...
-     P                 b                   export
+     P                 b
      D                 pi                        like(SerializedString_t)
      D headToken                     10a   const
      D value                               const like(String_t)

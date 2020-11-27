@@ -8,7 +8,7 @@
       //  http://www.eclipse.org/legal/cpl-v10.html
       // ==========================================================================
       // >>PRE-COMPILER<<
-      //   >>CRTCMD<<  RUCRTTST TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM) +
+      //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM) +
       //                        RPGPPOPT(*LVL2);
       //   >>IMPORTANT<<
       //     >>PARM<<  COPTION(*EVENTF);
@@ -23,8 +23,24 @@
       //   Exported Procedures
       //----------------------------------------------------------------------
 
+     D setUpSuite...
+     D                 pr                  extproc('setUpSuite')
+     D tearDownSuite...
+     D                 pr                  extproc('tearDownSuite')
+
+     d addMemberOfType...
+     d                 pr
+     d                                     extproc('addMemberOfType')
+     d  srcType                      10a   const varying
+
      D test_getFullTimestamp...
      D                 pr                  extproc('test_getFullTimestamp')
+     D test_waitSeconds...
+     D                 pr                  extproc('test_waitSeconds')
+     D test_getMemberType...
+     D                 pr                  extproc('test_getMemberType')
+     D test_getMemberType_error...
+     D                 pr                  extproc('test_getMemberType_error')
 
 
       //----------------------------------------------------------------------
@@ -35,6 +51,8 @@
       /copy qinclude,TESTUTILS
       /copy qinclude,TEMPLATES
 
+      /copy qsysinc,QCMDEXC
+
 
       //----------------------------------------------------------------------
       //   Private Procedure Prototypes
@@ -44,9 +62,73 @@
       //   Global Variables
       //----------------------------------------------------------------------
 
+     D mustDeleteFile  s               n   inz(*off)
+
       //----------------------------------------------------------------------
-      //   Tests
+      //   Setup/Teardown
       //----------------------------------------------------------------------
+
+     P setUpSuite...
+     P                 b                   export
+     D                 pi
+
+     D cmd             s            500a   varying
+      /free
+
+       mustDeleteFile = *off;
+
+       monitor;
+         cmd = 'CRTSRCPF FILE(QTEMP/RPGUNITTST) RCDLEN(112)';
+         QCMDEXC( cmd : %len(cmd) );
+         mustDeleteFile = *on;
+       on-error;
+         tearDownSuite();
+       endmon;
+
+       addMemberOfType(MBR_RPGLE);
+       addMemberOfType(MBR_SQLRPGLE);
+       addMemberOfType(MBR_CBLLE);
+       addMemberOfType(MBR_SQLCBLLE);
+
+      /free
+     P                 e
+
+
+     P tearDownSuite...
+     P                 b                   export
+     D                 pi
+
+     D cmd             s            500a   varying
+      /free
+
+       monitor;
+         cmd = 'DLTF FILE(QTEMP/RPGUNITTST)';
+         QCMDEXC( cmd : %len(cmd) );
+         mustDeleteFile = *off;
+       on-error;
+       endmon;
+
+      /free
+     P                 e
+
+
+     p addMemberOfType...
+     p                 b
+     d                 pi
+     d  srcType                      10a   const varying
+
+     d cmd             s            500a   varying
+      /free
+
+       cmd = 'ADDPFM FILE(QTEMP/RPGUNITTST) MBR(' + srcType + ') +
+                TEXT(''iRPGUnit Test Member'') +
+                SRCTYPE(' + srcType + ')';
+
+       QCMDEXC( cmd : %len(cmd) );
+
+      /end-free
+     p                 e
+
 
       //----------------------------------------------------------------------
       //   Tests
@@ -97,6 +179,7 @@
       /end-free
      P                 e
 
+
      P test_getFullTimestamp...
      P                 b                   export
      D                 pi
@@ -127,6 +210,47 @@
         assert(mSecsAreValid
                : 'No valid microseconds found in '
                  + %char(MAX_SECONDS) + ' seconds');
+
+      /end-free
+     P                 e
+
+
+     P test_getMemberType...
+     P                 b                   export
+     D                 pi
+
+     D srcType         s             10a   varying
+      /free
+
+       srcType = getMemberType( 'RPGUNITTST' : 'QTEMP' : MBR_RPGLE );
+       assert( srcType = MBR_RPGLE : 'getMemberType() must return RPGLE' );
+
+       srcType = getMemberType( 'RPGUNITTST' : 'QTEMP' : MBR_SQLRPGLE );
+       assert( srcType = MBR_SQLRPGLE : 'getMemberType() must return SQLRPGLE');
+
+       srcType = getMemberType( 'RPGUNITTST' : 'QTEMP' : MBR_CBLLE );
+       assert( srcType = MBR_CBLLE : 'getMemberType() must return CBLLE' );
+
+       srcType = getMemberType( 'RPGUNITTST' : 'QTEMP' : MBR_SQLCBLLE );
+       assert( srcType = MBR_SQLCBLLE : 'getMemberType() must return SQLCBLLE');
+
+      /end-free
+     P                 e
+
+
+     P test_getMemberType_error...
+     P                 b                   export
+     D                 pi
+
+     D srcType         s             10a   varying
+      /free
+
+       monitor;
+         srcType = getMemberType( 'RPGUNITTST' : 'QTEMP' : 'NOT.FOUND' );
+         fail('getMember() should have raised an error');
+       on-error;
+         // Good, error seen.
+       endmon;
 
       /end-free
      P                 e

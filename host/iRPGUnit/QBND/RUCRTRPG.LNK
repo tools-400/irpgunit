@@ -1,5 +1,5 @@
 /* ========================================================================== */
-/*  iRPGUnit - Create Test Suite.                                             */
+/*  iRPGUnit - Create RPG Test Suite.                                         */
 /* ========================================================================== */
 /*  Copyright (c) 2013-2019 iRPGUnit Project Team                             */
 /*  All rights reserved. This program and the accompanying materials          */
@@ -23,7 +23,7 @@
 /*     >>PARM<<  ACTGRP(*NEW);                                                */
 /*     >>PARM<<  ALWUPD(*YES);                                                */
 /*     >>PARM<<  ALWLIBUPD(*YES);                                             */
-/*     >>PARM<<  TEXT('iRPGUnit - Create Test Suite.');                       */
+/*     >>PARM<<  TEXT('iRPGUnit - Create RPG Test Suite.');                   */
 /*     >>PARM<<  DETAIL(*BASIC);                                              */
 /*   >>END-IMPORTANT<<                                                        */
 /*   >>EXECUTE<<                                                              */

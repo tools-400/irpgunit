@@ -109,7 +109,7 @@
  compileTestSuite:
    PARSE ARG _prdLib, _tstPgm, _dbgView
 
-   "RUCRTTST TSTPGM("_prdLib"/"_tstPgm") ",
+   "RUCRTRPG TSTPGM("_prdLib"/"_tstPgm") ",
      "SRCFILE("prdLib"/QEXAMPLE) SRCMBR("_tstPgm") ",
      "COPTION(*SRCSTMT *EVENTF) DBGVIEW("_dbgView")"
 

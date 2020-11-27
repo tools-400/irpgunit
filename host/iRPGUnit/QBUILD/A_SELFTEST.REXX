@@ -215,7 +215,7 @@
  createUnitTest:
    PARSE ARG _prdLib, _bndDir, _unitTest, _dbgView
 
-   "RUCRTTST TSTPGM("_prdLib"/"_unitTest") ",
+   "RUCRTRPG TSTPGM("_prdLib"/"_unitTest") ",
      "SRCFILE("_prdLib"/QUNITTEST) ",
      "DBGVIEW("_dbgView") ",
      "BNDDIR("_prdLib"/"_bndDir") ",

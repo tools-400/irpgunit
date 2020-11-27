@@ -166,9 +166,10 @@
    "STRREXPRC SRCMBR(MKCALLTST) SRCFILE(QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
 
    /* - - - - - - - - - - - - - - - - - - - - */
-   /*  Create commands: RUCRTTST              */
+   /*  Create commands: RUCRTRPG/RUCRTCBL     */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "STRREXPRC SRCMBR(MKCRTTST) SRCFILE(QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
+   "STRREXPRC SRCMBR(MKCRTCBL) SRCFILE(QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
+   "STRREXPRC SRCMBR(MKCRTRPG) SRCFILE(QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
 
    /* - - - - - - - - - - - - - - - - - - - - */
    /*  Create program RUPGMRMT (plug-in)      */
@@ -238,17 +239,28 @@
 
    Signal off Error
 
+   /* obsolete objects prior to 4.0.0 */
+   "DLTCMD CMD("_prdlib"/RUCRTTST)"
+   "DLTPNLGRP PNLGRP("_prdlib"/RUCRTTST)"
+   "DLTPGM PGM("_prdlib"/RUCRTTST)"
+
+   /* objects of 4.0.0+ */
    "DLTCMD CMD("_prdlib"/CMPMOD)"
    "DLTCMD CMD("_prdlib"/RUCALLTST)"
-   "DLTCMD CMD("_prdlib"/RUCRTTST)"
+   "DLTCMD CMD("_prdlib"/RUCRTRPG)"
+   "DLTCMD CMD("_prdlib"/RUCRTCBL)"
+   "DLTCMD CMD("_prdlib"/UPDLIB)"
 
    "DLTPNLGRP PNLGRP("_prdlib"/CMPMODHLP)"
    "DLTPNLGRP PNLGRP("_prdlib"/RUCALLTST)"
-   "DLTPNLGRP PNLGRP("_prdlib"/RUCRTTST)"
+   "DLTPNLGRP PNLGRP("_prdlib"/RUCRTRPG)"
+   "DLTPNLGRP PNLGRP("_prdlib"/RUCRTCBL)"
+   "DLTPNLGRP PNLGRP("_prdlib"/UPDLIBHLP)"
 
    "DLTPGM PGM("_prdlib"/RUCALLTST)"
    "DLTPGM PGM("_prdlib"/RUCALLTSTV)"
-   "DLTPGM PGM("_prdlib"/RUCRTTST)"
+   "DLTPGM PGM("_prdlib"/RUCRTRPG)"
+   "DLTPGM PGM("_prdlib"/RUCRTCBL)"
    "DLTPGM PGM("_prdlib"/RUPGMRMT)"
    "DLTSRVPGM SRVPGM("_prdlib"/RUTESTCASE)"
 
@@ -330,6 +342,7 @@
    "DLTSRVPGM SRVPGM("_prdlib"/PGMMSGT)"
    "DLTSRVPGM SRVPGM("_prdlib"/RUNT)"
    "DLTSRVPGM SRVPGM("_prdlib"/STRINGT)"
+   "DLTSRVPGM SRVPGM("_prdlib"/TESTUTILST)"
 
    "DLTSRVPGM SRVPGM("_prdlib"/SCRIPTST)"
 
@@ -359,6 +372,8 @@
    "DLTMOD MODULE("_prdLib"/CMDRUNPRT)"
    "DLTMOD MODULE("_prdLib"/CMDRUNSRV)"
    "DLTMOD MODULE("_prdLib"/CMDRUNV)"
+   "DLTMOD MODULE("_prdLib"/CRTCBL)"
+   "DLTMOD MODULE("_prdLib"/CRTRPG)"
    "DLTMOD MODULE("_prdLib"/CRTTST)"
    "DLTMOD MODULE("_prdLib"/CRTTSTT)"
    "DLTMOD MODULE("_prdLib"/EXTPRC)"

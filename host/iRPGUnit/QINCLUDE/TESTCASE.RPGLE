@@ -104,11 +104,13 @@
      D assert          pr                  extproc('+
      D                                     assert+
      D                                     ')
+     D                                     opdesc
      D  condition                      n   const
       /if defined(RPGUNIT_INTERNAL)
-     D  msgIfFalse                  256a   const
+     D  msgIfFalse                         const like(OldMsg_t) options(*nopass)
       /else
-     D  msgIfFalse                16384a   const varying options(*Varsize)
+     D  msgIfFalse                16384a   const varying
+     D                                           options(*varsize: *nopass)
       /endif
 
 
@@ -131,10 +133,12 @@
      D fail            pr                  extproc('+
      D                                     fail+
      D                                     ')
+     D                                     opdesc
       /if defined(RPGUNIT_INTERNAL)
-     D  msg                         256a   const
+     D  msg                                const like(OldMsg_t) options(*nopass)
       /else
-     D  msg                       16384a   const varying options(*Varsize)
+     D  msg                       16384a   const varying
+     D                                           options(*varsize: *nopass)
       /endif
 
 

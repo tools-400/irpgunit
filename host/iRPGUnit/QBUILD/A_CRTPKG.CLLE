@@ -133,7 +133,10 @@
                           TOFILE(&LIB/&QBND) FROMMBR(RUCALLTSTV) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QBND) +
-                          TOFILE(&LIB/&QBND) FROMMBR(RUCRTTST) +
+                          TOFILE(&LIB/&QBND) FROMMBR(RUCRTCBL) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QBND) +
+                          TOFILE(&LIB/&QBND) FROMMBR(RUCRTRPG) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QBND) +
                           TOFILE(&LIB/&QBND) FROMMBR(RUPGMRMT) +
@@ -204,7 +207,7 @@
                           TOFILE(&LIB/&QCMD) FROMMBR(RUCALLTST) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QCMD) +
-                          TOFILE(&LIB/&QCMD) FROMMBR(RUCRTTST) +
+                          TOFILE(&LIB/&QCMD) FROMMBR(RUCRTRPG) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
 
              /* ---------------------------------------------------- */
@@ -233,6 +236,12 @@
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
                           TOFILE(&LIB/&QINCLUDE) FROMMBR(COPYRIGHT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(CRTCBL) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(CRTRPG) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
                           TOFILE(&LIB/&QINCLUDE) FROMMBR(CRTTST) +
@@ -367,7 +376,7 @@
                           TOFILE(&LIB/&QPNLGRP) FROMMBR(RUCALLTST) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QPNLGRP) +
-                          TOFILE(&LIB/&QPNLGRP) FROMMBR(RUCRTTST) +
+                          TOFILE(&LIB/&QPNLGRP) FROMMBR(RUCRTRPG) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
 
              /* ---------------------------------------------------- */
@@ -410,7 +419,10 @@
                           TOFILE(&LIB/&QSRC) FROMMBR(MKCALLTST) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSRC) +
-                          TOFILE(&LIB/&QSRC) FROMMBR(MKCRTTST) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(MKCRTCBL) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(MKCRTRPG) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSRC) +
                           TOFILE(&LIB/&QSRC) FROMMBR(MKRMTRUN) +
@@ -471,6 +483,9 @@
                           TOFILE(&LIB/&QSYSINC) FROMMBR(APILIST) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(CEEAPI) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
                           TOFILE(&LIB/&QSYSINC) FROMMBR(LOCALTIME) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
@@ -481,6 +496,9 @@
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
                           TOFILE(&LIB/&QSYSINC) FROMMBR(QBNLSPGM) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QCAPCMD) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
                           TOFILE(&LIB/&QSYSINC) FROMMBR(QCLRPGMI) +

@@ -35,6 +35,8 @@
 
       /include qinclude,SDS
 
+      /include qsysinc,CEEAPI
+
        //----------------------------------------------------------------------
        //   PRIVATE PROTOTYPES
        //----------------------------------------------------------------------
@@ -59,12 +61,14 @@
 
      D getParm         pr         16384a   varying
      D                                     extproc('getRealParm_internal_use')
-     D  i_value                       2a   const
+     D  i_value                            const like(OldMsg_t) options(*omit)
+     D  i_curLen                     10i 0 const
 
      D getRealParm_internal_use...
      D                 pr         16384a   varying
      D                                     extproc('getRealParm_internal_use')
-     D  i_value                       2a
+     D  i_value                       2a         options(*omit)
+     D  i_curLen                     10i 0 const
 
      D getSentTimeJobLogMsg...
      D                 pr              z
@@ -75,6 +79,13 @@
      D                 pr              z
      D                                     extproc('getSentTimeMsgQMsg')
      D  msg                                const likeds(dsLSTM0100EntHdr)
+
+       //----------------------------------------------------------------------
+       //   GLOBAL CONSTANTS
+       //----------------------------------------------------------------------
+
+     D ASSERT_NO_MSG   c                   'assert() called without message'
+     D FAIL_NO_MSG     c                   'fail() called without message'
 
        //----------------------------------------------------------------------
        //   GLOBAL VARIABLES
@@ -220,13 +231,38 @@
        //----------------------------------------------------------------------
      P assert...
      P                 b                   export
-     D                 pi
+     D                 pi                  opdesc
      D  condition                      n   const
-     D  msgIfFalse                  256a   const
+     D  msgIfFalse                         const like(OldMsg_t) options(*nopass)
+
+     D p_tMsgIfFalse   c                   2
+
+     D tMsgIfFalse_inf...
+     D                 ds                  likeds(ceegsi_inf_t) inz
+     D fc              ds                  likeds(fc_t) inz
       /free
 
-       doAssert(
-          condition: getParm(msgIfFalse): ONE_CALL_STK_LVL_ABOVE: 'assert');
+       if (%parms() >= p_tMsgIfFalse);
+         // Called by RPG or Cobol, because msgIfFalse is present.
+         // msgIfFalse became optional when iRPGUnit was enabled for Cobol.
+
+         CEEGSI(p_tMsgIfFalse: tMsgIfFalse_inf.dataType
+                : tMsgIfFalse_inf.curLen: tMsgIfFalse_inf.maxLen: fc);
+
+         // TODO: chek fc for errors and set tMsgIfFalse_inf.curLen to
+         // %len(OldMsg_t) because assert() must have been called by old
+         // RPG unit tests.
+         // checkCeeGsiFc(fc: tMsgIfFalse_inf);
+
+         doAssert(
+           condition: getParm(msgIfFalse: tMsgIfFalse_inf.curLen)
+           : ONE_CALL_STK_LVL_ABOVE: 'assert');
+       else;
+         // Called by Cobol
+         doAssert(
+           condition: getParm(ASSERT_NO_MSG: %len(ASSERT_NO_MSG))
+           : ONE_CALL_STK_LVL_ABOVE: 'assert');
+       endif;
 
       /end-free
      P                 e
@@ -237,11 +273,35 @@
        //----------------------------------------------------------------------
      P fail...
      P                 b                   export
-     d                 pi
-     D  msg                         256a   const
+     d                 pi                  opdesc
+     D  msg                                const like(OldMsg_t) options(*nopass)
+
+     D p_tMsg          c                   1
+
+     D tMsg_inf...
+     D                 ds                  likeds(ceegsi_inf_t) inz
+     D fc              ds                  likeds(fc_t) inz
       /free
 
-       doFail(getParm(msg): TWO_CALL_STK_LVL_ABOVE: 'fail');
+       if (%parms() >= p_tMsg);
+         // Called by RPG or Cobol, because msg is present.
+         // msg became optional when iRPGUnit was enabled for Cobol.
+
+         CEEGSI(p_tMsg: tMsg_inf.dataType
+                : tMsg_inf.curLen: tMsg_inf.maxLen: fc);
+
+         // TODO: chek fc for errors and set tMsgIfFalse_inf.curLen to
+         // %len(OldMsg_t) because fail() must have been called by old
+         // RPG unit tests.
+         // checkCeeGsiFc(fc: tMsg_inf);
+
+         doFail(getParm(msg: tMsg_inf.curLen)
+                : TWO_CALL_STK_LVL_ABOVE: 'fail');
+       else;
+         // Called by Cobol
+         doFail(getParm(FAIL_NO_MSG: %len(FAIL_NO_MSG))
+                : TWO_CALL_STK_LVL_ABOVE: 'fail');
+       endif;
 
       /end-free
      P                 e
@@ -840,14 +900,19 @@
      P getRealParm_internal_use...
      P                 b                   export
      D                 pi         16384A   varying
-     D  i_value                       2a
+     D  i_value                       2a   options(*omit)
+     D  i_curLen                     10i 0 const
 
-     D oldStyle        s            256a   based(p_value)
-     D newStyle        s          16384a   varying based(p_value)
+     D oldStyle        s                   like(OldMsg_t) based(p_value)
+     D newStyle        s          16384a         varying based(p_value)
+
+       if (%addr(i_value) = *null);
+         return '*N';
+       endif;
 
        p_value = %addr(i_value);
-       if (i_value > x'4000');
-         return %trim(oldStyle);
+       if (i_value > x'4000'); // old style or Cobol
+         return leftStr(%trim(oldStyle): i_curLen);
        else;
          return %trim(newStyle);
        endif;

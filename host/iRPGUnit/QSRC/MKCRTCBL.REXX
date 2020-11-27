@@ -1,10 +1,10 @@
 /* =================================================================== */
-/*  This Rexx script compiles the RUCRTTST command.                    */
+/*  This Rexx script compiles the RUCRTCBL command.                    */
 /*                                                                     */
 /*  Usage:                                                             */
 /*  a) Add the iRPGUnit library to your library list.                  */
 /*  b) Start the Rexx script with the following command:               */
-/*       STRREXPRC SRCMBR(MKCRTTST) SRCFILE(QSRC) PARM(prdLib)         */
+/*       STRREXPRC SRCMBR(MKCRTCBL) SRCFILE(QSRC) PARM(prdLib)         */
 /*     where 'prdLib' is the library containing the RPGUnit            */
 /*     source files.                                                   */
 /*                                                                     */
@@ -27,7 +27,7 @@
 /*   >>PRE-COMPILER<<                                                  */
 /*     >>CRTCMD<<  STRREXPRC SRCMBR(&SM) SRCFILE(&SL/&SF);             */
 /*     >>IMPORTANT<<                                                   */
-/*       >>PARM<< PARM('&LI');                                         */
+/*       >>PARM<< PARM('&LI *LIST');                                   */
 /*     >>END-IMPORTANT<<                                               */
 /*     >>EXECUTE<<                                                     */
 /*   >>END-PRE-COMPILER<<                                              */
@@ -41,7 +41,7 @@
  SIGNAL on SYNTAX
 
  /* The utility that is installed */
- UTILITY = 'RUCRTTST'
+ UTILITY = 'RUCRTCBL'
 
  PARSE ARG prdLib dbgView tgtrls
 
@@ -53,7 +53,7 @@
    "SNDPGMMSG ",
      "MSGID(CPF9898) ",
      "MSGF(QCPFMSG) ",
-     "MSGDTA('Usage: STRREXPRC SRCMBR(MKCRTTST) SRCFILE(QSRC) PARM(prdLib)')",
+     "MSGDTA('Usage: STRREXPRC SRCMBR(MKCRTCBL) SRCFILE(QSRC) PARM(prdLib)')",
      "TOPGMQ(*PRV (*CTLBDY)) ",
      "MSGTYPE(*ESCAPE)"
  end
@@ -82,6 +82,7 @@
  /* -------------------------------------------- */
  "STRREXPRC SRCMBR(MKLLIST) SRCFILE(QLLIST) PARM('"prdLib" "dbgView" "tgtRls"')"
 
+ "CMPMOD MODULE("prdLib"/CRTCBL   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/CRTTST   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/OBJECT   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
@@ -90,15 +91,16 @@
  "CMPMOD MODULE("prdLib"/TAGTST   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/USRSPC   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
- "CRTPGM PGM("prdLib"/RUCRTTST) ",
-        "MODULE("prdLib"/CRTTST     ",
+ "CRTPGM PGM("prdLib"/RUCRTCBL) ",
+        "MODULE("prdLib"/CRTCBL     ",
+                 prdLib"/CRTTST     ",
                  prdLib"/OBJECT     ",
                  prdLib"/PGMMSG     ",
                  prdLib"/SRCMBR     ",
                  prdLib"/STRING     ",
                  prdLib"/TAGTST     ",
                  prdLib"/USRSPC   ) ",
-        "ENTMOD("prdLib"/CRTTST) ",
+        "ENTMOD("prdLib"/CRTCBL) ",
         "BNDSRVPGM("prdLib"/RUTESTCASE) ",
         "ACTGRP(*NEW) ",
         "ALWUPD(*YES) ",
@@ -107,13 +109,13 @@
         "TGTRLS("tgtRls") ",
         "TEXT('iRPGUnit - Create Test Suite.')"
 
- "CRTPNLGRP  PNLGRP("prdLib"/RUCRTTST) SRCFILE(*LIBL/QPNLGRP)"
+ "CRTPNLGRP  PNLGRP("prdLib"/RUCRTCBL) SRCFILE(*LIBL/QPNLGRP)"
 
- "CRTCMD CMD("prdLib"/RUCRTTST) ",
-        "PGM("prdLib"/RUCRTTST) ",
+ "CRTCMD CMD("prdLib"/RUCRTCBL) ",
+        "PGM("prdLib"/RUCRTCBL) ",
         "SRCFILE(*LIBL/QCMD) ",
-        "HLPPNLGRP("prdLib"/RUCRTTST) ",
-        "HLPID(RUCRTTST)"
+        "HLPPNLGRP("prdLib"/RUCRTCBL) ",
+        "HLPID(RUCRTCBL)"
 
  "SNDPGMMSG ",
    "MSGID(CPF9897) ",

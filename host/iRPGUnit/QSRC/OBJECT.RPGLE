@@ -242,7 +242,7 @@
       //  Returns the object description of a given object.
       //----------------------------------------------------------------------
      P retrieveObjectDescription...
-     P                 b                   export
+     P                 b
      D                 pi          4096a
      D  object                             const likeds(Object_t)
      D  objType                      10a   const
@@ -272,7 +272,7 @@
       //  Returns the object description of a given object.
       //----------------------------------------------------------------------
      P retrieveMemberDescription...
-     P                 b                   export
+     P                 b
      D                 pi          4096a
      D  file                               const likeds(Object_t)
      D  member                       10a   const

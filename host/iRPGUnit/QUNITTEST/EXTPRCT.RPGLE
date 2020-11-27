@@ -8,7 +8,7 @@
       //  http://www.eclipse.org/legal/cpl-v10.html
       // ==========================================================================
       // >>PRE-COMPILER<<
-      //   >>CRTCMD<<  RUCRTTST TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
       //   >>IMPORTANT<<
       //     >>PARM<<  MODULE(&LI/EXTPRC    +
       //                      &LI/OBJECT    +
@@ -83,7 +83,7 @@
       /free
 
         if (TestSuite_isDirty('SRVPGM1': 'QTEMP'));
-           runcmd( 'RUCRTTST TSTPGM(QTEMP/SRVPGM1) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/SRVPGM1) SRCFILE(QTESTCASES)' );
         endif;
 
         procList = loadProcList( 'SRVPGM1' );
@@ -109,7 +109,7 @@
       /free
 
         if (TestSuite_isDirty('SRVPGM2': 'QTEMP'));
-           runcmd( 'RUCRTTST TSTPGM(QTEMP/SRVPGM2) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/SRVPGM2) SRCFILE(QTESTCASES)' );
         endif;
 
         procList = loadProcList( 'SRVPGM2' );
@@ -140,7 +140,7 @@
       /free
 
         if (TestSuite_isDirty('SRVPGM2': 'QTEMP'));
-           runcmd( 'RUCRTTST TSTPGM(QTEMP/SRVPGM2) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/SRVPGM2) SRCFILE(QTESTCASES)' );
         endif;
 
         // Setup.

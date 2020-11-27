@@ -40,6 +40,9 @@
        // Source member types
      D MBR_RPGLE       c                   const('RPGLE')
      D MBR_SQLRPGLE    c                   const('SQLRPGLE')
+     D MBR_CBLLE       c                   const('CBLLE')
+     D MBR_SQLCBLLE    c                   const('SQLCBLLE')
+
      D PARM_DBGVIEW    c                   const('DBGVIEW')
 
      D SLASH           c                   u'002F'
@@ -54,6 +57,10 @@
      D stmf_fl_t       s           1024a   template
 
      D MAX_NUM_LIB     c                   250
+
+       // 'Modul created in' message IDs
+     D MOD_CRT_RPG     c                   'RNS9305'
+     D MOD_CRT_CBL     c                   'LNC0899'
 
      D LibL_t          ds                  template
      D  numE                   1      2i 0
@@ -109,6 +116,10 @@
      D  qMod                               likeds(Object_t)
      D  procNm                             like(ProcNm_t)
      D  specNb                       10a
+
+
+      // Old style error message prior to version 2.0.0.
+     D OldMsg_t        s            256a
 
        // MsgInfo_t is and must be defined in member TESTCASE!
 
@@ -225,7 +236,7 @@
        // A sized list of options.
      D Options_t       ds                  based(template) qualified
      D  size                          5i 0
-     D  option                       10a   Dim(25)
+     D  option                       12a   Dim(25)
 
      D HeadToken_t     s             10a   based(template)
      D DbgView_t       s             10a   based(template)

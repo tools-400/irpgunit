@@ -1,5 +1,5 @@
       // ==========================================================================
-      //  iRPGUnit SelfTest - Test RUCRTTST.
+      //  iRPGUnit SelfTest - Test CRTTSTT.
       // ==========================================================================
       //  Copyright (c) 2013-2019 iRPGUnit Project Team
       //  All rights reserved. This program and the accompanying materials
@@ -8,7 +8,7 @@
       //  http://www.eclipse.org/legal/cpl-v10.html
       // ==========================================================================
       // >>PRE-COMPILER<<
-      //   >>CRTCMD<<  RUCRTTST TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
       //   >>IMPORTANT<<
       //     >>PARM<<  MODULE(&LI/CRTTST    +
       //                      &LI/LIBL      +
@@ -210,7 +210,7 @@
                                         noCompileOpt );
         aEqual( 'CRTRPGMOD MODULE(*CURLIB/SYSTYPES) '
               + 'SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES) '
-              + 'OPTION(*SRCSTMT )' : crtRpgModCmd );
+              + 'OPTION(*SRCSTMT)' : crtRpgModCmd );
 
       /end-free
      P                 e
@@ -238,7 +238,7 @@
                                         noCompileOpt );
         aEqual( 'CRTRPGMOD MODULE(*CURLIB/SYSTYPES) '
               + 'SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES) '
-              + 'OPTION(*SRCSTMT *NODEBUGIO )' : crtRpgModCmd );
+              + 'OPTION(*SRCSTMT *NODEBUGIO)' : crtRpgModCmd );
 
       /end-free
      P                 e
@@ -292,8 +292,8 @@
 
         // Control.
 
-        aEqual( 'CRTSRVPGM SRVPGM(*CURLIB/PGM_NAME) MODULE(*CURLIB/PGM_NAME ) '
-              + 'BNDSRVPGM(SRVPGM_LIB/SRVPGM_NM ) DETAIL(''*BASIC'')'
+        aEqual( 'CRTSRVPGM SRVPGM(*CURLIB/PGM_NAME) '
+              + 'BNDSRVPGM((SRVPGM_LIB/SRVPGM_NM)) DETAIL(''*BASIC'')'
               : crtSrvPgmCmd );
 
       /end-free
@@ -330,8 +330,8 @@
 
         // Control.
 
-        aEqual( 'CRTSRVPGM SRVPGM(*CURLIB/PGM_NAME) MODULE(*CURLIB/PGM_NAME ) '
-              + 'BNDSRVPGM(SRVPGM_LIB/SRVPGM_NM SRVPGM_LB2/SRVPGM_NM2 ) '
+        aEqual( 'CRTSRVPGM SRVPGM(*CURLIB/PGM_NAME) '
+              + 'BNDSRVPGM((SRVPGM_LIB/SRVPGM_NM) (SRVPGM_LB2/SRVPGM_NM2)) '
               + 'DETAIL(''*BASIC'')'
               : crtSrvPgmCmd );
 
@@ -366,8 +366,8 @@
 
         // Control.
 
-        aEqual( 'CRTSRVPGM SRVPGM(*CURLIB/PGM_NAME) MODULE(*CURLIB/PGM_NAME ) '
-              + 'BNDDIR(BNDDIR_LIB/BNDDIR_NM ) DETAIL(''*BASIC'')'
+        aEqual( 'CRTSRVPGM SRVPGM(*CURLIB/PGM_NAME) '
+              + 'BNDDIR(BNDDIR_LIB/BNDDIR_NM) DETAIL(''*BASIC'')'
               : crtSrvPgmCmd );
 
       /end-free
@@ -402,8 +402,8 @@
 
         // Control.
 
-        aEqual( 'CRTSRVPGM SRVPGM(*CURLIB/PGM_NAME) MODULE(*CURLIB/PGM_NAME ) +
-                 BNDDIR(BNDDIR_NM ) DETAIL(''*BASIC'')'
+        aEqual( 'CRTSRVPGM SRVPGM(*CURLIB/PGM_NAME) '
+              + 'BNDDIR(BNDDIR_NM) DETAIL(''*BASIC'')'
               : crtSrvPgmCmd );
 
       /end-free
@@ -437,8 +437,8 @@
 
         // Control.
 
-        aEqual( 'CRTSRVPGM SRVPGM(*CURLIB/PGM_NAME) MODULE(*CURLIB/PGM_NAME ) '
-              + 'OPTION(*DUPPROC ) DETAIL(''*BASIC'')'
+        aEqual( 'CRTSRVPGM SRVPGM(*CURLIB/PGM_NAME) '
+              + 'OPTION(*DUPPROC) DETAIL(''*BASIC'')'
               : crtSrvPgmCmd );
 
       /end-free
@@ -470,8 +470,8 @@
 
         // Control.
 
-        aEqual( 'CRTSRVPGM SRVPGM(*CURLIB/PGM_NAME) MODULE(*CURLIB/PGM_NAME ) '
-              + 'DETAIL(''*BASIC'') EXPORT(*ALL)'
+        aEqual( 'CRTSRVPGM SRVPGM(*CURLIB/PGM_NAME) '
+              + 'EXPORT(*ALL) DETAIL(''*BASIC'')'
               : crtSrvPgmCmd );
 
       /end-free
@@ -503,7 +503,7 @@
 
         // Control.
 
-        aEqual( 'CRTSRVPGM SRVPGM(*CURLIB/PGM_NAME) MODULE(*CURLIB/PGM_NAME ) '
+        aEqual( 'CRTSRVPGM SRVPGM(*CURLIB/PGM_NAME) '
               + 'ACTGRP(QTEST) DETAIL(''*BASIC'')'
               : crtSrvPgmCmd );
 
@@ -536,7 +536,7 @@
 
         // Control.
 
-        aEqual( 'CRTSRVPGM SRVPGM(*CURLIB/PGM_NAME) MODULE(*CURLIB/PGM_NAME ) '
+        aEqual( 'CRTSRVPGM SRVPGM(*CURLIB/PGM_NAME) '
               + 'TEXT(''Object ''''description'''' text'') DETAIL(''*BASIC'')'
               : crtSrvPgmCmd );
 

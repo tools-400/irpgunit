@@ -15,11 +15,12 @@
      /*       >>PARM<< VLDCKR(&LI/RUCALLTSTV);                                */
      /*       >>PARM<< HLPPNLGRP(&LI/RUCALLTST);                              */
      /*       >>PARM<< HLPID(RUCALLTST);                                      */
+     /*       >>PARM<< OPTION(*EVENTF);                                       */
      /*     >>END-IMPORTANT<<                                                 */
      /*     >>EXECUTE<<                                                       */
      /*   >>END-PRE-COMPILER<<                                                */
      /* ===================================================================== */
-             CMD        PROMPT('iRPGUnit - Execute Test Suite')
+             CMD        PROMPT('Execute Test Suite')
 
              PARM       KWD(TSTPGM)                          +
                         TYPE(OBJ)                            +

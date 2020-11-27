@@ -38,7 +38,8 @@
  /* Update programs */
  "UPDPGM PGM("library"/RUCALLTST) MODULE(*NONE) SRVPGMLIB("library")"
 
- "UPDPGM PGM("library"/RUCRTTST) MODULE(*NONE) SRVPGMLIB("library")"
+ "UPDPGM PGM("library"/RUCRTRPG) MODULE(*NONE) SRVPGMLIB("library")"
+ "UPDPGM PGM("library"/RUCRTCBL) MODULE(*NONE) SRVPGMLIB("library")"
 
  "UPDPGM PGM("library"/RUPGMRMT) MODULE(*NONE) SRVPGMLIB("library")"
 
@@ -50,8 +51,13 @@
    "HLPPNLGRP("library"/RUCALLTST) ",
    "VLDCKR("library"/RUCALLTSTV)"
 
- "CHGCMD CMD("library"/RUCRTTST) PGM("library"/RUCRTTST) ",
-   "HLPPNLGRP("library"/RUCRTTST)"
+ "CHGCMD CMD("library"/RUCRTRPG) PGM("library"/RUCRTRPG) ",
+   "HLPPNLGRP("library"/RUCRTRPG)"
+ "CHGCMD CMD("library"/RUCRTCBL) PGM("library"/RUCRTCBL) ",
+   "HLPPNLGRP("library"/RUCRTCBL)"
+
+ "CHGCMD CMD("library"/RUCRTTST) PGM("library"/RUCRTRPG) ",
+   "HLPPNLGRP("library"/RUCRTRPG)"
 
  /* Done */
  "SNDPGMMSG ",

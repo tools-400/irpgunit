@@ -1,5 +1,5 @@
      /* ===================================================================== */
-     /*  iRPGUnit - Create Test Suite.                                        */
+     /*  iRPGUnit - Create RPG Test Suite.                                    */
      /* ===================================================================== */
      /*  Copyright (c) 2013-2019 iRPGUnit Project Team                        */
      /*  All rights reserved. This program and the accompanying materials     */
@@ -11,14 +11,15 @@
      /*     >>CRTCMD<<  CRTCMD        CMD(&LI/&OB) +                          */
      /*                               SRCFILE(&SL/&SF) SRCMBR(&SM);           */
      /*     >>IMPORTANT<<                                                     */
-     /*       >>PARM<< PGM(&LI/RUCRTTST);                                     */
-     /*       >>PARM<< HLPPNLGRP(&LI/RUCRTTST);                               */
-     /*       >>PARM<< HLPID(RUCRTTST);                                       */
+     /*       >>PARM<< PGM(&LI/RUCRTRPG);                                     */
+     /*       >>PARM<< HLPPNLGRP(&LI/RUCRTRPG);                               */
+     /*       >>PARM<< HLPID(RUCRTRPG);                                       */
+     /*       >>PARM<< OPTION(*EVENTF);                                       */
      /*     >>END-IMPORTANT<<                                                 */
      /*     >>EXECUTE<<                                                       */
      /*   >>END-PRE-COMPILER<<                                                */
      /* ===================================================================== */
-             CMD        PROMPT('iRPGUnit - Create Test Suite')
+             CMD        PROMPT('Create RPG Test Suite')
 
              PARM       KWD(TSTPGM)                          +
                         TYPE(PGM)                            +
@@ -48,7 +49,7 @@
 
              PARM       KWD(COPTION)                         +
                           TYPE(*CHAR)                        +
-                          LEN(10)                            +
+                          LEN(12)                            +
                           MAX(10)                            +
                           DFT(*SRCSTMT)                      +
                           RSTD(*YES)                         +
@@ -100,7 +101,7 @@
 
              PARM       KWD(BOPTION)                         +
                           TYPE(*CHAR)                        +
-                          LEN(10)                            +
+                          LEN(12)                            +
                           MAX(2)                             +
                           RSTD(*YES)                         +
                           VALUES(*DUPPROC                    +
@@ -138,7 +139,7 @@
 
              PARM       KWD(POPTION)                         +
                           TYPE(*CHAR)                        +
-                          LEN(10)                            +
+                          LEN(12)                            +
                           MAX(9)                             +
                           DFT(*SYSVAL)                       +
                           RSTD(*YES)                         +

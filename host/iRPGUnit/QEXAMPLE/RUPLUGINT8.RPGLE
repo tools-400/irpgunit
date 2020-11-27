@@ -9,7 +9,7 @@
       //  http://www.eclipse.org/legal/cpl-v10.html
       // ==========================================================================
       //    >>PRE-COMPILER<<
-      //      >>CRTCMD<<  RUCRTTST    TSTPGM(&LI/&OB) +
+      //      >>CRTCMD<<  RUCRTRPG    TSTPGM(&LI/&OB) +
       //                              SRCFILE(&SL/&SF) SRCMBR(&SM);
       //      >>IMPORTANT<<
       //        >>PARM<< COPTION(*SRCSTMT *EVENTF);

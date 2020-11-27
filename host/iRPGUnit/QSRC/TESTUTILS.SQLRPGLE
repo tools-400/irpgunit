@@ -30,6 +30,7 @@
 
       /include qinclude,TESTUTILS
       /include qinclude,MILIB
+      /include qinclude,OBJECT
       /include qinclude,PGMMSG
       /include qinclude,SYSTEMAPI
 
