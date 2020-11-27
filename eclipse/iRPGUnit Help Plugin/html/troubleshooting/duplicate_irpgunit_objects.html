@@ -21,7 +21,7 @@ This page explain why the following error message is shown and how to solve the 
 The reason for this problem is that the iRPGUnit start program RUCALLTST or RUPGMRMT uses
 a different RUCALLTST service as your test suite. For example, that happens, when:
 <ul>
-<li>The iRPGUnit start program binds to RUCALLTST using a hard-coded library specified at the CRTSRVPGM command.</li>
+<li>The iRPGUnit start program binds to RUCALLTST using a hard-coded library specified at the CRTPGM command.</li>
 <li>And your test suite service program binds to RUCALLTST using the library list.</li>
 <il>And the product library specfied on the iRPGUnit preference page is different from the one in library list of the RSE connection.
 </ul>

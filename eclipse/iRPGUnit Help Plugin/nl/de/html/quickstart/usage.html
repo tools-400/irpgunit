@@ -25,7 +25,7 @@ zumindest aber nicht exportiert werden dürfen.
 Um die RPGUnit Funktionen nutzen zu können, muss das Modul mit den Testfällen 
 das copy book <code>TESTCASE</code> einbinden:
 <code class="indent"><pre>
- /copy RPGUNIT1,/copy RPGUNIT1,TESTCASE                     RPGUnit
+ /include qinclude,TESTCASE                  iRPGUnit Test Suite
 </pre></code>
 <p>
 <u>Beispiele für Testfälle</u>
@@ -42,7 +42,7 @@ kompiliert.
 <p class="indent">
 <code>RUCRTTST TSTPGM(RPGUNIT/RUPLUGINT1) SRCFILE(RPGUNITT1)</code></p>
 <p>
-Ein Beispiel für eine RPGUnit Test Suite enthält die Teildatei <a href="../appendix/assets/RPGUnitTestSuite.txt"><code>RPGUNIT1.TEMPLATE</code></a>. Bei der 
+Ein Beispiel für eine RPGUnit Test Suite enthält die Teildatei <a href="../appendix/assets/RPGUnitRPGTestSuite.txt"><code>QSRC.TEMPLATE</code></a>. Bei der 
 Ausführung dieser Test Suite wird eine Druckausgabe mit einer Darstellung des Programmablaufs 
 erstellt. 
 <p>

@@ -13,34 +13,36 @@
 <p class="indent">
 <code>assertMessageQueueContains( userOrQueue : library : [msgId : [msgText : [msgHelp : timeLimit );</code>
 </p>
-<b>Description:</b>
+<b>Beschreibung:</b>
 <p class="indent">
-Checks whether a given message queue contains the specified message between NOW and <i>timeLimit</i>. The
-message is identified by any combination of ID, message text or message help. Unused selection parameters
-must be omitted.
+Prüft, ob sich in einer gegebenen Nachrichtenwarteschlange eine spezielle Nachricht zwischen JETZT und
+<i>timeLimit</i> befindet. Die gesuchte Nachricht wird anhand einer Kombination aus ID, Nachrichtentext
+oder Hilfetext identifiziert. Nicht verwendete Auswahlparameter müssen ausgelassen werden. 
 </p>
 <p class="indent">
-Message ID can be set to <i>*EMPTY</i> to test whether a message queue is empty. All other parameters must be omitted.<br>
-Message text and message help can be specified as *generic* strings values.<br/>
-The value of <i>timeLimit</i> should be created with <a href="./getFullTimestamp.html">getFullTimeStamp()</a>.
+Die Nachrichten-ID kann auch mit <i>*EMPTY</i>, um zu prüfen, ob die Nachrichtenwarteschlange leer ist. Alle
+weiteren Parameter müssen für diesen Fall ausgelassen werden.<br>
+Nachrichtentext und Hilfetext könnenals *generische* Zeichenkette angegeben werden.<br/>
+Der Wert für <i>timeLimit</i> sollte mit Hilfe der Funktion <a href="./getFullTimestamp.html">getFullTimeStamp()</a>
+gesetzt werden.
 </p>
-<b>Return value:</b>
+<b>Rückgabewert:</b>
 <p class="indent">
 void
 </p>
-<b>Example 1:</b>
+<b>Beispiel 1:</b>
 <p>
 <code><pre class="indent">
 testStartTime = getFullTimeStamp();
-<span class="r-cmt">// run the test, that is expected to add the message to the message queue</span>
+<span class="r-cmt">// Ausführen des Tests, der die gesuchte Nachricht in die Nachrichtenwarteschlange stellen soll</span>
 assertMessageQueueContains( 'QMSGQT' : 'QTEMP' : *omit : 'MSGQT - iRPGUnit' : *omit : testStartTime );
 </pre></code>
 </p>
-<b>Example 2:</b>
+<b>Beispiel 2:</b>
 <p>
 <code><pre class="indent">
 testStartTime = getFullTimeStamp();
-<span class="r-cmt">// run the test, that is expected to add no messages to the message queue</span>
+<span class="r-cmt">// Ausführen des Tests, nachdem die Nachrichtenwarteschlange leer sein soll</span>
 assertMessageQueueContains( 'QMSGQT' : 'QTEMP' : '*EMPTY' : *omit : *omit : testStartTime );
 </pre></code>
 </p>

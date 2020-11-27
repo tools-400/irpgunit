@@ -1,0 +1,122 @@
+      *=====================================================================*
+      *  Empty Unit Test Case (Cobol).                                      *
+      *=====================================================================*
+      *  Command to create the service program:                             *
+      *  RUCRTCBL TSTPGM(RPGUNIT/TEMPLCBL) SRCFILE(RPGUNIT/QSRC)            *
+      *=====================================================================*
+      *  Tools/400 STRPREPRC instructions:                                  *
+      *   >>PRE-COMPILER<<                                                  *
+      *     >>CRTCMD<<  RUCRTCBL    TSTPGM(&LI/&OB) +                       *
+      *                             SRCFILE(&SL/&SF) SRCMBR(&SM);           *
+      *     >>COMPILE<<                                                     *
+      *       >>PARM<< COPTION(*EVENTF);                                    *
+      *       >>PARM<< DBGVIEW(*LIST);                                      *
+      *       >>PARM<< BNDDIR(*N);                                          *
+      *     >>END-COMPILE<<                                                 *
+      *     >>EXECUTE<<                                                     *
+      *   >>END-PRE-COMPILER<<                                              *
+      *=====================================================================*
+      *  Compile options:                                                   *
+      *    *SrcStmt       - Assign SEU line numbers when compiling the      *
+      *                     source member. This option is required to       *
+      *                     position the LPEX editor to the line in error   *
+      *                     when the source member is opened from the       *
+      *                     RPGUnit view.                                   *
+      *    *NoDebugIO     - Do not generate breakpoints for input and       *
+      *                     output specifications. Optional but useful.     *
+      *=====================================================================*
+
+      *=====================================================================*
+      *  Test assert() for a TRUE condition (1 parameter passed).           *
+      *=====================================================================*
+       PROCESS  NOMONOPRC.
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TEST_TRUE.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+         Special-Names.
+          Linkage Type Is Procedure For "assert"
+                       Using All Described
+          Linkage Type Is Procedure For "fail"
+                       Using All Described.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01  x Pic x(1) Value "1".
+       PROCEDURE DIVISION.
+       TEST_TRUE.
+           if x = "1"
+              Call "assert" Using By Content B"1"
+           else
+              Call "assert" Using By Content B"0"
+                                  By Content "'x' must be set to '1'".
+           GOBACK.
+       END PROGRAM TEST_TRUE.
+
+      *=====================================================================*
+      *  Test assert() for a FALSE condition (2 parameters passed).         *
+      *=====================================================================*
+       PROCESS  NOMONOPRC.
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TEST_FALSE.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+         Special-Names.
+          Linkage Type Is Procedure For "assert"
+                       Using All Described
+          Linkage Type Is Procedure For "fail"
+                       Using All Described.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01  x Pic x(1) Value "3".
+       PROCEDURE DIVISION.
+       TEST_FALSE.
+           if x = "2"
+              Call "assert" Using By Content B"1"
+           else
+              Call "assert" Using By Content B"0"
+                                  By Content "'x' must be set to '2'".
+           GOBACK.
+       END PROGRAM TEST_FALSE.
+
+      *=====================================================================*
+      *  Test fail(), 0 parameters passed.                                  *
+      *=====================================================================*
+       PROCESS  NOMONOPRC.
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TEST_FAIL0.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+         Special-Names.
+          Linkage Type Is Procedure For "assert"
+                       Using All Described
+          Linkage Type Is Procedure For "fail"
+                       Using All Described.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       PROCEDURE DIVISION.
+       TEST_FAIL0.
+           Call "fail".
+           GOBACK.
+       END PROGRAM TEST_FAIL0.
+
+      *=====================================================================*
+      *  Test fail(), 1 parameter passed.                                   *
+      *=====================================================================*
+       PROCESS  NOMONOPRC.
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TEST_FAIL1.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+         Special-Names.
+          Linkage Type Is Procedure For "assert"
+                       Using All Described
+          Linkage Type Is Procedure For "fail"
+                       Using All Described.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       PROCEDURE DIVISION.
+       TEST_FAIL1.
+           Call "fail" Using By Content "Successfully called fail()".
+           GOBACK.
+       END PROGRAM TEST_FAIL1.
+

@@ -23,7 +23,7 @@ case.
 In order to use RPGUnit procedures you need to add copy book <code>TESTCASE</code> 
 to your source member:
 <code class="indent"><pre>
- /copy RPGUNIT1,/copy RPGUNIT1,TESTCASE                     RPGUnit Utility
+ /include qinclude,TESTCASE                  iRPGUnit Test Suite
 </pre></code>
 <p>
 <u>Test case examples</u>
@@ -39,7 +39,7 @@ A test suite (service program) is created with command <code>RUCRTTST</code>.
 <p class="indent">
 <code>RUCRTTST TSTPGM(RPGUNIT/RUPLUGINT1) SRCFILE(RPGUNITT1)</code></p>
 <p>
-Member <a href="../appendix/assets/RPGUnitTestSuite.txt"><code>RPGUNIT1.TEMPLATE</code></a> is 
+Member <a href="../appendix/assets/RPGUnitRPGTestSuite.txt"><code>QSRC.TEMPLATE</code></a> is 
 an example of a test suite. It does not do any harm but produces a spooled file with the
 execution flow. 
 <p>

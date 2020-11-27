@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Error: Duplicate iRPGUnit Objects</title>
+</head>
+
+<body>
+<h1>Error: Duplicate iRPGUnit Objects</h1>
+<p>
+<h2>Symptom</h1>
+<p>
+Nachfolgend wird erklärt, warum folgende Fehlermeldung erscheint und wie das Prolbem behoben werden kann:
+<p class="indent">
+<img class="noborder" src="./assets/duplicate_irpgunit_objects_message.png">
+<p>
+<h2>Grund</h1>
+<p>
+Der Grund für dieses Problem ist, dass das Startprogramm RUCALLTST oder RUPGMRMT ein
+anderes Serviceprogramm RUTESTCASE verwendet, als ihr Test Suite Serviceprogramm. Die
+kann beispielsweise passieren, wenn:
+<ul>
+<li>Das iRPGUnit Startprogram unter Angabe einer Bibliothek zum Binden des RUCALLTST Serviceprogramms mit CRTPGM erstellt worden ist.</li>
+<li>Und ihr Test Suite Serviceprogramm die Bibliotheksliste zum Binden von RUTESTCASE verwendet.</li>
+<il>Und die auf der Einstellungsseite angegebene Produktbibliothek sich von der in der Bibliotheksliste befindlichen Produktbibliothek unterscheidet.
+</ul>
+<p>
+In diesem Fall sehen die Beziehungen der Objekte wie folgt aus:
+<p>
+<img class="noborder" src="./assets/duplicate_irpgunit_objects.png">
+<p>
+<h2>Lösung</h1>
+<p>
+Für die Lösung des Problems existieren zwei Ansätze:
+<p>
+<ol>
+<li>Ändern sie die RSE Verbindung und ersetzten sie die dort angegebene iRPGUnit Bibliothek mit der Bibliothek auf der Einstellungsseite.</li>
+<li>Öffnen sie die Einstellungsseite und ändern sie die Produktbibliothek auf <i>*LIBL</i>.</li>
+</ol>
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

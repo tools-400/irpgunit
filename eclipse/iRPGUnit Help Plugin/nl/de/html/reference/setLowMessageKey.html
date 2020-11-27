@@ -13,22 +13,22 @@
 <p class="indent">
 <code>setLowMessageKey( [ 'msgKey' );</code>
 </p>
-<b>Description:</b>
+<b>Beschreibung:</b>
 <p class="indent">
-Set the starting point for retrieving messages from the job log starting
-with the message after the message identified by the specified message key.<br>
-If parameter <i>msgKey</i> is omitted, a dummy message is appended to the
-job log and its key is returned.
+Setzt den Startpunkt zum Abrufen von Nachrichten aus dem Jobprotokoll auf
+den angegebenen Nachrichtenschlüssel. Wenn der Parameter <i>msgKey</i>
+ausgelassen wird, wird dem Jobprotokoll eine Dummy Nachricht hinzugefügt,
+um den Startpunkt zu markieren. 
 </p>
-<b>Return value:</b>
+<b>Rückgabewert:</b>
 <p class="indent">
 void
 </p>
-<b>Example:</b>
+<b>Beispiel:</b>
 <p>
 <code><pre class="indent">
-<span class="r-cmt">// Sets the starting point for retrieving</span>
-<span class="r-cmt">// messages from the job beyond <i>now</i>.</span>
+<span class="r-cmt">// Setzt den Startpunkt zum Abrufen von</span>
+<span class="r-cmt">// Nachrichten aus dem Jobprotokoll auf <i>Jetzt</i>.</span>
 
 setLowMessageKey();
 

@@ -16,16 +16,10 @@
         <topic href="html/reference/fail.html"                 label="fail"   />
         <topic href="html/reference/getMonitoredMessage.html"  label="getMonitoredMessage"/>
         <topic href="html/reference/assertJobLogContains.html" label="assertJobLogContains" />
+        <topic href="html/reference/assertMessageQueueContains.html" label="assertMessageQueueContains" />
     </topic>
-    <topic label="Weitere Funktionen">
+    <topic label="Hilfsfunktionen">
         <topic href="html/reference/getFullTimeStamp.html"     label="getFullTimeStamp" />
-    </topic>
-    <topic href="html/reference/selftest.html"                 label="Selbsttest">
-        <topic href="html/reference/getAssertFailEvt.html"     label="getAssertFailEvt"   />
-        <topic href="html/reference/getAssertFailEvtLong.html" label="getAssertFailEvtLong" />
-        <topic href="html/reference/getAssertCalled.html"      label="getAssertCalled"    />
-        <topic href="html/reference/clearAssertCounter.html"   label="clearAssertCounter" />
-        <topic href="html/reference/clrAssertFailEvt.html"     label="clrAssertFailEvt"   />
     </topic>
     <topic label="CL Befehle">
         <topic href="html/reference/CLRPFM.html"               label="CLRPFM"    />
@@ -35,5 +29,14 @@
         <topic href="html/reference/displayStatusMessage.html" label="displayStatusMessage" />
         <topic href="html/reference/restoreStatusMessage.html" label="restoreStatusMessage" />
         <topic href="html/reference/clearStatusMessage.html"   label="clearStatusMessage" />
+        <topic href="html/reference/getMemberType.html"        label="getMemberType" />
+        <topic href="html/reference/setLowMessageKey.html"     label="setLowMessageKey" />
+    </topic>
+    <topic href="html/reference/selftest.html"                 label="Selbsttest">
+        <topic href="html/reference/getAssertFailEvt.html"     label="getAssertFailEvt"   />
+        <topic href="html/reference/getAssertFailEvtLong.html" label="getAssertFailEvtLong" />
+        <topic href="html/reference/getAssertCalled.html"      label="getAssertCalled"    />
+        <topic href="html/reference/clearAssertCounter.html"   label="clearAssertCounter" />
+        <topic href="html/reference/clrAssertFailEvt.html"     label="clrAssertFailEvt"   />
     </topic>
 </toc>
