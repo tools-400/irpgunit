@@ -2,7 +2,7 @@
       *  Empty Unit Test Case (Cobol).                                      *
       *=====================================================================*
       *  Command to create the service program:                             *
-      *  RUCRTCBL TSTPGM(RPGUNIT/TEMPLATE) SRCFILE(RPGUNIT/QSRC)            *
+      *  RUCRTCBL TSTPGM(RPGUNIT/TEMPLCBL) SRCFILE(RPGUNIT/QSRC)            *
       *=====================================================================*
       *  Tools/400 STRPREPRC instructions:                                  *
       *   >>PRE-COMPILER<<                                                  *
@@ -24,10 +24,6 @@
       *                     RPGUnit view.                                   *
       *    *NoDebugIO     - Do not generate breakpoints for input and       *
       *                     output specifications. Optional but useful.     *
-      *=====================================================================*
-      * LNC0899:                                                            *
-      * Modul TEST_1 in Bibliothek RPGUNITDVP am 24.11.20 um 08:34:51 ...   *
-      * Modul TEST_2 in Bibliothek RPGUNITDVP am 24.11.20 um 08:34:51 ...   *
       *=====================================================================*
 
       *=====================================================================*
