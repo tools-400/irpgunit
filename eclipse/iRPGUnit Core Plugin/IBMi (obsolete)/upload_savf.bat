@@ -23,8 +23,6 @@ for %%f in (*.SAVF) do (
 )
 if not "%count%"=="1" (goto tooMuchFiles)
 
-
-
 :askUser
 cls
 echo *************************************************************
