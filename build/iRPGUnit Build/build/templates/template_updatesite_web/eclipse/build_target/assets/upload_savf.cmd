@@ -82,7 +82,7 @@ goto end
 echo.
 echo Uploads the RPGUNIT save file to your iSeries.
 echo.
-echo. upload_savf.bat HOST USER PASSWORD
+echo. upload_savf.cmd HOST USER PASSWORD
 echo.
 echo      HOST = FTP host you want to upload to (as400.example.com)
 echo      USER = UserID to log in with

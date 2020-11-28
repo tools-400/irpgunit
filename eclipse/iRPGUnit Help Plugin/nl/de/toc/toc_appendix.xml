@@ -4,4 +4,5 @@
 <toc label="Anhang" link_to="toc/toc.xml#appendix">
     <topic href="html/appendix/example_1.html"  label="iRPGUnit RPG Beispiel" />
     <topic href="html/appendix/example_2.html"  label="iRPGUnit Cobol Beispiel" />
+    <topic href="html/appendix/upload_save_file.html"  label="Hochladen Sicherungsdatei .cmd" />
 </toc>

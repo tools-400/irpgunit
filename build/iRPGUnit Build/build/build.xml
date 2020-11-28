@@ -303,7 +303,7 @@
 	      Erstellt eine neue Update-Site.
 	      Alle alten Dateien werden überschrieben, bzw. gelöscht.
 	     ============================================================= -->
-	<target name="build" depends="checkBuildTarget, clean, updateVersionNumber, createTagFile" description="Step 1">
+	<target name="build" depends="checkBuildTarget, clean, updateVersionNumber, updateHelpProject, createTagFile" description="Step 1">
 
 		<echo>+------------------------------------------------------+</echo>
 		<echo>|  Finished RPGUnit build ${build.version}             |</echo>
@@ -779,7 +779,7 @@
 		<mkdir dir="${temp.dir.local_updatesite}/plugins" />
 		<mkdir dir="${temp.dir.local_updatesite}/Server" />
 		
-		<copy file="${build.template.dir.web.assets}/upload_savf.bat" todir="${temp.dir.local_updatesite}/Server" />
+		<copy file="${build.template.dir.web.assets}/upload_savf.cmd" todir="${temp.dir.local_updatesite}/Server" />
 		
 		<copy todir="${temp.dir.local_updatesite}/features">
 			<fileset dir="${site.dir}/features" />
@@ -953,6 +953,23 @@
 		<echo>Done.</echo>
 
 	</target>
+
+	<!--
+    * =====================================================================
+    *   Updates the help project woth the following files:
+    *     - upload_savf.cmd
+    * ===================================================================== -->
+	<target name="updateHelpProject" depends="validateVersionNumber">
+
+		<echo>Updating version number to: ${build.version} ...</echo>
+
+		<copy file="${build.template.dir.web.assets}/upload_savf.cmd" todir="${workspace.home}/${build.help.projects}/html/appendix/assets" />
+
+		<antcall target="refreshProjects" />
+
+	<echo>Done.</echo>
+
+</target>
 
 	<!--
     * =====================================================================
