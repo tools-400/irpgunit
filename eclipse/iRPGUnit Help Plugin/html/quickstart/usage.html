@@ -35,9 +35,9 @@ to your source member:
 </ul>
 <p>
 One or more test cases make a test suite. In RPG we use a service program for that.
-A test suite (service program) is created with command <code>RUCRTTST</code>.
+A test suite (service program) is compiled with command <code>RUCRTRPG</code>.
 <p class="indent">
-<code>RUCRTTST TSTPGM(RPGUNIT/RUPLUGINT1) SRCFILE(RPGUNITT1)</code></p>
+<code>RUCRTRPG TSTPGM(RPGUNIT/RUPLUGINT1) SRCFILE(RPGUNITT1)</code></p>
 <p>
 Member <a href="../appendix/assets/RPGUnitRPGTestSuite.txt"><code>QSRC.TEMPLATE</code></a> is 
 an example of a test suite. It does not do any harm but produces a spooled file with the
@@ -49,8 +49,8 @@ execution flow.
                    order to get back your compile result in RDi. Furthermore parameter SRCMBR
                    has to be set to the name of source member to enable RDi to load the compile 
                    result. For example:<p>
-                   <code><u>RPGLE:</u><br>RUCRTTST TSTPGM(&O/&N) SRCFILE(&L/&F) SRCMBR(&N) COPTION(*SRCSTMT *EVENTF) DBGVIEW(*LIST)
-                   <br><br><u>SQLRPGLE:</u><br>RUCRTTST TSTPGM(&O/&N) SRCFILE(&L/&F) SRCMBR(&N) POPTION(*EVENTF) COMPILEOPT('DBGVIEW(*LIST)')</code><p>
+                   <code><u>RPGLE:</u><br>RUCRTRPG TSTPGM(&O/&N) SRCFILE(&L/&F) SRCMBR(&N) COPTION(*SRCSTMT *EVENTF) DBGVIEW(*LIST)
+                   <br><br><u>SQLRPGLE:</u><br>RUCRTRPG TSTPGM(&O/&N) SRCFILE(&L/&F) SRCMBR(&N) POPTION(*EVENTF) COMPILEOPT('DBGVIEW(*LIST)')</code><p>
                    It is also recommended to specify <code>*SRCSTMT</code>, to directly jump to the failed source 
                    statement, when double-clicking an error in the iRPGUnit view.</td>
 </tr>

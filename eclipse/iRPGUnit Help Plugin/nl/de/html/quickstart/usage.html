@@ -37,10 +37,10 @@ das copy book <code>TESTCASE</code> einbinden:
 </ul>
 <p>
 Die Prozeduren(n) werden dann in einem Modul zu einer Test Suite 
-zusammengefasst und mit dem Befehl <code>RUCRTTST</code> zu einem Serviceprogramm 
+zusammengefasst und mit dem Befehl <code>RUCRTRPG</code> zu einem Serviceprogramm 
 kompiliert.
 <p class="indent">
-<code>RUCRTTST TSTPGM(RPGUNIT/RUPLUGINT1) SRCFILE(RPGUNITT1)</code></p>
+<code>RUCRTRPG TSTPGM(RPGUNIT/RUPLUGINT1) SRCFILE(RPGUNITT1)</code></p>
 <p>
 Ein Beispiel für eine RPGUnit Test Suite enthält die Teildatei <a href="../appendix/assets/RPGUnitRPGTestSuite.txt"><code>QSRC.TEMPLATE</code></a>. Bei der 
 Ausführung dieser Test Suite wird eine Druckausgabe mit einer Darstellung des Programmablaufs 
@@ -51,7 +51,8 @@ erstellt.
 <td class="notice">Hinweis: Um das Ergebnis einer Umwandlung in RDi zu erhalten, muss der Parameter COPTION 
                    die Option *EVENTF enthalten. Ausserdem muss der Parameter SRCMBR die Quellenteildatei 
                    bennen, damit RDi die Umwandlungsergebnisse laden kann. Zum Beispiel:<p>
-                   <code>RUCRTTST TSTPGM(&O/&N) SRCFILE(&L/&F) SRCMBR(&N) COPTION(*SRCSTMT *EVENTF)</code><p>
+                   <code><u>RPGLE:</u><br>RUCRTRPG TSTPGM(&O/&N) SRCFILE(&L/&F) SRCMBR(&N) COPTION(*SRCSTMT *EVENTF) DBGVIEW(*LIST)
+                   <br><br><u>SQLRPGLE:</u><br>RUCRTRPG TSTPGM(&O/&N) SRCFILE(&L/&F) SRCMBR(&N) POPTION(*EVENTF) COMPILEOPT('DBGVIEW(*LIST)')</code><p>
                    Weiterhin wird empfohlen *SRCSTMT anzugeben, um direkt mit einem Doppelclick aus der 
                    RPGUnit Ansicht an die fehlerhafte Programmzeile springen zu können.</td>
 </tr>
