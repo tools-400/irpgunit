@@ -207,6 +207,9 @@
                           TOFILE(&LIB/&QCMD) FROMMBR(RUCALLTST) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QCMD) +
+                          TOFILE(&LIB/&QCMD) FROMMBR(RUCRTCBL) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QCMD) +
                           TOFILE(&LIB/&QCMD) FROMMBR(RUCRTRPG) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
 
@@ -236,12 +239,6 @@
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
                           TOFILE(&LIB/&QINCLUDE) FROMMBR(COPYRIGHT) +
-                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
-             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
-                          TOFILE(&LIB/&QINCLUDE) FROMMBR(CRTCBL) +
-                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
-             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
-                          TOFILE(&LIB/&QINCLUDE) FROMMBR(CRTRPG) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
                           TOFILE(&LIB/&QINCLUDE) FROMMBR(CRTTST) +
@@ -376,6 +373,9 @@
                           TOFILE(&LIB/&QPNLGRP) FROMMBR(RUCALLTST) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QPNLGRP) +
+                          TOFILE(&LIB/&QPNLGRP) FROMMBR(RUCRTCBL) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QPNLGRP) +
                           TOFILE(&LIB/&QPNLGRP) FROMMBR(RUCRTRPG) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
 
@@ -402,6 +402,12 @@
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSRC) +
                           TOFILE(&LIB/&QSRC) FROMMBR(CMDRUNV) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(CRTCBL) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(CRTRPG) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSRC) +
                           TOFILE(&LIB/&QSRC) FROMMBR(CRTTST) +
@@ -459,6 +465,9 @@
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSRC) +
                           TOFILE(&LIB/&QSRC) FROMMBR(TEMPLATE) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(TEMPLCBL) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSRC) +
                           TOFILE(&LIB/&QSRC) FROMMBR(TEMPLSQL) +
