@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+	<title>Cobol</title>
+</head>
+
+<body>
+<h1>Cobol</h1>
+Cobol wird seit der Version 4.0 unterstützt. Bitte lesen sie auch die Seite
+<a href="../usage.html"><i>Anwendung</i></a>, um ein vollständiges Bild der
+Anwendung von Unit Tests zu bekommen.
+<p>
+Zur Zeit werden nur folgende Prozeduren unterstützt:
+<ul>
+<li><a href="../../reference/assert.html">assert()</a></li>
+<li><a href="../../reference/fail.html">fail()</a></li>
+</ul>
+<p>
+Gerne ermöglichen wir den Aufruf weiterer Prozeduren, sofern der Bedarf dafür
+vorhanden ist. Stellen sie hierzu bitte ein Ticket
+auf <a href="https://sourceforge.net/p/irpgunit/tickets/">SourceForge</a> ein.
+</ol>
+<h2>Erstellen von Testfällen</h2>
+Cobol Test Suites werden analog zu RPG erstellt. Abweichend zu RPG kommt hierfür der Befehl
+<code>RUCRTCBL</code> zum Einsatz:
+<p class="indent">
+<code>RUCRTCBL TSTPGM(RPGUNIT/RUPLUGINT1) SRCFILE(QEXAMPLE)</code></p>
+<p>
+Im Gegensatz zu RPG kann ein Cobol Modul nur eine Prozedur exportieren. Diese Limitierung
+kann ein Stück weit aufgehoben werden, indem das Modul mit dem Parameter <code>MODULE(*PGMID)</code>
+kompiliert wird, um aus einer Quelle mehrere Module zu erstellen. Siehe hierzu mitgelieferte Cobol
+Beispiel <a href="../../appendix/example_2.html"><i>TEMPLCBL</i></a> in der Datei <i>QSRC</i>.
+<p>
+Aus dieser einen Quelle werden folgende Module kompliert:
+<ul>
+<li>TEST_TRUE</li>
+<li>TEST_FALSE</li>
+<li>TEST_FAIL0</li>
+<li>TEST_FAIL1</li>
+</ul>
+Alle Module zusammen bilden dann das Test Suite Serviceprogramm <i>TEMPLCBL</i>.
+<p>
+Weiterhin ist zu beachten, dass der Parameter <code>NOMONOPRC</code> entweder in der Quelle
+oder am Befehl RUCRTCBL angegeben wird.
+<p>
+<iframe src="../../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
