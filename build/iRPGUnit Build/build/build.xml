@@ -793,7 +793,7 @@
 			<fileset dir="${site.dir}" includes="artifacts.jar" />
 			<fileset dir="${site.dir}" includes="content.jar" />
 			<fileset dir="${site.dir}" includes="*.tag" />
-			<fileset dir="${site.dir}" includes="*.bat" />
+			<fileset dir="${site.dir}" includes="*.cmd" />
 		</copy>
 		
 		<copy toDir="${temp.dir.local_updatesite}/Server" >
@@ -874,7 +874,7 @@
 			<fileset dir="${site.dir}" includes="artifacts.jar" />
 			<fileset dir="${site.dir}" includes="content.jar" />
 			<fileset dir="${site.dir}" includes="*.tag" />
-			<fileset dir="${site.dir}" includes="*.bat" />
+			<fileset dir="${site.dir}" includes="*.cmd" />
 			<fileset dir="${site.dir}" includes="*.pdf" />
 		</delete>
 
