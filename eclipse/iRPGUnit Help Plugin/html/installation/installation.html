@@ -14,7 +14,11 @@ Installing the iRPGUnit plug-in requires three steps:
 <ul>
 <li><a href="#installing_the_plugin">Installing the iRPGUnit Plug-in</a></li>
 <li><a href="#installing_the_library">Installing the RPGUnit Library</a></li>
+</ul>
+Optional:
+<ul>
 <li><a href="#compiling_the_library">Compiling the RPGUnit Library</a></li>
+<li><a href="#renaming_the_library">Renaming the RPGUnit Library</a></li>
 </ul>
 <p>
 <a id="#installing_the_plugin" />
@@ -57,17 +61,19 @@ instructions given on the following pages.
 <p>
 <h3>Using the update site</h3>
 <p>
+The URL of the iRPGUnit plug-in site is:
+<p class="indent"><a href="https://irpgunit.sourceforge.io/eclipse/rdi8.0/">
+https://irpgunit.sourceforge.io/eclipse/rdi8.0/</a>
+<p>
+Open the Update site with your preferred Internet browser.
+<p>
 From the main menu, select "Help > Install New Software..." to enter the "Install" dialog.
 <p>
-Then Drag-and-Drop the URL of the update site into the "Work with:" field:
+Then Drag-and-Drop the URL of the update site from your browser into the "Work with:" field:
 <p class="indent">
 <img src="./assets/InstallDragDrop.png" alt="RDi: Install new software">
 <p>
 Then select the options you want to install, press the [Next] button and follow the instructions given on the following pages.
-<p>
-The URL of the iRPGUnit plug-in site is:
-<p class="indent"><a href="http://www.tools400.de/rpgunit/update/rdp8.0/">
-http://www.tools400.de/rpgunit/update/rdp8.0/</a>
 <p>
 <h3>Using a Local Update Directory</h3>
 <p>
@@ -79,7 +85,7 @@ Then follow these steps to create your local update site:
 <li>Download the zip file to a directory of your choice.</li>
 <li>Unpack the zip file to a directory of your choice. This directory will be your local update site.</li>
 <li>From the main menu, select "Help > Install New Software..." to enter the "Install" dialog.</li>
-<li>Press the [Add] button to add your directory to the list of available update sites.</li>
+<li>Press the [Add...] button to add your directory to the list of <i>Available Software Sites</i>.</li>
 <li>Use the [Local...] button to select your directory.</li>
 </ul>
 <p>
@@ -95,7 +101,7 @@ Then follow these steps to create your local update site:
 <li>Download the zip file to a directory of your choice. This zip file will be your local update archive.</li>
 <li>Consider removing the version number from the name of the zip file to keep the name stable for further updates.</li>
 <li>From the main menu, select "Help > Install New Software..." to enter the "Install" dialog.</li>
-<li>Press the [Add] button to add the zip file to the list of available update sites.</li>
+<li>Press the [Add...] button to add the zip file to the list of <i>Available Software Sites</i>.</li>
 <li>Use the [Archive...] button to select the zip file.</li>
 </ul>
 <p>
@@ -105,15 +111,15 @@ Select the options you want to install, press the [Next] button and follow the i
 <h2>Installing the RPGUnit Library</h2>
 <p>
 There are several options to install the library. Your favourite should be the
-<a href="#embedded_install_dialog">install dialog</a> of the iRPGUnit plug-in.
+the integrated <a href="#embedded_install_dialog">Installation Wizard</a>.
 <p>
 <a id="#embedded_install_dialog" />
-<h3>Using the Embedded Install Dialog</h3>
+<h3>Using the Embedded Installation Wizard</h3>
 <p>
 The most easiest way to install the library is to upload it from the preference page of the iRPGUnit 
 plug-in. However that requires that you are allowed to start a FTP connection to your host.
 <p>
-Take these steps to use the embedded installer:
+Take these steps to transfer the library:
 <ul>
 <li>Goto 'Window -> Preferences'.</li>
 <li>Filter for 'iRPGUnit'.</li>
@@ -146,11 +152,11 @@ Run <i>upload_savf.cmd</i> with the following parameters:
 </pre>
 Calling <i>upload_savf.cmd</i> without parameters displays usage instructions.
 <p>
-Go ahead with <a href="#compiling_the_library">Compiling the RPGUnit Library</a> the library.
+Go ahead with <a href="#compiling_the_library">Compiling the RPGUnit Library</a>.
 <p>
 <h3>Transfer Save File by Hand</h3>
 <p>
-Please create an empty save file on your server before sending the file from your PC:
+Please create an empty save file on your server before uploading the file:
 <pre class="indent">
 Create save file:
   CRTSAVF FILE(QGPL/RPGUNIT)
@@ -171,7 +177,7 @@ Terminate FTP session:
   quit
 </pre> 
 <p>
-Go ahead with <a href="#compiling_the_library">Compiling the RPGUnit Library</a> the library.
+Go ahead with <a href="#compiling_the_library">Compiling the RPGUnit Library</a>.
 <p>
 <a id="#compiling_the_library" />
 <h3>Compiling the RPGUnit Library</h3>
@@ -205,6 +211,17 @@ Finished.
 <tr><td>Do not forget to add library <b>RPGUNIT</b> to the library list of your Remote Connection or 
         change the product library from *LIBL to the actual library on the iRPGUnit preference page.</td></tr>
 </table>
+<p>
+<a id="#renaming_the_library" />
+<h3>Renaming the RPGUnit Library</h3>
+<p>
+Starting with version 4 you can use the <i>UPDLIB</i> command to update the references between the
+RPGUnit objects after renaming the library.
+<pre class="indent">
+  UPDLIB LIB(libName)
+</pre>
+<p>
+Then the library does not necessarily have to be recompiled.
 <p>
 <iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
 </body>
