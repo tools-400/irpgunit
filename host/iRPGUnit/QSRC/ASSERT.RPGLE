@@ -249,7 +249,7 @@
          CEEGSI(p_tMsgIfFalse: tMsgIfFalse_inf.dataType
                 : tMsgIfFalse_inf.curLen: tMsgIfFalse_inf.maxLen: fc);
 
-         // TODO: chek fc for errors and set tMsgIfFalse_inf.curLen to
+         // TODO: check fc for errors and set tMsgIfFalse_inf.curLen to
          // %len(OldMsg_t) because assert() must have been called by old
          // RPG unit tests.
          // checkCeeGsiFc(fc: tMsgIfFalse_inf);
@@ -290,7 +290,7 @@
          CEEGSI(p_tMsg: tMsg_inf.dataType
                 : tMsg_inf.curLen: tMsg_inf.maxLen: fc);
 
-         // TODO: chek fc for errors and set tMsgIfFalse_inf.curLen to
+         // TODO: check fc for errors and set tMsgIfFalse_inf.curLen to
          // %len(OldMsg_t) because fail() must have been called by old
          // RPG unit tests.
          // checkCeeGsiFc(fc: tMsg_inf);
