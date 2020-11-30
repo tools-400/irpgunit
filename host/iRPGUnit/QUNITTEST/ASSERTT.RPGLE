@@ -46,6 +46,10 @@
      D                 pr                  extproc('testAssertWithSuccess')
      D testBigIntegerEquality...
      D                 pr                  extproc('testBigIntegerEquality')
+     D testAssert_oldStyle...
+     D                 pr                  extproc('testAssert_oldStyle')
+     D testAssert_newStyle...
+     D                 pr                  extproc('testAssert_newStyle')
 
 
       //----------------------------------------------------------------------
@@ -56,6 +60,32 @@
       /include qinclude,PGMMSG
       /include qinclude,TEMPLATES
 
+      // assert() prototypes without 'opdesc' keyword.
+     D assert_oldStyle...
+     D                 pr                  extproc('+
+     D                                     assert+
+     D                                     ')
+     D  condition                      n   const
+     D  msgIfFalse                         const like(OldMsg_t) options(*nopass)
+
+     D assert_newStyle...
+     D                 pr                  extproc('+
+     D                                     assert+
+     D                                     ')
+     D  condition                      n   const
+     D  msgIfFalse                16384a   const varying
+     D                                           options(*varsize: *nopass)
+
+     D fail_oldStyle   pr                  extproc('+
+     D                                     fail+
+     D                                     ')
+     D  msg                                const like(OldMsg_t) options(*nopass)
+
+     D fail_newStyle   pr                  extproc('+
+     D                                     fail+
+     D                                     ')
+     D  msg                       16384a   const varying
+     D                                           options(*varsize: *nopass)
 
       //----------------------------------------------------------------------
       //   Private Procedures
@@ -153,9 +183,9 @@
                                assertFailEvt.callStk.Entry(1).sender.procNm );
 
         monitor;
-           aEqual( '134'     : assertFailEvt.callStk.Entry(1).sender.specNb );  // IFS Compile
+           aEqual( '164'     : assertFailEvt.callStk.Entry(1).sender.specNb );  // IFS Compile
         on-error;
-           aEqual( '13400'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
+           aEqual( '16400'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
         endmon;
 
       /end-free
@@ -217,9 +247,9 @@
                                assertFailEvt.callStk.Entry(1).sender.procNm );
 
         monitor;
-           aEqual( '196'     : assertFailEvt.callStk.Entry(1).sender.specNb );
+           aEqual( '226'     : assertFailEvt.callStk.Entry(1).sender.specNb );  // IFS Compile
         on-error;
-           aEqual( '19600'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
+           aEqual( '22600'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
         endmon;
 
       /end-free
@@ -314,9 +344,9 @@
                              : assertFailEvt.callStk.Entry(1).sender.procNm );
 
         monitor;
-           aEqual( '298'     : assertFailEvt.callStk.Entry(1).sender.specNb );  // IFS Compile
+           aEqual( '328'     : assertFailEvt.callStk.Entry(1).sender.specNb );  // IFS Compile
         on-error;
-           aEqual( '29800'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
+           aEqual( '32800'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
         endmon;
 
       /end-free
@@ -446,3 +476,72 @@
 
       /end-free
      P                 e
+
+
+     P testAssert_oldStyle...
+     P                 b                   export
+     D                 pi
+
+     D expectedMsg     s            500a   varying
+     D assertFailEvtLong...
+     D                 ds                  likeds(assertFailEvtLong_t)
+      /free
+
+        // Setup.
+
+        expectedMsg = 'Successfully called old style assert()';
+
+        // Execution.
+
+        monitor;
+           assert_oldStyle(*off:  expectedMsg);
+           fail('Should have thrown an error');
+        on-error;
+        endmon;
+
+        // Controls.
+
+        assertFailEvtLong = getAssertFailEvtLong();
+
+        assert(assertFailEvtLong.msg = expectedMsg
+               : 'Message does not match the expected value');
+        assert(%len(assertFailEvtLong.msg) = %len(expectedMsg)
+               : 'Message lengths do not match');
+
+      /end-free
+     P                 e
+
+
+     P testAssert_newStyle...
+     P                 b                   export
+     D                 pi
+
+     D expectedMsg     s            500a   varying
+     D assertFailEvtLong...
+     D                 ds                  likeds(assertFailEvtLong_t)
+      /free
+
+        // Setup.
+
+        expectedMsg = 'Successfully called new style assert()';
+
+        // Execution.
+
+        monitor;
+           assert_newStyle(*off:  expectedMsg);
+           fail('Should have thrown an error');
+        on-error;
+        endmon;
+
+        // Controls.
+
+        assertFailEvtLong = getAssertFailEvtLong();
+
+        assert(assertFailEvtLong.msg = expectedMsg
+               : 'Message does not match the expected value');
+        assert(%len(assertFailEvtLong.msg) = %len(expectedMsg)
+               : 'Message lengths do not match');
+
+      /end-free
+     P                 e
+
