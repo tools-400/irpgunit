@@ -45,6 +45,8 @@
        WORKING-STORAGE SECTION.
        01  x Pic x(1) Value "1".
 
+      * TODO: figure ot, how to correctly define structure MSG-INFO.
+      * Debugger does not show any sub-fields.
        01  MSG-INFO.
            02  MSG-ID             Pic x(7).
            02  MSG-TEXT-LENGTH    Pic 9(2) Usage Binary.
@@ -55,14 +57,19 @@
            02  PROCEDURE-NAME     Pic x(256).
            02  STATEMENT-NBR      Pic x(10).
 
-       01  result Pic 9(10).
-
        PROCEDURE DIVISION.
        TEST_TRUE.
-           Compute result Equal 5 / 0.
-           Call "getMonitoredMessage"
-                            Using By Content B"1"
-                            Returning MSG-INFO.
+
+      * TODO: figure out how to code a 'monitor' block similar to RPGLE.
+      *    monitor;
+      *      produce division by 0 or any other error
+      *    on-error;
+             Call "getMonitoredMessage"
+                              Using By Content B"1"
+                              Returning MSG-INFO.
+      *    endmon;
+
+      * TODO: check content of MSG-INFO.
 
            if x = "1"
               Call "assert" Using By Content B"1"
