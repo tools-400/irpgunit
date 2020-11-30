@@ -28,8 +28,8 @@ monitor;
   c = a / b; <span class="r-cmt">// fixed point operation. (MCH1211)</span>     
   fail( 'Division by zero did not raise an error.' );
 on-error;                                            
-  msgInfo = getMonitoredMsg(*ON); <span class="r-cmt">// entferne Nachricht</span>  
-endmon;                           <span class="r-cmt">// aus dem Job Protokoll</span>    
+  msgInfo = getMonitoredMessage(*ON); <span class="r-cmt">// entferne Nachricht</span>  
+endmon;                               <span class="r-cmt">// aus dem Job Protokoll</span>    
                                                      
 aEqual( 'MCH1211': msgInfo.Id );          
 </pre></code>

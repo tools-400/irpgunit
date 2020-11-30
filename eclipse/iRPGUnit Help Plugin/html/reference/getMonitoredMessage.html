@@ -40,8 +40,8 @@ monitor;
   c = a / b; <span class="r-cmt">// fixed point operation. (MCH1211)</span>     
   fail( 'Division by zero did not raise an error.' );
 on-error;                                            
-  msgInfo = getMonitoredMsg(*ON); <span class="r-cmt">// remove message</span>  
-endmon;                           <span class="r-cmt">// from job log</span>    
+  msgInfo = getMonitoredMessage(*ON); <span class="r-cmt">// remove message</span>  
+endmon;                               <span class="r-cmt">// from job log</span>    
                                                      
 aEqual( 'MCH1211': msgInfo.Id );          
 </pre></code>

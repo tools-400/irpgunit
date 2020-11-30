@@ -142,7 +142,7 @@
       /endif
 
 
-      // getMonitoredMsg -- Get Monitored Message.
+      // getMonitoredMessage -- Get Monitored Message.
       //
       // Retrieves the latest *ESCAPE message from the job log. Usually
       // called within the 'on-error' section of a 'monitor' block.
@@ -154,8 +154,8 @@
       //     c = a / b; // fixed point operation. (MCH1211)
       //     fail( 'Division by zero did not raise an error.' );
       //   on-error;
-      //     msgInfo = getMonitoredMsg(*ON); // remove message
-      //   endmon;                           // from job log
+      //     msgInfo = getMonitoredMessage(*ON); // remove message
+      //   endmon;                               // from job log
       //
       //   aEqual( 'MCH1211': msgInfo.Id );
 
