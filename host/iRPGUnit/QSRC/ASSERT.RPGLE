@@ -881,7 +881,7 @@
      D  msg_inf                                  likeds(ceegsi_inf_t)
       /free
 
-       if (fc.msgSev > 0 and fc.msgNo = x'0502');
+       if (fc.msgSev > 0 and fc.msgNo = x'0502'); // Missing operational descriptor.
          msg_inf.dataType = 2;
          msg_inf.curLen = length;
          msg_inf.maxLen = length;
