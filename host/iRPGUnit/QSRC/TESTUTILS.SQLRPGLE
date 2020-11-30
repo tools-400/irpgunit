@@ -57,7 +57,7 @@
 
      P waitSeconds...
      P                 b                   export
-     D                 pi
+     D                 pi                  opdesc
      D  seconds                      10i 0 const
      D  message                      50a   const varying options(*nopass: *omit)
 
@@ -85,7 +85,7 @@
 
      P displayStatusMessage...
      P                 b                   export
-     D                 pi
+     D                 pi                  opdesc
      D  message                     132a   const varying
       /free
 
@@ -97,7 +97,7 @@
 
      P restoreStatusMessage...
      P                 b                   export
-     D                 pi
+     D                 pi                  opdesc
       /free
 
          rstStsMsg();
@@ -108,7 +108,7 @@
 
      P clearStatusMessage...
      P                 b                   export
-     D                 pi
+     D                 pi                  opdesc
       /free
 
          sndStsMsg('');
@@ -119,7 +119,7 @@
 
      P getMemberType...
      P                 b                   export
-     D                 pi            10a
+     D                 pi            10a   opdesc
      D  srcFile                      10a   const
      D  srcFileLib                   10a   const
      D  mbr                          10a   const
@@ -141,7 +141,7 @@
 
      P getFullTimeStamp...
      P                 b                   export
-     D                 pi              z
+     D                 pi              z   opdesc
 
      D now             s               z
        exec sql SET :now = CURRENT_TIMESTAMP;
@@ -154,7 +154,7 @@
        //--------------------------------------------------------------------
      P rclactgrp...
      P                 b                   export
-     D                 pi
+     D                 pi                  opdesc
      D  w1actGrpNm                   10a   const
 
      D w1cmd           s          32702a   varying
@@ -172,7 +172,7 @@
        //--------------------------------------------------------------------
      P runCmd...
      P                 b                   export
-     D                 pi
+     D                 pi                  opdesc
      D  w1cmd                     32702a   const varying
       /free
 
@@ -184,7 +184,7 @@
 
      P clrpfm...
      P                 b                   export
-     D                 pi
+     D                 pi                  opdesc
      D  w1fileNm                     10a   const
      D  w1mbrNm                      10a   const options(*NoPass)
 
@@ -205,7 +205,7 @@
 
      P setLowMessageKey...
      P                 b                   export
-     D                 pi
+     D                 pi                  opdesc
      D  msgKey                        4a   const options(*nopass)
 
      D p_msgKey        c                   1
@@ -224,6 +224,7 @@
      P getMonitoredMessage...
      P                 b                   export
      D                 pi                  likeds(MsgInfo_t)
+     D                                     opdesc
      D  doRmvMsg                       n   const options(*nopass)
 
      D  msgInfo        ds                  likeds(MsgInfo_t)
