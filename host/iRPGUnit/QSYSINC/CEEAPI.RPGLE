@@ -4,6 +4,8 @@
        // 12-byte CEE APIs feedback code.
      D fc_t            ds                  based(template) qualified
      D  condition_id                  4a
+     D   msgSev                       5i 0 overlay(condition_id: 1)
+     D   msgNo                        5i 0 overlay(condition_id: 3)
      D  inf_byte                      1a
      D  facility_id                   3a
      D  i_s_info                      4a

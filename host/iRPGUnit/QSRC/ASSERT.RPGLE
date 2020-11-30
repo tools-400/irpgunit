@@ -150,7 +150,7 @@
        //----------------------------------------------------------------------
      P aEqual...
      P                 b                   export
-     D                 pi
+     D                 pi                  opdesc
      D  expected                  32565a   const
      D  actual                    32565a   const
      D  fieldName                    64a   const varying options(*nopass: *omit)
@@ -177,7 +177,7 @@
        //----------------------------------------------------------------------
      P iEqual...
      P                 b                   export
-     D                 pi
+     D                 pi                  opdesc
      D  expected                     31s 0 const
      D  actual                       31s 0 const
      D  fieldName                    64a   const varying options(*nopass: *omit)
@@ -203,7 +203,7 @@
        //----------------------------------------------------------------------
      P nEqual...
      P                 b                   export
-     D                 pi
+     D                 pi                  opdesc
      D  expected                       n   const
      D  actual                         n   const
      D  fieldName                    64a   const varying options(*nopass: *omit)
@@ -243,22 +243,22 @@
       /free
 
        if (%parms() >= p_tMsgIfFalse);
-         // Called by RPG or Cobol, because msgIfFalse is present.
+         // Called by old RPG or Cobol, because msgIfFalse is present.
          // msgIfFalse became optional when iRPGUnit was enabled for Cobol.
 
          CEEGSI(p_tMsgIfFalse: tMsgIfFalse_inf.dataType
                 : tMsgIfFalse_inf.curLen: tMsgIfFalse_inf.maxLen: fc);
 
-         // TODO: check fc for errors and set tMsgIfFalse_inf.curLen to
-         // %len(OldMsg_t) because assert() must have been called by old
+         // Check fc for errors and set tMsgIfFalse_inf.curLen to
+         // %len(msgIfFalse) because assert() must have been called by old
          // RPG unit tests.
-         // checkCeeGsiFc(fc: tMsgIfFalse_inf);
+         fixParameterLength( fc : %len(msgIfFalse) : tMsgIfFalse_inf );
 
          doAssert(
            condition: getParm(msgIfFalse: tMsgIfFalse_inf.curLen)
            : ONE_CALL_STK_LVL_ABOVE: 'assert');
        else;
-         // Called by Cobol
+         // Called by Cobol or new RPG after iRPGUnit v4.
          doAssert(
            condition: getParm(ASSERT_NO_MSG: %len(ASSERT_NO_MSG))
            : ONE_CALL_STK_LVL_ABOVE: 'assert');
@@ -284,21 +284,21 @@
       /free
 
        if (%parms() >= p_tMsg);
-         // Called by RPG or Cobol, because msg is present.
+         // Called by old RPG or Cobol, because msg is present.
          // msg became optional when iRPGUnit was enabled for Cobol.
 
          CEEGSI(p_tMsg: tMsg_inf.dataType
                 : tMsg_inf.curLen: tMsg_inf.maxLen: fc);
 
-         // TODO: check fc for errors and set tMsgIfFalse_inf.curLen to
-         // %len(OldMsg_t) because fail() must have been called by old
+         // Check fc for errors and set tMsgIfFalse_inf.curLen to
+         // %len(msg) because fail() must have been called by old
          // RPG unit tests.
-         // checkCeeGsiFc(fc: tMsg_inf);
+         fixParameterLength( fc : %len(msg) : tMsg_inf );
 
          doFail(getParm(msg: tMsg_inf.curLen)
                 : TWO_CALL_STK_LVL_ABOVE: 'fail');
        else;
-         // Called by Cobol
+         // Called by Cobol or new RPG after iRPGUnit v4.
          doFail(getParm(FAIL_NO_MSG: %len(FAIL_NO_MSG))
                 : TWO_CALL_STK_LVL_ABOVE: 'fail');
        endif;
@@ -429,7 +429,7 @@
        //----------------------------------------------------------------------
      P assertJobLogContains...
      P                 b                   export
-     D                 pi
+     D                 pi                  opdesc
      D  msgId                         7a   const
      D  timeLimit                      z   const
 
@@ -519,7 +519,7 @@
        //----------------------------------------------------------------------
      P assertMessageQueueContains...
      P                 b                   export
-     D                 pi
+     D                 pi                  opdesc
      D  userOrQueue                  10a   const
      D  library                      10a   const options(*omit)
      D  msgId                         7a   const options(*omit)
@@ -837,12 +837,14 @@
      D  msg                                const likeds(dsOLJL0100EntHdr)
 
      D sentDateAsIso   s              8a
+      /free
 
        sentDateAsIso = %char( %date( msg.sentDate : *cymd0) : *iso0 );
        return %timestamp( sentDateAsIso +
                           msg.sentTime +
                           msg.microseconds :
                           *iso0 );
+      /end-free
      P                 e
 
 
@@ -856,12 +858,36 @@
      D  msg                                const likeds(dsLSTM0100EntHdr)
 
      D sentDateAsIso   s              8a
+      /free
 
        sentDateAsIso = %char( %date( msg.sentDate : *cymd0) : *iso0 );
        return %timestamp( sentDateAsIso +
                           msg.sentTime +
                           msg.microseconds :
                           *iso0 );
+      /end-free
+     P                 e
+
+
+       //----------------------------------------------------------------------
+       // Check fc of CEEGSI and fix parameter length, when procedure
+       // was called by old RPG.
+       //----------------------------------------------------------------------
+     P fixParameterLength...
+     P                 b
+     D                 pi
+     D  fc                                 const likeds(fc_t)
+     D  length                       10i 0 const
+     D  msg_inf                                  likeds(ceegsi_inf_t)
+      /free
+
+       if (fc.msgSev > 0 and fc.msgNo = x'0502');
+         msg_inf.dataType = 2;
+         msg_inf.curLen = length;
+         msg_inf.maxLen = length;
+       endif;
+
+      /end-free
      P                 e
 
 
@@ -905,6 +931,7 @@
 
      D oldStyle        s                   like(OldMsg_t) based(p_value)
      D newStyle        s          16384a         varying based(p_value)
+      /free
 
        if (%addr(i_value) = *null);
          return '*N';
@@ -916,5 +943,6 @@
        else;
          return %trim(newStyle);
        endif;
+      /end-free
      P                 e
 
