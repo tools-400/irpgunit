@@ -34,6 +34,7 @@
      D aEqual          pr                  extproc('+
      D                                     aEqual+
      D                                     ')
+     D                                     opdesc
      D  expected                  32565a   const
      D  actual                    32565a   const
      D  fieldName                    64a   const varying options(*nopass: *omit)
@@ -56,6 +57,7 @@
      D iEqual          pr                  extproc('+
      D                                     iEqual+
      D                                     ')
+     D                                     opdesc
      D  expected                     31s 0 const
      D  actual                       31s 0 const
      D  fieldName                    64a   const varying options(*nopass: *omit)
@@ -78,6 +80,7 @@
      D nEqual          pr                  extproc('+
      D                                     nEqual+
      D                                     ')
+     D                                     opdesc
      D  expected                       n   const
      D  actual                         n   const
      D  fieldName                    64a   const varying options(*nopass: *omit)
@@ -164,6 +167,7 @@
      D                                     extproc('+
      D                                     getMonitoredMessage+
      D                                     ')
+     D                                     opdesc
      D  doRmvMsg                       n   const options(*nopass)
 
      D MsgInfo_t       ds                  qualified based(template)
@@ -190,6 +194,7 @@
      D                 pr                  extproc('+
      D                                     assertJobLogContains+
      D                                     ')
+     D                                     opdesc
      D  msgId                         7a   const
      D  timeLimit                      z   const
 
@@ -209,6 +214,7 @@
      D                 pr                  extproc('+
      D                                     assertMessageQueueContains+
      D                                     ')
+     D                                     opdesc
      D  userOrQueue                  10a   const
      D  library                      10a   const options(*omit)
      D  msgId                         7a   const options(*omit)
@@ -234,6 +240,7 @@
      D                 pr              z   extproc('+
      D                                     getFullTimeStamp+
      D                                     ')
+     D                                     opdesc
 
 
       // clrpfm -- Clear Physical File
@@ -244,6 +251,7 @@
      D clrpfm          pr                  extproc('+
      D                                     CLRPFM+
      D                                     ')
+     D                                     opdesc
         // A file name.
      D  w1fileNm                     10a   const
         // An (optional) member name.
@@ -261,6 +269,7 @@
      D rclactgrp       pr                  extproc('+
      D                                     RCLACTGRP+
      D                                     ')
+     D                                     opdesc
      D  w1actGrpNm                   10a   const
 
 
@@ -275,6 +284,7 @@
      D runCmd          pr                  extproc('+
      D                                     runCmd+
      D                                     ')
+     D                                     opdesc
      D  w1cmd                     32702a   const varying
 
 
@@ -290,6 +300,7 @@
      D waitSeconds     pr                  extproc('+
      D                                     waitSeconds+
      D                                     ')
+     D                                     opdesc
         // Wait time in seconds
      D  seconds                      10i 0 const
         // Optional. Message sent to *EXT
@@ -308,6 +319,7 @@
      D                 pr                  extproc('+
      D                                     displayStatusMessage+
      D                                     ')
+     D                                     opdesc
         // Optional. Message sent to *EXT
      D  message                     132a   const varying
 
@@ -330,6 +342,7 @@
      D                 pr                  extproc('+
      D                                     restoreStatusMessage+
      D                                     ')
+     D                                     opdesc
 
 
       // clearStatusMessage -- Clear Status Message
@@ -344,6 +357,7 @@
      D                 pr                  extproc('+
      D                                     clearStatusMessage+
      D                                     ')
+     D                                     opdesc
 
 
       // getMemberType -- Get Member Type.
@@ -358,6 +372,7 @@
      D                                     extproc('+
      D                                     getMemberType+
      D                                     ')
+     D                                     opdesc
      D  srcFile                      10a   const
      D  srcFileLib                   10a   const
      D  mbr                          10a   const
@@ -378,6 +393,7 @@
      D                 pr                  extproc('+
      D                                     setLowMessageKey+
      D                                     ')
+     D                                     opdesc
      D  msgKey                        4a   const options(*nopass)
 
       /endif
