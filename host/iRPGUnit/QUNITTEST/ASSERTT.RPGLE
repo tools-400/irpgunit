@@ -11,6 +11,7 @@
       //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
       //   >>IMPORTANT<<
       //     >>PARM<<  MODULE(&LI/PGMMSG);
+      //     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
       //   >>END-IMPORTANT<<
       //   >>EXECUTE<<
       // >>END-PRE-COMPILER<<
@@ -57,7 +58,6 @@
       //----------------------------------------------------------------------
 
       /include qinclude,ASSERT
-      /include qinclude,PGMMSG
       /include qinclude,TEMPLATES
 
       // assert() prototypes without 'opdesc' keyword.
