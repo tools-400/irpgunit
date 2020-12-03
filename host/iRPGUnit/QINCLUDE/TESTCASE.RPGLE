@@ -17,6 +17,7 @@
       // ------------------------------------
 
 
+      // Cobol enabled.
       // aEqual -- Aphanumeric Equality Assertion
       //
       // Compares the given String values 'expected' and 'actual'. The assertion
@@ -86,6 +87,7 @@
      D  fieldName                    64a   const varying options(*nopass: *omit)
 
 
+      // Cobol enabled.
       // assert -- General Purpose Assertion
       //
       // Checks the specified Boolean expression for true. The assertion fails,
@@ -117,6 +119,7 @@
       /endif
 
 
+      // Cobol enabled.
       // fail -- Fail test
       //
       // Produces an error and appends the specified 'message' to the test

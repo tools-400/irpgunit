@@ -64,6 +64,11 @@
      D  i_value                            const like(OldMsg_t) options(*omit)
      D  i_curLen                     10i 0 const
 
+     D getParm32       pr         32565a   varying
+     D                                     extproc('getParm32')
+     D  value                     32565a   const options(*varsize)
+     D  parm_inf                           const likeds(ceegsi_inf_t)
+
      D getRealParm_internal_use...
      D                 pr         16384a   varying
      D                                     extproc('getRealParm_internal_use')
@@ -79,6 +84,12 @@
      D                 pr              z
      D                                     extproc('getSentTimeMsgQMsg')
      D  msg                                const likeds(dsLSTM0100EntHdr)
+
+     D fixParameterLength...
+     D                 pr                  extproc('fixParameterLength')
+     D  fc                                 const likeds(fc_t)
+     D  length                       10i 0 const
+     D  parm_inf                                 likeds(ceegsi_inf_t)
 
        //----------------------------------------------------------------------
        //   GLOBAL CONSTANTS
@@ -146,6 +157,7 @@
      P                 e
 
        //----------------------------------------------------------------------
+       // Cobol enabled.
        // Assert equality between two alphanumeric variables.
        //----------------------------------------------------------------------
      P aEqual...
@@ -155,18 +167,51 @@
      D  actual                    32565a   const
      D  fieldName                    64a   const varying options(*nopass: *omit)
 
+     D p_expected      c                   1
+     D p_actual        c                   2
+     D p_fieldName     c                   3
+
+     D tExpected       s          32565a   varying
+     D tActual         s          32565a   varying
      D msg             s                   like(msgText_t) inz
+
+     D expectedDesc...
+     D                 ds                  likeds(ceegsi_inf_t) inz
+     D actualDesc...
+     D                 ds                  likeds(ceegsi_inf_t) inz
+     D fieldNameDesc...
+     D                 ds                  likeds(ceegsi_inf_t) inz
+     D fc              ds                  likeds(fc_t) inz
 
       /free
 
-       if (%parms() >= 3 and %addr(fieldName) <> *NULL);
-         msg = %trim(fieldName) + ': ';
+       CEEGSI(p_expected: expectedDesc.dataType
+              : expectedDesc.curLen: expectedDesc.maxLen: fc);
+       fixParameterLength(fc: %len(expected): expectedDesc);
+       tExpected = getParm32(expected: expectedDesc);
+
+       CEEGSI(p_actual: actualDesc.dataType
+              : actualDesc.curLen: actualDesc.maxLen: fc);
+       fixParameterLength(fc: %len(actual): actualDesc);
+       tActual = getParm32(actual: actualDesc);
+
+       if (%parms() >= p_fieldName and %addr(fieldName) <> *NULL);
+
+         CEEGSI(p_fieldName: fieldNameDesc.dataType
+                : fieldNameDesc.curLen: fieldNameDesc.maxLen: fc);
+
+         // Check fc for errors and set fieldName_inf.curLen to
+         // %len(fieldName) because aEqual() must have been called by old
+         // RPG unit tests.
+         fixParameterLength(fc: 64: fieldNameDesc);
+
+         msg = %trim(getParm32(fieldName: fieldNameDesc)) + ': ';
        endif;
 
        msg = msg
-           + 'Expected ' + QUOTE + %trimr(expected) + QUOTE + ','
-           + ' but was ' + QUOTE + %trimr(actual  ) + QUOTE + '.';
-       doAssert(expected = actual: msg: ONE_CALL_STK_LVL_ABOVE: 'aEqual');
+           + 'Expected ' + QUOTE + %trimr(tExpected) + QUOTE + ','
+           + ' but was ' + QUOTE + %trimr(tActual  ) + QUOTE + '.';
+       doAssert(tExpected = tActual: msg: ONE_CALL_STK_LVL_ABOVE: 'aEqual');
 
       /end-free
      P                 e
@@ -227,6 +272,7 @@
 
 
        //----------------------------------------------------------------------
+       // Cobol enabled.
        // Asserts that a condition is true. See prototype.
        //----------------------------------------------------------------------
      P assert...
@@ -235,32 +281,32 @@
      D  condition                      n   const
      D  msgIfFalse                         const like(OldMsg_t) options(*nopass)
 
-     D p_tMsgIfFalse   c                   2
+     D p_msgIfFalse    c                   2
 
-     D tMsgIfFalse_inf...
-     D                 ds                  likeds(ceegsi_inf_t) inz
+     D msgIfFalseDesc...
+     D                 ds                  likeds(ceegsi_inf_t) inz...
      D fc              ds                  likeds(fc_t) inz
       /free
 
-       if (%parms() >= p_tMsgIfFalse);
+       if (%parms() >= p_msgIfFalse);
          // Called by old RPG or Cobol, because msgIfFalse is present.
          // msgIfFalse became optional when iRPGUnit was enabled for Cobol.
 
-         CEEGSI(p_tMsgIfFalse: tMsgIfFalse_inf.dataType
-                : tMsgIfFalse_inf.curLen: tMsgIfFalse_inf.maxLen: fc);
+         CEEGSI(p_msgIfFalse: msgIfFalseDesc.dataType
+                : msgIfFalseDesc.curLen: msgIfFalseDesc.maxLen: fc);
 
          // Check fc for errors and set tMsgIfFalse_inf.curLen to
          // %len(msgIfFalse) because assert() must have been called by old
          // RPG unit tests.
-         fixParameterLength( fc : %len(msgIfFalse) : tMsgIfFalse_inf );
+         fixParameterLength(fc: %len(msgIfFalse): msgIfFalseDesc);
 
          doAssert(
-           condition: getParm(msgIfFalse: tMsgIfFalse_inf.curLen)
+           condition: getParm(msgIfFalse: msgIfFalseDesc.curLen)
            : ONE_CALL_STK_LVL_ABOVE: 'assert');
        else;
          // Called by Cobol or new RPG after iRPGUnit v4.
          doAssert(
-           condition: getParm(ASSERT_NO_MSG: %len(ASSERT_NO_MSG))
+           condition: getParm(ASSERT_NO_MSG: %len(ASSERT_NO_MSG ))
            : ONE_CALL_STK_LVL_ABOVE: 'assert');
        endif;
 
@@ -269,6 +315,7 @@
 
 
        //----------------------------------------------------------------------
+       // Cobol enabled.
        // Signals a test failure and stops the test.
        //----------------------------------------------------------------------
      P fail...
@@ -276,26 +323,26 @@
      d                 pi                  opdesc
      D  msg                                const like(OldMsg_t) options(*nopass)
 
-     D p_tMsg          c                   1
+     D p_msg           c                   1
 
-     D tMsg_inf...
+     D msgDesc...
      D                 ds                  likeds(ceegsi_inf_t) inz
      D fc              ds                  likeds(fc_t) inz
       /free
 
-       if (%parms() >= p_tMsg);
+       if (%parms() >= p_msg);
          // Called by old RPG or Cobol, because msg is present.
          // msg became optional when iRPGUnit was enabled for Cobol.
 
-         CEEGSI(p_tMsg: tMsg_inf.dataType
-                : tMsg_inf.curLen: tMsg_inf.maxLen: fc);
+         CEEGSI(p_msg: msgDesc.dataType
+                : msgDesc.curLen: msgDesc.maxLen: fc);
 
          // Check fc for errors and set tMsgIfFalse_inf.curLen to
          // %len(msg) because fail() must have been called by old
          // RPG unit tests.
-         fixParameterLength( fc : %len(msg) : tMsg_inf );
+         fixParameterLength(fc: %len(msg): msgDesc);
 
-         doFail(getParm(msg: tMsg_inf.curLen)
+         doFail(getParm(msg: msgDesc.curLen)
                 : TWO_CALL_STK_LVL_ABOVE: 'fail');
        else;
          // Called by Cobol or new RPG after iRPGUnit v4.
@@ -878,14 +925,35 @@
      D                 pi
      D  fc                                 const likeds(fc_t)
      D  length                       10i 0 const
-     D  msg_inf                                  likeds(ceegsi_inf_t)
+     D  parm_inf                                 likeds(ceegsi_inf_t)
       /free
 
        if (fc.msgSev > 0 and fc.msgNo = x'0502'); // Missing operational descriptor.
-         msg_inf.dataType = 2;
-         msg_inf.curLen = length;
-         msg_inf.maxLen = length;
+         parm_inf.dataType = 2;
+         parm_inf.curLen = length;
+         parm_inf.maxLen = length;
        endif;
+
+      /end-free
+     P                 e
+
+
+       //----------------------------------------------------------------------
+       // Returns the value of a given string depending on the
+       // descriptor information.
+       //----------------------------------------------------------------------
+     P getParm32...
+     P                 b
+     D                 pi         32565a   varying
+     D  value                     32565a   const options(*varsize)
+     D  parm_inf                           const likeds(ceegsi_inf_t)
+      /free
+
+       if (parm_inf.curLen = 0);
+         return '';
+       endif;
+
+       return %subst(value: 1: parm_inf.curLen);
 
       /end-free
      P                 e
