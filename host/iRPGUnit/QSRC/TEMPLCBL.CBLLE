@@ -35,42 +35,16 @@
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
          Special-Names.
-          Linkage Type Is Procedure For "assert"
-                       Using All Described
-          Linkage Type Is Procedure For "fail"
-                       Using All Described
-          Linkage Type Is Procedure For "getMonitoredMessage"
-                       Using All Described.
+       Copy CBLLINKAGE Of QINCLUDE.
+      * Terminate Special-Names section , because CBLLINKAGE
+      * does not do that.
+         .
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        01  x Pic x(1) Value "1".
-
-      * TODO: figure ot, how to correctly define structure MSG-INFO.
-      * Debugger does not show any sub-fields.
-       01  MSG-INFO.
-           02  MSG-ID             Pic x(7).
-           02  MSG-TEXT-LENGTH    Pic 9(2) Usage Binary.
-           02  MSG-TEXT           Pic x(256).
-           02  PROGRAM-NAME       Pic x(10).
-           02  MODULE-NAME        Pic x(10).
-           02  PROCEDURE-LENGTH   Pic 9(2) Usage Binary.
-           02  PROCEDURE-NAME     Pic x(256).
-           02  STATEMENT-NBR      Pic x(10).
-
+       01  n Pic 99999v99 Value 12345.67.
        PROCEDURE DIVISION.
        TEST_TRUE.
-
-      * TODO: figure out how to code a 'monitor' block similar to RPGLE.
-      *    monitor;
-      *      produce division by 0 or any other error
-      *    on-error;
-             Call "getMonitoredMessage"
-                              Using By Content B"1"
-                              Returning MSG-INFO.
-      *    endmon;
-
-      * TODO: check content of MSG-INFO.
-
            if x = "1"
               Call "assert" Using By Content B"1"
            else
@@ -88,12 +62,10 @@
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
          Special-Names.
-          Linkage Type Is Procedure For "assert"
-                       Using All Described
-          Linkage Type Is Procedure For "fail"
-                       Using All Described
-          Linkage Type Is Procedure For "getMonitoredMessage"
-                       Using All Described.
+       Copy TESTCOBOL Of QINCLUDE.
+      * Terminate Special-Names section , because CBLLINKAGE
+      * does not do that.
+         .
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        01  x Pic x(1) Value "3".
@@ -116,12 +88,10 @@
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
          Special-Names.
-          Linkage Type Is Procedure For "assert"
-                       Using All Described
-          Linkage Type Is Procedure For "fail"
-                       Using All Described
-          Linkage Type Is Procedure For "getMonitoredMessage"
-                       Using All Described.
+       Copy TESTCOBOL Of QINCLUDE.
+      * Terminate Special-Names section , because CBLLINKAGE
+      * does not do that.
+         .
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        PROCEDURE DIVISION.
@@ -139,12 +109,10 @@
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
          Special-Names.
-          Linkage Type Is Procedure For "assert"
-                       Using All Described
-          Linkage Type Is Procedure For "fail"
-                       Using All Described
-          Linkage Type Is Procedure For "getMonitoredMessage"
-                       Using All Described.
+       Copy TESTCOBOL Of QINCLUDE.
+      * Terminate Special-Names section , because CBLLINKAGE
+      * does not do that.
+         .
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        PROCEDURE DIVISION.
