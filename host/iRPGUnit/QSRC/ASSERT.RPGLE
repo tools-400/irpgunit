@@ -95,8 +95,7 @@
        //   GLOBAL CONSTANTS
        //----------------------------------------------------------------------
 
-     D ASSERT_NO_MSG   c                   'assert() called without message'
-     D FAIL_NO_MSG     c                   'fail() called without message'
+     D NO_MSG_TEXT     c                   '*N'
 
        //----------------------------------------------------------------------
        //   GLOBAL VARIABLES
@@ -306,7 +305,7 @@
        else;
          // Called by Cobol or new RPG after iRPGUnit v4.
          doAssert(
-           condition: getParm(ASSERT_NO_MSG: %len(ASSERT_NO_MSG ))
+           condition: getParm(NO_MSG_TEXT: %len(NO_MSG_TEXT))
            : ONE_CALL_STK_LVL_ABOVE: 'assert');
        endif;
 
@@ -346,7 +345,7 @@
                 : TWO_CALL_STK_LVL_ABOVE: 'fail');
        else;
          // Called by Cobol or new RPG after iRPGUnit v4.
-         doFail(getParm(FAIL_NO_MSG: %len(FAIL_NO_MSG))
+         doFail(getParm(NO_MSG_TEXT: %len(NO_MSG_TEXT))
                 : TWO_CALL_STK_LVL_ABOVE: 'fail');
        endif;
 
