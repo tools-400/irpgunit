@@ -22,14 +22,24 @@
       //   Exported Procedures
       //----------------------------------------------------------------------
 
-     D testAssert_oldStyle...
-     D                 pr                  extproc('testAssert_oldStyle')
-     D testAssert_newStyle_without_OPDESC...
+     D testAssert_v3_oldStyle...
+     D                 pr                  extproc('testAssert_v3_oldStyle')
+     D testAssert_v3_newStyle...
      D                 pr                  extproc(
-     D                                     'testAssert_newStyle_without_OPDESC')
-     D testAssert_newStyle_with_OPDESC...
+     D                                     'testAssert_v3_newStyle')
+     D testAssert_v4_varying_length...
      D                 pr                  extproc(
-     D                                     'testAssert_newStyle_with_OPDESC')
+     D                                     'testAssert_v4_varying_length')
+
+     D testAEqual_v3...
+     D                 pr                  extproc(
+     D                                     'testAEqual_v3')
+     D testAEqual_v4_varying_length...
+     D                 pr                  extproc(
+     D                                     'testAEqual_v4_varying_length')
+     D testAEqual_v4_fix_length...
+     D                 pr                  extproc(
+     D                                     'testAEqual_v4_fix_length')
 
 
       //----------------------------------------------------------------------
@@ -39,15 +49,21 @@
       /include qinclude,ASSERT
       /include qinclude,TEMPLATES
 
-      // assert() prototypes without 'opdesc' keyword.
-     D assert_oldStyle...
+
+      //----------------------------------------------------------------------
+      //   v3 and v4 prototypes.
+      //----------------------------------------------------------------------
+
+      // assert() prototypes old style, new style
+      // and brand new style with 'opdesc' (v4).
+     D assert_v3_oldStyle...
      D                 pr                  extproc('+
      D                                     assert+
      D                                     ')
      D  condition                      n   const
      D  msgIfFalse                         const like(OldMsg_t) options(*nopass)
 
-     D assert_newStyle...
+     D assert_v3_newStyle...
      D                 pr                  extproc('+
      D                                     assert+
      D                                     ')
@@ -55,7 +71,15 @@
      D  msgIfFalse                16384a   const varying
      D                                           options(*varsize: *nopass)
 
-     D assert_newStyle_with_opdesc...
+     D assert_v4_fix_length...
+     D                 pr                  extproc('+
+     D                                     assert+
+     D                                     ')
+     D                                     opdesc
+     D  condition                      n   const
+     D  msgIfFalse                16384a   const options(*varsize: *nopass)
+
+     D assert_v4_varying_length...
      D                 pr                  extproc('+
      D                                     assert+
      D                                     ')
@@ -64,12 +88,31 @@
      D  msgIfFalse                16384a   const varying
      D                                           options(*varsize: *nopass)
 
-      //----------------------------------------------------------------------
-      //   Private Procedures
-      //----------------------------------------------------------------------
+      // aEqual() prototypes with and without 'opdesc'.
+     D aEqual_v3       pr                  extproc('+
+     D                                     aEqual+
+     D                                     ')
+     D  expected                  32565a   const
+     D  actual                    32565a   const
+     D  fieldName                    64a   const varying options(*nopass: *omit)
 
-     D callFailInAMonitorBlock...
-     D                 pr              n   extproc('callFailInAMonitorBlock')
+     D aEqual_v4_fix_length...
+     D                 pr                  extproc('+
+     D                                     aEqual+
+     D                                     ')
+     D                                     opdesc
+     D  expected                  32565a   const
+     D  actual                    32565a   const
+     D  fieldName                    64a   const         options(*nopass: *omit)
+
+     D aEqual_varying_length...
+     D                 pr                  extproc('+
+     D                                     aEqual+
+     D                                     ')
+     D                                     opdesc
+     D  expected                  32565a   const varying
+     D  actual                    32565a   const varying
+     D  fieldName                    64a   const varying options(*nopass: *omit)
 
 
       //----------------------------------------------------------------------
@@ -78,10 +121,10 @@
 
 
       //----------------------------------------------------------------------
-      //  The the old style of parameter 'msgIfFalse', which was a
+      //  Test the old style of parameter 'msgIfFalse', which was a
       //  128-byte fix-length field.
       //----------------------------------------------------------------------
-     P testAssert_oldStyle...
+     P testAssert_v3_oldStyle...
      P                 b                   export
      D                 pi
 
@@ -97,7 +140,7 @@
         // Execution.
 
         monitor;
-           assert_oldStyle(*off:  expectedMsg);
+           assert_v3_oldStyle(*off:  expectedMsg);
            fail('Should have thrown an error');
         on-error;
         endmon;
@@ -119,7 +162,7 @@
       //  The the new style of parameter 'msgIfFalse', which is a
       //  16384-byte varying-length field.
       //----------------------------------------------------------------------
-     P testAssert_newStyle_without_OPDESC...
+     P testAssert_v3_newStyle...
      P                 b                   export
      D                 pi
 
@@ -135,7 +178,7 @@
         // Execution.
 
         monitor;
-           assert_newStyle(*off:  expectedMsg);
+           assert_v3_newStyle(*off:  expectedMsg);
            fail('Should have thrown an error');
         on-error;
         endmon;
@@ -158,7 +201,7 @@
       //  16384-byte varying-length field with an operational descriptor.
       //  Since: 4.0 due to the Cobol enhancements.
       //----------------------------------------------------------------------
-     P testAssert_newStyle_with_OPDESC...
+     P testAssert_v4_fix_length...
      P                 b                   export
      D                 pi
 
@@ -174,7 +217,7 @@
         // Execution.
 
         monitor;
-           assert_newStyle_with_opdesc(*off:  expectedMsg);
+           assert_v4_fix_length(*off:  expectedMsg);
            fail('Should have thrown an error');
         on-error;
         endmon;
@@ -191,21 +234,153 @@
       /end-free
      P                 e
 
-      //----------------------------------------------------------------------
-      //   Helper Procedures
-      //----------------------------------------------------------------------
 
-     P callFailInAMonitorBlock...
-     P                 b
-     D                 pi              n
+      //----------------------------------------------------------------------
+      //  The the new style of parameter 'msgIfFalse', which is a
+      //  16384-byte varying-length field with an operational descriptor.
+      //  Since: 4.0 due to the Cobol enhancements.
+      //----------------------------------------------------------------------
+     P testAssert_v4_varying_length...
+     P                 b                   export
+     D                 pi
+
+     D expectedMsg     s            500a   varying
+     D assertFailEvtLong...
+     D                 ds                  likeds(assertFailEvtLong_t)
       /free
 
-          monitor;
-            fail( 'Failure message' );
-            return *off;
-          on-error;
-            return *on;
-          endmon;
+        // Setup.
+
+        expectedMsg = 'Successfully called new style assert()';
+
+        // Execution.
+
+        monitor;
+           assert_v4_varying_length(*off:  expectedMsg);
+           fail('Should have thrown an error');
+        on-error;
+        endmon;
+
+        // Controls.
+
+        assertFailEvtLong = getAssertFailEvtLong();
+
+        assert(assertFailEvtLong.msg = expectedMsg
+               : 'Message does not match the expected value');
+        assert(%len(assertFailEvtLong.msg) = %len(expectedMsg)
+               : 'Message lengths do not match');
+
+      /end-free
+     P                 e
+
+
+      //----------------------------------------------------------------------
+      //  The aEqual() with v3 parameter types and without the
+      //  'opdesc' keyword.
+      //----------------------------------------------------------------------
+     P testAEqual_v3...
+     P                 b                   export
+     D                 pi
+
+     D expectedMsg     s            500a   varying
+     D assertFailEvtLong...
+     D                 ds                  likeds(assertFailEvtLong_t)
+      /free
+
+        // Setup.
+
+        expectedMsg = 'aFieldName: Expected ''A'', but was ''B''.';
+
+        // Execution.
+
+        monitor;
+           aEqual_v3('A': 'B':  'aFieldName');
+           fail('Should have thrown an error');
+        on-error;
+        endmon;
+
+        // Controls.
+
+        assertFailEvtLong = getAssertFailEvtLong();
+
+        assert(assertFailEvtLong.msg = expectedMsg
+               : 'Message does not match the expected value');
+        assert(%len(assertFailEvtLong.msg) = %len(expectedMsg)
+               : 'Message lengths do not match');
+
+      /end-free
+     P                 e
+
+
+      //----------------------------------------------------------------------
+      //  The aEqual() with varying length parameters.
+      //----------------------------------------------------------------------
+     P testAEqual_v4_varying_length...
+     P                 b                   export
+     D                 pi
+
+     D expectedMsg     s            500a   varying
+     D assertFailEvtLong...
+     D                 ds                  likeds(assertFailEvtLong_t)
+      /free
+
+        // Setup.
+
+        expectedMsg = 'aFieldName: Expected ''A'', but was ''B''.';
+
+        // Execution.
+
+        monitor;
+           aEqual_varying_length('A': 'B':  'aFieldName');
+           fail('Should have thrown an error');
+        on-error;
+        endmon;
+
+        // Controls.
+
+        assertFailEvtLong = getAssertFailEvtLong();
+
+        assert(assertFailEvtLong.msg = expectedMsg
+               : 'Message does not match the expected value');
+        assert(%len(assertFailEvtLong.msg) = %len(expectedMsg)
+               : 'Message lengths do not match');
+
+      /end-free
+     P                 e
+
+
+      //----------------------------------------------------------------------
+      //  The aEqual() with fix length parameters.
+      //----------------------------------------------------------------------
+     P testAEqual_v4_fix_length...
+     P                 b                   export
+     D                 pi
+
+     D expectedMsg     s            500a   varying
+     D assertFailEvtLong...
+     D                 ds                  likeds(assertFailEvtLong_t)
+      /free
+
+        // Setup.
+
+        expectedMsg = 'aFieldName: Expected ''A'', but was ''B''.';
+
+        // Execution.
+
+        monitor;
+           aEqual_v4_fix_length('A': 'B':  'aFieldName');
+           fail('Should have thrown an error');
+        on-error;
+        endmon;
+
+        // Controls.
+
+        assertFailEvtLong = getAssertFailEvtLong();
+
+        assert(assertFailEvtLong.msg = expectedMsg
+               : 'Message does not match the expected value');
+        assert(%len(assertFailEvtLong.msg) = %len(expectedMsg)
+               : 'Message lengths do not match');
 
       /end-free
      P                 e
