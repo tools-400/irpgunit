@@ -740,6 +740,9 @@
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(MKMSGQT) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(MKOPDESCT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(MKPGMMSGT) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
@@ -759,6 +762,9 @@
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(MSGQT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(OPDESCT) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(PGMMSGT) +

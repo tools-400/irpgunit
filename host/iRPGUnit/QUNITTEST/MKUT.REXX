@@ -100,6 +100,7 @@
  executeUnitTest('MKJOBLOGT', 'JOBLOGT')
  executeUnitTest('MKLIBLT', 'LIBLT')
  executeUnitTest('MKMSGQT', 'MSGQT')
+ executeUnitTest('MKOPDESCT', 'OPDESCT')
  executeUnitTest('MKPGMMSGT', 'PGMMSGT')
  executeUnitTest('MKRUNT', 'RUNT')
  executeUnitTest('MKSTRINGT', 'STRINGT')
