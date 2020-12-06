@@ -10,7 +10,6 @@
       // >>PRE-COMPILER<<
       //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
       //   >>IMPORTANT<<
-      //     >>PARM<<  MODULE(&LI/PGMMSG);
       //     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
       //   >>END-IMPORTANT<<
       //   >>EXECUTE<<
@@ -23,9 +22,8 @@
       //   Exported Procedures
       //----------------------------------------------------------------------
 
-     D testFailShouldRiseAboveAnEnclosingMonitorBlock...
-     D                 pr                  extproc('testFailShouldRiseAboveAnEn+
-     D                                     closingMonitorBlock')
+     D testFailInsideMonitorBlock...
+     D                 pr                  extproc('testFailInsideMonitorBlock')
      D testHelloEqualsHello...
      D                 pr                  extproc('testHelloEqualsHello')
      D testGoodByeIsNotHello...
@@ -47,10 +45,6 @@
      D                 pr                  extproc('testAssertWithSuccess')
      D testBigIntegerEquality...
      D                 pr                  extproc('testBigIntegerEquality')
-     D testAssert_oldStyle...
-     D                 pr                  extproc('testAssert_oldStyle')
-     D testAssert_newStyle...
-     D                 pr                  extproc('testAssert_newStyle')
 
 
       //----------------------------------------------------------------------
@@ -60,63 +54,44 @@
       /include qinclude,ASSERT
       /include qinclude,TEMPLATES
 
-      // assert() prototypes without 'opdesc' keyword.
-     D assert_oldStyle...
-     D                 pr                  extproc('+
-     D                                     assert+
-     D                                     ')
-     D  condition                      n   const
-     D  msgIfFalse                         const like(OldMsg_t) options(*nopass)
-
-     D assert_newStyle...
-     D                 pr                  extproc('+
-     D                                     assert+
-     D                                     ')
-     D  condition                      n   const
-     D  msgIfFalse                16384a   const varying
-     D                                           options(*varsize: *nopass)
-
-     D fail_oldStyle   pr                  extproc('+
-     D                                     fail+
-     D                                     ')
-     D  msg                                const like(OldMsg_t) options(*nopass)
-
-     D fail_newStyle   pr                  extproc('+
-     D                                     fail+
-     D                                     ')
-     D  msg                       16384a   const varying
-     D                                           options(*varsize: *nopass)
-
       //----------------------------------------------------------------------
       //   Private Procedures
       //----------------------------------------------------------------------
 
-     D callFailInAMonitorBlock...
-     D                 pr              n   extproc('callFailInAMonitorBlock')
+     D CMDRUNSRV_runProc...
+     D                 pr              n   extproc('CMDRUNSRV_runProc')
+     D failInsideMonitorBlock...
+     D                 pr              n   extproc('failInsideMonitorBlock')
+
+
+      //----------------------------------------------------------------------
+      //   Global Constants
+      //----------------------------------------------------------------------
+     D FAILURE_MESSAGE...
+     D                 c                   'Failure message'
 
 
       //----------------------------------------------------------------------
       //   Test Procedures
       //----------------------------------------------------------------------
 
-     P testFailShouldRiseAboveAnEnclosingMonitorBlock...
+     P testFailInsideMonitorBlock...
      P                 b                   export
      D                 pi
 
      D excpWasCaught   s               n   inz(*off)
      D success         s               n   inz(*off)
 
+     D msgInfo         ds                  likeds(MsgInfo_t)
       /free
 
-        monitor;
-          excpWasCaught = callFailInAMonitorBlock();
-        on-error;
-          success = *on;
-        endmon;
+        success = CMDRUNSRV_runProc();
 
         select;
           when success;
             // Success.
+            msgInfo = getMonitoredMessage(*off);
+            assert( msgInfo.txt = FAILURE_MESSAGE );
           when excpWasCaught;
             fail( 'The failure exception'
                 + ' should not be caught by the monitor block' );
@@ -125,13 +100,11 @@
         endsl;
 
       /end-free
-     P testFailShouldRiseAboveAnEnclosingMonitorBlock...
      P                 e
 
 
      PtestTwoAndTwoEqualsFour...
      P                 b                   export
-     DtestTwoAndTwoEqualsFour...
      D                 pi
       /free
 
@@ -183,9 +156,9 @@
                                assertFailEvt.callStk.Entry(1).sender.procNm );
 
         monitor;
-           aEqual( '164'     : assertFailEvt.callStk.Entry(1).sender.specNb );  // IFS Compile
+           aEqual( '137'     : assertFailEvt.callStk.Entry(1).sender.specNb );  // IFS Compile
         on-error;
-           aEqual( '16400'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
+           aEqual( '13700'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
         endmon;
 
       /end-free
@@ -247,9 +220,9 @@
                                assertFailEvt.callStk.Entry(1).sender.procNm );
 
         monitor;
-           aEqual( '226'     : assertFailEvt.callStk.Entry(1).sender.specNb );  // IFS Compile
+           aEqual( '199'     : assertFailEvt.callStk.Entry(1).sender.specNb );  // IFS Compile
         on-error;
-           aEqual( '22600'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
+           aEqual( '19900'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
         endmon;
 
       /end-free
@@ -344,9 +317,9 @@
                              : assertFailEvt.callStk.Entry(1).sender.procNm );
 
         monitor;
-           aEqual( '328'     : assertFailEvt.callStk.Entry(1).sender.specNb );  // IFS Compile
+           aEqual( '301'     : assertFailEvt.callStk.Entry(1).sender.specNb );  // IFS Compile
         on-error;
-           aEqual( '32800'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
+           aEqual( '30100'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
         endmon;
 
       /end-free
@@ -368,26 +341,6 @@
         // No exception message => OK.
 
         aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
-
-      /end-free
-     P                 e
-
-      //----------------------------------------------------------------------
-      //   Helper Procedures
-      //----------------------------------------------------------------------
-
-     P callFailInAMonitorBlock...
-     P                 b
-     D callFailInAMonitorBlock...
-     D                 pi              n
-      /free
-
-          monitor;
-            fail( 'Failure message' );
-            return *off;
-          on-error;
-            return *on;
-          endmon;
 
       /end-free
      P                 e
@@ -478,69 +431,42 @@
      P                 e
 
 
-     P testAssert_oldStyle...
-     P                 b                   export
-     D                 pi
+      //----------------------------------------------------------------------
+      //   Procedure that simulates the test case executor procedure
+      //   of module CMDRUNSRV. It must receive the message sent by fail().
+      //----------------------------------------------------------------------
 
-     D expectedMsg     s            500a   varying
-     D assertFailEvtLong...
-     D                 ds                  likeds(assertFailEvtLong_t)
+     P CMDRUNSRV_runProc...
+     P                 b
+     D                 pi              n
+
+     D msgInfo         ds                  likeds(MsgInfo_t)
       /free
 
-        // Setup.
-
-        expectedMsg = 'Successfully called old style assert()';
-
-        // Execution.
-
-        monitor;
-           assert_oldStyle(*off:  expectedMsg);
-           fail('Should have thrown an error');
-        on-error;
-        endmon;
-
-        // Controls.
-
-        assertFailEvtLong = getAssertFailEvtLong();
-
-        assert(assertFailEvtLong.msg = expectedMsg
-               : 'Message does not match the expected value');
-        assert(%len(assertFailEvtLong.msg) = %len(expectedMsg)
-               : 'Message lengths do not match');
+          monitor;
+            if (failInsideMonitorBlock());
+              return *off; // Let the caller report the error.
+            endif;
+          on-error;
+            // Success, exception seen.
+            return *on;
+          endmon;
 
       /end-free
      P                 e
 
 
-     P testAssert_newStyle...
-     P                 b                   export
-     D                 pi
-
-     D expectedMsg     s            500a   varying
-     D assertFailEvtLong...
-     D                 ds                  likeds(assertFailEvtLong_t)
+     P failInsideMonitorBlock...
+     P                 b
+     D                 pi              n
       /free
 
-        // Setup.
-
-        expectedMsg = 'Successfully called new style assert()';
-
-        // Execution.
-
-        monitor;
-           assert_newStyle(*off:  expectedMsg);
-           fail('Should have thrown an error');
-        on-error;
-        endmon;
-
-        // Controls.
-
-        assertFailEvtLong = getAssertFailEvtLong();
-
-        assert(assertFailEvtLong.msg = expectedMsg
-               : 'Message does not match the expected value');
-        assert(%len(assertFailEvtLong.msg) = %len(expectedMsg)
-               : 'Message lengths do not match');
+          monitor;
+            fail( FAILURE_MESSAGE );
+            return *off;
+          on-error;
+            return *on; // Bad. Message was captured.
+          endmon;
 
       /end-free
      P                 e

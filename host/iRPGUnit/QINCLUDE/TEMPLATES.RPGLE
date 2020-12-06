@@ -12,6 +12,9 @@
       //  http://www.eclipse.org/legal/cpl-v10.html
       // ==========================================================================
 
+     D TEST_CASE_EXECUTOR...
+     D                 c                   'CMDRUNSRV_runProc'
+
      D TEST_PREFIX     c                   const('TEST')
 
      D TSTPRC_ALL      c                   '*ALL'

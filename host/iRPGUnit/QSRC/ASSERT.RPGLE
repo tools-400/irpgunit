@@ -59,22 +59,6 @@
      D                                     likeds(CallStk_t)
      D  startProc                   256a   const varying options(*varsize)
 
-     D getParm         pr         16384a   varying
-     D                                     extproc('getRealParm_internal_use')
-     D  i_value                            const like(OldMsg_t) options(*omit)
-     D  i_curLen                     10i 0 const
-
-     D getParm32       pr         32565a   varying
-     D                                     extproc('getParm32')
-     D  value                     32565a   const options(*varsize)
-     D  parm_inf                           const likeds(ceegsi_inf_t)
-
-     D getRealParm_internal_use...
-     D                 pr         16384a   varying
-     D                                     extproc('getRealParm_internal_use')
-     D  i_value                       2a         options(*omit)
-     D  i_curLen                     10i 0 const
-
      D getSentTimeJobLogMsg...
      D                 pr              z
      D                                     extproc('getSentTimeJobLogMsg')
@@ -85,17 +69,48 @@
      D                                     extproc('getSentTimeMsgQMsg')
      D  msg                                const likeds(dsLSTM0100EntHdr)
 
-     D fixParameterLength...
-     D                 pr                  extproc('fixParameterLength')
+     D getValueFromDesc...
+     D                 pr         32565a   varying
+     D                                     extproc(
+     D                                       'getValueFromDescriptor_internal')
+     D  descInf                            const likeds(ceedod_inf_t)
+     D  strInf                             const likeds(ceegsi_inf_t)
      D  fc                                 const likeds(fc_t)
-     D  length                       10i 0 const
-     D  parm_inf                                 likeds(ceegsi_inf_t)
+     D  value                     32565a   const options(*varsize)
+     D  dftLen                       10i 0 const
+
+     D getValueFromDescriptor_internal...
+     D                 pr         32565a   varying
+     D                                     extproc(
+     D                                       'getValueFromDescriptor_internal')
+     D  descInf                            const likeds(ceedod_inf_t)
+     D  strInf                             const likeds(ceegsi_inf_t)
+     D  fc                                 const likeds(fc_t)
+     D  value                     32565a         options(*varsize)
+     D  dftLen                       10i 0 const
+
+     d descTypeToExt...
+     d                 pr            20a   varying
+     d                                     extproc('descTypeToExt')
+     d  dataType                     10i 0 const
 
        //----------------------------------------------------------------------
        //   GLOBAL CONSTANTS
        //----------------------------------------------------------------------
 
      D NO_MSG_TEXT     c                   '*N'
+
+     D START_PROC_AEQUAL...
+     D                 c                   'aEqual'
+     D START_PROC_IEQUAL...
+     D                 c                   'iEqual'
+     D START_PROC_NEQUAL...
+     D                 c                   'nEqual'
+     D START_PROC_ASSERT...
+     D                 c                   'assert'
+     D START_PROC_FAIL...
+     D                 c                   'fail'
+
 
        //----------------------------------------------------------------------
        //   GLOBAL VARIABLES
@@ -164,7 +179,7 @@
      D                 pi                  opdesc
      D  expected                  32565a   const
      D  actual                    32565a   const
-     D  fieldName                    64a   const varying options(*nopass: *omit)
+     D  fieldName                    64a   const         options(*nopass: *omit)
 
      D p_expected      c                   1
      D p_actual        c                   2
@@ -172,7 +187,13 @@
 
      D tExpected       s          32565a   varying
      D tActual         s          32565a   varying
+     D tFieldName      s                   like(fieldName)
      D msg             s                   like(msgText_t) inz
+
+     D descInf...
+     D                 ds                  likeds(ceedod_inf_t) inz
+     D strInf...
+     D                 ds                  likeds(ceegsi_inf_t) inz
 
      D expectedDesc...
      D                 ds                  likeds(ceegsi_inf_t) inz
@@ -184,33 +205,37 @@
 
       /free
 
-       CEEGSI(p_expected: expectedDesc.dataType
-              : expectedDesc.curLen: expectedDesc.maxLen: fc);
-       fixParameterLength(fc: %len(expected): expectedDesc);
-       tExpected = getParm32(expected: expectedDesc);
+       CEEDOD(p_expected: descInf.descType: descInf.dataType
+              : descInf.descInf1: descInf.descInf2: descInf.dataLen: fc);
+       CEEGSI(p_expected: strInf.dataType
+              : strInf.curLen: strInf.maxLen: fc);
+       tExpected = getValueFromDesc(
+                     descInf: strInf: fc: expected: %size(expected));
 
-       CEEGSI(p_actual: actualDesc.dataType
-              : actualDesc.curLen: actualDesc.maxLen: fc);
-       fixParameterLength(fc: %len(actual): actualDesc);
-       tActual = getParm32(actual: actualDesc);
+       CEEDOD(p_actual: descInf.descType: descInf.dataType
+              : descInf.descInf1: descInf.descInf2: descInf.dataLen: fc);
+       CEEGSI(p_actual: strInf.dataType
+              : strInf.curLen: strInf.maxLen: fc);
+       tActual = getValueFromDesc(descInf: strInf: fc: actual: %size(actual));
 
        if (%parms() >= p_fieldName and %addr(fieldName) <> *NULL);
 
-         CEEGSI(p_fieldName: fieldNameDesc.dataType
-                : fieldNameDesc.curLen: fieldNameDesc.maxLen: fc);
 
-         // Check fc for errors and set fieldName_inf.curLen to
-         // %len(fieldName) because aEqual() must have been called by old
-         // RPG unit tests.
-         fixParameterLength(fc: 64: fieldNameDesc);
+         CEEDOD(p_fieldName: descInf.descType: descInf.dataType
+                : descInf.descInf1: descInf.descInf2: descInf.dataLen: fc);
+         CEEGSI(p_fieldName: strInf.dataType
+                : strInf.curLen: strInf.maxLen: fc);
+         tFieldName = getValueFromDesc(
+                        descInf: strInf: fc: fieldName: %size(fieldName));
 
-         msg = %trim(getParm32(fieldName: fieldNameDesc)) + ': ';
+         msg = %trim(tFieldName) + ': ';
        endif;
 
        msg = msg
            + 'Expected ' + QUOTE + %trimr(tExpected) + QUOTE + ','
            + ' but was ' + QUOTE + %trimr(tActual  ) + QUOTE + '.';
-       doAssert(tExpected = tActual: msg: ONE_CALL_STK_LVL_ABOVE: 'aEqual');
+       doAssert(tExpected = tActual: msg
+                : ONE_CALL_STK_LVL_ABOVE: START_PROC_AEQUAL);
 
       /end-free
      P                 e
@@ -237,7 +262,8 @@
        msg = msg
            + 'Expected ' + %char(expected) + ','
            + ' but was ' + %char(actual  ) + '.';
-       doAssert(expected = actual: msg: ONE_CALL_STK_LVL_ABOVE: 'iEqual');
+       doAssert(expected = actual: msg
+                : ONE_CALL_STK_LVL_ABOVE: START_PROC_IEQUAL);
 
       /end-free
      P                 e
@@ -263,7 +289,8 @@
        msg = msg
            + 'Expected ' + QUOTE + expected + QUOTE + ','
            + ' but was ' + QUOTE + actual   + QUOTE + '.';
-       doAssert(expected = actual: msg: ONE_CALL_STK_LVL_ABOVE: 'nEqual');
+       doAssert(expected = actual: msg
+                : ONE_CALL_STK_LVL_ABOVE: START_PROC_NEQUAL);
 
 
       /end-free
@@ -282,31 +309,30 @@
 
      D p_msgIfFalse    c                   2
 
-     D msgIfFalseDesc...
+     D tMsgIfFalse     s          16384a   varying
+
+     D descInf...
+     D                 ds                  likeds(ceedod_inf_t) inz...
+     D strInf...
      D                 ds                  likeds(ceegsi_inf_t) inz...
      D fc              ds                  likeds(fc_t) inz
       /free
 
        if (%parms() >= p_msgIfFalse);
-         // Called by old RPG or Cobol, because msgIfFalse is present.
-         // msgIfFalse became optional when iRPGUnit was enabled for Cobol.
 
-         CEEGSI(p_msgIfFalse: msgIfFalseDesc.dataType
-                : msgIfFalseDesc.curLen: msgIfFalseDesc.maxLen: fc);
+         CEEDOD(p_msgIfFalse: descInf.descType: descInf.dataType
+                : descInf.descInf1: descInf.descInf2: descInf.dataLen: fc);
+         CEEGSI(p_msgIfFalse: strInf.dataType
+                : strInf.curLen: strInf.maxLen: fc);
+         tMsgIfFalse = getValueFromDesc(
+                         descInf: strInf: fc: msgIfFalse: %len(msgIfFalse));
 
-         // Check fc for errors and set tMsgIfFalse_inf.curLen to
-         // %len(msgIfFalse) because assert() must have been called by old
-         // RPG unit tests.
-         fixParameterLength(fc: %len(msgIfFalse): msgIfFalseDesc);
-
-         doAssert(
-           condition: getParm(msgIfFalse: msgIfFalseDesc.curLen)
-           : ONE_CALL_STK_LVL_ABOVE: 'assert');
+         doAssert(condition: tMsgIfFalse
+                  : ONE_CALL_STK_LVL_ABOVE: START_PROC_ASSERT);
        else;
          // Called by Cobol or new RPG after iRPGUnit v4.
-         doAssert(
-           condition: getParm(NO_MSG_TEXT: %len(NO_MSG_TEXT))
-           : ONE_CALL_STK_LVL_ABOVE: 'assert');
+         doAssert(condition: NO_MSG_TEXT
+                  : ONE_CALL_STK_LVL_ABOVE: START_PROC_ASSERT);
        endif;
 
       /end-free
@@ -324,29 +350,27 @@
 
      D p_msg           c                   1
 
-     D msgDesc...
-     D                 ds                  likeds(ceegsi_inf_t) inz
+     D tMsg            s          16384a   varying
+
+     D descInf...
+     D                 ds                  likeds(ceedod_inf_t) inz...
+     D strInf...
+     D                 ds                  likeds(ceegsi_inf_t) inz...
      D fc              ds                  likeds(fc_t) inz
       /free
 
        if (%parms() >= p_msg);
-         // Called by old RPG or Cobol, because msg is present.
-         // msg became optional when iRPGUnit was enabled for Cobol.
 
-         CEEGSI(p_msg: msgDesc.dataType
-                : msgDesc.curLen: msgDesc.maxLen: fc);
+         CEEDOD(p_msg: descInf.descType: descInf.dataType
+                : descInf.descInf1: descInf.descInf2: descInf.dataLen: fc);
+         CEEGSI(p_msg: strInf.dataType
+                : strInf.curLen: strInf.maxLen: fc);
+         tMsg = getValueFromDesc(descInf: strInf: fc: msg: %len(msg));
 
-         // Check fc for errors and set tMsgIfFalse_inf.curLen to
-         // %len(msg) because fail() must have been called by old
-         // RPG unit tests.
-         fixParameterLength(fc: %len(msg): msgDesc);
-
-         doFail(getParm(msg: msgDesc.curLen)
-                : TWO_CALL_STK_LVL_ABOVE: 'fail');
+         doFail(tMsg: -1: START_PROC_FAIL);
        else;
          // Called by Cobol or new RPG after iRPGUnit v4.
-         doFail(getParm(NO_MSG_TEXT: %len(NO_MSG_TEXT))
-                : TWO_CALL_STK_LVL_ABOVE: 'fail');
+         doFail(NO_MSG_TEXT: -1: START_PROC_FAIL);
        endif;
 
       /end-free
@@ -386,7 +410,7 @@
        assertFailEvt.msg = %trimR( msg );
        assertFailEvt.callStk = getCallStk(startProc);
 
-       sndEscapeMsg( msg : toCallStacKE + 1 );
+         sndEscapeMsg( msg : toCallStacKE + 1 );
 
       /end-free
      P                 e
@@ -916,50 +940,10 @@
 
 
        //----------------------------------------------------------------------
-       // Check fc of CEEGSI and fix parameter length, when procedure
-       // was called by old RPG.
-       //----------------------------------------------------------------------
-     P fixParameterLength...
-     P                 b
-     D                 pi
-     D  fc                                 const likeds(fc_t)
-     D  length                       10i 0 const
-     D  parm_inf                                 likeds(ceegsi_inf_t)
-      /free
-
-       if (fc.msgSev > 0 and fc.msgNo = x'0502'); // Missing operational descriptor.
-         parm_inf.dataType = 2;
-         parm_inf.curLen = length;
-         parm_inf.maxLen = length;
-       endif;
-
-      /end-free
-     P                 e
-
-
-       //----------------------------------------------------------------------
        // Returns the value of a given string depending on the
        // descriptor information.
        //----------------------------------------------------------------------
-     P getParm32...
-     P                 b
-     D                 pi         32565a   varying
-     D  value                     32565a   const options(*varsize)
-     D  parm_inf                           const likeds(ceegsi_inf_t)
-      /free
-
-       if (parm_inf.curLen = 0);
-         return '';
-       endif;
-
-       return %subst(value: 1: parm_inf.curLen);
-
-      /end-free
-     P                 e
-
-
-       //----------------------------------------------------------------------
-       // Taken from Scott Klement's HTTPAPI.
+       // Patially taken from Scott Klement's HTTPAPI.
        //----------------------------------------------------------------------
        // getRealSA(): Okay, this one's hard to explain :)
        //
@@ -990,26 +974,92 @@
        //
        // NOTE: This is now used for content-type and useragent as well
        //----------------------------------------------------------------------
-     P getRealParm_internal_use...
+     P getValueFromDescriptor_internal...
      P                 b                   export
-     D                 pi         16384A   varying
-     D  i_value                       2a   options(*omit)
-     D  i_curLen                     10i 0 const
+     D                 pi         32565a   varying
+     D  descInf                            const likeds(ceedod_inf_t)
+     D  strInf                             const likeds(ceegsi_inf_t)
+     D  fc                                 const likeds(fc_t)
+     D  value                     32565a         options(*varsize)
+     D  dftLen                       10i 0 const
 
-     D oldStyle        s                   like(OldMsg_t) based(p_value)
-     D newStyle        s          16384a         varying based(p_value)
+     D length          s              2a           based(p_value)
+     D fixLength       s          32565a           based(p_value)
+     D varying2        s          32563a   varying based(p_value)
       /free
 
-       if (%addr(i_value) = *null);
-         return '*N';
+       p_value = %addr(value);
+
+       // Get value without an operational descriptor.
+       // Version: 3.2 and before
+
+       // Missing operational descriptor.
+       if (fc.msgSev > 0 and fc.msgNo = x'0502');
+         // Check if we have:
+         //  a) an incorrect Cobol call without opdesc or
+         //  b) an old RPG call from assert() or fail()
+         //     with a message parameter defined as OldMsg_t.
+         if (length > x'4000');
+           return %subst(fixLength: 1: dftLen);
+         else;
+           // New style with a varying field, but without
+           // an operational descriptor. Before: 4.0
+           return varying2;
+         endif;
        endif;
 
-       p_value = %addr(i_value);
-       if (i_value > x'4000'); // old style or Cobol
-         return leftStr(%trim(oldStyle): i_curLen);
-       else;
-         return %trim(newStyle);
-       endif;
+       // Get value from a descriptor.
+       // Version: 4.0+
+
+       select;
+       when (descInf.dataType = DOD_TYPE_CHAR); // SBCS characters
+         return %subst(value: 1: strInf.curLen);
+       when (descInf.dataType = DOD_TYPE_CHARV2); // 2-byte-length + SBCS characters
+         return %subst(value: 3: strInf.curLen);
+       other;
+         sndEscapeMsgAboveCtlBdy(
+           'Unsupported data type: ' + descTypeToExt(descInf.dataType));
+       endsl;
+
       /end-free
      P                 e
+
+
+     p descTypeToExt...
+     p                 b
+     d                 pi            20a   varying
+     d  dataType                     10i 0 const
+      /free
+
+       select;
+       when (dataType = DOD_TYPE_ESC);
+         return 'unknown';
+       when (dataType = DOD_TYPE_CHAR);
+         return 'typeChar';      // SBCS characters
+       when (dataType = DOD_TYPE_CHARZ);
+         return 'typeCharZ';     // SBCS characters x'00' terminated
+       when (dataType = DOD_TYPE_CHARV2);
+         return 'typeCharV2';    // 2-byte varying SBCS characters
+       when (dataType = DOD_TYPE_CHARV4);
+         return 'typeCharV4';    // 4-byte varying SBCS characters
+       when (dataType = DOD_TYPE_BIT);
+         return 'typeBit';       // bits with values of 0 or 1
+       when (dataType = DOD_TYPE_BITV2);
+         return 'typeBitV2';     // 2-byte varying bits with values of 0 or 1
+       when (dataType = DOD_TYPE_BITV4);
+         return 'typeBitV4';     // 4-byte varying bits with values of 0 or 1
+       when (dataType = DOD_TYPE_GCHAR);
+         return 'typeGChar';     // DBCS characters
+       when (dataType = DOD_TYPE_GCHARZ);
+         return 'typeGCharZ';    // DBCS characters x'00' terminated
+       when (dataType = DOD_TYPE_GCHARV2);
+         return 'typeGCharV2';   // 2-byte varying DBCS characters
+       when (dataType = DOD_TYPE_GCHARV4);
+         return 'typeGCharV4';   // 4-byte varying DBCS characters
+       other;
+         return '*N';
+       endsl;
+
+      /end-free
+     p                 e
 

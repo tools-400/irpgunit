@@ -35,6 +35,7 @@
      D  testIdx                      10i 0 const
 
       // Run a setup, teardown or test procedure. See prototype.
+      // Constant TEMPLATES.TEST_CASE_EXECUTOR must match procedure name!
      D runProc         pr                  likeds(TestResult_t)
      D                                     extproc('CMDRUNSRV_runProc')
      D  proc                           *   const procptr

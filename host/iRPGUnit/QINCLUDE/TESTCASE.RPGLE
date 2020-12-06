@@ -38,7 +38,11 @@
      D                                     opdesc
      D  expected                  32565a   const
      D  actual                    32565a   const
+      /if defined(RPGUNIT_INTERNAL)
+     D  fieldName                    64a   const         options(*nopass: *omit)
+      /else
      D  fieldName                    64a   const varying options(*nopass: *omit)
+      /endif
 
 
       // iEqual -- Integer Equality Assertion
