@@ -410,7 +410,11 @@
        assertFailEvt.msg = %trimR( msg );
        assertFailEvt.callStk = getCallStk(startProc);
 
+       if (toCallStacKE = -1);
+         sndEscapeMsgToProcedure( msg : TEST_CASE_EXECUTOR );
+       else;
          sndEscapeMsg( msg : toCallStacKE + 1 );
+       endif;
 
       /end-free
      P                 e
