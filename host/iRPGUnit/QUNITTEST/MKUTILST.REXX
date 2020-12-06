@@ -1,5 +1,5 @@
 /* =================================================================== */
-/*  iRPGUnit SelfTest - Build UTILST.                                  */
+/*  iRPGUnit Self Test - Build TESTUTILST.                             */
 /* =================================================================== */
 /* Copyright (c) 2013-2020 iRPGUnit Project Team                       */
 /* All rights reserved. This program and the accompanying materials    */
@@ -47,7 +47,7 @@
  SIGNAL on SYNTAX
 
  /* The utility that is installed */
- UTILITY = 'UTILST'
+ UTILITY = 'TESTUTILST'
 
  PARSE ARG prdLib dbgView tgtrls
 
@@ -90,11 +90,10 @@
  /* -------------------------------------------- */
  /*  Let's do it!                                */
  /* -------------------------------------------- */
- "CMPMOD MODULE("prdLib"/UTILST ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/PGMMSG ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/TESTUTILST) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
- "CRTSRVPGM  SRVPGM("prdLib"/UTILST) ",
-            "MODULE("prdLib"/PGMMSG) ",
+ "CRTSRVPGM  SRVPGM("prdLib"/TESTUTILST) ",
+            "MODULE("prdLib"/TESTUTILST) ",
             "EXPORT(*ALL) ",
             "OPTION(*DUPPROC) ",
             "BNDSRVPGM("prdLib"/RUTESTCASE) ",
