@@ -34,12 +34,12 @@
      D testAEqual_v3...
      D                 pr                  extproc(
      D                                     'testAEqual_v3')
-     D testAEqual_v4_varying_length...
-     D                 pr                  extproc(
-     D                                     'testAEqual_v4_varying_length')
      D testAEqual_v4_fix_length...
      D                 pr                  extproc(
      D                                     'testAEqual_v4_fix_length')
+     D testAEqual_v4_varying_length...
+     D                 pr                  extproc(
+     D                                     'testAEqual_v4_varying_length')
 
 
       //----------------------------------------------------------------------
@@ -103,7 +103,7 @@
      D                                     opdesc
      D  expected                  32565a   const
      D  actual                    32565a   const
-     D  fieldName                    64a   const         options(*nopass: *omit)
+     D  fieldName                    64a   const options(*nopass: *omit)
 
      D aEqual_varying_length...
      D                 pr                  extproc('+
@@ -121,7 +121,7 @@
 
 
       //----------------------------------------------------------------------
-      //  Test the old style of parameter 'msgIfFalse', which was a
+      //  Test the old v3 style of parameter 'msgIfFalse', which was a
       //  128-byte fix-length field.
       //----------------------------------------------------------------------
      P testAssert_v3_oldStyle...
@@ -159,7 +159,7 @@
 
 
       //----------------------------------------------------------------------
-      //  The the new style of parameter 'msgIfFalse', which is a
+      //  The the new v3 style of parameter 'msgIfFalse', which is a
       //  16384-byte varying-length field.
       //----------------------------------------------------------------------
      P testAssert_v3_newStyle...
@@ -197,9 +197,9 @@
 
 
       //----------------------------------------------------------------------
-      //  The the new style of parameter 'msgIfFalse', which is a
-      //  16384-byte varying-length field with an operational descriptor.
-      //  Since: 4.0 due to the Cobol enhancements.
+      //  Test the new v4 style of parameter 'msgIfFalse' with an
+      //  operational descriptor and a fix-length field.
+      //  Most likely used by Cobol test cases.
       //----------------------------------------------------------------------
      P testAssert_v4_fix_length...
      P                 b                   export
@@ -236,9 +236,8 @@
 
 
       //----------------------------------------------------------------------
-      //  The the new style of parameter 'msgIfFalse', which is a
-      //  16384-byte varying-length field with an operational descriptor.
-      //  Since: 4.0 due to the Cobol enhancements.
+      //  Test the new v4 style of parameter 'msgIfFalse' with an
+      //  operational descriptor and a varying length field.
       //----------------------------------------------------------------------
      P testAssert_v4_varying_length...
      P                 b                   export
@@ -275,7 +274,7 @@
 
 
       //----------------------------------------------------------------------
-      //  The aEqual() with v3 parameter types and without the
+      //  Test aEqual() with v3 parameter types and without the
       //  'opdesc' keyword.
       //----------------------------------------------------------------------
      P testAEqual_v3...
@@ -313,44 +312,9 @@
 
 
       //----------------------------------------------------------------------
-      //  The aEqual() with varying length parameters.
-      //----------------------------------------------------------------------
-     P testAEqual_v4_varying_length...
-     P                 b                   export
-     D                 pi
-
-     D expectedMsg     s            500a   varying
-     D assertFailEvtLong...
-     D                 ds                  likeds(assertFailEvtLong_t)
-      /free
-
-        // Setup.
-
-        expectedMsg = 'aFieldName: Expected ''A'', but was ''B''.';
-
-        // Execution.
-
-        monitor;
-           aEqual_varying_length('A': 'B':  'aFieldName');
-           fail('Should have thrown an error');
-        on-error;
-        endmon;
-
-        // Controls.
-
-        assertFailEvtLong = getAssertFailEvtLong();
-
-        assert(assertFailEvtLong.msg = expectedMsg
-               : 'Message does not match the expected value');
-        assert(%len(assertFailEvtLong.msg) = %len(expectedMsg)
-               : 'Message lengths do not match');
-
-      /end-free
-     P                 e
-
-
-      //----------------------------------------------------------------------
-      //  The aEqual() with fix length parameters.
+      //  Test the new v4 style with an
+      //  operational descriptor and a fix-length fields.
+      //  Most likely used by Cobol test cases.
       //----------------------------------------------------------------------
      P testAEqual_v4_fix_length...
      P                 b                   export
@@ -369,6 +333,44 @@
 
         monitor;
            aEqual_v4_fix_length('A': 'B':  'aFieldName');
+           fail('Should have thrown an error');
+        on-error;
+        endmon;
+
+        // Controls.
+
+        assertFailEvtLong = getAssertFailEvtLong();
+
+        assert(assertFailEvtLong.msg = expectedMsg
+               : 'Message does not match the expected value');
+        assert(%len(assertFailEvtLong.msg) = %len(expectedMsg)
+               : 'Message lengths do not match');
+
+      /end-free
+     P                 e
+
+
+      //----------------------------------------------------------------------
+      //  Test the new v4 style with an
+      //  operational descriptor and a varying-length fields.
+      //----------------------------------------------------------------------
+     P testAEqual_v4_varying_length...
+     P                 b                   export
+     D                 pi
+
+     D expectedMsg     s            500a   varying
+     D assertFailEvtLong...
+     D                 ds                  likeds(assertFailEvtLong_t)
+      /free
+
+        // Setup.
+
+        expectedMsg = 'aFieldName: Expected ''A'', but was ''B''.';
+
+        // Execution.
+
+        monitor;
+           aEqual_varying_length('A': 'B':  'aFieldName');
            fail('Should have thrown an error');
         on-error;
         endmon;
