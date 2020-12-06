@@ -55,6 +55,22 @@ b) Optionally run the RPGUnit self tests:
 
 --------------------------
 
+Version 4.0.0 - xx.xx.2021
+--------------------------
+ * TBD.
+
+Version 3.2.0 - 17.04.2020
+--------------------------
+ * TBD.
+
+Version 3.1.0 - 18.11.2019
+--------------------------
+ * TBD.
+
+Version 3.0.1 - 02.11.2019
+--------------------------
+ * TBD.
+
 Version 3.0.0 - 09.09.2019
 --------------------------
  * Merged ILEUnit (Mihael Schmidt) with iRPGUnit.
