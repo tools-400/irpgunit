@@ -194,6 +194,7 @@
      D                 ds                  likeds(ceedod_inf_t) inz
      D strInf...
      D                 ds                  likeds(ceegsi_inf_t) inz
+     D fc              ds                  likeds(fc_t) inz
       /free
 
        CEEDOD(p_expected: descInf.descType: descInf.dataType
