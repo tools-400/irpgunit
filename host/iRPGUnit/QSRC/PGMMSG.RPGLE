@@ -291,7 +291,40 @@
 
 
       //----------------------------------------------------------------------
-      // Send an escape message. See prototype.
+      // Send an escape message to a procedure. See prototype.
+      //----------------------------------------------------------------------
+     P sndEscapeMsgToProcedure...
+     P                 b                   export
+     D                 pi
+     D  msg                         256a   const
+     D  procedure                   256a   const varying options(*omit)
+
+     D msgKey          s              4a
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
+      /free
+
+        // CPF9897 with severity 40.
+        QMHSNDPM( 'CPF9897' :
+                  'QCPFMSG   *LIBL' :
+                  msg :
+                  %len(msg) :
+                  '*ESCAPE' :
+                  procedure :
+                  0 :
+                  msgKey :
+                  percolateErrors :
+                  %len(procedure) :
+                  '*NONE     *NONE' :
+                  -1);
+
+      /end-free
+     P                 e
+
+
+      //----------------------------------------------------------------------
+      // Send an escape message to the caller. See prototype.
       //----------------------------------------------------------------------
      P sndEscapeMsgToCaller...
      P                 b                   export
@@ -306,7 +339,7 @@
 
 
       //----------------------------------------------------------------------
-      // Send an escape message. See prototype.
+      // Send an escape message above control boundary. See prototype.
       //----------------------------------------------------------------------
      P sndEscapeMsgAboveCtlBdy...
      P                 b                   export
@@ -335,7 +368,7 @@
 
 
       //----------------------------------------------------------------------
-      // Send an information message. See prototype.
+      // Send an information message to the caller. See prototype.
       //----------------------------------------------------------------------
      P sndInfoMsg...
      P                 b                   export
@@ -365,7 +398,7 @@
 
 
       //----------------------------------------------------------------------
-      // Send a status message. See prototype.
+      // Send a status message.
       //----------------------------------------------------------------------
      P sndStsMsg...
      P                 b                   export

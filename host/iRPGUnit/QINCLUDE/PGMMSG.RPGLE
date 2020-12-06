@@ -54,6 +54,13 @@
      D  msg                         256a   const
      D  callStkCnt                   10i 0 const
 
+       // ...to the specified procedure.
+     D sndEscapeMsgToProcedure...
+     D                 pr                  extproc('PGMMSG_+
+     D                                     sndEscapeMsgToProcedure')
+     D  msg                         256a   const
+     D  procedure                   256a   const varying options(*omit)
+
        // ...to the procedure's caller.
      D sndEscapeMsgToCaller...
      D                 pr                  extproc('PGMMSG_+

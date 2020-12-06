@@ -8,10 +8,16 @@
      D   msgData                    256a   const options(*varsize)
      D   msgDataLen                  10i 0 const
      D   msgType                     10a   const
-     D   callStkEnt                  10a   const
+     D   callStkEnt                1024a   const options(*varsize)
      D   callStkCnt                  10i 0 const
      D   msgKey                       4a
-     D   error                     1024a   options(*varsize) noopt
+     D   error                     1024a   options(*varsize)
+     D   lenCallStkEnt...
+     D                               10i 0 const options(*nopass)
+     D   callStkEntQual...
+     D                               20a   const options(*nopass)
+     D   msgWaitTime...
+     D                               10i 0 const options(*nopass)
 
 
        //----------------------------------------------------------------------
