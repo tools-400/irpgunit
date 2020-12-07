@@ -3,7 +3,7 @@
       // ==========================================================================
       //  iRPGUnit - Object Utilities.
       // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  Copyright (c) 2013-2020 iRPGUnit Project Team
       //  All rights reserved. Ths program and the accompanying materials
       //  are made available under the terms of the Common Public License v1.0
       //  which accompanies this distribution, and is available at
@@ -15,6 +15,14 @@
      D                 pr            10a
      D                                     extproc('OBJECT_+
      D                                     Object_resolveLibrary+
+     D                                     ')
+     D  object                             const likeds(Object_t)
+     D  objType                      10a   const
+
+     D Object_getAttribute...
+     D                 pr            10a
+     D                                     extproc('OBJECT_+
+     D                                     Object_getAttribute+
      D                                     ')
      D  object                             const likeds(Object_t)
      D  objType                      10a   const

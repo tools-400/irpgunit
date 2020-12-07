@@ -1,7 +1,7 @@
       // ==========================================================================
       //  iRPGUnit - Object Utilities.
       // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  Copyright (c) 2013-2020 iRPGUnit Project Team
       //  All rights reserved. This program and the accompanying materials
       //  are made available under the terms of the Common Public License v1.0
       //  which accompanies this distribution, and is available at
@@ -122,6 +122,37 @@
          endif;
 
          return objd0100.rtnLib;
+
+      /end-free
+     P                 e
+
+      //----------------------------------------------------------------------
+      //  Resolves the object library.
+      //----------------------------------------------------------------------
+     P Object_getAttribute...
+     P                 b                   export
+     D                 pi            10a
+     D  object                             const likeds(Object_t)
+     D  objType                      10a   const
+
+     D objd0200        ds                  likeds(objd0200_t) inz
+     D errorCode       ds                  likeds(errorCode_t) inz(*likeds)
+      /free
+
+         clear errorCode;
+         errorCode.bytPrv = %size(errorCode);
+         objd0200 = retrieveObjectDescription(
+                       object: objType: 'OBJD0200': errorCode);
+
+         if (errorCode.bytAvl > 0);
+            return '';
+         endif;
+
+         if (objd0200.bytRet = 0);
+            return '';
+         endif;
+
+         return objd0200.extObjAtr;
 
       /end-free
      P                 e
