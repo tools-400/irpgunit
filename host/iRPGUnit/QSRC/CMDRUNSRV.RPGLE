@@ -1,7 +1,7 @@
       // ==========================================================================
       //  iRPGUnit - Command Line Toolkit.
       // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  Copyright (c) 2013-2020 iRPGUnit Project Team
       //  All rights reserved. This program and the accompanying materials
       //  are made available under the terms of the Common Public License v1.0
       //  which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@
       /include qinclude,CMDRUNLOG
       /include qinclude,EXTPRC
       /include qinclude,EXTTST
+      /include qinclude,OBJECT
       /include qinclude,PGMMSG
       /include qinclude,TEMPLATES
       /include qinclude,TESTUTILS
@@ -60,11 +61,20 @@
      D testSuite       ds                  likeds(TestSuite_t)
      D actMark         s                   like(ActMark_t)
 
+     D extObjAttr      s             10a
       /free
 
         procList   = loadProcList( srvPgm );
         procNmList = getProcNmList( procList );
         testSuite  = getTestSuite( procNmList );
+        testSuite.qName = srvPgm;
+
+        extObjAttr = Object_getAttribute( srvPgm : '*SRVPGM' );
+        if (extObjAttr = 'CBLLE' or extObjAttr = 'SQLCBLLE');
+          testSuite.isCobol = *on;
+        else;
+          testSuite.isCobol = *off;
+        endif;
 
         actMark = activateSrvPgm( srvPgm );
         activateTestSuite( testSuite : actMark );

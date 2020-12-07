@@ -5,7 +5,7 @@
       // ==========================================================================
       //  iRPGUnit - Type Templates.
       // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  Copyright (c) 2013-2020 iRPGUnit Project Team
       //  All rights reserved. This program and the accompanying materials
       //  are made available under the terms of the Common Public License v1.0
       //  which accompanies this distribution, and is available at
@@ -185,6 +185,8 @@
      D  assertCnt                    10i 0
 
      D TestSuite_t     ds                  qualified template
+     D  isCobol                        n
+     D  qName                              likeds(Object_t)
      D  setUpSuite                         likeds(Proc_t)
      D  setUp                              likeds(Proc_t)
      D  testCasesCnt                 10i 0

@@ -1,7 +1,7 @@
       // ==========================================================================
       //  iRPGUnit - Command line runner.
       // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  Copyright (c) 2013-2020 iRPGUnit Project Team
       //  All rights reserved. This program and the accompanying materials
       //  are made available under the terms of the Common Public License v1.0
       //  which accompanies this distribution, and is available at
@@ -38,12 +38,15 @@
       /include qinclude,CMDRUNV
       /include qinclude,EXTTST
       /include qinclude,TEMPLATES
+      /include qinclude,OBJECT
       /include qinclude,PGMMSG
       /include qinclude,STRING
       /include qinclude,LIBL
       /include qinclude,SRCMBR
       /include qinclude,XMLWRITER
       /include qllist,llist_h
+
+      /include qsysinc,QCMDEXC
 
       /include qinclude,SDS
 
@@ -138,9 +141,6 @@
      D  jobd                               const likeds(Object_t)
      D  rclRsc                             const like(rclrsc_t)
      D  xmlStmf                            const like(stmf_t)
-
-     D illegalRplVar   s             10a   varying
-     D illegalMsg      s            128a   varying
       /free
 
        registerStartPgm(sds.pgmLib: sds.pgmName);
@@ -170,7 +170,7 @@
        setupTestSuite( testSuite : result );
 
        if (result.errorCnt = 0 and result.failureCnt = 0);
-         runTests(result: testSuiteName.nm : testSuite : testProcs
+         runTests(result: testSuite : testProcs
                   : order : detail: rclRsc);
        endif;
 
@@ -471,7 +471,6 @@
      P                 b                   export
      D                 pi
      D  result                                   likeds(result_t)
-     D  testSuiteNm                        const like(Object_t.nm)
      D  testSuite                          const likeds(TestSuite_t)
      D  testProcsToRun...
      D                                     const likeds(ProcNms_t)
@@ -489,26 +488,21 @@
      D                 s             10i 0
      D CMD_RCLRSC      c                   'RCLRSC LVL(*) OPTION(*NORMAL)'
 
-
-      // ... Execute Command (QCMDEXC) API
-     D QCMDEXC...
-     D                 PR                  extpgm('QCMDEXC')
-     D  i_cmd                     32702A   const  options(*varsize)
-     D  i_length                     15P 5 const
-     D cmd             s            128A
-
-     D assertCnt       s             10i 0
       /free
 
         setTestRunOrder( testSuite : order : testIdx : step );
 
         dow 1 <= testIdx and testIdx <= testSuite.testCasesCnt;
           testProcNm = getTestNm( testSuite : testIdx );
+          if (testSuite.isCobol and endsWith('_reset': testProcNm));
+            testIdx += step;
+            iter;
+          endif;
 
           if isInTestProcToRun(testProcNm: testProcsToRun);
 
             assertionCntBeforeRun = getAssertCalled();
-            status( testSuiteNm : testProcNm );
+            status( testSuite.qName.nm : testProcNm );
 
             // Run test case
             testResult = runTest( testSuite : testIdx );

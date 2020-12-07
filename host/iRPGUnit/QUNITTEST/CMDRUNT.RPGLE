@@ -1,7 +1,7 @@
       // ==========================================================================
       //  iRPGUnit SelfTest - Test CMDRUN.
       // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  Copyright (c) 2013-2020 iRPGUnit Project Team
       //  All rights reserved. This program and the accompanying materials
       //  are made available under the terms of the Common Public License v1.0
       //  which accompanies this distribution, and is available at
@@ -126,7 +126,7 @@
      D ALL_PROCS       c                   const('*ALL')
 
        // Dummy test program name.
-     D testPgm         c                   const('MYTSTPGM')
+     D*testPgm         c                   const('MYTSTPGM')
 
 
       //----------------------------------------------------------------------
@@ -203,7 +203,7 @@
 
         // Execution.
 
-        runTests( result : testPgm : testSuite : procNms :
+        runTests( result : testSuite : procNms :
                   ORDER_API : DETAIL_BASIC : RCLRSC_NO);
 
         // Controls.
@@ -233,7 +233,7 @@
 
         // Execution.
 
-        runTests( result : testPgm : testSuite : procNms :
+        runTests( result : testSuite : procNms :
                   ORDER_API : DETAIL_ALL : RCLRSC_NO);
 
 
@@ -264,7 +264,7 @@
 
         // Execution.
 
-        runTests( result : testPgm : testSuite : procNms :
+        runTests( result : testSuite : procNms :
                   ORDER_API : DETAIL_ALL : RCLRSC_NO);
 
         // Controls.
@@ -293,7 +293,7 @@
 
         // Execution.
 
-        runTests( result : testPgm : testSuite : procNms :
+        runTests( result : testSuite : procNms :
                   ORDER_API : DETAIL_ALL : RCLRSC_NO);
 
         // Controls.
@@ -322,7 +322,7 @@
 
         // Execution.
 
-        runTests( result : testPgm : testSuite : procNms :
+        runTests( result : testSuite : procNms :
                   ORDER_REVERSE : DETAIL_ALL : RCLRSC_NO);
 
         // Controls.
@@ -351,7 +351,7 @@
 
         // Execution.
 
-        runTests( result : testPgm : testSuite : procNms :
+        runTests( result : testSuite : procNms :
                   ORDER_API : DETAIL_ALL : RCLRSC_NO );
 
         // Controls.
@@ -378,7 +378,7 @@
 
         // Execution.
 
-        runTests( result : testPgm : testSuite : procNms :
+        runTests( result : testSuite : procNms :
                   ORDER_API : DETAIL_ALL : RCLrSC_NO );
 
         // Controls.

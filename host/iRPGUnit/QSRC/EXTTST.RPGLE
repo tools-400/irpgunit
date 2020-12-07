@@ -1,7 +1,7 @@
       // ==========================================================================
       //  iRPGUnit - Extract Test Cases.
       // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  Copyright (c) 2013-2020 iRPGUnit Project Team
       //  All rights reserved. This program and the accompanying materials
       //  are made available under the terms of the Common Public License v1.0
       //  which accompanies this distribution, and is available at
@@ -199,6 +199,17 @@
             when uCase(procNm) = 'TEARDOWN';
               testSuite.tearDown.procNm = procNm;
             when uCase(procNm) = 'TEARDOWNSUITE';
+              testSuite.tearDownSuite.procNm = procNm;
+
+            // Cobol procedures
+
+            when uCase(procNm) = 'SETUPSTE';
+              testSuite.setUpSuite.procNm = procNm;
+            when uCase(procNm) = 'SETUP';
+              testSuite.setUp.procNm = procNm;
+            when uCase(procNm) = 'TEARDWN';
+              testSuite.tearDown.procNm = procNm;
+            when uCase(procNm) = 'TEARDWNSTE';
               testSuite.tearDownSuite.procNm = procNm;
           endsl;
           goToNext( privateData );

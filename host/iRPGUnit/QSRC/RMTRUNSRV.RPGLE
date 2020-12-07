@@ -1,7 +1,7 @@
       // ==========================================================================
       //  iRPGUnit - Plug-in Adapter.
       // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  Copyright (c) 2013-2020 iRPGUnit Project Team
       //  All rights reserved. This program and the accompanying materials
       //  are made available under the terms of the Common Public License v1.0
       //  which accompanies this distribution, and is available at
@@ -238,7 +238,7 @@
         setupTestSuite( testSuite : result );
 
         if (result.errorCnt = 0 and result.failureCnt = 0);
-          runTests(result: testSuiteName.nm: testSuite: testProcs
+          runTests(result: testSuite: testProcs
                    : order :detail: rclrsc);
         endif;
 
