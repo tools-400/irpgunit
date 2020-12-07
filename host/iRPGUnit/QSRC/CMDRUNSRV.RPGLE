@@ -145,7 +145,6 @@
      D  setUp                              const likeds(Proc_t)
      D  tearDown                           const likeds(Proc_t)
 
-     D failureEvt      ds                  likeds(AssertFailEvtLong_t)
      D testResult      ds                  likeds(TestResult_t)
      D startTime       s               z
      D endTime         s               z
