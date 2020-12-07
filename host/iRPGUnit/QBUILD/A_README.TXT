@@ -57,19 +57,32 @@ b) Optionally run the RPGUnit self tests:
 
 Version 4.0.0 - xx.xx.2021
 --------------------------
- * TBD.
+ * Added test suite OPDESCT.
+ * Refactored the iRPGUnit library to support Cobol.
+   (assert, fail, aEqual)
+ * Fixed bug, that fail() did not create an error, when called in a monitor
+   block from a deep stack entry.
 
 Version 3.2.0 - 17.04.2020
 --------------------------
- * TBD.
+ * Changed capturing of the callstack to exclude internal procedures of
+   iRPGUnit such as iEqual() or fail()..
 
 Version 3.1.0 - 18.11.2019
 --------------------------
- * TBD.
+ * Added options '*SRCMBRTXT' and '*DEFAULT' to parameter TEXT of command
+   RUCRTTST.
+ * Changed iRPGUnit to accept 'RPGUNIT' and 'IRPGUNIT' as an marker for a
+   unit test suite service program.
+ * Changed default of parameter TEXT of command RUCRTTST from
+   'RPGUnit - Test Case' to '*SRCMBRTXT'.
+ * Changed default debug view of iRPGUnit self-tests to *ALL to better
+   support code coverage.
 
 Version 3.0.1 - 02.11.2019
 --------------------------
- * TBD.
+ * Fixed runtime error 'I/O operation was applied to closed file QSYSPRT'
+   when running unit tests with disabled report output.
 
 Version 3.0.0 - 09.09.2019
 --------------------------
