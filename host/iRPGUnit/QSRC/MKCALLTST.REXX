@@ -140,6 +140,7 @@
         "TEXT('iRPGUnit - RUCALLTST Validity checking program.')"
 
  "CRTPNLGRP  PNLGRP("prdLib"/RUCALLTST) SRCFILE(*LIBL/QPNLGRP)"
+ deleteSpooledFile('RUCALLTST')
 
  "CRTCMD CMD("prdLib"/RUCALLTST) ",
         "PGM("prdLib"/RUCALLTST) ",
@@ -147,6 +148,7 @@
         "VLDCKR("prdLib"/RUCALLTSTV) ",
         "HLPPNLGRP("prdLib"/RUCALLTST) ",
         "HLPID(RUCALLTST)"
+ deleteSpooledFile('RUCALLTST')
 
  "SNDPGMMSG ",
    "MSGID(CPF9897) ",
@@ -156,6 +158,18 @@
    "MSGTYPE(*INFO)"
 
  EXIT
+
+ /* ------------------------------------------------------------- */
+ /* Delete specified spooled file.                                */
+ /* ------------------------------------------------------------- */
+deleteSpooledFile:
+   PARSE ARG _splf
+
+   Signal off Error
+   'DLTSPLF FILE('_splf') JOB(*) SPLNBR(*LAST)'
+   Signal on Error
+
+   return ''
 
  /* ------------------------------------------------------------- */
  /* Global Error handler                                          */

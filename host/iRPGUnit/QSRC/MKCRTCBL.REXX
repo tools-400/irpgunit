@@ -110,12 +110,14 @@
         "TEXT('iRPGUnit - Create Test Suite.')"
 
  "CRTPNLGRP  PNLGRP("prdLib"/RUCRTCBL) SRCFILE(*LIBL/QPNLGRP)"
+ deleteSpooledFile('RUCRTCBL')
 
  "CRTCMD CMD("prdLib"/RUCRTCBL) ",
         "PGM("prdLib"/RUCRTCBL) ",
         "SRCFILE(*LIBL/QCMD) ",
         "HLPPNLGRP("prdLib"/RUCRTCBL) ",
         "HLPID(RUCRTCBL)"
+ deleteSpooledFile('RUCRTCBL')
 
  "SNDPGMMSG ",
    "MSGID(CPF9897) ",
@@ -125,6 +127,18 @@
    "MSGTYPE(*INFO)"
 
  EXIT
+
+ /* ------------------------------------------------------------- */
+ /* Delete specified spooled file.                                */
+ /* ------------------------------------------------------------- */
+deleteSpooledFile:
+   PARSE ARG _splf
+
+   Signal off Error
+   'DLTSPLF FILE('_splf') JOB(*) SPLNBR(*LAST)'
+   Signal on Error
+
+   return ''
 
  /* ------------------------------------------------------------- */
  /* Global Error handler                                          */

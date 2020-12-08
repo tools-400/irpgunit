@@ -90,6 +90,7 @@
  /* -------------------------------------------- */
 
  "CRTPNLGRP  PNLGRP("prdLib"/CMPMODHLP) SRCFILE(*LIBL/QBUILD)"
+ deleteSpooledFile('CMPMODHLP')
 
  "CRTCMD CMD("prdLib"/CMPMOD) SRCFILE(*LIBL/QBUILD) ",
         "PGM(*REXX) ",
@@ -97,8 +98,10 @@
         "REXSRCMBR(CMPMODCPP) ",
         "HLPPNLGRP("prdLib"/CMPMODHLP) ",
         "HLPID(CMPMOD)"
+ deleteSpooledFile('CMPMOD')
 
  "CRTPNLGRP  PNLGRP("prdLib"/UPDLIBHLP) SRCFILE(*LIBL/QBUILD)"
+ deleteSpooledFile('UPDLIBHLP')
 
  "CRTCMD CMD("prdLib"/UPDLIB) SRCFILE(*LIBL/QBUILD) ",
         "PGM(*REXX) ",
@@ -106,6 +109,7 @@
         "REXSRCMBR(UPDLIBCPP) ",
         "HLPPNLGRP("prdLib"/UPDLIBHLP) ",
         "HLPID(UPDLIB)"
+ deleteSpooledFile('UPDLIB')
 
  "SNDPGMMSG ",
    "MSGID(CPF9897) ",
@@ -115,6 +119,18 @@
    "MSGTYPE(*INFO)"
 
  EXIT
+
+ /* ------------------------------------------------------------- */
+ /* Delete specified spooled file.                                */
+ /* ------------------------------------------------------------- */
+deleteSpooledFile:
+   PARSE ARG _splf
+
+   Signal off Error
+   'DLTSPLF FILE('_splf') JOB(*) SPLNBR(*LAST)'
+   Signal on Error
+
+   return ''
 
  /* ------------------------------------------------------------- */
  /* Global Error handler                                          */
