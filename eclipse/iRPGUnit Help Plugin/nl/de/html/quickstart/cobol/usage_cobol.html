@@ -8,15 +8,25 @@
 </head>
 
 <body>
+<img src="../../reference/assets/cobol_ready.png" style="float:right; margin-right:20px;  margin-bottom:20px" border=0>
 <h1>Cobol</h1>
 Cobol wird seit der Version 4.0 unterstützt. Bitte lesen sie auch die Seite
 <a href="../usage.html"><i>Anwendung</i></a>, um ein vollständiges Bild der
 Anwendung von Unit Tests zu bekommen.
 <p>
-Zur Zeit werden nur folgende Prozeduren unterstützt:
+Zur Zeit werden folgende Zusicherungen unterstützt:
 <ul>
+<li><a href="../../reference/aEqual.html">assert()</a></li>
 <li><a href="../../reference/assert.html">assert()</a></li>
 <li><a href="../../reference/fail.html">fail()</a></li>
+</ul>
+<p>
+Die Prozeduren zum Initialisieren und Beenden heißen für Cobol:
+<ul>
+<li><a href="../../reference/setupTestSuite.html">SETUPSTE()</a></li>
+<li><a href="../../reference/setupTestCase.html">SETUP()</a></li>
+<li><a href="../../reference/teardownTestCase.html">TEARDWN()</a></li>
+<li><a href="../../reference/teardownTestSuite.html">TEARDWNSTE()</a></li>
 </ul>
 <p>
 Gerne ermöglichen wir den Aufruf weiterer Prozeduren, sofern der Bedarf dafür
@@ -36,10 +46,14 @@ Beispiel <a href="../../appendix/example_2.html"><i>TEMPLCBL</i></a> in der Date
 <p>
 Aus dieser einen Quelle werden folgende Module kompliert:
 <ul>
-<li>TEST_TRUE</li>
-<li>TEST_FALSE</li>
-<li>TEST_FAIL0</li>
 <li>TEST_FAIL1</li>
+<li>TEST_FAIL0</li>
+<li>TEST_FALSE</li>
+<li>TEST_TRUE</li>
+<li>TEARDWNSTE</li>
+<li>TEARDWN</li>
+<li>SETUP</li>
+<li>SETUPSTE</li>
 </ul>
 Alle Module zusammen bilden dann das Test Suite Serviceprogramm <i>TEMPLCBL</i>.
 <p>

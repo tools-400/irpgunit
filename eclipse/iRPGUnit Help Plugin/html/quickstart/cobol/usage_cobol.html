@@ -8,15 +8,25 @@
 </head>
 
 <body>
+<img src="../../reference/assets/cobol_ready.png" style="float:right; margin-right:20px;  margin-bottom:20px" border=0>
 <h1>Cobol</h1>
 Cobol is supported since version 4.0. This page covers only the Cobol specific aspects.
 Please also read page <a href="../usage.html"><i>Usage</i> to get a complete picture
 of running unit tests.</a>.
 <p>
-Currently only the following procedures are supported:
+Currently the following assertions are supported:
 <ul>
+<li><a href="../../reference/aEqual.html">assert()</a></li>
 <li><a href="../../reference/assert.html">assert()</a></li>
 <li><a href="../../reference/fail.html">fail()</a></li>
+</ul>
+<p>
+Setup and tear down procedures are named differently:
+<ul>
+<li><a href="../../reference/setupTestSuite.html">SETUPSTE()</a></li>
+<li><a href="../../reference/setupTestCase.html">SETUP()</a></li>
+<li><a href="../../reference/teardownTestCase.html">TEARDWN()</a></li>
+<li><a href="../../reference/teardownTestSuite.html">TEARDWNSTE()</a></li>
 </ul>
 <p>
 We will happily enable more procedures for Cobol if there is a need for it. Feel
@@ -37,10 +47,14 @@ example <a href="../../appendix/example_2.html"><i>TEMPLCBL</i></a> in file <i>Q
 <p>
 Compiling that source member produces the following modules:
 <ul>
-<li>TEST_TRUE</li>
-<li>TEST_FALSE</li>
-<li>TEST_FAIL0</li>
 <li>TEST_FAIL1</li>
+<li>TEST_FAIL0</li>
+<li>TEST_FALSE</li>
+<li>TEST_TRUE</li>
+<li>TEARDWNSTE</li>
+<li>TEARDWN</li>
+<li>SETUP</li>
+<li>SETUPSTE</li>
 </ul>
 Then all modules are linked to test tuite service programm <i>TEMPLCBL</i>.
 <p>
