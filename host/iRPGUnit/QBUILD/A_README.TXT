@@ -57,6 +57,7 @@ b) Optionally run the RPGUnit self tests:
 
 Version 4.0.0 - xx.xx.2021
 --------------------------
+ * Added Cobol support.
  * Added test suite OPDESCT.
  * Refactored the iRPGUnit library to support Cobol.
    (assert, fail, aEqual)
