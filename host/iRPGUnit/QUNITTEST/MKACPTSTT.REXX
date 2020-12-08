@@ -115,7 +115,7 @@
             "EXPORT(*ALL) ",
             "OPTION(*DUPPROC) ",
             "BNDSRVPGM("prdLib"/RUTESTCASE) ",
-            "TEXT('iRPGUnit SelfTest - Acceptance tests.')"
+            "TEXT('RPGUnit SelfTest - Acceptance tests.')"
 
 
  "SNDPGMMSG ",

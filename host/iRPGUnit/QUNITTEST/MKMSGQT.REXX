@@ -100,7 +100,7 @@
             "EXPORT(*ALL) ",
             "OPTION(*DUPPROC) ",
             "BNDSRVPGM("prdLib"/RUTESTCASE) ",
-            "TEXT('iRPGUnit SelfTest - Test Message Queue.')"
+            "TEXT('RPGUnit SelfTest - Test Message Queue.')"
 
  "SNDPGMMSG ",
    "MSGID(CPF9897) ",
