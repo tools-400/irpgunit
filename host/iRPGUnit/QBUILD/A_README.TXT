@@ -62,6 +62,8 @@ Version 4.0.0 - xx.xx.2021
    (assert, fail, aEqual)
  * Fixed bug, that fail() did not create an error, when called in a monitor
    block from a deep stack entry.
+ * Added missing copyright footer to German help pages.
+ * Changed MK' scripts to delete the spooled files after compiling an object.
 
 Version 3.2.0 - 17.04.2020
 --------------------------
