@@ -41,9 +41,15 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QBND) +
-                          MBR(RUCRTTST) +
+                          MBR(RUCRTCBL) +
                           SRCTYPE(LNK) +
-                          TEXT('iRPGUnit - Create Test Suite.')
+                          TEXT('iRPGUnit - Create Cobol Test Suite.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QBND) +
+                          MBR(RUCRTRPG) +
+                          SRCTYPE(LNK) +
+                          TEXT('iRPGUnit - Create RPG Test Suite.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QBND) +
@@ -148,6 +154,24 @@
                           TEXT('iRPGUnit - Create Install Utility.')
              MONMSG     MSGID(CPF3288)
 
+             CHGPFM     FILE(&TARGETLIB/QBUILD) +
+                          MBR(UPDLIB) +
+                          SRCTYPE(CMD) +
+                          TEXT('iRPGUnit - Update RPGUNIT library.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QBUILD) +
+                          MBR(UPDLIBCPP) +
+                          SRCTYPE(REXX) +
+                          TEXT('iRPGUnit - Update RPGUNIT library.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QBUILD) +
+                          MBR(UPDLIBHLP) +
+                          SRCTYPE(PNLGRP) +
+                          TEXT('iRPGUnit - Update RPGUNIT library.')
+             MONMSG     MSGID(CPF3288)
+
              CHGPFM     FILE(&TARGETLIB/QCMD) +
                           MBR(RUCALLTST) +
                           SRCTYPE(CMD) +
@@ -155,9 +179,15 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QCMD) +
-                          MBR(RUCRTTST) +
+                          MBR(RUCRTCBL) +
                           SRCTYPE(CMD) +
-                          TEXT('iRPGUnit - Create Test Suite.')
+                          TEXT('iRPGUnit - Create Cobol Test Suite.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QCMD) +
+                          MBR(RUCRTRPG) +
+                          SRCTYPE(CMD) +
+                          TEXT('iRPGUnit - Create RPG Test Suite.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
@@ -211,7 +241,7 @@
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
                           MBR(CRTTST) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - Implementation of RUCRTTST command.')
+                          TEXT('iRPGUnit - Implementation of RUCRT* commands.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
@@ -449,9 +479,15 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QPNLGRP) +
-                          MBR(RUCRTTST) +
+                          MBR(RUCRTCBL) +
                           SRCTYPE(PNLGRP) +
-                          TEXT('iRPGUnit - Create Test Suite.')
+                          TEXT('iRPGUnit - Create Cobol Test Suite.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QPNLGRP) +
+                          MBR(RUCRTRPG) +
+                          SRCTYPE(PNLGRP) +
+                          TEXT('iRPGUnit - Create RPG Test Suite.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +
@@ -497,9 +533,21 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(CRTCBL) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Create Cobol Unit Test Suite CPP.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(CRTRPG) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Create RPG Unit Test Suite CPP.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
                           MBR(CRTTST) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - Implementation of RUCRTTST command.')
+                          TEXT('iRPGUnit - Implementation of RUCRT* commands.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +
@@ -527,9 +575,15 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +
-                          MBR(MKCRTTST) +
+                          MBR(MKCRTCBL) +
                           SRCTYPE(REXX) +
-                          TEXT('iRPGUnit - Make RUCRTTST program.')
+                          TEXT('iRPGUnit - Make RUCRTCBL command.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(MKCRTRPG) +
+                          SRCTYPE(REXX) +
+                          TEXT('iRPGUnit - Make RUCRTRPG command.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +
@@ -605,6 +659,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(TEMPLCBL) +
+                          SRCTYPE(CBLLE) +
+                          TEXT('iRPGUnit - Empty Unit Test Case (Cobol)')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
                           MBR(TEMPLSQL) +
                           SRCTYPE(SQLRPGLE) +
                           TEXT('iRPGUnit - Empty SQL Unit Test Case.')
@@ -641,6 +701,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(CEEAPI) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('CEE APIs')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
                           MBR(LOCALTIME) +
                           SRCTYPE(RPGLE) +
                           TEXT('localtime() -- Convert Time')
@@ -662,6 +728,12 @@
                           MBR(QBNLSPGM) +
                           SRCTYPE(RPGLE) +
                           TEXT('List ILE service program information API.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QCAPCMD) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Process Commands (QCAPCMD) API')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSYSINC) +
@@ -1009,7 +1081,7 @@
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(CRTTSTT) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit SelfTest - Test RUCRTTST.')
+                          TEXT('iRPGUnit SelfTest - Test CRTTST.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
@@ -1075,7 +1147,7 @@
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(MKCRTTSTT) +
                           SRCTYPE(REXX) +
-                          TEXT('iRPGUnit SelfTest - Build RUCRTTSTT.')
+                          TEXT('iRPGUnit SelfTest - Build CRTTSTT.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
@@ -1109,6 +1181,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(MKOPDESCT) +
+                          SRCTYPE(REXX) +
+                          TEXT('iRPGUnit SelfTest - Build OPDESCT.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(MKPGMMSGT) +
                           SRCTYPE(REXX) +
                           TEXT('iRPGUnit SelfTest - Build PGMMSGT.')
@@ -1139,9 +1217,21 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(MKUTILST) +
+                          SRCTYPE(REXX) +
+                          TEXT('iRPGUnit Self Test - Build TESTUTILST.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(MSGQT) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit SelfTest - Test Message Queue.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(OPDESCT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit SelfTest - Operational Desc. for Cobol.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
@@ -1178,6 +1268,12 @@
                           MBR(STRINGT) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit SelfTest - Test STRING.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(TESTUTILST) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit Self Test - Test TESTUTILS.')
              MONMSG     MSGID(CPF3288)
 
              ENDPGM
