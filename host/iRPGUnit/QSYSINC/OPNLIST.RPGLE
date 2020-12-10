@@ -1,4 +1,7 @@
-
+      /if defined(opnlist)
+      /eof
+      /endif
+      /define opnlist
        //
        // Open list structure
        //
