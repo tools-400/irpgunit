@@ -256,6 +256,9 @@
                           TOFILE(&LIB/&QINCLUDE) FROMMBR(EXTTST) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(JOBLOG) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
                           TOFILE(&LIB/&QINCLUDE) FROMMBR(FDINFDS) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
@@ -417,6 +420,9 @@
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSRC) +
                           TOFILE(&LIB/&QSRC) FROMMBR(EXTTST) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(JOBLOG) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSRC) +
                           TOFILE(&LIB/&QSRC) FROMMBR(LIBL) +

@@ -381,6 +381,7 @@
    "DLTMOD MODULE("_prdLib"/EXTPRCT)"
    "DLTMOD MODULE("_prdLib"/EXTTST)"
    "DLTMOD MODULE("_prdLib"/EXTTSTT)"
+   "DLTMOD MODULE("_prdLib"/JOBLOG)"
    "DLTMOD MODULE("_prdLib"/JOBLOGT)"
    "DLTMOD MODULE("_prdLib"/LIBL)"
    "DLTMOD MODULE("_prdLib"/LIBLC)"
