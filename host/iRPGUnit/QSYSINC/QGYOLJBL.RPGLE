@@ -73,6 +73,17 @@
        // - message with replacement data
      D OLJL_MSG_WITH_RPL_DATA...
      D                 c                   const(0302)
+       // - message help
+     D OLJL_MSG_HELP   c                   const(0401)
+       // - message help with replacement data
+     D OLJL_MSG_HELP_WITH_RPL_DATA...
+     D                 c                   const(0402)
+       // - message help with formatting characters
+     D OLJL_MSG_HELP_WITH_FORMAT_CHARS...
+     D                 c                   const(0403)
+       // - message help with replacement data and formatting characters
+     D OLJL_MSG_HELP_WITH_RPL_DATA_AND_FORMAT_CHARS...
+     D                 c                   const(0404)
        // - sending program name
      D OLJL_SND_PGM_NM...
      D                 c                   const(0603)
