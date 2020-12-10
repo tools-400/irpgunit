@@ -455,10 +455,11 @@
       /include qsysinc,OPNLIST
       /include qsysinc,QBNLPGMI
       /include qsysinc,QBNLSPGM
+      /include qsysinc,QCAPCMD
       /include qsysinc,QCLRPGMI
       /include qsysinc,QCMDEXC
-      /include qsysinc,QGYGTLE
       /include qsysinc,QGYCLST
+      /include qsysinc,QGYGTLE
       /include qsysinc,QGYOLJBL
       /include qsysinc,QGYOLMSG
       /include qsysinc,QGYOLSPL
@@ -480,8 +481,9 @@
       /include qsysinc,QUSRMBRD
       /include qsysinc,QUSROBJD
       /include qsysinc,QWDRJOBD
-      /include qsysinc,QWVRCSTK
       /include qsysinc,QWCRTVCA
+      /include qsysinc,QWDRJOBD
+      /include qsysinc,QWVRCSTK
 
       /endif
 
