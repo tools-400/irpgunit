@@ -60,11 +60,6 @@
      D                                     likeds(CallStk_t)
      D  startProc                   256a   const varying options(*varsize)
 
-     D getSentTimeJobLogMsg...
-     D                 pr              z
-     D                                     extproc('getSentTimeJobLogMsg')
-     D  msg                                const likeds(dsOLJL0100EntHdr)
-
      D getSentTimeMsgQMsg...
      D                 pr              z
      D                                     extproc('getSentTimeMsgQMsg')
@@ -95,21 +90,14 @@
      D                                     extproc('descTypeToExt')
      D  dataType                     10i 0 const
 
-     D addFieldSelectId...
-     D                 pr
-     D                                     extproc(
-     D                                       'addFieldSelectId')
-     D  i_pFldSelect                   *   const
-     D  i_size                       10i 0 const
-     D  i_field_id                   10i 0 const
-
-     D setCallMsgQName...
-     D                 pr
-     D                                     extproc(
-     D                                       'setCallMsgQName')
-     D  i_pFldSelect                   *   const
-     D  i_size                       10i 0 const
-     D  i_msgQName                   10a   const varying
+     D jobLogCallback...
+     D                 pr              n
+     D                                     extproc('jobLogCallback')
+     D i_hMsgInfo                      *   const
+     D i_pUserData                     *   const
+     D i_msgId                        7a   const
+     D i_msgText                    132a   const varying
+     D i_msgSentTime                   z   const
 
 
        //----------------------------------------------------------------------
@@ -528,21 +516,6 @@
      D  msgId                         7a   const
      D  timeLimit                      z   const
 
-       // Job log message field selection for QGYOLJBL API.
-     D fldSelect       ds           100    qualified
-     D  listDirection                10a   inz('*PRV')
-     D  qlfJobNm                     26a   inz('*')
-     D  intJobId                     16a   inz(*blank)
-     D  startMsgKey                   4a   inz(x'FFFFFFFF')
-     D  maxMsgLen                    10i 0 inz(0)
-     D  maxMsgHlpLen                 10i 0 inz(0)
-     D  fldIdOff                     10i 0 inz(0)
-     D  fldCnt                       10i 0 inz(0)
-     D  callMsgqNmOff                10i 0 inz(0)
-     D  callMsgqNmLen                10i 0 inz(0)
-      *  Identifiers of fields to return
-      *  Call message queue name
-
      D hReader         s                   like(hJobLogReader_t)
      D userData        ds                  likeds(jobLogUserData_t)
       /free
@@ -553,7 +526,7 @@
        userData.msgId = msgId;
 
        hReader = JobLogReader_init(JL_RD_PREVIOUS);
-       JobLogReader_read(hReader: %paddr(jobLogCallback): %addr(userData));
+       JobLogReader_read(hReader: %paddr('jobLogCallback'): %addr(userData));
 
        assert(userData.isFound
               : 'Message ' + msgId + ' not found in the job log.');
@@ -563,9 +536,7 @@
 
 
        //----------------------------------------------------------------------
-       // Adds a field selection key to the 'Message Selection Information
-       // Format' of the Open List of Job Log Messages (QGYOLJBL) API.
-       // Must be called before setCallMsgQName().
+       // Call back of JobLogReader used by assertJobLogContains().
        //----------------------------------------------------------------------
      p jobLogCallback...
      p                 b
@@ -592,75 +563,6 @@
 
      p                 e
 
-       //----------------------------------------------------------------------
-       // Adds a field selection key to the 'Message Selection Information
-       // Format' of the Open List of Job Log Messages (QGYOLJBL) API.
-       // Must be called before setCallMsgQName().
-       //----------------------------------------------------------------------
-     p addFieldSelectId...
-     p                 b
-     D                 pi
-     D  i_pFldSelect                   *   const
-     D  i_size                       10i 0 const
-     D  i_field_id                   10i 0 const
-
-     D fldSelect       ds                  likeds(fldSelect_QGYOLJBL_t)
-     D                                     based(i_pFldSelect)
-
-     D p_field_id      s               *
-     D field_id        s             10i 0 based(p_field_id)
-      /free
-
-       if (fldSelect.fldIdOff >= i_size - %size(field_id));
-         return;
-       endif;
-
-       fldSelect.fldIdOff = %size(fldSelect);
-
-       p_field_id = %addr(fldSelect) + fldSelect.fldIdOff +
-                      %size(field_id) * fldSelect.fldCnt;
-
-       field_id = i_field_id;
-       fldSelect.fldCnt += 1;
-
-       fldSelect.callMsgqNmOff = fldSelect.fldIdOff +
-                                 (%size(field_id) * fldSelect.fldCnt);
-
-      /end-free
-     p                 e
-
-
-       //----------------------------------------------------------------------
-       // Sets the call message queue name in the 'Message Selection
-       // Information Format' of the Open List of Job Log Messages
-       // (QGYOLJBL) API.
-       // Must be called after addFieldSelectId().
-       //----------------------------------------------------------------------
-     p setCallMsgQName...
-     p                 b
-     D                 pi
-     D  i_pFldSelect                   *   const
-     D  i_size                       10i 0 const
-     D  i_msgQName                   10a   const varying
-
-     D fldSelect       ds                  likeds(fldSelect_QGYOLJBL_t)
-     D                                     based(i_pFldSelect)
-
-     D p_msgQName      s               *
-     D msgQName        s             10a   based(p_msgQName)
-      /free
-
-       if (fldSelect.fldIdOff >= i_size - %len(i_msgQName));
-         return;
-       endif;
-
-       p_msgQName = %addr(fldSelect) + fldSelect.callMsgqNmOff;
-
-       %subst(msgQName: 1: %len(i_msgQName)) = i_msgQName;
-       fldSelect.callMsgqNmLen = %len(i_msgQName);
-
-      /end-free
-     p                 e
 
        //----------------------------------------------------------------------
        // Searches a given message queue backwards for a message identified
@@ -975,28 +877,6 @@
 
       /end-free
      P                 e
-
-
-       //----------------------------------------------------------------------
-       // Converts the time a job log entry was added from the internal
-       // format CYMD to the ISO format.
-       //----------------------------------------------------------------------
-     P getSentTimeJobLogMsg...
-     P                 b
-     D                 pi              z
-     D  msg                                const likeds(dsOLJL0100EntHdr)
-
-     D sentDateAsIso   s              8a
-      /free
-
-       sentDateAsIso = %char( %date( msg.sentDate : *cymd0) : *iso0 );
-       return %timestamp( sentDateAsIso +
-                          msg.sentTime +
-                          msg.microseconds :
-                          *iso0 );
-      /end-free
-     P                 e
-
 
        //----------------------------------------------------------------------
        // Converts the time a message was sent from the internal

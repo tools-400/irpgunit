@@ -58,18 +58,18 @@ dcl-c FIELD_SIZE 4;
 //   PRIVATE PROTOTYPES
 //----------------------------------------------------------------------
 
-dcl-pi hasField ind extproc('hasField');
+dcl-pr hasField ind extproc('hasField');
   i_hReader likeds(hReader_t);
   i_fieldId int(10) const;
-end-pi;
+end-pr;
 
-dcl-pi prepareRead ind extproc('prepareRead');
+dcl-pr prepareRead ind extproc('prepareRead');
   io_hReader  like(hJobLogReader_t);
-end-pi;
+end-pr;
 
-dcl-pi setMsgQName ind extproc('setMsgQName');
+dcl-pr setMsgQName ind extproc('setMsgQName');
   io_hReader likeds(hReader_t);
-end-pi;
+end-pr;
 
 //----------------------------------------------------------------------
 // Initializes a job log reader.
