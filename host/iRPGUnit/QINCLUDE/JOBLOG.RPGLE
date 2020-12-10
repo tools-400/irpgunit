@@ -11,6 +11,14 @@
 
 dcl-s hJobLogReader_t varchar(1024) template;
 
+dcl-pr jl_rd_callback ind;
+  i_hMsgInfo    pointer      const;
+  i_pUserData   pointer      const;
+  i_msgId       char(7)      const;
+  i_msgText     varchar(132) const;
+  i_msgSentTime timestamp    const;
+end-pr;
+
 dcl-c JL_RD_NEXT     '*NEXT';
 dcl-c JL_RD_PREVIOUS '*PRV';
 dcl-c JL_RD_MSG_EXT  '*EXT';
@@ -21,13 +29,19 @@ dcl-pr JobLogReader_init like(hJobLogReader_t) extproc('JobLogReader_init');
   i_msgQ       varchar(10) const options(*nopass);
 end-pr;
 
-dcl-pr JobLogReader_addField extproc('JobLogReader_addField');
-  io_hReader    like(hJobLogReader_t);
-  i_fieldID     pointer options(*nopass) const;
+dcl-pr JobLogReader_addField int(10) extproc('JobLogReader_addField');
+  io_hReader   like(hJobLogReader_t);
+  i_fieldId    int(10) const;
 end-pr;
 
 dcl-pr JobLogReader_read ind extproc('JobLogReader_read');
   io_hReader   like(hJobLogReader_t);
+  i_callback   pointer(*proc) const;
   i_pUserData  pointer options(*nopass) const;
+end-pr;
+
+dcl-pr JobLogReader_getCharValue varchar(3000) extproc('JobLogReader_getCharValue');
+  i_hMsgInfo   pointer const;
+  i_fieldId    int(10) const;
 end-pr;
 

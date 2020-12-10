@@ -28,6 +28,7 @@
       /define RPGUNIT_INTERNAL
       /include qinclude,ASSERT
       /include qinclude,ERRORCODE
+      /include qinclude,JOBLOG
       /include qinclude,PGMMSG
       /include qinclude,TEMPLATES
       /include qinclude,STRING
@@ -110,6 +111,7 @@
      D  i_size                       10i 0 const
      D  i_msgQName                   10a   const varying
 
+
        //----------------------------------------------------------------------
        //   GLOBAL CONSTANTS
        //----------------------------------------------------------------------
@@ -126,6 +128,17 @@
      D                 c                   'assert'
      D START_PROC_FAIL...
      D                 c                   'fail'
+
+
+       //----------------------------------------------------------------------
+       //   GLOBAL TEMPLATES
+       //----------------------------------------------------------------------
+
+     D jobLogUserData_t...
+     D                 ds                  qualified template
+     D  timeLimit                      z
+     D  msgId                         7a
+     D  isFound                        n
 
 
        //----------------------------------------------------------------------
@@ -529,72 +542,55 @@
      D  callMsgqNmLen                10i 0 inz(0)
       *  Identifiers of fields to return
       *  Call message queue name
-     D p_callMsgqNm    s               *
-     D callMsgqNm      s              1a   based(p_callMsgqNm)
 
-     D listInfo        ds                  likeds(dsOpnList)
-     D msgBasicInfo    ds                  likeds(dsOLJL0100EntHdr)
-     D                                     based(p_msgBasicInfo)
-     D p_msgBasicInfo  s               *
-     D jobLogList      s          32766a
-     D sentTimeStamp   s               z
-     D msgIdx          s             10i 0
-     D msgFound        s               n   inz(*off)
-     D percolateErrors...
-     D                 ds                  likeds(percolateErrors_t)
-     D                                     inz(*likeds)
+     D hReader         s                   like(hJobLogReader_t)
+     D userData        ds                  likeds(jobLogUserData_t)
       /free
 
-       reset fldSelect;
-       addFieldSelectId(%addr(fldSelect): %size(fldSelect): OLJL_SND_PGM_NM);
-       setCallMsgQName(%addr(fldSelect): %size(fldSelect): '*');
+       clear userData;
+       userData.timeLimit = timeLimit;
+       userData.isFound = *off;
+       userData.msgId = msgId;
 
-       QGYOLJBL( jobLogList :
-                 %size( jobLogList ) :
-                 listInfo :
-                 OLJL_FULL_SYNCHRONOUS_BUILD :
-                 fldSelect :
-                 %size( fldSelect ) :
-                 percolateErrors );
+       hReader = JobLogReader_init(JL_RD_PREVIOUS);
+       JobLogReader_read(hReader: %paddr(jobLogCallback): %addr(userData));
 
-       p_msgBasicInfo = %addr( jobLogList );
-       msgIdx = 1;
-
-       dow 1=1;
-         if msgIdx > listInfo.retRcdCnt;
-           if listInfo.totalRcdCnt > listInfo.retRcdCnt;
-             sndEscapeMsgToCaller( 'Insufficient implementation. ' +
-                   'Should use QGYGTLE to retrieve records after ' +
-                                %char( listInfo.retRcdCnt ) + '. ' +
-                                           'Please open an issue.' );
-           else;
-             leave;
-           endif;
-         endif;
-
-         sentTimeStamp = getSentTimeJobLogMsg( msgBasicInfo );
-
-         if sentTimeStamp < timeLimit;
-           leave;
-         endif;
-
-         if msgBasicInfo.msgId = msgId;
-           msgFound = *on;
-           leave;
-         endif;
-
-         // Go to next message in the job log.
-         p_msgBasicInfo = %addr( jobLogList ) + msgBasicInfo.nextEntOff;
-         msgIdx += 1;
-       enddo;
-
-       QGYCLST( listInfo.rqsHdl : percolateErrors );
-
-       assert( msgFound : 'Message ' + msgId + ' not found in the job log.' );
+       assert(userData.isFound
+              : 'Message ' + msgId + ' not found in the job log.');
 
       /end-free
      P                 e
 
+
+       //----------------------------------------------------------------------
+       // Adds a field selection key to the 'Message Selection Information
+       // Format' of the Open List of Job Log Messages (QGYOLJBL) API.
+       // Must be called before setCallMsgQName().
+       //----------------------------------------------------------------------
+     p jobLogCallback...
+     p                 b
+     D                 pi              n
+     D i_hMsgInfo                      *   const
+     D i_pUserData                     *   const
+     D i_msgId                        7a   const
+     D i_msgText                    132a   const varying
+     D i_msgSentTime                   z   const
+
+     D userData        ds                  likeds(jobLogUserData_t)
+     D                                     based(i_pUserData)
+
+       if i_msgSentTime < userdata.timeLimit;
+         return *off;
+       endif;
+
+       if (i_msgId = userData.msgId);
+         userData.isFound = *on;
+         return *off;
+       endif;
+
+       return *on;
+
+     p                 e
 
        //----------------------------------------------------------------------
        // Adds a field selection key to the 'Message Selection Information
