@@ -1,6 +1,6 @@
 **FREE
 // ==========================================================================
-//  iRPGUnit - XML File Writer.
+//  iRPGUnit - Job Log Reader.
 // ==========================================================================
 //  Copyright (c) 2013-2019 iRPGUnit Project Team
 //  All rights reserved. This program and the accompanying materials
@@ -20,28 +20,28 @@
 
 ctl-opt NoMain;
 /include qinclude,H_SPEC
+
 /include qinclude,COPYRIGHT
-
-/include qinclude,OSVERSION
-/include qinclude,SYSTEMAPI
 /include qinclude,ERRORCODE
+/include qsysinc,QGYOLJBL
 
-dcl-proc OS_getVersion export;
-  dcl-pi *n char(6) end-pi;
+/include qinclude,JOBLOG
 
-  dcl-ds data likeds(prdr0100_t);
-  dcl-ds productInfo likeds(prdi0100_t);
-  dcl-ds errorCode likeds(errorCode_t);
+dcl-ds hReader_t qualified;
+  length int(5);
+  data   char(2014);
+end-ds;
 
-  productInfo.productId = '*OPSYS';
-  productInfo.releaseLvl = '*CUR';
-  productInfo.productOpt = '0000';
-  productInfo.loadId = '*CODE';
+dcl-proc JobLogReader_init export;
+  dcl-pi *n like(hJobLogReader_t);
+    i_direction  varchar(10) const;
+    i_msgQ       varchar(10) const options(*nopass);
+  end-pi;
 
-  clear errorCode;
+  dcl-ds hReader likeds(hReader_t);
 
-  api_retrieveProductInfo(
-     data : %size(data) : 'PRDR0100' : productInfo : errorCode);
-  return data.releaseLvl;
+
+  return hReader;
+
 end-proc;
 

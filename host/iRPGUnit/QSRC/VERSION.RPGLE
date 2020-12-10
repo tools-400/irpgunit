@@ -19,18 +19,11 @@
 
      H NoMain
       /include qinclude,H_SPEC
-      /include qinclude,COPYRIGHT
-
-      //----------------------------------------------------------------------
-      //   IMPORTS
-      //----------------------------------------------------------------------
-
-      /include qinclude,VERSION
 
       /define COPYRIGHT_DSPEC
       /include qinclude,COPYRIGHT
-      /undefine COPYRIGHT_DSPEC
 
+      /include qinclude,VERSION
 
      P getVersion...
      P                 b                   export

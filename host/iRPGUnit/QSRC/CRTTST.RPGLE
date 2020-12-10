@@ -251,8 +251,7 @@
      P                 b
      D                 pi                  likeds(ObjectArray_t)
      D  crtMsgId                      7a   const
-     D  startCompileTime...
-     D                                 z   const
+     D  timeLimit                      z   const
 
        // Job log message field selection for QGYOLJBL API.
      D fldSelect       ds                  qualified
@@ -266,7 +265,9 @@
      D  fldCnt                       10i 0 inz(1)
      D  callMsgqNmOff                10i 0
      D  callMsgqNmLen                10i 0 inz(%size(fldSelect.callMsgqNm))
+      *  Identifiers of fields to return
      D  fldId1                       10i 0 inz(OLJL_RPL_DATA)
+      *  Call message queue name
      D  callMsgqNm                    1a   inz('*')
 
      D listInfo        ds                  likeds(dsOpnList)
@@ -277,7 +278,7 @@
      D                                     based(pMsgFldInfo)
      D pMsgFldInfo     s               *
      D sentDateAsIso   s              8a
-     D msgSendTime     s               z
+     D sentTimeStamp   s               z
      D jobLogList      s          32766a
      D msgIdx          s             10i 0
      D percolateErrors...
@@ -328,10 +329,11 @@
          endif;
 
          sentDateAsIso = %char( %date( msgBasicInfo.sentDate: *cymd0) : *iso0 );
-         msgSendTime = %timestamp( sentDateAsIso
-                                 + msgBasicInfo.sentTime
-                                 + msgBasicInfo.microseconds: *iso0 );
-         if (startCompileTime >= msgSendTime);
+         sentTimeStamp = %timestamp( sentDateAsIso
+                                   + msgBasicInfo.sentTime
+                                   + msgBasicInfo.microseconds: *iso0 );
+
+         if sentTimeStamp < timeLimit;
            leave;
          endif;
 

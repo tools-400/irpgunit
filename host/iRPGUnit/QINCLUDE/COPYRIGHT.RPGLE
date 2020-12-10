@@ -1,4 +1,3 @@
-      /if not defined(COPYRIGHT_DSPEC)
       // ==========================================================================
       //  iRPGUnit Copyright Disclaimer.
       // ==========================================================================
@@ -10,6 +9,7 @@
       // ==========================================================================
      HCopyright('v4.0.0 - xx.xx.xxxx - +
      H           Copyright (c) 2013-xxxx iRPGUnit Project Team')
+      /if not defined(COPYRIGHT_DSPEC)
       /eof
       /endif
      D cRPGUNIT_VERSION...

@@ -89,10 +89,26 @@
      D  value                     32565a         options(*varsize)
      D  dftLen                       10i 0 const
 
-     d descTypeToExt...
-     d                 pr            20a   varying
-     d                                     extproc('descTypeToExt')
-     d  dataType                     10i 0 const
+     D descTypeToExt...
+     D                 pr            20a   varying
+     D                                     extproc('descTypeToExt')
+     D  dataType                     10i 0 const
+
+     D addFieldSelectId...
+     D                 pr
+     D                                     extproc(
+     D                                       'addFieldSelectId')
+     D  i_pFldSelect                   *   const
+     D  i_size                       10i 0 const
+     D  i_field_id                   10i 0 const
+
+     D setCallMsgQName...
+     D                 pr
+     D                                     extproc(
+     D                                       'setCallMsgQName')
+     D  i_pFldSelect                   *   const
+     D  i_size                       10i 0 const
+     D  i_msgQName                   10a   const varying
 
        //----------------------------------------------------------------------
        //   GLOBAL CONSTANTS
@@ -500,19 +516,21 @@
      D  timeLimit                      z   const
 
        // Job log message field selection for QGYOLJBL API.
-     D fldSelect       ds                  qualified
+     D fldSelect       ds           100    qualified
      D  listDirection                10a   inz('*PRV')
      D  qlfJobNm                     26a   inz('*')
      D  intJobId                     16a   inz(*blank)
      D  startMsgKey                   4a   inz(x'FFFFFFFF')
      D  maxMsgLen                    10i 0 inz(0)
      D  maxMsgHlpLen                 10i 0 inz(0)
-     D  fldIdOff                     10i 0
-     D  fldCnt                       10i 0 inz(1)
-     D  callMsgqNmOff                10i 0
-     D  callMsgqNmLen                10i 0 inz(%size(fldSelect.callMsgqNm))
-     D  fldId1                       10i 0 inz(OLJL_SND_PGM_NM)
-     D  callMsgqNm                    1a   inz('*')
+     D  fldIdOff                     10i 0 inz(0)
+     D  fldCnt                       10i 0 inz(0)
+     D  callMsgqNmOff                10i 0 inz(0)
+     D  callMsgqNmLen                10i 0 inz(0)
+      *  Identifiers of fields to return
+      *  Call message queue name
+     D p_callMsgqNm    s               *
+     D callMsgqNm      s              1a   based(p_callMsgqNm)
 
      D listInfo        ds                  likeds(dsOpnList)
      D msgBasicInfo    ds                  likeds(dsOLJL0100EntHdr)
@@ -527,9 +545,9 @@
      D                                     inz(*likeds)
       /free
 
-       fldSelect.fldIdOff = %addr(fldSelect.fldId1) - %addr(fldSelect);
-       fldSelect.callMsgqNmOff =
-                        %addr(fldSelect.callMsgqNm) - %addr(fldSelect);
+       reset fldSelect;
+       addFieldSelectId(%addr(fldSelect): %size(fldSelect): OLJL_SND_PGM_NM);
+       setCallMsgQName(%addr(fldSelect): %size(fldSelect): '*');
 
        QGYOLJBL( jobLogList :
                  %size( jobLogList ) :
@@ -577,6 +595,76 @@
       /end-free
      P                 e
 
+
+       //----------------------------------------------------------------------
+       // Adds a field selection key to the 'Message Selection Information
+       // Format' of the Open List of Job Log Messages (QGYOLJBL) API.
+       // Must be called before setCallMsgQName().
+       //----------------------------------------------------------------------
+     p addFieldSelectId...
+     p                 b
+     D                 pi
+     D  i_pFldSelect                   *   const
+     D  i_size                       10i 0 const
+     D  i_field_id                   10i 0 const
+
+     D fldSelect       ds                  likeds(fldSelect_QGYOLJBL_t)
+     D                                     based(i_pFldSelect)
+
+     D p_field_id      s               *
+     D field_id        s             10i 0 based(p_field_id)
+      /free
+
+       if (fldSelect.fldIdOff >= i_size - %size(field_id));
+         return;
+       endif;
+
+       fldSelect.fldIdOff = %size(fldSelect);
+
+       p_field_id = %addr(fldSelect) + fldSelect.fldIdOff +
+                      %size(field_id) * fldSelect.fldCnt;
+
+       field_id = i_field_id;
+       fldSelect.fldCnt += 1;
+
+       fldSelect.callMsgqNmOff = fldSelect.fldIdOff +
+                                 (%size(field_id) * fldSelect.fldCnt);
+
+      /end-free
+     p                 e
+
+
+       //----------------------------------------------------------------------
+       // Sets the call message queue name in the 'Message Selection
+       // Information Format' of the Open List of Job Log Messages
+       // (QGYOLJBL) API.
+       // Must be called after addFieldSelectId().
+       //----------------------------------------------------------------------
+     p setCallMsgQName...
+     p                 b
+     D                 pi
+     D  i_pFldSelect                   *   const
+     D  i_size                       10i 0 const
+     D  i_msgQName                   10a   const varying
+
+     D fldSelect       ds                  likeds(fldSelect_QGYOLJBL_t)
+     D                                     based(i_pFldSelect)
+
+     D p_msgQName      s               *
+     D msgQName        s             10a   based(p_msgQName)
+      /free
+
+       if (fldSelect.fldIdOff >= i_size - %len(i_msgQName));
+         return;
+       endif;
+
+       p_msgQName = %addr(fldSelect) + fldSelect.callMsgqNmOff;
+
+       %subst(msgQName: 1: %len(i_msgQName)) = i_msgQName;
+       fldSelect.callMsgqNmLen = %len(i_msgQName);
+
+      /end-free
+     p                 e
 
        //----------------------------------------------------------------------
        // Searches a given message queue backwards for a message identified

@@ -1,10 +1,12 @@
-      //
-      // Prototype for QGYOLJBL API.
-      //
-      // Open List of Job Log Messages
-      //
+       //
+       // Prototype for QGYOLJBL API.
+       //
+       // Open List of Job Log Messages
+       //
       // http://publib.boulder.ibm.com/iseries/v5r2/ic2924/info/apis/qgyoljbl.htm
-      //
+       //
+
+      /include qsysinc,OPNLIST
 
      DQGYOLJBL         pr                  ExtPgm('QGYOLJBL')
      D jobLogList                 32766a   options(*varsize)
@@ -14,6 +16,24 @@
      D msgSelect                  32766a   const options(*varsize)
      D msgSelectLen                  10i 0 const
      D error                      32766a   options(*varsize: *omit) noopt
+
+       // Job log message field selection for QGYOLJBL API.
+     D fldSelect_QGYOLJBL_t...
+     D                 ds                  qualified based(template)
+     D  listDirection                10a
+     D  qlfJobNm                     26a
+     D  intJobId                     16a
+     D  startMsgKey                   4a
+     D  maxMsgLen                    10i 0
+     D  maxMsgHlpLen                 10i 0
+     D  fldIdOff                     10i 0
+     D  fldCnt                       10i 0
+     D  callMsgqNmOff                10i 0
+     D  callMsgqNmLen                10i 0
+      *  Identifiers of fields to return
+      *    ARRAY(*) of BINARY(4)
+      *  Call message queue name
+      *    CHAR(*)
 
      DdsOLJL0100EntHdr...
      D                 ds                  qualified based(template)

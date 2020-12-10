@@ -99,8 +99,7 @@
      D                                     getCreatedModulesFromJobLog+
      D                                     ')
      D  crtMsgId                      7a   const
-     D  startCompileTime...
-     D                                 z   const
+     D  timeLimit                      z   const
 
      D addModules...
      D                 pr
