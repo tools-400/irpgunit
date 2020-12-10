@@ -21,6 +21,10 @@
 ctl-opt NoMain;
 /include qinclude,H_SPEC
 
+//----------------------------------------------------------------------
+//   IMPORTS
+//----------------------------------------------------------------------
+
 /include qinclude,COPYRIGHT
 /include qinclude,ERRORCODE
 /include qinclude,PGMMSG
@@ -28,6 +32,10 @@ ctl-opt NoMain;
 /include qsysinc,QGYCLST
 
 /include qinclude,JOBLOG
+
+//----------------------------------------------------------------------
+//   TYPE TEMPLATES
+//----------------------------------------------------------------------
 
 dcl-ds hReader_t qualified template;
   length     int(5);
@@ -45,6 +53,23 @@ dcl-ds msgInfo_t qualified template;
 end-ds;
 
 dcl-c FIELD_SIZE 4;
+
+//----------------------------------------------------------------------
+//   PRIVATE PROTOTYPES
+//----------------------------------------------------------------------
+
+dcl-pi hasField ind extproc('hasField');
+  i_hReader likeds(hReader_t);
+  i_fieldId int(10) const;
+end-pi;
+
+dcl-pi prepareRead ind extproc('prepareRead');
+  io_hReader  like(hJobLogReader_t);
+end-pi;
+
+dcl-pi setMsgQName ind extproc('setMsgQName');
+  io_hReader likeds(hReader_t);
+end-pi;
 
 //----------------------------------------------------------------------
 // Initializes a job log reader.
@@ -316,7 +341,7 @@ dcl-proc hasField;
 end-proc;
 
 //----------------------------------------------------------------------
-// Prepares the message selection information..
+// Prepares the message selection information.
 //----------------------------------------------------------------------
 dcl-proc prepareRead;
   dcl-pi *n ind;
