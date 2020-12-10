@@ -20,6 +20,8 @@
       * ===================================================================
       /include qinclude,H_SPEC
      H DFTACTGRP(*NO) ACTGRP(*NEW)
+      /define COPYRIGHT_DSPEC
+      /include qinclude,COPYRIGHT
       * ===================================================================
      FQAFDMBRL  IF   E             DISK    usropn
      F                                     extfile(g_outfile)
@@ -34,12 +36,6 @@
      D g_srcmbr        S             10A   varying inz('A_METADATA')
       *
      D g_copybooks     S             20A   varying inz
-      * ------------------------------------
-      *  Type definitions
-      * ------------------------------------
-      /define COPYRIGHT_DSPEC
-      /include qinclude,COPYRIGHT
-      /undefine COPYRIGHT_DSPEC
       *
       * ------------------------------------
       *  External Prototypes
