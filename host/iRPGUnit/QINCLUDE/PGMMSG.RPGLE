@@ -10,6 +10,8 @@
       //  http://www.eclipse.org/legal/cpl-v10.html
       // ==========================================================================
 
+      /include qinclude,templates
+
        // Receive exception message.
      D rcvExcpMsgInfo  pr                  likeds(Msg_t)
      D                                     extproc('PGMMSG_rcvExcpMsgInfo')
