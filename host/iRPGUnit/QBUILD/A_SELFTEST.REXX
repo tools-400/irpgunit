@@ -108,6 +108,7 @@
  "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/CRTTST    *MODULE))"
  "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/EXTPRC    *MODULE))"
  "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/EXTTST    *MODULE))"
+ "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/JOBLOG    *MODULE))"
  "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/LIBL      *MODULE))"
  "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/OBJECT    *MODULE))"
  "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/OSVERSION *MODULE))"

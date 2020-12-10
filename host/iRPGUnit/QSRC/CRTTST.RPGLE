@@ -25,6 +25,7 @@
       //   IMPORTS
       //----------------------------------------------------------------------
 
+      /include qinclude,JOBLOG
       /include qinclude,STRING
       /include qinclude,PGMMSG
       /include qinclude,TEMPLATES
@@ -43,6 +44,31 @@
       //----------------------------------------------------------------------
 
       /include qinclude,CRTTST
+
+
+      //----------------------------------------------------------------------
+      //   PRIVATE PROTOTYPES
+      //----------------------------------------------------------------------
+
+     D jobLogCallback...
+     D                 pr              n
+     D                                     extproc('jobLogCallback')
+     D i_hMsgInfo                      *   const
+     D i_pUserData                     *   const
+     D i_msgId                        7a   const
+     D i_msgText                    132a   const varying
+     D i_msgSentTime                   z   const
+
+
+      //----------------------------------------------------------------------
+      //   TYPE TEMPLATE
+      //----------------------------------------------------------------------
+
+     D jobLogUserData_t...
+     D                 ds                  qualified template
+     D  timeLimit                      z
+     D  crtMsgId                      7a
+     D  modules                            likeds(ObjectArray_t) inz
 
 
       //----------------------------------------------------------------------
@@ -253,41 +279,38 @@
      D  crtMsgId                      7a   const
      D  timeLimit                      z   const
 
-       // Job log message field selection for QGYOLJBL API.
-     D fldSelect       ds                  qualified
-     D  listDirection                10a   inz('*PRV')
-     D  qlfJobNm                     26a   inz('*')
-     D  intJobId                     16a   inz(*blank)
-     D  startMsgKey                   4a   inz(x'FFFFFFFF')
-     D  maxMsgLen                    10i 0 inz(0)
-     D  maxMsgHlpLen                 10i 0 inz(0)
-     D  fldIdOff                     10i 0
-     D  fldCnt                       10i 0 inz(1)
-     D  callMsgqNmOff                10i 0
-     D  callMsgqNmLen                10i 0 inz(%size(fldSelect.callMsgqNm))
-      *  Identifiers of fields to return
-     D  fldId1                       10i 0 inz(OLJL_RPL_DATA)
-      *  Call message queue name
-     D  callMsgqNm                    1a   inz('*')
+     D hReader         s                   like(hJobLogReader_t)
+     D userData        ds                  likeds(jobLogUserData_t)
+      /free
 
-     D listInfo        ds                  likeds(dsOpnList)
-     D msgBasicInfo    ds                  likeds(dsOLJL0100EntHdr)
-     D                                     based(p_msgBasicInfo)
-     D p_msgBasicInfo  s               *
-     D msgFldInfo      ds                  likeds(dsOLJL0100FldHdr)
-     D                                     based(pMsgFldInfo)
-     D pMsgFldInfo     s               *
-     D sentDateAsIso   s              8a
-     D sentTimeStamp   s               z
-     D jobLogList      s          32766a
-     D msgIdx          s             10i 0
-     D percolateErrors...
-     D                 ds                  likeds(percolateErrors_t)
-     D                                     inz(*likeds)
-     D i               s             10i 0
-     D module          ds                  likeds(Object_t) inz
+       clear userData;
+       userData.timeLimit = timeLimit;
+       userData.crtMsgId = crtMsgId;
 
-     D pMsgData        s               *
+       hReader = JobLogReader_init(JL_RD_PREVIOUS);
+       JobLogReader_addField(hReader: OLJL_RPL_DATA);
+       JobLogReader_read(hReader: %paddr('jobLogCallback'): %addr(userData));
+
+       return userData.modules;
+
+      /end-free
+     P                 e
+
+
+     p jobLogCallback...
+     p                 b
+     D                 pi              n
+     D i_hMsgInfo                      *   const
+     D i_pUserData                     *   const
+     D i_msgId                        7a   const
+     D i_msgText                    132a   const varying
+     D i_msgSentTime                   z   const
+
+     D userData        ds                  likeds(jobLogUserData_t)
+     D                                     based(i_pUserData)
+
+     D msgData         s            100a
+     D module          ds                  likeds(Object_t)
 
      D RNS9305         ds                  qualified based(pMsgData)
      D  mod                          10a
@@ -297,76 +320,31 @@
      D  length                        5i 0
      D  data                         10a
 
-     D modules         ds                  likeds(ObjectArray_t) inz
-      /free
+       if i_msgSentTime < userdata.timeLimit;
+         return *off;
+       endif;
 
-       fldSelect.fldIdOff = %addr(fldSelect.fldId1) - %addr(fldSelect);
-       fldSelect.callMsgqNmOff =
-                        %addr(fldSelect.callMsgqNm) - %addr(fldSelect);
+       if (i_msgId = userData.crtMsgId);
 
-       QGYOLJBL( jobLogList :
-                 %size( jobLogList ) :
-                 listInfo :
-                 OLJL_FULL_SYNCHRONOUS_BUILD :
-                 fldSelect :
-                 %size( fldSelect ) :
-                 percolateErrors );
+         msgData = JobLogReader_getCharValue(i_hMsgInfo: OLJL_RPL_DATA);
+         pMsgData = %addr(msgData);
 
-       p_msgBasicInfo = %addr( jobLogList );
-       msgIdx = 1;
+         select;
+         when (userData.crtMsgId = MOD_CRT_RPG);
+           module.nm = RNS9305.mod;
+           module.lib = RNS9305.lib;
+           addModule( userData.modules : module );
+         when (userData.crtMsgId = MOD_CRT_CBL);
+           module.nm = %subst(LNC0899.data: 1: LNC0899.length);
+           pMsgData += LNC0899.length + %size(LNC0899.length); // push pointer to next *VARY field
+           module.lib = %subst(LNC0899.data: 1: LNC0899.length);
+           addModule( userData.modules : module );
+         endsl;
+       endif;
 
-       dow 1=1;
-         if msgIdx > listInfo.retRcdCnt;
-           if listInfo.totalRcdCnt > listInfo.retRcdCnt;
-             sndEscapeMsgAboveCtlBdy(
-                   'Insufficient implementation. ' +
-                   'Should use QGYGTLE to retrieve records after ' +
-                                %char( listInfo.retRcdCnt ) + '. ' +
-                                           'Please open an issue.' );
-           else;
-             leave;
-           endif;
-         endif;
+       return *on;
 
-         sentDateAsIso = %char( %date( msgBasicInfo.sentDate: *cymd0) : *iso0 );
-         sentTimeStamp = %timestamp( sentDateAsIso
-                                   + msgBasicInfo.sentTime
-                                   + msgBasicInfo.microseconds: *iso0 );
-
-         if sentTimeStamp < timeLimit;
-           leave;
-         endif;
-
-         if (msgBasicInfo.msgId = crtMsgId);
-
-           pMsgFldInfo = %addr( jobLogList ) + msgBasicInfo.retFldOff;
-
-           pMsgData = pMsgFldInfo + %size(msgFldInfo);
-
-           select;
-           when (crtMsgId = MOD_CRT_RPG);
-             module.nm = RNS9305.mod;
-             module.lib = RNS9305.lib;
-             addModule( modules : module );
-           when (crtMsgId = MOD_CRT_CBL);
-             module.nm = %subst(LNC0899.data: 1: LNC0899.length);
-             pMsgData += LNC0899.length + %size(LNC0899.length); // push pointer to next *VARY field
-             module.lib = %subst(LNC0899.data: 1: LNC0899.length);
-             addModule( modules : module );
-           endsl;
-         endif;
-
-         // Go to next message in the job log.
-         p_msgBasicInfo = %addr( jobLogList ) + msgBasicInfo.nextEntOff;
-         msgIdx += 1;
-       enddo;
-
-       QGYCLST( listInfo.rqsHdl : percolateErrors );
-
-       return modules;
-
-      /end-free
-     P                 e
+     p                 e
 
 
      P addModules...
@@ -641,8 +619,6 @@
       // Command string accumulator.
      D cmd             s                   like(Cmd_t)
      D dbgCompileOpt   s                   like(compileOpt)
-      // Counter.
-     D i               s             10i 0
 
       /free
 
@@ -707,8 +683,6 @@
       // Command string accumulator.
      D cmd             s                   like(Cmd_t)
      D dbgCompileOpt   s                   like(compileOpt)
-      // Counter.
-     D i               s             10i 0
 
       /free
 
