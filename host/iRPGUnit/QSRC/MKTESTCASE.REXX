@@ -82,6 +82,7 @@
  /* -------------------------------------------- */
 
  "CMPMOD MODULE("prdLib"/ASSERT   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/JOBLOG   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/VERSION  ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/TESTUTILS) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
@@ -89,6 +90,7 @@
 
  "CRTSRVPGM  SRVPGM("prdLib"/RUTESTCASE) ",
               "MODULE("prdLib"/ASSERT     ",
+                       prdLib"/JOBLOG     ",
                        prdLib"/PGMMSG     ",
                        prdLib"/VERSION    ",
                        prdLib"/TESTUTILS  ",
