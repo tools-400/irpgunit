@@ -8,14 +8,14 @@
 
       /include qsysinc,OPNLIST
 
-     DQGYOLJBL         pr                  ExtPgm('QGYOLJBL')
-     D jobLogList                 32766a   options(*varsize)
-     D jobLogListLen                 10i 0 const
-     D listInfo                            likeds(dsOpnList)
-     D nbOfRcdToRtn                  10i 0 const
-     D msgSelect                  32766a   const options(*varsize)
-     D msgSelectLen                  10i 0 const
-     D error                      32766a   options(*varsize: *omit) noopt
+     D QGYOLJBL        pr                  ExtPgm('QGYOLJBL')
+     D  o_rcvVar                  32766a         options(*varsize)
+     D  i_rcvVarLen                  10i 0 const
+     D  o_listInfo                               likeds(dsOpnList)
+     D  i_nbrRcdToRtn                10i 0 const
+     D  i_msgSelect               32766a   const options(*varsize)
+     D  i_msgSelectLn                10i 0 const
+     D  io_error                  32766a         options(*varsize)
 
        // Job log message field selection for QGYOLJBL API.
      D fldSelect_QGYOLJBL_t...
@@ -35,30 +35,30 @@
       *  Call message queue name
       *    CHAR(*)
 
-     DdsOLJL0100EntHdr...
+     D dsOLJL0100EntHdr...
      D                 ds                  qualified based(template)
-     D nextEntOff                    10i 0
-     D retFldOff                     10i 0
-     D retFldCnt                     10i 0
-     D msgSeverity                   10i 0
-     D msgId                          7a
-     D msgType                        2a
-     D msgKey                         4a
-     D msgfNm                        10a
-     D msgfLib                       10a
-     D sentDate                       7a
-     D sentTime                       6a
-     D microseconds                   6a
+     D  nextEntOff                   10i 0
+     D  retFldOff                    10i 0
+     D  retFldCnt                    10i 0
+     D  msgSeverity                  10i 0
+     D  msgId                         7a
+     D  msgType                       2a
+     D  msgKey                        4a
+     D  msgfNm                       10a
+     D  msgfLib                      10a
+     D  sentDate                      7a
+     D  sentTime                      6a
+     D  microseconds                  6a
 
-     DdsOLJL0100FldHdr...
+     D dsOLJL0100FldHdr...
      D                 ds                  qualified based(template)
-     D nextFldOff                    10i 0
-     D fldInfoLen                    10i 0
-     D fldId                         10i 0
-     D dataType                       1a
-     D dataSts                        1a
-     D reserved_1                    14a
-     D dataLen                       10i 0
+     D  nextFldOff                   10i 0
+     D  fldInfoLen                   10i 0
+     D  fldId                        10i 0
+     D  dataType                      1a
+     D  dataSts                       1a
+     D  reserved_1                   14a
+     D  dataLen                      10i 0
 
        // Number of records to return:
        // - All records are built synchronously in the list by the main job.

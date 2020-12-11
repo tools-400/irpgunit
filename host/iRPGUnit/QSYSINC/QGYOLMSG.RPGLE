@@ -8,54 +8,55 @@
 
       /include qinclude,templates
 
-     DQGYOLMSG         pr                  ExtPgm('QGYOLMSG')
-     D msgList                    32766a   options(*varsize)
-     D msgListLen                    10i 0 const
-     D listInfo                            likeds(dsOpnList)
-     D nbOfRcdToRtn                  10i 0 const
-     D msgSort                        1a   const
-     D msgSelect                  32766a   const options(*varsize)
-     D msgSelectLen                  10i 0 const
-     D userQueueInf                  21a   const
-     D msgQueuesUsed                 44a
-     D error                      32766a   options(*varsize: *omit) noopt
+     D QGYOLMSG        pr                  ExtPgm('QGYOLMSG')
+     D  o_rcvVar                  32766a         options(*varsize)
+     D  i_rcvVarLen                  10i 0 const
+     D  o_listInfo                               likeds(dsOpnList)
+     D  i_nbrRcdToRtn                10i 0 const
+     D  i_msgSort                     1a   const
+     D  i_msgSelect               32766a   const options(*varsize)
+     D  i_msgSelectLn                10i 0 const
+     D  i_userQInf                   21a   const
+     D  o_msgQUsed                   44a
+     D  io_error                  32766a         options(*varsize)
 
-     DdsLSTM0100EntHdr...
+     D dsLSTM0100EntHdr...
      D                 ds                  qualified based(template)
-     D nextEntOff                    10i 0
-     D retFldOff                     10i 0
-     D retFldCnt                     10i 0
-     D msgSeverity                   10i 0
-     D msgId                          7a
-     D msgType                        2a
-     D msgKey                         4a
-     D msgfNm                        10a
-     D msgfLib                       10a
-     D msgQueueNm                    10a
-     D msgQueueLib                   10a
-     D sentDate                       7a
-     D sentTime                       6a
-     D microseconds                   6a
-     D timezone                      10a
+     D  nextEntOff                   10i 0
+     D  retFldOff                    10i 0
+     D  retFldCnt                    10i 0
+     D  msgSeverity                  10i 0
+     D  msgId                         7a
+     D  msgType                       2a
+     D  msgKey                        4a
+     D  msgfNm                       10a
+     D  msgfLib                      10a
+     D  msgQueueNm                   10a
+     D  msgQueueLib                  10a
+     D  sentDate                      7a
+     D  sentTime                      6a
+     D  microseconds                  6a
+     D  timezone                     10a
 
-     DdsLSTM0100FldHdr...
+     D dsLSTM0100FldHdr...
      D                 ds                  qualified based(template)
-     D nextFldOff                    10i 0
-     D fldInfoLen                    10i 0
-     D fldId                         10i 0
-     D dataType                       1a
-     D dataSts                        1a
-     D reserved_1                    14a
-     D dataLen                       10i 0
+     D  nextFldOff                   10i 0
+     D  fldInfoLen                   10i 0
+     D  fldId                        10i 0
+     D  dataType                      1a
+     D  dataSts                       1a
+     D  reserved_1                   14a
+     D  dataLen                      10i 0
 
        // User or queue information
-     DdsUserQueueInf   ds                  qualified based(template)
+     D dsUserQueueInf  ds                  qualified based(template)
      D  ind                           1a
      D  userOrQueueNm                10a
      D  libraryNm                    10a
 
        // Message queues used
-     DdsMsgQueuesUsed  ds                  qualified based(template)
+     D dsMsgQueuesUsed...
+     D                 ds                  qualified based(template)
      D  queuesCnt                    10i 0
      D  msgQueues                          likeds(Object_t) dim(2)
 
