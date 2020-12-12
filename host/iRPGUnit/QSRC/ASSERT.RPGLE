@@ -176,7 +176,7 @@
        if (status.qStartPgm.lib <> sds.pgmLib);
          msg = 'Start program RUCALLTST or RUPGMRMT was not +
                 registered with service program ' +
-                %trim(sds.pgmLib) + '/' + %trim(sds.pgmName) + '. +
+                %trim(sds.pgmLib) + '/RUTESTCASE. +
                 Make sure that there are no duplicate iRPGUnit +
                 objects in the library list. +
                 Compare the library list with the product library +
