@@ -48,6 +48,16 @@
      D  splfNm                       10a   const
      D  usrData                      10a   const
 
+     D listSplfCallback...
+     D                 pr              n
+     D                                     extproc('listSplfCallback')
+     D  i_hSplF                        *   const
+     D  i_pUserData                    *   const
+     D  i_name                       10a   const
+     D  i_qJob                             const likeds(Job_t)
+     D  i_splFNbr                    10i 0 const
+     D  i_status                     10a   const varying
+
       //----------------------------------------------------------------------
       //   Imported Procedures
       //----------------------------------------------------------------------
@@ -57,6 +67,8 @@
       /copy qinclude,SYSTEMAPI
       /copy qinclude,TEMPLATES
       /copy qinclude,USRSPC
+
+      /copy qinclude,LSTSPLF
 
       //----------------------------------------------------------------------
       //   Constants
@@ -70,11 +82,14 @@
       //   Templates
       //----------------------------------------------------------------------
 
-     D SplfId_t        ds                  qualified based(template)
+     D SplfId_t        ds                  qualified template
      D  qJob                               likeds(QlfJobNm_t)
      D  name                         10a
      D  number                       10i 0
      D  handle                       10i 0
+
+     D userData_t      ds                  qualified template
+     D  countDeleted                 10i 0
 
       //----------------------------------------------------------------------
       //   Global Variables
@@ -162,108 +177,49 @@
      D  splfNm                             const like(UsrNm_t)
      D  usrData                      10a   const
 
-       // Retrieve only one record.
-     D ONE_RECORD      c                   const(1)
-       // Retrieve spool files from all jobs.
-     D ALL_JOBS        c                   const(*blank)
-       // Do not retrieve any record.
-     D NO_RETRIEVAL    c                   const(*zero)
-       // The entire list is build synchronously.
-     D BUILD_ENTIRE_LIST_SYNCHRONOUSLY...
-     D                 c                   const(-1)
-       // Latest spool file id.
-     D latestSplfId    ds                  likeds(SplfId_t)
-       // Latest spool file info from QGYOLSPL API.
-     D latestSplfInfo  ds                  likeds(dsOSPL0300)
-       // Open list information for QGYOLSPL API.
-     D listInfo        ds                  likeds(dsOpnList)
-       // Open list handle.
-     D opnListHdl      s                   like(dsOpnList.rqsHdl)
-       // Current spool file record index.
-     D rcdIdx          s             10i 0
-       // Spool file sorting information.
-     D sortInfo        ds                  likeds(SortInfo_t)
-       // Spool file filtering information, according to OSPF0100 format.
-     D filterInfo      ds                  qualified
-     D  usrNmCnt                     10i 0 inz(1)
-     D   usrNm                       10a
-     D                                2a   inz(x'00')
-     D  outqNmCnt                    10i 0 inz(1)
-     D   outqNm                      10a   inz('*ALL')
-     D   outqLibNm                   10a   inz(*blank)
-     D  formType                     10a   inz('*ALL')
-     D  usrData                      10a
-     D  statusCnt                    10i 0 inz(1)
-     D   splfStatus                  10a   inz('*READY')
-     D                                2a   inz(x'00')
-     D  deviceNmCnt                  10i 0 inz(1)
-     D   deviceNm                    10a   inz('*ALL')
-     D                                2a   inz(x'00')
-
-     D percolateErrors...
-     D                 ds                  likeds(percolateErrors_t)
-     D                                     inz(*likeds)
-
-     D cmd             s            512a   varying
-     D countDeleted    s             10i 0
+     D hLister         s                   like(hSplFLister_t)
+     D userData        ds                  likeds(userData_t)
       /free
 
-        filterInfo.usrNm   = rtvJobUsrNm();
-        filterInfo.usrData = usrData;
+        clear userData;
+        userData.countDeleted = 0;
 
-        sortInfo = *allx'00';
+        hLister = SplFLister_init('*': splFNm: usrData);
+        // filterInfo.usrNm   = rtvJobUsrNm();
+        SplFLister_list(hLister: %paddr('listSplfCallback'): %addr(userData));
 
-        QGYOLSPL( latestSplfInfo :
-                  NO_RETRIEVAL :
-                  listInfo :
-                  BUILD_ENTIRE_LIST_SYNCHRONOUSLY :
-                  sortInfo :
-                  filterInfo :
-                  ALL_JOBS :
-                  'OSPL0300' :
-                  percolateErrors );
+        return userData.countDeleted;
 
-        if ( listInfo.retRcdCnt <> 0 );
-          fail( 'QGYOLSPL unexpectedly returned a record' );
-        endif;
+      /end-free
+     P                 e
 
-        if ( listInfo.infoCompInd <> 'C' );
-          fail( 'QGYOLSPL could not retrieve complete info. ' +
-                'Indicator=' + listInfo.infoCompInd );
-        endif;
 
-        if ( listInfo.firstRcdIdx <> 0 );
-          fail( 'QGYOLSPL unexpectedly returned a first record' );
-        endif;
+     P listSplfCallback...
+     P                 b                   export
+     D                 pi              n
+     D  i_hSplF                        *   const
+     D  i_pUserData                    *   const
+     D  i_name                       10a   const
+     D  i_qJob                             const likeds(Job_t)
+     D  i_splFNbr                    10i 0 const
+     D  i_status                     10a   const varying
 
-        for rcdIdx = 1 to listInfo.totalRcdCnt;
+     D userData        ds                  likeds(userData_t)
+     D                                     based(i_pUserData)
+     D cmd             s            512a   varying
+      /free
 
-          opnListHdl = listInfo.rqsHdl;
+       cmd = 'DLTSPLF FILE(' + %trim(i_name) + ') +
+              JOB(' + %trim(i_qJob.nbr) + '/' +
+                      %trim(i_qJob.user) + '/' +
+                      %trim(i_qJob.name) + ') +
+              SPLNBR(' + %char(i_splFNbr) + ')';
 
-          QGYGTLE( latestSplfInfo :
-                   %size(latestSplfInfo) :
-                   opnListHdl :
-                   listInfo :
-                   ONE_RECORD :
-                   rcdIdx :
-                   percolateErrors );
+       qcmdexc( cmd: %len(cmd) );
 
-          if (splfNm = latestSplfInfo.splfNm);
-            cmd = 'DLTSPLF FILE(' + %trim(latestSplfInfo.splfNm) + ') +
-                   JOB(' + %trim(latestSplfInfo.jobNb) + '/' +
-                           %trim(latestSplfInfo.usrNm) + '/' +
-                           %trim(latestSplfInfo.jobNm) + ') +
-                   SPLNBR(' + %char(latestSplfInfo.splfNb) + ')';
+       userData.countDeleted += 1;
 
-            qcmdexc( cmd: %len(cmd) );
-            countDeleted += 1;
-          endif;
-
-        endfor;
-
-        QGYCLST( listInfo.rqsHdl : percolateErrors );
-
-        return countDeleted;
+       return *on;
 
       /end-free
      P                 e
