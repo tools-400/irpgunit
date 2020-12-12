@@ -60,6 +60,7 @@ Version 4.0.0 - xx.xx.2021
  * Added Cobol support.
  * Added test suite OPDESCT.
  * Added module JOBLOG.
+ * Added module LSTSPLF.
  * Refactored the iRPGUnit library to support Cobol.
    (assert, fail, aEqual)
  * Fixed bug, that fail() did not create an error, when called in a monitor

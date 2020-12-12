@@ -110,6 +110,7 @@
  "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/EXTTST    *MODULE))"
  "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/JOBLOG    *MODULE))"
  "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/LIBL      *MODULE))"
+ "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/LSTSPLF   *MODULE))"
  "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/OBJECT    *MODULE))"
  "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/OSVERSION *MODULE))"
  "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/PGMMSG    *MODULE))"
@@ -142,6 +143,7 @@
  "CMPMOD MODULE("prdLib"/EXTPRC   ) SRCFILE(QSRC) DBGVIEW("dbgView")"
  "CMPMOD MODULE("prdLib"/EXTTST   ) SRCFILE(QSRC) DBGVIEW("dbgView")"
  "CMPMOD MODULE("prdLib"/LIBL     ) SRCFILE(QSRC) DBGVIEW("dbgView")"
+ "CMPMOD MODULE("prdLib"/LSTSPLF  ) SRCFILE(QSRC) DBGVIEW("dbgView")"
  "CMPMOD MODULE("prdLib"/OBJECT   ) SRCFILE(QSRC) DBGVIEW("dbgView")"
  "CMPMOD MODULE("prdLib"/OSVERSION) SRCFILE(QSRC) DBGVIEW("dbgView")"
  "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE(QSRC) DBGVIEW("dbgView")"
@@ -171,6 +173,7 @@
  createUnitTest(prdLib, bndDir, 'EXTTSTT', dbgView)
  createUnitTest(prdLib, bndDir, 'JOBLOGT', dbgView)
  createUnitTest(prdLib, bndDir, 'LIBLT', dbgView)
+ createUnitTest(prdLib, bndDir, 'LSTSPLFT', dbgView)
  createUnitTest(prdLib, bndDir, 'MSGQT', dbgView)
  createUnitTest(prdLib, bndDir, 'OPDESCT', dbgView)
  createUnitTest(prdLib, bndDir, 'PGMMSGT', dbgView)
@@ -190,6 +193,7 @@
  runUnitTest(prdLib, 'EXTTSTT')
  runUnitTest(prdLib, 'JOBLOGT')
  runUnitTest(prdLib, 'LIBLT')
+ runUnitTest(prdLib, 'LSTSPLFT')
  runUnitTest(prdLib, 'MSGQT')
  runUnitTest(prdLib, 'OPDESCT')
  runUnitTest(prdLib, 'PGMMSGT')

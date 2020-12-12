@@ -1,5 +1,5 @@
 /* =================================================================== */
-/*  iRPGUnit SelfTest - Build the acceptance tests.                    */
+/*  iRPGUnit SelfTest - Build LSTSPLFT.                                */
 /* =================================================================== */
 /* Copyright (c) 2013-2019 iRPGUnit Project Team                       */
 /* All rights reserved. This program and the accompanying materials    */
@@ -10,7 +10,7 @@
 /*  Usage:                                                             */
 /*  a) Add the iRPGUnit library to your library list.                  */
 /*  b) Start the Rexx script with the following command:               */
-/*       STRREXPRC SRCMBR(MKACPTSTT) SRCFILE(QUNITTEST) PARM(prdLib)   */
+/*       STRREXPRC SRCMBR(MKLSTSPLFT) SRCFILE(QUNITTEST) PARM(prdLib)   */
 /*     where 'prdLib' is the library containing the RPGUnit            */
 /*     source files.                                                   */
 /*                                                                     */
@@ -47,7 +47,7 @@
  SIGNAL on SYNTAX
 
  /* The utility that is installed */
- UTILITY = 'ACPTSTT'
+ UTILITY = 'LSTSPLFT'
 
  PARSE ARG prdLib dbgView tgtrls
 
@@ -59,7 +59,7 @@
    "SNDPGMMSG ",
      "MSGID(CPF9898) ",
      "MSGF(QCPFMSG) ",
-     "MSGDTA('Usage: STRREXPRC SRCMBR(MKACPTSTT) SRCFILE(QUNITTEST) PARM(prdLib)')",
+     "MSGDTA('Usage: STRREXPRC SRCMBR(MKLSTSPLFT) SRCFILE(QUNITTEST) PARM(prdLib)')",
      "TOPGMQ(*PRV (*CTLBDY)) ",
      "MSGTYPE(*ESCAPE)"
  end
@@ -90,37 +90,18 @@
  /* -------------------------------------------- */
  /*  Let's do it!                                */
  /* -------------------------------------------- */
- "CMPMOD MODULE("prdLib"/ACPTSTT  ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/ASSERT   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/JOBLOG   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/LIBL     ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/LSTSPLFT ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/LSTSPLF  ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/OBJECT   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/SPLF     ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/SRCMBR   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/STRING   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/TESTUTILS) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/USRSPC   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
- "CRTSRVPGM  SRVPGM("prdLib"/ACPTSTT) ",
-            "MODULE("prdLib"/ACPTSTT   ",
-                     prdLib"/ASSERT    ",
-                     prdLib"/JOBLOG    ",
-                     prdLib"/LIBL      ",
+ "CRTSRVPGM  SRVPGM("prdLib"/LSTSPLFT) ",
+            "MODULE("prdLib"/LSTSPLFT  ",
                      prdLib"/LSTSPLF   ",
-                     prdLib"/OBJECT    ",
-                     prdLib"/PGMMSG    ",
-                     prdLib"/SPLF      ",
-                     prdLib"/SRCMBR    ",
-                     prdLib"/STRING    ",
-                     prdLib"/TESTUTILS ",
-                     prdLib"/USRSPC)   ",
+                     prdLib"/PGMMSG)   ",
             "EXPORT(*ALL) ",
             "OPTION(*DUPPROC) ",
             "BNDSRVPGM("prdLib"/RUTESTCASE) ",
-            "TEXT('RPGUnit SelfTest - Acceptance tests.')"
-
+            "TEXT('iRPGUnit SelfTest - Test LSTSPLF.')"
 
  "SNDPGMMSG ",
    "MSGID(CPF9897) ",

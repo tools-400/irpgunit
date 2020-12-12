@@ -283,6 +283,9 @@
                           TOFILE(&LIB/&QINCLUDE) FROMMBR(LIBL) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(LSTSPLF) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
                           TOFILE(&LIB/&QINCLUDE) FROMMBR(MILIB) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
@@ -426,6 +429,9 @@
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSRC) +
                           TOFILE(&LIB/&QSRC) FROMMBR(LIBL) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(LSTSPLF) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSRC) +
                           TOFILE(&LIB/&QSRC) FROMMBR(MKCALLTST) +
@@ -713,6 +719,9 @@
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(LIBLT) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(LSTSPLFT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(MKACPTSTT) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
@@ -741,6 +750,9 @@
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(MKLIBLT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(MKLSTSPLFT) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(MKMSGQT) +
