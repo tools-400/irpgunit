@@ -305,6 +305,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(JOBLOG) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Job Log Reader.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
                           MBR(LIBC_H) +
                           SRCTYPE(RPGLE) +
                           TEXT('C Library Function Prototypes.')
@@ -314,6 +320,12 @@
                           MBR(LIBL) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - Library list Utilities.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(LSTSPLF) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - List Spooled Files.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
@@ -563,9 +575,21 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(JOBLOG) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Job Log Reader.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
                           MBR(LIBL) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - Library list Utilities.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(LSTSPLF) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - List Spooled Files.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +
@@ -1115,6 +1139,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(LSTSPLFT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit SelfTest - Test LSTSPLF.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(MKACPTSTT) +
                           SRCTYPE(REXX) +
                           TEXT('iRPGUnit SelfTest - Build the acceptance tests.')
@@ -1172,6 +1202,12 @@
                           MBR(MKLIBLT) +
                           SRCTYPE(REXX) +
                           TEXT('iRPGUnit SelfTest - Build LIBLT.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(MKLSTSPLFT) +
+                          SRCTYPE(REXX) +
+                          TEXT('iRPGUnit SelftTest - Build LSTSPLFT.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
