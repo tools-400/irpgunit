@@ -78,7 +78,7 @@ end-pr;
 //  * no message text, no message help
 //  * return all messages
 // Returns:
-//  job log reader handle on succeess, else *null.
+//  job log reader handle on succeess, else ''.
 //----------------------------------------------------------------------
 dcl-proc JobLogReader_init export;
   dcl-pi *n like(hJobLogReader_t);
