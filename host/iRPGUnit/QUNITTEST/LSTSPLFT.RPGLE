@@ -80,7 +80,8 @@ dcl-pr createSpooledFile extproc('createSpooledFile');
   i_usrDta varchar(10) options(*trim) const;
 end-pr;
 
-dcl-pr waitNextMinute timestamp extproc('waitNextMinute');
+dcl-pr waitSecs timestamp extproc('waitSecs');
+  i_seconds int(10) const options(*nopass);
 end-pr;
 
 dcl-proc setUp export;
@@ -272,7 +273,7 @@ dcl-proc testStartAndEndTime export;
 
   hLister = SplFLister_init(qJob);
 
-  SplFLister_setStartTime(hLister: waitNextMinute());
+  SplFLister_setStartTime(hLister: waitSecs());
 
   createSpooledFile('DELETE': 'DELETE-NOW');
   createSpooledFile('DELETE': 'DELETE-NOW');
@@ -280,7 +281,7 @@ dcl-proc testStartAndEndTime export;
 
   SplFLister_setEndTime(hLister: %timestamp());
 
-  startTime = waitNextMinute();
+  startTime = waitSecs();
 
   createSpooledFile('LATER': 'DLT-LATER');
 
@@ -371,21 +372,16 @@ end-proc;
 //----------------------------------------------------------------------
 //  Wait for the next minute.
 //----------------------------------------------------------------------
-dcl-proc waitNextMinute;
+dcl-proc waitSecs;
   dcl-pi *n timestamp;
+    i_seconds int(10) const options(*nopass);
   end-pi;
 
-  dcl-s now timestamp;
-  dcl-s seconds int(10);
-
-  now = %timestamp();
-  dow (%subdt(now: *minutes) = %subdt(%timestamp(): *minutes));
-    seconds = 60 - %subdt(%timestamp(): *seconds);
-    displayStatusMessage('Waiting for the next minute (' + %char(seconds) + ') ...');
-    system('DLYJOB DLY(5)');
-  enddo;
-
-  clearStatusMessage();
+  if (%parms() >= %parmnum(i_seconds));
+    system('DLYJOB DLY(' + %char(i_seconds) + ')');
+  else;
+    system('DLYJOB DLY(1)');
+  endif;
 
   return %timestamp();
 
