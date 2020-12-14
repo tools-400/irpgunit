@@ -24,23 +24,23 @@ dcl-c JL_RD_PREVIOUS '*PRV';
 dcl-c JL_RD_MSG_EXT  '*EXT';
 dcl-c JL_RD_MSG_ALL  '*';
 
-dcl-pr JobLogReader_init like(hJobLogReader_t) extproc('JobLogReader_init');
+dcl-pr JobLogReader_init like(hJobLogReader_t) extproc('JOBLOG_JobLogReader_init');
   i_direction  varchar(10) const;
   i_msgQ       varchar(10) const options(*nopass);
 end-pr;
 
-dcl-pr JobLogReader_addField int(10) extproc('JobLogReader_addField');
+dcl-pr JobLogReader_addField int(10) extproc('JOBLOG_JobLogReader_addField');
   io_hReader   like(hJobLogReader_t);
   i_fieldId    int(10) const;
 end-pr;
 
-dcl-pr JobLogReader_read ind extproc('JobLogReader_read');
+dcl-pr JobLogReader_read ind extproc('JOBLOG_JobLogReader_read');
   io_hReader   like(hJobLogReader_t);
   i_callback   pointer(*proc) const;
   i_pUserData  pointer options(*nopass) const;
 end-pr;
 
-dcl-pr JobLogReader_getCharValue varchar(3000) extproc('JobLogReader_getCharValue');
+dcl-pr JobLogReader_getCharValue varchar(3000) extproc('JOBLOG_JobLogReader_getCharValue');
   i_hMsgInfo   pointer const;
   i_fieldId    int(10) const;
 end-pr;

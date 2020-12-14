@@ -35,34 +35,34 @@ dcl-c SL_STS_READY      '*READY';
 dcl-c SL_STS_SAVED      '*SAVED';
 dcl-c SL_STS_WRITING    '*WRITING';
 
-dcl-pr SplFLister_init like(hSplfLister_t) extproc('SplFLister_init');
+dcl-pr SplFLister_init like(hSplfLister_t) extproc('LSTSPLF_SplFLister_init');
   i_qJob    likeds(Job_t) const options(*nopass);
   i_splfNm  char(10)      const options(*nopass);
   i_usrDta  char(10)      const options(*nopass);
 end-pr;
 
-dcl-pr SplFLister_addStatus int(10) extproc('SplFLister_addStatus');
+dcl-pr SplFLister_addStatus int(10) extproc('LSTSPLF_SplFLister_addStatus');
   io_hLister  like(hSplfLister_t);
   i_status    char(10) const;
 end-pr;
 
-dcl-pr SplFLister_setStartTime ind extproc('SplFLister_setStartTime');
+dcl-pr SplFLister_setStartTime ind extproc('LSTSPLF_SplFLister_setStartTime');
     io_hLister   like(hSplfLister_t);
     i_startTime  timestamp const;
 end-pr;
 
-dcl-pr SplFLister_setEndTime ind extproc('SplFLister_setEndTime');
+dcl-pr SplFLister_setEndTime ind extproc('LSTSPLF_SplFLister_setEndTime');
     io_hLister  like(hSplfLister_t);
     i_endTime   timestamp const;
 end-pr;
 
-dcl-pr SplFLister_list ind extproc('SplFLister_list');
+dcl-pr SplFLister_list ind extproc('LSTSPLF_SplFLister_list');
   io_hLister   like(hSplfLister_t);
   i_pCallback  pointer(*proc) const;
   i_pUserData  pointer options(*nopass) const;
 end-pr;
 
-dcl-pr SplFLister_getUserData char(10) extproc('SplFLister_getUserData');
+dcl-pr SplFLister_getUserData char(10) extproc('LSTSPLF_SplFLister_getUserData');
   i_hSplf  pointer const;
 end-pr;
 
