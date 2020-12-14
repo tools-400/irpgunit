@@ -13,7 +13,7 @@
 
 dcl-s hSplfLister_t varchar(1024) template;
 
-dcl-pr jl_rd_callback ind;
+dcl-pr sl_ls_callback ind;
   i_hSplf       pointer       const;
   i_pUserData   pointer       const;
   i_splfNm      char(10)      const;
