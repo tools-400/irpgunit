@@ -193,7 +193,8 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM01': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM01) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM01) +
+                      SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
         run( 'RUCALLTST TESTPGM01' : noError : '*COMP' : msgTxt );
@@ -215,7 +216,8 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM02': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM02) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM02) +
+                      SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
         run( 'RUCALLTST TESTPGM02' : noError : '*COMP' : msgTxt );
@@ -238,7 +240,8 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM03': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM03) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM03) +
+                      SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
         run( 'RUCALLTST TESTPGM03' : errorExpected : '*ESCAPE' : msgTxt );
@@ -287,7 +290,8 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM04': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM04) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM04) +
+                      SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
         run( 'RUCALLTST TESTPGM04' : noError : '*COMP' : msgTxt );
@@ -309,7 +313,8 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM05': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM05) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM05) +
+                      SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
         run( 'RUCALLTST TESTPGM05' : errorExpected : '*ESCAPE' : msgTxt );
@@ -341,7 +346,8 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM06': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM06) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM06) +
+                      SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
         testStartTime = getFullTimeStamp();
@@ -389,7 +395,8 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM07': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM07) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM07) +
+                      SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
         run( 'RUCALLTST TESTPGM07' : errorExpected : '*ESCAPE' : msgTxt );
@@ -479,7 +486,8 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM09': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM09) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM09) +
+                      SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
         run( 'RUCALLTST TESTPGM09' : errorExpected : '*ESCAPE' : msgTxt );
@@ -528,7 +536,8 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM10': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM10) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM10) +
+                      SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
         run( 'RUCALLTST TESTPGM10' : errorExpected : '*ESCAPE' : msgTxt );
@@ -572,7 +581,8 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM11': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM11) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM11) +
+                      SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
         run( 'RUCALLTST TESTPGM11' : errorExpected : '*ESCAPE' : msgTxt );
@@ -595,7 +605,8 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM12': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM12) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM12) +
+                      SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
         run( 'RUCALLTST TESTPGM12' : errorExpected : '*ESCAPE' : msgTxt );
@@ -626,7 +637,8 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM13': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM13) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM13) +
+                      SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
         run( 'RUCALLTST TESTPGM13' : noError : '*COMP' : msgTxt );
@@ -649,7 +661,8 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM14': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM14) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM14) +
+                      SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
         run( 'RUCALLTST TESTPGM14' : errorExpected : '*ESCAPE' : msgTxt );
@@ -696,7 +709,8 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM15': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM15) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM15) +
+                      SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
         run( 'RUCALLTST TSTPGM(TESTPGM15) DETAIL(*ALL)' :
@@ -746,7 +760,8 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM16': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM16) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM16) +
+                      SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
         run( 'RUCALLTST TSTPGM(TESTPGM16) ORDER(*REVERSE)' :
@@ -779,7 +794,8 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM05': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM05) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM05) +
+                      SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
         run( 'RUCALLTST TESTPGM05 TSTPRC(TEST2)' :
@@ -829,7 +845,8 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM05': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM05) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM05) +
+                      SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
         run( 'RUCALLTST TESTPGM05 TSTPRC(NON_EXISTING_TEST)' :
@@ -874,7 +891,8 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM17': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM17) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM17) +
+                      SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
         run( 'RUCALLTST TESTPGM17' : errorExpected : '*ESCAPE' : msgTxt );
@@ -922,7 +940,8 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM18': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM18) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM18) +
+                      SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
         run( 'RUCALLTST TESTPGM18' : errorExpected : '*ESCAPE' : msgTxt );
@@ -971,7 +990,8 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM19': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM19) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM19) +
+                      SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
         run( 'RUCALLTST TESTPGM19' : errorExpected : '*ESCAPE' : msgTxt );
@@ -1023,7 +1043,8 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM02': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM02) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM02) +
+                      SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
         dltSplFs( 'RPGUNIT' : 'TESTPGM02' );
@@ -1047,7 +1068,8 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM03': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM03) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM03) +
+                      SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
         dltSplFs( 'RPGUNIT' : 'TESTPGM03' );
@@ -1071,7 +1093,8 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM06': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM06) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM06) +
+                      SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
         dltSplFs( 'RPGUNIT' : 'TESTPGM06' );
@@ -1123,7 +1146,8 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM11': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM11) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM11) +
+                      SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
         dltSplFs( 'RPGUNIT' : 'TESTPGM11' );
@@ -1148,7 +1172,8 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM02': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM02) SRCFILE(QTESTCASES)' );
+           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM02) +
+                      SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
         dltSplFs( 'RPGUNIT' : 'TESTPGM02' );
