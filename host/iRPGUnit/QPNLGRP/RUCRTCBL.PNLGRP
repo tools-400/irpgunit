@@ -136,6 +136,20 @@ Refer to the MODULE parameter in CRTSRVPGM command help.
 .* --------------------------------------
 .*  Additional parameters
 .* --------------------------------------
+:help name='RUCRTCBL/DLTSPLF' WIDTH=64.
+Delete spooled files (DLTSPLF) - Help
+:xh3.Delete spooled files (DLTSPLF)
+:p.
+Specifies if all spooled files (compile listing) created
+by the object creations commands are deleted on success.
+:parml.
+:pt.:pk def.*NO:epk.
+:pd.Compile listings are not deleted.
+:pt.*YES
+:pd.Compile listings are deleted on success.
+:eparml.
+:ehelp.
+.*
 :help name='RUCRTCBL/ACTGRP' WIDTH=64.
 Activation group (ACTGRP) - Help
 :xh3.Activation group (ACTGRP)

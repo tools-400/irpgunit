@@ -27,6 +27,7 @@
 
       /include qinclude,JOBLOG
       /include qinclude,STRING
+      /include qinclude,LSTSPLF
       /include qinclude,PGMMSG
       /include qinclude,TEMPLATES
       /include qinclude,SRCMBR
@@ -58,6 +59,16 @@
      D i_msgId                        7a   const
      D i_msgText                    132a   const varying
      D i_msgSentTime                   z   const
+
+     D deleteSplfCallback...
+     D                 pr              n
+     D                                     extproc('deleteSplfCallback')
+     D  i_hSplF                        *   const
+     D  i_pUserData                    *   const
+     D  i_splfNm                     10a   const
+     D  i_qJob                             const likeds(Job_t)
+     D  i_splFNbr                    10i 0 const
+     D  i_fileStatus                 10a   const
 
 
       //----------------------------------------------------------------------
@@ -94,6 +105,7 @@
      D  bndSrvPgm                          const likeds(ObjectArray_t)
      D  bndDir                             const likeds(ObjectArray_t)
      D  bOption                            const likeds(Options_t)
+     D  dltSplf                            const like(yesNo_t)
      D  actGrp                             const like(ActivationGroup_t)
      D  bModules                           const likeds(ObjectArray_t)
      D  pRpgPpOpt                          const like(RpgPpOpt_t)
@@ -222,7 +234,8 @@
        endmon;
 
        monitor;
-         deleteModules( modulesCreated );
+         deleteModulesAndSpooledFiles(
+           dltSplf : startCompileTime : modulesCreated );
        on-error;
        endmon;
 
@@ -467,25 +480,63 @@
      P                 e
 
 
-     P deleteModules...
+     P deleteModulesAndSpooledFiles...
      P                 b
      D                 pi
+     D  dltSplf                        n   const
+     D  startTime                      z   const
      D  modules                            const likeds(ObjectArray_t)
 
 
      D i               s             10i 0
      D cmd             s                   like(Cmd_t)
 
+     D hLister         s                   like(hSplFLister_t)
+     D qJob            ds                  likeds(Job_t)
       /free
+
+       clear qJob;
+       qJob.name = '*';
 
        for i = 1 to modules.size;
          cmd = getDltModCmd( modules.object(i) );
          qcmdexc( cmd : %len(cmd) );
+
+         if (dltSplf);
+           hLister = SplFLister_init(qJob);
+           SplFLister_list(hLister: %paddr('deleteSplfCallback'));
+         endif;
        endfor;
 
       /end-free
      P                 e
 
+
+     p deleteSplfCallback...
+     p                 b
+     D                 pi              n
+     D  i_hSplF                        *   const
+     D  i_pUserData                    *   const
+     D  i_splfNm                     10a   const
+     D  i_qJob                             const likeds(Job_t)
+     D  i_splFNbr                    10i 0 const
+     D  i_fileStatus                 10a   const
+
+     D cmd             s                   like(Cmd_t)
+      /free
+
+       cmd = 'DLTSPLF FILE(' + %trim(i_splfNm) + ') +
+                JOB(' + %trim(i_qJob.nbr) + '/' +
+                        %trim(i_qJob.user) + '/' +
+                        %trim(i_qJob.name) + ') +
+                SPLNBR(' + %char(i_splFNbr) + ')';
+
+       qcmdexc( cmd : %len(cmd) );
+
+       return *on;
+
+      /end-free
+     p                 e
 
      P crtSrvPgm...
      P                 b

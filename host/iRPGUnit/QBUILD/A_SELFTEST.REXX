@@ -227,7 +227,8 @@
      "SRCFILE("_prdLib"/QUNITTEST) ",
      "DBGVIEW("_dbgView") ",
      "BNDDIR("_prdLib"/"_bndDir") ",
-     "BOPTION(*DUPPROC)"
+     "BOPTION(*DUPPROC) ",
+     "DLTSPLF(*YES) "
 
    return ''
 

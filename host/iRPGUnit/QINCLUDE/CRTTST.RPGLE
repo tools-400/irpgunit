@@ -28,6 +28,7 @@
      D  bndSrvPgm                          const likeds(ObjectArray_t)
      D  bndDir                             const likeds(ObjectArray_t)
      D  bOption                            const likeds(Options_t)
+     D  dltSplf                            const like(yesNo_t)
      D  actGrp                             const like(ActivationGroup_t)
      D  bModules                           const likeds(ObjectArray_t)
      D  pRpgPpOpt                          const like(RpgPpOpt_t)
@@ -151,11 +152,13 @@
      D  actGrp                             const like(ActivationGroup_t)
      D  text                               const like(Text_t)
 
-     D deleteModules...
+     D deleteModulesAndSpooledFiles...
      D                 pr
      D                                     extproc('+
-     D                                     deleteModules+
+     D                                     deleteModulesAndSpooledFiles+
      D                                     ')
+     D  dltSplf                        n   const
+     D  startTime                      z   const
      D  modules                            const likeds(ObjectArray_t)
 
      D getDltModCmd...

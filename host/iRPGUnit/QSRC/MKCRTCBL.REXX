@@ -85,6 +85,7 @@
  "CMPMOD MODULE("prdLib"/CRTCBL   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/CRTTST   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/JOBLOG   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/LSTSPLF  ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/OBJECT   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/SRCMBR   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
@@ -96,6 +97,7 @@
         "MODULE("prdLib"/CRTCBL     ",
                  prdLib"/CRTTST     ",
                  prdLib"/JOBLOG     ",
+                 prdLib"/LSTSPLF    ",
                  prdLib"/OBJECT     ",
                  prdLib"/PGMMSG     ",
                  prdLib"/SRCMBR     ",

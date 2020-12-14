@@ -46,6 +46,7 @@
      D  bndSrvPgm                          const likeds(ObjectArray_t)
      D  bndDir                             const likeds(ObjectArray_t)
      D  bOption                            const likeds(Options_t)
+     D  dltSplf                            const like(yesNo_t)
      D  actGrp                             const like(ActivationGroup_t)
      D  bModules                           const likeds(ObjectArray_t)
      D  pOption                            const likeds(Options_t)
@@ -62,6 +63,7 @@
      D  bndSrvPgm                          const likeds(ObjectArray_t)
      D  bndDir                             const likeds(ObjectArray_t)
      D  bOption                            const likeds(Options_t)
+     D  dltSplf                            const like(yesNo_t)
      D  actGrp                             const like(ActivationGroup_t)
      D  bModules                           const likeds(ObjectArray_t)
      D  pOption                            const likeds(Options_t)
@@ -85,8 +87,8 @@
        endif;
 
        crtTst( testPgm : srcFile : srcMbrRslv : text : cOption : dbgView
-              : bndSrvPgm : bndDir : bOption : actGrp : bModules : '*N'
-              : pOption : compileOpt );
+              : bndSrvPgm : bndDir : bOption : dltSplf : actGrp : bModules
+              : '*N' : pOption : compileOpt );
 
        *inlr = *on;
 

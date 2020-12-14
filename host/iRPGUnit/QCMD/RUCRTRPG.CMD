@@ -112,6 +112,15 @@
          /*   Additional parameters                */
          /* -------------------------------------- */
 
+             PARM       KWD(DLTSPLF)                         +
+                          TYPE(*CHAR)                        +
+                          LEN(1)                             +
+                          RSTD(*YES)                         +
+                          SPCVAL((*YES '1')                  +
+                                 (*NO  '0'))                 +
+                          DFT(*NO)                           +
+                          PROMPT('Delete spooled files')
+
              PARM       KWD(ACTGRP)                          +
                           TYPE(*NAME)                        +
                           PMTCTL(*PMTRQS)                    +

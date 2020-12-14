@@ -149,59 +149,68 @@
          /*   Additional parameters                */
          /* -------------------------------------- */
 
-             PARM       KWD(ACTGRP)                           +
-                          TYPE(*NAME)                         +
-                          PMTCTL(*PMTRQS)                     +
-                          SPCVAL(*CALLER)                     +
-                          DFT(*CALLER)                        +
+             PARM       KWD(DLTSPLF)                         +
+                          TYPE(*CHAR)                        +
+                          LEN(1)                             +
+                          RSTD(*YES)                         +
+                          SPCVAL((*YES '1')                  +
+                                 (*NO  '0'))                 +
+                          DFT(*NO)                           +
+                          PROMPT('Delete spooled files')
+
+             PARM       KWD(ACTGRP)                          +
+                          TYPE(*NAME)                        +
+                          PMTCTL(*PMTRQS)                    +
+                          SPCVAL(*CALLER)                    +
+                          DFT(*CALLER)                       +
                           PROMPT('Activation group')
 
-             PARM       KWD(MODULE)                           +
-                          TYPE(MODULE)                        +
-                          MAX(50)                             +
-                          PMTCTL(*PMTRQS)                     +
+             PARM       KWD(MODULE)                          +
+                          TYPE(MODULE)                       +
+                          MAX(50)                            +
+                          PMTCTL(*PMTRQS)                    +
                           PROMPT('Module')
 
-             PARM       KWD(POPTION)                          +
-                          TYPE(*CHAR)                         +
-                          LEN(12)                             +
-                          MAX(9)                              +
-                          DFT(*SYSVAL)                        +
-                          RSTD(*YES)                          +
-                          VALUES(*XREF                        +
-                                 *NOXREF                      +
-                                 *GEN                         +
-                                 *NOGEN                       +
-                                 *COMMA                       +
-                                 *PERIOD                      +
-                                 *JOB                         +
-                                 *SYSVAL                      +
-                                 *QUOTESQL                    +
-                                 *APOSTSQL                    +
-                                 *QUOTE                       +
-                                 *APOST                       +
-                                 *SECLVL                      +
-                                 *NOSECLVL                    +
-                                 *EVENTF                      +
-                                 *NOEVENTF                    +
-                                 *CVTDT                       +
-                                 *NOCVTDT                     +
-                                 *SQL                         +
-                                 *SYS                         +
-                                 *OPTLOB                      +
-                                 *NOOPTLOB                    +
-                                 *NOEXTIND                    +
-                                 *EXTIND                      +
-                                 *SYSTIME                     +
-                                 *NOSYSTIME)                  +
-                          PMTCTL(*PMTRQS)                     +
+             PARM       KWD(POPTION)                         +
+                          TYPE(*CHAR)                        +
+                          LEN(12)                            +
+                          MAX(9)                             +
+                          DFT(*SYSVAL)                       +
+                          RSTD(*YES)                         +
+                          VALUES(*XREF                       +
+                                 *NOXREF                     +
+                                 *GEN                        +
+                                 *NOGEN                      +
+                                 *COMMA                      +
+                                 *PERIOD                     +
+                                 *JOB                        +
+                                 *SYSVAL                     +
+                                 *QUOTESQL                   +
+                                 *APOSTSQL                   +
+                                 *QUOTE                      +
+                                 *APOST                      +
+                                 *SECLVL                     +
+                                 *NOSECLVL                   +
+                                 *EVENTF                     +
+                                 *NOEVENTF                   +
+                                 *CVTDT                      +
+                                 *NOCVTDT                    +
+                                 *SQL                        +
+                                 *SYS                        +
+                                 *OPTLOB                     +
+                                 *NOOPTLOB                   +
+                                 *NOEXTIND                   +
+                                 *EXTIND                     +
+                                 *SYSTIME                    +
+                                 *NOSYSTIME)                 +
+                          PMTCTL(*PMTRQS)                    +
                           PROMPT('Pre-compiler OPTIONS')
 
-             PARM       KWD(COMPILEOPT)                       +
-                          TYPE(*CHAR)                         +
-                          LEN(5000)                           +
-                          VARY(*YES *INT2)                    +
-                          PMTCTL(*PMTRQS)                     +
+             PARM       KWD(COMPILEOPT)                      +
+                          TYPE(*CHAR)                        +
+                          LEN(5000)                          +
+                          VARY(*YES *INT2)                   +
+                          PMTCTL(*PMTRQS)                    +
                           PROMPT('Pre-Compiler COMPILEOPT')
 
  PGM:        QUAL       TYPE(*NAME) LEN(10)

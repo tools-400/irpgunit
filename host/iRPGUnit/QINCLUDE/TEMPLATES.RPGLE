@@ -58,6 +58,7 @@
      D rclrsc_t        s             10a   template
      D stmf_t          s           1024a   varying template
      D stmf_fl_t       s           1024a   template
+     D yesNo_t         s              1a   template
 
      D MAX_NUM_LIB     c                   250
 
