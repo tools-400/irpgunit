@@ -367,6 +367,8 @@ dcl-proc createSpooledFile;
   write QSYSPRT output;
   close QSYSPRT;
 
+  system('DLTOVR FILE(QSYSPRT) LVL(*)');
+
 end-proc;
 
 //----------------------------------------------------------------------
