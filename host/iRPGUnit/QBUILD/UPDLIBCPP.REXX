@@ -59,6 +59,8 @@
  "CHGCMD CMD("library"/RUCRTTST) PGM("library"/RUCRTRPG) ",
    "HLPPNLGRP("library"/RUCRTRPG)"
 
+ "CHGJOBD JOBD("library"/RPGUNIT) INLLIBL("library") "
+
  /* Done */
  "SNDPGMMSG ",
    "MSGID(CPF9897) ",
