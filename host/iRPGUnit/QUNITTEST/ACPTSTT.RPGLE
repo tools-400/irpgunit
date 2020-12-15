@@ -10,18 +10,23 @@
       // >>PRE-COMPILER<<
       //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
       //   >>IMPORTANT<<
-      //     >>PARM<<  MODULE(&LI/ASSERT    +
-      //                      &LI/LIBL      +
+      //     >>PARM<<  MODULE(&LI/LIBL      +
+      //                      &LI/LSTSPLF   +
       //                      &LI/OBJECT    +
       //                      &LI/PGMMSG    +
-      //                      &LI/SPLF      +
       //                      &LI/SRCMBR    +
-      //                      &LI/STRING    +
-      //                      &LI/TESTUTILS +
       //                      &LI/USRSPC    +
+      //                      &LI/SPLF      +
       //                      );
       //     >>PARM<<  BOPTION(*DUPPROC);
       //   >>END-IMPORTANT<<
+      //   >>CMD<<     CMPMOD MODULE(&LI/LIBL     ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/LSTSPLF  ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/OBJECT   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/PGMMSG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/SRCMBR   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/USRSPC   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/SPLF     ) SRCFILE(&SL/QUNITTEST) DBGVIEW(*LIST);
       //   >>EXECUTE<<
       // >>END-PRE-COMPILER<<
       // ==========================================================================
@@ -1123,8 +1128,6 @@
         endif;
 
         dltSplFs( 'RPGUNIT' : 'TESTPGM08' );
-
-        callp(e) run( 'DLTSRVPGM TESTPGM08 OUTPUT(*NONE)' );    // No TESTPGM08.
 
         run( 'RUCALLTST TESTPGM08 OUTPUT(*NONE)' : errorExpected : '*ESCAPE' :
              msgTxt );
