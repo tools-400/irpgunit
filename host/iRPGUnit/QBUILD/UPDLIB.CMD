@@ -12,9 +12,9 @@
      /*                               SRCFILE(&SL/&SF) SRCMBR(&SM);           */
      /*     >>COMPILE<<                                                       */
      /*       >>PARM<< PGM(*REXX);                                            */
-     /*       >>PARM<< REXSRCFILE(&LI/QBUILD);                                */
+     /*       >>PARM<< REXSRCFILE(*LIBL/QBUILD);                              */
      /*       >>PARM<< REXSRCMBR(UPDLIBCPP);                                  */
-     /*       >>PARM<< HLPPNLGRP(&LI/UPDLIBHLP);                              */
+     /*       >>PARM<< HLPPNLGRP(*LIBL/UPDLIBHLP);                            */
      /*       >>PARM<< HLPID(UPDLIB);                                         */
      /*     >>END-COMPILE<<                                                   */
      /*     >>EXECUTE<<                                                       */
