@@ -94,8 +94,8 @@
  "CMPMOD MODULE("prdLib"/USRSPC   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
  "CRTPGM PGM("prdLib"/RUCRTCBL) ",
-        "MODULE("prdLib"/CRTCBL     ",
-                 prdLib"/CRTTST     ",
+        "MODULE("prdLib"/CRTTST     ",
+                 prdLib"/CRTCBL     ",
                  prdLib"/JOBLOG     ",
                  prdLib"/LSTSPLF    ",
                  prdLib"/OBJECT     ",
