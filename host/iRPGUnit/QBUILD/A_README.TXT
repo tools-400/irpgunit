@@ -65,6 +65,9 @@ Version 4.0.0 - xx.xx.2021
    (assert, fail, aEqual)
  * Fixed bug, that fail() did not create an error, when called in a monitor
    block from a deep stack entry.
+ * Fixed bug, that OUTPUT(*NONE) and OUTPUT(*ERROR) incorrectly produced a
+   spooled file.
+ * Fixed self-test CMDRUNLOGT (related to: OUTPUT *ERROR/*NONE bug).
  * Added missing copyright footer to German help pages.
  * Changed MK' scripts to delete the spooled files after compiling an object.
 
