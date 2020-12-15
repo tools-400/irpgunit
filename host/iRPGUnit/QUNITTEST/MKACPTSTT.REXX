@@ -91,31 +91,24 @@
  /*  Let's do it!                                */
  /* -------------------------------------------- */
  "CMPMOD MODULE("prdLib"/ACPTSTT  ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/ASSERT   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/JOBLOG   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/LIBL     ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/LSTSPLF  ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/OBJECT   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/SPLF     ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/SRCMBR   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/STRING   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/TESTUTILS) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/USRSPC   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/SPLF     ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
  "CRTSRVPGM  SRVPGM("prdLib"/ACPTSTT) ",
             "MODULE("prdLib"/ACPTSTT   ",
-                     prdLib"/ASSERT    ",
-                     prdLib"/JOBLOG    ",
                      prdLib"/LIBL      ",
                      prdLib"/LSTSPLF   ",
                      prdLib"/OBJECT    ",
                      prdLib"/PGMMSG    ",
-                     prdLib"/SPLF      ",
                      prdLib"/SRCMBR    ",
-                     prdLib"/STRING    ",
-                     prdLib"/TESTUTILS ",
-                     prdLib"/USRSPC)   ",
+                     prdLib"/USRSPC    ",
+                     prdLib"/SPLF      ",
+                     ") ",
             "EXPORT(*ALL) ",
             "OPTION(*DUPPROC) ",
             "BNDSRVPGM("prdLib"/RUTESTCASE) ",
