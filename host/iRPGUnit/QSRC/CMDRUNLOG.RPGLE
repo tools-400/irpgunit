@@ -74,6 +74,8 @@
      D g_detail        s             10a   inz(DETAIL_BASIC)
        // Specifies whether a report is created.
      D g_output        s             10a   inz(OUTPUT_ALLWAYS)
+       // Library list, the test suite is executed with.
+     D g_liblData      ds                  likeds(LiblData_t) inz
 
        //----------------------------------------------------------------------
        //   Program Status Data Structure
@@ -224,6 +226,7 @@
           logRawLine('iRPGUnit    : ' + 'v' + %trim(version));
           logRawLine('IBM i       : ' + OS_getVersion());
           linefeed();
+          logLibraryList(g_liblData);
           hdrWasPrinted = *on;
         endif;
 
@@ -329,6 +332,8 @@
            return;
         endif;
 
+        logHdr( g_srvPgm );
+
         logRawLine( line );
 
       /end-free
@@ -353,7 +358,7 @@
        //                 nnnn LLLLLLLLLL   nnnn LLLLLLLLLL   nnnn LLLLLLLLLL
        //----------------------------------------------------------------------
      P logLibraryList...
-     P                 b                   export
+     P                 b
      D                 pi
      D  libraryList                        const likeds(LiblData_t)
 
@@ -472,11 +477,17 @@
         g_detail = detail;
         g_output = output;
 
-        if (g_output = OUTPUT_NONE);
-           return;
-        endif;
+      /end-free
+     P                 e
 
-        logHdr( g_srvPgm );
+
+     P updateLogContext...
+     P                 b                   export
+     D                 pi
+     D  liblData                           const likeds(LiblData_t)
+      /free
+
+        g_liblData = liblData;
 
       /end-free
      P                 e

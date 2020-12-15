@@ -11,11 +11,18 @@
       //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
       //   >>IMPORTANT<<
       //     >>PARM<<  MODULE(&LI/CMDRUNLOG +
+      //                      &LI/CMDRUNPRT +
       //                      &LI/LIBL      +
       //                      &LI/OSVERSION +
       //                      &LI/STRING    +
       //                      );
+      //     >>PARM<<  BOPTION(*DUPPROC);
       //   >>END-IMPORTANT<<
+      //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNLOG) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNPRT) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/LIBL     ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/OSVERSION) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/STRING   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
       //   >>EXECUTE<<
       // >>END-PRE-COMPILER<<
       // ==========================================================================
@@ -30,6 +37,7 @@
       /copy qinclude,CMDRUNLOG
       /copy qinclude,LIBL
       /copy qinclude,TEMPLATES
+      /copy qinclude,STRING
 
       // CMDRUNPRTY is imported to mock module CMDRUNPRT. That way, we can
       // test what would have been printed in the spool file, without
@@ -130,7 +138,7 @@
      D                 pi
 
      D oneAssertion    c                   const(1)
-
+     D r               s             10i 0
       /free
 
         // Setup.
@@ -145,11 +153,15 @@
 
         assert( logWasOpened : 'Log was not opened' );
         aEqual( MARGIN + '*** Tests of MY_SRVPGM ***         ' : logLine(1)  );
-        aEqual( MARGIN + 'successful_test_with_one_asser     ' : logLine(10)  );
-        aEqual( MARGIN + 'tion - Success                     ' : logLine(11) );
-        aEqual( MARGIN + '  1 assertions                     ' : logLine(12) );
-        aEqual( MARGIN + '-----------------------            ' : logLine(13) );
-        iEqual( 14 : logIdx );
+
+        r = findRow('successful_test');
+        assert(r > 0: 'Row starting with ''successful_test'' not found');
+
+        aEqual( MARGIN + 'successful_test_with_one_asser     ' : logLine(r));
+        aEqual( MARGIN + 'tion - Success                     ' : logLine(r+1));
+        aEqual( MARGIN + '  1 assertions                     ' : logLine(r+2));
+        aEqual( MARGIN + '-----------------------            ' : logLine(r+3));
+        iEqual( r+4 : logIdx );
 
       /end-free
      P                 e
@@ -160,7 +172,7 @@
      D                 pi
 
      D twoAssertions   c                   const(2)
-
+     D r               s             10i 0
       /free
 
         // Setup.
@@ -174,11 +186,15 @@
         // Controls.
 
         aEqual( MARGIN + '*** Tests of MY_SRVPGM ***        ' : logLine(1)  );
-        aEqual( MARGIN + 'successful_test_with_two_asser    ' : logLine(10) );
-        aEqual( MARGIN + 'tions - Success                   ' : logLine(11) );
-        aEqual( MARGIN + '  2 assertions                    ' : logLine(12) );
-        aEqual( MARGIN + '-----------------------           ' : logLine(13) );
-        iEqual( 14 : logIdx );
+
+        r = findRow('successful_test');
+        assert(r > 0: 'Row starting with ''successful_test'' not found');
+
+        aEqual( MARGIN + 'successful_test_with_two_asser    ' : logLine(r ) );
+        aEqual( MARGIN + 'tions - Success                   ' : logLine(r+1));
+        aEqual( MARGIN + '  2 assertions                    ' : logLine(r+2));
+        aEqual( MARGIN + '-----------------------           ' : logLine(r+3));
+        iEqual( r+4 : logIdx );
 
       /end-free
      P                 e
@@ -189,7 +205,7 @@
      D                 pi
 
      D testNm2         s                   like(TestNm)
-
+     D r               s             10i 0
       /free
 
         // Setup.
@@ -205,14 +221,18 @@
         // Controls.
 
         aEqual( MARGIN + '*** Tests of MY_SRVPGM ***    ' : logLine(1)  );
-        aEqual( MARGIN + 'successful_test_1 - Success   ' : logLine(10) );
-        aEqual( MARGIN + '  0 assertions                ' : logLine(11) );
-        aEqual( MARGIN + '-----------------------       ' : logLine(12) );
-        aEqual( MARGIN + ''                               : logLine(13) );
-        aEqual( MARGIN + 'successful_test_2 - Success   ' : logLine(14) );
-        aEqual( MARGIN + '  0 assertions                ' : logLine(15) );
-        aEqual( MARGIN + '-----------------------       ' : logLine(16) );
-        iEqual( 17 : logIdx );
+
+        r = findRow('successful_test');
+        assert(r > 0: 'Row starting with ''successful_test'' not found');
+
+        aEqual( MARGIN + 'successful_test_1 - Success   ' : logLine(r ) );
+        aEqual( MARGIN + '  0 assertions                ' : logLine(r+1));
+        aEqual( MARGIN + '-----------------------       ' : logLine(r+2));
+        aEqual( MARGIN + ''                               : logLine(r+3));
+        aEqual( MARGIN + 'successful_test_2 - Success   ' : logLine(r+4));
+        aEqual( MARGIN + '  0 assertions                ' : logLine(r+5));
+        aEqual( MARGIN + '-----------------------       ' : logLine(r+6));
+        iEqual( r+7 : logIdx );
 
       /end-free
      P                 e
@@ -223,7 +243,7 @@
      D                 pi
 
      D failure         ds                  likeds(AssertFailEvtLong_t) inz
-
+     D r               s             10i 0
       /free
 
         // Setup.
@@ -243,13 +263,17 @@
 
         assert( logWasOpened : 'Log was not opened' );
         aEqual( MARGIN + '*** Tests of MY_SRVPGM ***        ' : logLine(1)  );
-        aEqual( MARGIN + 'failure_without_spec_nb - FAIL    ' : logLine(10) );
-        aEqual( MARGIN + 'URE                               ' : logLine(11) );
-        aEqual( MARGIN + '  failure_without_spec_nb (MY_    ' : logLine(12) );
-        aEqual( MARGIN + 'SRVPGM->MY_SRVPGM:*N)             ' : logLine(13) );
-        aEqual( MARGIN + '-----------------------           ' : logLine(14) );
-        aEqual( MARGIN + '                                  ' : logLine(15) );
-        iEqual( 15 : logIdx );
+
+        r = findRow('failure_without');
+        assert(r > 0: 'Row starting with ''failure_without'' not found');
+
+        aEqual( MARGIN + 'failure_without_spec_nb - FAIL    ' : logLine(r ) );
+        aEqual( MARGIN + 'URE                               ' : logLine(r+1));
+        aEqual( MARGIN + '  failure_without_spec_nb (MY_    ' : logLine(r+2));
+        aEqual( MARGIN + 'SRVPGM->MY_SRVPGM:*N)             ' : logLine(r+3));
+        aEqual( MARGIN + '-----------------------           ' : logLine(r+4));
+        aEqual( MARGIN + '                                  ' : logLine(r+5));
+        iEqual( r+5 : logIdx );
 
       /end-free
      P                 e
@@ -260,7 +284,7 @@
      D                 pi
 
      D excpMsgInfo     ds                  likeds(Msg_t)
-
+     D r               s             10i 0
       /free
 
         // Setup.
@@ -280,11 +304,15 @@
 
         assert( logWasOpened : 'Log was not opened' );
         aEqual( MARGIN + '*** Tests of MY_SRVPGM ***        ' : logLine(1)  );
-        aEqual( MARGIN + 'error_with_missing_msg_id - ERROR ' : logLine(10) );
-        aEqual( MARGIN + 'Error message.                    ' : logLine(11) );
-        aEqual( MARGIN + '  error_proc (ERRORPGM->:1000)    ' : logLine(12) );
-        aEqual( MARGIN + '-----------------------           ' : logLine(13) );
-        iEqual( 14 : logIdx );
+
+        r = findRow('error_with');
+        assert(r > 0: 'Row starting with ''error_with'' not found');
+
+        aEqual( MARGIN + 'error_with_missing_msg_id - ERROR ' : logLine(r ) );
+        aEqual( MARGIN + 'Error message.                    ' : logLine(r+1));
+        aEqual( MARGIN + '  error_proc (ERRORPGM->:1000)    ' : logLine(r+2));
+        aEqual( MARGIN + '-----------------------           ' : logLine(r+3));
+        iEqual( r+4 : logIdx );
 
       /end-free
      P                 e
@@ -295,7 +323,7 @@
      D                 pi
 
      D excpMsgInfo     ds                  likeds(Msg_t)
-
+     D r               s             10i 0
       /free
 
         // Setup.
@@ -314,10 +342,14 @@
         // Controls.
 
         aEqual( MARGIN + '*** Tests of MY_SRVPGM ***        ' : logLine(1)  );
-        aEqual( MARGIN + 'error_without_origin_info - ERROR ' : logLine(10) );
-        aEqual( MARGIN + 'CPF1234 - Error message.          ' : logLine(11) );
-        aEqual( MARGIN + '-----------------------           ' : logLine(12) );
-        iEqual( 13 : logIdx );
+
+        r = findRow('error_without');
+        assert(r > 0: 'Row starting with ''error_without'' not found');
+
+        aEqual( MARGIN + 'error_without_origin_info - ERROR ' : logLine(r ) );
+        aEqual( MARGIN + 'CPF1234 - Error message.          ' : logLine(r+1));
+        aEqual( MARGIN + '-----------------------           ' : logLine(r+2));
+        iEqual( r+3 : logIdx );
 
       /end-free
      P                 e
@@ -325,6 +357,8 @@
 
      P testLogCompMsg  b                   export
      D                 pi
+
+     D r               s             10i 0
       /free
 
         // Execution.
@@ -335,8 +369,13 @@
 
         assert( logWasOpened : 'Log was not opened' );
         aEqual( MARGIN + '*** Tests of MY_SRVPGM ***        ' : logLine(1)  );
-        aEqual( MARGIN + 'Completion message                ' : logLine(10) );
-        iEqual( 10 : logIdx );
+
+        r = findRow('Library list:');
+        assert(r > 0: 'Row starting with ''Library list:'' not found');
+
+        aEqual( MARGIN + 'Completion message                ' : logLine(r+2));
+        assert( r+2 = logIdx
+               : 'Line with ''Completion message'' must be the last one');
         assert( logWasClosed : 'Log was not closed' );
 
       /end-free
@@ -353,8 +392,8 @@
 
         // Controls.
 
-        aEqual( MARGIN + 'A short text                      ' : logLine(10) );
-        iEqual( 10 : logIdx );
+        aEqual( MARGIN + 'A short text                      ' : logLine(1)  );
+        iEqual( 1  : logIdx );
 
       /end-free
      P                 e
@@ -382,9 +421,9 @@
 
               //          1111111111222222222233333333334
               // 1234567890123456789012345678901234567890
-        aEqual( MARGIN + 'A very very very very very ver' : logLine(10) );
-        aEqual( MARGIN + 'y very very long text' : logLine(11) );
-        iEqual( 11 : logIdx );
+        aEqual( MARGIN + 'A very very very very very ver' : logLine(1 ) );
+        aEqual( MARGIN + 'y very very long text' : logLine(2 ) );
+        iEqual( 2  : logIdx );
 
       /end-free
      P                 e
@@ -459,4 +498,22 @@
       /end-free
      P                 e
 
+
+       // Helper to search a row starting with a given string.
+     P findRow         b
+     D                 pi            10i 0
+     D  value                        80a   const varying
+     D  i              s             10i 0
+      /free
+
+        for i = 1 to logIdx;
+          if (startsWith(value: %trim(logLine(i))));
+            return i;
+          endif;
+        endfor;
+
+        return -1;
+
+      /end-free
+     P                 e
 

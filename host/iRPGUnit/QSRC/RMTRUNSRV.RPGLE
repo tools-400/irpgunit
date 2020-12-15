@@ -221,7 +221,7 @@
         monitor;
           savedLibl = getLibl();
           mustRestoreLibl = setTestSuiteLibl(libl: qJobD: testSuiteName.lib);
-          logLibraryList(getLibl());
+          updateLogContext(getLibl());
           testSuite = loadTestSuite( testSuiteName );
         on-error;
           checkAndRestoreLibl(mustRestoreLibl: savedLibl);

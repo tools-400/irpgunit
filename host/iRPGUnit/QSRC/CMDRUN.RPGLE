@@ -153,7 +153,7 @@
        monitor;
          savedLibl = getLibl();
          mustRestoreLibl = setTestSuiteLibl(libl: jobd: testSuiteName.lib);
-         logLibraryList(getLibl());
+         updateLogContext(getLibl());
          testSuite = loadTestSuite( testSuiteName );
        on-error;
          checkAndRestoreLibl(mustRestoreLibl: savedLibl);

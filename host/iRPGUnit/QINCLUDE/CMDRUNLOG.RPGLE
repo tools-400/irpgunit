@@ -79,6 +79,10 @@
      D  detail                       10a   const
      D  output                       10a   const
 
+     D updateLogContext...
+     D                 pr                  extproc('updateLogContext')
+     D  liblData                           const likeds(LiblData_t)
+
        // Log a raw line (no header, no automatic opening / closing).
      D logRawLine      pr                  extproc('CMDRUNLOG_+
      D                                     logRawLine+
