@@ -58,6 +58,7 @@ b) Optionally run the RPGUnit self tests:
 Version 4.0.0 - xx.xx.2021
 --------------------------
  * Added Cobol support.
+ * Added parameter DLTSPLF to commands RUCRTRPG and RUCRTCBL.
  * Added test suite OPDESCT.
  * Added module JOBLOG.
  * Added module LSTSPLF.
