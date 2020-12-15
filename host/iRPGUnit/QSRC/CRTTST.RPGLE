@@ -112,7 +112,7 @@
      D  pOption                            const likeds(Options_t)
      D  compileopt                 5000a   const varying options(*varsize)
 
-     D module          ds                  likeds(bModules) inz
+     D modules         ds                  likeds(bModules) inz
      D srcType         s             10a   varying
      D textRslv        s                   like(text) inz
      D i               s             10i 0
@@ -128,7 +128,7 @@
       /free
 
        qSrcFile = srcFile;
-       module = resolveLibraries(bModules);
+       modules = resolveLibraries(bModules);
 
        if (not Object_exists(qSrcFile: '*FILE'));
          sndEscapeMsgAboveCtlBdy(
@@ -200,13 +200,13 @@
 
          select;
          when (srcType = MBR_RPGLE or srcType = MBR_SQLRPGLE);
-           addModule( module : testPgm : *on); // Add to position #1.
+           addModule( modules : testPgm : *on); // Add to position #1.
            // QDEVTOOLS/QLNCMSG RNS9305 - Module &1 placed in library &2.
            crtRpgMod( testPgm : qSrcFile : srcMbr : cOption : dbgView :
                       pRpgPpOpt : pOption : compileopt );
            modulesCreated = getCreatedModulesFromJobLog(
                               MOD_CRT_RPG : startCompileTime );
-           addModules( module : modulesCreated );
+           addModules( modules : modulesCreated );
          when (srcType = MBR_CBLLE or srcType = MBR_SQLCBLLE);
            // There is no test case module to add for Cobol ==> See: *PGMID
            // QDEVTOOLS/QLNCMSG LNC0899 - Module &1 placed in library &2.
@@ -214,14 +214,14 @@
                       pOption : compileopt );
            modulesCreated = getCreatedModulesFromJobLog(
                               MOD_CRT_CBL : startCompileTime );
-           addModules( module : modulesCreated );
+           addModules( modules : modulesCreated );
          other;
            sndEscapeMsgAboveCtlBdy(
              'Source type ' + addQuotes(srcType) + ' is not supported.' );
          endsl;
 
          srvPgm = crtSrvPgm(
-                     testPgm : bndSrvPgm : bndDir : module : bOption :
+                     testPgm : bndSrvPgm : bndDir : modules : bOption :
                      actGrp : textRslv);
 
          tagTstSrvPgm(srvPgm : qSrcFile : srcMbr);
@@ -385,33 +385,33 @@
      D  module                             const likeds(Object_t)
      D  isFirstMod                     n   const options(*nopass)
 
-     d p_isFirstMod    c                         3
-
      d i               s             10i 0
      d r               s             10i 0
 
       /free
 
-       if (%parms() > p_isFirstMod);
+       if (%parms() >= %parmnum(isFirstMod));
          // First remove module (if found)
          for i = 1 to modules.size;
            if (module.nm = modules.object(i).nm and
                module.lib = modules.object(i).lib);
              r = i;
            endif;
-           if (r < i);
+           if (r > 0 and  r < i);
              modules.object(r) = modules.object(i);
              clear modules.object(i);
              r = i;
            endif;
          endfor;
-         if (r < i);
+         if (r > 0 and r < i);
            modules.size -= (i - r);
          endif;
          // Shift modules 1 item up
          for i = modules.size downto 1;
            modules.object(i + 1) = modules.object(i);
+           clear modules.object(i);
          endfor;
+         modules.size += 1;
          modules.object(1) = module;
        else;
          for i = 1 to modules.size;
@@ -420,10 +420,9 @@
              return;
            endif;
          endfor;
+         modules.size += 1;
+         modules.object(modules.size) = module;
        endif;
-
-       modules.size += 1;
-       modules.object(modules.size) = module;
 
       /end-free
      p                 e
