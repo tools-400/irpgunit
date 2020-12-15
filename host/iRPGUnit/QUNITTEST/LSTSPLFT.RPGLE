@@ -57,6 +57,14 @@ dcl-ds userData_t qualified template;
 end-ds;
 
 //----------------------------------------------------------------------
+//   GLOBAL VARIABLES
+//----------------------------------------------------------------------
+
+dcl-ds g_status qualified;
+  testCaseStarted timestamp;
+end-ds;
+
+//----------------------------------------------------------------------
 //   PRIVATE PROTOTYPES
 //----------------------------------------------------------------------
 
@@ -88,6 +96,8 @@ dcl-proc setUp export;
   dcl-pi *n;
   end-pi;
 
+  g_status.testCaseStarted = %timestamp();
+
   createSpooledFile('FILE1': 'FOO');
   createSpooledFile('FILE1': 'BAA');
   createSpooledFile('FILE2': 'FOO');
@@ -115,7 +125,11 @@ dcl-proc tearDown export;
   qJob.name = '*';
 
   hLister = SplFLister_init(qJob);
+  SplFLister_setStartTime(hLister: g_status.testCaseStarted);
+  SplFLister_setEndTime(hLister: %timestamp());
   SplFLister_list(hLister: %paddr('deleteSplfCallback'): %addr(userData));
+
+  clear g_status.testCaseStarted;
 
 end-proc;
 
