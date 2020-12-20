@@ -64,6 +64,7 @@ Version 4.0.0 - xx.xx.2021
  * Added module LSTSPLF.
  * Refactored the iRPGUnit library to support Cobol.
    (assert, fail, aEqual)
+ * Converted module STRINGT to **free and added procedure parseNum().
  * Fixed bug, that fail() did not create an error, when called in a monitor
    block from a deep stack entry.
  * Fixed bug, that OUTPUT(*NONE) and OUTPUT(*ERROR) incorrectly produced a

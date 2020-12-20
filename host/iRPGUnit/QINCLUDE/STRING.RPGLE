@@ -1,82 +1,68 @@
-      /if not defined(IRPGUNIT_STRING)
-      /define IRPGUNIT_STRING
-      // ==========================================================================
-      //  iRPGUnit - String Utilities.
-      // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
-      // ==========================================================================
+**FREE
+/if not defined(IRPGUNIT_STRING)
+/define IRPGUNIT_STRING
+// ==========================================================================
+//  iRPGUnit - String Utilities.
+// ==========================================================================
+//  Copyright (c) 2013-2020 iRPGUnit Project Team
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ==========================================================================
 
-     D uCase           pr                        like(String_t)
-     D                                     extproc('STRING_uCase')
-     D  string                             const like(String_t)
-     D                                           options(*varsize)
+dcl-pr uCase like(String_t) extproc('STRING_uCase');
+  string  like(String_t) const options(*varsize);
+end-pr;
 
-     D leftStr...
-     D                 pr                  like(String_t)
-     D                                     extproc('STRING_leftStr')
-     D  string                             const like(String_t)
-     D                                           options(*varsize)
-     D  length                       10i 0 const
+dcl-pr leftStr like(String_t) extproc('STRING_leftStr');
+  string  like(String_t) const options(*varsize);
+  length  int(10) const;
+end-pr;
 
-     D startsWith...
-     D                 pr              N
-     D                                     extproc('STRING_startsWith')
-     D  prefix                             const like(String_t)
-     D                                           options(*varsize)
-     D  string                             const like(String_t)
-     D                                           options(*varsize)
+dcl-pr startsWith ind extproc('STRING_startsWith');
+  prefix  like(String_t) const options(*varsize);
+  string  like(String_t) const options(*varsize);
+end-pr;
 
-     D endsWith...
-     D                 pr              N
-     D                                     extproc('STRING_endsWith')
-     D  suffix                             const like(String_t)
-     D                                           options(*varsize)
-     D  string                             const like(String_t)
-     D                                           options(*varsize)
+dcl-pr endsWith ind extproc('STRING_endsWith');
+  suffix  like(String_t) const options(*varsize);
+  string  like(String_t) const options(*varsize);
+end-pr;
 
-     D contains...
-     D                 pr              N
-     D                                     extproc('STRING_contains')
-     D  text                               const like(String_t)
-     D                                           options(*varsize)
-     D  string                             const like(String_t)
-     D                                           options(*varsize)
+dcl-pr contains ind extproc('STRING_contains');
+  text    like(String_t) const options(*varsize);
+  string  like(String_t) const options(*varsize);
+end-pr;
 
-     D compare...
-     D                 pr              N
-     D                                     extproc('STRING_compare')
-     D  generic                            const like(String_t)
-     D                                           options(*varsize)
-     D  string                             const like(String_t)
-     D                                           options(*varsize)
+dcl-pr compare ind extproc('STRING_compare');
+  generic like(String_t) const options(*varsize);
+  string  like(String_t) const options(*varsize);
+end-pr;
 
-     D isQuoted...
-     D                 pr              n
-     D                                     extproc('STRING_isQuoted')
-     D  string                             const like(String_t)
-     D                                           options(*varsize)
+dcl-pr isQuoted ind extproc('STRING_isQuoted');
+  string  like(String_t) const options(*varsize);
+end-pr;
 
-     D addQuotes...
-     D                 pr                        like(String_t)
-     D                                     extproc('STRING_addQuotes')
-     D  string                             const like(String_t)
-     D                                           options(*varsize)
+dcl-pr addQuotes like(String_t) extproc('STRING_addQuotes');
+  string  like(String_t) const options(*varsize);
+end-pr;
 
-     D removeQuotes...
-     D                 pr                        like(String_t)
-     D                                     extproc('STRING_removeQuotes')
-     D  string                             const like(String_t)
-     D                                           options(*varsize)
+dcl-pr removeQuotes like(String_t) extproc('STRING_removeQuotes');
+  string  like(String_t) const options(*varsize);
+end-pr;
 
-     D spaces...
-     D                 pr                        like(String_t)
-     D                                     extproc('STRING_spaces')
-     D  length                       10i 0 value
-     D  char                          1a   value options(*nopass)
+dcl-pr spaces like(String_t) extproc('STRING_spaces');
+  length  int(10) const;
+  char    char(1) const options(*nopass);
+end-pr;
 
-      /endif
+dcl-pr parseNum zoned(63:20) extproc('STRING_parseNum');
+  i_string    varchar(96) const options(*trim);
+  i_decPoint  char(1)     const options(*nopass);
+  i_comma     char(1)     const options(*nopass);
+  i_curSym    char(1)     const options(*nopass);
+end-pr;
+
+/endif
 
