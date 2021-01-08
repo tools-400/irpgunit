@@ -62,6 +62,9 @@ Version 4.0.0 - xx.xx.2021
  * Added test suite OPDESCT.
  * Added module JOBLOG.
  * Added module LSTSPLF.
+ * Added TEMPLCBL.
+ * Convert TEMPLATE to **free.
+ * Convert TEMPLSQL to **free.
  * Refactored the iRPGUnit library to support Cobol.
    (assert, fail, aEqual)
  * Converted module STRINGT to **free and added procedure parseNum().

@@ -1,217 +1,276 @@
-      *=====================================================================*
-      *  Empty Unit Test Case. Prints a protocol of the execution flow.     *
-      *=====================================================================*
-      *  Command to create the service program:                             *
-      *  RUCRTRPG TSTPGM(RPGUNIT/TEMPLATE) SRCFILE(RPGUNIT/QSRC)            *
-      *=====================================================================*
-      *  Tools/400 STRPREPRC instructions:                                  *
-      *   >>PRE-COMPILER<<                                                  *
-      *     >>CRTCMD<<  RUCRTRPG    TSTPGM(&LI/&OB) +                       *
-      *                             SRCFILE(&SL/&SF) +                      *
-      *                             SRCMBR(&SM);                            *
-      *     >>COMPILE<<                                                     *
-      *       >>PARM<< POPTION(*EVENTF);                                    *
-      *       >>PARM<< DBGVIEW(*NONE);                                      *
-      *       >>PARM<< COMPILEOPT('DBGVIEW(*LIST)');                        *
-      *       >>PARM<< BNDDIR(*N);                                          *
-      *     >>END-COMPILE<<                                                 *
-      *     >>EXECUTE<<                                                     *
-      *   >>END-PRE-COMPILER<<                                              *
-      *=====================================================================*
-      *  Compile options:                                                   *
-      *    *SrcStmt       - Assign SEU line numbers when compiling the      *
-      *                     source member. This option is required to       *
-      *                     position the LPEX editor to the line in error   *
-      *                     when the source member is opened from the       *
-      *                     RPGUnit view.                                   *
-      *    *NoDebugIO     - Do not generate breakpoints for input and       *
-      *                     output specifications. Optional but useful.     *
-      *=====================================================================*
-     H NoMain Option(*SrcStmt : *NoDebugIO)
-     FQSYSPRT   O    F   80        printer usropn oflind(*in70)
+**free
+//=====================================================================
+//  Empty Unit Test Case. Prints a protocol of the execution flow.
+//=====================================================================
+//  Command to create the service program:
+//  RUCRTRPG TSTPGM(RPGUNIT/TEMPLATE) SRCFILE(RPGUNIT/QSRC)
+//=====================================================================
+//  Tools/400 STRPREPRC instructions:
+//   >>PRE-COMPILER<<
+//     >>CRTCMD<<  RUCRTRPG    TSTPGM(&LI/&OB) +
+//                             SRCFILE(&SL/&SF) +
+//                             SRCMBR(&SM);
+//     >>COMPILE<<
+//       >>PARM<< POPTION(*EVENTF);
+//       >>PARM<< RPGPPOPT(*LVL2);
+//       >>PARM<< DBGVIEW(*NONE);
+//       >>PARM<< COMPILEOPT('DBGVIEW(*LIST)');
+//       >>PARM<< BNDDIR(*N);
+//     >>END-COMPILE<<
+//     >>EXECUTE<<
+//   >>END-PRE-COMPILER<<
+//=====================================================================
+//  Compile options:
+//    *SrcStmt       - Assign SEU line numbers when compiling the
+//                     source member. This option is required to
+//                     position the LPEX editor to the line in error
+//                     when the source member is opened from the
+//                     RPGUnit view.
+//    *NoDebugIO     - Do not generate breakpoints for input and
+//                     output specifications. Optional but useful.
+//=====================================================================
+ctl-opt NoMain Option(*SrcStmt : *NoDebugIO);
+dcl-f QSYSPRT printer(80) oflind(*in70) usropn;
 
-      /include qinclude,TESTCASE                  iRPGUnit Test Suite
+/include qinclude,TESTCASE                  iRPGUnit Test Suite
 
-     D sds            sds                  qualified
-     D  pgmName                1     10a
-     D  pgmLib                81     90a
+/include qinclude,SDS                       Program status data structure
 
-     D openPrinter...
-     D                 pr                  extproc('openPrinter')
+// ------------------------------------------------------------
+//  Global type templates.
+// ------------------------------------------------------------
 
-     D print...
-     D                 pr                  extproc('print')
-     D  text                        128a   value  varying options(*nopass)
+dcl-ds sql_status_t qualified template;
+  ignSQLWarn ind inz(*off);
+end-ds;
 
-     D closePrinter...
-     D                 pr                  extproc('closePrinter')
+// ------------------------------------------------------------
+//  Global Program Status.
+// ------------------------------------------------------------
 
-     D setUpSuite...
-     D                 pr                  extproc('setUpSuite')
+dcl-ds g_status qualified;
+  srcSeq int(10);
+  srcSeq2 int(10);
+  sql likeds(sql_status_t) inz(*likeds);
+end-ds;
 
-     D tearDownSuite...
-     D                 pr                  extproc('tearDownSuite')
+// ============================================================
+//  Opens the printer.
+// ============================================================
+dcl-proc openPrinter;
+  dcl-pi *n extproc(*dclcase) end-pi;
 
-     D setUp...
-     D                 pr                  extproc('setUp')
+  open QSYSPRT;
 
-     D tearDown...
-     D                 pr                  extproc('tearDown')
+end-proc;
 
-     D testWhatever_1...
-     D                 pr                  extproc('+
-     D                                     testWhatever_1+
-     D                                     ')
+// ============================================================
+//  Prints a message.
+// ============================================================
+dcl-proc print;
+  dcl-pi *n extproc(*dclcase);
+    text varchar(128) value options(*nopass);
+  end-pi;
 
-     D testWhatever_2...
-     D                 pr                  extproc('+
-     D                                     testWhatever_2+
-     D                                     ')
+  dcl-ds lineOutput len(80);
+  end-ds;
 
-      // ============================================================
-      //  Opens the printer.
-      // ============================================================
-     P openPrinter...
-     P                 b                   export
-     D                 pi
-      /free
+  if (%parms() >= 1);
+    lineOutput = text;
+  else;
+    lineOutput = '';
+  endif;
+  write QSYSPRT lineOutput;
 
-         open QSYSPRT;
+end-proc;
 
-      /end-free
-     P                 e
+// ============================================================
+//  Closes the printer.
+// ============================================================
+dcl-proc closePrinter;
+  dcl-pi *n extproc(*dclcase) end-pi;
 
-      // ============================================================
-      //  Prints a message.
-      // ============================================================
-     P print...
-     P                 b                   export
-     D                 pi
-     D  text                        128a   value  varying options(*nopass)
+  if (%open(QSYSPRT));
+    close QSYSPRT;
+  endif;
 
-     D lineOutput      DS            80    inz
-      /free
+end-proc;
 
-         if (%parms() >= 1);
-            lineOutput = text;
-         else;
-            lineOutput = '';
-         endif;
-         write QSYSPRT lineOutput;
+// ------------------------------------------------------------
+//  Specifies whether SQL warnings are ignored when
+//  calling isSQLError().
+// ------------------------------------------------------------
+dcl-proc setIgnSQLWarn;
+  dcl-pi *n extproc(*dclcase);
+    i_ignore ind const;
+  end-pi;
 
-      /end-free
-     P                 e
+  g_status.sql.ignSQLWarn = i_ignore;
 
-      // ============================================================
-      //  Closes the printer.
-      // ============================================================
-     P closePrinter...
-     P                 b                   export
-     D                 pi
-      /free
+end-proc;
 
-         if (%open(QSYSPRT));
-            close QSYSPRT;
-         endif;
+// ------------------------------------------------------------
+//  Returns *on, when the last SQL statement ended with an
+//  error, else *off;
+// ------------------------------------------------------------
+dcl-proc isSQLError;
+  dcl-pi *n ind extproc(*dclcase);
+    i_state   char(5) const;
+  end-pi;
 
-      /end-free
-     P                 e
+  dcl-ds sqlState qualified;
+    class char(2);
+    qualifier char(3);
+  end-ds;
 
-      // ============================================================
-      //  Set up test suite. Executed once per RUCALLTST.
-      // ============================================================
-     P setUpSuite...
-     P                 b                   export
-     D                 pi
+  dcl-ds sql likeds(sql_status_t);
 
-     D rc              S              1A
-      /free
+  sqlState = i_state;
+  sql = g_status.sql;
 
-         runCmd('OVRPRTF FILE(QSYSPRT) TOFILE(*FILE) +
-                 SPLFNAME(PROC_FLOW) OVRSCOPE(*JOB)');
-         monitor;
-            openPrinter();
-            print('Executing:   setUpSuite()');
-         on-error;
-            // ignore errors ...
-         endmon;
+  reset g_status.sql;
 
-         // ... but try to remove the override.
-         monitor;
-            runCmd('DLTOVR FILE(QSYSPRT) LVL(*JOB)');
-         on-error;
-            dsply '*** Failed to delete QSYSPRT override! ***' rc;
-         endmon;
+  select;
+  // SQL code 00: Unqualified Successful Completion
+  when (sqlState = '00000');
+    // Execution of the operation was successful and did not
+    // result in any type of warning or exception condition.
+    return *off;
 
-      /end-free
-     P                 e
+  // SQL code 01: Warning
+  When (sqlState.class = '01');
+    // Valid warning SQLSTATEs returned by an SQL routine.
+    // Also used for RAISE_ERROR and SIGNAL.
+    if (sql.ignSQLWarn);
+      return *off;
+    else;
+      return *on;
+    endif;
 
-      // ============================================================
-      //  Tear down test suite.
-      // ============================================================
-     P tearDownSuite...
-     P                 b                   export
-     D                 pi
-      /free
+  // SQL code 02: No data
+  When (sqlState = '02000');
+    return *off;
 
-         print('Executing:   tearDownSuite()');
-         closePrinter();
+  other;
+    // Other problem or error
+    return *on;
+  endsl;
 
-      /end-free
-     P                 e
+end-proc;
 
-      // ============================================================
-      //  Set up test case.
-      // ============================================================
-     P setUp...
-     P                 b                   export
-     D                 pi
-      /free
+// ============================================================
+//  Set up test suite. Executed once per RUCALLTST.
+// ============================================================
+dcl-proc setUpSuite export;
+  dcl-pi *n extproc(*dclcase) end-pi;
 
-         print('Executing:   - setUp()');
+  dcl-s rc char(1);
 
-      /end-free
-     P                 e
+  runCmd('OVRPRTF FILE(QSYSPRT) TOFILE(*FILE) +
+          SPLFNAME(PROC_FLOW) OVRSCOPE(*JOB)');
+  monitor;
+    openPrinter();
+    print('Executing:   setUpSuite()');
+  on-error;
+  // ignore errors ...
+  endmon;
 
-      // ============================================================
-      //  Tear down test case.
-      // ============================================================
-     P tearDown...
-     P                 b                   export
-     D                 pi
-      /free
+  // ... but try to remove the override.
+  monitor;
+    runCmd('DLTOVR FILE(QSYSPRT) LVL(*JOB)');
+  on-error;
+    dsply '*** Failed to delete QSYSPRT override! ***' rc;
+  endmon;
 
-         print('Executing:   - tearDown()');
+end-proc;
 
-      /end-free
-     P                 e
+// ============================================================
+//  Tear down test suite.
+// ============================================================
+dcl-proc tearDownSuite export;
+  dcl-pi *n extproc(*dclcase) end-pi;
 
-      // ============================================================
-      //  RPGUnit test case.
-      // ============================================================
-     P testWhatever_1...
-     P                 b                   export
-     D                 pi
-      /free
+  print('Executing:   tearDownSuite()');
+  closePrinter();
 
-         print('Executing:       * testWhatever_1()');
+end-proc;
 
-         // Place your assertions here.
+// ============================================================
+//  Set up test case.
+// ============================================================
+dcl-proc setUp export;
+  dcl-pi *n extproc(*dclcase) end-pi;
 
-      /end-free
-     P                 e
+  print('Executing:   - setUp()');
 
-      // ============================================================
-      //  RPGUnit test case.
-      // ============================================================
-     P testWhatever_2...
-     P                 b                   export
-     D                 pi
-      /free
+end-proc;
 
-         print('Executing:       * testWhatever_2()');
+// ============================================================
+//  Tear down test case.
+// ============================================================
+dcl-proc tearDown export;
+  dcl-pi *n extproc(*dclcase) end-pi;
 
-         // Place your assertions here.
+  print('Executing:   - tearDown()');
 
-      /end-free
-     P                 e
+end-proc;
+
+// ============================================================
+//  RPGUnit test case.
+// ============================================================
+dcl-proc testWhatever_1 export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  dcl-s count int(10);
+
+  print('Executing:       * testWhatever_1()');
+
+  // Run
+  exec sql
+    SELECT COUNT(DAY_NUM) INTO :count
+      FROM ( VALUES (1, 'Monday'),
+                           (2, 'Tuesday'),
+                           (3, 'Wednesday'),
+                           (4, 'Thursday'),
+                           (5, 'Friday'),
+                           (6, 'Saturday'),
+                           (7, 'Sunday') )
+      AS week_days (DAY_NUM, DAY_NAME);
+
+  // Place your assertions here.
+  assert(not isSqlError(sqlState));
+
+  assert(count = 7: 'A week must have 7 days');
+
+end-proc;
+
+// ============================================================
+//  RPGUnit test case.
+// ============================================================
+dcl-proc testWhatever_2 export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  dcl-s count int(10);
+
+  print('Executing:       * testWhatever_2()');
+
+  // Run
+  exec sql
+    SELECT COUNT(DAY_NUM) INTO :count
+      FROM ( VALUES (1, 'Monday'),
+                           (2, 'Tuesday'),
+                           (3, 'Wednesday'),
+                           (4, 'Thursday'),
+                           (5, 'Friday'),
+                           (6, 'Saturday'),
+                           (7, 'Sunday') )
+      AS week_days (DAY_NUM, DAY_NAME)
+      WHERE DAY_NUM < 1 OR DAY_NUM > 7;
+
+  // Place your assertions here.
+  assert(not isSqlError(sqlState));
+
+  assert(count = 0: 'Ordinal numbers of days must be between 1 and 7');
+
+end-proc;
+
