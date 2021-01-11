@@ -33,8 +33,14 @@ ctl-opt NoMain Option(*SrcStmt : *NoDebugIO);
 dcl-f QSYSPRT printer(80) oflind(*in70) usropn;
 
 /include qinclude,TESTCASE                  iRPGUnit Test Suite
-
 /include qinclude,SDS                       Program status data structure
+
+// ------------------------------------------------------------
+//  SQL Options.
+// ------------------------------------------------------------
+
+exec sql
+  set option commit = *none;
 
 // ------------------------------------------------------------
 //  Global type templates.
