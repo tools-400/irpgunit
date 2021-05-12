@@ -50,7 +50,7 @@
  UTILITY = 'iRPGUnit'
  PRD_LIB = 'RPGUNIT'
  DEBUG_VIEW = '*NONE'
- TARGET_RELEASE = 'V7R1M0'
+ TARGET_RELEASE = '*CURRENT'
 
  PARSE ARG option prdLib dbgView tgtrls
 
