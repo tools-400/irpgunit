@@ -17,17 +17,17 @@
    </feature>
    <category-def name="de.tools400.rpgunit" label="iRPGUnit for IBM i">
       <description>
-         iRPGUnit for RDi 8.0 / 9.0+. This is the base component of iRPGUnit.
+         iRPGUnit for RDi 9.5.1.3+. This is the base component of iRPGUnit.
       </description>
    </category-def>
    <category-def name="de.tools400.rpgunit.additions" label="iRPGUnit for IBM i (optional features)">
       <description>
-         Optional features of iRPGUnit for RDi 8.0 / 9.0+. The features listed here are optional. It is recommended to install the spooled file viewer, if you do not have installed the iSphere plug-in.
+         Optional features of iRPGUnit for RDi 9.5.1.3+. The features listed here are optional. It is recommended to install the spooled file viewer, if you do not have installed the iSphere plug-in.
       </description>
    </category-def>
    <category-def name="de.tools400.rpgunit.integration" label="iRPGUnit for IBM i (optional integration features)">
       <description>
-         Optional integration features of iRPGUnit for RDi 8.0 / 9.0+. The features listed here are interesting for iSphere and CMOne users. You should install these features, when you want to connect iSphere or CMOne and iRPGUnit.
+         Optional integration features of iRPGUnit for RDi 9.5.1.3+. The features listed here are interesting for iSphere and CMOne users. You should install these features, when you want to connect iSphere or CMOne and iRPGUnit.
       </description>
    </category-def>
 </site>

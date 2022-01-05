@@ -1,7 +1,7 @@
 @echo off
 rem **************************************************************
 rem *  This is an MS-DOS BATCH file for downloading the          *
-rem *  RPGUnit source members.      RDP 8.0 / RDi 9.0            *
+rem *  RPGUnit source members.      RDi 9.5.1.3+                 *
 rem **************************************************************
 set VERSION=v1.7.3
 set UTILITIES_DIR=DOS Utilities

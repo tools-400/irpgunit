@@ -28,7 +28,7 @@
  *     1.3 On the PC change version number in COPYRIGHT.RPGLE.
  *     1.4 On the PC push changes of project's i Project to the AS/400.
  *     1.5 On the PC update document 'iRPGUnit.doc' and also save it as 
- *         'iRPGUnit for RDi 8.0.pdf'.
+ *         'iRPGUnit for RDi 9.5.1.3+.pdf'.
  *     1.6 Refresh project 'iRPGUnit Core Plugin'.
  *     1.7 On the PC increment version number of property 'build.version'
  *         in file 'build.properties'.
@@ -53,7 +53,7 @@
  *     3.4 On the PC run target 'uploadSourceForgeFiles' of file 'build.xml'.
  *     3.5 Check the green 'Download' button on SourceForge. It must point
  *         to the local update site file, e.g.: 
- *           iRPGUnit for RDi 8.0+ (v2.5.0.r Update Site).zip
+ *           iRPGUnit for RDi 9.5.1.3+ (v2.5.0.r Update Site).zip
  *     3.6 Check-in source code.
  *     3.7 Create version tag, e.g.: v002.004.001.r
  *
@@ -174,7 +174,7 @@
 	</if>
 
 	<!-- Set build target dependant parameters -->
-	<property name="target.ide.product.name.short.rdi" value="RDi 8.0+" />
+	<property name="target.ide.product.name.short.rdi" value="RDi 9.5.1.3+" />
 	<property name="target.ide.product.name.short.wdsci" value="WDSCi 7.0" />
 	<property name="target.ide.product.name.long.rdi" value="IBM Rational Developer for i" />
 	<property name="target.ide.product.name.long.wdsci" value="Websphere Development Studio Client for iSeries" />

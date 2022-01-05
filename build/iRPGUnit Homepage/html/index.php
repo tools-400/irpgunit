@@ -43,20 +43,20 @@
         <div class="section">
         iRPGUnit is an open source plug-in for IBM Rational Developer for i. It enables you to develop and
         execute repeatable unit tests for RPG programs and service programs. The current version is @VERSION_NUMBER@.
-		<p/>
-		The iRPGUnit plug-in uses a fork of the <a href="https://sourceforge.net/projects/rpgunit/"  target="_external">RPGUnit</a>
-		library, which was started by Lacton back in September 2006. The enhanced library adds an interface that enables RPGUnit to 
-		pass test results to the IBM Rational Developer for i. The development of the library as well as the plug-in was started by 
-		Mihael Schmidt at <a href="http://www.rpgnextgen.com/" target="_external">RPG Next Gen</a> and is continued by the current 
-		developers. 
-		<p/>
-		iRPGUnit uses test suites to group test cases. A test case is a method that starts with 'test' and that is hosted
-		and exported by a RPG module. A test suite is a service program that consists of one or more modules that exports
-		test cases. Typically there is a one to one relation between the test suite service program and the module that
-		contains the test cases.
-		<p/>
-		iRPGUnit features are driven from our ideas and needs, but everybody is encouraged to contribute
-		suggestions and manpower to improve the power of iRPGUnit.
+        <p/>
+        The iRPGUnit plug-in uses a fork of the <a href="https://sourceforge.net/projects/rpgunit/"  target="_external">RPGUnit</a>
+        library, which was started by Lacton back in September 2006. The enhanced library adds an interface that enables RPGUnit to 
+        pass test results to the IBM Rational Developer for i. The development of the library as well as the plug-in was started by 
+        Mihael Schmidt at <a href="http://www.rpgnextgen.com/" target="_external">RPG Next Gen</a> and is continued by the current 
+        developers. 
+        <p/>
+        iRPGUnit uses test suites to group test cases. A test case is a method that starts with 'test' and that is hosted
+        and exported by a RPG module. A test suite is a service program that consists of one or more modules that exports
+        test cases. Typically there is a one to one relation between the test suite service program and the module that
+        contains the test cases.
+        <p/>
+        iRPGUnit features are driven from our ideas and needs, but everybody is encouraged to contribute
+        suggestions and manpower to improve the power of iRPGUnit.
         <p/>
         <div style="background-color:lightblue; border: 3px solid red; width:800px;">
         <p/>
@@ -71,17 +71,17 @@
         </td></tr>
         </table>
         </div>
-		<p/>
-		<table  border="0" >
-		<tr><td valign="top">
-			<table border="0" style="border-spacing: 0px 0px; ">
-			<tr><td valign="top"><h2>The iRPGUnit Project Team</h2></td></tr>
-			<tr><td nowrap><a target="_owner" href="http://www.tools400.de/"><img class="noborder" src="./assets/tools400.png" ></a><br>Tools/400, Thomas Raddatz</td></tr>
+        <p/>
+        <table  border="0" >
+        <tr><td valign="top">
+            <table border="0" style="border-spacing: 0px 0px; ">
+            <tr><td valign="top"><h2>The iRPGUnit Project Team</h2></td></tr>
+            <tr><td nowrap><a target="_owner" href="http://www.tools400.de/"><img class="noborder" src="./assets/tools400.png" ></a><br>Tools/400, Thomas Raddatz</td></tr>
 	        </table>
 	        </td>
 	    </tr>
         </table>
-		</div>
+        </div>
         <p/>
 
         <h2 class="release">Features</h2>
@@ -122,7 +122,7 @@
         But you can also use the official update site at SourceForge:
         <p/>
         <table class="nomargin">
-        <tr><td><img class="noborder" src="./assets/updatesite.png"></td><td><a href="http://irpgunit.sourceforge.io/eclipse/rdi8.0/">IBM Rational Developer for i - RDi 8.0+</a></td></tr>
+        <tr><td><img class="noborder" src="./assets/updatesite.png"></td><td><a href="http://irpgunit.sourceforge.io/eclipse/rdi8.0/">IBM Rational Developer for i - RDi 9.5.1.3+</a></td></tr>
         </table>
         Last but not least you can download the local update site as a zip file and install iRPGUnit from there:
         <p/>
@@ -134,7 +134,7 @@
         The iRPGUnit beta version is available here: 
         <p/>
         <table class="nomargin">
-        <tr><td><img class="noborder" src="./assets/updatesite_beta.png"></td><td><a href="http://irpgunit.sourceforge.io/beta-version/eclipse/rdi8.0/">IBM Rational Developer for i - RDi 8.0+</a></td></tr>
+        <tr><td><img class="noborder" src="./assets/updatesite_beta.png"></td><td><a href="http://irpgunit.sourceforge.io/beta-version/eclipse/rdi8.0/">IBM Rational Developer for i - RDi 9.5.1.3+</a></td></tr>
         </table>
         <p/>
         <table class="nomargin">
@@ -153,17 +153,16 @@
         </table>
         </div>
         <p/>
-		
-		<h2 class="release">Trademarks</h2>
+
+        <h2 class="release">Trademarks</h2>
         <div class="section">
-		The following terms are trademarks of the IBM Corporation in the United States or other countries or both:
-		<ul>
-		<li>IBM Rational Developer for Power Systems Software 8.0+</li>
-		<li>IBM Rational Developer for i 9.1+</li>
-		</ul>
-		</div>
+        The following terms are trademarks of the IBM Corporation in the United States or other countries or both:
+        <ul>
+        <li>IBM Rational Developer for i 9.5.1.3+</li>
+        </ul>
+        </div>
         <p/>
-		
+
         <br>
         <hr>
         <table border="0" class="copyright">

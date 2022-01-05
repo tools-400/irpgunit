@@ -17,7 +17,7 @@ Building the Project
 1.3 Change the version number in COPYRIGHT.RPGLE.
 1.4 Push all changes of the i Project to your IBM i.
 1.5 Update document 'iRPGUnit.doc' and also save it as
-    'iRPGUnit for RDi 8.0.pdf'.
+    'iRPGUnit for RDi 9.5.1.3+.pdf'.
 1.6 Refresh project 'iRPGUnit Core Plugin'.
 1.7 Increment version number of property 'build.version' in
     file 'build.properties'.
@@ -45,7 +45,7 @@ Building the Project
 3.4 Run target 'uploadSourceForgeFiles' of file 'build.xml'.
 3.5 Check the green 'Download' button on SourceForge. It must point
     to the local update site file, e.g.:
-      iRPGUnit for RDi 8.0+ (v2.5.0.r Update Site).zip
+      iRPGUnit for RDi 9.5.1.3+ (v2.5.0.r Update Site).zip
 3.6 Check-in source code.
 3.7 Create version tag, e.g.: v002.004.001.r
 

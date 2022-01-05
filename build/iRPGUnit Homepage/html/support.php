@@ -65,17 +65,16 @@
         </table>
         </div>
         <p/>
-		
-		<h2 class="release">Trademarks</h2>
+
+        <h2 class="release">Trademarks</h2>
         <div class="section">
-		The following terms are trademarks of the IBM Corporation in the United States or other countries or both:
-		<ul>
-		<li>IBM Rational Developer for Power Systems Software 8.0+</li>
-		<li>IBM Rational Developer for i 9.1+</li>
-		</ul>
-		</div>
+        The following terms are trademarks of the IBM Corporation in the United States or other countries or both:
+        <ul>
+        <li>IBM Rational Developer for i 9.5.1.3+</li>
+        </ul>
+        </div>
         <p/>
-		
+
         <br>
         <hr>
         <table border="0" class="copyright">
