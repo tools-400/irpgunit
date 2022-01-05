@@ -925,9 +925,6 @@
 								<replaceregexp match="${html.copyright.2.version.regex}" replace="${html.copyright.2.version.replace}" byline="true">
 									<fileset dir="${workspace.home}\@{project}/html" includes="copyright.html" />
 								</replaceregexp>
-								<replaceregexp match="${html.copyright.year.regex}" replace="${html.copyright.year.replace}" byline="true">
-									<fileset dir="${workspace.home}\@{project}/html" includes="copyright.html" />
-								</replaceregexp>
 							</then>
 						</if>
 
