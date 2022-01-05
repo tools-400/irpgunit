@@ -151,7 +151,7 @@
 	<property name="html.copyright.1.version.regex" value="^(Version: )(${version.number.search.regex})(.*)?" />
 	<property name="html.copyright.1.version.replace" value="\1${build.version}\3" />
 	
-	<property name="html.copyright.2.version.regex" value="(Copyright: )([0-9]{4})" />
+	<property name="html.copyright.2.version.regex" value="(Copyright:\s)([0-9]{4})" />
 	<property name="html.copyright.2.version.replace" value="\1${today.year}" />
 
 	<!-- Check for BETA or RELEASE version -->
@@ -923,6 +923,9 @@
 									<fileset dir="${workspace.home}\@{project}/html" includes="copyright.html" />
 								</replaceregexp>
 								<replaceregexp match="${html.copyright.2.version.regex}" replace="${html.copyright.2.version.replace}" byline="true">
+									<fileset dir="${workspace.home}\@{project}/html" includes="copyright.html" />
+								</replaceregexp>
+								<replaceregexp match="${html.copyright.year.regex}" replace="${html.copyright.year.replace}" byline="true">
 									<fileset dir="${workspace.home}\@{project}/html" includes="copyright.html" />
 								</replaceregexp>
 							</then>
