@@ -890,6 +890,7 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
             assertions.setText("0"); //$NON-NLS-1$
 
             hasErrors = false;
+            errorPanel.setBackground(grey);
 
             this.update();
         }
