@@ -55,14 +55,17 @@ b) Optionally run the RPGUnit self tests:
 
 --------------------------
 
-Version 4.0.0 - xx.xx.2021
+Version 4.0.0 - 05.01.2022
 --------------------------
+ * Compiled plug-in for RDP 9.5.1.3.
  * Added Cobol support.
  * Added parameter DLTSPLF to commands RUCRTRPG and RUCRTCBL.
  * Added test suite OPDESCT.
  * Added module JOBLOG.
  * Added module LSTSPLF.
  * Added TEMPLCBL.
+ * Changed the RPGUnit view to set the background color of the result label
+   to grey while executing a test suite.
  * Convert TEMPLATE to **free.
  * Convert TEMPLSQL to **free.
  * Refactored the iRPGUnit library to support Cobol.
