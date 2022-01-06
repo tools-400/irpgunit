@@ -1105,7 +1105,7 @@
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(CRTTSTT) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit SelfTest - Test RUCRTTST.')
+                          TEXT('iRPGUnit SelfTest - Test CRTTST.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
@@ -1177,7 +1177,7 @@
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(MKCRTTSTT) +
                           SRCTYPE(REXX) +
-                          TEXT('iRPGUnit SelfTest - Build RUCRTTSTT.')
+                          TEXT('iRPGUnit SelfTest - Build CRTTSTT.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
