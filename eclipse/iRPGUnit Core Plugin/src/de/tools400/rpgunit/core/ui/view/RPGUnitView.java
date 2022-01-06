@@ -892,6 +892,8 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
             hasErrors = false;
             errorPanel.setBackground(grey);
 
+            setTitleImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_RPGUNIT));
+
             this.update();
         }
 
@@ -901,7 +903,7 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
 
             red = getDisplay().getSystemColor(SWT.COLOR_DARK_RED);
             green = getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN);
-            grey = getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+            grey = getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
 
             Composite header = this; // new Composite(mainPanel, SWT.NONE);
             header.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
