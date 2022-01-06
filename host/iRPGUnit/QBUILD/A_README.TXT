@@ -53,6 +53,18 @@ Developer Library:
    STRREXPRC SRCMBR(A_INSTALL) SRCFILE(RPGUNITDVP/QBUILD)
      PARM('INSTALL RPGUNITDVP LIST')
 
+
+--------------------------------------
+      Creating Distribution Library
+--------------------------------------
+
+   CRTBNDCL PGM(RPGUNITDVP/A_CRTPKG) SRCFILE(RPGUNITDVP/QBUILD)
+     DFTACTGRP(*NO) ACTGRP(*NEW) DBGVIEW(*LIST)
+
+   CALL PGM(A_CRTPKG) PARM('RPGUNITDVP' 'RPGUNIT' '*NONE')
+   *** Successfully create RPGUNIT library ***
+
+
 --------------------------------------
               History
 --------------------------------------
