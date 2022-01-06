@@ -6,11 +6,11 @@
       provider-name="Tools400"
       plugin="de.tools400.rpgunit.core">
 
-   <description url="http://www.tools400.de/rpgunit/update/rdp8.0/">
+   <description url="https://irpgunit.sourceforge.io/index.php">
       %description
    </description>
 
-   <copyright url="http://www.tools400.de/rpgunit/update/rdp8.0/">
+   <copyright url="https://irpgunit.sourceforge.io/index.php">
       %copyright
    </copyright>
 
@@ -19,7 +19,7 @@
    </license>
 
    <url>
-      <update label="RPGUnit - Remote Update Site" url="http://www.tools400.de/rpgunit/update/rdp8.0/"/>
+      <update label="iRPGUnit - Remote Update Site" url="https://irpgunit.sourceforge.io/eclipse/rdi8.0/"/>
       <discovery label="iRPGUnit Project Team" url="http://www.tools400.de"/>
    </url>
 
