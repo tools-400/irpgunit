@@ -73,7 +73,14 @@ b) Optionally run the RPGUnit self tests:
 
 --------------------------
 
-Version 4.0.0 - 05.01.2022
+Version 4.0.1 - 06.01.2022
+--------------------------
+ * Fixed A_SELFTEST to properly pass parameter TGTRLS to object creation
+   commands.
+
+--------------------------
+
+Version 4.0.0 - 06.01.2022
 --------------------------
  * Compiled plug-in for RDP 9.5.1.3.
  * Added Cobol support.
