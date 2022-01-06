@@ -48,6 +48,10 @@ a) Call the A_INSTALL REXX script with:
 b) Optionally run the RPGUnit self tests:
    STRREXPRC SRCMBR(A_SELFTEST) SRCFILE(RPGUNIT/QBUILD) PARM('RPGUNIT')
 
+Developer Library:
+
+   STRREXPRC SRCMBR(A_INSTALL) SRCFILE(RPGUNITDVP/QBUILD)
+     PARM('INSTALL RPGUNITDVP LIST')
 
 --------------------------------------
               History
