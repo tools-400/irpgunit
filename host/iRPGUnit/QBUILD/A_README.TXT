@@ -53,6 +53,11 @@ b) Optionally run the RPGUnit self tests:
       Creating Distribution Library
 --------------------------------------
 
+ Prepare Library List
+
+   CHGLIBL LIBL(RPGUNITDVP QGPL QTEMP) CURLIB(*CRTDFT)
+   CHGSYSLIBL LIB(UBMSYS) OPTION(*REMOVE)
+
  Compile Developer Library
 
    STRREXPRC SRCMBR(A_INSTALL) SRCFILE(RPGUNITDVP/QBUILD)
@@ -72,6 +77,10 @@ b) Optionally run the RPGUnit self tests:
 --------------------------------------
 
 --------------------------
+
+Version 4.0.2 - 09.01.2022
+--------------------------
+ * Removed plug-in discovery sites that are no update sites.
 
 Version 4.0.1 - 06.01.2022
 --------------------------
