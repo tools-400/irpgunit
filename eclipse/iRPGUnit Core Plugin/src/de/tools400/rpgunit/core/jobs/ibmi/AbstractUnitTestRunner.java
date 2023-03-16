@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2019 iRPGUnit Project Team
+ * Copyright (c) 2013-2023 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,9 @@ import com.ibm.as400.access.AS400Bin2;
 import com.ibm.as400.access.AS400Bin4;
 import com.ibm.as400.access.AS400Bin8;
 import com.ibm.as400.access.CharConverter;
+import com.ibm.as400.access.CommandCall;
+import com.ibm.as400.access.Job;
+import com.ibm.as400.access.ObjectDescription;
 import com.ibm.as400.access.ObjectList;
 import com.ibm.as400.access.ProgramParameter;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
@@ -27,7 +30,9 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import de.tools400.rpgunit.core.Messages;
 import de.tools400.rpgunit.core.RPGUnitCorePlugin;
 import de.tools400.rpgunit.core.handler.UnitTestException;
+import de.tools400.rpgunit.core.helpers.StringHelper;
 import de.tools400.rpgunit.core.model.ibmi.I5Library;
+import de.tools400.rpgunit.core.model.ibmi.I5LibraryList;
 import de.tools400.rpgunit.core.model.ibmi.I5Object;
 import de.tools400.rpgunit.core.model.ibmi.I5ObjectName;
 import de.tools400.rpgunit.core.model.ibmi.I5ServiceProgram;
@@ -94,6 +99,81 @@ public abstract class AbstractUnitTestRunner {
             RPGUnitCorePlugin.logError("Error during check for unit test case runner.", e); //$NON-NLS-1$
         }
         return tAvailable;
+    }
+
+    public boolean updateLibrary(I5LibraryList libraryList) {
+
+        if (!libraryList.isTypeOf(I5LibraryList.TYPE_SPECIFIED)) {
+            return isAvailable();
+        }
+
+        boolean tAvailable = false;
+        String[] currentLibraryList = null;
+
+        try {
+
+            AS400 system = runner.getLibrary().getConnection().getAS400ToolboxObject();
+            currentLibraryList = getLibraryList(system);
+            if (currentLibraryList == null) {
+                return isAvailable();
+            }
+
+            setLibraryList(system, libraryList.getLibraries());
+            ObjectList objects = new ObjectList(system, "*LIBL", getName(), getType()); // //$NON-NLS-1$
+            objects.load();
+            tAvailable = objects.getObjects().hasMoreElements();
+            if (tAvailable) {
+                ObjectDescription objectDescription = (ObjectDescription)objects.getObjects().nextElement();
+                runner.getLibrary().setName(objectDescription.getLibrary());
+            }
+
+        } catch (Exception e) {
+            RPGUnitCorePlugin.logError("Could not check iRPGUnit runner availability.", e); //$NON-NLS-1$
+        } finally {
+            try {
+                setLibraryList(system, currentLibraryList);
+            } catch (Exception e) {
+
+            }
+        }
+
+        return tAvailable;
+    }
+
+    private String[] getLibraryList(AS400 system) {
+
+        try {
+
+            Job[] jobs = system.getJobs(AS400.COMMAND);
+
+            if (jobs.length == 1) {
+                String[] libraryList = jobs[0].getUserLibraryList();
+                return libraryList;
+            }
+
+        } catch (Exception e) {
+            RPGUnitCorePlugin.logError("Failed to retrieve library list.", e); // //$NON-NLS-1$
+        }
+
+        return null;
+    }
+
+    private boolean setLibraryList(AS400 system, String[] currentLibraryList) {
+
+        String command = "CHGLIBL LIBL(" + StringHelper.concatTokens(currentLibraryList, " ") + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        CommandCall commandCall = new CommandCall(system);
+
+        try {
+
+            if (commandCall.run(command)) {
+                return true;
+            }
+
+        } catch (Exception e) {
+            RPGUnitCorePlugin.logError("Failed to set library list.", e);
+        }
+
+        return false;
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2019 iRPGUnit Project Team
+ * Copyright (c) 2013-2023 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.part.ViewPart;
+
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 import de.tools400.rpgunit.core.Messages;
 import de.tools400.rpgunit.core.handler.UnitTestException;
@@ -112,9 +114,18 @@ public class RunUnitTestsJob extends AbstractRunUnitTestsJob {
                     // TODO: System.out.println("Executing test suite (" +
                     // tUnitTestSuite.getServiceProgram().getName() + ") ...");
                     I5ServiceProgram tUnitTestServiceProgram = tUnitTestSuite.getServiceProgram();
+                    IBMiConnection connection = tUnitTestServiceProgram.getLibrary().getConnection();
+                    RPGUnitTestRunner tRunner = new RPGUnitTestRunner(connection);
 
-                    RPGUnitTestRunner tRunner = new RPGUnitTestRunner(tUnitTestServiceProgram.getLibrary().getConnection());
-                    if (!tRunner.isAvailable()) {
+                    boolean isAvailable = tRunner.isAvailable();
+                    // If the runner could not be found, ...
+                    if (!isAvailable) {
+                        // ... attempt to find it using the execution library
+                        // list of the unit test service program.
+                        isAvailable = tRunner.updateLibrary(tUnitTestServiceProgram.getExecutionLibraryList());
+                    }
+
+                    if (!isAvailable) {
                         displayError(ERROR_TITLE,
                             Messages.bind(Messages.Can_not_execute_unit_test_due_to_missing_unit_test_runner,
                                 new Object[] { tUnitTestServiceProgram.getLibrary(), tUnitTestServiceProgram.getName(), tRunner.toString(),

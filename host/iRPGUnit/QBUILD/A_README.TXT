@@ -78,6 +78,13 @@ b) Optionally run the RPGUnit self tests:
 
 --------------------------
 
+Version 4.0.3 - 16.03.2022
+--------------------------
+ * Resolve the runner library from the execution library list of the unit
+   test service program, when it could not be found.
+
+--------------------------
+
 Version 4.0.2 - 09.01.2022
 --------------------------
  * Removed plug-in discovery sites that are no update sites.
