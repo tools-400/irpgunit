@@ -17,6 +17,19 @@
  *
  *   See also: build.properties
  *
+ *   Setup the el tools configuration:
+ *
+ *     1 JRE
+ *     1.1 Select option "Run in the same JRE as the workspace".
+ *
+ *     2 Classpath
+ *     2.1 Add the following jars from [iRPGUnit Build]/build/lib:
+ *         - org.hamcrest.core_1.1.0.v20090501071000.jar
+ *         - junit.jar
+ *         - jsch-0.1.51.jar
+ *         - commons-net-3.3-patched.jar
+ *         - ant-contrib-1.0b3.jar
+ *
  *   Here are the steps to create a new version of the plug-in:
  *
  *     1 Preparation
