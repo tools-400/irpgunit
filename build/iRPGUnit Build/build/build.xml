@@ -26,7 +26,7 @@
  *     2.1 Add the following jars from [iRPGUnit Build]/build/lib:
  *         - org.hamcrest.core_1.1.0.v20090501071000.jar
  *         - junit.jar
- *         - jsch-0.1.51.jar
+ *         - jsch-0.1.55.jar
  *         - commons-net-3.3-patched.jar
  *         - ant-contrib-1.0b3.jar
  *
