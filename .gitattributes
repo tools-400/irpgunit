@@ -1,0 +1,118 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Git stuff
+.gitattributes text eol=lf
+.gitignore text eol=lf
+
+# Project specific
+*.java text eol=lf
+*.pcml text eol=lf
+*.exsd text eol=lf
+*.jar binary
+
+# Eclipse specific
+.project text eol=lf
+.classpath text eol=lf
+MANIFEST.MF text eol=lf
+**/*.prefs text eol=lf
+
+# Miscellaneous
+*.xml text eol=lf
+*.properties text eol=lf
+*.html text eol=lf
+*.php text eol=lf
+*.js text eol=lf
+*.css text eol=lf
+*.ini text eol=lf
+*.txt text eol=lf
+*.snippet text eol=lf
+*.cmd text eol=lf
+*.bat text eol=crlf
+*.URL text eol=lf
+
+*.SAVF binary
+*.zip binary
+*.dll binary
+*.exe binary
+*.pdf binary
+*.doc binary
+*.docx binary
+*.vsd binary
+*.vsdx binary
+*.cdr binary
+
+# Graphics
+*.ico binary
+*.png binary
+*.jpg binary
+*.bmp binary
+*.gif binary
+*.ttf binary
+*.svg binary
+*.icns binary
+*.xcf binary
+*.pdn binary
+
+# Host
+*.ALIAS text eol=lf
+*.BAS text eol=lf
+*.BND text eol=lf
+*.BNDDIR text eol=lf
+*.C text eol=lf
+*.CBL text eol=lf
+*.CBLLE text eol=lf
+*.CHKCST text eol=lf
+*.CLD text eol=lf
+*.CLE text eol=lf
+*.CLLE text eol=lf
+*.CLP text eol=lf
+*.CMD text eol=lf
+*.CPP text eol=lf
+*.CTAS text eol=lf
+*.DSPF text eol=lf
+*.ENVVAR text eol=lf
+*.FTN text eol=lf
+*.FUNCTION text eol=lf
+*.ICFF text eol=lf
+*.IDYCOL text eol=lf
+*.INDEX text eol=lf
+*.LF text eol=lf
+*.MENU text eol=lf
+*.MNU text eol=lf
+*.MNUCMD text eol=lf
+*.MNUDDS text eol=lf
+*.MQT text eol=lf
+*.PAS text eol=lf
+*.PF text eol=lf
+*.PLI text eol=lf
+*.PNLGRP text eol=lf
+*.PRIKEY text eol=lf
+*.PROCEDURE text eol=lf
+*.PRTF text eol=lf
+*.REFCST text eol=lf
+*.REXX text eol=lf
+*.RPG text eol=lf
+*.RPGLE text eol=lf
+*.RPT text eol=lf
+*.SEQUENCE text eol=lf
+*.SQLC text eol=lf
+*.SQLCBL text eol=lf
+*.SQLCBLLE text eol=lf
+*.SQLCPP text eol=lf
+*.SQLFTN text eol=lf
+*.SQLPLI text eol=lf
+*.SQLRPG text eol=lf
+*.SQLRPGLE text eol=lf
+*.TABLE text eol=lf
+*.TBL text eol=lf
+*.TEMPORAL text eol=lf
+*.TRIGGER text eol=lf
+*.TXT text eol=lf
+*.TYPE text eol=lf
+*.UNQCST text eol=lf
+*.VARIABLE text eol=lf
+*.VIEW text eol=lf
+*.XML text eol=lf
+*.LNK text eol=lf
+*.XSD text eol=lf
