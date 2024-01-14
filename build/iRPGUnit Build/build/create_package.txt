@@ -41,12 +41,9 @@ Building the Project
 
 3.1 Run target 'build' of file 'build.xml'.
 3.2 Right-click 'site.xml', select 'PDE Tools -> Build Site'.
-3.3 Run target 'createSourceForgeFiles' of file 'build.xml'.
-3.4 Run target 'uploadSourceForgeFiles' of file 'build.xml'.
-3.5 Check the green 'Download' button on SourceForge. It must point
-    to the local update site file, e.g.:
-      iRPGUnit for RDi 9.5.1.3+ (v2.5.0.r Update Site).zip
-3.6 Check-in source code.
-3.7 Create version tag, e.g.: v002.004.001.r
+3.3 Run target 'createGitHubFiles' of file 'build.xml'.
+3.4 Run target 'uploadGitHubFiles' of file 'build.xml'.
+3.5 Check-in source code.
+3.6 Create version tag, e.g.: v002.004.001.r
 
 See also: build.xml
