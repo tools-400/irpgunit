@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Upgrading From v3.2.0 to v4.0.0</title>
+</head>
+
+<body>
+<h1>Upgrading From v3.2.0 to v4.0.0</h1>
+This version has been changed to support Cobol unit tests. Please notice that:
+<p>
+<ul>
+<li>... there is a new RUCRTCBL command.</li>
+<li>... there is a new RUCRTRPG command.</li>
+<li>... there is still the old RUCRTTST command, which is a copy of RUCRTRPG.</li>
+</ul>
+<p>
+The following RPGUnit self-tests have been changed, because all commands
+created by iRPGUnit are formatted, now. That change was necessary to ease
+testing iRPGUnit: 
+<ul>
+<li>CRTTSTT</li>
+</ul>
+<p>
+<table>
+<tr>
+<td class="notice">Notice: This version requires iSphere v3.7.3 or higher, if you want to integrate it.</td>
+</tr>
+</table>
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
