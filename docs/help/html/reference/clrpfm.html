@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>CLRPFM (clear physical file member)</title>
+</head>
+
+<body>
+<h1>CLRPFM (clear physical file member)</h1>
+<b>Syntax:</b>
+<p class="indent">
+<code>clrpfm( 'file' [: 'member' );</code>
+</p>
+<b>Description:</b>
+<p class="indent">
+Uses <code>CLRPFM</code> to remove the data from <code>'member'</code> of file <code>'file'</code>.
+<br><br>
+<b>Important:</b> The specified file must be stored in library (<code>*CURLIB</code>)!
+</p>
+<b>Return value:</b>
+<p class="indent">
+void
+</p>
+<b>Example:</b>
+<p>
+<code><pre class="indent">
+<span class="r-cmt">// Clears member 'TEST1' of file 'TESTWERTE'.</span>
+
+clrpfm( 'TESTVALUES' : 'TEST1' );          
+</pre></code>
+</p>
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

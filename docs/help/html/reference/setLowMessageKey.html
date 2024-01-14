@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>setLowMessageKey (set low message key)</title>
+</head>
+
+<body>
+<h1>setLowMessageKey (set low message key)</h1>
+<b>Syntax:</b>
+<p class="indent">
+<code>setLowMessageKey( [ 'msgKey' );</code>
+</p>
+<b>Description:</b>
+<p class="indent">
+Set the starting point for retrieving messages from the job log starting
+with the message after the message identified by the specified message key.<br>
+If parameter <i>msgKey</i> is omitted, a dummy message is appended to the
+job log and its key is returned.
+</p>
+<b>Return value:</b>
+<p class="indent">
+void
+</p>
+<b>Example:</b>
+<p>
+<code><pre class="indent">
+<span class="r-cmt">// Sets the starting point for retrieving</span>
+<span class="r-cmt">// messages from the job beyond <i>now</i>.</span>
+
+setLowMessageKey();
+
+</pre></code>
+</p>
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

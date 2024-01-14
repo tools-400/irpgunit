@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+	<title>Usage With CMOne</title>
+</head>
+
+<body>
+<h1>Usage With CMOne</h1>
+If you are a user of the CMOne, the Software Change Management System of Task Force IT-Consulting GmbH, you
+can integrate iRPGUnit into CMOne. Just install the <i>iRPGUnit CMOne Integration</i> feature to do so.
+<p class="indent">
+<img src="assets/InstallCMOneFeature.png" alt="iRPGUnit Preferences">
+</p>
+<p>
+Now you can launch a RPGUnit test suite directly from a CMOne worksheet:
+<p class="indent">
+<img src="assets/RPGUnitCMOneIntegration.png" alt="iRPGUnit Preferences">
+</p>
+<p>
+<table>
+<tr>
+<td class="notice">Notice: The <i>Run Unit Test</i> option is not shown, when the selected
+                   service program does not match the requirements specified on the
+                   <a href="../../quickstart/preferences.html#check_test_suite_service_program">preferences</a>
+                   page.
+</td>
+</tr>
+<p>
+The test suite is executed with the library list that has been set for the
+CMOne application the test suite service program belongs to.
+</table>
+<p>
+Example of a CMOne type code for RPGUnit test suites:
+<p>
+<table>
+<colgroup>
+  <col valign="top">
+  <col valign="top" width="10">
+  <col valign="top">
+</colgroup>
+<tr><td>Typecode:</td><td>&nbsp;</td><td>RUNIT</td></tr>
+<tr><td>Description:</td><td>&nbsp;</td><td>Unit Test</td></tr>
+<tr><td>Priority:</td><td>&nbsp;</td><td>401</td></tr>
+<tr><td>Source typecode:</td><td>&nbsp;</td><td>*YES</td></tr>
+<tr><td>Object typecode:</td><td>&nbsp;</td><td>*YES</td></tr>
+<tr><td>Source file:</td><td>&nbsp;</td><td>QRUNIT</td></tr>
+<tr><td>Source attribute:</td><td>&nbsp;</td><td>RPGLE</td></tr>
+<tr><td>Object type:</td><td>&nbsp;</td><td>*SRVPGM</td></tr>
+<tr><td>Object attribute:</td><td>&nbsp;</td><td>*BLANK</td></tr>
+<tr><td colspan="3">&nbsp;</td></tr>
+<tr><td>Command:</td><td>&nbsp;</td><td>RUCRTRPG</td></tr>
+<tr><td>Parameter TSTPGM:</td><td>&nbsp;</td><td>&OL/&EO</td></tr>
+<tr><td>Parameter SRCFILE:</td><td>&nbsp;</td><td>&SL/&SF</td></tr>
+<tr><td>Parameter SRCMBR:</td><td>&nbsp;</td><td>&ES</td></tr>
+<tr><td>Parameter COPTION:</td><td>&nbsp;</td><td>*EVENTF</td></tr>
+</table>
+<p>
+The type code for test suites with embedded SQL looks the same, but should have a different <i>Description</i>
+and the <i>Source attribute</i> must be set to <i>SQLRPGLE</i>.
+<p>
+<table>
+<tr>
+<td class="info">Hint: Disable preference option <i>Show result view</i> to keep the focus on the CMOne worksheet 
+                 after a test run. The <i>RPGUnit</i> result view displays a green or red icon on the tab of the view
+                 to show the result.</td>
+</tr>
+</table>
+<p>
+<table>
+<tr><td><img src="/help/topic/de.tools400.rpgunit.core.help/html/quickstart/assets/Icon_OK.png" /></td><td width="10">&nbsp;</td><td>Indicates that the unit test finished successfully.</td></tr>
+<tr><td><img src="/help/topic/de.tools400.rpgunit.core.help/html/quickstart/assets/Icon_Error.png" /></td><td width="10">&nbsp;</td><td>Indicates that the unit test ended with errors. Check the result view for details.</td></tr>
+<tr><td><img src="/help/topic/de.tools400.rpgunit.core.help/html/quickstart/assets/Icon_Canceled.png" /></td><td width="10">&nbsp;</td><td>Indicates that all unit tests had been canceled by the user. Check the result view for details.</td></tr>
+</table>
+<p>
+<iframe src="../../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
