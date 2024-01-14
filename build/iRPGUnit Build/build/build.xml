@@ -196,6 +196,8 @@
 		</else>
 	</if>
 
+	<property name="target.ide.ide.product.full.name" value="${target.ide.product.name.long.rdi} - ${target.ide.ide.product.name.short}" />
+
 	<property name="target.ide.zip.file.name" value="${build.public.project.name} for ${target.ide.ide.product.name.short} (v${build.version} Update Site).zip" />
 
 	<if>
@@ -246,6 +248,7 @@
 	<!-- Set the name of the default home page file -->
 	<property name="home.page" value="index.html" />
 	<property name="support.page" value="support.html" />
+	<property name="files.page" value="files/index.html" />
 
 	<!-- Set update site values -->
 	<property name="updatesite.tag.file" location="${workspace.home}\${build.updatesite}\iRPGUnit Update Site v${build.version}.tag" />
@@ -354,7 +357,7 @@
 	     ============================================================= -->
 	<target name="createGitHubFiles" depends="prepareUpdateSite, createZipFile, createUpdateSite, createGitHubWebUpdateSite, createGitHubWebHelpPage, createGitHubWebHomePage" description="Step 3">
 
-		<antcall target="cleanTempAndPDE" />
+		<!-- TODO: enable <antcall target="cleanTempAndPDE" /> -->
 		<antcall target="refreshProjects" />
 
 	</target>
@@ -533,13 +536,16 @@
 		<replace file="${build.upload.dir.home}/${home.page}" token="@BETA_HELP_SITE_URL@" value="${target.ide.root.beta.help.site.url}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@FILES_PAGE@" value="${sf.files.url}" />
 
-		
 		<replace file="${build.upload.dir.home}/${support.page}" token="@VERSION_NUMBER@" value="${build.version}" />
 		<replace file="${build.upload.dir.home}/${support.page}" token="@TODAY_YEAR@" value="${today.year}" />
 		<replace file="${build.upload.dir.home}/${support.page}" token="@TODAY@" value="${today.timestamp}" />
 		<replace file="${build.upload.dir.home}/${support.page}" token="@UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
 		<replace file="${build.upload.dir.home}/${support.page}" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
 		<replace file="${build.upload.dir.home}/${support.page}" token="@BETA_HELP_SITE_URL@" value="${target.ide.root.beta.help.site.url}" />
+
+		<replace file="${build.upload.dir.home}/${files.page}" token="@ZIP_FILE@" value="${target.ide.zip.file.name}" />
+		<replace file="${build.upload.dir.home}/${files.page}" token="@TARGET_IDE@" value="${target.ide.sf.dir}" />
+		<replace file="${build.upload.dir.home}/${files.page}" token="@TARGET_IDE_FULL_NAME@" value="${target.ide.ide.product.full.name}" />
 
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
 
