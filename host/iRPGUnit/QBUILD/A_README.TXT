@@ -21,7 +21,7 @@ In 2019 Mihael Schmidt and Thomas Raddatz joined iRPGUnit and ILEUnit to
 iRPGUnit 3.0.
 
 The Eclipse update site of the plug-in is at:
-   https://irpgunit.sourceforge.io/eclipse/rdi8.0/
+   https://tools400.github.io/irpgunit/update-site/eclipse/rdi8.0/
 
 Let me know your experiences!
 

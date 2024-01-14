@@ -8,25 +8,9 @@
         <title>iRPGUnit Plug-in Support</title>
     </head>
     <body>
-        <?php
-            function parseJarManifest($manifestFileContents) {
-               $manifest = array();	
-               $lines = explode("\n", $manifestFileContents);
-               foreach ($lines as $line) {
-                  if (preg_match("/^([^:]+):\s*(.+)$/", $line, $m)) {
-                     $manifest[$m[1]] = trim($m[2]);
-                  }
-               }
-               return $manifest;
-            }
-            $manifestFileContents = file_get_contents('http://sourceforge.net/p/irpgunit/code/HEAD/tree/trunk/build/iRPGUnit%20Core%20Plugin/MANIFEST.MF?format=raw');
-            $manifest = parseJarManifest($manifestFileContents);
-            $current_version = $manifest['Bundle-Version'];
-        ?>
-      
         <table width="100%" border="0">
         <tr><td align="left" >
-        <a href="https://sourceforge.net/projects/irpgunit/"><img src="assets/iRPGUnit.png" alt="iRPGUnit - Unit Tests for i" border="0" style="padding-right: 10px;"/></a>
+        <a href="https://github.com/tools400/irpgunit/"><img src="assets/iRPGUnit.png" alt="iRPGUnit - Unit Tests for i" border="0" style="padding-right: 10px;"/></a>
         </td>
         <td align="left" width="100%" >
         <h1>iRPGUnit Plug-in</h1>
