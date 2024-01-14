@@ -13,7 +13,7 @@
    <topic label="API Reference">
       <anchor id="reference" />
    </topic>
-   <topic label="Integration">
+   <topic label="Integration" href="html/integration/integration.html">
       <anchor id="integration" />
    </topic>
    <topic label="Troubleshooting">
