@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Error: Duplicate iRPGUnit Objects</title>
+</head>
+
+<body>
+<h1>Error: Duplicate iRPGUnit Objects</h1>
+<p>
+<h2>Symptom</h1>
+<p>
+This page explain why the following error message is shown and how to solve the problem:
+<p class="indent">
+<img class="noborder" src="./assets/duplicate_irpgunit_objects_message.png">
+<p>
+<h2>Reason</h1>
+<p>
+The reason for this problem is that the iRPGUnit start program RUCALLTST or RUPGMRMT uses
+a different RUCALLTST service as your test suite. For example, that happens, when:
+<ul>
+<li>The iRPGUnit start program binds to RUCALLTST using a hard-coded library specified at the CRTPGM command.</li>
+<li>And your test suite service program binds to RUCALLTST using the library list.</li>
+<il>And the product library specfied on the iRPGUnit preference page is different from the one in library list of the RSE connection.
+</ul>
+<p>
+In this case the relationships between the objects look like this:
+<p>
+<img class="noborder" src="./assets/duplicate_irpgunit_objects.png">
+<p>
+<h2>Solution</h1>
+<p>
+There are two options to solve the problem:
+<p>
+<ol>
+<li>Change the RSE connection and replace the iRPGUnit library with the library specified on the preferences page.</li>
+<li>Go to the preferences page and change the product library to <i>*LIBL</i>.</li>
+</ol>
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
