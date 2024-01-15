@@ -86,6 +86,19 @@
 	<!-- Load ftp user name and password -->
 	<property file="ftp.properties" />
 
+	<!-- Load IBM i FTP user name and password -->
+	<if>
+		<available file="ftp-credentials.properties"/>
+		<then>
+			<property file="ftp-credentials.properties" />
+		</then>
+		<else>
+			<echo>File 'ftp-credentials.properties' not found.</echo>
+			<echo>Copy 'ftp-credentials_template.properties' to 'ftp-credentials.properties' and set the user names only (recommended).</echo>
+			<fail message="Ant script stopped."/>
+		</else>
+	</if>
+
 	<!-- Set date and time -->
 	<tstamp>
 		<format property="today.timestamp" pattern="dd.MM.yyyy - kk:mm:ss" locale="de,DE" />
@@ -197,8 +210,8 @@
 	</if>
 
 	<property name="target.ide.ide.product.full.name" value="${target.ide.product.name.long.rdi} - ${target.ide.ide.product.name.short}" />
-
 	<property name="target.ide.zip.file.name" value="${build.public.project.name} for ${target.ide.ide.product.name.short} (v${build.version} Update Site).zip" />
+	<property name="target.ide.uload.dir" value="${sf.ftp.project}/docs" />
 
 	<if>
 		<equals arg1="${is.beta.version}" arg2="true" />
@@ -317,6 +330,8 @@
 		<echo>+------------------------------------------------------+</echo>
 		<echo>*** Finished ***</echo>
 
+		<antcall target="refreshProjects" />
+
 	</target>
 
 	<!-- =============================================================
@@ -357,7 +372,7 @@
 	     ============================================================= -->
 	<target name="createGitHubFiles" depends="prepareUpdateSite, createZipFile, createUpdateSite, createGitHubWebUpdateSite, createGitHubWebHelpPage, createGitHubWebHomePage" description="Step 3">
 
-		<!-- TODO: enable <antcall target="cleanTempAndPDE" /> -->
+		<antcall target="cleanTempAndPDE" />
 		<antcall target="refreshProjects" />
 
 	</target>
@@ -561,38 +576,50 @@
 
 		<echo>CReating GitHub upload directory ...</echo>
 
-		<delete includeemptydirs="true" failonerror="no">
-			<fileset dir="${workspace.home}/irpgunit/docs" includes="**/*" />
-		</delete>
+		<if>
+			<equals arg1="${is.beta.version}" arg2="true" />
+			<then>
+				<delete>
+					<!-- delete: [workspace]/irpgunit/docs/beta-version -->
+					<fileset dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}" includes="**/*"/>
+				</delete>
+			</then>
+			<else>
+				<delete includeemptydirs="true" failonerror="no">
+					<!-- delete: [workspace]/irpgunit/docs/ (exclude: beta-version) -->
+					<fileset dir="${workspace.home}/${target.ide.uload.dir}" includes="**/*" excludes=".project,.settings/,${beta.dir}/"/>
+				</delete>
+			</else>
+		</if>
 
-		<mkdir dir="${workspace.home}/irpgunit/docs"/>
-		<mkdir dir="${workspace.home}/irpgunit/docs/${beta.dir}/update-site/eclipse/${target.ide.sf.dir}"/>
-		<mkdir dir="${workspace.home}/irpgunit/docs/${beta.dir}/help"/>
-		<mkdir dir="${workspace.home}/irpgunit/docs/${beta.dir}/files"/>
+		<mkdir dir="${workspace.home}/${target.ide.uload.dir}"/>
+		<mkdir dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/update-site/eclipse/${target.ide.sf.dir}"/>
+		<mkdir dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/help"/>
+		<mkdir dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/files"/>
 
 		<!-- Homepage -->
-		<copy todir="${workspace.home}/irpgunit/docs" failonerror="false">
+		<copy todir="${workspace.home}/${target.ide.uload.dir}" failonerror="false">
 			<fileset dir="${build.upload.dir.home}">
 				<include name="**"/>
 			</fileset>
 		</copy>
 
 		<!-- Homepage Help -->
-		<copy todir="${workspace.home}/irpgunit/docs/${beta.dir}/help" >  
+		<copy todir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/help" >  
 			<fileset dir="${build.upload.dir.help}">
 				<include name="**"/>
 			</fileset>
 		</copy>
 
 		<!-- Update Site -->
-		<copy todir="${workspace.home}/irpgunit/docs/${beta.dir}/update-site/eclipse/${target.ide.sf.dir}" >
+		<copy todir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/update-site/eclipse/${target.ide.sf.dir}" >
 			<fileset dir="${build.upload.dir.web.eclipse}">
 				<include name="**"/>
 			</fileset>
 		</copy>
 
 		<!-- Zipped Update Site -->
-		<copy todir="${workspace.home}/irpgunit/docs/${beta.dir}/files/${target.ide.sf.dir}" >
+		<copy todir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/files/${target.ide.sf.dir}" >
 			<fileset dir="${build.upload.dir.files}">
 				<include name="**"/>
 			</fileset>
@@ -896,6 +923,8 @@
     *   Property 'IBMi.ftp.user' is loaded from 'ftp.properties'.
     * ===================================================================== -->
 	<target name="ftpCredentialsIBMi" unless="IBMi.ftp.password">
+
+		<echo>Login:  ${IBMi.ftp.user}</echo>
 
 		<input message="Please enter FTP password:" addproperty="IBMi.ftp.password" defaultvalue="" />
 
