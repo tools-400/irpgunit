@@ -32,7 +32,7 @@
              DCL        VAR(&TMPLIB    ) TYPE(*CHAR) LEN(10) VALUE('QTEMP')
              DCL        VAR(&OWNER     ) TYPE(*CHAR) LEN(10) VALUE('QPGMR')
              DCL        VAR(&DBGVIEW   ) TYPE(*CHAR) LEN(10) VALUE('NONE')
-             DCL        VAR(&TGTRLS    ) TYPE(*CHAR) LEN(10) VALUE('V7R1M0')
+             DCL        VAR(&TGTRLS    ) TYPE(*CHAR) LEN(10) VALUE('V7R3M0')
              DCL        VAR(&IS_DEVLIB ) TYPE(*LGL )         VALUE('1')
              DCL        VAR(&TODAY     ) TYPE(*CHAR) LEN(10)
 
