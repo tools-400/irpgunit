@@ -57,7 +57,7 @@
                         TYPE(*CHAR)                          +
                         LEN(6)                               +
                         MIN(0)                               +
-                        DFT(V7R1M0)                          +
+                        DFT(V7R3M0)                          +
                         SPCVAL((*CURRENT *C)                 +
                                (*PRV     *P))                +
                         PROMPT('Target release')
