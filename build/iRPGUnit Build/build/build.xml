@@ -218,13 +218,13 @@
 		<then>
 			<property name="target.ide.root.update.site.url" value="${sf.update.site.url}/${beta.dir}/eclipse/${target.ide.sf.dir}" />
 			<property name="target.ide.root.help.site.url" value="${sf.help.url}/${sf.dir.updatesite.help.dir}/" />
-			<property name="target.ide.root.beta.help.site.url" value="${sf.help.url}/beta-version/${sf.dir.updatesite.help.dir}/" />
+			<property name="target.ide.root.beta.help.site.url" value="${sf.help.url}/${sf.ftp.beta.dir.name}/${sf.dir.updatesite.help.dir}/" />
 			<property name="marketplace.installation.hint.snippet" value="beta_marketplace.snippet" />
 		</then>
 		<else>
 			<property name="target.ide.root.update.site.url" value="${sf.update.site.url}/eclipse/${target.ide.sf.dir}" />
 			<property name="target.ide.root.help.site.url" value="${sf.help.url}/${sf.dir.updatesite.help.dir}/" />
-			<property name="target.ide.root.beta.help.site.url" value="${sf.help.url}/beta-version/${sf.dir.updatesite.help.dir}/" />
+			<property name="target.ide.root.beta.help.site.url" value="${sf.help.url}/${sf.ftp.beta.dir.name}/${sf.dir.updatesite.help.dir}/" />
 			<property name="marketplace.installation.hint.snippet" value="release_marketplace.snippet" />
 		</else>
 	</if>
@@ -566,36 +566,48 @@
 
 	</target>
 
+    <!--
+    * =====================================================================
+    *   Uploads the entire project files to GitHub.
+    *   This target must be run, after the GitHub files have been built.
+    *   This target is specific to RDi/WDSCi and controlled by build.target.
+    * ===================================================================== -->
+    <target name="cleaningDocsDirectory">
+
+        <echo>Cleaning 'docs' directory ...</echo>
+
+        <mkdir dir="${workspace.home}/${target.ide.uload.dir}"/>
+        <mkdir dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}"/>
+        <mkdir dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/update-site/eclipse/${target.ide.sf.dir}"/>
+        <mkdir dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/help"/>
+        <mkdir dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/files"/>
+
+        <if>
+            <equals arg1="${is.beta.version}" arg2="true" />
+            <then>
+                <delete>
+                    <!-- delete: [workspace]/irpgunit/docs/beta-version -->
+                    <fileset dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}" includes="**/*"/>
+                </delete>
+            </then>
+            <else>
+                <delete includeemptydirs="true" failonerror="no">
+                    <!-- delete: [workspace]/irpgunit/docs/ (exclude: beta-version) -->
+                    <fileset dir="${workspace.home}/${target.ide.uload.dir}" includes="**/*" excludes=".project,.settings/,${sf.ftp.beta.dir.name}/"/>
+                </delete>
+            </else>
+        </if>
+
+	</target>
 	<!--
     * =====================================================================
     *   Uploads the entire project files to GitHub.
     *   This target must be run, after the GitHub files have been built.
     *   This target is specific to RDi/WDSCi and controlled by build.target.
     * ===================================================================== -->
-	<target name="uploadGitHubFiles" depends="checkBuildTarget" description="Uploads the entire project to GitHub">
+	<target name="uploadGitHubFiles" depends="checkBuildTarget,cleaningDocsDirectory" description="Uploads the entire project to GitHub">
 
 		<echo>CReating GitHub upload directory ...</echo>
-
-		<if>
-			<equals arg1="${is.beta.version}" arg2="true" />
-			<then>
-				<delete>
-					<!-- delete: [workspace]/irpgunit/docs/beta-version -->
-					<fileset dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}" includes="**/*"/>
-				</delete>
-			</then>
-			<else>
-				<delete includeemptydirs="true" failonerror="no">
-					<!-- delete: [workspace]/irpgunit/docs/ (exclude: beta-version) -->
-					<fileset dir="${workspace.home}/${target.ide.uload.dir}" includes="**/*" excludes=".project,.settings/,${beta.dir}/"/>
-				</delete>
-			</else>
-		</if>
-
-		<mkdir dir="${workspace.home}/${target.ide.uload.dir}"/>
-		<mkdir dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/update-site/eclipse/${target.ide.sf.dir}"/>
-		<mkdir dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/help"/>
-		<mkdir dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/files"/>
 
 		<!-- Homepage -->
 		<copy todir="${workspace.home}/${target.ide.uload.dir}" failonerror="false">
