@@ -20,8 +20,13 @@ are still a good source of information.
 In 2019 Mihael Schmidt and Thomas Raddatz joined iRPGUnit and ILEUnit to
 iRPGUnit 3.0.
 
-The Eclipse update site of the plug-in is at:
+The Eclipse update sites of the plug-in are:
+
+Release Version:
    https://tools400.github.io/irpgunit/update-site/eclipse/rdi8.0/
+
+Beta Version:
+   https://tools400.github.io/irpgunit/beta-version/update-site/eclipse/rdi8.0/
 
 Let me know your experiences!
 
@@ -75,6 +80,13 @@ b) Optionally run the RPGUnit self tests:
 --------------------------------------
               History
 --------------------------------------
+
+--------------------------
+
+Version 4.0.4 - 15.01.2024
+--------------------------
+ * Moved iRPGUnit to GitHub and change target release to 7.3.
+   GitHub: https://github.com/tools400/irpgunit
 
 --------------------------
 

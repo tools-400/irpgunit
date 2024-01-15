@@ -76,7 +76,15 @@ document.write('\<ul id="treemenu" class="treeview">\
     </li>\
   </ul>\
   </li>\
-  <li><a href="../html/integration/integration.html" target="content" style="text-decoration:none">Integration</a></li>\
+  <li><a href="../html/integration/integration.html" target="content" style="text-decoration:none">Integration</a>\
+  <ul>\
+    <li><a href="../html/integration/cmone/usage_cmone.html" target="content" style="text-decoration:none">CMOne</a>\
+    <ul>\
+      <li><a href="../html/integration/cmone/preferences/preferences_cmone.html" target="content" style="text-decoration:none">Preferences</a></li>\
+    </ul>\
+    </li>\
+  </ul>\
+  </li>\
   <li>Troubleshooting\
   <ul>\
     <li><a href="../html/troubleshooting/duplicate_irpgunit_objects.html" target="content" style="text-decoration:none">Error: Duplicate iRPGUnit objects</a></li>\
