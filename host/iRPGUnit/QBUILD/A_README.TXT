@@ -83,6 +83,13 @@ b) Optionally run the RPGUnit self tests:
 
 --------------------------
 
+Version 4.0.4 - 15.01.2024
+--------------------------
+ * Moved iRPGUnit to GitHub and change target release to 7.3.
+   GitHub: https://github.com/tools400/irpgunit
+
+--------------------------
+
 Version 4.0.3 - 16.03.2022
 --------------------------
  * Resolve the runner library from the execution library list of the unit
