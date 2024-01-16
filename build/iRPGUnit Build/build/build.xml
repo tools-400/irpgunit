@@ -644,9 +644,7 @@
 
         <!-- Documentation pdf -->
         <copy todir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/files/" >
-            <fileset dir="${build.upload.dir.files}">
-                <include name="*.pdf"/>
-            </fileset>
+            <fileset file="${project.pdf}"/>
         </copy>
 
 	</target>
