@@ -404,7 +404,7 @@
 
 		
 		<copy todir="${build.upload.dir.updateSite.eclipse}">
-			<fileset dir="${temp.dir.local_updatesite}" />
+			<fileset dir="${temp.dir.local_updatesite}" excludes="*.pdf"/>
 		</copy>
 
 	</target>
@@ -534,7 +534,8 @@
 		<copy todir="${build.upload.dir.home}">
 			<fileset dir="${workspace.home}/${build.homepage.project}/html" />
 		</copy>
-		
+
+
 		<replace file="${build.upload.dir.home}/${home.page}" token="@TODAY@" value="${today.timestamp}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@VERSION_NUMBER@" value="${build.version}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@PROJECT_HOME@" value="${sf.gitlab.project.url}" />
@@ -562,6 +563,7 @@
 		<replace file="${build.upload.dir.home}/${support.page}" token="@BETA_HELP_SITE_URL@" value="${target.ide.root.beta.help.site.url}" />
 
 		<replace file="${build.upload.dir.home}/${files.page}" token="@ZIP_FILE@" value="${target.ide.zip.file.name}" />
+		<replace file="${build.upload.dir.home}/${files.page}" token="@PDF_FILE@" value="${build.project.pdf}" />
 		<replace file="${build.upload.dir.home}/${files.page}" token="@TARGET_IDE@" value="${target.ide.sf.dir}" />
 		<replace file="${build.upload.dir.home}/${files.page}" token="@TARGET_IDE_FULL_NAME@" value="${target.ide.ide.product.full.name}" />
 
@@ -636,9 +638,16 @@
 		<!-- Zipped Update Site -->
 		<copy todir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/files/${target.ide.sf.dir}" >
 			<fileset dir="${build.upload.dir.files}">
-				<include name="**"/>
+				<include name="*.zip"/>
 			</fileset>
 		</copy>
+
+        <!-- Documentation pdf -->
+        <copy todir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/files/" >
+            <fileset dir="${build.upload.dir.files}">
+                <include name="*.pdf"/>
+            </fileset>
+        </copy>
 
 	</target>
 
@@ -666,14 +675,13 @@
 			<fileset dir="${site.dir}" includes="artifacts.jar" />
 			<fileset dir="${site.dir}" includes="content.jar" />
 			<fileset dir="${site.dir}" includes="*.tag" />
-			<fileset dir="${site.dir}" includes="*.cmd" />
 		</copy>
+
+        <copy file="${project.pdf}" todir="${temp.dir.local_updatesite}" overwrite="true"/>
 		
 		<copy toDir="${temp.dir.local_updatesite}/Server" >
 			<fileset dir="${local.savefile.directory}" includes="${local.savefile.name}" />
 		</copy>
-
-		<copy file="${project.pdf}" todir="${temp.dir.local_updatesite}" overwrite="true"/>
 
 		<if>
 			<equals arg1="${do.copy.site.xml}" arg2="true" />
@@ -773,8 +781,6 @@
 			<fileset dir="${site.dir}" includes="artifacts.jar" />
 			<fileset dir="${site.dir}" includes="content.jar" />
 			<fileset dir="${site.dir}" includes="*.tag" />
-			<fileset dir="${site.dir}" includes="*.cmd" />
-			<fileset dir="${site.dir}" includes="*.pdf" />
 		</delete>
 
 		<!-- Files created by PDE Tools -->
