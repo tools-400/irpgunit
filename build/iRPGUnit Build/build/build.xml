@@ -466,7 +466,7 @@
 		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@IDE_PRODUCT_NAME_LONG@" value="${target.ide.ide.product.name.long}" />
 		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@IDE_PRODUCT_NAME_SHORT@" value="${target.ide.ide.product.name.short}" />
 		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
-        <replace file="${build.upload.dir.web.eclipse}/index.html" token="@BETA_UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
+        <replace file="${build.upload.dir.web.eclipse}/index.html" token="@BETA_UPDATE_SITE_URL@" value="${target.ide.root.beta.update.site.url}" />
 		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@TODAY@" value="${today.timestamp}" />
 		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@TODAY_YEAR@" value="${today.year}" />
 		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@VERSION_NUMBER@" value="${build.version}" />
@@ -549,7 +549,7 @@
 		<replace file="${build.upload.dir.home}/${home.page}" token="@TODAY_YEAR@" value="${today.year}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@TODAY@" value="${today.timestamp}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
-        <replace file="${build.upload.dir.home}/${home.page}" token="@BETA_UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
+        <replace file="${build.upload.dir.home}/${home.page}" token="@BETA_UPDATE_SITE_URL@" value="${target.ide.root.beta.update.site.url}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@BETA_HELP_SITE_URL@" value="${target.ide.root.beta.help.site.url}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@FILES_PAGE@" value="${sf.files.url}" />
@@ -558,7 +558,7 @@
 		<replace file="${build.upload.dir.home}/${support.page}" token="@TODAY_YEAR@" value="${today.year}" />
 		<replace file="${build.upload.dir.home}/${support.page}" token="@TODAY@" value="${today.timestamp}" />
 		<replace file="${build.upload.dir.home}/${support.page}" token="@UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
-        <replace file="${build.upload.dir.home}/${support.page}" token="@BETA_UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
+        <replace file="${build.upload.dir.home}/${support.page}" token="@BETA_UPDATE_SITE_URL@" value="${target.ide.root.beta.update.site.url}" />
 		<replace file="${build.upload.dir.home}/${support.page}" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
 		<replace file="${build.upload.dir.home}/${support.page}" token="@BETA_HELP_SITE_URL@" value="${target.ide.root.beta.help.site.url}" />
 
