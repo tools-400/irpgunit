@@ -223,8 +223,8 @@
 		</else>
 	</if>
 
-    <property name="target.ide.root.update.site.url"       value="${sf.update.site.url}/eclipse/${target.ide.sf.dir}" />
-    <property name="target.ide.root.beta.update.site.url"  value="${sf.update.site.url}/${sf.ftp.beta.dir.name}/eclipse/${target.ide.sf.dir}" />
+    <property name="target.ide.root.update.site.url"       value="${sf.update.site.url}/update-site/eclipse/${target.ide.sf.dir}" />
+    <property name="target.ide.root.beta.update.site.url"  value="${sf.update.site.url}/${sf.ftp.beta.dir.name}/update-site/eclipse/${target.ide.sf.dir}" />
 
     <property name="target.ide.root.help.site.url"         value="${sf.help.url}/${sf.dir.updatesite.help.dir}/" />
     <property name="target.ide.root.beta.help.site.url"    value="${sf.help.url}/${sf.ftp.beta.dir.name}/${sf.dir.updatesite.help.dir}/" />
