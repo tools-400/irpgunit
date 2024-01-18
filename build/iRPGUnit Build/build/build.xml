@@ -363,7 +363,7 @@
 	<!-- =============================================================
 	      Kopiert alle erforderlichen Assets-Dateien.
 	     ============================================================= -->
-	<target name="createGitHubFiles" depends="prepareUpdateSite, createZipFile, createUpdateSite, createUpdateSiteHtmlPages, createHelpHtmlPages, createHomePageHtml, createFilesHtml, cleanUpdateSite, refreshProjects" description="Step 3">
+	<target name="createGitHubFiles" depends="updatePdfFile, prepareUpdateSite, createZipFile, createUpdateSite, createUpdateSiteHtmlPages, createHelpHtmlPages, createHomePageHtml, createFilesHtml, cleanUpdateSite, refreshProjects" description="Step 3">
 
 		<echo>GitHub files have been created in: </echo>
 		
@@ -569,6 +569,10 @@
         <replace file="${build.upload.dir.home}/${files.page}" token="@PDF_FILE@" value="${build.project.pdf}" />
         <replace file="${build.upload.dir.home}/${files.page}" token="@TARGET_IDE@" value="${target.ide.sf.dir}" />
         <replace file="${build.upload.dir.home}/${files.page}" token="@TARGET_IDE_FULL_NAME@" value="${target.ide.ide.product.full.name}" />
+
+        <copy todir="${build.upload.dir.files}" >
+            <fileset file="${project.pdf}" />
+    	</copy>
 
         <eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
 
@@ -964,6 +968,39 @@
 	<echo>Done.</echo>
 
 </target>
+
+    <!--
+    * =====================================================================
+    *   Checks whether the PDF file is up to date.
+    * ===================================================================== -->
+    <target name="checkPdfFile">
+
+        <echo>Verifying that the PDF file is up to date ...</echo>
+
+        <eclipse.refreshLocal resource="${build.project.core}" depth="infinite" />
+
+        <uptodate property="pdf.isUpToDate" srcfile="${project.doc}" targetfile="${project.pdf}" />
+
+        <echo>Check ${build.public.project.name} PDF result: ${pdf.isUpToDate}</echo>
+
+    </target>
+
+    <!--
+    * =====================================================================
+    *   Updates the PDF file from 'project.doc'.
+    * ===================================================================== -->
+    <target name="updatePdfFile" depends="checkPdfFile" unless="pdf.isUpToDate">
+
+        <echo>Updating ${build.public.project.name} PDF file ...</echo>
+
+        <winword file="${project.doc}" visible="true">
+            <saveAs toFile="${project.pdf}" saveFormat="pdf" />
+        </winword>
+
+        <eclipse.refreshLocal resource="${build.project.core}" depth="infinite" />
+
+    </target>
+
 
 	<!--
     * =====================================================================
