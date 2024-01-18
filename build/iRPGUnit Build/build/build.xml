@@ -172,7 +172,7 @@
 			<echo>Building a BETA version.</echo>
 			<property name="is.beta.version" value="true" />
             <property name="marketplace.installation.hint.snippet" value="beta_marketplace.snippet" />
-			<property name="beta.dir" value="${sf.ftp.beta.dir.name}" />
+			<property name="beta.dir" value="${build.pages.beta.version}" />
 			<property name="version.info" value="&lt;div class=&quot;beta&quot;&gt;Beta Version - ${build.version}&lt;/div&gt;" />
 		</then>
 		<else>
@@ -212,17 +212,17 @@
 
 	<property name="target.ide.ide.product.full.name" value="${target.ide.product.name.long.rdi} - ${target.ide.ide.product.name.short}" />
 	<property name="target.ide.zip.file.name" value="${build.public.project.name} for ${target.ide.ide.product.name.short} (v${build.version} Update Site).zip" />
-	<property name="target.ide.uload.dir" value="${sf.ftp.project}/docs" />
+	<property name="target.ide.uload.dir" value="${sf.ftp.project}/${build.pages.root}" />
 
     <!-- Set regular expressions and replacement values that use property "beta.dir" and "target.ide.zip.file.name" -->
     <property name="html.files.zip.regex" value="(&lt;img id=&quot;${beta.dir}&quot;.*)(zip_file.png)(.*/files/)([a-z0-9.]+/|[A-Z@_]+/)(.*?)(&quot;&gt;)" />
     <property name="html.files.zip.replace" value="\1\2\3\4${target.ide.zip.file.name}\6" />
 
-    <property name="target.ide.root.update.site.url"       value="${sf.update.site.url}/update-site/eclipse/${target.ide.sf.dir}" />
-    <property name="target.ide.root.beta.update.site.url"  value="${sf.update.site.url}/${sf.ftp.beta.dir.name}/update-site/eclipse/${target.ide.sf.dir}" />
+    <property name="target.ide.root.update.site.url"       value="${build.pages.update.site.url}/update-site/eclipse/${target.ide.sf.dir}" />
+    <property name="target.ide.root.beta.update.site.url"  value="${build.pages.update.site.url}/${build.pages.beta.version}/update-site/eclipse/${target.ide.sf.dir}" />
 
-    <property name="target.ide.root.help.site.url"         value="${sf.help.url}/${sf.dir.updatesite.help.dir}/" />
-    <property name="target.ide.root.beta.help.site.url"    value="${sf.help.url}/${sf.ftp.beta.dir.name}/${sf.dir.updatesite.help.dir}/" />
+    <property name="target.ide.root.help.site.url"         value="${sf.help.url}/${build.pages.help}/" />
+    <property name="target.ide.root.beta.help.site.url"    value="${sf.help.url}/${build.pages.beta.version}/${build.pages.help}/" />
 
 	<property name="site.xml.property.url.regex" value="(&lt;site)([ ]*url=&quot;\S*&quot;[ ]*)?(&gt;)" />
 	<property name="site.xml.property.url.replace" value="\1 url=&quot;${target.ide.root.update.site.url}&quot;\3" />
@@ -247,7 +247,7 @@
 	<property name="build.upload.dir.web.eclipse"        location="${build.upload.dir}/sf-updatesite/${beta.dir}/eclipse/${target.ide.sf.dir}" />
 	<property name="build.upload.dir.web.eclipse.assets" location="${build.upload.dir}/sf-updatesite/${beta.dir}/eclipse/${target.ide.sf.dir}/assets" />
 	
-	<property name="build.upload.dir.help"               location="${build.upload.dir}/sf-help/${beta.dir}/help" />
+	<property name="build.upload.dir.help"               location="${build.upload.dir}/sf-help/${beta.dir}/${build.pages.help}" />
 	<property name="build.upload.dir.home"               location="${build.upload.dir}/sf-home/" />
 	<property name="zip.base.directory"                  location="${workspace.home}/${build.updatesite}" />
 	<property name="project.doc"                         location="${workspace.home}/${build.project.core}/${build.folder.doc}/${build.project.doc}" />
@@ -256,7 +256,7 @@
 	<!-- Set the name of the default home page file -->
 	<property name="home.page" value="index.html" />
 	<property name="support.page" value="support.html" />
-	<property name="files.page" value="files/index.html" />
+	<property name="files.page" value="${build.pages.files}/index.html" />
 
 	<!-- Set update site values -->
 	<property name="updatesite.tag.file" location="${workspace.home}\${build.updatesite}\iRPGUnit Update Site v${build.version}.tag" />
@@ -459,9 +459,9 @@
         <replace file="${build.upload.dir.web.eclipse}/index.html" token="@MARKETPLACE_INSTALLATION@" value="${marketplace.installation.hint}" />
         <replace file="${build.upload.dir.web.eclipse}/index.html" token="@REPOSITORY_NAME@" value="${sf.repository.name}" />
 
-		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@PROJECT_HOME@" value="${sf.gitlab.project.url}" />
-        <replace file="${build.upload.dir.web.eclipse}/index.html" token="@HOME_PAGE@" value="${sf.homepage.url}" />
-        <replace file="${build.upload.dir.web.eclipse}/index.html" token="@FILES_PAGE@" value="${sf.files.url}" />
+		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@PROJECT_HOME@" value="${build.pages.project.url}" />
+        <replace file="${build.upload.dir.web.eclipse}/index.html" token="@HOME_PAGE@" value="${build.pages.homepage.url}" />
+        <replace file="${build.upload.dir.web.eclipse}/index.html" token="@FILES_PAGE@" value="${build.pages.files.url}" />
 		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
 		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@BETA_HELP_SITE_URL@" value="${target.ide.root.beta.help.site.url}" />
 
@@ -485,7 +485,7 @@
     * ===================================================================== -->
 	<target name="createHelpHtmlPages" >
 
-		<echo>Creating ${build.public.project.name} help page (html) ...</echo>
+		<echo>Creating ${build.public.project.name} '${build.pages.help}' page (html) ...</echo>
 
 		<mkdir dir="${build.upload.dir}" />
 
@@ -517,27 +517,27 @@
 
 		<replace file="${build.upload.dir.home}/${home.page}" token="@TODAY@" value="${today.timestamp}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@VERSION_NUMBER@" value="${build.version}" />
-		<replace file="${build.upload.dir.home}/${home.page}" token="@PROJECT_HOME@" value="${sf.gitlab.project.url}" />
+		<replace file="${build.upload.dir.home}/${home.page}" token="@PROJECT_HOME@" value="${build.pages.project.url}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@TARGET_IDE_RDI@" value="${target.ide.rdi}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@TARGET_IDE_WDSCI@" value="${target.ide.wdsci}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@TARGET_IDE_PRODUCT_NAME_LONG_RDI@" value="${target.ide.product.name.long.rdi}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@TARGET_IDE_PRODUCT_NAME_LONG_WDSCI@" value="${target.ide.product.name.long.wdsci}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@TARGET_IDE_PRODUCT_NAME_SHORT_RDI@" value="${target.ide.product.name.short.rdi}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@TARGET_IDE_PRODUCT_NAME_SHORT_WDSCI@" value="${target.ide.product.name.short.wdsci}" />
-		<replace file="${build.upload.dir.home}/${home.page}" token="@BETA_VERSION@" value="${sf.ftp.beta.dir.name}" />
+		<replace file="${build.upload.dir.home}/${home.page}" token="@BETA_VERSION@" value="${build.pages.beta.version}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@TODAY_YEAR@" value="${today.year}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@TODAY@" value="${today.timestamp}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
         <replace file="${build.upload.dir.home}/${home.page}" token="@BETA_UPDATE_SITE_URL@" value="${target.ide.root.beta.update.site.url}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@BETA_HELP_SITE_URL@" value="${target.ide.root.beta.help.site.url}" />
-		<replace file="${build.upload.dir.home}/${home.page}" token="@FILES_PAGE@" value="${sf.files.url}" />
+		<replace file="${build.upload.dir.home}/${home.page}" token="@FILES_PAGE@" value="${build.pages.files.url}" />
 
 		<replace file="${build.upload.dir.home}/${support.page}" token="@VERSION_NUMBER@" value="${build.version}" />
 		<replace file="${build.upload.dir.home}/${support.page}" token="@TODAY_YEAR@" value="${today.year}" />
 		<replace file="${build.upload.dir.home}/${support.page}" token="@TODAY@" value="${today.timestamp}" />
 
-        <replace file="${build.upload.dir.home}/${support.page}" token="@HOME_PAGE@" value="${sf.homepage.url}" />
+        <replace file="${build.upload.dir.home}/${support.page}" token="@HOME_PAGE@" value="${build.pages.homepage.url}" />
 		<replace file="${build.upload.dir.home}/${support.page}" token="@UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
         <replace file="${build.upload.dir.home}/${support.page}" token="@BETA_UPDATE_SITE_URL@" value="${target.ide.root.beta.update.site.url}" />
 		<replace file="${build.upload.dir.home}/${support.page}" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
@@ -553,7 +553,7 @@
     * ===================================================================== -->
     <target name="createFilesHtml" >
 
-        <echo>Creating ${build.public.project.name} 'files' page (html) ...</echo>
+        <echo>Creating ${build.public.project.name} '${build.pages.files}' page (html) ...</echo>
 
         <copy todir="${build.upload.dir.home}">
             <fileset dir="${workspace.home}/${build.homepage.project}/html" >
@@ -586,12 +586,12 @@
     * ===================================================================== -->
     <target name="cleanDocsDirectory" depends="cleanHelpPage">
 
-        <echo>Cleaning 'docs' directory ...</echo>
+        <echo>Cleaning '${build.pages.root}' directory ...</echo>
 
         <mkdir dir="${workspace.home}/${target.ide.uload.dir}"/>
         <mkdir dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}"/>
         <mkdir dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/update-site/eclipse/${target.ide.sf.dir}"/>
-        <mkdir dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/files"/>
+        <mkdir dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/${build.pages.files}"/>
 
         <if>
             <equals arg1="${is.beta.version}" arg2="true" />
@@ -602,7 +602,7 @@
                     <fileset dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}">
                         <include name="**/*"/>
                         <exclude name="${files.page}"/>
-                        <exclude name="help/"/>
+                        <exclude name="${build.pages.help}/"/>
                         <exclude name=".project"/>
                         <exclude name=".settings"/>
                     </fileset>
@@ -614,9 +614,9 @@
                     <!-- delete: [workspace]/irpgunit/docs/ (exclude: beta-version) -->
                     <fileset dir="${workspace.home}/${target.ide.uload.dir}">
                         <include name="**/*"/>
-                        <exclude name="${sf.ftp.beta.dir.name}/"/>
+                        <exclude name="${build.pages.beta.version}/"/>
                         <exclude name="${files.page}"/>
-                        <exclude name="help/"/>
+                        <exclude name="${build.pages.help}/"/>
                         <exclude name=".project"/>
                         <exclude name=".settings"/>
                     </fileset>
@@ -636,9 +636,9 @@
     * ===================================================================== -->
     <target name="cleanHelpPage" unless="ignore.build.help">
 
-        <echo>Cleaning 'docs' directory ...</echo>
+        <echo>Cleaning '${build.pages.root}' directory ...</echo>
 
-        <mkdir dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/help"/>
+        <mkdir dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/${build.pages.help}"/>
 
         <if>
             <equals arg1="${is.beta.version}" arg2="true" />
@@ -646,14 +646,14 @@
                 <delete>
                     <!-- Create a beta version -->
                     <!-- delete: [workspace]/irpgunit/docs/beta-version -->
-                    <fileset dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/help" />
+                    <fileset dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/${build.pages.help}" />
                 </delete>
             </then>
             <else>
                 <delete includeemptydirs="true" failonerror="no">
                     <!-- Create a release version -->
                     <!-- delete: [workspace]/irpgunit/docs/ (exclude: beta-version) -->
-                    <fileset dir="${workspace.home}/${target.ide.uload.dir}/help" />
+                    <fileset dir="${workspace.home}/${target.ide.uload.dir}/${build.pages.help}" />
                 </delete>
             </else>
         </if>
@@ -670,7 +670,7 @@
     * ===================================================================== -->
 	<target name="uploadGitHubFiles" depends="checkBuildTarget, cleanDocsDirectory, refreshProjects" description="Step 4">
 
-		<echo>Creating GitHub 'docs' directory ...</echo>
+		<echo>Creating GitHub '${build.pages.root}' directory ...</echo>
 
         <!-- Upload (include) files/index.html if not present -->
         <condition property="docs.files.index.html.exists">
@@ -699,7 +699,7 @@
 		</copy>
 
 		<!-- Homepage Help -->
-		<copy todir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/help" >  
+		<copy todir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/${build.pages.help}" >  
 			<fileset dir="${build.upload.dir.help}">
 				<include name="**"/>
 			</fileset>
@@ -720,14 +720,14 @@
 		</copy>
 
 		<!-- Zipped Update Site -->
-		<copy todir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/files/${target.ide.sf.dir}" >
+		<copy todir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/${build.pages.files}/${target.ide.sf.dir}" >
 			<fileset dir="${build.upload.dir.files}">
 				<include name="*.zip"/>
 			</fileset>
 		</copy>
 
         <!-- Documentation pdf -->
-        <copy todir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/files/" >
+        <copy todir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/${build.pages.files}/" >
             <fileset dir="${build.upload.dir.files}">
                 <include name="*.pdf"/>
             </fileset>
