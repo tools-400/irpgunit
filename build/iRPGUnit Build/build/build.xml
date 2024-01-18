@@ -735,6 +735,28 @@
 
 	</target>
 
+	<!--
+    * =====================================================================
+    *   Create a local update site for your company.
+    *   This target must be run, after all files have been built.
+    *   This target is specific to RDi/WDSCi and controlled by build.target.
+    * ===================================================================== -->
+	<target name="uploadLocalUpdateSite" unless="{local.updateSite.disabled}" depends="setLocalUpdateSiteProperties, cleanLocalUpdateSite" description="Step 5" >
+
+    <echo>Uploading local update site '${local.updateSite.path}' ...</echo>
+
+		<copy todir="${local.updateSite.path}">
+			<fileset dir="${build.upload.dir.files.eclipse}\${target.ide.sf.dir}">
+			</fileset>
+		</copy>
+
+		<copy todir="${local.updateSite.path}">
+			<fileset file="${workspace.home}\${build.notifier.project}\${build.notifier.file}" >
+			</fileset>
+		</copy>
+			
+	</target>
+
 	<!-- =============================================================
 	      Bereitet das Erstellen der Update Site vor.
 	     ============================================================= -->
@@ -883,6 +905,44 @@
 
 		<antcall target="refreshProjects" />
 
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Removes all files from the local update site folders of
+    *   your company.
+    * ===================================================================== -->
+	<target name="cleanLocalUpdateSite" depends="setLocalUpdateSiteProperties">
+
+		<echo>Cleaning local update Site '${local.updateSite.path}' ...</echo>
+
+		<mkdir dir="${local.updateSite.path}" />
+		
+		<delete includeemptydirs="true">
+			<fileset dir="${local.updateSite.path}" includes="**/*" />
+		</delete>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Sets the properties that are used for building your local
+    *   update site.
+    *   This target uses the properties stored in 
+    *   'localUpdateSite.properties'.
+    * ===================================================================== -->
+	<target name="setLocalUpdateSiteProperties" >
+		
+		<if>
+			<equals arg1="${is.beta.version}" arg2="true" />
+			<then>
+				<property name="local.updateSite.path" value="${local.updateSite.beta.path}" />
+			</then>
+			<else>
+				<property name="local.updateSite.path" value="${local.updateSite.release.path}" />
+			</else>
+		</if>
+		
 	</target>
 
 	<!--
