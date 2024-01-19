@@ -214,13 +214,13 @@
 		<equals arg1="${build.target}" arg2="RDi" />
 		<then>
 			<property name="target.ide.ide.product.name.long" value="${target.ide.product.name.long.rdi}" />
-			<property name="target.ide.ide.product.name.short" value="${target.ide.product.name.short.rdi}" />
+			<property name="target.ide.product.name.short" value="${target.ide.product.name.short.rdi}" />
 			<property name="target.ide.exclude.web.files" value="**/wdsci*.*,**/*.snippet" />
 			<property name="target.ide.exclude.download.files" value="*wdsci*" />
 		</then>
 		<else>
 			<property name="target.ide.ide.product.name.long" value="${target.ide.product.name.long.wdsci}" />
-			<property name="target.ide.ide.product.name.short" value="${target.ide.product.name.short.wdsci}" />
+			<property name="target.ide.product.name.short" value="${target.ide.product.name.short.wdsci}" />
 			<property name="target.ide.exclude.web.files" value="**/rdi*.*,**/*.snippet" />
 			<property name="target.ide.exclude.download.files" value="*rdi*"/>
 		</else>
@@ -269,7 +269,7 @@
 	<property name="files.page" value="${build.pages.files}/index.html" />
 
 	<!-- Set update site values -->
-	<property name="updatesite.tag.file" location="${workspace.home}\${build.updatesite}\iRPGUnit Update Site v${build.version}.tag" />
+	<property name="updatesite.tag.file" location="${workspace.home}\${build.updatesite}\${build.public.project.name} Update Site v${build.version}.tag" />
 	
 	<!-- Check what shall be build -->
 	<if>
@@ -291,7 +291,7 @@
     *   where bug NET-512 has been fixed.
     *   (https://issues.apache.org/jira/browse/NET-512)
     *
-    *   Steps for preparing the RPGUNIT save file:
+    *   Steps for preparing the save file:
     *    1) Add library RPGUNIT to your library list.
     *    2) Compile program #PACKAGE.
     *    3) Call program #PACKAGE: CALL PGM(#PACKAGE)
@@ -447,6 +447,8 @@
 
 		<echo>Replacing '@' variables ...</echo>
 
+		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@IDE_PRODUCT_NAME_SHORT@" value="${target.ide.ide.product.name.short}" />
+		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@IDE_PRODUCT_NAME_LONG@"  value="${target.ide.ide.product.name.long}" />
 		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@VERSION_INFO@"    value="${version.info}" />
 		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@TODAY@"           value="${today.timestamp}" />
 		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@TODAY_YEAR@"      value="${today.year}" />
@@ -516,6 +518,8 @@
 		  <replace file="${build.upload.dir.home}/${home.page}" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
 		  <replace file="${build.upload.dir.home}/${home.page}" token="@BETA_HELP_SITE_URL@" value="${target.ide.root.beta.help.site.url}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@FILES_PAGE@" value="${build.pages.files.url}" />
+		<replace file="${build.upload.dir.home}/${home.page}" token="@ECLIPSE_MARKETPLACE@" value="build.eclipse.marketplace.url"/>
+        <replace file="${build.upload.dir.home}/${home.page}" token="@HOME_PAGE@" value="${build.pages.homepage.url}" />
 
 		  <replace file="${build.upload.dir.home}/${support.page}" token="@VERSION_NUMBER@" value="${build.version}" />
 		<replace file="${build.upload.dir.home}/${support.page}" token="@TODAY_YEAR@" value="${today.year}" />
@@ -809,7 +813,7 @@
 	</target>
 
     <!-- =============================================================
-          Löscht alle bestehenden Dateien: iRPGUnit Update Site
+          Löscht alle bestehenden Dateien: Working Directories
          ============================================================= -->
     <target name="cleanWorkFolders" >
 
@@ -847,7 +851,7 @@
     </target>
 
 	<!-- =============================================================
-	      Löscht alle bestehenden Dateien: iRPGUnit Update Site
+	      Löscht alle bestehenden Dateien: Update Site
 	     ============================================================= -->
 	<target name="cleanUpdateSite" >
 
