@@ -164,6 +164,24 @@
 	<property name="html.copyright.2.version.regex" value="(Copyright:\s)([0-9]{4})" />
 	<property name="html.copyright.2.version.replace" value="\1${today.year}" />
 
+    <!-- Set certain specific build target dependant parameters -->
+	<if>
+        <equals arg1="${build.target}" arg2="RDi" />
+        <then>
+            <property name="target.ide.sf.dir" value="${build.project.folder.rdi}" />
+        </then>
+        <else>
+            <property name="target.ide.sf.dir" value="${build.project.folder.wdsci}" />
+        </else>
+    </if>
+
+    <!-- Set release/beta specific project URLs -->
+    <property name="target.ide.root.update.site.url"       value="${build.pages.update.site.url}/update-site/eclipse/${target.ide.sf.dir}" />
+    <property name="target.ide.root.beta.update.site.url"  value="${build.pages.update.site.url}/${build.pages.beta.version}/update-site/eclipse/${target.ide.sf.dir}" />
+
+    <property name="target.ide.root.help.site.url"         value="${build.pages.homepage.url}/${build.pages.help}/" />
+    <property name="target.ide.root.beta.help.site.url"    value="${build.pages.homepage.url}/${build.pages.beta.version}/${build.pages.help}/" />
+
 	<!-- Check for BETA or RELEASE version -->
 	<propertyregex property="release.flag" input="${build.version}" regexp="${release.flag.regex}" select="\1" casesensitive="true" />
 	<if>
@@ -174,6 +192,7 @@
             <property name="marketplace.installation.hint.snippet" value="beta_marketplace.snippet" />
 			<property name="beta.dir" value="${build.pages.beta.version}" />
 			<property name="version.info" value="&lt;div class=&quot;beta&quot;&gt;Beta Version - ${build.version}&lt;/div&gt;" />
+            <property name="help.site.url" value="${target.ide.root.beta.help.site.url}" />
 		</then>
 		<else>
 			<echo>Building a RELEASE version.</echo>
@@ -181,6 +200,7 @@
             <property name="marketplace.installation.hint.snippet" value="release_marketplace.snippet" />
 			<property name="beta.dir" value="." />
 			<property name="version.info" value="&lt;div class=&quot;release&quot;&gt;Release Version - ${build.version}&lt;/div&gt;" />
+            <property name="help.site.url" value="${target.ide.root.help.site.url}" />
 		</else>
 	</if>
 
@@ -189,22 +209,18 @@
 	<property name="target.ide.product.name.short.wdsci" value="WDSCi 7.0" />
 	<property name="target.ide.product.name.long.rdi" value="IBM Rational Developer for i" />
 	<property name="target.ide.product.name.long.wdsci" value="Websphere Development Studio Client for iSeries" />
-	<property name="target.ide.rdi" value="rdi8.0" />
-	<property name="target.ide.wdsci" value="wdsci7.0" />
 	
 	<if>
 		<equals arg1="${build.target}" arg2="RDi" />
 		<then>
 			<property name="target.ide.ide.product.name.long" value="${target.ide.product.name.long.rdi}" />
 			<property name="target.ide.ide.product.name.short" value="${target.ide.product.name.short.rdi}" />
-			<property name="target.ide.sf.dir" value="${target.ide.rdi}" />
 			<property name="target.ide.exclude.web.files" value="**/wdsci*.*,**/*.snippet" />
 			<property name="target.ide.exclude.download.files" value="*wdsci*" />
 		</then>
 		<else>
 			<property name="target.ide.ide.product.name.long" value="${target.ide.product.name.long.wdsci}" />
 			<property name="target.ide.ide.product.name.short" value="${target.ide.product.name.short.wdsci}" />
-			<property name="target.ide.sf.dir" value="${target.ide.wdsci}" />
 			<property name="target.ide.exclude.web.files" value="**/rdi*.*,**/*.snippet" />
 			<property name="target.ide.exclude.download.files" value="*rdi*"/>
 		</else>
@@ -212,17 +228,11 @@
 
 	<property name="target.ide.ide.product.full.name" value="${target.ide.product.name.long.rdi} - ${target.ide.ide.product.name.short}" />
 	<property name="target.ide.zip.file.name" value="${build.public.project.name} for ${target.ide.ide.product.name.short} (v${build.version} Update Site).zip" />
-	<property name="target.ide.uload.dir" value="${sf.ftp.project}/${build.pages.root}" />
+	<property name="target.ide.uload.dir" value="${build.ftp.project}/${build.pages.root}" />
 
     <!-- Set regular expressions and replacement values that use property "beta.dir" and "target.ide.zip.file.name" -->
     <property name="html.files.zip.regex" value="(&lt;img id=&quot;${beta.dir}&quot;.*)(zip_file.png)(.*/files/)([a-z0-9.]+/|[A-Z@_]+/)(.*?)(&quot;&gt;)" />
     <property name="html.files.zip.replace" value="\1\2\3\4${target.ide.zip.file.name}\6" />
-
-    <property name="target.ide.root.update.site.url"       value="${build.pages.update.site.url}/update-site/eclipse/${target.ide.sf.dir}" />
-    <property name="target.ide.root.beta.update.site.url"  value="${build.pages.update.site.url}/${build.pages.beta.version}/update-site/eclipse/${target.ide.sf.dir}" />
-
-    <property name="target.ide.root.help.site.url"         value="${sf.help.url}/${build.pages.help}/" />
-    <property name="target.ide.root.beta.help.site.url"    value="${sf.help.url}/${build.pages.beta.version}/${build.pages.help}/" />
 
 	<property name="site.xml.property.url.regex" value="(&lt;site)([ ]*url=&quot;\S*&quot;[ ]*)?(&gt;)" />
 	<property name="site.xml.property.url.replace" value="\1 url=&quot;${target.ide.root.update.site.url}&quot;\3" />
@@ -426,44 +436,27 @@
 		<echo>Loading marketplace installation hint</echo>
 		<loadfile property="marketplace.installation.hint" srcfile="${build.template.dir.web.build_target}/${marketplace.installation.hint.snippet}" />
 		
-		<echo>Copying A_README.TXT ...</echo>
-		<copy todir="${build.upload.dir.web.eclipse.assets}">
-			<fileset dir="${workspace.home}\${build.project.server}\QBUILD">
-				<include name="A_README.TXT" />
-			</fileset>
-		</copy>
-		
 		<echo>Renaming ${target.ide.sf.dir} ...</echo>
 		<!-- <move todir="${build.upload.dir.web.eclipse}\${target.ide.sf.dir}"> -->
 		<move todir="${build.upload.dir.web.eclipse}">
 			<fileset dir="${build.upload.dir.web.build.target}" />
 		</move>
 
-		<echo>Renaming A_README.TXT ...</echo>
-		<move file="${build.upload.dir.web.eclipse.assets}\A_README.TXT" tofile="${build.upload.dir.web.eclipse.assets}\readme.txt" />
-
 		<echo>Renaming index.html ...</echo>
 		<move file="${build.upload.dir.web.eclipse}/${build.target}_index.html" tofile="${build.upload.dir.web.eclipse}/index.html" />
 
 		<echo>Replacing '@' variables ...</echo>
 
-		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@VERSION_INFO@" value="${version.info}" />
-		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@IDE_PRODUCT_NAME_LONG@" value="${target.ide.ide.product.name.long}" />
-		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@IDE_PRODUCT_NAME_SHORT@" value="${target.ide.ide.product.name.short}" />
-		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
-        <replace file="${build.upload.dir.web.eclipse}/index.html" token="@BETA_UPDATE_SITE_URL@" value="${target.ide.root.beta.update.site.url}" />
-		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@TODAY@" value="${today.timestamp}" />
-		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@TODAY_YEAR@" value="${today.year}" />
-		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@VERSION_NUMBER@" value="${build.version}" />
-        <replace file="${build.upload.dir.web.eclipse}/index.html" token="@PLUGIN_NAME@" value="${plugin.name}" />
+		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@VERSION_INFO@"    value="${version.info}" />
+		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@TODAY@"           value="${today.timestamp}" />
+		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@TODAY_YEAR@"      value="${today.year}" />
+		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@VERSION_NUMBER@"  value="${build.version}" />
         <replace file="${build.upload.dir.web.eclipse}/index.html" token="@MARKETPLACE_INSTALLATION@" value="${marketplace.installation.hint}" />
-        <replace file="${build.upload.dir.web.eclipse}/index.html" token="@REPOSITORY_NAME@" value="${sf.repository.name}" />
+        <replace file="${build.upload.dir.web.eclipse}/index.html" token="@REPOSITORY_NAME@" value="${build.repository.name}" />
 
-		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@PROJECT_HOME@" value="${build.pages.project.url}" />
-        <replace file="${build.upload.dir.web.eclipse}/index.html" token="@HOME_PAGE@" value="${build.pages.homepage.url}" />
-        <replace file="${build.upload.dir.web.eclipse}/index.html" token="@FILES_PAGE@" value="${build.pages.files.url}" />
-		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
-		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@BETA_HELP_SITE_URL@" value="${target.ide.root.beta.help.site.url}" />
+        <replace file="${build.upload.dir.web.eclipse}/index.html" token="@HOME_PAGE@"       value="${build.pages.homepage.url}" />
+        <replace file="${build.upload.dir.web.eclipse}/index.html" token="@FILES_PAGE@"      value="${build.pages.files.url}" />
+		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@HELP_URL@"        value="${help.site.url}" />
 
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
 
@@ -515,33 +508,24 @@
 			</fileset>
 		</copy>
 
-		<replace file="${build.upload.dir.home}/${home.page}" token="@TODAY@" value="${today.timestamp}" />
-		<replace file="${build.upload.dir.home}/${home.page}" token="@VERSION_NUMBER@" value="${build.version}" />
-		<replace file="${build.upload.dir.home}/${home.page}" token="@PROJECT_HOME@" value="${build.pages.project.url}" />
-		<replace file="${build.upload.dir.home}/${home.page}" token="@TARGET_IDE_RDI@" value="${target.ide.rdi}" />
-		<replace file="${build.upload.dir.home}/${home.page}" token="@TARGET_IDE_WDSCI@" value="${target.ide.wdsci}" />
-		<replace file="${build.upload.dir.home}/${home.page}" token="@TARGET_IDE_PRODUCT_NAME_LONG_RDI@" value="${target.ide.product.name.long.rdi}" />
-		<replace file="${build.upload.dir.home}/${home.page}" token="@TARGET_IDE_PRODUCT_NAME_LONG_WDSCI@" value="${target.ide.product.name.long.wdsci}" />
-		<replace file="${build.upload.dir.home}/${home.page}" token="@TARGET_IDE_PRODUCT_NAME_SHORT_RDI@" value="${target.ide.product.name.short.rdi}" />
-		<replace file="${build.upload.dir.home}/${home.page}" token="@TARGET_IDE_PRODUCT_NAME_SHORT_WDSCI@" value="${target.ide.product.name.short.wdsci}" />
-		<replace file="${build.upload.dir.home}/${home.page}" token="@BETA_VERSION@" value="${build.pages.beta.version}" />
-		<replace file="${build.upload.dir.home}/${home.page}" token="@TODAY_YEAR@" value="${today.year}" />
-		<replace file="${build.upload.dir.home}/${home.page}" token="@TODAY@" value="${today.timestamp}" />
-		<replace file="${build.upload.dir.home}/${home.page}" token="@UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
-        <replace file="${build.upload.dir.home}/${home.page}" token="@BETA_UPDATE_SITE_URL@" value="${target.ide.root.beta.update.site.url}" />
-		<replace file="${build.upload.dir.home}/${home.page}" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
-		<replace file="${build.upload.dir.home}/${home.page}" token="@BETA_HELP_SITE_URL@" value="${target.ide.root.beta.help.site.url}" />
+		  <replace file="${build.upload.dir.home}/${home.page}" token="@VERSION_NUMBER@" value="${build.version}" />
+		  <replace file="${build.upload.dir.home}/${home.page}" token="@TODAY_YEAR@" value="${today.year}" />
+		  <replace file="${build.upload.dir.home}/${home.page}" token="@TODAY@" value="${today.timestamp}" />
+		  <replace file="${build.upload.dir.home}/${home.page}" token="@UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
+          <replace file="${build.upload.dir.home}/${home.page}" token="@BETA_UPDATE_SITE_URL@" value="${target.ide.root.beta.update.site.url}" />
+		  <replace file="${build.upload.dir.home}/${home.page}" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
+		  <replace file="${build.upload.dir.home}/${home.page}" token="@BETA_HELP_SITE_URL@" value="${target.ide.root.beta.help.site.url}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@FILES_PAGE@" value="${build.pages.files.url}" />
 
-		<replace file="${build.upload.dir.home}/${support.page}" token="@VERSION_NUMBER@" value="${build.version}" />
+		  <replace file="${build.upload.dir.home}/${support.page}" token="@VERSION_NUMBER@" value="${build.version}" />
 		<replace file="${build.upload.dir.home}/${support.page}" token="@TODAY_YEAR@" value="${today.year}" />
 		<replace file="${build.upload.dir.home}/${support.page}" token="@TODAY@" value="${today.timestamp}" />
 
         <replace file="${build.upload.dir.home}/${support.page}" token="@HOME_PAGE@" value="${build.pages.homepage.url}" />
-		<replace file="${build.upload.dir.home}/${support.page}" token="@UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
-        <replace file="${build.upload.dir.home}/${support.page}" token="@BETA_UPDATE_SITE_URL@" value="${target.ide.root.beta.update.site.url}" />
-		<replace file="${build.upload.dir.home}/${support.page}" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
-		<replace file="${build.upload.dir.home}/${support.page}" token="@BETA_HELP_SITE_URL@" value="${target.ide.root.beta.help.site.url}" />
+		  <replace file="${build.upload.dir.home}/${support.page}" token="@UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
+          <replace file="${build.upload.dir.home}/${support.page}" token="@BETA_UPDATE_SITE_URL@" value="${target.ide.root.beta.update.site.url}" />
+		  <replace file="${build.upload.dir.home}/${support.page}" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
+		  <replace file="${build.upload.dir.home}/${support.page}" token="@BETA_HELP_SITE_URL@" value="${target.ide.root.beta.help.site.url}" />
 
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
 
@@ -562,11 +546,12 @@
         </copy>
 
         <replace file="${build.upload.dir.home}/${files.page}" token="@PDF_FILE@" value="${build.project.pdf}" />
+        <replace file="${build.upload.dir.home}/${files.page}" token="@ZIP_FILE@" value="${target.ide.zip.file.name}" />
         <replace file="${build.upload.dir.home}/${files.page}" token="@TARGET_IDE@" value="${target.ide.sf.dir}" />
         <replace file="${build.upload.dir.home}/${files.page}" token="@TARGET_IDE_FULL_NAME@" value="${target.ide.ide.product.full.name}" />
+        <replace file="${build.upload.dir.home}/${files.page}"  token="@FILES_PAGE@" value="${build.pages.files.url}" />
 
-        <replace file="${build.upload.dir.home}/${files.page}" token="@HOME_PAGE@" value="${sf.homepage.url}" />
-        <replace file="${build.upload.dir.home}/${files.page}" token="@PDF_FILE@" value="${build.project.pdf}" />
+        <replace file="${build.upload.dir.home}/${files.page}" token="@HOME_PAGE@" value="${build.pages.homepage.url}" />
         <replace file="${build.upload.dir.home}/${files.page}" token="@TARGET_IDE@" value="${target.ide.sf.dir}" />
         <replace file="${build.upload.dir.home}/${files.page}" token="@TARGET_IDE_FULL_NAME@" value="${target.ide.ide.product.full.name}" />
 
