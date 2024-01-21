@@ -322,7 +322,7 @@
 	      Erstellt eine neue Update-Site.
 	      Alle alten Dateien werden überschrieben, bzw. gelöscht.
 	     ============================================================= -->
-	<target name="build" depends="checkBuildTarget, clean, updateVersionNumber, updateHelpProject, createTagFile, refreshProjects" description="Step 2">
+	<target name="build" depends="checkBuildTarget, checkProjectPaths, clean, updateVersionNumber, updateHelpProject, createTagFile, refreshProjects" description="Step 2">
 
 		<echo>+------------------------------------------------------+</echo>
 		<echo>|  Finished RPGUnit build ${build.version}             |</echo>
@@ -587,7 +587,7 @@
             <then>
                 <delete>
                     <!-- Create a beta version -->
-                    <!-- delete: [workspace]/irpgunit/docs/beta-version -->
+                    <!-- delete: [workspace]/[project]/docs/beta-version -->
                     <fileset dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}">
                         <include name="**/*"/>
                         <exclude name="${files.page}"/>
@@ -600,7 +600,7 @@
             <else>
                 <delete includeemptydirs="true" failonerror="no">
                     <!-- Create a release version -->
-                    <!-- delete: [workspace]/irpgunit/docs/ (exclude: beta-version) -->
+                    <!-- delete: [workspace]/[project]/docs/ (exclude: beta-version) -->
                     <fileset dir="${workspace.home}/${target.ide.uload.dir}">
                         <include name="**/*"/>
                         <exclude name="${build.pages.beta.version}/"/>
@@ -634,14 +634,14 @@
             <then>
                 <delete>
                     <!-- Create a beta version -->
-                    <!-- delete: [workspace]/irpgunit/docs/beta-version -->
+                    <!-- delete: [workspace]/[project]/docs/beta-version -->
                     <fileset dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/${build.pages.help}" />
                 </delete>
             </then>
             <else>
                 <delete includeemptydirs="true" failonerror="no">
                     <!-- Create a release version -->
-                    <!-- delete: [workspace]/irpgunit/docs/ (exclude: beta-version) -->
+                    <!-- delete: [workspace]/[project]/docs/ (exclude: beta-version) -->
                     <fileset dir="${workspace.home}/${target.ide.uload.dir}/${build.pages.help}" />
                 </delete>
             </else>
@@ -941,7 +941,7 @@
     *     - feature.xml
     *     - site.xml
     * ===================================================================== -->
-	<target name="updateVersionNumber" depends="validateVersionNumber">
+	<target name="updateVersionNumber" depends="checkProjectPaths,validateVersionNumber">
 
 		<echo>Updating version number to: ${build.version} ...</echo>
 
@@ -993,6 +993,9 @@
 
 						<eclipse.refreshLocal resource="@{project}" depth="infinite" />
 					</then>
+					<else>
+						<echo message="** Problem? Project not found: ${workspace.home}\@{project} **" />
+					</else>
 				</if>
 			</sequential>
 		</for>
@@ -1110,6 +1113,36 @@
 				<fail>*** Error: Update site ${build.updatesite} not found! ***</fail>
 			</else>
 		</if>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Updates the version numbers of the following files:
+    *     - MANIFEST.MF
+    *     - feature.xml
+    *     - site.xml
+    * ===================================================================== -->
+	<target name="checkProjectPaths">
+
+		<echo>Checking project paths: ${build.target}</echo>
+
+		<for list="${build.projects}" delimiter="," param="project">
+			<sequential>
+
+				<if>
+					<available file="${workspace.home}\@{project}" type="dir" />
+					<then>
+						<!-- Fine. Nothing to do. -->
+					</then>
+					<else>
+						<fail message="Project not found: ${workspace.home}\@{project}"/>
+					</else>
+				</if>
+			</sequential>
+		</for>
+
+		<echo>Done.</echo>
 
 	</target>
 
