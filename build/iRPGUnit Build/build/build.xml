@@ -213,13 +213,13 @@
 	<if>
 		<equals arg1="${build.target}" arg2="RDi" />
 		<then>
-			<property name="target.ide.ide.product.name.long" value="${target.ide.product.name.long.rdi}" />
+			<property name="target.ide.product.name.long" value="${target.ide.product.name.long.rdi}" />
 			<property name="target.ide.product.name.short" value="${target.ide.product.name.short.rdi}" />
 			<property name="target.ide.exclude.web.files" value="**/wdsci*.*,**/*.snippet" />
 			<property name="target.ide.exclude.download.files" value="*wdsci*" />
 		</then>
 		<else>
-			<property name="target.ide.ide.product.name.long" value="${target.ide.product.name.long.wdsci}" />
+			<property name="target.ide.product.name.long" value="${target.ide.product.name.long.wdsci}" />
 			<property name="target.ide.product.name.short" value="${target.ide.product.name.short.wdsci}" />
 			<property name="target.ide.exclude.web.files" value="**/rdi*.*,**/*.snippet" />
 			<property name="target.ide.exclude.download.files" value="*rdi*"/>
@@ -448,7 +448,7 @@
 		<echo>Replacing '@' variables ...</echo>
 
 		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@IDE_PRODUCT_NAME_SHORT@" value="${target.ide.ide.product.name.short}" />
-		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@IDE_PRODUCT_NAME_LONG@"  value="${target.ide.ide.product.name.long}" />
+		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@IDE_PRODUCT_NAME_LONG@"  value="${target.ide.product.name.long}" />
 		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@VERSION_INFO@"    value="${version.info}" />
 		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@TODAY@"           value="${today.timestamp}" />
 		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@TODAY_YEAR@"      value="${today.year}" />
