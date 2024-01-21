@@ -146,7 +146,7 @@
 	<property name="feature.1.version.regex" value="(&lt;feature.*version=&quot;)(${version.number.search.regex})(&quot;\s+provider-name.*?&gt;)" />
 	<property name="feature.1.version.replace" value="\1${build.version}\3" />
 
-	<property name="feature.2.version.regex" value="(&lt;import feature.*version=&quot;)(${version.number.search.regex})(&quot;\s*)(match.*)?(/&gt;)" />
+	<property name="feature.2.version.regex" value="(&lt;import feature.*?version=&quot;)(${version.number.search.regex})(&quot;\s*?)(match.*?)?(/&gt;)" />
 	<property name="feature.2.version.replace" value="\1${build.version}\3\4\5" />
 	
 	<property name="feature.copyright.1.date.regex" value="^([ ]*Copyright.*[0-9]{4})-([0-9]{4})(.*)$" />
