@@ -164,6 +164,8 @@
 	<property name="html.copyright.2.version.regex" value="(Copyright:\s)([0-9]{4})" />
 	<property name="html.copyright.2.version.replace" value="\1${today.year}" />
 
+	<property name="regex.check.variables" value="(@.+?@)" />
+
     <!-- Set certain specific build target dependant parameters -->
 	<if>
         <equals arg1="${build.target}" arg2="RDi" />
@@ -226,8 +228,8 @@
 		</else>
 	</if>
 
-	<property name="target.ide.ide.product.full.name" value="${target.ide.product.name.long.rdi} - ${target.ide.ide.product.name.short}" />
-	<property name="target.ide.zip.file.name" value="${build.public.project.name} for ${target.ide.ide.product.name.short} (v${build.version} Update Site).zip" />
+	<property name="target.ide.ide.product.full.name" value="${target.ide.product.name.long.rdi} - ${target.ide.product.name.short}" />
+	<property name="target.ide.zip.file.name" value="${build.public.project.name} for ${target.ide.product.name.short} (v${build.version} Update Site).zip" />
 	<property name="target.ide.uload.dir" value="${build.ftp.project}/${build.pages.root}" />
 
     <!-- Set regular expressions and replacement values that use property "beta.dir" and "target.ide.zip.file.name" -->
@@ -447,7 +449,7 @@
 
 		<echo>Replacing '@' variables ...</echo>
 
-		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@IDE_PRODUCT_NAME_SHORT@" value="${target.ide.ide.product.name.short}" />
+		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@IDE_PRODUCT_NAME_SHORT@" value="${target.ide.product.name.short}" />
 		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@IDE_PRODUCT_NAME_LONG@"  value="${target.ide.product.name.long}" />
 		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@VERSION_INFO@"    value="${version.info}" />
 		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@TODAY@"           value="${today.timestamp}" />
@@ -457,8 +459,17 @@
         <replace file="${build.upload.dir.web.eclipse}/index.html" token="@REPOSITORY_NAME@" value="${build.repository.name}" />
 
         <replace file="${build.upload.dir.web.eclipse}/index.html" token="@HOME_PAGE@"       value="${build.pages.homepage.url}" />
+        <replace file="${build.upload.dir.home}/${home.page}"      token="@UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
         <replace file="${build.upload.dir.web.eclipse}/index.html" token="@FILES_PAGE@"      value="${build.pages.files.url}" />
 		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@HELP_URL@"        value="${help.site.url}" />
+
+		<loadfile property="tmp.update.page" srcfile="${build.upload.dir.web.eclipse}/index.html" />
+		<propertyregex  property="replace.error.update.site" input="tmp.update.page" regex="@.+?@" select="\1"/>
+		<echo>Found: ${replace.error.update.site}</echo>
+
+		<loadfile property="tmp.update.page" srcfile="${build.upload.dir.web.eclipse}/index.html" />
+		<propertyregex property="replace.error.update.page" input="${tmp.update.page}" regexp="${regex.check.variables}" select="\1"/>
+		<fail if="replace.error.update.page" message="Not all variables have been replaced."/>
 
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
 
@@ -531,6 +542,14 @@
 		  <replace file="${build.upload.dir.home}/${support.page}" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
 		  <replace file="${build.upload.dir.home}/${support.page}" token="@BETA_HELP_SITE_URL@" value="${target.ide.root.beta.help.site.url}" />
 
+		<loadfile property="tmp.home.page" srcfile="${build.upload.dir.home}/${home.page}" />
+		<propertyregex property="replace.error.home.page" input="${tmp.home.page}" regexp="${regex.check.variables}" select="\1"/>
+		<fail if="replace.error.home.page" message="Not all variables have been replaced."/>
+
+		<loadfile property="tmp.support.page" srcfile="${build.upload.dir.home}/${support.page}" />
+		<propertyregex property="replace.error.support.page" input="${tmp.support.page}" regexp="${regex.check.variables}" select="\1"/>
+		<fail if="replace.error.support.page" message="Not all variables have been replaced."/>
+
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
 
 	</target>
@@ -562,6 +581,10 @@
         <copy todir="${build.upload.dir.files}" >
             <fileset file="${project.pdf}" />
     	</copy>
+
+		<loadfile property="tmp.files.page" srcfile="${build.upload.dir.home}/${files.page}" />
+		<propertyregex property="replace.error.files.page" input="${tmp.files.page}" regexp="${regex.check.variables}" select="\1"/>
+		<fail if="replace.error.files.page" message="Not all variables have been replaced."/>
 
         <eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
 
@@ -975,18 +998,22 @@
 							</then>
 						</if>
 
+						<!-- feature.xml: version -->
 						<replaceregexp match="${feature.1.version.regex}" replace="${feature.1.version.replace}" flags="s" byline="false">
 							<fileset dir="${workspace.home}\@{project}" includes="feature.xml" />
 						</replaceregexp>
 
-						<replaceregexp match="${feature.2.version.regex}" replace="${feature.2.version.replace}" flags="s" byline="false">
+						<!-- feature.xml: requires version -->
+						<replaceregexp match="${feature.2.version.regex}" replace="${feature.2.version.replace}" flags="g" byline="false">
 							<fileset dir="${workspace.home}\@{project}" includes="feature.xml" />
 						</replaceregexp>
 
+						<!-- site.xml: feature version -->
 						<replaceregexp match="${site.1.version.regex}" replace="${site.1.version.replace}" flags="g" byline="false">
 							<fileset dir="${workspace.home}\@{project}" includes="site.xml" />
 						</replaceregexp>
 
+						<!-- site.xml: *_5.2.10.b002.jar -->
 						<replaceregexp match="${site.2.version.regex}" replace="${site.2.version.replace}" flags="g" byline="false">
 							<fileset dir="${workspace.home}\@{project}" includes="site.xml" />
 						</replaceregexp>
