@@ -164,7 +164,7 @@
 	<property name="html.copyright.2.version.regex" value="(Copyright:\s)([0-9]{4})" />
 	<property name="html.copyright.2.version.replace" value="\1${today.year}" />
 
-	<property name="regex.check.variables" value="(@.+?@)" />
+	<property name="regex.check.variables" value="(@.+?@|\$\{.+?})" />
 
     <!-- Set certain specific build target dependant parameters -->
 	<if>
@@ -458,17 +458,15 @@
         <replace file="${build.upload.dir.web.eclipse}/index.html" token="@MARKETPLACE_INSTALLATION@" value="${marketplace.installation.hint}" />
         <replace file="${build.upload.dir.web.eclipse}/index.html" token="@REPOSITORY_NAME@" value="${build.repository.name}" />
 
+        <replace file="${build.upload.dir.web.eclipse}/index.html" token="@PROJECT_HOME@"    value="${build.pages.project.url}" />
         <replace file="${build.upload.dir.web.eclipse}/index.html" token="@HOME_PAGE@"       value="${build.pages.homepage.url}" />
-        <replace file="${build.upload.dir.home}/${home.page}"      token="@UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
+        <replace file="${build.upload.dir.web.eclipse}/index.html" token="@UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
         <replace file="${build.upload.dir.web.eclipse}/index.html" token="@FILES_PAGE@"      value="${build.pages.files.url}" />
 		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@HELP_URL@"        value="${help.site.url}" />
 
 		<loadfile property="tmp.update.page" srcfile="${build.upload.dir.web.eclipse}/index.html" />
-		<propertyregex  property="replace.error.update.site" input="tmp.update.page" regex="@.+?@" select="\1"/>
-		<echo>Found: ${replace.error.update.site}</echo>
-
-		<loadfile property="tmp.update.page" srcfile="${build.upload.dir.web.eclipse}/index.html" />
 		<propertyregex property="replace.error.update.page" input="${tmp.update.page}" regexp="${regex.check.variables}" select="\1"/>
+		<echo>Found variable: ${replace.error.update.page}</echo>
 		<fail if="replace.error.update.page" message="Not all variables have been replaced."/>
 
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
@@ -489,7 +487,7 @@
     *     build.help.enabled=true
     *
     * ===================================================================== -->
-	<target name="createHelpHtmlPages" >
+	<target name="createHelpHtmlPages" depends="updateHelpBuilderProperties">
 
 		<echo>Creating ${build.public.project.name} '${build.pages.help}' page (html) ...</echo>
 
@@ -544,10 +542,12 @@
 
 		<loadfile property="tmp.home.page" srcfile="${build.upload.dir.home}/${home.page}" />
 		<propertyregex property="replace.error.home.page" input="${tmp.home.page}" regexp="${regex.check.variables}" select="\1"/>
+		<echo>Found variable: ${replace.error.home.page}</echo>
 		<fail if="replace.error.home.page" message="Not all variables have been replaced."/>
 
 		<loadfile property="tmp.support.page" srcfile="${build.upload.dir.home}/${support.page}" />
 		<propertyregex property="replace.error.support.page" input="${tmp.support.page}" regexp="${regex.check.variables}" select="\1"/>
+		<echo>Found variable: ${replace.error.support.page}</echo>
 		<fail if="replace.error.support.page" message="Not all variables have been replaced."/>
 
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
@@ -584,6 +584,7 @@
 
 		<loadfile property="tmp.files.page" srcfile="${build.upload.dir.home}/${files.page}" />
 		<propertyregex property="replace.error.files.page" input="${tmp.files.page}" regexp="${regex.check.variables}" select="\1"/>
+		<echo>Found variable: ${replace.error.files.page}</echo>
 		<fail if="replace.error.files.page" message="Not all variables have been replaced."/>
 
         <eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
@@ -1038,11 +1039,12 @@
     * ===================================================================== -->
 	<target name="updateHelpProject" unless="ignore.build.help">
 
-		<echo>Updating: ${upload_savf.cmd} ...</echo>
+		<echo>Updating upload_savf.cmd in ${workspace.home}/${build.help.base.project} ...</echo>
 
-		<copy file="${build.template.dir.web.assets}/upload_savf.cmd" todir="${workspace.home}/${build.help.projects}/html/appendix/assets" />
+		<copy file="${build.template.dir.web.assets}/upload_savf.cmd" todir="${workspace.home}/${build.help.base.project}/html/appendix/assets" />
 
-		<antcall target="refreshProjects" />
+		<echo>Refreshing: ${build.help.base.project}</echo>
+		<eclipse.refreshLocal resource="${build.help.base.project}" depth="infinite" />
 
 	<echo>Done.</echo>
 
@@ -1169,7 +1171,40 @@
 			</sequential>
 		</for>
 
+		<for list="${build.help.projects}" delimiter="," param="project">
+			<sequential>
+
+				<if>
+					<available file="${workspace.home}\@{project}" type="dir" />
+					<then>
+						<!-- Fine. Nothing to do. -->
+					</then>
+					<else>
+						<fail message="Help project not found: ${workspace.home}\@{project}"/>
+					</else>
+				</if>
+			</sequential>
+		</for>
+
 		<echo>Done.</echo>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Updates the version numbers of the following files:
+    *     - MANIFEST.MF
+    *     - feature.xml
+    *     - site.xml
+    * ===================================================================== -->
+	<target name="updateHelpBuilderProperties">
+
+		<echo>Updating help builder properties:  helpproject.properties</echo>
+
+		<propertyfile file="helpproject.properties" >
+		    <entry key="build.help.projects" value="${build.help.projects}"/>
+		    <entry key="build.help.title"    value="${build.help.title}"/>
+		</propertyfile>
 
 	</target>
 
