@@ -10,7 +10,7 @@ iRPGUnit is a fork of the RPGUnit project, providing enhancements and an Eclipse
 
 Further information about iRPGUnit are available on the [iRPGUnit Web Site](https://tools-400.github.io/irpgunit/).
 
-The iRPGUnit library requires V7R1 or higher. For lower releases you can compile the library from an i Project by hand. Refer to the iRPGUnit help for details.
+Please refer to the [iRPGUnit Version History](<https://tools-400.github.io/irpgunit/files/iRPGUnit for RDi 9.5.1.3+.pdf>) document to find out which operating system release is required for installing the iRPGUnit library.
 
 ## Features
 
