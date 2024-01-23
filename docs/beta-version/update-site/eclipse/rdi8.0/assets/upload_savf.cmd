@@ -3,7 +3,7 @@ rem **************************************************************
 rem *  This is an MS-DOS BATCH file for uploading the
 rem *  RPGUNIT save file to a System i server.
 rem **************************************************************
-set TEMPFILE=rpgunit.ftpcmds
+set TEMPFILE=ftp_upload.ftpcmds
 set HOST=%1
 set USER=%2
 set PASSWORD=%3
