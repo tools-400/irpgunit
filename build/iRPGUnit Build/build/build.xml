@@ -617,7 +617,7 @@
                         <exclude name="${files.page}"/>
                         <exclude name="${build.pages.help}/"/>
                         <exclude name=".project"/>
-                        <exclude name=".settings"/>
+                        <exclude name=".settings/"/>
                     </fileset>
                 </delete>
             </then>
@@ -631,7 +631,7 @@
                         <exclude name="${files.page}"/>
                         <exclude name="${build.pages.help}/"/>
                         <exclude name=".project"/>
-                        <exclude name=".settings"/>
+                        <exclude name=".settings/"/>
                     </fileset>
                 </delete>
             </else>
