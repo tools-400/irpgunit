@@ -637,7 +637,8 @@
             </else>
         </if>
 
-        <antcall target="refreshProjects" />
+        <echo>Refreshing: ${workspace.home}/${target.ide.uload.dir}</echo>
+        <eclipse.refreshLocal resource="${workspace.home}/${target.ide.uload.dir}" depth="infinite" />
 
 	</target>
 
@@ -671,7 +672,8 @@
             </else>
         </if>
 
-        <antcall target="refreshProjects" />
+        <echo>Refreshing: ${workspace.home}/${target.ide.uload.dir}</echo>
+        <eclipse.refreshLocal resource="${workspace.home}/${target.ide.uload.dir}" depth="infinite" />
 
     </target>
 
@@ -870,7 +872,8 @@
             <fileset dir="${build.upload.dir}" includes="**/*" />
         </delete>
 
-        <antcall target="refreshProjects" />
+        <echo>Refreshing: ${build.project.name}</echo>
+        <eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
 
     </target>
 
@@ -916,7 +919,8 @@
 			<fileset dir="${site.dir}" includes="*.tag" />
 		</delete>
 
-		<antcall target="refreshProjects" />
+        <echo>Refreshing: ${build.updatesite}</echo>
+        <eclipse.refreshLocal resource="${build.updatesite}" depth="infinite" />
 
 	</target>
 
