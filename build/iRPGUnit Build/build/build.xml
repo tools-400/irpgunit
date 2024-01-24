@@ -1,6 +1,6 @@
 <!--
  * =====================================================================
- *   This Ant script helps you to create an upload the project's
+ *   This Ant script helps you to create an upload the project's 
  *   update site. Before you can run the script, you need to copy
  *   'template_ftp.properties' to 'ftp.properties' and change the
  *   properties to meet your needs.
@@ -40,7 +40,7 @@
  *               Check: Regular expression
  *     1.3 On the PC change version number in COPYRIGHT.RPGLE.
  *     1.4 On the PC push changes of project's i Project to the AS/400.
- *     1.5 On the PC update document 'iSphere.doc' and also save it as
+ *     1.5 On the PC update document 'iSphere.doc' and also save it as 
  *         'iShere for RDi 9.5.1.3+.pdf'.
  *     1.6 Refresh project 'iSphere Core Plugin'.
  *     1.7 On the PC increment version number of property 'build.version'
@@ -51,8 +51,8 @@
  *
  *           ADDLIBLE LIB(RPGUNITDVP)
  *
- *           CRTBNDCL PGM(RPGUNITDVP/A_CRTPKG)
- *             SRCFILE(RPGUNITDVP/QBUILD)
+ *           CRTBNDCL PGM(RPGUNITDVP/A_CRTPKG) 
+ *             SRCFILE(RPGUNITDVP/QBUILD) 
  *             DFTACTGRP(*NO) ACTGRP(*NEW) DBGVIEW(*LIST)
  *
  *           CALL PGM(A_CRTPKG) PARM('RPGUNITDVP')
@@ -134,9 +134,9 @@
 
     <!-- Set regular expressions and replacement values -->
     <property name="version.number.validation.regex" value="[1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:(b)[0-9]{3}|(r)[0-9]{0,1}))?" />
-
+    
     <property name="version.number.search.regex" value="[1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{1,3}|r[0-9]{0,1}))?" />
-
+    
     <property name="validate.version.regex" value="^(${version.number.validation.regex})$" />
     <property name="release.flag.regex" value="^(?:${version.number.validation.regex})$" />
 
@@ -148,7 +148,7 @@
 
     <property name="feature.2.version.regex" value="(&lt;import feature.*?version=&quot;)(${version.number.search.regex})(&quot;\s*?)(match.*?)?(/&gt;)" />
     <property name="feature.2.version.replace" value="\1${build.version}\3\4\5" />
-
+    
     <property name="feature.copyright.1.date.regex" value="^([ ]*Copyright.*[0-9]{4})-([0-9]{4})(.*)$" />
     <property name="feature.copyright.1.date.replace" value="\1-${today.year}\3" />
 
@@ -160,7 +160,7 @@
 
     <property name="html.copyright.1.version.regex" value="^(Version: )(${version.number.search.regex})(.*)?" />
     <property name="html.copyright.1.version.replace" value="\1${build.version}\3" />
-
+    
     <property name="html.copyright.2.version.regex" value="(Copyright:\s)([0-9]{4})" />
     <property name="html.copyright.2.version.replace" value="\1${today.year}" />
 
@@ -211,7 +211,7 @@
     <property name="target.ide.product.name.short.wdsci" value="WDSCi 7.0" />
     <property name="target.ide.product.name.long.rdi" value="IBM Rational Developer for i" />
     <property name="target.ide.product.name.long.wdsci" value="Websphere Development Studio Client for iSeries" />
-
+    
     <if>
         <equals arg1="${build.target}" arg2="RDi" />
         <then>
@@ -252,20 +252,20 @@
     <property name="build.upload.dir.files"              location="${build.upload.dir}/sf-files/${beta.dir}" />
     <property name="build.upload.dir.updateSite"         location="${build.upload.dir}/sf-updatesite/${beta.dir}" />
     <property name="build.upload.dir.updateSite.eclipse" location="${build.upload.dir}/sf-updatesite/${beta.dir}/eclipse/${target.ide.sf.dir}" />
-
+    
     <!-- was: sf-web -->
     <property name="build.upload.dir.web"                location="${build.upload.dir}/sf-updatesite/${beta.dir}" />
     <property name="build.upload.dir.web.build.target"   location="${build.upload.dir}/sf-updatesite/${beta.dir}/eclipse/build_target" />
     <property name="build.upload.dir.web.eclipse"        location="${build.upload.dir}/sf-updatesite/${beta.dir}/eclipse/${target.ide.sf.dir}" />
     <property name="build.upload.dir.web.eclipse.assets" location="${build.upload.dir}/sf-updatesite/${beta.dir}/eclipse/${target.ide.sf.dir}/assets" />
-
+    
     <property name="build.upload.dir.help"               location="${build.upload.dir}/sf-help/${beta.dir}/${build.pages.help}" />
     <property name="build.upload.dir.home"               location="${build.upload.dir}/sf-home/" />
     <property name="zip.base.directory"                  location="${workspace.home}/${build.updatesite}" />
     <property name="project.doc"                         location="${workspace.home}/${build.project.core}/${build.folder.doc}/${build.project.doc}" />
     <property name="project.pdf"                         location="${workspace.home}/${build.project.core}/${build.folder.doc}/${build.project.pdf}" />
     <property name="project.notifier"                    location="${workspace.home}/${build.project.notifier}/${build.project.notify}" />
-
+    
     <!-- Set the name of the default home page file -->
     <property name="home.page" value="index.html" />
     <property name="support.page" value="support.html" />
@@ -273,7 +273,7 @@
 
     <!-- Set update site values -->
     <property name="updatesite.tag.file" location="${workspace.home}\${build.updatesite}\${build.public.project.name} Update Site (${build.target}) v${build.version}.tag" />
-
+    
     <!-- Check what shall be build -->
     <if>
         <equals arg1="${build.help.enabled}" arg2="true" />
@@ -346,7 +346,7 @@
     <target name="junit" >
 
         <echo>Running JUnit tests of project ${build.junit.project} ...</echo>
-
+        
         <junit haltonerror="true" haltonfailure="true" printsummary="true">
             <classpath>
                 <!-- JUnit4 -->
@@ -368,7 +368,7 @@
                 </fileset>
             </batchtest>
         </junit>
-
+        
         <echo>... finished JUnit tests.</echo>
 
     </target>
@@ -379,7 +379,7 @@
     <target name="createGitHubFiles" depends="updatePdfFile, prepareUpdateSite, createZipFile, createUpdateSite, createUpdateSiteHtmlPages, createHelpHtmlPages, createHomePageHtml, createFilesHtml, refreshProjects" description="Step 3">
 
         <echo>GitHub files have been created in: </echo>
-
+        
     </target>
 
     <!-- =============================================================
@@ -406,7 +406,7 @@
         <echo>Creating ${build.public.project.name} update site (plugin) ...</echo>
 
         <mkdir dir="${build.upload.dir.updateSite.eclipse}" />
-
+        
         <copy todir="${build.upload.dir.updateSite.eclipse}">
             <fileset dir="${temp.dir.local_updatesite}" excludes="*.pdf"/>
         </copy>
@@ -418,9 +418,9 @@
     *   Create the web pages of the update site.
     *   This target is specific to RDi/WDSCi and controlled by build.target.
     *
-    *   Set the build properties as shown below, if you want to update
+    *   Set the build properties as shown below, if you want to update 
     *   index.html:
-    *
+    * 
     *     build.help.enabled=false
     *
     * ===================================================================== -->
@@ -438,7 +438,7 @@
 
         <echo>Loading marketplace installation hint</echo>
         <loadfile property="marketplace.installation.hint" srcfile="${build.template.dir.web.build_target}/${marketplace.installation.hint.snippet}" />
-
+        
         <echo>Renaming ${target.ide.sf.dir} ...</echo>
         <!-- <move todir="${build.upload.dir.web.eclipse}\${target.ide.sf.dir}"> -->
         <move todir="${build.upload.dir.web.eclipse}">
@@ -479,12 +479,12 @@
     *   Creates the help pages.
     *   This target calls the build script of the 'Help Builder'
     *   project to create the help pages.
-    *   This target is not specific to RDi/WDSCi. It does not matter for
+    *   This target is not specific to RDi/WDSCi. It does not matter for 
     *   what target it is called.
     *
-    *   Set the build properties as shown below, if you want to update
+    *   Set the build properties as shown below, if you want to update 
     *   the help pages:
-    *
+    * 
     *     build.help.enabled=true
     *
     * ===================================================================== -->
@@ -501,7 +501,7 @@
         <copy todir="${build.upload.dir.help}">
             <fileset dir="${workspace.home}/${build.help.builder}/upload" />
         </copy>
-
+        
         <eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
 
     </target>
@@ -520,27 +520,27 @@
             </fileset>
         </copy>
 
-          <replace file="${build.upload.dir.home}/${home.page}" token="@VERSION_NUMBER@" value="${build.version}" />
-          <replace file="${build.upload.dir.home}/${home.page}" token="@TODAY_YEAR@" value="${today.year}" />
-          <replace file="${build.upload.dir.home}/${home.page}" token="@TODAY@" value="${today.timestamp}" />
-          <replace file="${build.upload.dir.home}/${home.page}" token="@UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
-          <replace file="${build.upload.dir.home}/${home.page}" token="@BETA_UPDATE_SITE_URL@" value="${target.ide.root.beta.update.site.url}" />
-          <replace file="${build.upload.dir.home}/${home.page}" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
-          <replace file="${build.upload.dir.home}/${home.page}" token="@BETA_HELP_SITE_URL@" value="${target.ide.root.beta.help.site.url}" />
+        <replace file="${build.upload.dir.home}/${home.page}" token="@VERSION_NUMBER@" value="${build.version}" />
+        <replace file="${build.upload.dir.home}/${home.page}" token="@TODAY_YEAR@" value="${today.year}" />
+        <replace file="${build.upload.dir.home}/${home.page}" token="@TODAY@" value="${today.timestamp}" />
+        <replace file="${build.upload.dir.home}/${home.page}" token="@UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
+        <replace file="${build.upload.dir.home}/${home.page}" token="@BETA_UPDATE_SITE_URL@" value="${target.ide.root.beta.update.site.url}" />
+        <replace file="${build.upload.dir.home}/${home.page}" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
+        <replace file="${build.upload.dir.home}/${home.page}" token="@BETA_HELP_SITE_URL@" value="${target.ide.root.beta.help.site.url}" />
         <replace file="${build.upload.dir.home}/${home.page}" token="@FILES_PAGE@" value="${build.pages.files.url}" />
         <replace file="${build.upload.dir.home}/${home.page}" token="@ECLIPSE_MARKETPLACE@" value="${build.eclipse.marketplace.url}"/>
         <replace file="${build.upload.dir.home}/${home.page}" token="@HOME_PAGE@" value="${build.pages.homepage.url}" />
         <replace file="${build.upload.dir.home}/${home.page}" token="@PROJECT_HOME@" value="${build.pages.project.url}" />
 
-          <replace file="${build.upload.dir.home}/${support.page}" token="@VERSION_NUMBER@" value="${build.version}" />
+        <replace file="${build.upload.dir.home}/${support.page}" token="@VERSION_NUMBER@" value="${build.version}" />
         <replace file="${build.upload.dir.home}/${support.page}" token="@TODAY_YEAR@" value="${today.year}" />
         <replace file="${build.upload.dir.home}/${support.page}" token="@TODAY@" value="${today.timestamp}" />
 
         <replace file="${build.upload.dir.home}/${support.page}" token="@HOME_PAGE@" value="${build.pages.homepage.url}" />
-          <replace file="${build.upload.dir.home}/${support.page}" token="@UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
-          <replace file="${build.upload.dir.home}/${support.page}" token="@BETA_UPDATE_SITE_URL@" value="${target.ide.root.beta.update.site.url}" />
-          <replace file="${build.upload.dir.home}/${support.page}" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
-          <replace file="${build.upload.dir.home}/${support.page}" token="@BETA_HELP_SITE_URL@" value="${target.ide.root.beta.help.site.url}" />
+        <replace file="${build.upload.dir.home}/${support.page}" token="@UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
+        <replace file="${build.upload.dir.home}/${support.page}" token="@BETA_UPDATE_SITE_URL@" value="${target.ide.root.beta.update.site.url}" />
+        <replace file="${build.upload.dir.home}/${support.page}" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
+        <replace file="${build.upload.dir.home}/${support.page}" token="@BETA_HELP_SITE_URL@" value="${target.ide.root.beta.help.site.url}" />
 
         <loadfile property="tmp.home.page" srcfile="${build.upload.dir.home}/${home.page}" />
         <propertyregex property="replace.error.home.page" input="${tmp.home.page}" regexp="${regex.check.variables}" select="\1"/>
@@ -720,7 +720,7 @@
         </copy>
 
         <!-- Homepage Help -->
-        <copy todir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/${build.pages.help}" >
+        <copy todir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/${build.pages.help}" >  
             <fileset dir="${build.upload.dir.help}">
                 <include name="**"/>
             </fileset>
@@ -769,7 +769,7 @@
             <then>
 
                 <echo>Adding notifier to '${build.pages.root}' directory ...</echo>
-
+        
                 <!-- Notifier -->
                 <copy todir="${workspace.home}/${target.ide.uload.dir}/${build.pages.files}/" >
                     <fileset dir="${build.upload.dir.files}">
@@ -801,7 +801,7 @@
             <fileset file="${workspace.home}\${build.notifier.project}\${build.notifier.file}" >
             </fileset>
         </copy>
-
+            
     </target>
 
     <!-- =============================================================
@@ -833,7 +833,7 @@
         </copy>
 
         <copy file="${project.pdf}" todir="${temp.dir.local_updatesite}" overwrite="true"/>
-
+        
         <copy toDir="${temp.dir.local_updatesite}/Server" >
             <fileset dir="${local.savefile.directory}" includes="${local.savefile.name}" />
         </copy>
@@ -850,7 +850,7 @@
 
     <!--
     * =====================================================================
-    *   Creates the tag file to indicate the project's version
+    *   Creates the tag file to indicate the project's version 
     *   of the zip file.
     * ===================================================================== -->
     <target name="createTagFile">
@@ -966,7 +966,7 @@
         <echo>Cleaning local update Site '${local.updateSite.path}' ...</echo>
 
         <mkdir dir="${local.updateSite.path}" />
-
+        
         <delete includeemptydirs="true">
             <fileset dir="${local.updateSite.path}" includes="**/*" />
         </delete>
@@ -977,11 +977,11 @@
     * =====================================================================
     *   Sets the properties that are used for building your local
     *   update site.
-    *   This target uses the properties stored in
+    *   This target uses the properties stored in 
     *   'localUpdateSite.properties'.
     * ===================================================================== -->
     <target name="setLocalUpdateSiteProperties" >
-
+        
         <if>
             <equals arg1="${is.beta.version}" arg2="true" />
             <then>
@@ -991,7 +991,7 @@
                 <property name="local.updateSite.path" value="${local.updateSite.release.path}" />
             </else>
         </if>
-
+        
     </target>
 
     <!--
@@ -1022,7 +1022,7 @@
                                 </replaceregexp>
                             </then>
                         </if>
-
+                        
                         <if>
                             <available file="${workspace.home}\@{project}/html" />
                             <then>
@@ -1158,7 +1158,7 @@
 
     <!--
     * =====================================================================
-    *   Checks whether of not the build has been started
+    *   Checks whether of not the build has been started 
     *   for the right target.
     * ===================================================================== -->
     <target name="checkBuildTarget">
