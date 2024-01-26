@@ -1097,8 +1097,17 @@
         <eclipse.refreshLocal resource="${build.project.core}" depth="infinite" />
 
         <uptodate property="pdf.isUpToDate" srcfile="${project.doc}" targetfile="${project.pdf}" />
+        <if>
+            <equals arg1="${pdf.isUpToDate}" arg2="true" />
+            <then>
+                <property name="pdf.needs.update" value="false"/>
+            </then>
+            <else>
+                <property name="pdf.needs.update" value="true"/>
+            </else>
+        </if>
 
-        <echo>Check ${build.public.project.name} PDF result: ${pdf.isUpToDate}</echo>
+        <echo>PDF must be updated: ${pdf.needs.update}</echo>
 
     </target>
 
@@ -1106,7 +1115,7 @@
     * =====================================================================
     *   Updates the PDF file from 'project.doc'.
     * ===================================================================== -->
-    <target name="updatePdfFile" depends="checkPdfFile" unless="pdf.isUpToDate">
+    <target name="updatePdfFile" depends="checkPdfFile" unless="pdf.needs.update">
 
         <echo>Updating ${build.public.project.name} PDF file ...</echo>
 
