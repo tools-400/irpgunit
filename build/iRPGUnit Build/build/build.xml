@@ -593,9 +593,18 @@
             <fileset file="${project.pdf}" />
         </copy>
 
-        <copy todir="${build.upload.dir.files}" >
-            <fileset file="${project.notifier}" />
-        </copy>
+        <condition property="project.notifier.exists">
+            <available file="${project.notifier}" type="file"/>
+        </condition>
+
+        <if>
+            <equals arg1="${project.notifier.exists}" arg2="true" />
+            <then>
+                <copy todir="${build.upload.dir.files}" >
+                    <fileset file="${project.notifier}" />
+                </copy>
+            </then>
+        </if>
 
         <loadfile property="tmp.files.page" srcfile="${build.upload.dir.home}/${files.page}" />
         <propertyregex property="replace.error.files.page" input="${tmp.files.page}" regexp="${regex.check.variables}" select="\1"/>
