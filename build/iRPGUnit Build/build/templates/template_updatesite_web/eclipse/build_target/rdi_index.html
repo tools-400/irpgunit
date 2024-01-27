@@ -1,22 +1,23 @@
 <html>
     <head>
         <meta http-equiv="cache-control" content="no-cache">
-        <meta name="description" content="iRPGUnit Plug-In Update Site">
-        <meta name="author" content="iRPGUnit Project Team">
-        <meta name="keywords" content="iRPGUnit, RPGUnit, Plugin, RDP, RDI, Eclipse, AS400">
+        <meta name="description" content="@PLUGIN_NAME@ Plug-in Update Site">
+        <meta name="author" content="@PLUGIN_NAME@ Project Team">
+        <meta name="keywords" content="@PLUGIN_NAME@, Plugin, RDI, Eclipse, AS400">
         <link href="assets/stylesheet.css" rel="stylesheet" type="text/css" />
-        <title>RPGUnit Update Site @IDE_PRODUCT_NAME_SHORT@</title>
+        <title>@PLUGIN_NAME@ Plug-in Update Site @IDE_PRODUCT_NAME_SHORT@</title>
     </head>
     <body>
         <table width="100%" border="0">
         <tr>
-        	<td align="left" >
-		    	<a href="@HOME_PAGE@"><img src="assets/project-logo.gif" alt="RPGUnit Tests Update Site" border="0" style="padding-right:10px;"/></a>
-   			</td>
-   			<td align="left" width="100%" >
-		        <h1>iRPGUnit Update Site RDi 9.5.1.3+</h1>
-		        <p>Hi, this is the iRPGUnit plug-in update site for IBM Rational Developer for i.</p>
-	        </td>
+            <td align="left" >
+                <a href="@HOME_PAGE@"><img src="./assets/project-logo.gif" alt="@PLUGIN_NAME@ - Eclipse Update Site for RDi" border="0" style="padding-right:10px;"/></a>
+            </td>
+           <td align="left" width="100%" >
+                <h1>@PLUGIN_NAME@ Plug-in Update Site @IDE_PRODUCT_NAME_SHORT@</h1>
+                <p>Hi, this is the <a href="@PROJECT_HOME@">@PLUGIN_NAME@</a> plug-in update site for @IDE_PRODUCT_NAME_LONG@.</p>
+                <p>Visit the <a href="@HELP_URL@">@PLUGIN_NAME@</a> help site to find out more about the plug-in.</p>
+            </td>
         </tr>
         </table>
         <p>
@@ -25,34 +26,19 @@
         <div class="section">
         <h2>Installing the Plug-In</h2>
         <p/>
-        <div style="background-color:lightblue; border: 3px solid red; width:800px;">
-        <p/>
-        <table border="0">
-        <tr><td>
-        <b>Notice:</b> Starting with version 4.0.3 iRPGUnit requires IBM i OS 7.3!
-        <p/>
-        <b>Notice:</b> It is important to know that starting with v3.0.0 source member TESTCASE has been moved from source file
-                       RPGUNIT1 to source file QINCLUDE. Currently iRPGUnit is shipped with a proxy member in file RPGUNIT1 to
-                       ensure backward compatibility at compile time. This proxy member will be removed after 31.12.2019 with a
-                       later version of iRPGUnit.
-        </td></tr>
-        </table>
-        </div>
-        <p/>
         <h3>Using Eclipse Marketplace</h3>
         <p>
 @MARKETPLACE_INSTALLATION@
         <p>
-        <h3>Using the iRPGUnit Update Site</h3>
-        <p>
-        <p class="indent">From the main menu, select "Help > Install New Software..." to enter the "Install" dialog.<br><br>
-        Then Drag-and-Drop the URL of the update site into the "Work with:" field:<br><br></p>
-        <img class="indent" src="./assets/InstallDragDrop.png" alt="RDi: Install new software">
+        <h3>Using the @PLUGIN_NAME@ Update Site</h3>
+        <p>From the main menu, select "Help > Install New Software..." to enter the "Install" dialog.<br><br>
+        Drag-and-drop the URL of the <a href="@UPDATE_SITE_URL@">update site</a> into the "Work with:" field:<br><br></p>
+        <img class="indent" src="./assets/rdi_InstallDragDrop.png" alt="RDi: Install new software">
         <p>
         Then select the options you want to install, press the [Next] button and follow the instructions given on the following pages.
         <h3>Using a Local Update Directory</h3>
         <p>
-        Go to the iRPGUnit <a href="@FILES_PAGE@" target="_blank">@REPOSITORY_NAME@ Files</a> page and download the zip file for your environment.
+        Go to the @PLUGIN_NAME@ <a href="@FILES_PAGE@" target="_blank">@REPOSITORY_NAME@ Files</a> page and download the zip file for your environment.
         <p>
         Then follow these steps to create your local update site:
         <p>
@@ -64,7 +50,7 @@
         </ul>
         <h3>Using a Local Update Archive</h3>
         <p>
-        Go to the iRPGUnit <a href="@FILES_PAGE@" target="_blank">@REPOSITORY_NAME@ Files</a> page and download the zip file for your environment.
+        Go to the @PLUGIN_NAME@ <a href="@FILES_PAGE@" target="_blank">@REPOSITORY_NAME@ Files</a> page and download the zip file for your environment.
         <p>
         Then follow these steps to create your local update site:
         <p>
@@ -76,15 +62,14 @@
         <li>Use the [Archive...] button to select the zip file.</li>
         </ul>
         <p>
-        <h2>Installing the RPGUnit Library</h2>
+        <h2>Installing the @PROJECT_LIBRARY@ Library</h2>
         <p class="indent">
-        The most easiest way to install the library is to upload it from the preference page of the iRPGUnit 
+        The most easiest way to install the library is to upload it from the preference page of the @PLUGIN_NAME@ 
         plug-in. However that requires that you are allowed to start a FTP connection to your host.
         <p>
         Take these steps to use the embedded installer:
         <ul>
         <li>Goto 'Window -> Preferences'.</li>
-        <li>Filter for 'iRPGUnit'.</li>
         <li>Click the upload button next to option 'Runtime: Product library'.</li>
         <li>Select a connection.</li>
         <li>Check the FTP port. The default is 21.</li>
@@ -92,7 +77,7 @@
         <li>Click the [Install] button.</li>
         </ul>
         <p>
-        Refer to the iRPGUnit <a target="_help" href="@HELP_URL@">help</a> page to see more options for installing the library.
+        Refer to the @PLUGIN_NAME@ <a target="_help" href="@HELP_URL@">help</a> page to see more options for installing the library.
         <p>
         The following terms are trademarks of the IBM Corporation in the United States or other countries or both:
         <ul>
@@ -101,7 +86,7 @@
         <br>
         <hr>
         <table border="0" class="copyright">
-        <tr><td class="copyright" align="left" width="50%">Version: @VERSION_NUMBER@ - Copyright: @TODAY_YEAR@, iRPGUnit project team</td><td class="copyright" align="right" width="50%">Updated: @TODAY@</td></tr>
+        <tr><td class="copyright" align="left" width="50%">Version: @VERSION_NUMBER@ - Copyright: @TODAY_YEAR@, @PLUGIN_NAME@ Project Team</td><td class="copyright" align="right" width="50%">Updated: @TODAY@</td></tr>
         </table>
         <br>
         </div>

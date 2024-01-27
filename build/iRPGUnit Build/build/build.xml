@@ -268,7 +268,7 @@
     
     <!-- Set the name of the default home page file -->
     <property name="home.page" value="index.html" />
-    <property name="support.page" value="support.html" />
+    <property name="support.page" value="${build.pages.support}/index.html" />
     <property name="files.page" value="${build.pages.files}/index.html" />
 
     <!-- Set update site values -->
@@ -465,6 +465,9 @@
         <replace file="${build.upload.dir.web.eclipse}/index.html" token="@FILES_PAGE@"      value="${build.pages.files.url}" />
         <replace file="${build.upload.dir.web.eclipse}/index.html" token="@HELP_URL@"        value="${help.site.url}" />
 
+        <replace file="${build.upload.dir.web.eclipse}/index.html" token="@PLUGIN_NAME@"     value="${build.public.project.name}" />
+        <replace file="${build.upload.dir.web.eclipse}/index.html" token="@PROJECT_LIBRARY@" value="${build.project.library}" />
+
         <loadfile property="tmp.update.page" srcfile="${build.upload.dir.web.eclipse}/index.html" />
         <propertyregex property="replace.error.update.page" input="${tmp.update.page}" regexp="${regex.check.variables}" select="\1"/>
         <echo>Found variable: ${replace.error.update.page}</echo>
@@ -531,16 +534,20 @@
         <replace file="${build.upload.dir.home}/${home.page}" token="@ECLIPSE_MARKETPLACE@" value="${build.eclipse.marketplace.url}"/>
         <replace file="${build.upload.dir.home}/${home.page}" token="@HOME_PAGE@" value="${build.pages.homepage.url}" />
         <replace file="${build.upload.dir.home}/${home.page}" token="@PROJECT_HOME@" value="${build.pages.project.url}" />
+        <replace file="${build.upload.dir.home}/${home.page}" token="@PROJECT_BUGS@" value="${build.pages.bugs.url}" />
+        <replace file="${build.upload.dir.home}/${home.page}" token="@PLUGIN_NAME@" value="${build.public.project.name}" />
 
         <replace file="${build.upload.dir.home}/${support.page}" token="@VERSION_NUMBER@" value="${build.version}" />
         <replace file="${build.upload.dir.home}/${support.page}" token="@TODAY_YEAR@" value="${today.year}" />
         <replace file="${build.upload.dir.home}/${support.page}" token="@TODAY@" value="${today.timestamp}" />
 
         <replace file="${build.upload.dir.home}/${support.page}" token="@HOME_PAGE@" value="${build.pages.homepage.url}" />
+        <replace file="${build.upload.dir.home}/${support.page}" token="@PROJECT_BUGS@" value="${build.pages.bugs.url}" />
         <replace file="${build.upload.dir.home}/${support.page}" token="@UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
         <replace file="${build.upload.dir.home}/${support.page}" token="@BETA_UPDATE_SITE_URL@" value="${target.ide.root.beta.update.site.url}" />
         <replace file="${build.upload.dir.home}/${support.page}" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
         <replace file="${build.upload.dir.home}/${support.page}" token="@BETA_HELP_SITE_URL@" value="${target.ide.root.beta.help.site.url}" />
+        <replace file="${build.upload.dir.home}/${support.page}" token="@PLUGIN_NAME@" value="${build.public.project.name}" />
 
         <loadfile property="tmp.home.page" srcfile="${build.upload.dir.home}/${home.page}" />
         <propertyregex property="replace.error.home.page" input="${tmp.home.page}" regexp="${regex.check.variables}" select="\1"/>
@@ -579,6 +586,8 @@
         <replace file="${build.upload.dir.home}/${files.page}" token="@HOME_PAGE@" value="${build.pages.homepage.url}" />
         <replace file="${build.upload.dir.home}/${files.page}" token="@TARGET_IDE@" value="${target.ide.sf.dir}" />
         <replace file="${build.upload.dir.home}/${files.page}" token="@TARGET_IDE_FULL_NAME@" value="${target.ide.ide.product.full.name}" />
+
+        <replace file="${build.upload.dir.home}/${files.page}" token="@PLUGIN_NAME@" value="${build.public.project.name}" />
 
         <copy todir="${build.upload.dir.files}" >
             <fileset file="${project.pdf}" />
