@@ -137,6 +137,10 @@
     
     <property name="version.number.search.regex" value="[1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{1,3}|r[0-9]{0,1}))?" />
     
+    <property name="files.release.version.regex" value="(&lt;h3&gt;Release Version )([1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{1,3}|r[0-9]{0,1}))?)(&lt;/h3&gt;)" />
+    <property name="files.beta.version.regex" value="(&lt;h3&gt;Beta Version )([1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{1,3}|r[0-9]{0,1}))?)(&lt;/h3&gt;)" />
+    <property name="files.version.replace" value="\1${build.version}\3" />
+    
     <property name="validate.version.regex" value="^(${version.number.validation.regex})$" />
     <property name="release.flag.regex" value="^(?:${version.number.validation.regex})$" />
 
@@ -195,6 +199,8 @@
             <property name="beta.dir" value="${build.pages.beta.version}" />
             <property name="version.info" value="&lt;div class=&quot;beta&quot;&gt;Beta Version - ${build.version}&lt;/div&gt;" />
             <property name="help.site.url" value="${target.ide.root.beta.help.site.url}" />
+            <property name="files.version.regex" value="${files.beta.version.regex}"/>
+            <property name="files.version.replace" value="${files.beta.version.replace}"/>
         </then>
         <else>
             <echo>Building a RELEASE version.</echo>
@@ -203,6 +209,8 @@
             <property name="beta.dir" value="." />
             <property name="version.info" value="&lt;div class=&quot;release&quot;&gt;Release Version - ${build.version}&lt;/div&gt;" />
             <property name="help.site.url" value="${target.ide.root.help.site.url}" />
+            <property name="files.version.regex" value="${files.release.version.regex}"/>
+            <property name="files.version.replace" value="${files.release.version.replace}"/>
         </else>
     </if>
 
@@ -577,6 +585,9 @@
             </fileset>
         </copy>
 
+        <replace file="${build.upload.dir.home}/${files.page}" token="@VERSION_NUMBER@"  value="${build.version}" />
+        <replace file="${build.upload.dir.home}/${files.page}" token="@TODAY_YEAR@"      value="${today.year}" />
+        <replace file="${build.upload.dir.home}/${files.page}" token="@TODAY@"           value="${today.timestamp}" />
         <replace file="${build.upload.dir.home}/${files.page}" token="@PDF_FILE@" value="${build.project.pdf}" />
         <replace file="${build.upload.dir.home}/${files.page}" token="@ZIP_FILE@" value="${target.ide.zip.file.name}" />
         <replace file="${build.upload.dir.home}/${files.page}" token="@TARGET_IDE@" value="${target.ide.sf.dir}" />
@@ -750,6 +761,10 @@
             <fileset file="${workspace.home}/${target.ide.uload.dir}/${files.page}" />
         </replaceregexp>
 
+        <!-- Replace version number -->
+        <replaceregexp match="${files.version.regex}" replace="${files.version.replace}" flags="g" byline="true">
+            <fileset file="${workspace.home}/${target.ide.uload.dir}/${files.page}" />
+        </replaceregexp>
 
         <!-- Update Site -->
         <copy todir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/update-site/eclipse/${target.ide.sf.dir}" >
