@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2020 iRPGUnit Project Team
+ * Copyright (c) 2013-2024 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,6 +59,7 @@ import de.tools400.rpgunit.core.extensions.testcase.UpdateTestResultContribution
 import de.tools400.rpgunit.core.extensions.view.SelectionChangedContributionsHandler;
 import de.tools400.rpgunit.core.handler.EditRemoteSourceMemberHandler;
 import de.tools400.rpgunit.core.model.ibmi.I5ServiceProgram;
+import de.tools400.rpgunit.core.model.local.IUnitTestItemWithSourceMember;
 import de.tools400.rpgunit.core.model.local.IUnitTestTreeItem;
 import de.tools400.rpgunit.core.model.local.Outcome;
 import de.tools400.rpgunit.core.model.local.UnitTestCallStackEntry;
@@ -488,8 +489,7 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
         boolean hasItems = false;
         IStructuredSelection tSelectedItems = (IStructuredSelection)tSelectedObject;
         for (Object tSelectedItem : tSelectedItems.toArray()) {
-            if ((tSelectedItem instanceof UnitTestSuite) || (tSelectedItem instanceof UnitTestCase)
-                || (tSelectedItem instanceof UnitTestCallStackEntry)) {
+            if (isSourceMemberAvailable(tSelectedItem)) {
                 hasItems = true;
             } else {
                 return false;
@@ -497,6 +497,15 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
         }
 
         return hasItems;
+    }
+
+    private boolean isSourceMemberAvailable(Object tSelectedItem) {
+        if (tSelectedItem instanceof IUnitTestItemWithSourceMember) {
+            IUnitTestItemWithSourceMember unitTestItemWithSourceMember = (IUnitTestItemWithSourceMember)tSelectedItem;
+            boolean isSourceMemberAvailable = unitTestItemWithSourceMember.isSourceMemberAvailable();
+            return isSourceMemberAvailable;
+        }
+        return false;
     }
 
     private void setTreeItemsExpandedStatus(TreeViewer aViewer, TreeItem[] tTreeItems, boolean anExpanded) {

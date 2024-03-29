@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2019 iRPGUnit Project Team
+ * Copyright (c) 2013-2024 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -173,7 +173,25 @@ public class UnitTestCase implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IU
     }
 
     @Override
+    public boolean isSourceMemberAvailable() {
+        if (getEditableSourceMember() != null) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public EditableSourceMember getEditableSourceMember() {
+        if (isError()) {
+            /*
+             * In case of an unexpected runtime error, e.g. division by zero,
+             * the QMHRCVPM API is used for receiving the escape message. The
+             * source is not available, because the sender information of format
+             * RCVM0300 of the QMHRCVPM API does not contain the program library
+             * name and hence we cannot get its source member.
+             */
+            return null;
+        }
         return getUnitTestSuite().getEditableSourceMember();
     }
 
