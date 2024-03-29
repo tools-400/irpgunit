@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2019 iRPGUnit Project Team
+ * Copyright (c) 2013-2024 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -116,6 +116,14 @@ public class UnitTestSuite
      */
     public I5ServiceProgram getServiceProgram() {
         return serviceprogram;
+    }
+
+    @Override
+    public boolean isSourceMemberAvailable() {
+        if (getEditableSourceMember() != null) {
+            return true;
+        }
+        return false;
     }
 
     @Override
