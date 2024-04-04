@@ -145,7 +145,7 @@
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
          Special-Names.
-       Copy TESTCOBOL Of QINCLUDE.
+       Copy CBLLINKAGE Of QINCLUDE.
       * Terminate Special-Names section , because CBLLINKAGE
       * does not do that.
          .
@@ -194,7 +194,7 @@
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
          Special-Names.
-       Copy TESTCOBOL Of QINCLUDE.
+       Copy CBLLINKAGE Of QINCLUDE.
       * Terminate Special-Names section , because CBLLINKAGE
       * does not do that.
          .
@@ -223,7 +223,7 @@
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
          Special-Names.
-       Copy TESTCOBOL Of QINCLUDE.
+       Copy CBLLINKAGE Of QINCLUDE.
       * Terminate Special-Names section , because CBLLINKAGE
       * does not do that.
          .
