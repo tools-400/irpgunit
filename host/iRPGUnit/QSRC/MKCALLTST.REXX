@@ -90,6 +90,7 @@
  "CMPMOD MODULE("prdLib"/CALLPRC  ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/EXTPRC   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/EXTTST   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/JOBLOG   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/LIBL     ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/OBJECT   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/OSVERSION) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
@@ -108,6 +109,7 @@
                  prdLib"/CALLPRC    ",
                  prdLib"/EXTPRC     ",
                  prdLib"/EXTTST     ",
+                 prdLib"/JOBLOG     ",
                  prdLib"/LIBL       ",
                  prdLib"/LLIST      ",
                  prdLib"/OBJECT     ",
@@ -128,6 +130,7 @@
 
  "CRTPGM PGM("prdLib"/RUCALLTSTV) ",
         "MODULE("prdLib"/CMDRUNV    ",
+                 prdLib"/JOBLOG     ",
                  prdLib"/PGMMSG     ",
                  prdLib"/STRING)    ",
         "ENTMOD("prdLib"/CMDRUNV) ",

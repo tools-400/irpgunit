@@ -30,6 +30,9 @@
       // User space version number 3. Introduced 23.04.2017.
       // Added 'tmpl_testSuite.numTestCasesRtn'.
      D VERSION_3       c                   3
+      // User space version number 3. Introduced 01.04.2021.
+      // Added message 'receiver' and program library name.
+     D VERSION_4       c                   4
 
       *-------------------------------------------------------------------------
       * Prototypes
@@ -38,27 +41,27 @@
       /include qinclude,RMTRUNSRV
       /include qinclude,ERRORCODE
 
-     D fillUserspace   PR
+     D fillUserspace   PR                  extproc('fillUserspace')
      D   userspace                         likeds(Object_t ) const
      D   testSuite                         likeds(testsuite_t) const
      D   testSuiteName...
      D                                     likeds(Object_t) const
      D   result                            likeds(result_t) const
 
-     D createV1TestCase...
-     D                 PR            10i 0
+     D createV3TestCase...
+     D                 PR            10i 0 extproc('createV2TestCase')
      D   usPtr                         *   value
      D   testResult                        value likeds(TestResult_t)
-     D   eptr                          *   value
+     D   ePtr                          *   value
 
-     D createV2TestCase...
-     D                 PR            10i 0
+     D createV4TestCase...
+     D                 PR            10i 0 extproc('createV4TestCase')
      D   usPtr                         *   value
      D   testResult                        value likeds(TestResult_t)
      D   eptr                          *   value
 
      D min...
-     D                 PR            10i 0
+     D                 PR            10i 0 extproc('min')
      D   int1                        10i 0 value
      D   int2                        10i 0 value
 
@@ -143,8 +146,32 @@
      D                                5I 0
      D  testCase                    100A
      D  excpMessage                1024A
-
+      *
      D  tmpl_execTime_v2...
+     D                 S             20I 0 based(nullPointer)
+      *
+     D tmpl_testCase_v4...
+     D                 DS                  qualified based(nullPointer)
+     D  length                       10I 0
+     D  result                        1A
+     D  reserved_1                   11A
+     D  numberAssertions...
+     D                               10I 0
+     D  numCallStkEnt                10I 0
+     D  offsCallStkEnt...
+     D                               10I 0
+     D  offsNext                     10I 0
+     D  lenTestCase                   5I 0
+     D  lenExcpMessage...
+     D                                5I 0
+     D  offsSender                   10I 0
+     D  lenSender                     5I 0
+     D  offsReceiver                 10I 0
+     D  lenReceiver                   5I 0
+     D  testCase                    100A
+     D  excpMessage                1024A
+      *
+     D  tmpl_execTime_v4...
      D                 S             20I 0 based(nullPointer)
       *
      D tmpl_callStkEnt...
@@ -159,19 +186,32 @@
      D  procNm                      256a
      D  qSrcMbr                            likeds(SrcMbr_t)
       *
+     D tmpl_sender...
+     D                 DS           308    qualified template
+     D  qPgm                               likeds(Object_t)
+     D  qMod                               likeds(Object_t)
+     D  specNb                       10a
+     D  lenProcNm                     5i 0
+     D  procNm                      256A
+      *
+     D tmpl_receiver...
+     D                 DS                  likeds(tmpl_sender) template
+      *
       /include qinclude,TEMPLATES
 
       *-------------------------------------------------------------------------
       * Module Status
       *-------------------------------------------------------------------------
      D g_status        DS                  qualified
-     D  version                      10i 0 inz(VERSION_3)
+     D  version                      10i 0 inz(VERSION_4)
 
       *-------------------------------------------------------------------------
       * Procedures
       *-------------------------------------------------------------------------
 
-
+      // ==========================================================================
+      //  Execute a given unit test suite.
+      // ==========================================================================
      P rpgunit_runTestSuite...
      P                 B                   export
      D                 PI            10I 0
@@ -293,7 +333,9 @@
       /end-free
      P                 E
 
-
+      // ==========================================================================
+      //  Fill user space, all versions.
+      // ==========================================================================
      P fillUserspace...
      P                 B
      D                 PI
@@ -351,10 +393,10 @@
          endif;
 
          select;
-         when g_status.version >= VERSION_2;
-            header.length += createV2TestCase(usPtr: testResult: eptr);
+         when g_status.version >= VERSION_4;
+            header.length += createV4TestCase(usPtr: testResult: eptr);
          other;
-            header.length += createV1TestCase(usPtr: testResult: eptr);
+            header.length += createV3TestCase(usPtr: testResult: eptr);
          endsl;
 
          ptr = list_getNext(testSuite.testResults);
@@ -368,118 +410,17 @@
       /end-free
      P                 E
 
-
-     P createV1TestCase...
+      // ==========================================================================
+      //  Create user space with version 2 layout.
+      // ==========================================================================
+     P createV3TestCase...
      P                 B
      D                 PI            10i 0
      D   usPtr                         *   value
      D   testResult                        value likeds(TestResult_t)
-     D   eptr                          *   value
+     D   ePtr                          *   value
       *
-     D entry           DS                  likeds(tmpl_testCase_v1) based(eptr)
-      *
-     D e               S             10I 0
-     D stackEntry      DS                  likeds(tmpl_callStkEnt) based(sptr)
-     D failure         DS                  likeds(AssertFailEvtLong_t)
-     D                                     based(fptr)
-      /free
-
-         clear entry;
-         entry.lenTestCase = %len(testResult.testName);
-         entry.testCase = testResult.testName;
-         entry.result = testResult.outcome;
-         entry.numberAssertions = testResult.assertCnt;
-
-         select;
-         when (testResult.outcome = TEST_CASE_ERROR);
-            entry.lenExcpMessage = %len(testResult.error.txt);
-            entry.excpMessage = testResult.error.txt;
-            if (testResult.error.sender.specNb <> '');
-               entry.specNb = testResult.error.sender.specNb;
-            else;
-               entry.specNb = '*N';
-            endif;
-            entry.execTime = -1;
-            entry.length = %size(entry);
-            entry.offsNext = (%addr(entry) - usPtr) + entry.length;
-            entry.offsCallStkEnt = 0;
-            entry.numCallStkEnt = 0;
-
-            // Add callstack entry of exception message
-            sptr = usPtr + entry.offsNext;
-
-            stackEntry.qPgm = testResult.Error.Sender.qPgm;
-            stackEntry.qMod = testResult.Error.Sender.qMod;
-            stackEntry.specNb = testResult.Error.Sender.specNb;
-            stackEntry.procNm = testResult.Error.Sender.procNm;
-            stackEntry.lenProcNm = %len(testResult.Error.Sender.procNm);
-
-            stackEntry.length = %size(stackEntry);
-            stackEntry.offsNext = (sptr - usPtr) + stackEntry.length;
-
-            entry.length += stackEntry.length;
-            entry.offsNext += stackEntry.length;
-            entry.numCallStkEnt += 1;
-
-         when (testResult.outcome = TEST_CASE_FAILURE);
-            fptr = %addr(testResult.failure);
-            entry.lenExcpMessage = %len(testResult.failure.msg);
-            entry.excpMessage = testResult.failure.msg;
-            entry.specNb =
-                  failure.callStk.entry(1).sender.specNb;
-
-            entry.execTime = -1;
-            entry.length = %size(entry);
-            entry.offsNext = (%addr(entry) - usPtr) + entry.length;
-            entry.offsCallStkEnt = entry.offsNext;
-
-            for e = 1 to failure.callStk.numE;
-               sptr = usPtr + entry.offsNext;
-
-               stackEntry.qPgm = failure.callStk.entry(e).sender.qPgm;
-               stackEntry.qMod = failure.callStk.entry(e).sender.qMod;
-               stackEntry.lenProcNm =
-                              %len(failure.callStk.entry(e).sender.procNm);
-               stackEntry.procNm = failure.callStk.entry(e).sender.procNm;
-               stackEntry.specNb = failure.callStk.entry(e).sender.specNb;
-
-               stackEntry.qSrcMbr = SrcMbr_getModSrc(
-                                          stackEntry.qPgm: stackEntry.qMod);
-
-               stackEntry.length = %size(stackEntry);
-               stackEntry.offsNext = (sptr - usPtr) + stackEntry.length;
-
-               entry.length += stackEntry.length;
-               entry.offsNext += stackEntry.length;
-               entry.numCallStkEnt += 1;
-            endfor;
-
-         other; // including:  TEST_CASE_SUCCESS
-            entry.lenExcpMessage = 0;
-            entry.excpMessage = '';
-            entry.specNb = '';
-            entry.execTime = testResult.execTime;
-            entry.length = %size(entry);
-            entry.offsNext = (%addr(entry) - usPtr) + entry.length;
-            entry.offsCallStkEnt = 0;
-            entry.numCallStkEnt = 0;
-
-         endsl;
-
-         return entry.length;
-
-      /end-free
-     P                 E
-
-
-     P createV2TestCase...
-     P                 B
-     D                 PI            10i 0
-     D   usPtr                         *   value
-     D   testResult                        value likeds(TestResult_t)
-     D   eptr                          *   value
-      *
-     D entry           DS                  likeds(tmpl_testCase_v2) based(eptr)
+     D entry           DS                  likeds(tmpl_testCase_v2) based(ePtr)
      D execTime        S                   like(tmpl_execTime_v2) based(pexct)
       *
      D e               S             10I 0
@@ -499,8 +440,8 @@
             entry.lenExcpMessage =
                min(%len(testResult.error.txt): %len(entry.excpMessage));
             entry.excpMessage = testResult.error.txt;
-            if (testResult.error.sender.specNb <> '');
-               entry.specNb = testResult.error.sender.specNb;
+            if (testResult.error.qSndStmt.specNb <> '');
+               entry.specNb = testResult.error.qSndStmt.specNb;
             else;
                entry.specNb = '*N';
             endif;
@@ -515,11 +456,11 @@
             // Add callstack entry of exception message
             sptr = usPtr + entry.offsNext;
 
-            stackEntry.qPgm = testResult.Error.Sender.qPgm;
-            stackEntry.qMod = testResult.Error.Sender.qMod;
-            stackEntry.specNb = testResult.Error.Sender.specNb;
-            stackEntry.procNm = testResult.Error.Sender.procNm;
-            stackEntry.lenProcNm = %len(testResult.Error.Sender.procNm);
+            stackEntry.qPgm = testResult.Error.qSndStmt.qPgm;
+            stackEntry.qMod = testResult.Error.qSndStmt.qMod;
+            stackEntry.specNb = testResult.Error.qSndStmt.specNb;
+            stackEntry.procNm = testResult.Error.qSndStmt.procNm;
+            stackEntry.lenProcNm = %len(testResult.Error.qSndStmt.procNm);
 
             stackEntry.length = %size(stackEntry);
             stackEntry.offsNext = (sptr - usPtr) + stackEntry.length;
@@ -534,7 +475,7 @@
                min(%len(testResult.failure.msg): %len(entry.excpMessage));
             entry.excpMessage = testResult.failure.msg;
             entry.specNb =
-                  failure.callStk.entry(1).sender.specNb;
+                  failure.callStk.entry(1).qStmt.specNb;
 
             pexct = %addr(entry.excpMessage) + entry.lenExcpMessage;
             execTime = -1;
@@ -546,12 +487,12 @@
             for e = 1 to failure.callStk.numE;
                sptr = usPtr + entry.offsNext;
 
-               stackEntry.qPgm = failure.callStk.entry(e).sender.qPgm;
-               stackEntry.qMod = failure.callStk.entry(e).sender.qMod;
+               stackEntry.qPgm = failure.callStk.entry(e).qStmt.qPgm;
+               stackEntry.qMod = failure.callStk.entry(e).qStmt.qMod;
                stackEntry.lenProcNm =
-                              %len(failure.callStk.entry(e).sender.procNm);
-               stackEntry.procNm = failure.callStk.entry(e).sender.procNm;
-               stackEntry.specNb = failure.callStk.entry(e).sender.specNb;
+                              %len(failure.callStk.entry(e).qStmt.procNm);
+               stackEntry.procNm = failure.callStk.entry(e).qStmt.procNm;
+               stackEntry.specNb = failure.callStk.entry(e).qStmt.specNb;
 
                stackEntry.qSrcMbr = SrcMbr_getModSrc(
                                           stackEntry.qPgm: stackEntry.qMod);
@@ -583,7 +524,144 @@
       /end-free
      P                 E
 
+      // ==========================================================================
+      //  Create user space with version 4 layout.
+      // ==========================================================================
+     P createV4TestCase...
+     P                 B
+     D                 PI            10i 0
+     D   usPtr                         *   value
+     D   testResult                        value likeds(TestResult_t)
+     D   eptr                          *   value
+      *
+     D offsEntry       S             10I 0
+     D entry           DS                  likeds(tmpl_testCase_v4) based(eptr)
+     D execTime        S                   like(tmpl_execTime_v4) based(pexct)
+      *
+     D e               S             10I 0
+     D stackEntry      DS                  likeds(tmpl_callStkEnt) based(sptr)
+     D sender          DS                  likeds(tmpl_sender)
+     D                                     based(pSender)
+     D receiver        DS                  likeds(tmpl_receiver)
+     D                                     based(pReceiver)
+     D failure         DS                  likeds(AssertFailEvtLong_t)
+     D                                     based(fptr)
+      /free
 
+         offsEntry = ePtr - usPtr;
+
+         clear entry;
+         entry.lenTestCase = %len(testResult.testName);
+         entry.testCase = testResult.testName;
+         entry.result = testResult.outcome;
+         entry.numberAssertions = testResult.assertCnt;
+
+         select;
+         when (testResult.outcome = TEST_CASE_ERROR);
+            entry.lenExcpMessage =
+               min(%len(testResult.error.txt): %len(entry.excpMessage));
+            entry.excpMessage = testResult.error.txt;
+            pexct = %addr(entry.excpMessage) + entry.lenExcpMessage;
+            execTime = -1;
+            entry.length = %size(entry) +
+                           entry.lenExcpMessage + %size(execTime);
+            entry.offsNext = (%addr(entry) - usPtr) + entry.length;
+
+            entry.offsCallStkEnt = 0;
+            entry.numCallStkEnt = 0;
+
+            // Add callstack entry of exception message
+            //sptr = usPtr + entry.offsNext;
+
+            //stackEntry.qPgm = testResult.Error.qSndStmt.qPgm;
+            //stackEntry.specNb = testResult.Error.qSndStmt.specNb;
+            //stackEntry.procNm = testResult.Error.qSndStmt.procNm;
+            //stackEntry.lenProcNm = %len(testResult.Error.qSndStmt.procNm);
+
+            //stackEntry.length = %size(stackEntry);
+            //stackEntry.offsNext = (sptr - usPtr) + stackEntry.length;
+
+            pSender = usPtr + entry.offsNext;
+            entry.offsSender = entry.offsNext;
+            entry.lenSender = %size(sender);
+
+            sender.qPgm = testResult.error.qSndStmt.qPgm;
+            sender.qMod = testResult.error.qSndStmt.qMod;
+            sender.specNb = testResult.error.qSndStmt.specNb;
+            sender.lenProcNm = %len(%trimr(testResult.error.qSndStmt.procNm));
+            sender.procNm = %trimr(testResult.error.qSndStmt.procNm);
+
+            entry.length += entry.lenSender;
+            entry.offsNext += entry.lenSender;
+
+            pReceiver = usPtr + entry.offsNext;
+            entry.offsReceiver = entry.offsNext;
+            entry.lenReceiver = %size(receiver);
+
+            receiver.qPgm = testResult.error.qRcvStmt.qPgm;
+            receiver.qMod = testResult.error.qRcvStmt.qMod;
+            receiver.specNb = testResult.error.qRcvStmt.specNb;
+            receiver.lenProcNm = %len(%trimr(testResult.error.qRcvStmt.procNm));
+            receiver.procNm = %trimr(testResult.error.qRcvStmt.procNm);
+
+            entry.length += entry.lenReceiver;
+            entry.offsNext += entry.lenReceiver;
+
+         when (testResult.outcome = TEST_CASE_FAILURE);
+            fptr = %addr(testResult.failure);
+            entry.lenExcpMessage =
+               min(%len(testResult.failure.msg): %len(entry.excpMessage));
+            entry.excpMessage = testResult.failure.msg;
+
+            pexct = %addr(entry.excpMessage) + entry.lenExcpMessage;
+            execTime = -1;
+            entry.length = %size(entry) +
+                           entry.lenExcpMessage + %size(execTime);
+            entry.offsNext = (%addr(entry) - usPtr) + entry.length;
+            entry.offsCallStkEnt = entry.offsNext;
+
+            for e = 1 to failure.callStk.numE;
+               sptr = usPtr + entry.offsNext;
+
+               stackEntry.qPgm = failure.callStk.entry(e).qStmt.qPgm;
+               stackEntry.qMod = failure.callStk.entry(e).qStmt.qMod;
+               stackEntry.lenProcNm =
+                              %len(failure.callStk.entry(e).qStmt.procNm);
+               stackEntry.procNm = failure.callStk.entry(e).qStmt.procNm;
+               stackEntry.specNb = failure.callStk.entry(e).qStmt.specNb;
+
+               stackEntry.qSrcMbr = SrcMbr_getModSrc(
+                                          stackEntry.qPgm: stackEntry.qMod);
+
+               stackEntry.length = %size(stackEntry);
+               stackEntry.offsNext = (sptr - usPtr) + stackEntry.length;
+
+               entry.length += stackEntry.length;
+               entry.offsNext += stackEntry.length;
+               entry.numCallStkEnt += 1;
+            endfor;
+
+         other; // including:  TEST_CASE_SUCCESS
+            entry.lenExcpMessage = 0;
+            entry.excpMessage = '';
+            pexct = %addr(entry.excpMessage) + entry.lenExcpMessage;
+            execTime = testResult.execTime;
+            entry.length = %size(entry) +
+                           entry.lenExcpMessage + %size(execTime);
+            entry.offsNext = (%addr(entry) - usPtr) + entry.length;
+            entry.offsCallStkEnt = 0;
+            entry.numCallStkEnt = 0;
+
+         endsl;
+
+         return entry.length;
+
+      /end-free
+     P                 E
+
+      // ==========================================================================
+      //  Returns the minimum of two integer values.
+      // ==========================================================================
      P min...
      P                 B
      D                 PI            10i 0

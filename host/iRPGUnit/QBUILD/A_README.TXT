@@ -83,6 +83,16 @@ b) Optionally run the RPGUnit self tests:
 
 --------------------------
 
+Version 4.1.0 - 05.04.2024
+--------------------------
+ * Changed result view to display the sending and receiving program of
+   unexpected escape messages.
+ * Bumped user space version to 4.
+ * Dropped support support for version 1 (22.04.2013) and version 2
+   (10.10.2016) user spaces.
+
+--------------------------
+
 Version 4.0.4 - 15.01.2024
 --------------------------
  * Moved iRPGUnit to GitHub and change target release to 7.3.
@@ -135,7 +145,7 @@ Version 4.0.0 - 06.01.2022
 Version 3.2.0 - 17.04.2020
 --------------------------
  * Changed capturing of the callstack to exclude internal procedures of
-   iRPGUnit such as iEqual() or fail()..
+   iRPGUnit such as iEqual() or fail().
 
 Version 3.1.0 - 18.11.2019
 --------------------------
@@ -231,6 +241,7 @@ Version 2.2.1 - 14.06.2017
    in lower case. Now the case is ignored.
  * Now errors in setup/teardown procedures properly show up in RDi.
  * Added number of executed assertions to RPGUnit view.
+ * Bumped user space version to 3.
 
 
 Version 2.1.0 - 06.12.2016
@@ -263,6 +274,7 @@ Version 2.0.0 - 29.11.2016
  * Renamed MKCMDRUN to MKCALLTST  (source member + program).
  * Renamed RUCRTTSTT to CRTTSTT   (source member + module).
  * Renamed RUCMDRUN to RUCALLTST  (object only, see: MKCALLTST).
+ * Bumped user space version to 2.
 
 The following errors are produced by units tests of version 1.10 and lower:
 

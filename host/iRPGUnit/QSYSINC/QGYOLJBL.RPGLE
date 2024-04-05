@@ -49,6 +49,8 @@
      D  sentDate                      7a
      D  sentTime                      6a
      D  microseconds                  6a
+     D  threadId                      8a
+     D  timeZone                     10a
 
      D dsOLJL0100FldHdr...
      D                 ds                  qualified based(template)
@@ -87,6 +89,25 @@
        // - sending program name
      D OLJL_SND_PGM_NM...
      D                 c                   const(0603)
+       // - sending program library
+     D OLJL_SND_PGM_LIB...
+     D                 c                   const(0608)
+       // - sending module name
+     D OLJL_SND_MOD_NM...
+     D                 c                   const(0604)
+       // - sending procedure name
+     D OLJL_SND_PROC_NM...
+     D                 c                   const(0605)
        // - receiving program name
      D OLJL_RCV_PGM_NM...
      D                 c                   const(0703)
+       // - receiving program library
+     D OLJL_RCV_PGM_LIB...
+     D                 c                   const(0708)
+       // - receiving module name
+     D OLJL_RCV_MOD_NM...
+     D                 c                   const(0704)
+       // - receiving procedure name
+     D OLJL_RCV_PROC_NM...
+     D                 c                   const(0705)
+

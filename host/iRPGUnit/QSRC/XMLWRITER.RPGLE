@@ -186,13 +186,13 @@ dcl-proc writeTestCases;
         text += TAB + TAB + '<error message="' + escapeXml(%trimr(testResult.error.txt)) +
             '" type="' + escapeXml(%trimr(testResult.error.id)) + '">' + CRLF;
         text += escapeXml(
-            %trimr(testResult.error.sender.procNm) + ' (' +
-            %trim(testResult.error.sender.qPgm.nm) + '->' +
-            %trim(testResult.error.sender.qMod.nm) + ':');
-        if (testResult.error.sender.specNb = *blank);
+            %trimr(testResult.error.qSndStmt.procNm) + ' (' +
+            %trim(testResult.error.qSndStmt.qPgm.nm) + '->' +
+            %trim(testResult.error.qSndStmt.qMod.nm) + ':');
+        if (testResult.error.qSndStmt.specNb = *blank);
             text += '*N)' + CRLF;
         else;
-            text += escapeXml(%trim(testResult.error.sender.specNb) + ')') + CRLF;
+            text += escapeXml(%trim(testResult.error.qSndStmt.specNb) + ')') + CRLF;
         endif;
         text += TAB + TAB + '</error>' + CRLF;
 
@@ -237,15 +237,15 @@ dcl-proc buildCallStack;
   dcl-s i int(10);
 
   for i = 1 to callstack.nume;
-    if (callstack.entry(i).sender.qPgm.nm = 'RUCALLXML');
+    if (callstack.entry(i).qStmt.qPgm.nm = 'RUCALLXML');
       leave;
     endif;
 
     // example: iEqual (RUTESTCASE->ASSERT:124)
-    text += callstack.entry(i).sender.procNm + ' (' +
-        %trim(callstack.entry(i).sender.qPgm.nm) + '->' +
-        %trim(callstack.entry(i).sender.qMod.nm) + ':' +
-        %trim(callstack.entry(i).sender.specNb) + ')' + CRLF;
+    text += callstack.entry(i).qStmt.procNm + ' (' +
+        %trim(callstack.entry(i).qStmt.qPgm.nm) + '->' +
+        %trim(callstack.entry(i).qStmt.qMod.nm) + ':' +
+        %trim(callstack.entry(i).qStmt.specNb) + ')' + CRLF;
   endfor;
 
   return text;

@@ -83,7 +83,7 @@
 
      D RCVM0300Sender  ds                  qualified based(template)
      D  sndJob                       10a
-     D  sndUsrPrf                    10a
+     D  sndJobUsrPrf                 10a
      D  sndJobNb                      6a
      D  dateSent                      7a
      D  timeSent                      6a
@@ -92,23 +92,42 @@
      D  sndPgmNm                     12a
      D  sndModNm                     10a
      D  sndProcNm                   256a
-     D                                1a
+     D  reserved_1                    1a
      D  sndPgmSttCnt                 10i 0
-     D  sndPgmSttNb                  30a   dim(3)
+     D  sndPgmSttNb                  10a   dim(3)
      D  rcvPgmNm                     10a
      D  rcvModNm                     10a
      D  rcvProcNm                   256a
-     D                               10a
+     D  reserved_2                   10a
      D  rcvPgmSttCnt                 10i 0
-     D  rcvPgmSttNb                  30a   dim(3)
-     D                                2a
-      // ...last fields omitted.
+     D  rcvPgmSttNb                  10a   dim(3)
+     D  reserved_3                    2a
+     D  offsLngSndPgmNm...
+     D                               10i 0
+     D  lenLngSndPgmNm...
+     D                               10i 0
+     D  offsLngSndProcNm...
+     D                               10i 0
+     D  lenLngSndProcNm...
+     D                               10i 0
+     D  offsLngRcvProcNm...
+     D                               10i 0
+     D  lenLngRcvProcNm...
+     D                               10i 0
+     D  mSecs                         6a
+     D  sndUsrPrf                    10a
+      //   char(*)   Long sending program name
+      //   char(*)   Long sending procedure name
+      //   char(*)   Long receiving procedure name
 
       //----------------------------------------------------------------------
       //   Symbolic Constants
       //----------------------------------------------------------------------
 
        // Format Name:
+       // - brief message information format for QMHRCVPM API.
+     D BRIEF_MSG_INFO...
+     D                 c                   const('RCVM0100')
        // - extended format for QMHRCVPM API.
      D EXTENDED_MSG_INFO...
      D                 c                   const('RCVM0200')

@@ -156,10 +156,10 @@
         line += excpMsgInfo.txt;
         logRawLine( line );
 
-        if ( excpMsgInfo.sender.procNm <> *blank and
-             excpMsgInfo.sender.qPgm.nm  <> *blank and
-             excpMsgInfo.sender.specNb <> *blank );
-          logStackEntry( excpMsgInfo.sender );
+        if ( excpMsgInfo.qSndStmt.procNm <> *blank and
+             excpMsgInfo.qSndStmt.qPgm.nm  <> *blank and
+             excpMsgInfo.qSndStmt.specNb <> *blank );
+          logStackEntry( excpMsgInfo.qSndStmt );
         endif;
 
         prtLine( getLeftMargin() + lineSeparator );
@@ -193,7 +193,7 @@
         logRawLine( failure.msg );
 
         for i = 1 to failure.callStk.numE;
-          logStackEntry( failure.callStk.entry(i).sender );
+          logStackEntry( failure.callStk.entry(i).qStmt );
         endfor;
 
         prtLine( getLeftMargin() + lineSeparator );
@@ -307,12 +307,12 @@
      P logStackEntry...
      P                 b                   export
      D                 pi
-     D  sender                             const likeds(MsgSender_t)
+     D  qSndStmt                           const likeds(qStatement_t)
 
      D line            s            256a   varying
       /free
 
-        line = fmtStackEntry( sender );
+        line = fmtStackEntry( qSndStmt );
         logRawLine( line );
 
       /end-free
@@ -437,25 +437,25 @@
      P fmtStackEntry...
      P                 b
      D                 pi                  like(Line_t)
-     D  sender                             const likeds(MsgSender_t)
+     D  qSndStmt                           const likeds(qStatement_t)
 
      D line            s                   like(Line_t)
        // Specification number. Special value '*N' if not available.
      D specNb          s             10a   varying
       /free
 
-          if (%trim(sender.specNb) = '');
+          if (%trim(qSndStmt.specNb) = '');
              specNb = '*N';
           else;
-             specNb = %trimL(%trim(sender.specNb): '0');
+             specNb = %trimL(%trim(qSndStmt.specNb): '0');
           endif;
 
           line = indent
-               + %trim(sender.procNm)
+               + %trim(qSndStmt.procNm)
                + ' ('
-               + %trim(sender.qPgm.nm)
+               + %trim(qSndStmt.qPgm.nm)
                + '->'
-               + %trim(sender.qMod.nm)
+               + %trim(qSndStmt.qMod.nm)
                + ':'
                + %trim(specNb)
                + ')';

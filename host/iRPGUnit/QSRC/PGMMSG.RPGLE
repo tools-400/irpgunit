@@ -27,16 +27,28 @@
 
       /include qinclude,PGMMSG
 
-
       //----------------------------------------------------------------------
       //   Imported Procedures
       //----------------------------------------------------------------------
 
       /include qinclude,ERRORCODE
+      /include qinclude,JOBLOG
       /include qinclude,STRING
       /include qinclude,SYSTEMAPI
       /include qinclude,TEMPLATES
 
+      //----------------------------------------------------------------------
+      //   Local Procedures
+      //----------------------------------------------------------------------
+
+     D jobLogCallback...
+     D                 pr              n
+     D                                     extproc('jobLogCallback')
+     D i_hMsgInfo                      *   const
+     D i_pUserData                     *   const
+     D i_msgId                        7a   const
+     D i_msgText                    132a   const varying
+     D i_msgSentTime                   z   const
 
       //----------------------------------------------------------------------
       //   Global Fields
@@ -51,7 +63,7 @@
       //----------------------------------------------------------------------
 
       //----------------------------------------------------------------------
-      // Receives the message data of am escape program message.
+      // Receives the message data of an escape program message.
       //----------------------------------------------------------------------
      P rcvExcpMsgInfo...
      P                 b                   export
@@ -174,18 +186,81 @@
         bufPos += rawMsgHdr.msgLenR;
         bufPos += rawMsgHdr.msgHlpLenR;
         senderInfo_p = %addr(rawMsgBuf) + bufPos - 1;
-        msg.sender.qPgm.nm = senderInfo.sndPgmNm;
-        msg.sender.qPgm.lib = '*N';
-        msg.sender.qMod.nm = senderInfo.sndModNm;
-        msg.sender.qMod.lib = '*N';
-        msg.sender.procNm = senderInfo.sndProcNm;
-        msg.sender.specNb = senderInfo.sndPgmSttNb(1);
+        msg.key = rawMsgHdr.msgKey;
+        msg.qSndStmt.qPgm.nm = senderInfo.sndPgmNm;
+        msg.qSndStmt.qPgm.lib = '*N';
+        msg.qSndStmt.qMod.nm = senderInfo.sndModNm;
+        msg.qSndStmt.qMod.lib = '*N';
+        msg.qSndStmt.procNm = %trimr(senderInfo.sndProcNm);
+        msg.qSndStmt.specNb = senderInfo.sndPgmSttNb(1);
+
+        msg.qRcvStmt.qPgm.nm = senderInfo.rcvPgmNm;
+        msg.qRcvStmt.qPgm.lib = '*N';
+        msg.qRcvStmt.qMod.nm = senderInfo.rcvModNm;
+        msg.qRcvStmt.qMod.lib = '*N';
+        msg.qRcvStmt.procNm = %trimr(senderInfo.rcvProcNm);
+        msg.qRcvStmt.specNb = senderInfo.rcvPgmSttNb(1);
+
+        if (rawMsgHdr.msgKey <> '');
+          JobLogReader_getMsg(rawMsgHdr.msgKey
+                              : %paddr('jobLogCallback')
+                              : %addr(msg)
+                              : OLJL_SND_PGM_NM
+                              : OLJL_SND_PGM_LIB
+                              : OLJL_SND_MOD_NM
+                              : OLJL_SND_PROC_NM
+                              : OLJL_RCV_PGM_NM
+                              : OLJL_RCV_PGM_LIB
+                              : OLJL_RCV_MOD_NM
+                              : OLJL_RCV_PROC_NM);
+        endif;
 
         return msg;
 
       /end-free
      P                 e
 
+     P jobLogCallback...
+     P                 b
+     D                 pi              n
+     D i_hMsgInfo                      *   const
+     D i_pUserData                     *   const
+     D i_msgId                        7a   const
+     D i_msgText                    132a   const varying
+     D i_msgSentTime                   z   const
+
+     D msg             ds                  likeds(msg_t)
+     D                                     based(i_pUserData)
+     D msgInfo         ds                  likeds(jl_rd_msgInfo_t) inz
+      /free
+
+        msgInfo = JobLogReader_getMsgInfo(i_hMsgInfo);
+        if (msgInfo.key <> msg.key);
+          return *on;
+        endif;
+
+        msg.qSndStmt.qPgm.nm =
+           JobLogReader_getCharValue(i_hMsgInfo: OLJL_SND_PGM_NM: NO_VALUE);
+        msg.qSndStmt.qPgm.lib =
+           JobLogReader_getCharValue(i_hMsgInfo: OLJL_SND_PGM_LIB: NO_VALUE);
+        msg.qSndStmt.qMod.nm =
+           JobLogReader_getCharValue(i_hMsgInfo: OLJL_SND_MOD_NM: NO_VALUE);
+        msg.qSndStmt.procNm =
+           JobLogReader_getCharValue(i_hMsgInfo: OLJL_SND_PROC_NM: NO_VALUE);
+
+        msg.qRcvStmt.qPgm.nm =
+           JobLogReader_getCharValue(i_hMsgInfo: OLJL_RCV_PGM_NM: NO_VALUE);
+        msg.qRcvStmt.qPgm.lib =
+           JobLogReader_getCharValue(i_hMsgInfo: OLJL_RCV_PGM_LIB: NO_VALUE);
+        msg.qRcvStmt.qMod.nm =
+           JobLogReader_getCharValue(i_hMsgInfo: OLJL_RCV_MOD_NM: NO_VALUE);
+        msg.qRcvStmt.procNm =
+           JobLogReader_getCharValue(i_hMsgInfo: OLJL_RCV_PROC_NM: NO_VALUE);
+
+        return *off;
+
+      /end-free
+     P                 e
 
       //----------------------------------------------------------------------
       // Send an validation error message. Used by validity checker programs.
@@ -491,7 +566,7 @@
 
 
       //----------------------------------------------------------------------
-      // Retrieves trhe latest escape message between 'highMsgKey' and NOW.
+      // Retrieves the latest escape message between 'highMsgKey' and NOW.
       //----------------------------------------------------------------------
      P getLatestEscMsg...
      P                 b                   export
@@ -502,7 +577,6 @@
      D msg             ds                  likeds(Msg_t)
 
        // The message reference key.
-     D rplData         s            128a   varying
      D lowKey          s             10i 0 based(pLowKey)
      D highMsgKey      ds
      D  highKey                      10i 0
@@ -540,7 +614,7 @@
             QMHRCVPM( rawMsgBuf : %size(rawMsgBuf) :
                       ALL_MSG_INFO_WITH_SENDER_INFO :
                       THIS_CALL_STK_ENT : THIS_CALL_STK_LVL : '*ANY' :
-                      highMsgKey : NO_WAIT : action : errorCode );
+                      highMsgKey : NO_WAIT : KEEP_UNCHANGED : errorCode );
             if (errorCode.bytAvl > 0);
                if (errorCode.excID = 'CPF2410'); // Message key not found
                   reset errorCode;
@@ -564,12 +638,41 @@
                                     rcvm0300.rplDataLenR +
                                     rcvm0300.msgLenR +
                                     rcvm0300.msgHlpLenR;
-                  msg.sender.qPgm.nm = senderInfo.sndPgmNm;
-                  msg.sender.qPgm.lib = '*N';
-                  msg.sender.qMod.nm = senderInfo.sndModNm;
-                  msg.sender.qMod.lib = '*N';
-                  msg.sender.procNm = senderInfo.sndProcNm;
-                  msg.sender.specNb = senderInfo.sndPgmSttNb(1);
+                  msg.qSndStmt.qPgm.nm = senderInfo.sndPgmNm;
+                  msg.qSndStmt.qPgm.lib = '*N';
+                  msg.qSndStmt.qMod.nm = senderInfo.sndModNm;
+                  msg.qSndStmt.qMod.lib = '*N';
+                  msg.qSndStmt.procNm = %trimr(senderInfo.sndProcNm);
+                  msg.qSndStmt.specNb = senderInfo.sndPgmSttNb(1);
+
+                  msg.qRcvStmt.qPgm.nm = senderInfo.rcvPgmNm;
+                  msg.qRcvStmt.qPgm.lib = '*N';
+                  msg.qRcvStmt.qMod.nm = senderInfo.rcvModNm;
+                  msg.qRcvStmt.qMod.lib = '*N';
+                  msg.qRcvStmt.procNm = %trimr(senderInfo.rcvProcNm);
+                  msg.qRcvStmt.specNb = senderInfo.rcvPgmSttNb(1);
+
+                  if (rcvm0300.msgKey <> '');
+                    JobLogReader_getMsg(rcvm0300.msgKey
+                                        : %paddr('jobLogCallback')
+                                        : %addr(msg)
+                                        : OLJL_SND_PGM_NM
+                                        : OLJL_SND_PGM_LIB
+                                        : OLJL_SND_MOD_NM
+                                        : OLJL_SND_PROC_NM
+                                        : OLJL_RCV_PGM_NM
+                                        : OLJL_RCV_PGM_LIB
+                                        : OLJL_RCV_MOD_NM
+                                        : OLJL_RCV_PROC_NM);
+                  endif;
+
+                  if (doRmvMsg);
+                    QMHRCVPM( rawMsgBuf : 8 :
+                              BRIEF_MSG_INFO :
+                              THIS_CALL_STK_ENT : THIS_CALL_STK_LVL : '*ANY' :
+                              rcvm0300.msgKey : NO_WAIT : REMOVE_MSG :
+                              errorCode );
+                  endif;
                endif;
             endif;
          enddo;

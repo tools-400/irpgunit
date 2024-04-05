@@ -47,7 +47,7 @@ dcl-ds hReader_t qualified template;
   fieldSelect likeds(fldSelect_QGYOLJBL_t) overlay(data);
 end-ds;
 
-dcl-ds msgInfo_t qualified template;
+dcl-ds hMsgInfo_t qualified template;
   pJobLogInfo pointer;
   pMsgInfo    pointer;
 end-ds;
@@ -58,17 +58,21 @@ dcl-c FIELD_SIZE 4;
 //   PRIVATE PROTOTYPES
 //----------------------------------------------------------------------
 
-dcl-pr hasField ind extproc('hasField');
+dcl-pr hasField ind extproc(*dclcase);
   i_hReader likeds(hReader_t);
   i_fieldId int(10) const;
 end-pr;
 
-dcl-pr prepareRead ind extproc('prepareRead');
+dcl-pr prepareRead ind extproc(*dclcase);
   io_hReader  like(hJobLogReader_t);
 end-pr;
 
-dcl-pr setMsgQName ind extproc('setMsgQName');
+dcl-pr setMsgQName ind extproc(*dclcase);
   io_hReader likeds(hReader_t);
+end-pr;
+
+dcl-pr getExtMsgType char(10) extproc(*dclcase);
+  i_typeIntern char(2);
 end-pr;
 
 //----------------------------------------------------------------------
@@ -213,7 +217,7 @@ dcl-proc JobLogReader_read export;
   dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
   dcl-ds msgBasicInfo likeds(dsOLJL0100EntHdr) based(p_msgBasicInfo);
 
-  dcl-ds msgInfo likeds(msgInfo_t);
+  dcl-ds hMsgInfo likeds(hMsgInfo_t);
 
   dcl-s msgId char(7);
   dcl-s msgText varchar(132);
@@ -254,15 +258,15 @@ dcl-proc JobLogReader_read export;
       endif;
     endif;
 
-    clear msgInfo;
-    msgInfo.pJobLogInfo = %addr(jobLogList);
-    msgInfo.pMsgInfo = p_msgBasicInfo;
+    clear hMsgInfo;
+    hMsgInfo.pJobLogInfo = %addr(jobLogList);
+    hMsgInfo.pMsgInfo = p_msgBasicInfo;
 
     msgId = msgBasicInfo.msgId;
-    msgText = JobLogReader_getCharValue(%addr(msgInfo): OLJL_MSG_WITH_RPL_DATA);
+    msgText = JobLogReader_getCharValue(%addr(hMsgInfo): OLJL_MSG_WITH_RPL_DATA);
     msgSentTime = getSentTimeJobLogMsg( msgBasicInfo );
 
-    if (not callback(%addr(msgInfo): pUserData: msgId: msgText: msgSentTime));
+    if (not callback(%addr(hMsgInfo): pUserData: msgId: msgText: msgSentTime));
       leave;
     endif;
 
@@ -278,24 +282,216 @@ dcl-proc JobLogReader_read export;
 end-proc;
 
 //----------------------------------------------------------------------
+// Gets a message by key from the job log.
+// Returns:
+//  *on on success, wlse *off.
+//----------------------------------------------------------------------
+dcl-proc JobLogReader_getMsg export;
+  dcl-pi *n ind;
+    i_msgKey     char(4) const;
+    i_callback   pointer(*proc) const;
+    i_pUserData  pointer options(*nopass) const;
+    i_fieldId01  int(10) options(*nopass) const;
+    i_fieldId02  int(10) options(*nopass) const;
+    i_fieldId03  int(10) options(*nopass) const;
+    i_fieldId04  int(10) options(*nopass) const;
+    i_fieldId05  int(10) options(*nopass) const;
+    i_fieldId06  int(10) options(*nopass) const;
+    i_fieldId07  int(10) options(*nopass) const;
+    i_fieldId08  int(10) options(*nopass) const;
+    i_fieldId09  int(10) options(*nopass) const;
+    i_fieldId10  int(10) options(*nopass) const;
+    i_fieldId11  int(10) options(*nopass) const;
+    i_fieldId12  int(10) options(*nopass) const;
+    i_fieldId13  int(10) options(*nopass) const;
+    i_fieldId14  int(10) options(*nopass) const;
+    i_fieldId15  int(10) options(*nopass) const;
+    i_fieldId16  int(10) options(*nopass) const;
+  end-pi;
+
+  dcl-s hReader like(hJobLogReader_t);
+  dcl-ds hReaderDs likeds(hReader_t) based(pHReaderDS);
+
+  pHReaderDS = %addr(hReader);
+
+  hReader = JobLogReader_init(JL_RD_NEXT);
+  hReaderDs.fieldSelect.startMsgKey = i_msgKey;
+
+  if (%parms() >= %parmnum(i_fieldId01));
+    JobLogReader_addField(hReader: i_fieldId01);
+  endif;
+
+  if (%parms() >= %parmnum(i_fieldId02));
+    JobLogReader_addField(hReader: i_fieldId02);
+  endif;
+
+  if (%parms() >= %parmnum(i_fieldId03));
+    JobLogReader_addField(hReader: i_fieldId03);
+  endif;
+
+  if (%parms() >= %parmnum(i_fieldId04));
+    JobLogReader_addField(hReader: i_fieldId04);
+  endif;
+
+  if (%parms() >= %parmnum(i_fieldId05));
+    JobLogReader_addField(hReader: i_fieldId05);
+  endif;
+
+  if (%parms() >= %parmnum(i_fieldId06));
+    JobLogReader_addField(hReader: i_fieldId06);
+  endif;
+
+  if (%parms() >= %parmnum(i_fieldId07));
+    JobLogReader_addField(hReader: i_fieldId07);
+  endif;
+
+  if (%parms() >= %parmnum(i_fieldId08));
+    JobLogReader_addField(hReader: i_fieldId08);
+  endif;
+
+  if (%parms() >= %parmnum(i_fieldId09));
+    JobLogReader_addField(hReader: i_fieldId09);
+  endif;
+
+  if (%parms() >= %parmnum(i_fieldId10));
+    JobLogReader_addField(hReader: i_fieldId10);
+  endif;
+
+  if (%parms() >= %parmnum(i_fieldId11));
+    JobLogReader_addField(hReader: i_fieldId11);
+  endif;
+
+  if (%parms() >= %parmnum(i_fieldId12));
+    JobLogReader_addField(hReader: i_fieldId12);
+  endif;
+
+  if (%parms() >= %parmnum(i_fieldId13));
+    JobLogReader_addField(hReader: i_fieldId13);
+  endif;
+
+  if (%parms() >= %parmnum(i_fieldId14));
+    JobLogReader_addField(hReader: i_fieldId14);
+  endif;
+
+  if (%parms() >= %parmnum(i_fieldId15));
+    JobLogReader_addField(hReader: i_fieldId15);
+  endif;
+
+  if (%parms() >= %parmnum(i_fieldId16));
+    JobLogReader_addField(hReader: i_fieldId16);
+  endif;
+
+  return JobLogReader_read(hReader: i_callback: i_pUserData);
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Returns the message information of the current entry.
+// Returns:
+//  jl_rd_msgInfo_t
+//----------------------------------------------------------------------
+dcl-proc JobLogReader_getMsgInfo export;
+  dcl-pi *n likeds(jl_rd_msgInfo_t);
+  i_hMsgInfo   pointer const;
+  end-pi;
+
+  dcl-ds msgInfoRtn likeds(jl_rd_msgInfo_t);
+
+  dcl-ds hMsgInfo likeds(hMsgInfo_t) based(i_hMsgInfo);
+    dcl-ds msgBasicInfo likeds(dsOLJL0100EntHdr) based(hMsgInfo.pMsgInfo);
+
+  msgInfoRtn.severity = msgBasicInfo.msgSeverity;
+  msgInfoRtn.id = msgBasicInfo.msgId;
+
+  msgInfoRtn.type = getExtMsgType(msgBasicInfo.msgType);
+
+  msgInfoRtn.key = msgBasicInfo.msgKey;
+  msgInfoRtn.file = msgBasicInfo.msgfNm;
+  msgInfoRtn.lib = msgBasicInfo.msgfLib;
+  msgInfoRtn.sndTime = %date(msgBasicInfo.sentDate: *cymd0) +
+                       %time(msgBasicInfo.sentTime: *hms0) +
+                       %mseconds(%dec(msgBasicInfo.microseconds: 6: 0));
+  msgInfoRtn.threadId = msgBasicInfo.threadId;
+  msgInfoRtn.timeZone = msgBasicInfo.timeZone;
+
+  return msgInfoRtn;
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Returns the external message type.
+//----------------------------------------------------------------------
+
+dcl-proc getExtMsgType;
+  dcl-pi *n char(10);
+    i_typeIntern char(2);
+  end-pi;
+
+  dcl-s msgType char(10);
+
+  select;
+  when (i_typeIntern = '01');
+     msgType = '*COMP';
+  when (i_typeIntern = '02');
+     msgType = '*DIAG';
+  when (i_typeIntern = '04');
+     msgType = '*INFO';
+  when (i_typeIntern = '05');
+     msgType = '*INQ';
+  when (i_typeIntern = '06');
+     msgType = '*COPY';
+  when (i_typeIntern = '08');
+     msgType = '*RQS';
+  when (i_typeIntern = '10');
+     msgType = '*RQS';
+  when (i_typeIntern = '14');
+     msgType = '*NOTIFY';
+  when (i_typeIntern = '15');
+     msgType = '*ESCAPE';
+  when (i_typeIntern = '16');
+     msgType = '*NOTIFY';
+  when (i_typeIntern = '17');
+     msgType = '*ESCAPE';
+  when (i_typeIntern = '21');
+     msgType = '*REPLY';
+  when (i_typeIntern = '22');
+     msgType = '*REPLY';
+  when (i_typeIntern = '23');
+     msgType = '*REPLY';
+  when (i_typeIntern = '24');
+     msgType = '*REPLY';
+  when (i_typeIntern = '25');
+     msgType = '*REPLY';
+  when (i_typeIntern = '26');
+     msgType = '*REPLY';
+  other;
+     msgType = '*N';
+  endsl;
+
+  return msgType;
+
+end-proc;
+
+//----------------------------------------------------------------------
 // Returns the value of a character field of a given job log message.
 //----------------------------------------------------------------------
 dcl-proc JobLogReader_getCharValue export;
   dcl-pi *n varchar(3000);
     i_hMsgInfo   pointer const;
     i_fieldId    int(10) const;
+    i_dftValue   varchar(256) options(*nopass) const;
   end-pi;
 
   dcl-s value varchar(3000);
 
-  dcl-ds msgInfo likeds(msgInfo_t) based(i_hMsgInfo);
+  dcl-ds hMsgInfo likeds(hMsgInfo_t) based(i_hMsgInfo);
 
-  dcl-ds msgBasicInfo likeds(dsOLJL0100EntHdr) based(msgInfo.pMsgInfo);
+  dcl-ds msgBasicInfo likeds(dsOLJL0100EntHdr) based(hMsgInfo.pMsgInfo);
   dcl-ds msgFieldInfo likeds(dsOLJL0100FldHdr) based(p_msgFieldInfo);
   dcl-s data char(3000) based(pData);
   dcl-s i int(10);
 
-  p_msgFieldInfo = msgInfo.pJobLogInfo + msgBasicInfo.retFldOff;
+  p_msgFieldInfo = hMsgInfo.pJobLogInfo + msgBasicInfo.retFldOff;
 
   for i = 1 to msgBasicInfo.retFldCnt;
 
@@ -309,8 +505,12 @@ dcl-proc JobLogReader_getCharValue export;
       endif;
     endif;
 
-    p_msgFieldInfo = msgInfo.pJobLogInfo + msgFieldInfo.nextFldOff;
+    p_msgFieldInfo = hMsgInfo.pJobLogInfo + msgFieldInfo.nextFldOff;
   endfor;
+
+  if (value = '' and %parms() >= %parmnum(i_dftValue));
+    value = i_dftValue;
+  endif;
 
   return value;
 
