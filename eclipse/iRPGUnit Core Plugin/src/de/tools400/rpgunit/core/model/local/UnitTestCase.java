@@ -13,9 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.IPropertySheetEntry;
 import org.eclipse.ui.views.properties.IPropertySource;
-import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import de.tools400.rpgunit.core.Messages;
 import de.tools400.rpgunit.core.extensions.testcase.IRPGUnitTestCaseItem;
@@ -23,14 +21,13 @@ import de.tools400.rpgunit.core.extensions.view.IRPGUnitSpooledFile;
 import de.tools400.rpgunit.core.jobs.ibmi.RPGUnitTestRunner;
 import de.tools400.rpgunit.core.model.ibmi.I5ServiceProgram;
 
-public class UnitTestCase implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IUnitTestItemWithSourceMember, IPropertySource {
+public class UnitTestCase extends AbstractUnitTestObject
+    implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IUnitTestItemWithSourceMember, IPropertySource {
 
     private static final String PROPERTY_ID_EXECUTION_TIME = "executionTime"; //$NON-NLS-1$
-
     private static final String PROPERTY_ID_OUTCOME = "outcome"; //$NON-NLS-1$
-
     private static final String PROPERTY_ID_ERROR_MESSAGE = "errorMessage"; //$NON-NLS-1$
-
+    private static final String PROPERTY_ID_PROCEDURE_NAME = "procedureName"; //$NON-NLS-1$
     private static final String PROPERTY_ID_STATEMENT_NUMBER = "statementNumber"; //$NON-NLS-1$
 
     private UnitTestSuite unitTestSuite;
@@ -46,7 +43,6 @@ public class UnitTestCase implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IU
     private long executionTime;
     private Date lastRunDate;
     private Outcome outcome;
-    private String statementNumber;
 
     public UnitTestCase(String aProcedure) {
         this.unitTestSuite = null;
@@ -182,6 +178,7 @@ public class UnitTestCase implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IU
 
     @Override
     public EditableSourceMember getEditableSourceMember() {
+
         if (isError()) {
             /*
              * In case of an unexpected runtime error, e.g. division by zero,
@@ -192,7 +189,15 @@ public class UnitTestCase implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IU
              */
             return null;
         }
-        return getUnitTestSuite().getEditableSourceMember();
+
+        EditableSourceMember editableSourceMember;
+        if (callStackEntries.isEmpty()) {
+            editableSourceMember = null;
+        } else {
+            editableSourceMember = callStackEntries.get(0).getEditableSourceMember();
+        }
+
+        return editableSourceMember;
     }
 
     public IRPGUnitSpooledFile getSpooledFile() {
@@ -201,11 +206,14 @@ public class UnitTestCase implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IU
 
     @Override
     public int getStatementNumber() {
-        try {
-            return Integer.parseInt(statementNumber);
-        } catch (Exception e) {
-            return -1;
+
+        int statementNumber;
+        if (callStackEntries.isEmpty()) {
+            statementNumber = -1;
+        } else {
+            statementNumber = callStackEntries.get(0).getStatementNumber();
         }
+        return statementNumber;
     }
 
     /**
@@ -221,17 +229,13 @@ public class UnitTestCase implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IU
         return errorMessage;
     }
 
-    /**
-     * Sets the statement number. Called only by the @link
-     * {@link RPGUnitTestRunner}.
-     * 
-     * @param aStatementNumber - Statement number as returned by RUPGMRMT.
-     */
-    public void setStatementNumber(String aStatementNumber) {
-        statementNumber = aStatementNumber.trim();
-    }
-
     public String getStatementNumberText() {
+        String statementNumber;
+        if (callStackEntries.isEmpty()) {
+            statementNumber = "*N";
+        } else {
+            statementNumber = callStackEntries.get(0).getStatementNumberText();
+        }
         return statementNumber;
     }
 
@@ -284,7 +288,6 @@ public class UnitTestCase implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IU
         setMessage(aUnitTestCase.errorMessage);
         setStatistics(aUnitTestCase.getLastRunDate(), aUnitTestCase.getExecutionTime());
         setOutcome(aUnitTestCase.getOutcome());
-        setStatementNumber(aUnitTestCase.getStatementNumberText());
 
         callStackEntries.clear();
         for (UnitTestCallStackEntry tUnitTestCallStackEntry : aUnitTestCase.getCallStack()) {
@@ -298,7 +301,6 @@ public class UnitTestCase implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IU
         setMessage(""); //$NON-NLS-1$ ;
         resetStatistics();
         setOutcome(Outcome.CANCELED);
-        setStatementNumber(""); //$NON-NLS-1$
         callStackEntries.clear();
     }
 
@@ -322,36 +324,35 @@ public class UnitTestCase implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IU
 
         List<IPropertyDescriptor> descriptors = new ArrayList<IPropertyDescriptor>();
 
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_STATEMENT_NUMBER, Messages.Statement_number, false));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_ERROR_MESSAGE, Messages.Error_message, false));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_OUTCOME, Messages.Result, false));
+        descriptors.add(createPropertyDescriptor(PROPERTY_ID_PROCEDURE_NAME, Messages.Procedure, false, Messages.Category_Statement));
 
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_EXECUTION_TIME, Messages.Execution_time, true));
-
-        return descriptors.toArray(new IPropertyDescriptor[descriptors.size()]);
-    }
-
-    private IPropertyDescriptor createPropertyDescriptor(String id, String displayName, boolean advanced) {
-
-        PropertyDescriptor descriptor = new PropertyDescriptor(id, displayName);
-        if (advanced) {
-            descriptor.setFilterFlags(new String[] { IPropertySheetEntry.FILTER_ID_EXPERT });
+        if (!isPropertyEmpty((String)getPropertyValue(PROPERTY_ID_STATEMENT_NUMBER))) {
+            descriptors.add(createPropertyDescriptor(PROPERTY_ID_STATEMENT_NUMBER, Messages.Statement_number, false, Messages.Category_Statement));
         }
 
-        return descriptor;
+        if (!isPropertyEmpty((String)getPropertyValue(PROPERTY_ID_ERROR_MESSAGE))) {
+            descriptors.add(createPropertyDescriptor(PROPERTY_ID_ERROR_MESSAGE, Messages.Error_message, false, Messages.Category_Result));
+        }
+
+        descriptors.add(createPropertyDescriptor(PROPERTY_ID_OUTCOME, Messages.Result, false, Messages.Category_Result));
+        descriptors.add(createPropertyDescriptor(PROPERTY_ID_EXECUTION_TIME, Messages.Execution_time, true, Messages.Category_Result));
+
+        return descriptors.toArray(new IPropertyDescriptor[descriptors.size()]);
     }
 
     @Override
     public Object getPropertyValue(Object id) {
 
-        if (PROPERTY_ID_STATEMENT_NUMBER.equals(id)) {
-            return statementNumber;
+        if (PROPERTY_ID_PROCEDURE_NAME.equals(id)) {
+            return getProcedure();
+        } else if (PROPERTY_ID_STATEMENT_NUMBER.equals(id)) {
+            return getStatementNumberText();
         } else if (PROPERTY_ID_ERROR_MESSAGE.equals(id)) {
-            return errorMessage;
+            return getMessage();
         } else if (PROPERTY_ID_EXECUTION_TIME.equals(id)) {
-            return executionTimeFormatter.formatExecutionTime(executionTime) + " s"; //$NON-NLS-1$
+            return executionTimeFormatter.formatExecutionTime(getExecutionTime()) + " s"; //$NON-NLS-1$
         } else if (PROPERTY_ID_OUTCOME.equals(id)) {
-            return outcome.getLabel();
+            return getOutcome().getLabel();
         }
 
         return null;
@@ -369,5 +370,4 @@ public class UnitTestCase implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IU
     @Override
     public void setPropertyValue(Object arg0, Object arg1) {
     }
-
 }

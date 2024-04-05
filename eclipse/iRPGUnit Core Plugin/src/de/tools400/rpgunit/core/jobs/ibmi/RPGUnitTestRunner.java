@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2019 iRPGUnit Project Team
+ * Copyright (c) 2013-2024 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,22 +64,16 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
      */
 
     /**
-     * User space version number 1. Introduced 22.04.2013.<br>
-     * Changed because of enhancements for RPGUnit plug-in.
-     */
-    private static int VERSION_1 = 1;
-
-    /**
-     * User space version number 2. Introduced 10.10.2016.<br>
-     * Changed exception message to varsize up to 1024 bytes.
-     */
-    private static int VERSION_2 = 2;
-
-    /**
      * User space version number 3. Introduced 23.04.2017.<br>
      * Added 'tmpl_testSuite.numTestCasesRtn'.
      */
     private static int VERSION_3 = 3;
+
+    /**
+     * User space version number 4. Introduced 01.04.2024.<br>
+     * Added message 'receiver' and program library name.
+     */
+    private static int VERSION_4 = 4;
 
     /**
      * Name of the remote test suite driver program.
@@ -379,21 +373,6 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
      */
     private static final int ENTRY_PROCEDURE = 100;
 
-    /**
-     * String. Exception message of a test case that ended with an error.
-     */
-    private static final int ENTRY_EXCP_MESSAGE = 200;
-
-    /**
-     * Long Integer. Execution time of the test case.
-     */
-    private static final int ENTRY_EXCP_TIME = 8;
-
-    /**
-     * String. Reserved.
-     */
-    private static final int ENTRY_RESERVED_2 = 40;
-
     private UserSpace userSpace = null;
 
     /*
@@ -626,7 +605,7 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
         int[] offset = new int[] { 0 };
         offset[0] = offset[0] + HEADER_TOTAL_LENGTH;
         int tVersion = extractInt(bytes, offset);
-        if (tVersion != VERSION_1 && tVersion != VERSION_2 && tVersion != VERSION_3) {
+        if (tVersion != VERSION_3 && tVersion != VERSION_4) {
             throw new InvalidVersionException(tVersion);
         }
 
@@ -676,7 +655,7 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             testResult.setSpooledFile(null);
         }
 
-        retrieveTestCases(bytes, tTotalSizeUserSpace, tOffsetTestCases, numTestCasesRtn, testResult, tVersion);
+            retrieveTestCases(bytes, tTotalSizeUserSpace, tOffsetTestCases, numTestCasesRtn, testResult, tVersion);
 
         assert tNumberAssertions == testResult.getNumberAssertions() : "Number of assertions does not match"; //$NON-NLS-1$
         // assert tNumberFailures == tTestSuite.getNumberFailures() :
@@ -719,7 +698,6 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
 
         String tOutcome = null;
         String tReserved_1 = null;
-        String tStatementNumber = null;
         int tAssertions = 0;
         short tLenExcpMessage = 0;
         String tExcpMessage = null;
@@ -739,7 +717,6 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             tEntryLength = extractInt(aUserSpaceBytes, tOffset);
             tOutcome = extractString(aUserSpaceBytes, tOffset, ENTRY_OUTCOME);
             tReserved_1 = extractString(aUserSpaceBytes, tOffset, ENTRY_RESERVED_1);
-            tStatementNumber = extractString(aUserSpaceBytes, tOffset, ENTRY_STATEMENT_NUMBER);
             tAssertions = extractInt(aUserSpaceBytes, tOffset);
             tNumCallStkEnt = extractInt(aUserSpaceBytes, tOffset);
             tOffsCallStkEnt = extractInt(aUserSpaceBytes, tOffset);
@@ -748,20 +725,14 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             tLenExcpMessage = extractShort(aUserSpaceBytes, tOffset);
             tProcedure = extractString(aUserSpaceBytes, tOffset, ENTRY_PROCEDURE).trim();
 
-            if (aVersion == 1) {
-                tExcpMessage = extractString(aUserSpaceBytes, tOffset, ENTRY_EXCP_MESSAGE).trim();
-                tExecutionTime = extractLong(aUserSpaceBytes, tOffset);
-                tOffset[0] = tOffset[0] + ENTRY_RESERVED_2;
-            } else {
-                tExcpMessage = extractString(aUserSpaceBytes, tOffset, tLenExcpMessage).trim();
-                tExecutionTime = extractLong(aUserSpaceBytes, tOffset);
-            }
+            tExcpMessage = extractString(aUserSpaceBytes, tOffset, tLenExcpMessage).trim();
+            tExecutionTime = extractLong(aUserSpaceBytes, tOffset);
+
             UnitTestCase testCase = new UnitTestCase(tProcedure);
             testCase.setOutcome(tOutcome);
             testCase.setStatistics(tLastRunDate, tExecutionTime);
             testCase.setAssertions(tAssertions);
             testCase.setMessage(tExcpMessage);
-            testCase.setStatementNumber(tStatementNumber);
             aTestSuite.addUnitTestCase(testCase);
 
             retrieveTestCaseCallStack(aUserSpaceBytes, tEntryLength, tOffsCallStkEnt, tNumCallStkEnt, testCase, aVersion);
@@ -801,21 +772,23 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
 
         for (int s = 0; s < aNumCallStackEntries; s++) {
             String tPgmNm = extractString(aUserSpaceBytes, tOffset, CALL_STACK_PROGRAM);
-            String tPgmLibNm = extractString(aUserSpaceBytes, tOffset, CALL_STACK_PROGRAM_LIB).trim();
+            String tPgmLibNm = extractString(aUserSpaceBytes, tOffset, CALL_STACK_PROGRAM_LIB);
             String tModNm = extractString(aUserSpaceBytes, tOffset, CALL_STACK_MODULE);
-            String tModLibNm = extractString(aUserSpaceBytes, tOffset, CALL_STACK_MODULE_LIB).trim();
+            String tModLibNm = extractString(aUserSpaceBytes, tOffset, CALL_STACK_MODULE_LIB);
             String tSpecNb = extractString(aUserSpaceBytes, tOffset, CALL_STACK_STATEMENT_NUMBER);
             int tLength = extractInt(aUserSpaceBytes, tOffset);
             int tOffsNext = extractInt(aUserSpaceBytes, tOffset);
             String tReserved_1 = extractString(aUserSpaceBytes, tOffset, CALL_STACK_RESERVED_1);
             short tLenProcNm = extractShort(aUserSpaceBytes, tOffset);
-            String tProcNm = extractString(aUserSpaceBytes, tOffset, CALL_STACK_PROCEDURE).trim();
+            String tProcNm = extractString(aUserSpaceBytes, tOffset, CALL_STACK_PROCEDURE);
 
-            String tSrcFile = extractString(aUserSpaceBytes, tOffset, CALL_STACK_SOURCE_FILE).trim();
-            String tSrcLibrary = extractString(aUserSpaceBytes, tOffset, CALL_STACK_SOURCE_LIBRARY).trim();
-            String tSrcMember = extractString(aUserSpaceBytes, tOffset, CALL_STACK_SOURCE_MEMBER).trim();
+            String tSrcFile = extractString(aUserSpaceBytes, tOffset, CALL_STACK_SOURCE_FILE);
+            String tSrcLibrary = extractString(aUserSpaceBytes, tOffset, CALL_STACK_SOURCE_LIBRARY);
+            String tSrcMember = extractString(aUserSpaceBytes, tOffset, CALL_STACK_SOURCE_MEMBER);
 
-            UnitTestCallStackEntry tStackEntry = new UnitTestCallStackEntry(tPgmNm, tModNm, tProcNm, tSpecNb, tSrcFile, tSrcLibrary, tSrcMember);
+            UnitTestCallStackEntry tStackEntry = new UnitTestCallStackEntry(tPgmNm, tPgmLibNm, tModNm, tModLibNm, tProcNm, tSpecNb, tSrcFile,
+                tSrcLibrary, tSrcMember);
+
             aTestCase.addCallStackEntry(tStackEntry);
 
             tOffset[0] = tOffsNext;
@@ -845,8 +818,9 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
 
             I5ObjectName tJobDescription = getJobDescription(aUnitTestServiceprogram);
             if (!isJobDescriptionAvailable(tJobDescription)) {
-                throw new UnitTestException(Messages.bind(Messages.Can_not_execute_unit_test_A_B_due_to_missing_job_description_C, new Object[] {
-                    aUnitTestServiceprogram.getLibrary(), aUnitTestServiceprogram.getName(), tJobDescription.toString() }),
+                throw new UnitTestException(
+                    Messages.bind(Messages.Can_not_execute_unit_test_A_B_due_to_missing_job_description_C,
+                        new Object[] { aUnitTestServiceprogram.getLibrary(), aUnitTestServiceprogram.getName(), tJobDescription.toString() }),
                     UnitTestException.Type.unexpectedError);
             }
         }
@@ -931,7 +905,8 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             captureJobLog(program, aServiceProgram, startingMessageKey);
             throw new UnitTestException(
                 Messages.bind(Messages.Unit_test_A_B_ended_unexpected_with_error_message, new Object[] { aServiceProgram.getLibrary(),
-                    aServiceProgram.getName(), as400ErrorMsg.toString(), program.getServerJob().toString() }), UnitTestException.Type.unexpectedError);
+                    aServiceProgram.getName(), as400ErrorMsg.toString(), program.getServerJob().toString() }),
+                UnitTestException.Type.unexpectedError);
         }
 
         if (Preferences.DEBUG_CAPTURE_JOBLOG_ALL.equals(captureJobLog)) {
@@ -952,8 +927,8 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss"); //$NON-NLS-1$
 
         String now = formatter.format(new Date());
-        String newJobLogEntry = Messages.bind(Messages.A_Result_of_iRPGUnit_Test_Case_B_served_by_server_job_C, new Object[] { now, aServiceProgram,
-            program.getServerJob() });
+        String newJobLogEntry = Messages.bind(Messages.A_Result_of_iRPGUnit_Test_Case_B_served_by_server_job_C,
+            new Object[] { now, aServiceProgram, program.getServerJob() });
         logMessage(newJobLogEntry);
 
         QueuedMessage[] jobLogMessages = getJobLog(program.getServerJob(), startingMessageKey, -1);
@@ -987,13 +962,11 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
                 newJobLogEntry += NEW_LINE + messageHelp;
             }
 
-            newJobLogEntry += NEW_LINE
-                + createProgramEntry(formatted, Messages.Sending, jobLogMessage.getFromProgram(), jobLogMessage.getSendingModuleName(),
-                    jobLogMessage.getSendingProcedureName(), jobLogMessage.getSendingStatementNumbers());
+            newJobLogEntry += NEW_LINE + createProgramEntry(formatted, Messages.Sending, jobLogMessage.getFromProgram(),
+                jobLogMessage.getSendingModuleName(), jobLogMessage.getSendingProcedureName(), jobLogMessage.getSendingStatementNumbers());
 
-            newJobLogEntry += NEW_LINE
-                + createProgramEntry(formatted, Messages.Receiving, jobLogMessage.getReceivingProgramName(), jobLogMessage.getReceivingModuleName(),
-                    jobLogMessage.getReceivingProcedureName(), jobLogMessage.getReceiverStatementNumbers());
+            newJobLogEntry += NEW_LINE + createProgramEntry(formatted, Messages.Receiving, jobLogMessage.getReceivingProgramName(),
+                jobLogMessage.getReceivingModuleName(), jobLogMessage.getReceivingProcedureName(), jobLogMessage.getReceiverStatementNumbers());
 
             logMessage(newJobLogEntry);
         }
@@ -1086,13 +1059,13 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
         String message;
         if (formatted) {
             label = "   " + label;
-            message = Messages.bind(Messages.A_program_B_module_C_procedure_D_statement_E_FORMATTED, new Object[] { label,
-                getValueOrNull(programName), label, getValueOrNull(moduleName), label, getValueOrNull(procedureName), label,
-                getValueOrNull(statement) });
+            message = Messages.bind(Messages.A_program_B_module_C_procedure_D_statement_E_FORMATTED,
+                new Object[] { label, getValueOrNull(programName), label, getValueOrNull(moduleName), label, getValueOrNull(procedureName), label,
+                    getValueOrNull(statement) });
         } else {
-            message = Messages.bind(Messages.A_program_B_module_C_procedure_D_statement_E_UNFORMATTED, new Object[] { label,
-                getValueOrNull(programName), label, getValueOrNull(moduleName), label, getValueOrNull(procedureName), label,
-                getValueOrNull(statement) });
+            message = Messages.bind(Messages.A_program_B_module_C_procedure_D_statement_E_UNFORMATTED,
+                new Object[] { label, getValueOrNull(programName), label, getValueOrNull(moduleName), label, getValueOrNull(procedureName), label,
+                    getValueOrNull(statement) });
         }
 
         return message.toString();

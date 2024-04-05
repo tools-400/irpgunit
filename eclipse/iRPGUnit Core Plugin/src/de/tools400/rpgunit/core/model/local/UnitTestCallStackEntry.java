@@ -12,51 +12,43 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.IPropertySheetEntry;
 import org.eclipse.ui.views.properties.IPropertySource;
-import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import de.tools400.rpgunit.core.Messages;
 
-public class UnitTestCallStackEntry implements IUnitTestItemWithSourceMember, IPropertySource {
+public class UnitTestCallStackEntry extends AbstractUnitTestObject implements IUnitTestItemWithSourceMember, IPropertySource {
 
     private static final String PROPERTY_ID_STATEMENT_NUMBER = "statementNumber"; //$NON-NLS-1$
-
     private static final String PROPERTY_ID_SOURCE_MEMBER = "sourceMember"; //$NON-NLS-1$
-
     private static final String PROPERTY_ID_SOURCE_LIBRARY = "sourceLibrary"; //$NON-NLS-1$
-
     private static final String PROPERTY_ID_SOURCE_FILE = "sourceFile"; //$NON-NLS-1$
-
     private static final String PROPERTY_ID_PROCEDURE = "procedure"; //$NON-NLS-1$
-
+    private static final String PROPERTY_ID_MODULE_LIBRARY = "moduleLibrary"; //$NON-NLS-1$
     private static final String PROPERTY_ID_MODULE = "module"; //$NON-NLS-1$
-
+    private static final String PROPERTY_ID_PROGRAM_LIBRARY = "programLibrary"; //$NON-NLS-1$
     private static final String PROPERTY_ID_PROGRAM = "program"; //$NON-NLS-1$
 
     private UnitTestCase unitTestCase;
 
     private String program;
-
+    private String programLibrary;
     private String module;
-
+    private String moduleLibrary;
     private String procedure;
-
     private String statementNumber;
-
     private String sourceFile;
-
     private String sourceLibrary;
-
     private String sourceMember;
 
     private EditableSourceMember editableSourceMember;
 
-    public UnitTestCallStackEntry(String aProgram, String aModule, String aProcedure, String aStatementNumber, String aSourceFile,
-        String aSourceLibrary, String aSourceMember) {
+    public UnitTestCallStackEntry(String aProgram, String aProgramLibrary, String aModule, String aModuleLibrary, String aProcedure,
+        String aStatementNumber, String aSourceFile, String aSourceLibrary, String aSourceMember) {
         unitTestCase = null;
         program = aProgram.trim();
+        programLibrary = aProgramLibrary.trim();
         module = aModule.trim();
+        moduleLibrary = aModuleLibrary.trim();
         procedure = aProcedure.trim();
         statementNumber = aStatementNumber.trim();
         sourceFile = aSourceFile.trim();
@@ -103,8 +95,16 @@ public class UnitTestCallStackEntry implements IUnitTestItemWithSourceMember, IP
         return this.program;
     }
 
+    public String getProgramLibrary() {
+        return this.programLibrary;
+    }
+
     public String getModule() {
         return this.module;
+    }
+
+    public String getModuleLibrary() {
+        return this.moduleLibrary;
     }
 
     public String getProcedure() {
@@ -137,25 +137,20 @@ public class UnitTestCallStackEntry implements IUnitTestItemWithSourceMember, IP
 
         List<IPropertyDescriptor> descriptors = new ArrayList<IPropertyDescriptor>();
 
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_PROGRAM, Messages.Program, false));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_MODULE, Messages.Module, false));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_PROCEDURE, Messages.Procedure, false));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_SOURCE_FILE, Messages.Source_file, false));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_SOURCE_LIBRARY, Messages.Source_library, false));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_SOURCE_MEMBER, Messages.Source_member, false));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_STATEMENT_NUMBER, Messages.Statement_number, false));
+        descriptors.add(createPropertyDescriptor(PROPERTY_ID_PROGRAM, Messages.Program, false, Messages.Category_Program));
+        descriptors.add(createPropertyDescriptor(PROPERTY_ID_PROGRAM_LIBRARY, Messages.Library, false, Messages.Category_Program));
+
+        descriptors.add(createPropertyDescriptor(PROPERTY_ID_MODULE, Messages.Module, false, Messages.Category_Module));
+        descriptors.add(createPropertyDescriptor(PROPERTY_ID_MODULE_LIBRARY, Messages.Library, false, Messages.Category_Module));
+
+        descriptors.add(createPropertyDescriptor(PROPERTY_ID_PROCEDURE, Messages.Procedure, false, Messages.Category_Statement));
+        descriptors.add(createPropertyDescriptor(PROPERTY_ID_STATEMENT_NUMBER, Messages.Statement_number, false, Messages.Category_Statement));
+
+        descriptors.add(createPropertyDescriptor(PROPERTY_ID_SOURCE_FILE, Messages.Source_file, false, Messages.Category_Source_member));
+        descriptors.add(createPropertyDescriptor(PROPERTY_ID_SOURCE_LIBRARY, Messages.Source_library, false, Messages.Category_Source_member));
+        descriptors.add(createPropertyDescriptor(PROPERTY_ID_SOURCE_MEMBER, Messages.Source_member, false, Messages.Category_Source_member));
 
         return descriptors.toArray(new IPropertyDescriptor[descriptors.size()]);
-    }
-
-    private IPropertyDescriptor createPropertyDescriptor(String id, String displayName, boolean advanced) {
-
-        PropertyDescriptor descriptor = new PropertyDescriptor(id, displayName);
-        if (advanced) {
-            descriptor.setFilterFlags(new String[] { IPropertySheetEntry.FILTER_ID_EXPERT });
-        }
-
-        return descriptor;
     }
 
     @Override
@@ -163,8 +158,12 @@ public class UnitTestCallStackEntry implements IUnitTestItemWithSourceMember, IP
 
         if (PROPERTY_ID_PROGRAM.equals(id)) {
             return getProgram();
+        } else if (PROPERTY_ID_PROGRAM_LIBRARY.equals(id)) {
+            return getProgramLibrary();
         } else if (PROPERTY_ID_MODULE.equals(id)) {
             return getModule();
+        } else if (PROPERTY_ID_MODULE_LIBRARY.equals(id)) {
+            return getModuleLibrary();
         } else if (PROPERTY_ID_PROCEDURE.equals(id)) {
             return getProcedure();
         } else if (PROPERTY_ID_SOURCE_FILE.equals(id)) {

@@ -615,14 +615,14 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
                     tText = tText + " " + formatExecutionTime(tTestCase.getExecutionTime()); //$NON-NLS-1$
                 }
                 if (tTestCase.isError() || tTestCase.isFailure()) {
-                    tText = tText + "  - " + tTestCase.getMessage().trim(); //$NON-NLS-1$
+                    tText = tText + "  - " + tTestCase.getMessage(); //$NON-NLS-1$
                 }
                 return tText;
             } else if (element instanceof UnitTestSuite) {
                 UnitTestSuite tUnitTestSuite = (UnitTestSuite)element;
                 I5ServiceProgram object = tUnitTestSuite.getServiceProgram();
                 String tText;
-                if (object.getDescription() != null && object.getDescription().trim().length() > 0) {
+                if (object.getDescription() != null && object.getDescription().length() > 0) {
                     tText = object.getName() + " [" + object.getDescription() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
                 } else {
                     tText = object.getName();
@@ -633,8 +633,8 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
                 return tText;
             } else if (element instanceof UnitTestCallStackEntry) {
                 UnitTestCallStackEntry tCallStackEntry = (UnitTestCallStackEntry)element;
-                String tText = tCallStackEntry.getProcedure().trim() + " ( " + tCallStackEntry.getProgram().trim() + "->" //$NON-NLS-1$ //$NON-NLS-2$
-                    + tCallStackEntry.getModule().trim() + ":" + tCallStackEntry.getStatementNumberText().trim() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                String tText = tCallStackEntry.getProcedure() + " ( " + tCallStackEntry.getProgram() + "->" //$NON-NLS-1$ //$NON-NLS-2$
+                    + tCallStackEntry.getModule() + ":" + tCallStackEntry.getStatementNumberText() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 return tText;
             } else {
                 return ""; //$NON-NLS-1$
