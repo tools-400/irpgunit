@@ -47,7 +47,13 @@ public class Messages extends NLS {
     public static String Error_message;
     public static String Result;
     public static String Execution_time;
+    public static String Category_Result;
+    public static String Category_Program;
+    public static String Category_Module;
+    public static String Category_Statement;
+    public static String Category_Source_member;
     public static String Program;
+    public static String Library;
     public static String Module;
     public static String Procedure;
     public static String Source_file;
