@@ -40,6 +40,8 @@
      D RCLRSC_ALWAYS   c                   '*ALWAYS'
      D RCLRSC_ONCE     c                   '*ONCE'
 
+     D NO_VALUE        c                   '*N'
+
        // Source member types
      D MBR_RPGLE       c                   const('RPGLE')
      D MBR_SQLRPGLE    c                   const('SQLRPGLE')
@@ -105,22 +107,23 @@
        // Call Stack Entry.
      D CallStkEnt_t    ds                  qualified template
      D  level                        10i 0
-     D  sender                             likeds(MsgSender_t)
+     D  qStmt                              likeds(qStatement_t)
 
        // Program Message.
      D Msg_t           ds                  qualified template
      D  id                            7a
      D  txt                                like(msgText_t)
      D  rplData                     256a   varying
-     D  sender                             likeds(MsgSender_t)
+     D  key                           4a
+     D  qSndStmt                           likeds(qStatement_t)
+     D  qRcvStmt                           likeds(qStatement_t)
 
-       // Sender of a program message
-     D MsgSender_t     ds                  qualified template
+       // Qualified program statement
+     D qStatement_t    ds                  qualified template
      D  qPgm                               likeds(Object_t)
      D  qMod                               likeds(Object_t)
      D  procNm                             like(ProcNm_t)
      D  specNb                       10a
-
 
       // Old style error message prior to version 2.0.0.
      D OldMsg_t        s            256a

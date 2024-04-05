@@ -827,35 +827,35 @@
 
          if (i = maxStkEnt);
            callStkE.level = 0;
-           callStkE.sender.procNm = CALL_STACK_INCOMPLETE;
+           callStkE.qStmt.procNm = CALL_STACK_INCOMPLETE;
          else;
            callStkE.level = 0;
-           callStkE.sender.qPgm.nm = ent.pgmNm;
-           callStkE.sender.qPgm.lib = ent.pgmLibNm;
-           callStkE.sender.qMod.nm = ent.modNm;
-           callStkE.sender.qMod.lib = ent.modLibNm;
+           callStkE.qStmt.qPgm.nm = ent.pgmNm;
+           callStkE.qStmt.qPgm.lib = ent.pgmLibNm;
+           callStkE.qStmt.qMod.nm = ent.modNm;
+           callStkE.qStmt.qMod.lib = ent.modLibNm;
 
            if ent.procNmLen <> 0;
              procNmBuffer_p = ent_p + ent.dsplToProcNm;
-             callStkE.sender.procNm =
+             callStkE.qStmt.procNm =
                 %subst( procNmBuffer: 1: ent.procNmLen );
            else;
-             callStkE.sender.procNm = '';
+             callStkE.qStmt.procNm = '';
            endif;
 
            if ent.nbSttId > 0;
              sttId_p = ent_p + ent.dsplToSttId;
-             callStkE.sender.specNb = %trimL(%trim(sttId): '0');
+             callStkE.qStmt.specNb = %trimL(%trim(sttId): '0');
            else;
-             callStkE.sender.specNb = '*N';
+             callStkE.qStmt.specNb = '*N';
            endif;
          endif;
 
          // Skip all procedures until we saw the
          // assertion procedure
-         if (callStkE.sender.qPgm.nm = 'RUTESTCASE' and
-             callStkE.sender.qMod.nm = 'ASSERT' and
-             callStkE.sender.procNm = startProc);
+         if (callStkE.qStmt.qPgm.nm = 'RUTESTCASE' and
+             callStkE.qStmt.qMod.nm = 'ASSERT' and
+             callStkE.qStmt.procNm = startProc);
            doReturnStckE = *on;
            ent_p += ent.len;
            iter;

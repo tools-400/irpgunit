@@ -11,6 +11,7 @@
       //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
       //   >>IMPORTANT<<
       //     >>PARM<<  MODULE(&LI/PGMMSG    +
+      //                      &LI/JOBLOG    +
       //                      );
       //     >>PARM<<    COPTION(*SRCSTMT *EVENTF);
       //   >>END-IMPORTANT<<
@@ -29,6 +30,8 @@
       /copy qinclude,PGMMSG
       /copy qinclude,TEMPLATES
       /copy qinclude,TESTUTILS
+
+      /include qinclude,SDS
 
 
       //----------------------------------------------------------------------
@@ -132,14 +135,15 @@
             // We should be checking the message content, but I do not know how to
             // do that, since it depends on the locale.
         aEqual( 'PGMMSGT': excpMsgInfo.sender.qPgm.nm );
+        aEqual( sds.pgmLib: excpMsgInfo.sender.qPgm.lib );
         aEqual( 'procWithError': excpMsgInfo.sender.procNm );
 
         monitor;
            msgKey = getHighestMsgKey();
-           aEqual( '100'   : excpMsgInfo.sender.specNb );   // IFS Compile
+           aEqual( '103'   : excpMsgInfo.sender.specNb );   // IFS Compile
         on-error;
            getLatestEscMsg(msgKey: *ON);
-           aEqual( '10000' : excpMsgInfo.sender.specNb );   // QSYS Compile
+           aEqual( '10300' : excpMsgInfo.sender.specNb );   // QSYS Compile
         endmon;
 
       /end-free
@@ -252,10 +256,10 @@
 
         monitor;
            msgKey = getHighestMsgKey();
-           aEqual( '100'   : msgInfo.specNb );   // IFS Compile
+           aEqual( '103'   : msgInfo.specNb );   // IFS Compile
         on-error;
            getLatestEscMsg(msgKey: *ON);
-           aEqual( '10000' : msgInfo.specNb );   // QSYS Compile
+           aEqual( '10300' : msgInfo.specNb );   // QSYS Compile
         endmon;
 
       /end-free

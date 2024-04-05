@@ -182,7 +182,7 @@
                   'Expected RNX0100: Length or start position is out of range');
            fail( 'Expected to see a RPG runtime exception' );
         on-error;
-           errMsgInfo = getMonitoredMessage(*ON);
+           errMsgInfo = getMonitoredMessage(*on);
            assert(errMsgInfo.id = 'RNX0100':
                   'Expected RNX0100: Length or start position is out of range');
         endmon;

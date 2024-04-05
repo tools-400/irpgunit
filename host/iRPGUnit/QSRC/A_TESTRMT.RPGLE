@@ -26,8 +26,10 @@
       //                      &LI/CMDRUNV   +
       //                      &LI/EXTPRC    +
       //                      &LI/EXTTST    +
+      //                      &LI/JOBLOG    +
       //                      &LI/LIBL      +
       //                      &LI/LLIST     +
+      //                      &LI/OBJECT    +
       //                      &LI/OSVERSION +
       //                      &LI/PGMMSG    +
       //                      &LI/SRCMBR    +

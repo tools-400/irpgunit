@@ -46,7 +46,7 @@
      D logStackEntry   pr                  extproc('CMDRUNLOG_+
      D                                     logStackEntry+
      D                                     ')
-     D  sender                             const likeds(MsgSender_t)
+     D  qSndStmt                           const likeds(qStatement_t)
 
        // Log runtime error.
      D logRuntimeError...
@@ -60,7 +60,7 @@
      D                                     extproc('CMDRUNLOG_+
      D                                     fmtStackEntry+
      D                                     ')
-     D  sender                             const likeds(MsgSender_t)
+     D  qSndStmt                           const likeds(qStatement_t)
 
        // Log library list.
      D logLibraryList...

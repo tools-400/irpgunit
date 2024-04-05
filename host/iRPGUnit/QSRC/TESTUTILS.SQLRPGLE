@@ -239,10 +239,10 @@
        endif;
        msgInfo.id     = msg.id;
        msgInfo.txt    = msg.txt;
-       msgInfo.pgm    = msg.sender.qPgm.nm;
-       msgInfo.mod    = msg.sender.qMod.nm;
-       msgInfo.proc   = msg.sender.procNm;
-       msgInfo.specNb = msg.sender.specNb;
+       msgInfo.pgm    = msg.qSndStmt.qPgm.nm;
+       msgInfo.mod    = msg.qSndStmt.qMod.nm;
+       msgInfo.proc   = msg.qSndStmt.procNm;
+       msgInfo.specNb = msg.qSndStmt.specNb;
        Return msgInfo;
 
       /end-free
