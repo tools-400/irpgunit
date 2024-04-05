@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2016 iRPGUnit Project Team
+ * Copyright (c) 2013-2024 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ public abstract class I5AbstractObject {
     private String description = null;
 
     public void setName(String name) {
-        this.name = name.toUpperCase();
+        this.name = name.toUpperCase().trim();
     }
 
     public String getName() {
@@ -24,7 +24,7 @@ public abstract class I5AbstractObject {
     }
 
     public void setType(String type) {
-        this.type = type.toUpperCase();
+        this.type = type.toUpperCase().trim();
     }
 
     public String getType() {
@@ -42,7 +42,7 @@ public abstract class I5AbstractObject {
      * @param description the description to set
      */
     public void setDescription(String description) {
-        this.description = description;
+        this.description = description.trim();
     }
 
     /**

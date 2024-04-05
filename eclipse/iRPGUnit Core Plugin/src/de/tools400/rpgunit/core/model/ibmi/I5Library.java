@@ -38,7 +38,7 @@ public class I5Library extends I5AbstractObject implements Comparable<I5Library>
     }
 
     /**
-     * Sets the library existance state.
+     * Sets the library existence state.
      * 
      * @param libraryExist
      */
