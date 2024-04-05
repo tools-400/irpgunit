@@ -42,7 +42,7 @@ public class I5Object extends I5AbstractObject implements IActionFilter, Compara
     }
 
     public void setAttribute(String attr) {
-        this.attr = attr;
+        this.attr = attr.trim();
     }
 
     public void setLibrary(I5Library lib) {
@@ -60,7 +60,7 @@ public class I5Object extends I5AbstractObject implements IActionFilter, Compara
 
     @Override
     public void setType(String type) {
-        this.type = type;
+        this.type = type.trim();
     }
 
     public String getSourceFile() {
@@ -68,7 +68,7 @@ public class I5Object extends I5AbstractObject implements IActionFilter, Compara
     }
 
     public void setSourceFile(String sourceFile) {
-        this.sourceFile = sourceFile;
+        this.sourceFile = sourceFile.trim();
     }
 
     public String getSourceLibrary() {
@@ -76,7 +76,7 @@ public class I5Object extends I5AbstractObject implements IActionFilter, Compara
     }
 
     public void setSourceLibrary(String sourceLibrary) {
-        this.sourceLibrary = sourceLibrary;
+        this.sourceLibrary = sourceLibrary.trim();
     }
 
     public String getSourceMember() {
@@ -84,7 +84,7 @@ public class I5Object extends I5AbstractObject implements IActionFilter, Compara
     }
 
     public void setSourceMember(String sourceMember) {
-        this.sourceMember = sourceMember;
+        this.sourceMember = sourceMember.trim();
     }
 
     public I5LibraryList getExecutionLibraryList() {
