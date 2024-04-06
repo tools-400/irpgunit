@@ -15,18 +15,18 @@
 </p>
 <b>Beschreibung:</b>
 <p class="indent">
-Prüft, ob sich in einer gegebenen Nachrichtenwarteschlange eine spezielle Nachricht zwischen JETZT und
+PrÃ¼ft, ob sich in einer gegebenen Nachrichtenwarteschlange eine spezielle Nachricht zwischen JETZT und
 <i>timeLimit</i> befindet. Die gesuchte Nachricht wird anhand einer Kombination aus ID, Nachrichtentext
-oder Hilfetext identifiziert. Nicht verwendete Auswahlparameter müssen ausgelassen werden. 
+oder Hilfetext identifiziert. Nicht verwendete Auswahlparameter mÃ¼ssen ausgelassen werden. 
 </p>
 <p class="indent">
-Die Nachrichten-ID kann auch mit <i>*EMPTY</i>, um zu prüfen, ob die Nachrichtenwarteschlange leer ist. Alle
-weiteren Parameter müssen für diesen Fall ausgelassen werden.<br>
-Nachrichtentext und Hilfetext könnenals *generische* Zeichenkette angegeben werden.<br/>
-Der Wert für <i>timeLimit</i> sollte mit Hilfe der Funktion <a href="./getFullTimestamp.html">getFullTimeStamp()</a>
+Die Nachrichten-ID kann auch mit <i>*EMPTY</i>, um zu prÃ¼fen, ob die Nachrichtenwarteschlange leer ist. Alle
+weiteren Parameter mÃ¼ssen fÃ¼r diesen Fall ausgelassen werden.<br>
+Nachrichtentext und Hilfetext kÃ¶nnenals *generische* Zeichenkette angegeben werden.<br/>
+Der Wert fÃ¼r <i>timeLimit</i> sollte mit Hilfe der Funktion <a href="./getFullTimestamp.html">getFullTimeStamp()</a>
 gesetzt werden.
 </p>
-<b>Rückgabewert:</b>
+<b>RÃ¼ckgabewert:</b>
 <p class="indent">
 void
 </p>
@@ -34,7 +34,7 @@ void
 <p>
 <code><pre class="indent">
 testStartTime = getFullTimeStamp();
-<span class="r-cmt">// Ausführen des Tests, der die gesuchte Nachricht in die Nachrichtenwarteschlange stellen soll</span>
+<span class="r-cmt">// AusfÃ¼hren des Tests, der die gesuchte Nachricht in die Nachrichtenwarteschlange stellen soll</span>
 assertMessageQueueContains( 'QMSGQT' : 'QTEMP' : *omit : 'MSGQT - iRPGUnit' : *omit : testStartTime );
 </pre></code>
 </p>
@@ -42,7 +42,7 @@ assertMessageQueueContains( 'QMSGQT' : 'QTEMP' : *omit : 'MSGQT - iRPGUnit' : *o
 <p>
 <code><pre class="indent">
 testStartTime = getFullTimeStamp();
-<span class="r-cmt">// Ausführen des Tests, nachdem die Nachrichtenwarteschlange leer sein soll</span>
+<span class="r-cmt">// AusfÃ¼hren des Tests, nachdem die Nachrichtenwarteschlange leer sein soll</span>
 assertMessageQueueContains( 'QMSGQT' : 'QTEMP' : '*EMPTY' : *omit : *omit : testStartTime );
 </pre></code>
 </p>

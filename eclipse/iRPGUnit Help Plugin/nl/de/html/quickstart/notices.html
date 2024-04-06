@@ -9,17 +9,17 @@
 
 <body>
 <h1>Hinweise</h1>
-Folgende Hinweise sollen ihnen helfen, RPGUnit richtig anzuwenden und möglicherweise 
+Folgende Hinweise sollen ihnen helfen, RPGUnit richtig anzuwenden und mÃ¶glicherweise 
 unerwartetes Verhalten richtig zu interpretieren.
 
 <h2>Prinzipielle Arbeitsweise</h2>
-Grundsätzlich bemüht sich RPGUnit die Arbeitsweise von JUnit exakt nachzubilden.
-Problematisch ist hierbei jedoch das Überwachen von Programmanweisungen 
-auf Fehler. Hierzu stehen im RPG zwei Möglichkeiten zur Verfügung.
+GrundsÃ¤tzlich bemÃ¼ht sich RPGUnit die Arbeitsweise von JUnit exakt nachzubilden.
+Problematisch ist hierbei jedoch das Ã¼berwachen von Programmanweisungen 
+auf Fehler. Hierzu stehen im RPG zwei MÃ¶glichkeiten zur VerfÃ¼gung.
 <p>
 
 <h2>Monitor Block</h2>
-Der Aufruf einer RPGUnit Prüffunktion innerhalb eines Monitor-Blocks führt zu einem
+Der Aufruf einer RPGUnit PrÃ¼ffunktion innerhalb eines Monitor-Blocks fÃ¼hrt zu einem
 protokollierten Fehler. Dies entspricht exakt dem Verhalten von JUnit. Auch dort werden 
 Fehler innerhalb eines <code>try/catch</code> Blocks erkannt und protokolliert.
 <p>
@@ -37,9 +37,9 @@ endmon;
 </pre></code> 
 
 <h2>CALLP - Error Extender</h2>
-Beim Aufruf der RPGUnit Prüffunktionen werden auftretende Fehler ignoriert, wenn der 
-Aufruf über <code>CALLP(E)</code> erfolgt. Verzichten Sie daher beim auf den Error 
-Extender <code>(E)</code> beim Aufruf der Prüffuktionen über <code>CALLP</code>.
+Beim Aufruf der RPGUnit PrÃ¼ffunktionen werden auftretende Fehler ignoriert, wenn der 
+Aufruf Ã¼ber <code>CALLP(E)</code> erfolgt. Verzichten Sie daher beim auf den Error 
+Extender <code>(E)</code> beim Aufruf der PrÃ¼ffuktionen Ã¼ber <code>CALLP</code>.
 <p>
 <b>Richtig</b>
 <code><pre class="indent">

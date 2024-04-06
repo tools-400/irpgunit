@@ -9,16 +9,16 @@
 
 <body>
 <h1>Voreinstellungen</h1>
-Die Voreinstellungen von RPGUnit sind, wie üblich, über den Menüpfad "Window" -> 
+Die Voreinstellungen von RPGUnit sind, wie Ã¼blich, Ã¼ber den MenÃ¼pfad "Window" -> 
 "Benutzervorgaben" zu erreichen.
 <p class="indent">
 <img src="assets/RPGUnitPreferences.png" width="674" height="626" alt="RPGUnit Preferences">
 </p>
 
-<h3>Ausführungsfolge</h3>
+<h3>AusfÃ¼hrungsfolge</h3>
 Gibt an, in welcher Reihenfolge die Test Cases (Prozeduren) einer Test Suite 
-(Serviceprogramm) ausgeführt werden.<p>
-Die möglichen Werte sind:<p>
+(Serviceprogramm) ausgefÃ¼hrt werden.<p>
+Die mÃ¶glichen Werte sind:<p>
 <table width="80%">
 <colgroup>
  <col width="100">
@@ -30,16 +30,16 @@ Die möglichen Werte sind:<p>
 
 <h3>Bibliotheksliste</h3>
 Gibt an, mit welcher Bibliotheksliste die Test Cases (Prozeduren) einer Test Suite 
-(Serviceprogramm) ausgeführt werden.<p>
-Die möglichen Werte sind:<p>
+(Serviceprogramm) ausgefÃ¼hrt werden.<p>
+Die mÃ¶glichen Werte sind:<p>
 <table width="80%">
 <colgroup>
  <col width="100">
 </colgroup>
 <tr><td valign="top">*JOBD</td><td>Die Test Cases werden mit der Bibliotheksliste der am Parameter 
-                                   <i>'Job description'</i> angegebenen Jobbeschreibung ausgeführt.</td></tr>
+                                   <i>'Job description'</i> angegebenen Jobbeschreibung ausgefÃ¼hrt.</td></tr>
 <tr><td valign="top">*CURRENT</td><td>Die Test Cases werden mit der in der <i>'Verbindung'</i> zum Server 
-                                      abgelegten Bibliotheksliste ausgeführt. Siehe: <i>'Subsystems'</i> 
+                                      abgelegten Bibliotheksliste ausgefÃ¼hrt. Siehe: <i>'Subsystems'</i> 
                                       in den Eigenschaften der Verbindung zum Server.</td></tr> 
 </table>
 <p>
@@ -47,7 +47,7 @@ Die möglichen Werte sind:<p>
 <h3>Jobbeschreibung</h3>
 Gibt an, welche Jobbeschreibung zur Ermittlung der Bibliotheksliste herangezogen wird, 
 wenn der Parameter <i>'Bibliotheksliste'</i> auf <i>'*JOBD' steht.</i>>.<p>
-Die möglichen Werte sind:<p>
+Die mÃ¶glichen Werte sind:<p>
 <table width="80%">
 <colgroup>
  <col width="100">
@@ -60,7 +60,7 @@ Die möglichen Werte sind:<p>
 
 <h3>Bibliothek der Jobbeschreibung</h3>
 Gibt an, welche Bibliothek nach der zu verwendenen Job Beschreibung durchsucht wird.<p>
-Die möglichen Werte sind:<p>
+Die mÃ¶glichen Werte sind:<p>
 <table width="80%">
 <colgroup>
  <col width="100">
@@ -72,7 +72,7 @@ Die möglichen Werte sind:<p>
 
 <h3>Detailstufe des Protokolls</h3>
 Gibt an, mit welcher Detailierungsstufe der Ausdruck der Ergebnisse des Unit Tests erfolgt.<p>
-Die möglichen Werte sind:<p>
+Die mÃ¶glichen Werte sind:<p>
 <table width="80%">
 <colgroup>
  <col width="100">
@@ -84,38 +84,38 @@ Die möglichen Werte sind:<p>
 
 <h3>Erstellen Protokoll</h3>
 Gibt an, ob eine Druckausgabe der Ergebnisse des Unit Tests erzeugt wird.<p>
-Die möglichen Werte sind:<p>
+Die mÃ¶glichen Werte sind:<p>
 <table width="80%">
 <colgroup>
  <col width="100">
 </colgroup>
 <tr><td valign="top">*NONE</td><td>Es erfolgt keine Druckausgabe.</td></tr>
 <tr><td valign="top">*ERROR</td><td>Eine Druckausgabe wird nur erzeugt, wenn Fehler aufgetreten sind.</td></tr> 
-<tr><td valign="top">*ALLWAYS</td><td>Eine Druckausgabe wird grundsätzlich erzeugt.</td></tr> 
+<tr><td valign="top">*ALLWAYS</td><td>Eine Druckausgabe wird grundsÃ¤tzlich erzeugt.</td></tr> 
 </table>
 <p>
 
-<h3>Ressourcen zurückfordern</h3>
-Gibt an, ob verwendete Ressourcen zurückgefordert werden. Ressourcen, zum Beispiel offene Dateien, können nach 
-jedem Testfall oder am Ende der Testreihe zurück gefordert werden.<p>
+<h3>Ressourcen zurÃ¼ckfordern</h3>
+Gibt an, ob verwendete Ressourcen zurÃ¼ckgefordert werden. Ressourcen, zum Beispiel offene Dateien, kÃ¶nnen nach 
+jedem Testfall oder am Ende der Testreihe zurÃ¼ck gefordert werden.<p>
 Dieser Parameter ist hilfreich, wenn innerhalb der Testreihe OPM Programme ohne gesetzter *INLR Bezugszahl aufgerufen werden.<p>
-Die möglichen Werte sind:<p>
+Die mÃ¶glichen Werte sind:<p>
 <table width="80%">
 <colgroup>
  <col width="100">
 </colgroup>
-<tr><td valign="top">*NO</td><td>Es werden keine Ressourcen zurück gefordert.</td></tr>
-<tr><td valign="top">*ALLWAYS</td><td>Die Ressourcen werden nach jedem Testfall und am Ende der Testreihe zurück gefordert.</td></tr> 
-<tr><td valign="top">*ONCE</td><td>Die Ressourcen werden einmalig am Ende der Testreihe zurück gefordert.</td></tr> 
+<tr><td valign="top">*NO</td><td>Es werden keine Ressourcen zurÃ¼ck gefordert.</td></tr>
+<tr><td valign="top">*ALLWAYS</td><td>Die Ressourcen werden nach jedem Testfall und am Ende der Testreihe zurÃ¼ck gefordert.</td></tr> 
+<tr><td valign="top">*ONCE</td><td>Die Ressourcen werden einmalig am Ende der Testreihe zurÃ¼ck gefordert.</td></tr> 
 </table>
 <p>
 
 <h3>XML stream file</h3>
-Gibt den Namen der XML Datenstromdatei an, welche das Ergebnis des Testlaufs enthält. Die Datei wird
+Gibt den Namen der XML Datenstromdatei an, welche das Ergebnis des Testlaufs enthÃ¤lt. Die Datei wird
 in einem Format erstellt, welches von einem Jenkins Build Server gelesen werden kann. Eine existierende
-Datei wird ohne Rückfrage überschieben.
+Datei wird ohne RÃ¼ckfrage Ã¼berschieben.
 <p>
-Folgende Ersatzvariablen können im Dateinamen verwendet werden:
+Folgende Ersatzvariablen kÃ¶nnen im Dateinamen verwendet werden:
 <p>
 <u>Befehlsparameter</u>
 <p>
@@ -124,7 +124,7 @@ Folgende Ersatzvariablen können im Dateinamen verwendet werden:
 <col width="100">
 </colgroup>
 <tr><td valign="top">&lt;TESTPGM&gt;</td><td>Name der Test Suite.</td></tr>
-<tr><td valign="top">&lt;TESTLIB&gt;</td><td>Name der Bibliothek, welche die Test Suite enthält.</td></tr>
+<tr><td valign="top">&lt;TESTLIB&gt;</td><td>Name der Bibliothek, welche die Test Suite enthÃ¤lt.</td></tr>
 </table>
 <p>
 <u>Funktion strftime()</u>
@@ -154,40 +154,40 @@ Folgende Ersatzvariablen können im Dateinamen verwendet werden:
 <tr><td valign="top">%y</td><td>2 stellige Jahreszahl [00,99].</td></tr>
 </table>
 <p>
-Die Tabelle entält einige aber nicht alle Variablen der Funktion strftime(). Einige
+Die Tabelle entÃ¤lt einige aber nicht alle Variablen der Funktion strftime(). Einige
 Variablen, die hier nicht gelistet sind, sind nicht erlaubt, weil deren Werte zu 
-einem ungültige Pfadnamen führen würden.
+einem ungÃ¼ltige Pfadnamen fÃ¼hren wÃ¼rden.
 
 <h3>Ausschalten Protokoll</h3>
-Unabhängig von der Einstellung des Parameters <i>'Erstellen Protokoll'</i> kann hiermit die Druckausgabe temporär 
+UnabhÃ¤ngig von der Einstellung des Parameters <i>'Erstellen Protokoll'</i> kann hiermit die Druckausgabe temporÃ¤r 
 ausgeschaltet werden, sofern <i>'Erstellen Protokoll'</i> nicht auf <i>'*NONE'</i> gesetzt ist. Dieser Schalter
-korrespondiert mit der Schaltfläche <i>'Testprotokoll aus-/einschalten'</i> der <i>'RPGUnit'</i> View.<p>
+korrespondiert mit der SchaltflÃ¤che <i>'Testprotokoll aus-/einschalten'</i> der <i>'RPGUnit'</i> View.<p>
 
 <h3>Ausschalten XML Datenstromdatei</h3>
-Unabhängig des Werts des Parameters <i>'XML Datenstromdatei'</i> kann hiermit die Ausgabe der XML Datenstromdatei temporär 
+UnabhÃ¤ngig des Werts des Parameters <i>'XML Datenstromdatei'</i> kann hiermit die Ausgabe der XML Datenstromdatei temporÃ¤r 
 ausgeschaltet werden
 <p>
 <p>
 
 <h3>Produktbibliothek</h3>
-Gibt den Namen der RPGUnit Produktbibliothek auf dem Host an. Der hier eingetragene Wert wird verwendet, um dass zur Ausführung 
+Gibt den Namen der RPGUnit Produktbibliothek auf dem Host an. Der hier eingetragene Wert wird verwendet, um dass zur AusfÃ¼hrung 
 der Unit Tests erforderliche Programm 'RUPGMRMT' zu finden.<p>
 <p>
 
 <a id="#check_test_suite_service_program" />
-<h3>Prüfen Unit Test Serviceprogramm</h3>
-Gibt an, ob zur Ausführung selektierte Serviceprogramme validiert werden.<p>
-Die möglichen Werte sind:<p>
+<h3>PrÃ¼fen Unit Test Serviceprogramm</h3>
+Gibt an, ob zur AusfÃ¼hrung selektierte Serviceprogramme validiert werden.<p>
+Die mÃ¶glichen Werte sind:<p>
 <table width="80%">
 <colgroup>
  <col width="100">
 </colgroup>
-<tr><td valign="top">*NONE</td><td>Zur Ausführung selektierte Serviceprogramme werden nicht validiert.</td></tr>
-<tr><td valign="top">*TEXT</td><td>Die Objektbeschreibung des zur Ausführung ausgewählten Serviceprogramms muss mit
-                                   <i>'RPGUnit'</i> oder <i>iRPGUnit</i> (Groß-/Kleinschreibung wird ignoriert) beginnen.</td></tr> 
-<tr><td valign="top">*ATTRIBUTE</td><td>Das benutzerdefinierte Attribut des zur Ausführung ausgewählten Serviceprogramms
-                                        muss <i>'RPGUnit'</i> oder <i>iRPGUnit</i> (Groß-/Kleinschreibung wird ignoriert)
-                                        enthalten. Dies ist die empfohlene Prüfung, die jedoch leider nicht bei allen RDi
+<tr><td valign="top">*NONE</td><td>Zur AusfÃ¼hrung selektierte Serviceprogramme werden nicht validiert.</td></tr>
+<tr><td valign="top">*TEXT</td><td>Die Objektbeschreibung des zur AusfÃ¼hrung ausgewÃ¤hlten Serviceprogramms muss mit
+                                   <i>'RPGUnit'</i> oder <i>iRPGUnit</i> (GroÃŸ-/Kleinschreibung wird ignoriert) beginnen.</td></tr> 
+<tr><td valign="top">*ATTRIBUTE</td><td>Das benutzerdefinierte Attribut des zur AusfÃ¼hrung ausgewÃ¤hlten Serviceprogramms
+                                        muss <i>'RPGUnit'</i> oder <i>iRPGUnit</i> (GroÃŸ-/Kleinschreibung wird ignoriert)
+                                        enthalten. Dies ist die empfohlene PrÃ¼fung, die jedoch leider nicht bei allen RDi
                                         Versionen funktioniert. Siehe APAR SE55976.</td></tr> 
 </table>
 <p>
@@ -196,14 +196,14 @@ Attribut des Serviceprogramms eingetragen.
 <p>
 
 <h3>Erstellen neue Verbindung</h3>
-Gibt an, ob für die Ausführung des Unit Tests eine neue Verbindung erstellt wird oder nicht. Eine neue Verbindung ist
-dann erforderlich, wenn für die Fehlersuche Service Entry Points verwendet werden sollen. Ohne eine neue Verbindung friert die 
+Gibt an, ob fÃ¼r die AusfÃ¼hrung des Unit Tests eine neue Verbindung erstellt wird oder nicht. Eine neue Verbindung ist
+dann erforderlich, wenn fÃ¼r die Fehlersuche Service Entry Points verwendet werden sollen. Ohne eine neue Verbindung friert die 
 Anwendung beim Erreichen des Service Entry Points ein.<p>
 <p>
 
 <h3>Editor auf fehlerhafte Zeile positionieren</h3>
 Gibt an, ob der LPEX Editor beim Laden einer Quellenteidatei auf die fehlerhafte Zeile positioniert wird. Damit 
-diese Einstellung korrekt funktioniert, müssen sie die Option <code>*SRCSTMT</code> in der RPG Quellenteildatei 
+diese Einstellung korrekt funktioniert, mÃ¼ssen sie die Option <code>*SRCSTMT</code> in der RPG Quellenteildatei 
 gesetzt haben.
 <p>
 
@@ -214,8 +214,8 @@ Gibt an, welche Nachrichten des Jobprotokolls aufgezeichnet und in der <i>Befehl
 <tr><td valign="top" nowrap>Keine Nachrichten</td><td valign="top">-</td><td valign="top">Es werden keine Nachrichten aus dem Jobprotokoll aufgezeichnet.</td></tr>
 <tr><td valign="top" nowrap>Abbruchnachrichten bei einem Programmabbruch</td><td valign="top">-</td><td valign="top">Bei einem unerwarteten Programmabbruch werden alle Abbruchnachrichten (*ESCAPE) des Jobprotokolls aufgezeichnet.</td></tr>
 <tr><td valign="top" nowrap>Alle Nachrichten bei einem Programmabbruch</td><td valign="top">-</td><td valign="top">Bei einem unerwarteten Programmabbruch werden alle Nachrichten des Jobprotokolls aufgezeichnet.</td></tr>
-<tr><td valign="top" nowrap>Alle Einträge</td><td valign="top">-</td><td valign="top">Alle Nachrichten des Jobprotokolls werden aufgezeichnet.</td></tr>
-<tr><td valign="top" nowrap>Formatieren Joblogeinträge</td><td valign="top">-</td><td valign="top">Gibt an, ob Joblogeinträge formatiert in der <i>Befehlsprotokoll</i> Ansicht dargestellt werden.</td></tr>
+<tr><td valign="top" nowrap>Alle EintrÃ¤ge</td><td valign="top">-</td><td valign="top">Alle Nachrichten des Jobprotokolls werden aufgezeichnet.</td></tr>
+<tr><td valign="top" nowrap>Formatieren JoblogeintrÃ¤ge</td><td valign="top">-</td><td valign="top">Gibt an, ob JoblogeintrÃ¤ge formatiert in der <i>Befehlsprotokoll</i> Ansicht dargestellt werden.</td></tr>
 </table>
 <p>
 
@@ -223,8 +223,8 @@ Gibt an, welche Nachrichten des Jobprotokolls aufgezeichnet und in der <i>Befehl
 Gibt an, ob die Ansicht der Ergebnisse eines Unit Tests am Ende des Testlaufs automatisch angezeigt wird.
 <p>
 
-<h3>Alle Warnungen zurücksetzen</h3>
-Setzt alle Warnungen zurück, die mit "Nicht noch einmal nachfragen." beantwortet worden sind zurück, so dass diese
+<h3>Alle Warnungen zurÃ¼cksetzen</h3>
+Setzt alle Warnungen zurÃ¼ck, die mit "Nicht noch einmal nachfragen." beantwortet worden sind zurÃ¼ck, so dass diese
 Nachrichten erneut angezeigt werden.
 <p>
 <iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>

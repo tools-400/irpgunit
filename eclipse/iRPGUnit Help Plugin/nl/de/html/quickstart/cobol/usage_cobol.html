@@ -10,18 +10,18 @@
 <body>
 <img src="../../reference/assets/cobol_ready.png" style="float:right; margin-right:20px;  margin-bottom:20px" border=0>
 <h1>Cobol</h1>
-Cobol wird seit der Version 4.0 unterstützt. Bitte lesen sie auch die Seite
-<a href="../usage.html"><i>Anwendung</i></a>, um ein vollständiges Bild der
+Cobol wird seit der Version 4.0 unterstÃ¼tzt. Bitte lesen sie auch die Seite
+<a href="../usage.html"><i>Anwendung</i></a>, um ein vollstÃ¤ndiges Bild der
 Anwendung von Unit Tests zu bekommen.
 <p>
-Zur Zeit werden folgende Zusicherungen unterstützt:
+Zur Zeit werden folgende Zusicherungen unterstÃ¼tzt:
 <ul>
 <li><a href="../../reference/aEqual.html">assert()</a></li>
 <li><a href="../../reference/assert.html">assert()</a></li>
 <li><a href="../../reference/fail.html">fail()</a></li>
 </ul>
 <p>
-Die Prozeduren zum Initialisieren und Beenden heißen für Cobol:
+Die Prozeduren zum Initialisieren und Beenden heiÃŸen fÃ¼r Cobol:
 <ul>
 <li><a href="../../reference/setupTestSuite.html">SETUPSTE()</a></li>
 <li><a href="../../reference/setupTestCase.html">SETUP()</a></li>
@@ -29,18 +29,18 @@ Die Prozeduren zum Initialisieren und Beenden heißen für Cobol:
 <li><a href="../../reference/teardownTestSuite.html">TEARDWNSTE()</a></li>
 </ul>
 <p>
-Gerne ermöglichen wir den Aufruf weiterer Prozeduren, sofern der Bedarf dafür
+Gerne ermÃ¶glichen wir den Aufruf weiterer Prozeduren, sofern der Bedarf dafÃ¼r
 vorhanden ist. Stellen sie hierzu bitte ein Ticket
 auf der <a href="https://sourceforge.net/p/irpgunit/tickets/" target="_blank">Tickets</a> Seite ein.
 </ol>
-<h2>Erstellen von Testfällen</h2>
-Cobol Test Suites werden analog zu RPG erstellt. Abweichend zu RPG kommt hierfür der Befehl
+<h2>Erstellen von TestfÃ¤llen</h2>
+Cobol Test Suites werden analog zu RPG erstellt. Abweichend zu RPG kommt hierfÃ¼r der Befehl
 <code>RUCRTCBL</code> zum Einsatz:
 <p class="indent">
 <code>RUCRTCBL TSTPGM(RPGUNIT/RUPLUGINT1) SRCFILE(QEXAMPLE)</code></p>
 <p>
 Im Gegensatz zu RPG kann ein Cobol Modul nur eine Prozedur exportieren. Diese Limitierung
-kann ein Stück weit aufgehoben werden, indem das Modul mit dem Parameter <code>MODULE(*PGMID)</code>
+kann ein StÃ¼ck weit aufgehoben werden, indem das Modul mit dem Parameter <code>MODULE(*PGMID)</code>
 kompiliert wird, um aus einer Quelle mehrere Module zu erstellen. Siehe hierzu mitgelieferte Cobol
 Beispiel <a href="../../appendix/example_2.html"><i>TEMPLCBL</i></a> in der Datei <i>QSRC</i>.
 <p>

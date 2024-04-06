@@ -11,24 +11,24 @@
 <h1>Anwendung</h1>
 Die Anwendung von RPGUnit Tests gliedert sich in zwei Bereiche:
 <ol>
-<li>Erstellen von Testfällen</li>
-<li>Ausführen von von Testfällen</li>
+<li>Erstellen von TestfÃ¤llen</li>
+<li>AusfÃ¼hren von von TestfÃ¤llen</li>
 </ol>
-<h2>Erstellen von Testfällen</h2>
-Ein oder mehrere Testfälle (test case) bilden eine Test Suite (test suite). Im RPG 
+<h2>Erstellen von TestfÃ¤llen</h2>
+Ein oder mehrere TestfÃ¤lle (test case) bilden eine Test Suite (test suite). Im RPG 
 wird ein Testfall in Form einer exportierten Prozedur erstellt. Die Prozedur muss 
-dabei zwingend mit <code>test</code> beginnen, umm bei der Ausführung als Testfall 
-erkannt zu werden. Umgekehrt bedeutet dies, das Prozeduren, die keine Testfälle 
+dabei zwingend mit <code>test</code> beginnen, umm bei der AusfÃ¼hrung als Testfall 
+erkannt zu werden. Umgekehrt bedeutet dies, das Prozeduren, die keine TestfÃ¤lle 
 darstellen und trotzdem mit <code>test</code> beginnen, vermieden werden sollten, 
-zumindest aber nicht exportiert werden dürfen.
+zumindest aber nicht exportiert werden dÃ¼rfen.
 <p>
-Um die RPGUnit Funktionen nutzen zu können, muss das Modul mit den Testfällen 
+Um die RPGUnit Funktionen nutzen zu kÃ¶nnen, muss das Modul mit den TestfÃ¤llen 
 das copy book <code>TESTCASE</code> einbinden:
 <code class="indent"><pre>
  /include qinclude,TESTCASE                  iRPGUnit Test Suite
 </pre></code>
 <p>
-<u>Beispiele für Testfälle</u>
+<u>Beispiele fÃ¼r TestfÃ¤lle</u>
 <ul>
 <li>testGenerateUUID</li>
 <li>testUpdateStatus</li>
@@ -42,8 +42,8 @@ kompiliert.
 <p class="indent">
 <code>RUCRTRPG TSTPGM(RPGUNIT/RUPLUGINT1) SRCFILE(QEXAMPLE)</code></p>
 <p>
-Ein Beispiel für eine RPGUnit Test Suite enthält die Teildatei <a href="../appendix/assets/RPGUnitRPGTestSuite.txt"><code>QSRC.TEMPLATE</code></a>. Bei der 
-Ausführung dieser Test Suite wird eine Druckausgabe mit einer Darstellung des Programmablaufs 
+Ein Beispiel fÃ¼r eine RPGUnit Test Suite enthÃ¤lt die Teildatei <a href="../appendix/assets/RPGUnitRPGTestSuite.txt"><code>QSRC.TEMPLATE</code></a>. Bei der 
+AusfÃ¼hrung dieser Test Suite wird eine Druckausgabe mit einer Darstellung des Programmablaufs 
 erstellt. 
 <p>
 <table>
@@ -54,13 +54,13 @@ erstellt.
                    <code><u>RPGLE:</u><br>RUCRTRPG TSTPGM(&O/&N) SRCFILE(&L/&F) SRCMBR(&N) COPTION(*SRCSTMT *EVENTF) DBGVIEW(*LIST)
                    <br><br><u>SQLRPGLE:</u><br>RUCRTRPG TSTPGM(&O/&N) SRCFILE(&L/&F) SRCMBR(&N) POPTION(*EVENTF) COMPILEOPT('DBGVIEW(*LIST)')</code><p>
                    Weiterhin wird empfohlen *SRCSTMT anzugeben, um direkt mit einem Doppelclick aus der 
-                   RPGUnit Ansicht an die fehlerhafte Programmzeile springen zu können.</td>
+                   RPGUnit Ansicht an die fehlerhafte Programmzeile springen zu kÃ¶nnen.</td>
 </tr>
 </table>
-<h2>Ausführen von Testfällen einer CL Befehlszeile</h2>
-Fertige Test Suites können mit dem Befehl <code>RUCALLTST</code> ausgeführt werden. 
-Standardmäßig werden alle in der Test Suite enthaltenen Test Cases ausgeführt. Mit 
-dem Parameter <code>TSTPRC</code> kann ein einzelner Test Case zur Ausführung ausgewählt 
+<h2>AusfÃ¼hren von TestfÃ¤llen einer CL Befehlszeile</h2>
+Fertige Test Suites kÃ¶nnen mit dem Befehl <code>RUCALLTST</code> ausgefÃ¼hrt werden. 
+StandardmÃ¤ÃŸig werden alle in der Test Suite enthaltenen Test Cases ausgefÃ¼hrt. Mit 
+dem Parameter <code>TSTPRC</code> kann ein einzelner Test Case zur AusfÃ¼hrung ausgewÃ¤hlt 
 werden. 
 <p class="indent">
 <code class="code">RUCALLTST TSTPGM(RUPLUGINT1)</code></p>
@@ -68,37 +68,37 @@ oder auch
 <p class="indent">
 <code class="code">RUCALLTST TSTPGM(RUPLUGINT1) TSTPRC(TESTALLOK_2)</code></p>
 <p>
-<h2>Ausführen von Testfällen im RDi</h2>
-Innerhalb des RDi können die RPGUnit Test aus der Ansicht des Remote Explorers heraus gestartet 
+<h2>AusfÃ¼hren von TestfÃ¤llen im RDi</h2>
+Innerhalb des RDi kÃ¶nnen die RPGUnit Test aus der Ansicht des Remote Explorers heraus gestartet 
 werden. Mit einem Rechts-Click im Remote Explorer auf einem RPGUnit Test Serviceprogramm erscheint 
-im Kontextmenü ein neuer Eintrag 'Run RPGUnit Test' zum starten des Testlaufs:
+im KontextmenÃ¼ ein neuer Eintrag 'Run RPGUnit Test' zum starten des Testlaufs:
 <p class="indent">
-<img src="assets/RunRPGUnitTest.png" width="252" height="100" alt="Ausführen RPGUnit Test">
+<img src="assets/RunRPGUnitTest.png" width="252" height="100" alt="AusfÃ¼hren RPGUnit Test">
 </p>
 <p>
 Das Ergebnis des Testlaufs erscheint sodann in der 'RPGUnit' View: 
 <p class="indent">
 <img src="assets/RPGUnitView_Success.png" width="695" height="182" alt="Anzeigen RPGUnit Test-Ergebnis">
 </p>
-Innerhalb der View lassen sich folgende Aktionen ausführen:
+Innerhalb der View lassen sich folgende Aktionen ausfÃ¼hren:
 <ul>
 <li>Alles zuklappen</li>
 <li>Alles aufklappen</li>
 <li>Nur Fehler anzeigen</li>
-<li>Alle Tests erneut ausführen</li>
+<li>Alle Tests erneut ausfÃ¼hren</li>
 <li>Protokoll aus-/einschalten</li>
 <li>Ein-/ausschalten Debug Mode</li>
 </ul>
 <p>
-Das Kontextmenü stellt folgende Aktionen zur Verfügung: 
+Das KontextmenÃ¼ stellt folgende Aktionen zur VerfÃ¼gung: 
 <p class="indent">
-<img src="assets/RPGUnitPopupMenu.png" width="196" height="78" alt="RPGUnit Kontextmenü">
+<img src="assets/RPGUnitPopupMenu.png" width="196" height="78" alt="RPGUnit KontextmenÃ¼">
 </p>
 <ul>
-<li>Ausgewählten Test erneut ausführen</li>
+<li>AusgewÃ¤hlten Test erneut ausfÃ¼hren</li>
 <li>Anzeigen Protokoll</li>
 <li>Quellenteildatei mit LPEX editieren (auch: Maus Doppel-Click)</li>
-<li>Ausgewählte Test Suite entfernen</li>
+<li>AusgewÃ¤hlte Test Suite entfernen</li>
 </ul>
 <p>
 Werte im Kopfbereich: 
@@ -109,10 +109,10 @@ Werte im Kopfbereich:
    <col valign="top">
    <col valign="top">
   </colgroup>
-  <tr><td>Testläufe</td><td>:</td><td>Anzahl zuletzt ausgeführter Testfälle / Anzahl Testfälle in der Ansicht</td></tr>
+  <tr><td>TestlÃ¤ufe</td><td>:</td><td>Anzahl zuletzt ausgefÃ¼hrter TestfÃ¤lle / Anzahl TestfÃ¤lle in der Ansicht</td></tr>
   <tr><td>Fehler</td><td>:</td><td>Anzahl Fehler in der Ansicht</td></tr>
-  <tr><td>Fehlgeschlagen</td><td>:</td><td>Anzahl fehlgeschlagener Testfälle in der Ansicht</td></tr>
-  <tr><td>Zusicherungen</td><td>:</td><td>Anzahl geprüfter Zusicherungen in der Ansicht</td></tr>
+  <tr><td>Fehlgeschlagen</td><td>:</td><td>Anzahl fehlgeschlagener TestfÃ¤lle in der Ansicht</td></tr>
+  <tr><td>Zusicherungen</td><td>:</td><td>Anzahl geprÃ¼fter Zusicherungen in der Ansicht</td></tr>
 </table>
 <p>
 Ergebnis eines fehlgeschlagenen Testlaufs: 
@@ -120,31 +120,31 @@ Ergebnis eines fehlgeschlagenen Testlaufs:
 <img src="assets/RPGUnitView_Error.png" alt="Display RPGUnit Test Result">
 </p>
 <p>
-Die Eigenschaften einer ausgewählten Zeile lassen sich auch in einem Eigenschaftsfenster in Tabellenform anzeigen: 
+Die Eigenschaften einer ausgewÃ¤hlten Zeile lassen sich auch in einem Eigenschaftsfenster in Tabellenform anzeigen: 
 <p class="indent">
 <img src="assets/RPGUnitView_Error_Properties.png" alt="Display RPGUnit Test Result">
 </p>
-Standardmäßig wird die Ausführungszeit nicht angezeigt. Sie läßt sich jedoch bei Bedarf über den 
+StandardmÃ¤ÃŸig wird die AusfÃ¼hrungszeit nicht angezeigt. Sie lÃ¤ÃŸt sich jedoch bei Bedarf Ã¼ber den 
 "Erweiterte Eigenschaften anzeigen" <img align="top" src="assets/Show_Advanced_Properties_Button.png" /> Button einblenden.
 <p>
 <table>
 <tr>
 <td class="info">Tipp: Deaktivieren sie die Voreinstellung <i>Anzeigen Ergebnissicht</i>, um nach einem Testlauf den Focus 
                  auf der Ansicht zu halten, von der aus der Unit Test gestartet worden ist. Die <i>RPGUnit</i> Ergebnissicht 
-                 visualisiert das Ergebnis eines Testlauf mit einem grünen oder roten Icon auf dem Tab der Sicht.</td>
+                 visualisiert das Ergebnis eines Testlauf mit einem grÃ¼nen oder roten Icon auf dem Tab der Sicht.</td>
 </tr>
 </table>
 <p>
 <table>
 <tr><td><img src="assets/Icon_OK.png" /></td><td width="10">&nbsp;</td><td>Zeigt an, dass der Unit Test erfolgreich abgeschossen wurde.</td></tr>
-<tr><td><img src="assets/Icon_Error.png" /></td><td width="10">&nbsp;</td><td>Zeigt an, dass der Unit Test mit Fehlern geendet hat. Wechseln sie zur Ergebnissicht, um die Details zu prüfen.</td></tr>
-<tr><td><img src="assets/Icon_Canceled.png" /></td><td width="10">&nbsp;</td><td>Zeigt an, dass alle Unit Tests vom Benutzer abgebrochen worden sind. Wechseln sie zur Ergebnissicht, um die Details zu prüfen.</td></tr>
+<tr><td><img src="assets/Icon_Error.png" /></td><td width="10">&nbsp;</td><td>Zeigt an, dass der Unit Test mit Fehlern geendet hat. Wechseln sie zur Ergebnissicht, um die Details zu prÃ¼fen.</td></tr>
+<tr><td><img src="assets/Icon_Canceled.png" /></td><td width="10">&nbsp;</td><td>Zeigt an, dass alle Unit Tests vom Benutzer abgebrochen worden sind. Wechseln sie zur Ergebnissicht, um die Details zu prÃ¼fen.</td></tr>
 </table>
 <p>
 <h3>Unit Tests Mit Fehlern</h3>
 <p>
-Im Fall eines unerwarteten Programmabbruchs kann es hilfreich sein die Nachrichten im Jobprotokoll einsehen zu können. Verwenden sie die
-<a href="./preferences.html">Voreinstellungen</a> oder das Menü der Ansicht, um den Umfang der aufgezeichneten Nachrichten einzustellen: 
+Im Fall eines unerwarteten Programmabbruchs kann es hilfreich sein die Nachrichten im Jobprotokoll einsehen zu kÃ¶nnen. Verwenden sie die
+<a href="./preferences.html">Voreinstellungen</a> oder das MenÃ¼ der Ansicht, um den Umfang der aufgezeichneten Nachrichten einzustellen: 
 <p class="indent">
 <img src="assets/RPGUnitView_Menu.png" alt="Display RPGUnit Test Result">
 </p>
@@ -153,18 +153,18 @@ Im Fall eines unerwarteten Programmabbruchs kann es hilfreich sein die Nachricht
 <tr><td valign="top" nowrap>Keine Nachrichten</td><td valign="top">-</td><td valign="top">Es werden keine Nachrichten aus dem Jobprotokoll aufgezeichnet.</td></tr>
 <tr><td valign="top" nowrap>Abbruchnachrichten bei einem Programmabbruch</td><td valign="top">-</td><td valign="top">Bei einem unerwarteten Programmabbruch werden alle Abbruchnachrichten (*ESCAPE) des Jobprotokolls aufgezeichnet.</td></tr>
 <tr><td valign="top" nowrap>Alle Nachrichten bei einem Programmabbruch</td><td valign="top">-</td><td valign="top">Bei einem unerwarteten Programmabbruch werden alle Nachrichten des Jobprotokolls aufgezeichnet.</td></tr>
-<tr><td valign="top" nowrap>Alle Einträge</td><td valign="top">-</td><td valign="top">Alle Nachrichten des Jobprotokolls werden aufgezeichnet.</td></tr>
-<tr><td valign="top" nowrap>Formatieren Joblogeinträge</td><td valign="top">-</td><td valign="top">Gibt an, ob Joblogeinträge formatiert in der <i>Befehlsprotokoll</i> Ansicht dargestellt werden.</td></tr>
+<tr><td valign="top" nowrap>Alle EintrÃ¤ge</td><td valign="top">-</td><td valign="top">Alle Nachrichten des Jobprotokolls werden aufgezeichnet.</td></tr>
+<tr><td valign="top" nowrap>Formatieren JoblogeintrÃ¤ge</td><td valign="top">-</td><td valign="top">Gibt an, ob JoblogeintrÃ¤ge formatiert in der <i>Befehlsprotokoll</i> Ansicht dargestellt werden.</td></tr>
 </table>
 <p>
 Die aufgezeichneten Nachrichten des Jobprotokolls werden in der <i>Befehlsprotokoll</i> Ansicht angezeigt.
 <p>
 <h3>Fehlernachrichten</h3>
 Der folgende Dialog wird angezeigt, wenn ein Serviceprogramm nicht als Test Suite oder eine Prozedur nicht als Test Case
-akzeptiert wird. Prüfen sie die folgenden Regeln, um das Problem zu lokalisieren:
+akzeptiert wird. PrÃ¼fen sie die folgenden Regeln, um das Problem zu lokalisieren:
 <ul>
-<li>In Abhängigkeit der Benutzereinstellungen müssen Serviceprogramms mit 'RPGUNIT' markiert sein (benutzerdefiniertes Attribut oder Text).</li>
-<li>Namen von Prozeduren müssen mit 'test' anfangen.</li>
+<li>In AbhÃ¤ngigkeit der Benutzereinstellungen mÃ¼ssen Serviceprogramms mit 'RPGUNIT' markiert sein (benutzerdefiniertes Attribut oder Text).</li>
+<li>Namen von Prozeduren mÃ¼ssen mit 'test' anfangen.</li>
 </ul>
 <p class="indent">
 <img src="assets/TestCaseErrorMessages.png" alt="Error messages when attempting to run a test case">
