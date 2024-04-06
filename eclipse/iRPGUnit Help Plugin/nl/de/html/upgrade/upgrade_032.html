@@ -9,19 +9,19 @@
 
 <body>
 <h1>Umsteigen von v0.3.2 nach v2.0.0</h1>
-Für den Umstieg von RPGUnit v0.3.2 auf iRPGUnit 2.0 liegen keine Erfahrungswerte vor.
+FÃ¼r den Umstieg von RPGUnit v0.3.2 auf iRPGUnit 2.0 liegen keine Erfahrungswerte vor.
 RPGUnit. Daher, bevor sie beginnen: 
 <p>
 <table>
 <tr>
-<td class="notice"><b>Testen sie ihre bestehenden Test Suites sorgfältig innerhalb einer 
-                      geschützten Testumgebung mit iRPGUnit 2.0, bevor sie endgültig auf 
+<td class="notice"><b>Testen sie ihre bestehenden Test Suites sorgfÃ¤ltig innerhalb einer 
+                      geschÃ¼tzten Testumgebung mit iRPGUnit 2.0, bevor sie endgÃ¼ltig auf 
                       die neue Version umsteigen.</b></td>
 </tr>
 </table>
 <p>
-Unit Test, welche ausschließlich die folgenden Zusicherungen verwenden, lassen sich
-problemlos unter allen Versionen von RPGUnit kompilieren und ausführen:
+Unit Test, welche ausschlieÃŸlich die folgenden Zusicherungen verwenden, lassen sich
+problemlos unter allen Versionen von RPGUnit kompilieren und ausfÃ¼hren:
 <ul>
 <li>assert()</li>
 <li>aEqual()</li>
@@ -29,7 +29,7 @@ problemlos unter allen Versionen von RPGUnit kompilieren und ausführen:
 <li>fail()</li>
 </ul>
 <p>
-Folgende Änderungen sollten sie kennen:
+Folgende Ã„nderungen sollten sie kennen:
 <ul>
 <li>RPG data structure <i>AssertFailEvt_t</i> has been changed.</li>
 <li>RPG data structure <i>CallStk_t</i> has been changed.</li>
@@ -40,7 +40,7 @@ Folgende Änderungen sollten sie kennen:
 <li>The test reports got a left margin.</li>
 </ul>
 <p>
-Die meisten Umwandlungsfehler lassen sich auf diese Änderungen zurückführen.
+Die meisten Umwandlungsfehler lassen sich auf diese Ã„nderungen zurÃ¼ckfÃ¼hren.
 <p>
 Die folgenden Unit Tests (kompiliert mit v0.3.2) brechen unter iRPGUnit mit einem Fehler ab: 
 <ul>
@@ -76,11 +76,11 @@ Die folgenden Unit Tests lassen sich mit iRPGUnit nicht kompilieren:
 <li>Test Suite <i>CMDRUNT</i>: Zum Beispiel: <i>ExcpMsgInfo_t</i> wurde entfernt.</li>
 <li>Test Suite <i>CMDRUNLOGT</i>: Zum Beispiel: <i>callStkEnt</i> von <i>AssertFailEvt_t</i> wurde umbenannt in <i>callStk</i>.</li>
 <li>Test Suite <i>PGMMSGT</i>: Zum Beispiel: <i>ExcpMsgInfo_t</i> wurde entfernt.</li>
-<li>Test Suite <i>RUCRTTSTT</i>: /COPY Teildatei <i>RUCRTTST</i> wurde umbenannt in <i>CRTTST</i> und die Anzahl Parameter von getCrtRpgModCmd() und getCrtSrvPgmCmd() haben sich geändert.</li>
+<li>Test Suite <i>RUCRTTSTT</i>: /COPY Teildatei <i>RUCRTTST</i> wurde umbenannt in <i>CRTTST</i> und die Anzahl Parameter von getCrtRpgModCmd() und getCrtSrvPgmCmd() haben sich geÃ¤ndert.</li>
 <li>Test Suite <i>RUNT</i>: /COPY Teildatei <i>RUCRTTST</i> wurde umbenannt in <i>CMDRUNSRV</i> und <i>callStkEnt</i> von <i>AssertFailEvt_t</i> wurde umbenannt in <i>callStk</i>.</li>
 </ul>
-Unit Test, welche die Prozedur <i>getAssertFailEvt()</i> aufrufen, müssen sorgfältig geprüft werden, weil
-sich die Datenstruktur <i>AssertFailEvt_t</i> geändert hat.
+Unit Test, welche die Prozedur <i>getAssertFailEvt()</i> aufrufen, mÃ¼ssen sorgfÃ¤ltig geprÃ¼ft werden, weil
+sich die Datenstruktur <i>AssertFailEvt_t</i> geÃ¤ndert hat.
 <p>
 <iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
 </body>

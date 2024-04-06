@@ -9,24 +9,24 @@
 
 <body>
 <h1>Umsteigen von v2.4.2 nach v3.0.0</h1>
-Zunächst müssen sie beachten, dass iRPGUnit 3.* mindestens ein IBM i Betriebssystem 7.1
-erfordert. Ältere Versionen werden nicht mehr unterstützt.  
+ZunÃ¤chst mÃ¼ssen sie beachten, dass iRPGUnit 3.* mindestens ein IBM i Betriebssystem 7.1
+erfordert. Ã¤ltere Versionen werden nicht mehr unterstÃ¼tzt.  
 <p>
-Wenn sie auf die Version 3.0.0 wechseln möchten, müssen sie die RPGUNIT Produktbibliothek
-aktualisieren, um alle neuen Funktionen nutzen zu können.
+Wenn sie auf die Version 3.0.0 wechseln mÃ¶chten, mÃ¼ssen sie die RPGUNIT Produktbibliothek
+aktualisieren, um alle neuen Funktionen nutzen zu kÃ¶nnen.
 <p>
 Es ist aber auch kein Problem, wenn sie erst nach dem Aktualisieren des Plug-ins feststellen,
-dass sie die Bibliothek, aus welchen Gründen auch immer, nicht aktualisieren können. Das Plugin
-kann auch mit einer 2.* Bibliothek verwendet werden. Allerdings müssen sie dann auf einige neue
+dass sie die Bibliothek, aus welchen GrÃ¼nden auch immer, nicht aktualisieren kÃ¶nnen. Das Plugin
+kann auch mit einer 2.* Bibliothek verwendet werden. Allerdings mÃ¼ssen sie dann auf einige neue
 Funktionen, wie zum Beispiel die neue XML Dateiausgabe, verzichten.
 <p>
 Alle bestehenden Unit Test Suites sollten sich problemlos mit iRPGUnit 3.0
-ausführen lassen. Dennoch: 
+ausfÃ¼hren lassen. Dennoch: 
 <p>
 <table>
 <tr>
-<td class="notice"><b>Testen sie ihre bestehenden Test Suites sorgfältig innerhalb einer 
-                      geschützten Testumgebung mit iRPGUnit 3.0, bevor sie endgültig auf 
+<td class="notice"><b>Testen sie ihre bestehenden Test Suites sorgfÃ¤ltig innerhalb einer 
+                      geschÃ¼tzten Testumgebung mit iRPGUnit 3.0, bevor sie endgÃ¼ltig auf 
                       die neue Version umsteigen.</b></td>
 </tr>
 </table>
@@ -46,9 +46,9 @@ der neuen Version:
 Die folgenden RPGUnit Selbsttests (erstellt mit v2.4.2) laufen <b>nicht</b> mit
 der neuen Version: 
 <ul>
-<li>Testfall <i>testAssertWithFailure</i> der Test Suite ASSERTT, aufgrund interner Änderungen.</li>
-<li>Testfall <i>testGoodByeIsNotHello</i> der Test Suite ASSERTT, aufgrund interner Änderungen.</li>
-<li>Testfall <i>testTwoAndTwoIsNotEqualToFive</i> der Test Suite ASSERTT, aufgrund interner Änderungen.</li>
+<li>Testfall <i>testAssertWithFailure</i> der Test Suite ASSERTT, aufgrund interner Ã„nderungen.</li>
+<li>Testfall <i>testGoodByeIsNotHello</i> der Test Suite ASSERTT, aufgrund interner Ã„nderungen.</li>
+<li>Testfall <i>testTwoAndTwoIsNotEqualToFive</i> der Test Suite ASSERTT, aufgrund interner Ã„nderungen.</li>
 <p>
 <li>Test Suite <i>CALLPROCT</i>, weil das Serviceprogramm RURUNNER aufgegeben wurde.</li>
 <li>Test Suite <i>EXTPRCT</i>, weil das Serviceprogramm RURUNNER aufgegeben wurde.</li>
@@ -56,8 +56,8 @@ der neuen Version:
 <li>Test Suite <i>RUNT</i>, weil das Serviceprogramm RURUNNER aufgegeben wurde.</li>
 <p>
 <li>Test Suite <i>RUACPTST</i>, weil die Quellendatei RPGUNITF1 nach QTESTCASES umbenannt wurde.
-    Einige Testfälle lassen sich ausführen, wenn QTESTCASES nach RPGUNITF1 dupliziert wird. Dennoch
-    bleiben Testfälle übrig, die aufgrund interner Änderungen fehlschlagen.</li>
+    Einige TestfÃ¤lle lassen sich ausfÃ¼hren, wenn QTESTCASES nach RPGUNITF1 dupliziert wird. Dennoch
+    bleiben TestfÃ¤lle Ã¼brig, die aufgrund interner Ã„nderungen fehlschlagen.</li>
 </ul>
 <p>
 <table>
@@ -68,11 +68,11 @@ der neuen Version:
 </tr>
 </table>
 <p>
-Das Problem lässt sich wie folgt beheben:
+Das Problem lÃ¤sst sich wie folgt beheben:
 <ol>
-<li>Öffnen sie die Quellendatei einer vorhandenen v2.x Test Suite.</li>
+<li>Ã–ffnen sie die Quellendatei einer vorhandenen v2.x Test Suite.</li>
 <li>Suchen sie die <i>/copy</i> Anweisung, mit welche die Quellenteildatei <i>TESTCASE</i> einbindet.</li>
-<li>Ändern sie die Anweisung, so dass <i>TESTCASE</i> der Quellendatei QINCLUDE referenziert wird.</li>
+<li>Ã„ndern sie die Anweisung, so dass <i>TESTCASE</i> der Quellendatei QINCLUDE referenziert wird.</li>
 </ol>
 <p>
 <b>Beispiel:</b>
@@ -86,7 +86,7 @@ Das Problem lässt sich wie folgt beheben:
 /copy QINCLUDE,TESTCASE
 </pre></code> 
 <p>
-EIne weitere Möglichkeit zum Beheben des Problems besteht darin, die Quellenteildatei <i>TESTCASE</i> der
+EIne weitere MÃ¶glichkeit zum Beheben des Problems besteht darin, die Quellenteildatei <i>TESTCASE</i> der
 Quellendatei <i>QINCLUDE</i> in die Quellendatei <i>RPGUNIT1</i> zu kopieren.
 <p>
 <code><pre class="indent">
@@ -94,7 +94,7 @@ CRTSRCPF FILE(RPGUNIT/RPGUNIT1) RCDLEN(112)
 CPYF FROMFILE(RPGUNIT2/RPGUNIT1) TOFILE(RPGUNIT/RPGUNIT1) FROMMBR(TESTCASE) TOMBR(*FROMMBR) MBROPT(*ADD)
 </pre></code> 
 <p>
-Für eine Übergangszeit wird iRPGUnit mit einem Duplikat der Quellenteildatei TESTCASE in der Quellendatei RPGUNIT1 ausgeliefert.
+FÃ¼r eine Ã¼bergangszeit wird iRPGUnit mit einem Duplikat der Quellenteildatei TESTCASE in der Quellendatei RPGUNIT1 ausgeliefert.
 <p>
 <iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
 </body>
