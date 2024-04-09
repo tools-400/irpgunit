@@ -398,7 +398,12 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
         if (isDisposed()) {
             return;
         }
+
+        Cursor oldCursor = mainPanel.getCursor();
         mainPanel.setCursor(aCursor);
+        if (oldCursor != null) {
+            oldCursor.dispose();
+        }
     }
 
     public IRPGUnitViewDelegate getViewDelegate() {

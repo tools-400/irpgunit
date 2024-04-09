@@ -19,7 +19,9 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
 
@@ -112,14 +114,16 @@ public abstract class AbstractRunUnitTestsJob extends Job {
 
         UnitTestSuite[] unitTestSuites = getUnitTestSuites();
 
+        Display display = PlatformUI.getWorkbench().getDisplay();
+
         try {
             resetStatistics();
-            setCursor(new Cursor(null, SWT.CURSOR_WAIT));
+            setCursor(new Cursor(display, SWT.CURSOR_WAIT));
             IStatus status = asyncExecute(unitTestSuites, monitor);
             return status;
         } finally {
             returnResultToView(unitTestSuites);
-            setCursor(new Cursor(null, SWT.CURSOR_ARROW));
+            setCursor(new Cursor(display, SWT.CURSOR_ARROW));
         }
     }
 
