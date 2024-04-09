@@ -65,6 +65,8 @@ import de.tools400.rpgunit.core.model.local.Outcome;
 import de.tools400.rpgunit.core.model.local.UnitTestCallStackEntry;
 import de.tools400.rpgunit.core.model.local.UnitTestCase;
 import de.tools400.rpgunit.core.model.local.UnitTestExecutionTimeFormatter;
+import de.tools400.rpgunit.core.model.local.UnitTestMessageReceiver;
+import de.tools400.rpgunit.core.model.local.UnitTestMessageSender;
 import de.tools400.rpgunit.core.model.local.UnitTestSuite;
 import de.tools400.rpgunit.core.preferences.Preferences;
 import de.tools400.rpgunit.core.ui.warning.WarningMessage;
@@ -633,8 +635,18 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
                 return tText;
             } else if (element instanceof UnitTestCallStackEntry) {
                 UnitTestCallStackEntry tCallStackEntry = (UnitTestCallStackEntry)element;
-                String tText = tCallStackEntry.getProcedure() + " ( " + tCallStackEntry.getProgram() + "->" //$NON-NLS-1$ //$NON-NLS-2$
-                    + tCallStackEntry.getModule() + ":" + tCallStackEntry.getStatementNumberText() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                String tText = tCallStackEntry.getProcedure() + " ( " + tCallStackEntry.getProgramLibrary() + "/" + tCallStackEntry.getProgram() //$NON-NLS-1$ //$NON-NLS-2$
+                    + "->" + tCallStackEntry.getModule() + ":" + tCallStackEntry.getStatementNumberText() + ")"; //$NON-NLS-2$ //$NON-NLS-3$
+                return tText;
+            } else if (element instanceof UnitTestMessageSender) {
+                UnitTestMessageSender tSender = (UnitTestMessageSender)element;
+                String tText = tSender.getType() + ": " + tSender.getProcedure() + " ( " + tSender.getProgramLibrary() + "/" + tSender.getProgram() //$NON-NLS-1$ //$NON-NLS-2$
+                    + "->" + tSender.getModule() + ":" + tSender.getStatementNumberText() + ")"; //$NON-NLS-2$ //$NON-NLS-3$
+                return tText;
+            } else if (element instanceof UnitTestMessageReceiver) {
+                UnitTestMessageReceiver tReceiver = (UnitTestMessageReceiver)element;
+                String tText = tReceiver.getType() + ": " + tReceiver.getProcedure() + " ( " + tReceiver.getProgramLibrary() + "/" //$NON-NLS-1$ //$NON-NLS-2$
+                    + tReceiver.getProgram() + "->" + tReceiver.getModule() + ":" + tReceiver.getStatementNumberText() + ")"; //$NON-NLS-2$ //$NON-NLS-3$
                 return tText;
             } else {
                 return ""; //$NON-NLS-1$
@@ -657,7 +669,17 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
             } else if (parentElement instanceof UnitTestSuite) {
                 return ((UnitTestSuite)parentElement).getUnitTestCases();
             } else if (parentElement instanceof UnitTestCase) {
-                return ((UnitTestCase)parentElement).getCallStack().toArray();
+                UnitTestCase unitTestCase = (UnitTestCase)parentElement;
+                Outcome outcome = unitTestCase.getOutcome();
+                if (Outcome.ERROR.equals(outcome)) {
+                    UnitTestMessageSender messageSender = unitTestCase.getMessageSender();
+                    UnitTestMessageReceiver messageReceiver = unitTestCase.getMessageReceiver();
+                    return new Object[] { messageSender, messageReceiver };
+                } else if (Outcome.FAILURE.equals(outcome)) {
+                    return unitTestCase.getCallStack().toArray();
+                } else {
+                    return noElements;
+                }
             } else {
                 return noElements;
             }
@@ -693,7 +715,6 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
 
         @Override
         public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-
         }
 
     }

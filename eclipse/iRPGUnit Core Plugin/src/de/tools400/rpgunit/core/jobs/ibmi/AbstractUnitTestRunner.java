@@ -41,6 +41,8 @@ import de.tools400.rpgunit.core.preferences.Preferences;
 
 public abstract class AbstractUnitTestRunner {
 
+    protected static final String EMPTY_STRING = "";//$NON-NLS-1$
+
     /**
      * Remote test driver return code: All test successfully finished.
      */

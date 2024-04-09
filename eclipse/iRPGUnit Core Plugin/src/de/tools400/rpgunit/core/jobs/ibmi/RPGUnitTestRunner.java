@@ -42,6 +42,8 @@ import de.tools400.rpgunit.core.model.ibmi.I5ObjectName;
 import de.tools400.rpgunit.core.model.ibmi.I5ServiceProgram;
 import de.tools400.rpgunit.core.model.local.UnitTestCallStackEntry;
 import de.tools400.rpgunit.core.model.local.UnitTestCase;
+import de.tools400.rpgunit.core.model.local.UnitTestMessageReceiver;
+import de.tools400.rpgunit.core.model.local.UnitTestMessageSender;
 import de.tools400.rpgunit.core.model.local.UnitTestReportFile;
 import de.tools400.rpgunit.core.model.local.UnitTestSuite;
 import de.tools400.rpgunit.core.preferences.Preferences;
@@ -553,38 +555,31 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
          * Structure of user space:
          *  
          *   tmpl_testSuite
-         *     tmpl_testCase         Array(n)
-         *       tmpl_callStkEnt     Array(0..64)
+         *     tmpl_testCase_v4         Array(n)
+         *       tmpl_callStkEnt_V4     Array(0..64)
+         *       or
+         *       tmpl_sender_V4
+         *       tmpl_receiver_V4
          *
          * Structure of test suite header: 
          * 
-         * D tmpl_testSuite  DS           256    qualified
-         * D  length...                           
-         * D                               10I 0          
-         * D  version...                          
-         * D                               10I 0          
-         * D  testSuite                    20A
-         * D  numberRuns...                          
-         * D                               10I 0          
-         * D  numberAssertions...                         
-         * D                               10I 0          
-         * D  numberFailures...                           
-         * D                               10I 0          
-         * D  numberErrors...                             
-         * D                               10I 0          
-         * D  offsetTestCases...                          
-         * D                               10I 0          
-         * D  numberTestCases...                          
-         * D                               10I 0
+         * D tmpl_testSuite  DS           256    qualified template
+         * D  length                       10I 0
+         * D  version                      10I 0
+         * D  testSuite                          likeds(Object_t)
+         * D  numRuns                      10I 0
+         * D  numAsserts                   10I 0
+         * D  numFailures                  10I 0
+         * D  numErrors                    10I 0
+         * D  offsTestCases                10I 0
+         * D  numTestCases                 10I 0
          * D  system                       10A
-         * D  splF_name                    10A  
+         * D  splF_name                    10A
          * D  splF_nbr                     10I 0
-         * D  job_name                     10A  
-         * D  job_user                     10A  
+         * D  job_name                     10A
+         * D  job_user                     10A
          * D  job_nbr                       6A
-         * D  srcFile                      10A
-         * D  srcLib                       10A
-         * D  srcMbr                       10A
+         * D  qSrcMbr                            likeds(SrcMbr_t)
          * D  numTestCasesRtn...
          * D                               10I 0
          * D  reserved1                   120A
@@ -655,49 +650,52 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             testResult.setSpooledFile(null);
         }
 
-            retrieveTestCases(bytes, tTotalSizeUserSpace, tOffsetTestCases, numTestCasesRtn, testResult, tVersion);
+        if (tVersion == VERSION_4) {
+            retrieveTestCasesV4(bytes, tTotalSizeUserSpace, tOffsetTestCases, numTestCasesRtn, testResult, tVersion);
+        } else {
+            retrieveTestCasesV3(bytes, tTotalSizeUserSpace, tOffsetTestCases, numTestCasesRtn, testResult, tVersion);
+        }
 
         assert tNumberAssertions == testResult.getNumberAssertions() : "Number of assertions does not match"; //$NON-NLS-1$
-        // assert tNumberFailures == tTestSuite.getNumberFailures() :
-        // "Number of failed assertions does not match";
-        // assert tNumberErrors == tTestSuite.getNumberErrors() :
-        // "Number of errors does not match";
 
         return testResult;
     }
 
-    private void retrieveTestCases(byte[] aUserSpaceBytes, int aTotalLength, int anOffsetTestCases, int numTestCasesRtn, UnitTestSuite aTestSuite,
+    private void retrieveTestCasesV3(byte[] aUserSpaceBytes, int aTotalLength, int anOffsetTestCases, int numTestCasesRtn, UnitTestSuite aTestSuite,
         int aVersion) throws Exception {
 
         // @formatter:off
         /* 
          * Structure of test case entry: 
          *   
-         *   D tmpl_testCase   DS           384    qualified
-         *   D  length                       10I 0
-         *   D  result                        1A            
-         *   D  reserved_1                    1A
-         *   D  stmt                         10A
-         *   D  numberAssertions...                         
-         *   D                               10I 0
-         *   D  numCallStkEnt                10I 0
-         *   D  offsCallStkEnt...           
-         *   D                               10I 0
-         *   D  offsNext                     10I 0
-         *   D  lenTestCase                   5I 0
-         *   D  lenExcpMessage...                   
-         *   D                                5I 0  
-         *   D  testCase                    100A    
-         *   D  excpMessage                 200A           (varying length up to 1024 with v2)
-         *   D  execTime                     20I 0
-         *   D  reserved_2                   40A           (removed with v2)
+         * D tmpl_testCase_v4...
+         * D                 DS            50    qualified template
+         * D  offsNextEntry                10i 0
+         * D  lenEntry                      5i 0
+         * D  result                        1a
+         * D  reserved_1                    1a
+         * D  numAsserts                   10i 0
+         * D  execTime                     20i 0
+         * D  offsTestCaseText...
+         * D                               10i 0
+         * D  lenTestCaseText...
+         * D                                5i 0
+         * D  offsExcpMsg                  10i 0
+         * D  lenExcpMsg                    5i 0
+         * D  offsSndInf                   10i 0
+         * D  lenSndInf                     5i 0
+         * D  offsRcvInf                   10i 0
+         * D  lenRcvInf                     5i 0
+         * D  offsCallStkE                 10i 0
+         * D  numCallStkE                   5i 0
          *   
-         *   Length over all: 384
+         *   Length over all: 50
          */
         // @formatter:on
 
         String tOutcome = null;
         String tReserved_1 = null;
+        String tNoLongerUsed = null;
         int tAssertions = 0;
         short tLenExcpMessage = 0;
         String tExcpMessage = null;
@@ -717,6 +715,7 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             tEntryLength = extractInt(aUserSpaceBytes, tOffset);
             tOutcome = extractString(aUserSpaceBytes, tOffset, ENTRY_OUTCOME);
             tReserved_1 = extractString(aUserSpaceBytes, tOffset, ENTRY_RESERVED_1);
+            tNoLongerUsed = extractString(aUserSpaceBytes, tOffset, ENTRY_STATEMENT_NUMBER);
             tAssertions = extractInt(aUserSpaceBytes, tOffset);
             tNumCallStkEnt = extractInt(aUserSpaceBytes, tOffset);
             tOffsCallStkEnt = extractInt(aUserSpaceBytes, tOffset);
@@ -735,36 +734,31 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             testCase.setMessage(tExcpMessage);
             aTestSuite.addUnitTestCase(testCase);
 
-            retrieveTestCaseCallStack(aUserSpaceBytes, tEntryLength, tOffsCallStkEnt, tNumCallStkEnt, testCase, aVersion);
+            retrieveTestCaseCallStackV3(aUserSpaceBytes, tEntryLength, tOffsCallStkEnt, tNumCallStkEnt, testCase, aVersion);
 
             tOffset[0] = tOffsetNext;
         }
     }
 
-    private void retrieveTestCaseCallStack(byte[] aUserSpaceBytes, int aTotalLength, int anOffsetCallStackEntries, int aNumCallStackEntries,
+    private void retrieveTestCaseCallStackV3(byte[] aUserSpaceBytes, int aTotalLength, int anOffsetCallStackEntries, int aNumCallStackEntries,
         UnitTestCase aTestCase, int aVersion) throws Exception {
 
         // @formatter:off
         /* 
          * Structure of test case entry: 
          *   
-         *   D tmpl_callStkEnt...
-         *   D                 DS           354    qualified
-         *   D  pgmNm                        10A            
-         *   D  pgmLibNm                     10a
-         *   D  modNm                        10A            
-         *   D  modLibNm                     10A
-         *   D  specNb                       10A
-         *   D  length                       10I 0            
-         *   D  offsNext                     10I 0
-         *   D  reserved_1                     8A
-         *   D  lenProcNm                     5I 0
-         *   D  procNm                      256A
-         *   D  srcFile                      10A
-         *   D  srcLib                       10A
-         *   D  srcMbr                       10A
+         * D tmpl_callStkEnt_V4...
+         * D                 DS            92    qualified template
+         * D  offsNextEntry                10i 0
+         * D  lenEntry                      5i 0
+         * D  qPgm                               likeds(Object_t)
+         * D  qMod                               likeds(Object_t)
+         * D  specNb                       10a
+         * D  offsProcNm                   10i 0
+         * D  lenProcNm                     5i 0
+         * D  qSrcMbr                            likeds(SrcMbr_t)
          *
-         *   Length over all: 354
+         *   Length over all: 92
          */
         // @formatter:on
 
@@ -792,6 +786,173 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             aTestCase.addCallStackEntry(tStackEntry);
 
             tOffset[0] = tOffsNext;
+        }
+    }
+
+    private void retrieveTestCasesV4(byte[] aUserSpaceBytes, int aTotalLength, int anOffsetTestCases, int numTestCasesRtn, UnitTestSuite aTestSuite,
+        int aVersion) throws Exception {
+
+        // @formatter:off
+        /* 
+         * Structure of test case entry: 
+         *   
+         * D tmpl_testCase_v4...
+         * D                 DS            50    qualified template
+         * D  offsNextEntry                10i 0
+         * D  lenEntry                      5i 0
+         * D  result                        1a
+         * D  reserved_1                    1a
+         * D  numAsserts                   10i 0
+         * D  execTime                     20i 0
+         * D  offsTestCaseText...
+         * D                               10i 0
+         * D  lenTestCaseText...
+         * D                                5i 0
+         * D  offsExcpMsg                  10i 0
+         * D  lenExcpMsg                    5i 0
+         * D  offsSndInf                   10i 0
+         * D  lenSndInf                     5i 0
+         * D  offsRcvInf                   10i 0
+         * D  lenRcvInf                     5i 0
+         * D  offsCallStkE                 10i 0
+         * D  numCallStkE                   5i 0
+         *   
+         *   Length over all: 50
+         */
+        // @formatter:on
+
+        int[] tOffset = { anOffsetTestCases };
+
+        Date tLastRunDate = new Date();
+
+        for (int i = 0; i < numTestCasesRtn; i++) {
+
+            int tOffsNextEntry = extractInt(aUserSpaceBytes, tOffset);
+            short tlenEntry = extractShort(aUserSpaceBytes, tOffset);
+
+            String tOutcome = extractString(aUserSpaceBytes, tOffset, 1);
+            String reserved_1 = extractString(aUserSpaceBytes, tOffset, 1);
+
+            int tNumAsserts = extractInt(aUserSpaceBytes, tOffset);
+            long tExecutionTime = extractLong(aUserSpaceBytes, tOffset);
+
+            int tOffsTestCaseText = extractInt(aUserSpaceBytes, tOffset);
+            short tLenTestCaseText = extractShort(aUserSpaceBytes, tOffset);
+
+            int tOffsExcpMsg = extractInt(aUserSpaceBytes, tOffset);
+            short tLenExcpMsg = extractShort(aUserSpaceBytes, tOffset);
+
+            int tOffsSndInf = extractInt(aUserSpaceBytes, tOffset);
+            short tLenSndInf = extractShort(aUserSpaceBytes, tOffset);
+
+            int tOffsRcvInf = extractInt(aUserSpaceBytes, tOffset);
+            short tLenRcvInf = extractShort(aUserSpaceBytes, tOffset);
+
+            int tOffsCallStkE = extractInt(aUserSpaceBytes, tOffset);
+            short tNumCallStkE = extractShort(aUserSpaceBytes, tOffset);
+
+            String tTestCaseText;
+            if (tOffsTestCaseText > 0 && tLenTestCaseText > 0) {
+                tOffset[0] = tOffsTestCaseText;
+                tTestCaseText = extractString(aUserSpaceBytes, tOffset, tLenTestCaseText).trim();
+            } else {
+                tTestCaseText = EMPTY_STRING;
+            }
+
+            String tExcpMsg;
+            if (tOffsExcpMsg > 0 && tLenExcpMsg > 0) {
+                tOffset[0] = tOffsExcpMsg;
+                tExcpMsg = extractString(aUserSpaceBytes, tOffset, tLenExcpMsg).trim();
+            } else {
+                tExcpMsg = EMPTY_STRING;
+            }
+
+            UnitTestMessageSender tSender;
+            if (tOffsSndInf > 0) {
+                tOffset[0] = tOffsSndInf;
+                short tlenSender = extractShort(aUserSpaceBytes, tOffset);
+                String tPgmNm = extractString(aUserSpaceBytes, tOffset, 10);
+                String tPgmLibNm = extractString(aUserSpaceBytes, tOffset, 10);
+                String tModNm = extractString(aUserSpaceBytes, tOffset, 10);
+                String tModLibNm = extractString(aUserSpaceBytes, tOffset, 10);
+                String tSpecNb = extractString(aUserSpaceBytes, tOffset, 10);
+                int tOffsProcNm = extractInt(aUserSpaceBytes, tOffset);
+                short tLenProcNm = extractShort(aUserSpaceBytes, tOffset);
+                tOffset[0] = tOffsProcNm;
+                String tProcNm = extractString(aUserSpaceBytes, tOffset, tLenProcNm);
+
+                tSender = new UnitTestMessageSender(tPgmNm, tPgmLibNm, tModNm, tModLibNm, tProcNm, tSpecNb);
+            } else {
+                tSender = null;
+            }
+
+            UnitTestMessageReceiver tReceiver;
+            if (tOffsRcvInf > 0) {
+                tOffset[0] = tOffsRcvInf;
+                short tlenReceiver = extractShort(aUserSpaceBytes, tOffset);
+                String tPgmNm = extractString(aUserSpaceBytes, tOffset, 10);
+                String tPgmLibNm = extractString(aUserSpaceBytes, tOffset, 10);
+                String tModNm = extractString(aUserSpaceBytes, tOffset, 10);
+                String tModLibNm = extractString(aUserSpaceBytes, tOffset, 10);
+                String tSpecNb = extractString(aUserSpaceBytes, tOffset, 10);
+                int tOffsProcNm = extractInt(aUserSpaceBytes, tOffset);
+                short tLenProcNm = extractShort(aUserSpaceBytes, tOffset);
+                tOffset[0] = tOffsProcNm;
+                String tProcNm = extractString(aUserSpaceBytes, tOffset, tLenProcNm);
+
+                tReceiver = new UnitTestMessageReceiver(tPgmNm, tPgmLibNm, tModNm, tModLibNm, tProcNm, tSpecNb);
+            } else {
+                tReceiver = null;
+            }
+
+            UnitTestCase testCase = new UnitTestCase(tTestCaseText);
+            testCase.setOutcome(tOutcome);
+            testCase.setStatistics(tLastRunDate, tExecutionTime);
+            testCase.setAssertions(tNumAsserts);
+            testCase.setMessage(tExcpMsg);
+            testCase.setMessageSender(tSender);
+            testCase.setMessageReceiver(tReceiver);
+            aTestSuite.addUnitTestCase(testCase);
+
+            if (tOffsCallStkE > 0 && tNumCallStkE > 0) {
+                retrieveTestCaseCallStackV4(aUserSpaceBytes, tOffsCallStkE, tNumCallStkE, testCase, aVersion);
+            }
+
+            tOffset[0] = tOffsNextEntry;
+        }
+    }
+
+    private void retrieveTestCaseCallStackV4(byte[] aUserSpaceBytes, int anOffsetCallStackEntries, int aNumCallStackEntries, UnitTestCase aTestCase,
+        int aVersion) throws Exception {
+
+        int[] tOffset = { anOffsetCallStackEntries };
+
+        for (int s = 0; s < aNumCallStackEntries; s++) {
+
+            int tOffsNextEntry = extractInt(aUserSpaceBytes, tOffset);
+            short tLenEntry = extractShort(aUserSpaceBytes, tOffset);
+            String tPgmNm = extractString(aUserSpaceBytes, tOffset, 10);
+            String tPgmLibNm = extractString(aUserSpaceBytes, tOffset, 10);
+            String tModNm = extractString(aUserSpaceBytes, tOffset, 10);
+            String tModLibNm = extractString(aUserSpaceBytes, tOffset, 10);
+            String tSpecNb = extractString(aUserSpaceBytes, tOffset, 10);
+
+            int tOffsProcNm = extractInt(aUserSpaceBytes, tOffset);
+            short tLenProcNm = extractShort(aUserSpaceBytes, tOffset);
+
+            String tSrcFile = extractString(aUserSpaceBytes, tOffset, CALL_STACK_SOURCE_FILE);
+            String tSrcLibrary = extractString(aUserSpaceBytes, tOffset, CALL_STACK_SOURCE_LIBRARY);
+            String tSrcMember = extractString(aUserSpaceBytes, tOffset, CALL_STACK_SOURCE_MEMBER);
+
+            tOffset[0] = tOffsProcNm;
+            String tProcNm = extractString(aUserSpaceBytes, tOffset, tLenProcNm);
+
+            UnitTestCallStackEntry tStackEntry = new UnitTestCallStackEntry(tPgmNm, tPgmLibNm, tModNm, tModLibNm, tProcNm, tSpecNb, tSrcFile,
+                tSrcLibrary, tSrcMember);
+
+            aTestCase.addCallStackEntry(tStackEntry);
+
+            tOffset[0] = tOffsNextEntry;
         }
     }
 

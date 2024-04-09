@@ -56,6 +56,10 @@ public class Messages extends NLS {
     public static String Library;
     public static String Module;
     public static String Procedure;
+    public static String Other;
+    public static String Type;
+    public static String Sender;
+    public static String Receiver;
     public static String Source_file;
     public static String Source_library;
     public static String Source_member;
