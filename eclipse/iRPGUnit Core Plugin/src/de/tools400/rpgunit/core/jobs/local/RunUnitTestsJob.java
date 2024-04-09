@@ -26,6 +26,7 @@ import de.tools400.rpgunit.core.model.ibmi.I5ServiceProgram;
 import de.tools400.rpgunit.core.model.local.UnitTestCase;
 import de.tools400.rpgunit.core.model.local.UnitTestSuite;
 import de.tools400.rpgunit.core.preferences.Preferences;
+import de.tools400.rpgunit.core.utils.ExceptionHelper;
 
 public class RunUnitTestsJob extends AbstractRunUnitTestsJob {
 
@@ -160,7 +161,7 @@ public class RunUnitTestsJob extends AbstractRunUnitTestsJob {
 
                         } catch (Exception e) {
                             displayError(ERROR_TITLE, Messages.bind(Messages.The_unit_test_A_has_not_finished_successful_B,
-                                new Object[] { tUnitTestServiceProgram.toString(), e.getLocalizedMessage() }));
+                                new Object[] { tUnitTestServiceProgram.toString(), ExceptionHelper.getLocalizedMessage(e) }));
                             cancelJob(tUnitTestSuite);
                         } finally {
                             deselectUnitTestCases(tUnitTestSuite);
