@@ -91,8 +91,8 @@ public abstract class AbstractUnitTestMessageProvider extends AbstractUnitTestOb
         descriptors.add(createPropertyDescriptor(PROPERTY_ID_TYPE, Messages.Type, false, Messages.Other));
         descriptors.add(createPropertyDescriptor(PROPERTY_ID_PROGRAM_NAME, Messages.Program, false, Messages.Program));
         descriptors.add(createPropertyDescriptor(PROPERTY_ID_PROGRAM_LIBRARY_NAME, Messages.Library, false, Messages.Program));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_MODULE_NAME, Messages.Error_message, false, Messages.Module));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_MODULE_LIBRARY_NAME, Messages.Result, false, Messages.Module));
+        descriptors.add(createPropertyDescriptor(PROPERTY_ID_MODULE_NAME, Messages.Module, false, Messages.Module));
+        descriptors.add(createPropertyDescriptor(PROPERTY_ID_MODULE_LIBRARY_NAME, Messages.Library, false, Messages.Module));
         descriptors.add(createPropertyDescriptor(PROPERTY_ID_PROCEDURE_NAME, Messages.Procedure, false, Messages.Statement_number));
         descriptors.add(createPropertyDescriptor(PROPERTY_ID_STATEMENT_NUMBER, Messages.Statement_number, false, Messages.Statement_number));
 
