@@ -43,6 +43,8 @@ public class UnitTestCase extends AbstractUnitTestObject
     private long executionTime;
     private Date lastRunDate;
     private Outcome outcome;
+    private UnitTestMessageSender messageSender;
+    private UnitTestMessageReceiver messageReceiver;
 
     public UnitTestCase(String aProcedure) {
         this.unitTestSuite = null;
@@ -239,6 +241,28 @@ public class UnitTestCase extends AbstractUnitTestObject
         return statementNumber;
     }
 
+    public void setMessageSender(UnitTestMessageSender messageSender) {
+        // if (messageSender != null) {
+        messageSender.setUnitTestCase(this);
+        // }
+        this.messageSender = messageSender;
+    }
+
+    public UnitTestMessageSender getMessageSender() {
+        return messageSender;
+    }
+
+    public void setMessageReceiver(UnitTestMessageReceiver messageReceiver) {
+        if (messageReceiver != null) {
+            messageReceiver.setUnitTestCase(this);
+        }
+        this.messageReceiver = messageReceiver;
+    }
+
+    public UnitTestMessageReceiver getMessageReceiver() {
+        return messageReceiver;
+    }
+
     public String getKey() {
         return procedure;
     }
@@ -288,6 +312,8 @@ public class UnitTestCase extends AbstractUnitTestObject
         setMessage(aUnitTestCase.errorMessage);
         setStatistics(aUnitTestCase.getLastRunDate(), aUnitTestCase.getExecutionTime());
         setOutcome(aUnitTestCase.getOutcome());
+        setMessageSender(aUnitTestCase.getMessageSender());
+        setMessageReceiver(aUnitTestCase.getMessageReceiver());
 
         callStackEntries.clear();
         for (UnitTestCallStackEntry tUnitTestCallStackEntry : aUnitTestCase.getCallStack()) {
