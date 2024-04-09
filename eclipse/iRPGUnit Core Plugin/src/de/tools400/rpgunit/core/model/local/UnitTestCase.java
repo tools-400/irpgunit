@@ -242,9 +242,9 @@ public class UnitTestCase extends AbstractUnitTestObject
     }
 
     public void setMessageSender(UnitTestMessageSender messageSender) {
-        // if (messageSender != null) {
-        messageSender.setUnitTestCase(this);
-        // }
+        if (messageSender != null) {
+            messageSender.setUnitTestCase(this);
+        }
         this.messageSender = messageSender;
     }
 
