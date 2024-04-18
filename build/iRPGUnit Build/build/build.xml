@@ -839,14 +839,11 @@
     <echo>Uploading local update site '${local.updateSite.path}' ...</echo>
 
         <copy todir="${local.updateSite.path}">
-            <fileset dir="${build.upload.dir.files.eclipse}\${target.ide.sf.dir}">
+            <fileset dir="${build.upload.dir.updateSite.eclipse}">
             </fileset>
         </copy>
 
-        <copy todir="${local.updateSite.path}">
-            <fileset file="${workspace.home}\${build.notifier.project}\${build.notifier.file}" >
-            </fileset>
-        </copy>
+        <copy file="${project.notifier}" todir="${local.updateSite.path}" />
             
     </target>
 
