@@ -99,6 +99,19 @@
         </else>
     </if>
 
+    <!-- Load local update site properties -->
+    <if>
+        <available file="localUpdateSite.properties"/>
+        <then>
+            <property file="localUpdateSite.properties" />
+        </then>
+        <else>
+            <echo>File 'localUpdateSite' not found.</echo>
+            <echo>Copy 'localUpdateSite_template.properties' to 'localUpdateSite.properties' and set the user names only (recommended).</echo>
+            <fail message="Ant script stopped."/>
+        </else>
+    </if>
+
     <!-- Set date and time -->
     <tstamp>
         <format property="today.timestamp" pattern="dd.MM.yyyy - kk:mm:ss" locale="de,DE" />
