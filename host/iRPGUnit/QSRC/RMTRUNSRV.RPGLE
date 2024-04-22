@@ -187,6 +187,7 @@
      D  specNb                       10a
      D  offsProcNm                   10i 0
      D  lenProcNm                     5i 0
+      * TODO: add qualified source member
       *
      D tmpl_receiver_V4...
      D                 DS                  likeds(tmpl_sender_V4) template
