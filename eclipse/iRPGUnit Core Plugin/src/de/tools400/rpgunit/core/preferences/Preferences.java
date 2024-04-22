@@ -724,7 +724,7 @@ public final class Preferences {
     }
 
     public String getDefaultCheckTestSuite() {
-        return CHECK_TEST_SUITE_TEXT;
+        return CHECK_TEST_SUITE_ATTRIBUTE;
     }
 
     public boolean getDefaultIsShowResultView() {
