@@ -14,11 +14,11 @@ command line, because you do not know the job, which runs the test case. It coul
 be any QZRCSRVS job of the System i. Therefore you cannot start a service job and 
 hence you cannot start the debugger.
 <p>
-The solution for that problem is “Service Entry Points” (SEPs).  SEPs let you debug 
+The solution for that problem is using "Service Entry Points" (SEPs).  SEPs let you debug 
 a batch program without knowing the job. Even the user profile may be unknown.
 <p>
 In order to set a SEP, you must right click on the service program that is your 
-iRPGUnit test suite and select “Debug (Service Entry)” to set a service entry point. 
+iRPGUnit test suite and select "Debug (Service Entry)" to set a service entry point. 
 <p class="indent">
 <img src="assets/RPGUnitSetSEP.png" alt="iRPGUnit Set SEP">
 </p>
@@ -30,7 +30,7 @@ Debug mode is enabled, when the little green bug at the top right corner of the 
 <p>
 <u><b>Note:</b></u> When debug mode is disabled, the RDi freezes, when the program reaches the SEP!<p>
 Now run your test case as usual. When the program reaches the SEP, you get a message 
-that you need to answer with “Yes” in order to start a debug session:
+that you need to answer with "Yes" in order to start a debug session:
 <p class="indent">
 <img src="assets/RPGUnitConfirmSEP.png" alt="iRPGUnit Confirm SEP">
 </p>
