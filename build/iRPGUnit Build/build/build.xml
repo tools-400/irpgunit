@@ -843,8 +843,12 @@
             </fileset>
         </copy>
 
-        <copy file="${project.notifier}" todir="${local.updateSite.path}" />
-            
+        <if>
+            <equals arg1="${project.notifier.exists}" arg2="true" />
+            <then>
+                <copy file="${project.notifier}" todir="${local.updateSite.path}" />
+            </then>
+        </if>
     </target>
 
     <!-- =============================================================
