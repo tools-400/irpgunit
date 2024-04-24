@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iRPGUnit CMOne Integration (optional)
 Bundle-SymbolicName: de.tools400.rpgunit.cmone;singleton:=true
-Bundle-Version: 4.0.4.r
+Bundle-Version: 4.1.0.r
 Bundle-Activator: de.tools400.rpgunit.cmone.RPGUnitCMOneIntegrationPlugin
 Bundle-Vendor: iRPGUnit Project Team
 Require-Bundle: org.eclipse.ui,

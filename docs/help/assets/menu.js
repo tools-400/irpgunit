@@ -10,6 +10,8 @@ document.write('\<ul id="treemenu" class="treeview">\
     <li><a href="../html/upgrade/upgrade_110.html" target="content" style="text-decoration:none">Upgrading from v1.10 to v2.0.0</a></li>\
     <li><a href="../html/upgrade/upgrade_242.html" target="content" style="text-decoration:none">Upgrading from v2.4.2 to v3.0.0</a></li>\
     <li><a href="../html/upgrade/upgrade_320.html" target="content" style="text-decoration:none">Upgrading from v3.2.0 to v4.0.0</a></li>\
+    <li><a href="../html/upgrade/upgrade_320.html" target="content" style="text-decoration:none">Upgrading from v3.2.0 to v4.0.0</a></li>\
+    <li><a href="../html/upgrade/upgrade_404.html" target="content" style="text-decoration:none">Upgrading from v4.0.4 to v4.1.0</a></li>\
   </ul>\
   </li>\
   <li>Quickstart\
