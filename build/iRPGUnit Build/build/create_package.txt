@@ -39,6 +39,11 @@ Building the Project
 3. Creating the Update Site
 ---------------------------
 
+Ensure you have the following libraries in your Ant build path:
+
+  - commons-net-3.3-patched.jar
+  - jsch-0.1.55.jar
+
 3.1 Run target 'build' of file 'build.xml'.
 3.2 Right-click 'site.xml', select 'PDE Tools -> Build Site'.
 3.3 Run target 'createGitHubFiles' of file 'build.xml'.
