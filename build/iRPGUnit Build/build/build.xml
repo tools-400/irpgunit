@@ -214,6 +214,7 @@
             <property name="help.site.url" value="${target.ide.root.beta.help.site.url}" />
             <property name="files.version.regex" value="${files.beta.version.regex}"/>
             <property name="files.version.replace" value="${files.beta.version.replace}"/>
+            <property name="html.css.property.display.div.beta.version" value="inherit" />
         </then>
         <else>
             <echo>Building a RELEASE version.</echo>
@@ -224,6 +225,7 @@
             <property name="help.site.url" value="${target.ide.root.help.site.url}" />
             <property name="files.version.regex" value="${files.release.version.regex}"/>
             <property name="files.version.replace" value="${files.release.version.replace}"/>
+            <property name="html.css.property.display.div.beta.version" value="none" />
         </else>
     </if>
 
@@ -251,7 +253,7 @@
 
     <property name="target.ide.ide.product.full.name" value="${target.ide.product.name.long.rdi} - ${target.ide.product.name.short}" />
     <property name="target.ide.zip.file.name" value="${build.public.project.name} for ${target.ide.product.name.short} (v${build.version} Update Site).zip" />
-    <property name="target.ide.uload.dir" value="${build.ftp.project}/${build.pages.root}" />
+    <property name="target.ide.uload.dir" value="${workspace.home}/${build.ftp.project}/${build.pages.root}" />
 
     <!-- Set regular expressions and replacement values that use property "beta.dir" and "target.ide.zip.file.name" -->
     <property name="html.files.zip.regex" value="(&lt;img id=&quot;${beta.dir}&quot;.*)(zip_file.png)(.*/files/{1,2})([a-z0-9.]+/|[A-Z@_]+/)(.*?)(&quot;&gt;)" />
@@ -551,6 +553,7 @@
         <replace file="${build.upload.dir.home}/${home.page}" token="@BETA_UPDATE_SITE_URL@" value="${target.ide.root.beta.update.site.url}" />
         <replace file="${build.upload.dir.home}/${home.page}" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
         <replace file="${build.upload.dir.home}/${home.page}" token="@BETA_HELP_SITE_URL@" value="${target.ide.root.beta.help.site.url}" />
+        <replace file="${build.upload.dir.home}/${home.page}" token="@HAVE_BETA_VERSION@" value="${html.css.property.display.div.beta.version}" />
         <replace file="${build.upload.dir.home}/${home.page}" token="@FILES_PAGE@" value="${build.pages.files.url}" />
         <replace file="${build.upload.dir.home}/${home.page}" token="@ECLIPSE_MARKETPLACE@" value="${build.eclipse.marketplace.url}"/>
         <replace file="${build.upload.dir.home}/${home.page}" token="@HOME_PAGE@" value="${build.pages.homepage.url}" />
@@ -649,10 +652,10 @@
 
         <echo>Cleaning '${build.pages.root}' directory ...</echo>
 
-        <mkdir dir="${workspace.home}/${target.ide.uload.dir}"/>
-        <mkdir dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}"/>
-        <mkdir dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/update-site/eclipse/${target.ide.sf.dir}"/>
-        <mkdir dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/${build.pages.files}"/>
+        <mkdir dir="${target.ide.uload.dir}"/>
+        <mkdir dir="${target.ide.uload.dir}/${beta.dir}"/>
+        <mkdir dir="${target.ide.uload.dir}/${beta.dir}/update-site/eclipse/${target.ide.sf.dir}"/>
+        <mkdir dir="${target.ide.uload.dir}/${beta.dir}/${build.pages.files}"/>
 
         <if>
             <equals arg1="${is.beta.version}" arg2="true" />
@@ -660,7 +663,7 @@
                 <delete>
                     <!-- Create a beta version -->
                     <!-- delete: [workspace]/[project]/docs/beta-version -->
-                    <fileset dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}">
+                    <fileset dir="${target.ide.uload.dir}/${beta.dir}">
                         <include name="**/*"/>
                         <exclude name="${files.page}"/>
                         <exclude name="${build.pages.help}/"/>
@@ -673,7 +676,7 @@
                 <delete includeemptydirs="true" failonerror="no">
                     <!-- Create a release version -->
                     <!-- delete: [workspace]/[project]/docs/ (exclude: beta-version) -->
-                    <fileset dir="${workspace.home}/${target.ide.uload.dir}">
+                    <fileset dir="${target.ide.uload.dir}">
                         <include name="**/*"/>
                         <exclude name="${build.pages.beta.version}/"/>
                         <exclude name="${files.page}"/>
@@ -685,8 +688,8 @@
             </else>
         </if>
 
-        <echo>Refreshing: ${workspace.home}/${target.ide.uload.dir}</echo>
-        <eclipse.refreshLocal resource="${workspace.home}/${target.ide.uload.dir}" depth="infinite" />
+        <echo>Refreshing: ${target.ide.uload.dir}</echo>
+        <eclipse.refreshLocal resource="${target.ide.uload.dir}" depth="infinite" />
 
     </target>
 
@@ -700,7 +703,7 @@
 
         <echo>Cleaning '${build.pages.root}' directory ...</echo>
 
-        <mkdir dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/${build.pages.help}"/>
+        <mkdir dir="${target.ide.uload.dir}/${beta.dir}/${build.pages.help}"/>
 
         <if>
             <equals arg1="${is.beta.version}" arg2="true" />
@@ -708,20 +711,20 @@
                 <delete>
                     <!-- Create a beta version -->
                     <!-- delete: [workspace]/[project]/docs/beta-version -->
-                    <fileset dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/${build.pages.help}" />
+                    <fileset dir="${target.ide.uload.dir}/${beta.dir}/${build.pages.help}" />
                 </delete>
             </then>
             <else>
                 <delete includeemptydirs="true" failonerror="no">
                     <!-- Create a release version -->
                     <!-- delete: [workspace]/[project]/docs/ (exclude: beta-version) -->
-                    <fileset dir="${workspace.home}/${target.ide.uload.dir}/${build.pages.help}" />
+                    <fileset dir="${target.ide.uload.dir}/${build.pages.help}" />
                 </delete>
             </else>
         </if>
 
-        <echo>Refreshing: ${workspace.home}/${target.ide.uload.dir}</echo>
-        <eclipse.refreshLocal resource="${workspace.home}/${target.ide.uload.dir}" depth="infinite" />
+        <echo>Refreshing: ${target.ide.uload.dir}</echo>
+        <eclipse.refreshLocal resource="${target.ide.uload.dir}" depth="infinite" />
 
     </target>
 
@@ -737,7 +740,7 @@
 
         <!-- Upload (include) files/index.html if not present -->
         <condition property="docs.files.index.html.exists">
-            <available filepath="${workspace.home}/${target.ide.uload.dir}" file="${files.page}" type="file" />
+            <available filepath="${target.ide.uload.dir}" file="${files.page}" type="file" />
         </condition>
 
         <if>
@@ -753,7 +756,7 @@
         </if>
 
         <!-- Homepage -->
-        <copy todir="${workspace.home}/${target.ide.uload.dir}" failonerror="false">
+        <copy todir="${target.ide.uload.dir}" failonerror="false">
             <fileset dir="${build.upload.dir.home}">
                 <include name="**"/>
                 <!-- Exclude files/index.html, because we must update the existing file! -->
@@ -762,7 +765,7 @@
         </copy>
 
         <!-- Homepage Help -->
-        <copy todir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/${build.pages.help}" >  
+        <copy todir="${target.ide.uload.dir}/${beta.dir}/${build.pages.help}" >  
             <fileset dir="${build.upload.dir.help}">
                 <include name="**"/>
             </fileset>
@@ -771,30 +774,30 @@
         <!-- Replace zip file name -->
         <replaceregexp match="${html.files.zip.regex}" replace="${html.files.zip.replace}" flags="g" byline="true">
             <!-- file is always in docs/files and never in 'beta-version/files' -->
-            <fileset file="${workspace.home}/${target.ide.uload.dir}/${files.page}" />
+            <fileset file="${target.ide.uload.dir}/${files.page}" />
         </replaceregexp>
 
         <!-- Replace version number -->
         <replaceregexp match="${files.version.regex}" replace="${files.version.replace}" flags="g" byline="true">
-            <fileset file="${workspace.home}/${target.ide.uload.dir}/${files.page}" />
+            <fileset file="${target.ide.uload.dir}/${files.page}" />
         </replaceregexp>
 
         <!-- Update Site -->
-        <copy todir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/update-site/eclipse/${target.ide.sf.dir}" >
+        <copy todir="${target.ide.uload.dir}/${beta.dir}/update-site/eclipse/${target.ide.sf.dir}" >
             <fileset dir="${build.upload.dir.web.eclipse}">
                 <include name="**"/>
             </fileset>
         </copy>
 
         <!-- Zipped Update Site -->
-        <copy todir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/${build.pages.files}/${target.ide.sf.dir}" >
+        <copy todir="${target.ide.uload.dir}/${beta.dir}/${build.pages.files}/${target.ide.sf.dir}" >
             <fileset dir="${build.upload.dir.files}">
                 <include name="${target.ide.zip.file.name}"/>
             </fileset>
         </copy>
 
         <!-- Documentation pdf -->
-        <copy todir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/${build.pages.files}/" >
+        <copy todir="${target.ide.uload.dir}/${beta.dir}/${build.pages.files}/" >
             <fileset dir="${build.upload.dir.files}">
                 <include name="${build.project.pdf}"/>
             </fileset>
@@ -817,7 +820,7 @@
                 <echo>Adding notifier to '${build.pages.root}' directory ...</echo>
         
                 <!-- Notifier -->
-                <copy todir="${workspace.home}/${target.ide.uload.dir}/${build.pages.files}/" >
+                <copy todir="${target.ide.uload.dir}/${build.pages.files}/" >
                     <fileset dir="${build.upload.dir.files}">
                         <include name="${build.project.notify}"/>
                     </fileset>
