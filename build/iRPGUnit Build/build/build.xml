@@ -177,7 +177,7 @@
 
     <property name="html.copyright.1.version.regex" value="^(Version: )(${version.number.search.regex})(.*)?" />
     <property name="html.copyright.1.version.replace" value="\1${build.version}\3" />
-    
+
     <property name="html.copyright.2.version.regex" value="(Copyright:\s)([0-9]{4})" />
     <property name="html.copyright.2.version.replace" value="\1${today.year}" />
 
@@ -261,6 +261,9 @@
 
     <property name="site.xml.property.url.regex" value="(&lt;site)([ ]*url=&quot;\S*&quot;[ ]*)?(&gt;)" />
     <property name="site.xml.property.url.replace" value="\1 url=&quot;${target.ide.root.update.site.url}&quot;\3" />
+
+    <property name="html.css.property.display.regex" value="(style=&quot;display:)\s*(none|inherit)\s*(;&quot;)" />
+    <property name="html.css.property.display.replace" value="\1 ${html.css.property.display.div.beta.version}\3" />
 
     <!-- Set common upload properties -->
     <property name="build.dir" location="./.." />
@@ -608,7 +611,8 @@
         <replace file="${build.upload.dir.home}/${files.page}" token="@ZIP_FILE@" value="${target.ide.zip.file.name}" />
         <replace file="${build.upload.dir.home}/${files.page}" token="@TARGET_IDE@" value="${target.ide.sf.dir}" />
         <replace file="${build.upload.dir.home}/${files.page}" token="@TARGET_IDE_FULL_NAME@" value="${target.ide.ide.product.full.name}" />
-        <replace file="${build.upload.dir.home}/${files.page}"  token="@FILES_PAGE@" value="${build.pages.files.url}" />
+        <replace file="${build.upload.dir.home}/${files.page}" token="@FILES_PAGE@" value="${build.pages.files.url}" />
+        <replace file="${build.upload.dir.home}/${files.page}" token="@HAVE_BETA_VERSION@" value="${html.css.property.display.div.beta.version}" />
 
         <replace file="${build.upload.dir.home}/${files.page}" token="@HOME_PAGE@" value="${build.pages.homepage.url}" />
         <replace file="${build.upload.dir.home}/${files.page}" token="@TARGET_IDE@" value="${target.ide.sf.dir}" />
@@ -779,6 +783,11 @@
 
         <!-- Replace version number -->
         <replaceregexp match="${files.version.regex}" replace="${files.version.replace}" flags="g" byline="true">
+            <fileset file="${target.ide.uload.dir}/${files.page}" />
+        </replaceregexp>
+
+        <!-- Replace CCS property 'display' -->
+        <replaceregexp match="${html.css.property.display.regex}" replace="${html.css.property.display.replace}" flags="g" byline="true">
             <fileset file="${target.ide.uload.dir}/${files.page}" />
         </replaceregexp>
 
