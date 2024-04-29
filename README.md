@@ -8,9 +8,9 @@ iRPGUnit is an open source plugin for RDi 9.5.1.3+. The plug-in provides unit te
 
 iRPGUnit is a fork of the RPGUnit project, providing enhancements and an Eclipse plug-in for running unit test from your IBM Rational Developer for i.
 
-Further information about iRPGUnit are available on the [iRPGUnit Web Site](https://tools-400.github.io/irpgunit/).
+Further information about iRPGUnit are available on the [iRPGUnit Web Site](https://tools-400.github.io/irpgunit-web-site/).
 
-Please refer to the [iRPGUnit Version History](<https://tools-400.github.io/irpgunit/files/iRPGUnit for RDi 9.5.1.3+.pdf>) document to find out which operating system release is required for installing the iRPGUnit library.
+Please refer to the [iRPGUnit Version History](<https://tools-400.github.io/irpgunit-web-site/files/iRPGUnit for RDi 9.5.1.3+.pdf>) document to find out which operating system release is required for installing the iRPGUnit library.
 
 ## Features
 
