@@ -93,16 +93,20 @@
  "CMPMOD MODULE("prdLib"/CMDRUNLOGT) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/CMDRUNLOG ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/CMDRUNPRT ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/JOBLOG    ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/LIBL      ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/OSVERSION ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/PGMMSG    ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/STRING    ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
  "CRTSRVPGM  SRVPGM("prdLib"/CMDRUNLOGT) ",
             "MODULE("prdLib"/CMDRUNLOGT ",
                      prdLib"/CMDRUNLOG  ",
                      prdLib"/CMDRUNPRT  ",
+                     prdLib"/JOBLOG     ",
                      prdLib"/LIBL       ",
                      prdLib"/OSVERSION  ",
+                     prdLib"/PGMMSG     ",
                      prdLib"/STRING  )  ",
             "EXPORT(*ALL) ",
             "OPTION(*DUPPROC) ",

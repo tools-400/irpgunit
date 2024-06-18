@@ -92,11 +92,9 @@
  /* -------------------------------------------- */
 
  "CMPMOD MODULE("prdLib"/ASSERTT  ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
  "CRTSRVPGM  SRVPGM("prdLib"/ASSERTT) ",
-            "MODULE("prdLib"/ASSERTT ",
-                     prdLib"/PGMMSG) ",
+            "MODULE("prdLib"/ASSERTT) ",
             "EXPORT(*ALL) ",
             "BNDSRVPGM("prdLib"/RUTESTCASE) ",
             "TEXT('RPGUnit SelfTest - Test ASSERT.')"

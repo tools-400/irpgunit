@@ -150,15 +150,15 @@
 
         aEqual( 'Expected 5, but was 4.' : assertFailEvt.msg );
 
-        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).sender.qPgm.nm );
-        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).sender.qMod.nm );
-        aEqual( 'testTwoAndTwoIsNotEqualToFive' :
-                               assertFailEvt.callStk.Entry(1).sender.procNm );
+        aEqual( 'ASSERTT' : assertFailEvt.callStk.Entry(1).qStmt.qPgm.nm );
+        aEqual( 'ASSERTT' : assertFailEvt.callStk.Entry(1).qStmt.qMod.nm );
+        aEqual( 'testTwoAndTwoIsNotEqualToFive'
+               : assertFailEvt.callStk.Entry(1).qStmt.procNm );
 
         monitor;
-           aEqual( '137'     : assertFailEvt.callStk.Entry(1).sender.specNb );  // IFS Compile
+           aEqual( '137'  : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
         on-error;
-           aEqual( '13700'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
+           aEqual( '13700': assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
         endmon;
 
       /end-free
@@ -214,15 +214,15 @@
         aEqual( 'Expected ''Hello'', but was ''Good bye''.' :
                 assertFailEvt.msg );
 
-        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).sender.qPgm.nm );
-        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).sender.qMod.nm );
+        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).qStmt.qPgm.nm );
+        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).qStmt.qMod.nm );
         aEqual( 'testGoodByeIsNotHello' :
-                               assertFailEvt.callStk.Entry(1).sender.procNm );
+                               assertFailEvt.callStk.Entry(1).qStmt.procNm );
 
         monitor;
-           aEqual( '199'     : assertFailEvt.callStk.Entry(1).sender.specNb );  // IFS Compile
+           aEqual( '199'     : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
         on-error;
-           aEqual( '19900'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
+           aEqual( '19900'   : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
         endmon;
 
       /end-free
@@ -311,15 +311,15 @@
 
         aEqual( 'Failure message.' : assertFailEvt.msg );
 
-        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).sender.qPgm.nm );
-        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).sender.qMod.nm );
+        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).qStmt.qPgm.nm );
+        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).qStmt.qMod.nm );
         aEqual( 'testAssertWithFailure'
-                             : assertFailEvt.callStk.Entry(1).sender.procNm );
+                             : assertFailEvt.callStk.Entry(1).qStmt.procNm );
 
         monitor;
-           aEqual( '301'     : assertFailEvt.callStk.Entry(1).sender.specNb );  // IFS Compile
+           aEqual( '301'     : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
         on-error;
-           aEqual( '30100'   : assertFailEvt.callStk.Entry(1).sender.specNb );  // QSYS Compile
+           aEqual( '30100'   : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
         endmon;
 
       /end-free

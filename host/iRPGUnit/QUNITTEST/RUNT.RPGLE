@@ -10,15 +10,18 @@
        // >>PRE-COMPILER<<
        //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
        //   >>IMPORTANT<<
-       //     >>PARM<<  MODULE(&LI/CMDRUNLOG +
+       //     >>PARM<<  MODULE(&LI/CALLPRC   +
+       //                      &LI/CMDRUNLOG +
        //                      &LI/CMDRUNPRT +
        //                      &LI/CMDRUNSRV +
-       //                      &LI/CALLPRC   +
        //                      &LI/EXTPRC    +
        //                      &LI/EXTTST    +
+       //                      &LI/JOBLOG    +
        //                      &LI/LLIST     +
+       //                      &LI/OBJECT    +
        //                      &LI/OSVERSION +
        //                      &LI/PGMMSG    +
+       //                      &LI/SRCMBR    +
        //                      &LI/STRING    +
        //                      &LI/USRSPC    +
        //                      );
@@ -206,7 +209,7 @@
        aEqual( 'My Failure Message' : result.failure.msg );
        // New, due to new procedure doFail():
        // aEqual( 'fail' : result.failure.callStk.entry(1).sender.procNm );
-       aEqual( 'TEST_FAIL' : result.failure.callStk.entry(1).sender.procNm );
+       aEqual( 'TEST_FAIL' : result.failure.callStk.entry(1).qStmt.procNm );
 
       /end-free
      P                 e
@@ -228,7 +231,7 @@
 
        aEqual( 'test_error was called' : execTrace(1) );
        aEqual( TEST_CASE_ERROR : result.outcome );
-       aEqual( 'RAISEERROR' : result.error.sender.procNm );
+       aEqual( 'RAISEERROR' : result.error.qSndStmt.procNm );
 
       /end-free
      P                 e
@@ -290,7 +293,7 @@
        aEqual( 'setup_with_error was called' : execTrace(1) );
        aEqual( *blank                        : execTrace(2) );    // test_proc not called.
        aEqual( TEST_CASE_ERROR : result.outcome );
-       aEqual( 'RAISEERROR' : result.error.sender.procNm );
+       aEqual( 'RAISEERROR' : result.error.qSndStmt.procNm );
 
       /end-free
      P                 e
@@ -352,7 +355,7 @@
        aEqual( 'test_proc was called'           : execTrace(1) );
        aEqual( 'teardown_with_error was called' : execTrace(2) );
        aEqual( TEST_CASE_ERROR : result.outcome );
-       aEqual( 'RAISEERROR' : result.error.sender.procNm );
+       aEqual( 'RAISEERROR' : result.error.qSndStmt.procNm );
 
       /end-free
      P                 e
@@ -418,7 +421,7 @@
        // test_proc not called.
        aEqual( 'teardown_proc was called'    : execTrace(2) );
        aEqual( TEST_CASE_ERROR : result.outcome );
-       aEqual( 'RAISEERROR' : result.error.sender.procNm );
+       aEqual( 'RAISEERROR' : result.error.qSndStmt.procNm );
 
       /end-free
      P                 e

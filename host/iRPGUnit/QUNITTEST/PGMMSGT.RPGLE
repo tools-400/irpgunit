@@ -10,8 +10,8 @@
       // >>PRE-COMPILER<<
       //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
       //   >>IMPORTANT<<
-      //     >>PARM<<  MODULE(&LI/PGMMSG    +
-      //                      &LI/JOBLOG    +
+      //     >>PARM<<  MODULE(&LI/JOBLOG    +
+      //                      &LI/PGMMSG    +
       //                      );
       //     >>PARM<<    COPTION(*SRCSTMT *EVENTF);
       //   >>END-IMPORTANT<<
@@ -134,16 +134,16 @@
         assert( excpMsgInfo.txt <> *blank : 'Exception message not retrieved' );
             // We should be checking the message content, but I do not know how to
             // do that, since it depends on the locale.
-        aEqual( 'PGMMSGT': excpMsgInfo.sender.qPgm.nm );
-        aEqual( sds.pgmLib: excpMsgInfo.sender.qPgm.lib );
-        aEqual( 'procWithError': excpMsgInfo.sender.procNm );
+        aEqual( 'PGMMSGT': excpMsgInfo.qSndStmt.qPgm.nm );
+        aEqual( sds.pgmLib: excpMsgInfo.qSndStmt.qPgm.lib );
+        aEqual( 'procWithError': excpMsgInfo.qSndStmt.procNm );
 
         monitor;
            msgKey = getHighestMsgKey();
-           aEqual( '103'   : excpMsgInfo.sender.specNb );   // IFS Compile
+           aEqual( '103'   : excpMsgInfo.qSndStmt.specNb );   // IFS Compile
         on-error;
            getLatestEscMsg(msgKey: *ON);
-           aEqual( '10300' : excpMsgInfo.sender.specNb );   // QSYS Compile
+           aEqual( '10300' : excpMsgInfo.qSndStmt.specNb );   // QSYS Compile
         endmon;
 
       /end-free

@@ -91,10 +91,12 @@
  /*  Let's do it!                                */
  /* -------------------------------------------- */
  "CMPMOD MODULE("prdLib"/PGMMSGT  ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/JOBLOG   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
  "CRTSRVPGM  SRVPGM("prdLib"/PGMMSGT) ",
             "MODULE("prdLib"/PGMMSGT ",
+                     prdLib"/JOBLOG  ",
                      prdLib"/PGMMSG) ",
             "EXPORT(*ALL) ",
             "OPTION(*DUPPROC) ",

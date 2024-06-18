@@ -11,7 +11,8 @@
       //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM) +
       //                 COPTION(*EVENTF);
       //   >>IMPORTANT<<
-      //     >>PARM<<  MODULE(&LI/PGMMSG);
+      //     >>PARM<<  MODULE(&LI/JOBLOG +
+      //                      &LI/PGMMSG );
       //   >>END-IMPORTANT<<
       //   >>EXECUTE<<
       // >>END-PRE-COMPILER<<
