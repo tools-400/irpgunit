@@ -15,6 +15,8 @@
       //                      );
       //     >>PARM<<    COPTION(*SRCSTMT *EVENTF);
       //   >>END-IMPORTANT<<
+      //   >>CMD<<     CMPMOD MODULE(&LI/JOBLOG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/PGMMSG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
       //   >>EXECUTE<<
       // >>END-PRE-COMPILER<<
       // ==========================================================================

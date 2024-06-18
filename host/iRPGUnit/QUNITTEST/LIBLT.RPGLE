@@ -13,7 +13,10 @@
       //     >>PARM<<  MODULE(&LI/LIBL      +
       //                      &LI/LIBLC     +
       //                      );
+      //     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
       //   >>END-IMPORTANT<<
+      //   >>CMD<<     CMPMOD MODULE(&LI/LIBL     ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/LIBLC    ) SRCFILE(&SL/QUNITTEST) DBGVIEW(*LIST);
       //   >>EXECUTE<<
       // >>END-PRE-COMPILER<<
       // ==========================================================================

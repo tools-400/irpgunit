@@ -18,6 +18,7 @@
       //                      &LI/PGMMSG    +
       //                      &LI/STRING    +
       //                      );
+      //     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
       //     >>PARM<<  BOPTION(*DUPPROC);
       //   >>END-IMPORTANT<<
       //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNLOG) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);

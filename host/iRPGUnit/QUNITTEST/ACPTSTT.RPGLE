@@ -19,6 +19,7 @@
       //                      &LI/USRSPC    +
       //                      &LI/SPLF      +
       //                      );
+      //     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
       //     >>PARM<<  BOPTION(*DUPPROC);
       //   >>END-IMPORTANT<<
       //   >>CMD<<     CMPMOD MODULE(&LI/LIBL     ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);

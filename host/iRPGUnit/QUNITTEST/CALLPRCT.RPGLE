@@ -25,6 +25,7 @@
       //                      &LI/STRING    +
       //                      &LI/USRSPC    +
       //                      );
+      //     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
       //   >>END-IMPORTANT<<
       //   >>CMD<<     CMPMOD MODULE(&LI/CALLPRC  ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
       //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNLOG) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);

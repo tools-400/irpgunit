@@ -11,7 +11,7 @@
       //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM) +
       //                        RPGPPOPT(*LVL2);
       //   >>IMPORTANT<<
-      //     >>PARM<<  COPTION(*EVENTF);
+      //     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
       //   >>END-IMPORTANT<<
       //   >>EXECUTE<<
       // >>END-PRE-COMPILER<<
