@@ -10,7 +10,8 @@
       // >>PRE-COMPILER<<
       //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
       //   >>IMPORTANT<<
-      //     >>PARM<<  MODULE(&LI/LIBL      +
+      //     >>PARM<<  MODULE(&LI/JOBLOG    +
+      //                      &LI/LIBL      +
       //                      &LI/LSTSPLF   +
       //                      &LI/OBJECT    +
       //                      &LI/PGMMSG    +

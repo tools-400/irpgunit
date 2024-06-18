@@ -12,16 +12,20 @@
       //   >>IMPORTANT<<
       //     >>PARM<<  MODULE(&LI/CMDRUNLOG +
       //                      &LI/CMDRUNPRT +
+      //                      &LI/JOBLOG    +
       //                      &LI/LIBL      +
       //                      &LI/OSVERSION +
+      //                      &LI/PGMMSG    +
       //                      &LI/STRING    +
       //                      );
       //     >>PARM<<  BOPTION(*DUPPROC);
       //   >>END-IMPORTANT<<
       //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNLOG) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
       //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNPRT) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/JOBLOG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
       //   >>CMD<<     CMPMOD MODULE(&LI/LIBL     ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
       //   >>CMD<<     CMPMOD MODULE(&LI/OSVERSION) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/PGMMSG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
       //   >>CMD<<     CMPMOD MODULE(&LI/STRING   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
       //   >>EXECUTE<<
       // >>END-PRE-COMPILER<<
@@ -250,10 +254,10 @@
 
         testNm = 'failure_without_spec_nb';
         failure.callStk.numE = 1;
-        failure.callStk.Entry(1).sender.qPgm.nm = 'MY_SRVPGM';
-        failure.callStk.Entry(1).sender.qMod.nm = 'MY_SRVPGM';
-        failure.callStk.Entry(1).sender.procNm = testNm;
-        failure.callStk.Entry(1).sender.specNb = *blank;
+        failure.callStk.Entry(1).qStmt.qPgm.nm = 'MY_SRVPGM';
+        failure.callStk.Entry(1).qStmt.qMod.nm = 'MY_SRVPGM';
+        failure.callStk.Entry(1).qStmt.procNm = testNm;
+        failure.callStk.Entry(1).qStmt.specNb = *blank;
 
         // Execution.
 
@@ -292,9 +296,9 @@
         testNm = 'error_with_missing_msg_id';
         excpMsgInfo.Id = *blank;
         excpMsgInfo.txt = 'Error message.';
-        excpMsgInfo.sender.qPgm.nm = 'ERRORPGM';
-        excpMsgInfo.sender.procNm = 'error_proc';
-        excpMsgInfo.sender.specNb = '1000';
+        excpMsgInfo.qSndStmt.qPgm.nm = 'ERRORPGM';
+        excpMsgInfo.qSndStmt.procNm = 'error_proc';
+        excpMsgInfo.qSndStmt.specNb = '1000';
 
         // Execution.
 
@@ -331,9 +335,9 @@
         testNm = 'error_without_origin_info';
         excpMsgInfo.Id = 'CPF1234';
         excpMsgInfo.txt = 'Error message.';
-        excpMsgInfo.sender.qPgm.nm = *blank;
-        excpMsgInfo.sender.procNm = *blank;
-        excpMsgInfo.sender.specNb = *blank;
+        excpMsgInfo.qSndStmt.qPgm.nm = *blank;
+        excpMsgInfo.qSndStmt.procNm = *blank;
+        excpMsgInfo.qSndStmt.specNb = *blank;
 
         // Execution.
 

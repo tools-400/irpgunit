@@ -91,6 +91,7 @@
  /*  Let's do it!                                */
  /* -------------------------------------------- */
  "CMPMOD MODULE("prdLib"/ACPTSTT  ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/JOBLOG   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/LIBL     ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/LSTSPLF  ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/OBJECT   ) SRCFILE(QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
@@ -101,6 +102,7 @@
 
  "CRTSRVPGM  SRVPGM("prdLib"/ACPTSTT) ",
             "MODULE("prdLib"/ACPTSTT   ",
+                     prdLib"/JOBLOG    ",
                      prdLib"/LIBL      ",
                      prdLib"/LSTSPLF   ",
                      prdLib"/OBJECT    ",
