@@ -142,10 +142,10 @@
 
         monitor;
            msgKey = getHighestMsgKey();
-           aEqual( '103'   : excpMsgInfo.qSndStmt.specNb );   // IFS Compile
+           aEqual( '105'   : excpMsgInfo.qSndStmt.specNb );   // IFS Compile
         on-error;
            getLatestEscMsg(msgKey: *ON);
-           aEqual( '10300' : excpMsgInfo.qSndStmt.specNb );   // QSYS Compile
+           aEqual( '10500' : excpMsgInfo.qSndStmt.specNb );   // QSYS Compile
         endmon;
 
       /end-free
@@ -258,10 +258,10 @@
 
         monitor;
            msgKey = getHighestMsgKey();
-           aEqual( '103'   : msgInfo.specNb );   // IFS Compile
+           aEqual( '105'   : msgInfo.specNb );   // IFS Compile
         on-error;
            getLatestEscMsg(msgKey: *ON);
-           aEqual( '10300' : msgInfo.specNb );   // QSYS Compile
+           aEqual( '10500' : msgInfo.specNb );   // QSYS Compile
         endmon;
 
       /end-free
