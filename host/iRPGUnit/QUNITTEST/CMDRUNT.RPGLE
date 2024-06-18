@@ -10,7 +10,6 @@
       // >>PRE-COMPILER<<
       //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
       //   >>IMPORTANT<<
-      //     >>PARM<<  BOPTION(*DUPPROC);
       //     >>PARM<<  MODULE(&LI/CMDRUN    +
       //                      &LI/CALLPRC   +
       //                      &LI/CMDRUNLOG +
@@ -30,6 +29,8 @@
       //                      &LI/USRSPC    +
       //                      &LI/XMLWRITER +
       //                      );
+      //     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
+      //     >>PARM<<  BOPTION(*DUPPROC);
       //   >>END-IMPORTANT<<
       //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUN   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
       //   >>CMD<<     CMPMOD MODULE(&LI/CALLPRC  ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);

@@ -17,6 +17,10 @@
       //                      );
       //     >>PARM<<    COPTION(*SRCSTMT *EVENTF);
       //   >>END-IMPORTANT<<
+      //   >>CMD<<     CMPMOD MODULE(&LI/EXTPRC   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/OBJECT   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/SRCMBR   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/USRSPC   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
       //   >>EXECUTE<<
       // >>END-PRE-COMPILER<<
       // ==========================================================================

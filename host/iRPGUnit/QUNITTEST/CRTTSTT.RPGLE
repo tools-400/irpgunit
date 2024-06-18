@@ -21,6 +21,7 @@
       //                      &LI/TAGTST    +
       //                      &LI/USRSPC    +
       //                      );
+      //     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
       //   >>END-IMPORTANT<<
       //   >>CMD<<     CMPMOD MODULE(&LI/CRTTST   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
       //   >>CMD<<     CMPMOD MODULE(&LI/JOBLOG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);

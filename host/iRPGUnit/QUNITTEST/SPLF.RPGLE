@@ -10,7 +10,7 @@
       // >>PRE-COMPILER<<
       //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
       //   >>IMPORTANT<<
-      //     >>PARM<<  OPTION(*EVENTF);
+      //     >>PARM<<  OPTION(*SRCSTMT *EVENTF);
       //     >>PARM<<  DBGVIEW(*LIST);
       //   >>END-IMPORTANT<<
       //   >>EXECUTE<<
