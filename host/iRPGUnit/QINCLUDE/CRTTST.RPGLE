@@ -56,6 +56,7 @@
      D  pRpgPpOpt                          const like(RpgPpOpt_t)
      D  pOptions                           const likeds(Options_t)
      D  compileopt                 5000a   const varying options(*varsize)
+     D  targetRls                          const like(TargetRelease_t)
 
      D getCrtCblModCmd...
      D                 pr                        like(Cmd_t)

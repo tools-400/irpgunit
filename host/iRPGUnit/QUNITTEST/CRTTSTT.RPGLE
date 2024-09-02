@@ -195,7 +195,8 @@
                                         noDbgView :
                                         rpgPpOptLvl2 :
                                         noPOption :
-                                        noCompileOpt );
+                                        noCompileOpt :
+                                        noTargetRls );
         aEqual( 'CRTRPGMOD MODULE(*CURLIB/SYSTYPES) '
               + 'SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES)' : crtRpgModCmd );
 
@@ -221,7 +222,8 @@
                                         noDbgView :
                                         rpgPpOptLvl2 :
                                         noPOption :
-                                        noCompileOpt );
+                                        noCompileOpt :
+                                        noTargetRls );
         aEqual( 'CRTRPGMOD MODULE(*CURLIB/SYSTYPES) '
               + 'SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES) '
               + 'OPTION(*SRCSTMT)' : crtRpgModCmd );
@@ -249,7 +251,8 @@
                                         noDbgView :
                                         rpgPpOptLvl2 :
                                         noPOption :
-                                        noCompileOpt );
+                                        noCompileOpt :
+                                        noTargetRls );
         aEqual( 'CRTRPGMOD MODULE(*CURLIB/SYSTYPES) '
               + 'SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES) '
               + 'OPTION(*SRCSTMT *NODEBUGIO)' : crtRpgModCmd );
@@ -269,7 +272,8 @@
                                         '*LIST'   :
                                         rpgPpOptLvl2 :
                                         noPOption :
-                                        noCompileOpt );
+                                        noCompileOpt :
+                                        noTargetRls );
         aEqual( 'CRTRPGMOD MODULE(*CURLIB/SYSTYPES) '
               + 'SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES) '
               + 'DBGVIEW(*LIST)' : crtRpgModCmd );
@@ -277,6 +281,27 @@
       /end-free
      P                 e
 
+     PtestModTargetRls...
+     P                 b                   export
+     D                 pi
+     D
+      /free
+
+        crtRpgModCmd = getCrtRpgModCmd( 'SYSTYPES  *CURLIB   ' :
+                                        'QRPGLESRC QSYSINC   ' :
+                                        'SYSTYPES'  :
+                                        noCOption :
+                                        '*LIST'   :
+                                        rpgPpOptLvl2 :
+                                        noPOption :
+                                        noCompileOpt :
+                                        '*CURRENT' );
+        aEqual( 'CRTRPGMOD MODULE(*CURLIB/SYSTYPES) '
+              + 'SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES) '
+              + 'DBGVIEW(*LIST) TGTRLS(*CURRENT)' : crtRpgModCmd );
+
+      /end-free
+     P                 e
 
      PtestOneBndSrvPgm...
      P                 b                   export
