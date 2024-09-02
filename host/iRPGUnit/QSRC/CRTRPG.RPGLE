@@ -52,6 +52,7 @@
      D  pRpgPpOpt                          const like(RpgPpOpt_t)
      D  pOption                            const likeds(Options_t)
      D  compileOpt                 5000a   const varying options(*varsize)
+     D  targetRls                          const like(TargetRelease_t)
 
      D crtRpg...
      D                 pi
@@ -70,6 +71,7 @@
      D  pRpgPpOpt                          const like(RpgPpOpt_t)
      D  pOption                            const likeds(Options_t)
      D  compileOpt                 5000a   const varying options(*varsize)
+     D  targetRls                          const like(TargetRelease_t)
 
      D srcMbrRslv      s                   like(srcMbr)
      D srcType         s             10a
@@ -90,7 +92,7 @@
 
        crtTst( testPgm : srcFile : srcMbrRslv : text : cOption : dbgView
               : bndSrvPgm : bndDir : bOption : dltSplf : actGrp : bModules
-              : pRpgPpOpt : pOption : compileOpt );
+              : pRpgPpOpt : pOption : compileOpt : targetRls);
 
        *inlr = *on;
 

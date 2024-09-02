@@ -111,6 +111,7 @@
      D  pRpgPpOpt                          const like(RpgPpOpt_t)
      D  pOption                            const likeds(Options_t)
      D  compileopt                 5000a   const varying options(*varsize)
+     D  targetRls                          const like(TargetRelease_t)
 
      D modules         ds                  likeds(bModules) inz
      D srcType         s             10a   varying
@@ -222,7 +223,7 @@
 
          srvPgm = crtSrvPgm(
                      testPgm : bndSrvPgm : bndDir : modules : bOption :
-                     actGrp : textRslv);
+                     actGrp : textRslv : targetRls);
 
          tagTstSrvPgm(srvPgm : qSrcFile : srcMbr);
 
@@ -547,6 +548,7 @@
      D  bOption                            const likeds(Options_t)
      D  actGrp                             const like(ActivationGroup_t)
      D  text                               const like(Text_t)
+     D  targetRls                          const like(TargetRelease_t)
 
       // Export all procedures from the service program.
      D EXPORT_ALL      c                   const('*ALL')
@@ -574,7 +576,8 @@
                                 bOption :
                                 EXPORT_ALL :
                                 actGrp :
-                                text );
+                                text :
+                                targetRls );
          sndInfoMsg( cmd );
          qcmdexc( cmd : %len(cmd) );
 
@@ -598,6 +601,7 @@
      D  export                             const like(Export_t)
      D  actGrp                             const like(ActivationGroup_t)
      D  text                               const like(Text_t )
+     D  targetRls                          const like(TargetRelease_t)
 
       // Command string accumulator.
      D cmd             s                   like(Cmd_t)
@@ -611,6 +615,7 @@
         cmd += serializeOptions( 'OPTION' : options );
         cmd += serializeValue( 'ACTGRP' : actGrp );
         cmd += serializeString( 'TEXT' : text );
+        cmd += serializeValue( 'TGTRLS' : targetRls );
         cmd += serializeString( 'DETAIL' : '*BASIC' );
 
         if export <> *blank;
