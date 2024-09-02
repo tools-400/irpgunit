@@ -204,7 +204,7 @@
            addModule( modules : testPgm : *on); // Add to position #1.
            // QDEVTOOLS/QLNCMSG RNS9305 - Module &1 placed in library &2.
            crtRpgMod( testPgm : qSrcFile : srcMbr : cOption : dbgView :
-                      pRpgPpOpt : pOption : compileopt );
+                      pRpgPpOpt : pOption : compileopt : targetRls);
            modulesCreated = getCreatedModulesFromJobLog(
                               MOD_CRT_RPG : startCompileTime );
            addModules( modules : modulesCreated );
@@ -440,6 +440,7 @@
      D  pRpgPpOpt                          const like(RpgPpOpt_t)
      D  pOption                            const likeds(Options_t)
      D  compileopt                 5000a   const varying options(*varsize)
+     D  targetRls                          const like(TargetRelease_t)
 
       // A command to be executed.
      D cmd             s                   like(Cmd_t)
@@ -447,7 +448,7 @@
       /free
 
          cmd = getCrtRpgModCmd( testPgm : srcFile : srcMbr : cOption : dbgView:
-                                pRpgPpOpt : pOption : compileopt );
+                                pRpgPpOpt : pOption : compileopt : targetRls );
          sndInfoMsg( cmd );
          qcmdexc( cmd : %len(cmd) );
 
@@ -670,6 +671,7 @@
      D  pRpgPpOpt                          const like(RpgPpOpt_t)
      D  pOptions                           const likeds(Options_t)
      D  compileopt                 5000a   const varying options(*varsize)
+     D  targetRls                          const like(TargetRelease_t)
 
       // Command string accumulator.
      D cmd             s                   like(Cmd_t)
@@ -685,6 +687,7 @@
             cmd += 'SRCFILE(' + serializeObjectName( srcFile ) + ') ';
             cmd += serializeValue( 'SRCMBR' : srcMbr );
             cmd += serializeOptions( 'OPTION' : cOptions );
+            cmd += serializeValue( 'TGTRLS' : targetRls );
             cmd += serializeValue( 'DBGVIEW' : dbgView );
 
           // SQLRPGLE
@@ -694,6 +697,7 @@
             cmd += serializeValue( 'SRCMBR' : srcMbr );
             cmd += serializeOptions( 'OPTION' : pOptions );
             cmd += serializeValue('OBJTYPE': '*MODULE');
+            cmd += serializeValue( 'TGTRLS' : targetRls );
             cmd += serializeValue( 'DBGVIEW' : '*NONE');
 
             if (pRpgPpOpt <> '*DEFAULT');
