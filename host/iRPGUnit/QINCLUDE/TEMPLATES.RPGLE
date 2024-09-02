@@ -262,6 +262,8 @@
      D                 s            512a   based(template) varying
      D SerializedString_t...
      D                 s           5136a   based(template) varying
+     D TargetRelease_t...
+     D                 s             10a   based(template)
 
        // Program Status Data Structure.
      D sds_t           ds                  based(template) qualified

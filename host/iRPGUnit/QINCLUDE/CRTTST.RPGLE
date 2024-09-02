@@ -34,6 +34,7 @@
      D  pRpgPpOpt                          const like(RpgPpOpt_t)
      D  pOption                            const likeds(Options_t)
      D  compileopt                 5000a   const varying options(*varsize)
+     D  targetRls                          const like(TargetRelease_t)
 
      D serializeObjectName...
      D                 pr            21a   varying
@@ -82,6 +83,7 @@
      D  export                       10a   const
      D  actGrp                             const like(ActivationGroup_t)
      D  text                               const like(Text_t )
+     D  targetRls                          const like(TargetRelease_t)
 
        //----------------------------------------------------------------------
        //   PRIVATE PROTOTYPES
@@ -151,6 +153,7 @@
      D  bOption                            const likeds(Options_t)
      D  actGrp                             const like(ActivationGroup_t)
      D  text                               const like(Text_t)
+     D  targetRls                          const like(TargetRelease_t)
 
      D deleteModulesAndSpooledFiles...
      D                 pr
