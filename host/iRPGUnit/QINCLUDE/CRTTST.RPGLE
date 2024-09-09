@@ -70,6 +70,7 @@
      D  dbgView                      10a   const
      D  pOptions                           const likeds(Options_t)
      D  compileopt                 5000a   const varying options(*varsize)
+     D  targetRls                          const like(TargetRelease_t)
 
      D getCrtSrvPgmCmd...
      D                 pr                        like(Cmd_t)
@@ -141,6 +142,7 @@
      D  dbgView                            const like(DbgView_t)
      D  pOption                            const likeds(Options_t)
      D  compileopt                 5000a   const varying options(*varsize)
+     D  targetRls                          const like(TargetRelease_t)
 
      D crtSrvPgm...
      D                 pr                  likeds(Object_t)

@@ -174,4 +174,11 @@ Refer to the COMPILEOPT parameter in CRTSQLCBLI command help.
 of parameter DBGVIEW is automatically added.
 :ehelp.
 .*
+:help name='RUCRTCBL/TGTRLS' WIDTH=64.
+Target release (TGTRLS) - Help
+:xh3.Target release (TGTRLS)
+:p.
+Refer to the TGTRLS parameter in CRTSRVPGM command help.
+:ehelp.
+.*
 :epnlgrp.

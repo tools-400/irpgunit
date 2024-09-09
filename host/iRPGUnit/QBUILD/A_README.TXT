@@ -83,6 +83,12 @@ b) Optionally run the RPGUnit self tests:
 
 --------------------------
 
+Version 4.2.0 - 09.09.2024
+--------------------------
+ * Added parameter TGTRLS to RUCRTRPG command.
+   (Contributed by Rafał Gała)
+ * Added parameter TGTRLS to RUCRTCBL command.
+
 Version 4.1.0 - 05.04.2024
 --------------------------
  * Changed result view to display the sending and receiving program of

@@ -212,7 +212,7 @@
            // There is no test case module to add for Cobol ==> See: *PGMID
            // QDEVTOOLS/QLNCMSG LNC0899 - Module &1 placed in library &2.
            crtCblMod( testPgm : qSrcFile : srcMbr : cOption : dbgView :
-                      pOption : compileopt );
+                      pOption : compileopt : targetRls);
            modulesCreated = getCreatedModulesFromJobLog(
                               MOD_CRT_CBL : startCompileTime );
            addModules( modules : modulesCreated );
@@ -466,6 +466,7 @@
      D  dbgView                            const like(DbgView_t)
      D  pOption                            const likeds(Options_t)
      D  compileopt                 5000a   const varying options(*varsize)
+     D  targetRls                          const like(TargetRelease_t)
 
       // A command to be executed.
      D cmd             s                   like(Cmd_t)
@@ -473,7 +474,7 @@
       /free
 
          cmd = getCrtCblModCmd( testPgm : srcFile : srcMbr : cOption : dbgView:
-                                pOption : compileopt );
+                                pOption : compileopt : targetRls);
          sndInfoMsg( cmd );
          qcmdexc( cmd : %len(cmd) );
 
@@ -738,6 +739,7 @@
      D  dbgView                            const like(DbgView_t)
      D  pOptions                           const likeds(Options_t)
      D  compileopt                 5000a   const varying options(*varsize)
+     D  targetRls                          const like(TargetRelease_t)
 
       // Command string accumulator.
      D cmd             s                   like(Cmd_t)
@@ -753,6 +755,7 @@
             cmd += 'SRCFILE(' + serializeObjectName( srcFile ) + ') ';
             cmd += serializeValue( 'SRCMBR' : srcMbr );
             cmd += serializeOptions( 'OPTION' : cOptions );
+            cmd += serializeValue( 'TGTRLS' : targetRls );
             cmd += serializeValue( 'DBGVIEW' : dbgView );
 
           // SQLCBLLE
@@ -762,6 +765,7 @@
             cmd += serializeValue( 'SRCMBR' : srcMbr );
             cmd += serializeOptions( 'OPTION' : pOptions );
             cmd += serializeValue('OBJTYPE': '*MODULE');
+            cmd += serializeValue( 'TGTRLS' : targetRls );
             cmd += serializeValue( 'DBGVIEW' : '*NONE');
 
             if compileopt <> *blank;
