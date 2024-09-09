@@ -7,13 +7,13 @@
       //  which accompanies this distribution, and is available at
       //  http://www.eclipse.org/legal/cpl-v10.html
       // ==========================================================================
-     HCopyright('v4.1.0 - xx.xx.xxxx - +
+     HCopyright('v4.2.0 - xx.xx.xxxx - +
      H           Copyright (c) 2013-xxxx iRPGUnit Project Team')
       /if not defined(COPYRIGHT_DSPEC)
       /eof
       /endif
      D cRPGUNIT_VERSION...
-     D                 C                   '4.1.0'
+     D                 C                   '4.2.0'
      D cRPGUNIT_DATE...
      D                 C                   'xx.xx.xxxx'
 

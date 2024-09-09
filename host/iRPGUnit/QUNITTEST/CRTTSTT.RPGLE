@@ -127,6 +127,8 @@
 
        // Command to create an RPG module.
      D crtRpgModCmd    s            256a
+       // Command to create a Cobol module.
+     D crtCblModCmd    s            256a
        // Command to create a Service Program object.
      D crtSrvPgmCmd    s            256a
 
@@ -148,6 +150,8 @@
      Psetup            b                   export
      D                 pi
       /free
+
+        clear crtCblModCmd;
 
         clear crtRpgModCmd;
 
@@ -287,6 +291,10 @@
      D
       /free
 
+        // Use members stored in library QSYSINC for testing
+        // purposes. Members SYSTYPES and SQLUDF must exist
+        // as we need to retrieve their source types.
+
         crtRpgModCmd = getCrtRpgModCmd( 'SYSTYPES  *CURLIB   ' :
                                         'QRPGLESRC QSYSINC   ' :
                                         'SYSTYPES'  :
@@ -299,6 +307,18 @@
         aEqual( 'CRTRPGMOD MODULE(*CURLIB/SYSTYPES) '
               + 'SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES) '
               + 'DBGVIEW(*LIST) TGTRLS(*CURRENT)' : crtRpgModCmd );
+
+        crtCblModCmd = getCrtCblModCmd( 'SQLUDF    *CURLIB   ' :
+                                        'QCBLLESRC QSYSINC   ' :
+                                        'SQLUDF'    :
+                                        noCOption :
+                                        '*LIST'   :
+                                        noPOption :
+                                        noCompileOpt :
+                                        '*CURRENT' );
+        aEqual( 'CRTCBLMOD MODULE(*PGMID) '
+              + 'SRCFILE(QSYSINC/QCBLLESRC) SRCMBR(SQLUDF) '
+              + 'DBGVIEW(*LIST) TGTRLS(*CURRENT)' : crtCblModCmd );
 
       /end-free
      P                 e
