@@ -51,6 +51,7 @@
      D  bModules                           const likeds(ObjectArray_t)
      D  pOption                            const likeds(Options_t)
      D  compileOpt                 5000a   const varying options(*varsize)
+     D  targetRls                          const like(TargetRelease_t)
 
      D crtCbl...
      D                 pi
@@ -68,6 +69,7 @@
      D  bModules                           const likeds(ObjectArray_t)
      D  pOption                            const likeds(Options_t)
      D  compileOpt                 5000a   const varying options(*varsize)
+     D  targetRls                          const like(TargetRelease_t)
 
      D srcMbrRslv      s                   like(srcMbr)
      D srcType         s             10a
@@ -88,7 +90,7 @@
 
        crtTst( testPgm : srcFile : srcMbrRslv : text : cOption : dbgView
               : bndSrvPgm : bndDir : bOption : dltSplf : actGrp : bModules
-              : '*N' : pOption : compileOpt );
+              : '*N' : pOption : compileOpt : targetRls);
 
        *inlr = *on;
 

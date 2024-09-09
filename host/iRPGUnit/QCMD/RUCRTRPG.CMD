@@ -182,6 +182,13 @@
                           PMTCTL(*PMTRQS)                    +
                           PROMPT('Pre-Compiler COMPILEOPT')
 
+             PARM       KWD(TGTRLS)                          +
+                          TYPE(*NAME)                        +
+                          PMTCTL(*PMTRQS)                    +
+                          SPCVAL(*CURRENT *PRV)                   +
+                          DFT(*CURRENT)                      +
+                          PROMPT('Target release')
+
  PGM:        QUAL       TYPE(*NAME) LEN(10)
              QUAL       TYPE(*NAME) LEN(10) DFT(*CURLIB) SPCVAL(*CURLIB)     +
                         PROMPT('Library')
