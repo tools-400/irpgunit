@@ -737,6 +737,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(MEMCPY) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('memcpy -- Copy Bytes')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
                           MBR(OPNLIST) +
                           SRCTYPE(RPGLE) +
                           TEXT('Open List Structure.')
