@@ -122,6 +122,8 @@
      D noCompileOpt    s              1a   varying
        // No activation group.
      D noActGrp        s             10a   varying
+       // No target release
+     D noTargetRls     s                   like(TargetRelease_t)
 
        // Command to create an RPG module.
      D crtRpgModCmd    s            256a
@@ -193,7 +195,8 @@
                                         noDbgView :
                                         rpgPpOptLvl2 :
                                         noPOption :
-                                        noCompileOpt );
+                                        noCompileOpt :
+                                        noTargetRls );
         aEqual( 'CRTRPGMOD MODULE(*CURLIB/SYSTYPES) '
               + 'SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES)' : crtRpgModCmd );
 
@@ -219,7 +222,8 @@
                                         noDbgView :
                                         rpgPpOptLvl2 :
                                         noPOption :
-                                        noCompileOpt );
+                                        noCompileOpt :
+                                        noTargetRls );
         aEqual( 'CRTRPGMOD MODULE(*CURLIB/SYSTYPES) '
               + 'SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES) '
               + 'OPTION(*SRCSTMT)' : crtRpgModCmd );
@@ -247,7 +251,8 @@
                                         noDbgView :
                                         rpgPpOptLvl2 :
                                         noPOption :
-                                        noCompileOpt );
+                                        noCompileOpt :
+                                        noTargetRls );
         aEqual( 'CRTRPGMOD MODULE(*CURLIB/SYSTYPES) '
               + 'SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES) '
               + 'OPTION(*SRCSTMT *NODEBUGIO)' : crtRpgModCmd );
@@ -267,7 +272,8 @@
                                         '*LIST'   :
                                         rpgPpOptLvl2 :
                                         noPOption :
-                                        noCompileOpt );
+                                        noCompileOpt :
+                                        noTargetRls );
         aEqual( 'CRTRPGMOD MODULE(*CURLIB/SYSTYPES) '
               + 'SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES) '
               + 'DBGVIEW(*LIST)' : crtRpgModCmd );
@@ -275,6 +281,27 @@
       /end-free
      P                 e
 
+     PtestModTargetRls...
+     P                 b                   export
+     D                 pi
+     D
+      /free
+
+        crtRpgModCmd = getCrtRpgModCmd( 'SYSTYPES  *CURLIB   ' :
+                                        'QRPGLESRC QSYSINC   ' :
+                                        'SYSTYPES'  :
+                                        noCOption :
+                                        '*LIST'   :
+                                        rpgPpOptLvl2 :
+                                        noPOption :
+                                        noCompileOpt :
+                                        '*CURRENT' );
+        aEqual( 'CRTRPGMOD MODULE(*CURLIB/SYSTYPES) '
+              + 'SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES) '
+              + 'DBGVIEW(*LIST) TGTRLS(*CURRENT)' : crtRpgModCmd );
+
+      /end-free
+     P                 e
 
      PtestOneBndSrvPgm...
      P                 b                   export
@@ -300,7 +327,8 @@
                                         noBOption :
                                         noExport :
                                         noActGrp :
-                                        noText );
+                                        noText :
+                                        noTargetRls);
 
         // Control.
 
@@ -338,7 +366,8 @@
                                         noBOption :
                                         noExport :
                                         noActGrp :
-                                        noText );
+                                        noText :
+                                        noTargetRls);
 
         // Control.
 
@@ -374,7 +403,8 @@
                                         noBOption :
                                         noExport :
                                         noActGrp :
-                                        noText );
+                                        noText :
+                                        noTargetRls);
 
         // Control.
 
@@ -410,7 +440,8 @@
                                         noBOption :
                                         noExport :
                                         noActGrp :
-                                        noText );
+                                        noText :
+                                        noTargetRls);
 
         // Control.
 
@@ -445,7 +476,8 @@
                                         oneBOption :
                                         noExport :
                                         noActGrp :
-                                        noText );
+                                        noText :
+                                        noTargetRls);
 
         // Control.
 
@@ -478,7 +510,8 @@
                                         noBOption :
                                         export :
                                         noActGrp :
-                                        noText );
+                                        noText :
+                                        noTargetRls);
 
         // Control.
 
@@ -511,7 +544,8 @@
                                         noBOption :
                                         noExport :
                                         actGrp :
-                                        noText );
+                                        noText :
+                                        noTargetRls);
 
         // Control.
 
@@ -522,6 +556,38 @@
       /end-free
      P                 e
 
+     PtestTargetRls    b                   export
+     D                 pi
+
+       // Export option.
+     D targetRls       s                   like(TargetRelease_t)
+
+      /free
+
+        // Setup.
+
+        targetRls = '*CURRENT';
+
+        // Execute.
+
+        crtSrvPgmCmd = getCrtSrvPgmCmd( 'PGM_NAME  *CURLIB   ' :
+                                        noBndSrvPgm :
+                                        noBndDir :
+                                        noModule :
+                                        noBOption :
+                                        noExport :
+                                        noActGrp :
+                                        noText :
+                                        targetRls);
+
+        // Control.
+
+        aEqual( 'CRTSRVPGM SRVPGM(*CURLIB/PGM_NAME) '
+              + 'DETAIL(''*BASIC'') TGTRLS(*CURRENT)'
+              : crtSrvPgmCmd );
+
+      /end-free
+     P                 e
 
      PtestText         b                   export
      D                 pi
@@ -544,7 +610,8 @@
                                         noBOption :
                                         noExport :
                                         noActGrp :
-                                        text );
+                                        text :
+                                        noTargetRls);
 
         // Control.
 

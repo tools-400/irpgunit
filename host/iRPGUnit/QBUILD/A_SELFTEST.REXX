@@ -228,7 +228,7 @@
      "DBGVIEW("_dbgView") ",
      "BNDDIR("_prdLib"/"_bndDir") ",
      "BOPTION(*DUPPROC) ",
-     "DLTSPLF(*YES) "
+     "DLTSPLF(*YES) TGTRLS("TGTRLS")"
 
    return ''
 
