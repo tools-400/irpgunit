@@ -67,7 +67,28 @@
      D  actual                       31s 0 const
      D  fieldName                    64a   const varying options(*nopass: *omit)
 
-
+      /if defined(*V7R4M0)
+      // uEqual -- Universal Equality Assertion
+      //
+      // Compares the given values converted to string, expected and actual.
+      // The assertion fails, if both values are different.
+      //
+      // Example:
+      //   uEqual( *ON : isFound );
+      //   uEqual( 123 : 123 );
+      //   uEqual(D'2024-09-10', %date());
+      //
+      // Message:
+      //   Expected 'expected', but was 'actual'.
+      //
+      // If parameter 'fieldName' is specified, the message is prefixed
+      // with 'fieldName:'.
+     D uEqual          pr                  extproc('uEqual')
+     D                                     opdesc
+     D  expected                       *   const options(*convert)
+     D  actual                         *   const options(*convert)
+     D  fieldName                    64a   const varying options(*nopass: *omit)
+      /endif
       // nEqual -- Boolean Equality Assertion
       //
       // Compares the given Boolean values expected and actual. The assertion fails,

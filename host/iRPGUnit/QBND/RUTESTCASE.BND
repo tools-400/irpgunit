@@ -55,7 +55,7 @@ STRPGMEXP  PGMLVL(*CURRENT) SIGNATURE('iRPGUNIT V3.3')
   EXPORT SYMBOL("assertMessageQueueContains")  /* public API */
 
   EXPORT SYMBOL("ASSERT_registerStartPgm")     /* internally used procedure */
-
+  EXPORT SYMBOL("uEqual")                      /* public API */
 ENDPGMEXP
 
 STRPGMEXP  PGMLVL(*PRV) SIGNATURE('iRPGUNIT V3.0')

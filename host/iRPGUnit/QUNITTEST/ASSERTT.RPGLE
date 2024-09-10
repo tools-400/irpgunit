@@ -430,7 +430,342 @@
       /end-free
      P                 e
 
+      /if defined(*V7R4M0)
+     P testUniversalStringComparisonWithSuccess...
+     P                 b                   export
+      /free
+        uEqual('abc' : 'abc');
 
+        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+      /end-free
+     P                 e
+
+     P testUniversalNumericComparisonWithSuccess...
+     P                 b                   export
+      /free
+        uEqual(123 : 123);
+
+        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+      /end-free
+     P                 e
+
+     P testUniversalTimestampComparisonWithSuccess...
+     P                 b                   export
+     D tstmp1          s               z   inz(z'2024-09-02-11.22.33.123456')
+     D tstmp2          s               z   inz(z'2024-09-02-11.22.33.123456')
+      /free
+        uEqual(tstmp1 : tstmp2);
+
+        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+      /end-free
+     P                 e
+
+     P testUniversalTimeComparisonWithSuccess...
+     P                 b                   export
+     D tm1             s               t   inz(t'11.22.33')
+     D tm2             S               t   inz(t'11.22.33')
+      /free
+        uEqual(tm1 : tm2);
+
+        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+      /end-free
+     P                 e
+
+     P testUniversalDateComparisonWithSuccess...
+     P                 b                   export
+     D dt1             s               d   inz(d'2024-09-02')
+     D dt2             s               d   inz(d'2024-09-02')
+      /free
+        uEqual(dt1 : dt2);
+
+        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+      /end-free
+     P                 e
+
+     PtestUniversalStringComparisonWithFailure...
+     P                 b                   export
+     D                 pi
+     D                                     extproc('testUniversalStringComparis-
+     D                                     onWithFailure')
+
+     D excpWasSeen     s               n
+     D assertFailEvt   ds                  likeds(AssertFailEvt_t)
+
+      /free
+
+        // Execution.
+
+        monitor;
+          uEqual( 'Hello' : 'Good bye' );
+          excpWasSeen = *off;
+
+        on-error;
+          excpWasSeen = *on;
+        endmon;
+
+        // Controls.
+
+        assertFailEvt = getAssertFailEvt();
+
+        assert( excpWasSeen :
+                'uEqual( Hello : Good bye )'
+              + ' should have raised an error message.' );
+
+        aEqual( 'Expected ''Hello'', but was ''Good bye''.' :
+                assertFailEvt.msg );
+
+        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).qStmt.qPgm.nm );
+        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).qStmt.qMod.nm );
+        aEqual( %proc        : assertFailEvt.callStk.Entry(1).qStmt.procNm );
+
+        monitor;
+          aEqual( '499'     : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
+        on-error;
+          aEqual( '49900'   : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
+        endmon;
+
+      /end-free
+     P                 e
+
+     PtestUniversalNumberComparisonWithFailure...
+     P                 b                   export
+     D                 pi
+     D                                     extproc('testUniversalNumberComparis-
+     D                                     onWithFailure')
+
+     D excpWasSeen     s               n
+     D assertFailEvt   ds                  likeds(AssertFailEvt_t)
+
+      /free
+
+        // Execution.
+
+        monitor;
+          uEqual( 123 : 321 );
+          excpWasSeen = *off;
+
+        on-error;
+          excpWasSeen = *on;
+        endmon;
+
+        // Controls.
+
+        assertFailEvt = getAssertFailEvt();
+
+        assert( excpWasSeen :
+                'uEqual( 123 : 321 ) should have raised an error message.' );
+
+        aEqual( 'Expected ''123'', but was ''321''.' :
+                assertFailEvt.msg );
+
+        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).qStmt.qPgm.nm );
+        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).qStmt.qMod.nm );
+        aEqual( %proc        : assertFailEvt.callStk.Entry(1).qStmt.procNm );
+
+        monitor;
+          aEqual( '544'     : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
+        on-error;
+          aEqual( '54400'   : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
+        endmon;
+
+      /end-free
+     P                 e
+
+     PtestUniversalTimestampComparisonWithFailure...
+     P                 b                   export
+     D                 pi
+     D                                     extproc('testUniversalTimestampCompa-
+     D                                     risonWithFailure')
+
+     D excpWasSeen     s               n
+     D assertFailEvt   ds                  likeds(AssertFailEvt_t)
+     D tstmp1          s               z   inz(z'2024-09-02-11.22.33.123456')
+     D tstmp2          s               z   inz(z'2024-11-03-22.11.00.654321')
+      /free
+
+        // Execution.
+
+        monitor;
+          uEqual( tstmp1: tstmp2 );
+          excpWasSeen = *off;
+
+        on-error;
+          excpWasSeen = *on;
+        endmon;
+
+        // Controls.
+
+        assertFailEvt = getAssertFailEvt();
+
+        assert( excpWasSeen :
+                'uEqual( ''2024-09-02-11.22.33.123456'' : +
+                ''2024-11-03-22.11.00.654321'' )' +
+                ' should have raised an error message.' );
+
+        aEqual( 'Expected ''2024-09-02-11.22.33.123456'', ' +
+                'but was ''2024-11-03-22.11.00.654321''.' :
+                assertFailEvt.msg );
+
+        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).qStmt.qPgm.nm );
+        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).qStmt.qMod.nm );
+        aEqual( %proc        : assertFailEvt.callStk.Entry(1).qStmt.procNm );
+
+        monitor;
+          aEqual( '589'     : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
+        on-error;
+          aEqual( '58900'   : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
+        endmon;
+
+      /end-free
+     P                 e
+
+     PtestUniversalDateComparisonWithFailure...
+     P                 b                   export
+     D                 pi
+     D                                     extproc('testUniversalDateCompa-
+     D                                     risonWithFailure')
+
+     D excpWasSeen     s               n
+     D assertFailEvt   ds                  likeds(AssertFailEvt_t)
+     D dt1             s               d   inz(d'2024-11-02')
+     D dt2             s               d   inz(d'2011-09-02')
+      /free
+
+        // Execution.
+
+        monitor;
+          uEqual( dt1 : dt2 );
+          excpWasSeen = *off;
+
+        on-error;
+          excpWasSeen = *on;
+        endmon;
+
+        // Controls.
+
+        assertFailEvt = getAssertFailEvt();
+
+        assert( excpWasSeen :
+                'uEqual( ''2024-11-02'' : + ''2011-09-02'' )' +
+                ' should have raised an error message.' );
+
+        aEqual( 'Expected ''2024-11-02'', but was ''2011-09-02''.' :
+                assertFailEvt.msg );
+
+        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).qStmt.qPgm.nm );
+        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).qStmt.qMod.nm );
+        aEqual( %proc        : assertFailEvt.callStk.Entry(1).qStmt.procNm );
+
+        monitor;
+          aEqual( '637'     : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
+        on-error;
+          aEqual( '63700'   : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
+        endmon;
+
+      /end-free
+     P                 e
+
+     PtestUniversalTimeComparisonWithFailure...
+     P                 b                   export
+     D                 pi
+     D                                     extproc('testUniversalTimeCompa-
+     D                                     risonWithFailure')
+
+     D excpWasSeen     s               n
+     D assertFailEvt   ds                  likeds(AssertFailEvt_t)
+     D tm1             s               t   inz(t'11.22.33')
+     D tm2             S               t   inz(t'22.33.11')
+      /free
+
+        // Execution.
+
+        monitor;
+          uEqual( tm1 : tm2 );
+          excpWasSeen = *off;
+
+        on-error;
+          excpWasSeen = *on;
+        endmon;
+
+        // Controls.
+
+        assertFailEvt = getAssertFailEvt();
+
+        assert( excpWasSeen :
+                'uEqual( ''11.22.33'' : + ''22.33.11'' )' +
+                ' should have raised an error message.' );
+
+        aEqual( 'Expected ''11.22.33'', but was ''22.33.11''.' :
+                assertFailEvt.msg );
+
+        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).qStmt.qPgm.nm );
+        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).qStmt.qMod.nm );
+        aEqual( %proc        : assertFailEvt.callStk.Entry(1).qStmt.procNm );
+
+        monitor;
+          aEqual( '683'     : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
+        on-error;
+          aEqual( '68300'   : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
+        endmon;
+
+      /end-free
+     P                 e
+     P testUniversaBooleanComparisonWithSuccess...
+     P                 b                   export
+     D n1              s               n   inz(*on)
+     D n2              s               n   inz(*on)
+      /free
+        uEqual(n1: n2);
+
+        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+      /end-free
+     P                 e
+     P testUniversaBooleanComparisonWithFailure...
+     P                 b                   export
+     D                 pi
+     D                                     extproc('testUniversalBooleanCompa-
+     D                                     risonWithFailure')
+
+     D excpWasSeen     s               n
+     D assertFailEvt   ds                  likeds(AssertFailEvt_t)
+     D n1              s               n   inz(*off)
+     D n2              s               n   inz(*on)
+      /free
+
+        // Execution.
+
+        monitor;
+          uEqual( n1 : n2 );
+          excpWasSeen = *off;
+
+        on-error;
+          excpWasSeen = *on;
+        endmon;
+
+        // Controls.
+
+        assertFailEvt = getAssertFailEvt();
+
+        assert( excpWasSeen :
+                'uEqual( ''0'' : + ''1'' )' +
+                ' should have raised an error message.' );
+
+        aEqual( 'Expected ''0'', but was ''1''.' :
+                assertFailEvt.msg );
+
+        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).qStmt.qPgm.nm );
+        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).qStmt.qMod.nm );
+        aEqual( %proc        : assertFailEvt.callStk.Entry(1).qStmt.procNm );
+
+        monitor;
+          aEqual( '738'     : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
+        on-error;
+          aEqual( '73800'   : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
+        endmon;
+
+      /end-free
+     P                 e
+      /endif
       //----------------------------------------------------------------------
       //   Procedure that simulates the test case executor procedure
       //   of module CMDRUNSRV. It must receive the message sent by fail().

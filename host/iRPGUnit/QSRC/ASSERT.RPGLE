@@ -112,6 +112,8 @@
      D                 c                   'iEqual'
      D START_PROC_NEQUAL...
      D                 c                   'nEqual'
+     D START_PROC_UEQUAL...
+     D                 c                   'uEqual'
      D START_PROC_ASSERT...
      D                 c                   'assert'
      D START_PROC_FAIL...
@@ -276,7 +278,43 @@
 
       /end-free
      P                 e
+      /if defined(*V7R4M0)
+     P uEqual...
+     P                 b                   export
+     D                 pi                  opdesc
+     D  expected                       *   const options(*convert)
+     D  actual                         *   const options(*convert)
+     D  fieldName                    64a   const varying options(*nopass: *omit)
 
+     D msg             s                   like(msgText_t) inz
+
+      /free
+       if (%parms() >= 3 and %addr(fieldName) <> *NULL);
+         msg = %trim(fieldName) + ': ';
+       endif;
+
+       msg = msg
+           + 'Expected ' + QUOTE + %str(expected) + QUOTE + ','
+           + ' but was ' + QUOTE + %str(actual)   + QUOTE + '.';
+       doAssert(%str(expected) = %str(actual) : msg
+                : ONE_CALL_STK_LVL_ABOVE : START_PROC_UEQUAL);
+
+      /end-free
+     P                 e
+      /else
+     P uEqual...
+     P                 b                   export
+     D                 pi                  opdesc extproc('uEqual')
+     D  expected                       *   const options(*string)
+     D  actual                         *   const options(*string)
+     D  fieldName                    64a   const varying options(*nopass: *omit)
+     D msg             s                   like(msgText_t) inz
+      /free
+       msg = 'Method unsupported in current target release';
+       fail(msg);
+      /end-free
+     P                 e
+      /endif
        //----------------------------------------------------------------------
        // Assert equality between two alphanumeric variables.
        //----------------------------------------------------------------------
