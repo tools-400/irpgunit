@@ -44,6 +44,9 @@
  "UPDPGM PGM("library"/RUPGMRMT) MODULE(*NONE) SRVPGMLIB("library")"
 
  /* Update commands */
+ "CHGCMD CMD("library"/UPDLIB) PGM(*REXX) REXSRCFILE("library"/QBUILD) ",
+   "HLPPNLGRP("library"/UPDLIBHLP)"
+
  "CHGCMD CMD("library"/CMPMOD) PGM(*REXX) REXSRCFILE("library"/QBUILD) ",
    "HLPPNLGRP("library"/CMPMODHLP)"
 

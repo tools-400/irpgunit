@@ -77,7 +77,8 @@ public class ProductLibraryUploader {
 
     public boolean run() {
 
-        boolean isUploadedFine = false;;
+        boolean isUploadedFine = false;
+        ;
 
         try {
 
@@ -124,8 +125,11 @@ public class ProductLibraryUploader {
                                 if (!restoreLibrary(workLibrary, saveFileName, libraryName, aspDeviceName)) {
                                     setError(Messages.bind(Messages.Could_not_restore_library_A, libraryName));
                                 } else {
-                                    if (!updateLibrary(libraryName)){
-                                        MessageDialog.openError(shell, Messages.Warning, Messages.bind(Messages.Library_RPGUNIT_has_been_restored_to_A_but_objects_could_not_be_updated_Try_to_run_command_UPDLIB_A_by_hand_and_check_the_job_log, libraryName));
+                                    if (!updateLibrary(libraryName)) {
+                                        MessageDialog.openError(shell, Messages.Warning,
+                                            Messages.bind(
+                                                Messages.Library_RPGUNIT_has_been_restored_to_A_but_objects_could_not_be_updated_Try_to_run_command_UPDLIB_A_by_hand_and_check_the_job_log,
+                                                libraryName));
                                         isUploadedFine = false;
                                     } else {
                                         setStatus(Messages.bind(Messages.Successfully_restored_iRPGUnit_library, libraryName));
@@ -365,10 +369,18 @@ public class ProductLibraryUploader {
 
         setStatus(Messages.bind(Messages.Updating_objects_of_library_A, libraryName));
 
+        // CHGCMD CMD(RPGUNIT42/UPDLIB) PGM(*REXX) REXSRCFILE(RPGUNIT42/QBUILD)
+
+        String command = String.format("CHGCMD CMD(%s/UPDLIB) PGM(*REXX) REXSRCFILE(%s/QBUILD) HLPPNLGRP(%s/UPDLIBHLP)", libraryName, libraryName,
+            libraryName);
+        if (!executeCommand(command, true).equals("")) {
+            return false;
+        }
+
         if (!executeCommand(libraryName + "/UPDLIB LIB(" + libraryName + ")", true).equals("")) {
             return false;
         }
-        
+
         return true;
     }
 
