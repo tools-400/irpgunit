@@ -45,6 +45,12 @@
      D                 pr                  extproc('testAssertWithSuccess')
      D testBigIntegerEquality...
      D                 pr                  extproc('testBigIntegerEquality')
+     D testAssertEqual_string...
+     D                 pr                  extproc('testAssertEqual_string')
+     D testAssertEqual_integer...
+     D                 pr                  extproc('testAssertEqual_integer')
+     D testAssertEqual_numeric...
+     D                 pr                  extproc('testAssertEqual_numeric')
 
 
       //----------------------------------------------------------------------
@@ -156,9 +162,9 @@
                : assertFailEvt.callStk.Entry(1).qStmt.procNm );
 
         monitor;
-           aEqual( '137'  : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
+           aEqual( '143'  : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
         on-error;
-           aEqual( '13700': assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
+           aEqual( '14300': assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
         endmon;
 
       /end-free
@@ -220,9 +226,9 @@
                                assertFailEvt.callStk.Entry(1).qStmt.procNm );
 
         monitor;
-           aEqual( '199'     : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
+           aEqual( '205'     : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
         on-error;
-           aEqual( '19900'   : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
+           aEqual( '20500'   : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
         endmon;
 
       /end-free
@@ -317,9 +323,9 @@
                              : assertFailEvt.callStk.Entry(1).qStmt.procNm );
 
         monitor;
-           aEqual( '301'     : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
+           aEqual( '307'     : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
         on-error;
-           aEqual( '30100'   : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
+           aEqual( '30700'   : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
         endmon;
 
       /end-free
@@ -467,6 +473,126 @@
           on-error;
             return *on; // Bad. Message was captured.
           endmon;
+
+      /end-free
+     P                 e
+
+
+     PtestAssertEqual_string...
+     P                 b                   export
+     D                 pi
+
+     D assertFailEvtLong...
+     D                 ds                  likeds(assertFailEvtLong_t)
+      /free
+
+        // Test equality
+        assertEqual( 'expected' :
+                     'expected' );
+        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+
+        // Test unequality without assertion message
+        monitor;
+          assertEqual( 'expected' :
+                       'unexpected value' );
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Expected ''expected'', but was ''unexpected value''.');
+        endmon;
+
+        // Test unequality with assertion message
+        monitor;
+          assertEqual( 'expected' :
+                       'unexpected value' :
+                       'String values do not match');
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'String values do not match');
+        endmon;
+
+      /end-free
+     P                 e
+
+
+     PtestAssertEqual_integer...
+     P                 b                   export
+     D                 pi
+
+     D assertFailEvtLong...
+     D                 ds                  likeds(assertFailEvtLong_t)
+      /free
+
+        // Test equality
+        assertEqual( 9223372036854775807 :
+                     9223372036854775807 );
+        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+
+        // Test unequality without assertion message
+        monitor;
+          assertEqual( 9223372036854775807 :
+                       123 );
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Expected ''9223372036854775807'', but was ''123''.');
+        endmon;
+
+        // Test unequality with assertion message
+        monitor;
+          assertEqual( 9223372036854775807 :
+                       123 :
+                       'Integer values do not match');
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Integer values do not match');
+        endmon;
+
+      /end-free
+     P                 e
+
+
+     PtestAssertEqual_numeric...
+     P                 b                   export
+     D                 pi
+
+     D assertFailEvtLong...
+     D                 ds                  likeds(assertFailEvtLong_t)
+      /free
+
+        // Test equality
+        assertEqual( 1234567890,1234 :
+                     1234567890,1234 );
+        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+
+        // Test unequality without assertion message
+        monitor;
+          assertEqual( 1234567890,1234 :
+                       1234567890,1233 );
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Expected ''1234567890,1234'', but was ''1234567890,1233''.');
+        endmon;
+
+        // Test unequality with assertion message
+        monitor;
+          assertEqual( 1234567890,1234 :
+                       1234567890,1233 :
+                       'Numeric values do not match');
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Numeric values do not match');
+        endmon;
 
       /end-free
      P                 e

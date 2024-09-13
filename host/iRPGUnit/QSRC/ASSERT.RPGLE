@@ -1,20 +1,20 @@
       // ==========================================================================
-       //  iRPGUnit - Assertion Facilities.
+      //  iRPGUnit - Assertion Facilities.
       // ==========================================================================
-       //  Copyright (c) 2013-2019 iRPGUnit Project Team
-       //  All rights reserved. This program and the accompanying materials
-       //  are made available under the terms of the Common Public License v1.0
-       //  which accompanies this distribution, and is available at
-       //  http://www.eclipse.org/legal/cpl-v10.html
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
       // ==========================================================================
-       // >>PRE-COMPILER<<
-       //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
-       //   >>IMPORTANT<<
-       //     >>PARM<<  OPTION(*EVENTF);
-       //     >>PARM<<  DBGVIEW(*LIST);
-       //   >>END-IMPORTANT<<
-       //   >>EXECUTE<<
-       // >>END-PRE-COMPILER<<
+      // >>PRE-COMPILER<<
+      //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>IMPORTANT<<
+      //     >>PARM<<  OPTION(*EVENTF);
+      //     >>PARM<<  DBGVIEW(*LIST);
+      //   >>END-IMPORTANT<<
+      //   >>EXECUTE<<
+      // >>END-PRE-COMPILER<<
       // ==========================================================================
 
      H NoMain
@@ -43,13 +43,6 @@
        //----------------------------------------------------------------------
 
      D checkStartPgm   pr                  extproc('checkStartPgm')
-
-     D doAssert        pr                  extproc('doAssert')
-     D  condition                      n   const
-     D  msgIfFalse                16384a   const varying options(*Varsize)
-     D  toCallStacKE                 10i 0 const
-     D  startProc                   256a   const varying options(*varsize)
-
 
      D doFail          pr                  extproc('doFail')
      D  msg                       16384a   const varying options(*Varsize)
@@ -387,7 +380,7 @@
 
 
      P doAssert...
-     P                 b
+     P                 b                   export
      D                 pi
      D  condition                      n   const
      D  msgIfFalse                16384a   const varying options(*Varsize)
@@ -409,7 +402,7 @@
 
 
      P doFail...
-     P                 b
+     P                 b                   export
      D                 pi
      D  msg                       16384a   const varying options(*Varsize)
      D  toCallStacKE                 10i 0 const
@@ -854,7 +847,8 @@
          // Skip all procedures until we saw the
          // assertion procedure
          if (callStkE.qStmt.qPgm.nm = 'RUTESTCASE' and
-             callStkE.qStmt.qMod.nm = 'ASSERT' and
+             (callStkE.qStmt.qMod.nm = 'ASSERT' or
+              callStkE.qStmt.qMod.nm = 'ASSERTV2' ) and
              callStkE.qStmt.procNm = startProc);
            doReturnStckE = *on;
            ent_p += ent.len;
