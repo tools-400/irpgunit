@@ -264,6 +264,7 @@
      D                 s           5136a   based(template) varying
      D TargetRelease_t...
      D                 s             10a   based(template)
+     D assertString_t  s               a   len(32565) varying(4)
 
        // Program Status Data Structure.
      D sds_t           ds                  based(template) qualified
