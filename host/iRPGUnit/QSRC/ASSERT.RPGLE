@@ -248,8 +248,8 @@
        endif;
 
        msg = msg
-           + 'Expected ' + %char(expected) + ','
-           + ' but was ' + %char(actual  ) + '.';
+           + 'Expected ' + formatNumeric(expected) + ','
+           + ' but was ' + formatNumeric(actual) + '.';
        doAssert(expected = actual: msg
                 : ONE_CALL_STK_LVL_ABOVE: %proc());
 
