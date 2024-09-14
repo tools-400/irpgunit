@@ -97,20 +97,6 @@
        //   GLOBAL CONSTANTS
        //----------------------------------------------------------------------
 
-     D NO_MSG_TEXT     c                   '*N'
-
-     D START_PROC_AEQUAL...
-     D                 c                   'aEqual'
-     D START_PROC_IEQUAL...
-     D                 c                   'iEqual'
-     D START_PROC_NEQUAL...
-     D                 c                   'nEqual'
-     D START_PROC_ASSERT...
-     D                 c                   'assert'
-     D START_PROC_FAIL...
-     D                 c                   'fail'
-
-
        //----------------------------------------------------------------------
        //   TYPE TEMPLATE
        //----------------------------------------------------------------------
@@ -237,7 +223,7 @@
            + 'Expected ' + QUOTE + %trimr(tExpected) + QUOTE + ','
            + ' but was ' + QUOTE + %trimr(tActual  ) + QUOTE + '.';
        doAssert(tExpected = tActual: msg
-                : ONE_CALL_STK_LVL_ABOVE: START_PROC_AEQUAL);
+                : ONE_CALL_STK_LVL_ABOVE: %proc());
 
       /end-free
      P                 e
@@ -265,7 +251,7 @@
            + 'Expected ' + %char(expected) + ','
            + ' but was ' + %char(actual  ) + '.';
        doAssert(expected = actual: msg
-                : ONE_CALL_STK_LVL_ABOVE: START_PROC_IEQUAL);
+                : ONE_CALL_STK_LVL_ABOVE: %proc());
 
       /end-free
      P                 e
@@ -292,7 +278,7 @@
            + 'Expected ' + QUOTE + expected + QUOTE + ','
            + ' but was ' + QUOTE + actual   + QUOTE + '.';
        doAssert(expected = actual: msg
-                : ONE_CALL_STK_LVL_ABOVE: START_PROC_NEQUAL);
+                : ONE_CALL_STK_LVL_ABOVE: %proc());
 
 
       /end-free
@@ -330,11 +316,11 @@
                          descInf: strInf: fc: msgIfFalse: %len(msgIfFalse));
 
          doAssert(condition: tMsgIfFalse
-                  : ONE_CALL_STK_LVL_ABOVE: START_PROC_ASSERT);
+                  : ONE_CALL_STK_LVL_ABOVE: %proc());
        else;
          // Called by Cobol or new RPG after iRPGUnit v4.
          doAssert(condition: NO_MSG_TEXT
-                  : ONE_CALL_STK_LVL_ABOVE: START_PROC_ASSERT);
+                  : ONE_CALL_STK_LVL_ABOVE: %proc());
        endif;
 
       /end-free
@@ -369,10 +355,10 @@
                 : strInf.curLen: strInf.maxLen: fc);
          tMsg = getValueFromDesc(descInf: strInf: fc: msg: %len(msg));
 
-         doFail(tMsg: -1: START_PROC_FAIL);
+         doFail(tMsg: -1: %proc());
        else;
          // Called by Cobol or new RPG after iRPGUnit v4.
-         doFail(NO_MSG_TEXT: -1: START_PROC_FAIL);
+         doFail(NO_MSG_TEXT: -1: %proc());
        endif;
 
       /end-free
