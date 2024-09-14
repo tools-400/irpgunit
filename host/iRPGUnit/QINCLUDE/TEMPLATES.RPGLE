@@ -42,6 +42,8 @@
 
      D NO_VALUE        c                   '*N'
 
+     D NO_MSG_TEXT     c                   '*N'
+
        // Source member types
      D MBR_RPGLE       c                   const('RPGLE')
      D MBR_SQLRPGLE    c                   const('SQLRPGLE')
@@ -238,36 +240,39 @@
 
 
       // A sized array of OS400 objects.
-     D ObjectArray_t   ds                  based(template) qualified
+     D ObjectArray_t   ds                  template qualified
      D  size                          5i 0
      D  object                             Dim(51) likeds(Object_t)
 
        // A sized list of options.
-     D Options_t       ds                  based(template) qualified
+     D Options_t       ds                  template qualified
      D  size                          5i 0
      D  option                       12a   Dim(25)
 
-     D HeadToken_t     s             10a   based(template)
-     D DbgView_t       s             10a   based(template)
-     D Export_t        s             10a   based(template)
+     D HeadToken_t     s             10a   template
+     D DbgView_t       s             10a   template
+     D Export_t        s             10a   template
      D ActivationGroup_t...
-     D                 s             10a   based(template)
+     D                 s             10a   template
 
-     D Cmd_t           s           8192a   based(template) varying
+     D Cmd_t           s           8192a   template varying
      D SerializedArray_t...
-     D                 s           2048a   based(template) varying
+     D                 s           2048a   template varying
      D SerializedObject_t...
-     D                 s             21a   based(template) varying
+     D                 s             21a   template varying
      D SerializedOptions_t...
-     D                 s            512a   based(template) varying
+     D                 s            512a   template varying
      D SerializedString_t...
-     D                 s           5136a   based(template) varying
+     D                 s           5136a   template varying
      D TargetRelease_t...
-     D                 s             10a   based(template)
-     D assertString_t  s               a   len(32565) varying(4)
+     D                 s             10a   template
+     D assertString_t...
+     D                 s               a   len(32565) varying(4) ccsid(*utf8)
+     D assertNumeric_t...
+     D                 s             63s20 template
 
        // Program Status Data Structure.
-     D sds_t           ds                  based(template) qualified
+     D sds_t           ds                  template qualified
      D  pgmName                1     10A
      D  pgmStat               11     15S 0
      D  prevStat              16     20S 0

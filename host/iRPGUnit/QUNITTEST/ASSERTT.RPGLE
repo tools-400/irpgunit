@@ -51,6 +51,8 @@
      D                 pr                  extproc('testAssertEqual_integer')
      D testAssertEqual_numeric...
      D                 pr                  extproc('testAssertEqual_numeric')
+     D testAssertThat...
+     D                 pr                  extproc('testAssertThat')
 
 
       //----------------------------------------------------------------------
@@ -162,9 +164,9 @@
                : assertFailEvt.callStk.Entry(1).qStmt.procNm );
 
         monitor;
-           aEqual( '143'  : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
+           aEqual( '145'  : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
         on-error;
-           aEqual( '14300': assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
+           aEqual( '14500': assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
         endmon;
 
       /end-free
@@ -226,9 +228,9 @@
                                assertFailEvt.callStk.Entry(1).qStmt.procNm );
 
         monitor;
-           aEqual( '205'     : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
+           aEqual( '207'     : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
         on-error;
-           aEqual( '20500'   : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
+           aEqual( '20700'   : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
         endmon;
 
       /end-free
@@ -323,9 +325,9 @@
                              : assertFailEvt.callStk.Entry(1).qStmt.procNm );
 
         monitor;
-           aEqual( '307'     : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
+           aEqual( '309'     : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
         on-error;
-           aEqual( '30700'   : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
+           aEqual( '30900'   : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
         endmon;
 
       /end-free
@@ -499,7 +501,8 @@
         on-error;
           assertFailEvtLong = getAssertFailEvtLong();
           assert(assertFailEvtLong.msg =
-                 'Expected ''expected'', but was ''unexpected value''.');
+                 'Expected ''expected'', but was ''unexpected value''.'
+                 : 'Error messages does not match expected value.');
         endmon;
 
         // Test unequality with assertion message
@@ -511,7 +514,8 @@
         on-error;
           assertFailEvtLong = getAssertFailEvtLong();
           assert(assertFailEvtLong.msg =
-                 'String values do not match');
+                 'String values do not match'
+                 : 'Error messages does not match expected value.');
         endmon;
 
       /end-free
@@ -533,13 +537,14 @@
 
         // Test unequality without assertion message
         monitor;
-          assertEqual( 9223372036854775807 :
-                       123 );
+          assertEqual( -9223372036854775807 :
+                       -123 );
           fail('Expected the asssertion to fail.');
         on-error;
           assertFailEvtLong = getAssertFailEvtLong();
           assert(assertFailEvtLong.msg =
-                 'Expected ''9223372036854775807'', but was ''123''.');
+                 'Expected ''-9223372036854775807'', but was ''-123''.'
+                 : 'Error messages does not match expected value.');
         endmon;
 
         // Test unequality with assertion message
@@ -551,7 +556,8 @@
         on-error;
           assertFailEvtLong = getAssertFailEvtLong();
           assert(assertFailEvtLong.msg =
-                 'Integer values do not match');
+                 'Integer values do not match'
+                 : 'Error messages does not match expected value.');
         endmon;
 
       /end-free
@@ -573,13 +579,14 @@
 
         // Test unequality without assertion message
         monitor;
-          assertEqual( 1234567890,1234 :
-                       1234567890,1233 );
+          assertEqual( -1234567890,123 :
+                       -1234567890,122 );
           fail('Expected the asssertion to fail.');
         on-error;
           assertFailEvtLong = getAssertFailEvtLong();
           assert(assertFailEvtLong.msg =
-                 'Expected ''1234567890,1234'', but was ''1234567890,1233''.');
+                 'Expected ''-1234567890,123'', but was ''-1234567890,122''.'
+                 : 'Error messages does not match expected value.');
         endmon;
 
         // Test unequality with assertion message
@@ -591,8 +598,120 @@
         on-error;
           assertFailEvtLong = getAssertFailEvtLong();
           assert(assertFailEvtLong.msg =
-                 'Numeric values do not match');
+                 'Numeric values do not match'
+                 : 'Error messages does not match expected value.');
         endmon;
+
+      /end-free
+     P                 e
+
+
+     PtestAssertThat...
+     P                 b                   export
+     D                 pi
+
+     D expected        s            128a   varying
+     D actual          s            128a   varying
+
+     D assertFailEvtLong...
+     D                 ds                  likeds(assertFailEvtLong_t)
+      /free
+
+        // Test equality
+        expected = 'Donald Duck';
+        actual = expected;
+        assertThat( %addr(expected) :
+                    %addr(actual) :
+                    %paddr(assertThatMatcherWithMsg));
+        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+
+        // Test unequality without assertion message but
+        // with a message returned by the matcher
+        monitor;
+          expected = 'Donald Duck';
+          actual = 'Dagobert Duck';
+          assertThat( %addr(expected) :
+                      %addr(actual) :
+                      %paddr(assertThatMatcherWithMsg));
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Matcher: Actual values does not match expected value.'
+                 : 'Error messages does not match message from matcher.');
+        endmon;
+
+        // Test unequality without any assertion message
+        monitor;
+          expected = 'Donald Duck';
+          actual = 'Dagobert Duck';
+          assertThat( %addr(expected) :
+                      %addr(actual) :
+                      %paddr(assertThatMatcherWithoutMsg));
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 '*N');
+        endmon;
+
+        // Test unequality with error message
+        monitor;
+          expected = 'Donald Duck';
+          actual = 'Dagobert Duck';
+          assertThat( %addr(expected) :
+                      %addr(actual) :
+                      %paddr(assertThatMatcherWithoutMsg) :
+                      'Matcher did not accept actual value.');
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Matcher did not accept actual value.');
+        endmon;
+
+      /end-free
+     P                 e
+
+
+     P assertThatMatcherWithMsg...
+     P                 b                   export
+     D                 pi              n
+     D  pExpected                      *   const
+     D  pActual                        *   const
+     D  message                            like(msgText_t)
+
+     D expected        s            128a   varying based(pExpected)
+     D actual          s            128a   varying based(pActual)
+      /free
+
+        if (expected = actual);
+          message = '';
+          return *on;
+        else;
+          message = 'Matcher: Actual values does not match expected value.';
+          return *off;
+        endif;
+
+      /end-free
+     P                 e
+
+
+     P assertThatMatcherWithoutMsg...
+     P                 b                   export
+     D                 pi              n
+     D  pExpected                      *   const
+     D  pActual                        *   const
+
+     D expected        s            128a   varying based(pExpected)
+     D actual          s            128a   varying based(pActual)
+      /free
+
+        if (expected = actual);
+          return *on;
+        else;
+          return *off;
+        endif;
 
       /end-free
      P                 e

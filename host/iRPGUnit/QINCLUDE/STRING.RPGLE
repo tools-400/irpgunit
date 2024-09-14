@@ -64,5 +64,9 @@ dcl-pr parseNum zoned(63:20) extproc('STRING_parseNum');
   i_curSym    char(1)     const options(*nopass);
 end-pr;
 
+dcl-pr formatNumeric varchar(128) extproc('formatNumeric');
+  numericValue  like(assertNumeric_t) const;
+end-pr;
+
 /endif
 

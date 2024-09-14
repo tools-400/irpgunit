@@ -29,6 +29,7 @@ ctl-opt NoMain;
 /include qinclude,ASSERT
 /include qinclude,ASSERTV2
 /include qinclude,PGMMSG
+/include qinclude,STRING
 
 //----------------------------------------------------------------------
 //   PRIVATE PROTOTYPES
@@ -37,13 +38,6 @@ ctl-opt NoMain;
 //----------------------------------------------------------------------
 //   GLOBAL CONSTANTS
 //----------------------------------------------------------------------
-
-dcl-c NO_MSG_TEXT '*N';
-
-dcl-c START_PROC_ASSERT_EQUAL_STRING  'assertEqual_string';
-// Constant disabled, because it is handled by: assertEqual_numeric
-// dcl-c START_PROC_ASSERT_EQUAL_INTEGER 'assertEqual_integer';
-dcl-c START_PROC_ASSERT_EQUAL_NUMERIC 'assertEqual_numeric';
 
 //----------------------------------------------------------------------
 //   TYPE TEMPLATE
@@ -69,12 +63,12 @@ dcl-proc assertEqual_string export;
     msg = message;
   else;
     msg = msg
-        + 'Expected ' + QUOTE + %trimr(expected) + QUOTE + ','
-        + ' but was ' + QUOTE + %trimr(actual  ) + QUOTE + '.';
+        + 'Expected ' + addQuotes(%trimr(expected)) + ','
+        + ' but was ' + addQuotes(%trimr(actual)) + '.';
   endif;
 
   doAssert(expected = actual: msg
-           : ONE_CALL_STK_LVL_ABOVE: START_PROC_ASSERT_EQUAL_STRING);
+           : ONE_CALL_STK_LVL_ABOVE: %proc());
 
 end-proc;
 
@@ -95,14 +89,13 @@ end-proc;
 //    msg = message;
 //  else;
 //    msg = msg
-//        + 'Expected ' + QUOTE + %char(expected) + QUOTE + ','
-//        + ' but was ' + QUOTE + %char(actual  ) + QUOTE + '.';
+//        + 'Expected ' + addQuotes(%char(expected)) + ','
+//        + ' but was ' + addQuotes(%char(actual  )) + '.';
 //  endif;
 //
 //  doAssert(expected = actual: msg
-//           : ONE_CALL_STK_LVL_ABOVE: START_PROC_ASSERT_EQUAL_INTEGER);
+//           : ONE_CALL_STK_LVL_ABOVE: %proc());
 //
-//end-proc;
 //end-proc;
 
 //----------------------------------------------------------------------
@@ -110,8 +103,8 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc assertEqual_numeric export;
   dcl-pi *n opdesc;
-    expected   zoned(63: 20) const;
-    actual     zoned(63: 20) const;
+    expected   like(assertNumeric_t) const;
+    actual     like(assertNumeric_t) const;
     message    like(msgText_t) options(*nopass: *omit) const;
   end-pi;
 
@@ -121,12 +114,51 @@ dcl-proc assertEqual_numeric export;
     msg = message;
   else;
     msg = msg
-        + 'Expected ' + QUOTE + %char(expected) + QUOTE + ','
-        + ' but was ' + QUOTE + %char(actual  ) + QUOTE + '.';
+        + 'Expected ' + addQuotes(formatNumeric(expected)) + ','
+        + ' but was ' + addQuotes(formatNumeric(actual)) + '.';
   endif;
 
   doAssert(expected = actual: msg
-           : ONE_CALL_STK_LVL_ABOVE: START_PROC_ASSERT_EQUAL_NUMERIC);
+           : ONE_CALL_STK_LVL_ABOVE: %proc());
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Assert equality using a matcher callback procedure - V2.
+//----------------------------------------------------------------------
+dcl-proc assertThat export;
+  dcl-pi *n opdesc;
+    expected   pointer const;
+    actual     pointer const;
+    matcher    pointer(*proc) const;
+    message    like(msgText_t) options(*nopass: *omit) const;
+  end-pi;
+
+  dcl-s pMatcherCallback pointer(*proc);
+  dcl-pr matcherCallback ind extproc(pMatcherCallback);
+    expected   pointer const;
+    actual     pointer const;
+    message    like(msgText_t);
+  end-pr;
+
+  dcl-s msg like(msgText_t);
+  dcl-s matcherMessage like(msgText_t);
+  dcl-s matcherResult ind;
+
+  pMatcherCallback = matcher;
+  matcherResult = matcherCallback(expected: actual: matcherMessage);
+  if (matcherMessage <> '');
+    msg = matcherMessage;
+  else;
+    if (%parms() >= %parmnum(message) and %addr(message) <> *NULL);
+      msg = message;
+    else;
+      msg = NO_MSG_TEXT;
+    endif;
+  endif;
+
+  doAssert(matcherResult: msg
+           : ONE_CALL_STK_LVL_ABOVE: %proc());
 
 end-proc;
 

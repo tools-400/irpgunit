@@ -587,3 +587,22 @@ dcl-proc parseNum export;
 
 end-proc;
 
+
+//----------------------------------------------------------------------
+//  Formats a numeric value.
+//----------------------------------------------------------------------
+dcl-proc formatNumeric export;
+  dcl-pi *n varchar(128);
+    numericValue  like(assertNumeric_t) const;
+  end-pi;
+
+  dcl-s result varchar(128);
+
+  result = %trimr(%triml(%editc(numericValue: 'P')): '0');
+  if (endsWith(',': result) or endsWith('.': result));
+    result = %subst(result: 1: %len(result) - 1);
+  endif;
+
+  return result;
+
+end-proc;
