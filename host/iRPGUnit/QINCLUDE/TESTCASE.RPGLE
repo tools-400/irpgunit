@@ -362,7 +362,8 @@ end-pr;
  // ------------------------------------------------------------------
 
 dcl-pr assertEqual overload(assertEqual_string
-                           : assertEqual_numeric);
+                           : assertEqual_numeric
+                           : assertEqual_float );
 
 // assertEqual -- Aphanumeric Equality Assertion
 //
@@ -416,8 +417,27 @@ end-pr;
 //
 // If parameter 'message' is specified that is appened to the log.
 dcl-pr assertEqual_numeric opdesc extproc('assertEqual_numeric');
-  expected   zoned(63: 20) const;
-  actual     zoned(63: 20) const;
+  expected   zoned(63: 20) options(*exact) const;
+  actual     zoned(63: 20) options(*exact) const;
+  message    like(msgText_t) options(*nopass: *omit) const;
+end-pr;
+
+
+// assertEqual -- Float Equality Assertion
+//
+// Compares the given float values 'expected' and 'actual'. The assertion
+// fails, if both values are different.
+//
+// Example:
+//   assertEqual( 123,45 : intValue );
+//
+// Message:
+//   Expected '123,45', but was 'actual'.
+//
+// If parameter 'message' is specified that is appened to the log.
+dcl-pr assertEqual_float opdesc extproc('assertEqual_float');
+  expected   float(8) options(*exact) const;
+  actual     float(8) options(*exact) const;
   message    like(msgText_t) options(*nopass: *omit) const;
 end-pr;
 
