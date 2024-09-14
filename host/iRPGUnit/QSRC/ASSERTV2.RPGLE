@@ -103,8 +103,8 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc assertEqual_numeric export;
   dcl-pi *n opdesc;
-    expected   like(assertNumeric_t) const;
-    actual     like(assertNumeric_t) const;
+    expected   zoned(63: 20) options(*exact) const;
+    actual     zoned(63: 20) options(*exact) const;
     message    like(msgText_t) options(*nopass: *omit) const;
   end-pi;
 
@@ -116,6 +116,31 @@ dcl-proc assertEqual_numeric export;
     msg = msg
         + 'Expected ' + addQuotes(formatNumeric(expected)) + ','
         + ' but was ' + addQuotes(formatNumeric(actual)) + '.';
+  endif;
+
+  doAssert(expected = actual: msg
+           : ONE_CALL_STK_LVL_ABOVE: %proc());
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Assert equality between two float variables - V2.
+//----------------------------------------------------------------------
+dcl-proc assertEqual_float export;
+  dcl-pi *n opdesc;
+    expected   float(8) options(*exact) const;
+    actual     float(8) options(*exact) const;
+    message    like(msgText_t) options(*nopass: *omit) const;
+  end-pi;
+
+  dcl-s msg like(msgText_t);
+
+  if (%parms() >= %parmnum(message) and %addr(message) <> *NULL);
+    msg = message;
+  else;
+    msg = msg
+        + 'Expected ' + addQuotes(%char(expected)) + ','
+        + ' but was ' + addQuotes(%char(actual)) + '.';
   endif;
 
   doAssert(expected = actual: msg

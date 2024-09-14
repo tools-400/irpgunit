@@ -570,7 +570,56 @@
 
      D assertFailEvtLong...
      D                 ds                  likeds(assertFailEvtLong_t)
+
+     D actualExact     s             63p20 inz(*hival)
+     D expectedExact   s             63p20 inz(*hival)
+
+     D actualLess      s             15p 5 inz(*hival)
+     D expectedLess    s             15p 5 inz(*hival)
+
+     D actualLike      s                   like(assertNumeric_t) inz(*hival)
+     D expectedLike    s                   like(assertNumeric_t) inz(*hival)
+
+     D actualShort     s              3i 0 inz(*hival)
+     D expectedShort   s              3i 0 inz(*hival)
+
+     D actualInt       s              5i 0 inz(*hival)
+     D expectedInt     s              5i 0 inz(*hival)
+
+     D actualLong      s             20i 0 inz(*hival)
+     D expectedLong    s             20i 0 inz(*hival)
+
+     D actualZoned     s             20s 0 inz(*hival)
+     D expectedZoned   s             20s 0 inz(*hival)
+
+     D actualSingle    s              4f   inz(*hival)
+     D expectedSingle  s              4f   inz(*hival)
+
+     D actualDouble    s              8f   inz(*hival)
+     D expectedDouble  s              8f   inz(*hival)
+
+     D actualDecLoss   s             30s25 inz(1,1234567890123456789012345)
+     D expectedDecLoss...
+     D                 s             30s25 inz(1,1234567890123456789012345)
       /free
+
+        // Test compiler
+        assertEqual_numeric( actualExact : expectedExact );
+        assertEqual_numeric( actualLess : expectedLess );
+        assertEqual( actualLike : expectedLike );
+        assertEqual( actualInt : expectedInt );
+        assertEqual( actualShort : expectedShort );
+        assertEqual( actualLong : expectedLong );
+        assertEqual( actualZoned : expectedZoned );
+
+        assertEqual( actualSingle : expectedSingle );
+        assertEqual( actualDouble : expectedDouble );
+
+        // Test loss of decimal positions
+        // Produces compiler error:
+        // No prototype in the OVERLOAD keyword of ASSERTEQUAL matches the call.
+        // TODO: create a test case for that
+        // assertEqual( actualDecLoss : expectedDecLoss );
 
         // Test equality
         assertEqual( 1234567890,1234 :
