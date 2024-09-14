@@ -60,6 +60,7 @@ STRPGMEXP  PGMLVL(*CURRENT) SIGNATURE('iRPGUNIT V5.0')
 /* Procedure disabled, because it is handled by: assertEqual_numeric */
 /*EXPORT SYMBOL("assertEqual_integer")*/       /* public API V2 */
   EXPORT SYMBOL("assertEqual_numeric")         /* public API V2 */
+  EXPORT SYMBOL("assertThat")                  /* public API V2 */
 
 ENDPGMEXP
 

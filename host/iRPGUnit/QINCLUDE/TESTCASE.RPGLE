@@ -12,6 +12,7 @@
  //  http://www.eclipse.org/legal/cpl-v10.html
  // ==========================================================================
 
+/include qinclude,TEMPLATES
 
  // ------------------------------------
  //  Assertions of module ASSERT.
@@ -418,6 +419,33 @@ dcl-pr assertEqual_numeric opdesc extproc('assertEqual_numeric');
   expected   zoned(63: 20) const;
   actual     zoned(63: 20) const;
   message    like(msgText_t) options(*nopass: *omit) const;
+end-pr;
+
+
+// assertThat -- Asserts that 'actual' satisfies the condition specified by matcher.
+//
+// Calls the 'matcher' for comparing 'actual. The assertion fails if the 'mathcer'
+// return 'false'.
+//
+// Example:
+//   assertThat( actual : %paddr('matcher') : pUserData );
+//
+// Message:
+//   ???
+//
+// If parameter 'message' is specified that is appened to the log.
+dcl-pr assertThat opdesc extproc('assertThat');
+  expected   pointer const;
+  actual     pointer const;
+  matcher    pointer(*proc) const;
+  message    like(msgText_t) options(*nopass: *omit) const;
+end-pr;
+
+dcl-s pMatcher_t pointer(*proc);
+dcl-pr matcher_t ind extproc(pMatcher_t);
+  expected   pointer const;
+  actual     pointer const;
+  message    like(msgText_t) options(*nopass);
 end-pr;
 
 /endif
