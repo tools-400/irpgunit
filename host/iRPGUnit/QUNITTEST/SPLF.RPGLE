@@ -29,14 +29,8 @@
       //   Private Procedures
       //----------------------------------------------------------------------
 
-     D bufEqual        pr              *   extproc('bufEqual')
-     D  expBuf                      256a   const varying
-     D  actBuf_p                       *   const
-
-     D findInSpool     pr              *   extproc('findInSpool')
-     D  charToFind                    1a   const
-     D  startPos                       *   const
-     D  endPos                         *   const
+     D getNextLine     pr           256a   varying
+     D                                     extproc('getNextLine')
 
      D rtvJobUsrNm     pr                  extproc('rtvJobUsrNm')
      D                                     like(UsrNm_t)
@@ -81,7 +75,11 @@
 
        // SNA Character String (in spool files).
        // - New Line
+     D NULL            c                   const(x'00')
      D NL              c                   const(x'15')
+     D PP              c                   const(x'34')
+     D CR              c                   const(x'0D')
+     D FF              c                   const(x'0C')
 
       //----------------------------------------------------------------------
       //   Templates
@@ -117,26 +115,6 @@
       //----------------------------------------------------------------------
       //   Procedure Definition
       //----------------------------------------------------------------------
-
-     P bufEqual...
-     P                 b
-     D                 pi              *
-     D expBuf                       256a   const varying
-     D actBuf_p                        *   const
-
-       // Actual buffer contents.
-     D actBuf          s            256a   based(actBuf_p)
-
-      /free
-
-        aEqual( expBuf :
-                %subst( actBuf : 1 : %len(expBuf) ) );
-
-        return actBuf_p + %len(expBuf);
-
-      /end-free
-     P                 e
-
 
      P chkAndCloSplF...
      P                 b                   export
@@ -232,37 +210,55 @@
      P                 e
 
 
-     P findInSpool...
+     P getNextLine...
      P                 b
-     D                 pi              *
-     D charToFind                     1a   const
-     D startPos                        *   const
-     D endPos                          *   const
+     D                 pi           256a   varying
 
        // Character at current position.
-     D currentChar_p   s               *
-     D currentChar     s              1a   based(currentChar_p)
+     D currentChar     s              1a   based(splf.bufPos_p)
+     D line            s            256a   varying
+     D isLine          s               n
 
       /free
 
-        currentChar_p = startPos;
+        isLine = *off;
 
-        dow currentChar_p <= endPos;
-          if currentChar = charToFind;
-            return currentChar_p;
-          endif;
-          currentChar_p += 1;
+        dow (splf.bufPos_p <= splf.usrSpcEnd_p);
+          select;
+          when (currentChar = NULL);
+            splf.bufPos_p += %size( NULL );
+            if (isLine);
+              isLine = *off;
+              return line;
+            endif;
+          when (currentChar = NL);
+            splf.bufPos_p += %size( NL );
+            isLine = *on;
+          when (currentChar = PP);
+            splf.bufPos_p = splf.bufPos_p + %size( PP ) + 2;
+          when (currentChar = CR);
+            splf.bufPos_p += %size( CR );
+          when (currentChar = FF);
+            splf.bufPos_p += %size( FF );
+          when (currentChar >= x'40' and currentChar <= x'FE');
+            if (isLine);
+              line += currentChar;
+            endif;
+            splf.bufPos_p += %size( currentChar );
+          other;
+            splf.bufPos_p += 1;
+          endsl;
         enddo;
 
-        if (currentChar_p > splf.usrSpcEnd_p);
+        if (splf.bufPos_p > splf.usrSpcEnd_p);
           monitor;
             readSplfBuf();
-            return findInSpool(charToFind: splf.bufPos_p: splf.usrSpcEnd_p);
+            return getNextLine();
           on-error;
           endmon;
         endif;
 
-        fail( 'Character "' + charToFind + '" not found in buffer' );
+        fail( 'Reached end of spooled file.' );
 
       /end-free
      P                 e
@@ -293,6 +289,10 @@
                                  'RPGUnit - SelfTest - Spool File Contents.' );
 
         readSplfBuf();
+
+        // Skip first 15 bytes according to "Decoding a Spooled File after Using the QSPGETSP API":
+        // https://www.ibm.com/support/pages/decoding-spooled-file-after-using-qspgetsp-api
+        splf.bufPos_p += 15;
 
       /end-free
      P                 e
@@ -524,10 +524,32 @@
      D                 pi
      D expString                    256a   const varying
 
+     D line            s            256a   varying
       /free
 
-        splf.bufPos_p = findInSpool( NL : splf.bufPos_p : splf.usrSpcEnd_p );
-        splf.bufPos_p = bufEqual( expString : splf.bufPos_p + 1 + 3 );
+        line = getNextLine();
+        assertEqual( expString : %subst(line: 1: %len(expString)) );
+
+
+      /end-free
+     P                 e
+
+
+     P splfContains...
+     P                 b                   export
+     D                 pi
+     D expString                    256a   const varying
+
+     D line            s            256a   varying
+      /free
+
+        dow (*on);
+          line = getNextLine();
+          if (%scan(expString: line) > 0);
+            return;
+          endif;
+        enddo;
+
 
       /end-free
      P                 e
@@ -539,8 +561,7 @@
 
       /free
 
-        splf.bufPos_p = findInSpool( NL : splf.bufPos_p : splf.usrSpcEnd_p );
-        splf.bufPos_p = splf.bufPos_p + %size( NL );
+        getNextLine();
 
       /end-free
      P                 e

@@ -20,6 +20,10 @@
      D                 pr                  extproc('splfLineStartsWith')
      D  expString                   256a   const varying
 
+     D splfContains...
+     D                 pr                  extproc('splfContains')
+     D  expString                   256a   const varying
+
      D splfSkipLine...
      D                 pr                  extproc('splfSkipLine')
 
