@@ -595,8 +595,6 @@
 
      D actualDouble    s              8f   inz(*hival)
      D expectedDouble  s              8f   inz(*hival)
-
-     D actualDecLoss   s             63s20
       /free
 
         // Test compiler
