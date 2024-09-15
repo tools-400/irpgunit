@@ -29,18 +29,20 @@
       //   Private Procedures
       //----------------------------------------------------------------------
 
-     D bufEqual        pr              *
+     D bufEqual        pr              *   extproc('bufEqual')
      D  expBuf                      256a   const varying
      D  actBuf_p                       *   const
 
-     D findInSpool     pr              *
+     D findInSpool     pr              *   extproc('findInSpool')
      D  charToFind                    1a   const
      D  startPos                       *   const
      D  endPos                         *   const
 
-     D rtvJobUsrNm     pr                  like(UsrNm_t)
+     D rtvJobUsrNm     pr                  extproc('rtvJobUsrNm')
+     D                                     like(UsrNm_t)
 
-     D rtvLatestSplf   pr                  likeds(SplfId_t)
+     D rtvLatestSplf   pr                  extproc('rtvLatestSplf')
+     D                                     likeds(SplfId_t)
      D  usrNm                              const like(UsrNm_t)
      D  usrData                      10a   const
 
@@ -57,6 +59,9 @@
      D  i_qJob                             const likeds(Job_t)
      D  i_splFNbr                    10i 0 const
      D  i_status                     10a   const varying
+
+     D readSplfBuf...
+     D                 pr                  extproc('readSplfBuf')
 
       //----------------------------------------------------------------------
       //   Imported Procedures
@@ -100,6 +105,8 @@
      D   qJob                              likeds(QlfJobNm_t)
      D   name                        10a
      D   number                      10i 0
+     D   usrSpcNm                          likeds(Object_t)
+     D   pUsrSpc                       *
          // - Handle
      D   hdl                         10i 0 inz(-1)
          // - Print Data User Space Current Position Pointer
@@ -247,6 +254,14 @@
           currentChar_p += 1;
         enddo;
 
+        if (currentChar_p > splf.usrSpcEnd_p);
+          monitor;
+            readSplfBuf();
+            return findInSpool(charToFind: splf.bufPos_p: splf.usrSpcEnd_p);
+          on-error;
+          endmon;
+        endif;
+
         fail( 'Character "' + charToFind + '" not found in buffer' );
 
       /end-free
@@ -259,18 +274,6 @@
      D  splfNm                       10a   const
      D  usrData                      10a   const
 
-       // QSPGETSP API: Reading an entire spooled file.
-     D READ_ENTIRE_SPLF...
-     D                 c                   const(-1)
-       // QSP API generic header.
-     D qspGenHdr_p     s               *
-     D qspGenHdr       ds                  likeds(qspGenHdr_t)
-     D                                     based(qspGenHdr_p)
-       // User Space to store spool contents.
-     D usrSpcNm        ds                  likeds(Object_t)
-     D percolateErrors...
-     D                 ds                  likeds(percolateErrors_t)
-     D                                     inz(*likeds)
 
      D splfId          ds                  likeds(SplfId_t) inz
       /free
@@ -283,14 +286,35 @@
         splf.number = splfId.number;
         splf.hdl = splfId.handle;
 
-        usrSpcNm.nm  = 'RUSPOOL';
-        usrSpcNm.lib = 'QTEMP';
+        splf.usrSpcNm.nm  = 'RUSPOOL';
+        splf.usrSpcNm.lib = 'QTEMP';
 
-        qspGenHdr_p = crtUsrSpc( usrSpcNm :
+        splf.pUsrSpc = crtUsrSpc( splf.usrSpcNm :
                                  'RPGUnit - SelfTest - Spool File Contents.' );
 
+        readSplfBuf();
+
+      /end-free
+     P                 e
+
+
+     P readSplfBuf...
+     P                 b
+     D                 pi
+       // QSPGETSP API: Reading an entire spooled file.
+     D READ_ENTIRE_SPLF...
+     D                 c                   const(-1)
+       // QSP API generic header.
+     D qspGenHdr       ds                  likeds(qspGenHdr_t)
+     D                                     based(splf.pUsrSpc)
+       // User Space to store spool contents.
+     D percolateErrors...
+     D                 ds                  likeds(percolateErrors_t)
+     D                                     inz(*likeds)
+      /free
+
         QSPGETSP( splf.hdl :
-                  usrSpcNm :
+                  splf.usrSpcNm :
                   'SPFR0300' :
                   READ_ENTIRE_SPLF :
                   '*ERROR' :
@@ -298,8 +322,8 @@
 
         aEqual( 'C' : qspGenHdr.compInd );
 
-        splf.bufPos_p    = qspGenHdr_p + qspGenHdr.firstBufOff;
-        splf.usrSpcEnd_p = qspGenHdr_p + qspGenHdr.usrSpcSizeUsed;
+        splf.bufPos_p    = splf.pUsrSpc + qspGenHdr.firstBufOff;
+        splf.usrSpcEnd_p = splf.pUsrSpc + qspGenHdr.usrSpcSizeUsed;
 
       /end-free
      P                 e
