@@ -1194,6 +1194,32 @@
      P                 e
 
 
+     P testOptionsExact...
+     P                 b                   export
+     D                 pi
+
+     D i               s             10i 0
+     D count           s             10i 0 inz(1406)
+      /free
+
+        monitor;
+          runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM20) +
+                     SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
+          fail('Expected compiler error: RNF3245');
+        on-error;
+        endmon;
+
+        opnSplf( 'TESTPGM20' : '' );
+
+        splfContains('*RNF3245 30        002600  No prototype +
+                      in the OVERLOAD keyword of ASSERTEQUAL matches');
+
+        cloSplf();
+
+      /end-free
+     P                 e
+
+
       //----------------------------------------------------------------------
       //   Helper Procedures
       //----------------------------------------------------------------------
