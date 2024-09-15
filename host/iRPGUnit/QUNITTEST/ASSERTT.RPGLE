@@ -615,6 +615,8 @@
         //   63s15    too many positions before the comma
         //   63s25    too many positions after the comma
         //   "RNF3245: No prototype in the OVERLOAD keyword of ASSERTEQUAL matches the call."
+        // See test case: ACPTSTT.testOptionsExact() and TESTPGM20
+        //
         // assertEqual( expectedDecLoss : actualDecLoss );
 
         // Test equality
