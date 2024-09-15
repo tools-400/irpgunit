@@ -598,8 +598,8 @@
       /free
 
         // Test compiler
-        assertEqual_numeric( actualExact : expectedExact );
-        assertEqual_numeric( actualLess : expectedLess );
+        assertEqual( actualExact : expectedExact );
+        assertEqual( actualLess : expectedLess );
         assertEqual( expectedLike: actualLike );
         assertEqual( expectedInt : actualInt );
         assertEqual( expectedShort : actualShort );
