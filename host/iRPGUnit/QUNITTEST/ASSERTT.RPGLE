@@ -447,8 +447,6 @@
      P CMDRUNSRV_runProc...
      P                 b
      D                 pi              n
-
-     D msgInfo         ds                  likeds(MsgInfo_t)
       /free
 
           monitor;
@@ -598,28 +596,28 @@
      D actualDouble    s              8f   inz(*hival)
      D expectedDouble  s              8f   inz(*hival)
 
-     D actualDecLoss   s             30s25 inz(1,1234567890123456789012345)
-     D expectedDecLoss...
-     D                 s             30s25 inz(1,1234567890123456789012345)
+     D actualDecLoss   s             63s20
       /free
 
         // Test compiler
         assertEqual_numeric( actualExact : expectedExact );
         assertEqual_numeric( actualLess : expectedLess );
-        assertEqual( actualLike : expectedLike );
-        assertEqual( actualInt : expectedInt );
-        assertEqual( actualShort : expectedShort );
-        assertEqual( actualLong : expectedLong );
-        assertEqual( actualZoned : expectedZoned );
+        assertEqual( expectedLike: actualLike );
+        assertEqual( expectedInt : actualInt );
+        assertEqual( expectedShort : actualShort );
+        assertEqual( expectedLong : actualLong );
+        assertEqual( expectedZoned : actualZoned );
 
-        assertEqual( actualSingle : expectedSingle );
-        assertEqual( actualDouble : expectedDouble );
+        assertEqual( expectedSingle : actualSingle );
+        assertEqual( expectedDouble : actualDouble );
 
-        // Test loss of decimal positions
-        // Produces compiler error:
-        // No prototype in the OVERLOAD keyword of ASSERTEQUAL matches the call.
-        // TODO: create a test case for that
-        // assertEqual( actualDecLoss : expectedDecLoss );
+        // The following assertEqual() statement produces the following compiler error
+        // message, if 'actualDecLoss' or 'expectedDecLoss' are defined with too many
+        // positions or decimal positions, e.g.:
+        //   63s15    too many positions before the comma
+        //   63s25    too many positions after the comma
+        //   "RNF3245: No prototype in the OVERLOAD keyword of ASSERTEQUAL matches the call."
+        // assertEqual( expectedDecLoss : actualDecLoss );
 
         // Test equality
         assertEqual( 1234567890,1234 :
