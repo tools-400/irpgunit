@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="../stylesheet.css">
+    <title>assertThat (assertThat)</title>
+</head>
+
+<body>
+<h1>assertThat</h1>
+<b>Syntax:</b>
+<p class="indent">
+<code>assertThat( 'pExpected' : 'pActual' : pMatcher [: 'message');</code>
+</p>
+<b>Description:</b>
+<p class="indent">
+Asserts that the data addressed by 'pExpected' and 'pActual' satisfies the condition specified by
+procedure 'pMatcher'. The assertion fails if the matcher returns <code>*off</code>.
+</p>
+<p class="indent">
+This asssertion can be used for comparing very large string values or any other types of complex
+data, such as <b>XML</b> or <b>Json</b>.
+</p>
+<b>Return value:</b>
+<p class="indent">
+void
+</p>
+<b>Example 1 (string):</b>
+<p>
+<code><pre class="indent">
+expected = 'Donald Duck';
+actual = 'Dagobert Duck';
+assertThat( %addr(expected) :
+            %addr(actual) :
+            %paddr(matcherProcedure));
+</pre></code>
+<p class="indent">
+In the example above, the matcher procedure should return <code>*off</code>, because
+obviously 'Donald Duck' does not match 'Dagobert Duck'.
+</p>
+<b>Example 2 (data structure):</b>
+<p>
+<code><pre class="indent">
+dcl-ds expected qualified;
+  type    char(10) inz('*HEADER');
+  name    varchar(256) inz('Donald Duck');
+end-ds;
+
+dcl-ds actual qualified;
+  type    char(10) inz('*ITEM');
+  name    varchar(256) inz('Dagobert Duck');
+endds;
+
+assertThat( %addr(expected) :
+            %addr(actual) :
+            %paddr(assertThatMatcher));
+</pre></code>
+<p class="indent">
+In the example above, the matcher must compare the data structures and return <code>*on</code>
+or <code>*off</code> depending on the result. Most likely it returns <code>*off</code>, because
+neither the 'type' nor the 'name' do match.
+</p>
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

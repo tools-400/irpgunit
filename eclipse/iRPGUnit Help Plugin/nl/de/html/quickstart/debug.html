@@ -2,7 +2,7 @@
 
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
 	<title>Usage</title>
 </head>
@@ -10,17 +10,17 @@
 <body>
 <h1>Debugging Test Cases</h1>
 Unit test cases sind nicht ganz so einfach zu debuggen, wie von einer Befehlszeile
-aufgerufene Programme, weil der den Test Case ausführende Job nicht bekannt ist. Es
-könnte jeder laufende QZRCSRVS Job sein. Aus diesem Grund läßt sich der für das 
+aufgerufene Programme, weil der den Test Case ausfï¿½hrende Job nicht bekannt ist. Es
+kï¿½nnte jeder laufende QZRCSRVS Job sein. Aus diesem Grund lï¿½ï¿½t sich der fï¿½r das 
 Debuggen erforderliche Service Job nicht starten.
 <p>
-Die Lösung für dieses Problem heißt "Service Entry Points" (SEPs). Mit Hilfe von SEPs 
-lassen sich Fehler in Batchprozessen suchen, ohne dass der den Prozess ausführende
-Job bekannt ist. Sogar das den Job ausführende Benutzerprofil muss nicht zwingend
+Die Lï¿½sung fï¿½r dieses Problem heiï¿½t "Service Entry Points" (SEPs). Mit Hilfe von SEPs 
+lassen sich Fehler in Batchprozessen suchen, ohne dass der den Prozess ausfï¿½hrende
+Job bekannt ist. Sogar das den Job ausfï¿½hrende Benutzerprofil muss nicht zwingend
 bekannt sein.
 <p>
 Die Funktion zum Setzen eines Service Entry Points findet sich im 
-Kontextmenü des Serviceprograms, welches die RPGUnit Test Suite abbildet, unter 
+Kontextmenï¿½ des Serviceprograms, welches die RPGUnit Test Suite abbildet, unter 
 "Debug (Service Entry)". Der SEP wird gesetzt mit "Set Service Entry Point".
 <p class="indent">
 <img src="assets/RPGUnitSetSEP.png" width="428" height="110" alt="iRPGUnit Setzen SEP">
@@ -29,16 +29,16 @@ Ausserdem muss sicher gestellt sein, dass sich das RPGUnit Plugin im "Debug Modu
 <p class="indent">
 <img src="assets/RPGUnitEnableDebug.png" width="695" height="182" alt="iRPGUnit Debug Modus Eingeschaltet">
 </p>
-Der Debug Modus ist aktiv, wenn der kleine grüne Käfer, in der oberen rechten Ecke der
-RPGUnit View gedrückt ist.
+Der Debug Modus ist aktiv, wenn der kleine grï¿½ne Kï¿½fer, in der oberen rechten Ecke der
+RPGUnit View gedrï¿½ckt ist.
 <p>
 <u><b>Achtung:</b></u> Ist der Debug Mode nicht aktiv, friert der RDi mit dem Erreichen des SEPs ein!<p>
-Jetzt kann der Unit Test wie gewöhnlich gestartet werden. Mit dem Erreichen des SEPs muss die
+Jetzt kann der Unit Test wie gewï¿½hnlich gestartet werden. Mit dem Erreichen des SEPs muss die
 die Frage nach dem Starten einer Debug Session mit "Ja" beantwortet werden:
 <p class="indent">
-<img src="assets/RPGUnitConfirmSEP.png" width="441" height="162" alt="iRPGUnit Bestätigen SEP">
+<img src="assets/RPGUnitConfirmSEP.png" width="441" height="162" alt="iRPGUnit Bestï¿½tigen SEP">
 </p>
-Danach lassen sich die benötigten Haltepunkte wie gewohnt setzen.
+Danach lassen sich die benï¿½tigten Haltepunkte wie gewohnt setzen.
 <p>
 <iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
 </body>
