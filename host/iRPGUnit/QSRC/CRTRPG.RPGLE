@@ -83,7 +83,15 @@
          srcMbrRslv = srcMbr;
        endif;
 
-       srcType = getMemberType( srcFile.nm : srcFile.lib : srcMbrRslv );
+       monitor;
+         srcType = getMemberType( srcFile.nm : srcFile.lib : srcMbrRslv );
+       on-error;
+         sndEscapeMsgAboveCtlBdy( 'Could not retrieve source type of member '
+                                + %trim(srcMbrRslv)
+                                + ' of file '
+                                + %trim(srcFile.lib) + '/' + %trim(srcFile.nm)
+                                + '.' );
+       endmon;
 
        if (srcType <> MBR_RPGLE and srcType <> MBR_SQLRPGLE );
          sndEscapeMsgAboveCtlBdy( 'Source type ' + %trim(srcType)
