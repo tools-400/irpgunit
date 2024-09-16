@@ -363,7 +363,10 @@ end-pr;
 
 dcl-pr assertEqual overload(assertEqual_string
                            : assertEqual_numeric
-                           : assertEqual_float );
+                           : assertEqual_float
+                           : assertEqual_date
+                           : assertEqual_time
+                           : assertEqual_timestamp);
 
 // assertEqual -- Aphanumeric Equality Assertion
 //
@@ -441,6 +444,59 @@ dcl-pr assertEqual_float opdesc extproc('assertEqual_float');
   message    like(msgText_t) options(*nopass: *omit) const;
 end-pr;
 
+// assertEqual -- Date Equality Assertion
+//
+// Compares the given date values 'expected' and 'actual'. The assertion
+// fails, if both values are different.
+//
+// Example:
+//   assertEqual( D'2024-09-16' : D'2023-01-11'  );
+//
+// Message:
+//   Expected '2024-09-16', but was '2023-01-11'.
+//
+// If parameter 'message' is specified that is appened to the log.
+dcl-pr assertEqual_date opdesc extproc(*dclcase);
+  expected   date const;
+  actual     date const;
+  message    like(msgText_t) options(*nopass: *omit) const;
+end-pr;
+
+// assertEqual -- Time Equality Assertion
+//
+// Compares the given time values 'expected' and 'actual'. The assertion
+// fails, if both values are different.
+//
+// Example:
+//   assertEqual( T'11.22.33' : T'22.33.44'  );
+//
+// Message:
+//   Expected '11.22.33', but was '22.33.44'.
+//
+// If parameter 'message' is specified that is appened to the log.
+dcl-pr assertEqual_time opdesc extproc(*dclcase);
+  expected   time const;
+  actual     time const;
+  message    like(msgText_t) options(*nopass: *omit) const;
+end-pr;
+
+// assertEqual -- Timestamp Equality Assertion
+//
+// Compares the given timestamp values 'expected' and 'actual'. The assertion
+// fails, if both values are different.
+//
+// Example:
+//   assertEqual( Z'2024-09-16-11.22.33.123456' : Z'2024-01-11-11.22.33.123456'  );
+//
+// Message:
+//   Expected '2024-09-16-11.22.33.123456', but was '2024-01-11-11.22.33.123456'.
+//
+// If parameter 'message' is specified that is appened to the log.
+dcl-pr assertEqual_timestamp opdesc extproc(*dclcase);
+  expected   timestamp(12) const;
+  actual     timestamp(12) const;
+  message    like(msgText_t) options(*nopass: *omit) const;
+end-pr;
 
 // assertThat -- Asserts that 'actual' satisfies the condition specified by matcher.
 //
