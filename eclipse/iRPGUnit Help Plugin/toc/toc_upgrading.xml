@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?>
 
-<toc label="Upgrading to iRPGUnit" link_to="./toc/toc.xml#upgrading">
+<toc label="Upgrading iRPGUnit" link_to="./toc/toc.xml#upgrading">
     <topic href="html/upgrade/upgrade_032.html"  label="Upgrading from v0.3.2 to v2.0.0" />
     <topic href="html/upgrade/upgrade_110.html"  label="Upgrading from v1.10 to v2.0.0" />
     <topic href="html/upgrade/upgrade_242.html"  label="Upgrading from v2.4.2 to v3.0.0" />
     <topic href="html/upgrade/upgrade_320.html"  label="Upgrading from v3.2.0 to v4.0.0" />
-    <topic href="html/upgrade/upgrade_320.html"  label="Upgrading from v3.2.0 to v4.0.0" />
     <topic href="html/upgrade/upgrade_404.html"  label="Upgrading from v4.0.4 to v4.1.0" />
+    <topic href="html/upgrade/upgrade_421.html"  label="Upgrading from v4.2.1 to v5.0.0" />
 </toc>
