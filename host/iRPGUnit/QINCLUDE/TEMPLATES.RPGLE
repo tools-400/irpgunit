@@ -268,6 +268,7 @@
      D                 s             10a   template
      D assertString_t...
      D                 s               a   len(32565) varying(4) ccsid(*utf8)
+     D                                     template
      D assertNumeric_t...
      D                 s             63s20 template
 
