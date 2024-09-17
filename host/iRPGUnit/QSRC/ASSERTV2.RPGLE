@@ -149,6 +149,81 @@ dcl-proc assertEqual_float export;
 end-proc;
 
 //----------------------------------------------------------------------
+// Assert equality between two date variables - V2.
+//----------------------------------------------------------------------
+dcl-proc assertEqual_date export;
+  dcl-pi *n opdesc;
+    expected   date const;
+    actual     date const;
+    message    like(msgText_t) options(*nopass: *omit) const;
+  end-pi;
+
+  dcl-s msg like(msgText_t);
+
+  if (%parms() >= %parmnum(message) and %addr(message) <> *NULL);
+    msg = message;
+  else;
+    msg = msg
+        + 'Expected ' + addQuotes(%char(expected)) + ','
+        + ' but was ' + addQuotes(%char(actual)) + '.';
+  endif;
+
+  doAssert(expected = actual: msg
+           : ONE_CALL_STK_LVL_ABOVE: %proc());
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Assert equality between two time variables - V2.
+//----------------------------------------------------------------------
+dcl-proc assertEqual_time export;
+  dcl-pi *n opdesc;
+    expected   time const;
+    actual     time const;
+    message    like(msgText_t) options(*nopass: *omit) const;
+  end-pi;
+
+  dcl-s msg like(msgText_t);
+
+  if (%parms() >= %parmnum(message) and %addr(message) <> *NULL);
+    msg = message;
+  else;
+    msg = msg
+        + 'Expected ' + addQuotes(%char(expected)) + ','
+        + ' but was ' + addQuotes(%char(actual)) + '.';
+  endif;
+
+  doAssert(expected = actual: msg
+           : ONE_CALL_STK_LVL_ABOVE: %proc());
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Assert equality between two timestamp variables - V2.
+//----------------------------------------------------------------------
+dcl-proc assertEqual_timestamp export;
+  dcl-pi *n opdesc;
+    expected   timestamp(12) const;
+    actual     timestamp(12) const;
+    message    like(msgText_t) options(*nopass: *omit) const;
+  end-pi;
+
+  dcl-s msg like(msgText_t);
+
+  if (%parms() >= %parmnum(message) and %addr(message) <> *NULL);
+    msg = message;
+  else;
+    msg = msg
+        + 'Expected ' + addQuotes(%char(expected)) + ','
+        + ' but was ' + addQuotes(%char(actual)) + '.';
+  endif;
+
+  doAssert(expected = actual: msg
+           : ONE_CALL_STK_LVL_ABOVE: %proc());
+
+end-proc;
+
+//----------------------------------------------------------------------
 // Assert equality using a matcher callback procedure - V2.
 //----------------------------------------------------------------------
 dcl-proc assertThat export;

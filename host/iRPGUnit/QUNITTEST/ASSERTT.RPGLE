@@ -720,6 +720,125 @@
       /end-free
      P                 e
 
+     PtestAssertEqual_date...
+     P                 b                   export
+     D                 pi
+
+     D assertFailEvtLong...
+     D                 ds                  likeds(assertFailEvtLong_t)
+      /free
+
+        // Test equality
+        assertEqual( D'2024-09-16' : D'2024-09-16' );
+        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+
+        // Test unequality without assertion message
+        monitor;
+          assertEqual( D'2024-09-16' : D'2002-01-02' );
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Expected ''2024-09-16'', but was ''2002-01-02''.'
+                 : 'Error messages does not match expected value.');
+        endmon;
+
+        // Test unequality with assertion message
+        monitor;
+          assertEqual( D'2024-09-16' :
+                       D'2002-01-02' :
+                       'Date values do not match');
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Date values do not match'
+                 : 'Error messages does not match expected value.');
+        endmon;
+
+      /end-free
+     P                 e
+
+     PtestAssertEqual_time...
+     P                 b                   export
+     D                 pi
+
+     D assertFailEvtLong...
+     D                 ds                  likeds(assertFailEvtLong_t)
+      /free
+
+        // Test equality
+        assertEqual( T'11.22.33' : T'11.22.33' );
+        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+
+        // Test unequality without assertion message
+        monitor;
+          assertEqual( T'11.22.33' : T'22.33.44' );
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Expected ''11.22.33'', but was ''22.33.44''.'
+                 : 'Error messages does not match expected value.');
+        endmon;
+
+        // Test unequality with assertion message
+        monitor;
+          assertEqual( T'11.22.33' :
+                       T'22.33.44' :
+                       'Time values do not match');
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Time values do not match'
+                 : 'Error messages does not match expected value.');
+        endmon;
+
+      /end-free
+     P                 e
+
+     PtestAssertEqual_timestamp...
+     P                 b                   export
+     D                 pi
+
+     D assertFailEvtLong...
+     D                 ds                  likeds(assertFailEvtLong_t)
+      /free
+
+        // Test equality
+        assertEqual( Z'2024-09-16-11.22.33.123456789012' :
+                     Z'2024-09-16-11.22.33.123456789012' );
+        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+
+        // Test unequality without assertion message
+        monitor;
+          assertEqual( Z'2024-09-16-11.22.33.123456789012' :
+                       Z'2023-01-16-22.33.44.654321789012' );
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Expected ''2024-09-16-11.22.33.123456789012'', but was ' +
+                 '''2023-01-16-22.33.44.654321789012''.'
+                 : 'Error messages does not match expected value.');
+        endmon;
+
+        // Test unequality with assertion message
+        monitor;
+          assertEqual( Z'2024-09-16-11.22.33.123456789012' :
+                       Z'2023-01-16-22.33.44.654321789012' :
+                       'Timestamp values do not match');
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Timestamp values do not match'
+                 : 'Error messages does not match expected value.');
+        endmon;
+
+      /end-free
+     P                 e
 
      P assertThatMatcherWithMsg...
      P                 b                   export
