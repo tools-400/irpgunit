@@ -89,10 +89,10 @@
  /*  Let's do it!                                */
  /* -------------------------------------------- */
 
- "CRTPNLGRP  PNLGRP("prdLib"/CMPMODHLP) SRCFILE(*LIBL/QBUILD)"
+ "CRTPNLGRP  PNLGRP("prdLib"/CMPMODHLP) SRCFILE("prdLib"/QBUILD)"
  deleteSpooledFile('CMPMODHLP')
 
- "CRTCMD CMD("prdLib"/CMPMOD) SRCFILE(*LIBL/QBUILD) ",
+ "CRTCMD CMD("prdLib"/CMPMOD) SRCFILE("prdLib"/QBUILD) ",
         "PGM(*REXX) ",
         "REXSRCFILE("prdLib"/QBUILD) ",
         "REXSRCMBR(CMPMODCPP) ",
@@ -100,10 +100,10 @@
         "HLPID(CMPMOD)"
  deleteSpooledFile('CMPMOD')
 
- "CRTPNLGRP  PNLGRP("prdLib"/UPDLIBHLP) SRCFILE(*LIBL/QBUILD)"
+ "CRTPNLGRP  PNLGRP("prdLib"/UPDLIBHLP) SRCFILE("prdLib"/QBUILD)"
  deleteSpooledFile('UPDLIBHLP')
 
- "CRTCMD CMD("prdLib"/UPDLIB) SRCFILE(*LIBL/QBUILD) ",
+ "CRTCMD CMD("prdLib"/UPDLIB) SRCFILE("prdLib"/QBUILD) ",
         "PGM(*REXX) ",
         "REXSRCFILE("prdLib"/QBUILD) ",
         "REXSRCMBR(UPDLIBCPP) ",

@@ -116,11 +116,11 @@
 
  /* Unit Tests. */
 
- "STRREXPRC SRCMBR(MKUT) SRCFILE(QUNITTEST) PARM('"prdLib" "dbgView" "tgtRls"')"
+ "STRREXPRC SRCMBR(MKUT) SRCFILE("prdLib"/QUNITTEST) PARM('"prdLib" "dbgView" "tgtRls"')"
 
  /* Acceptance Tests. */
 
- "STRREXPRC SRCMBR(MKACPTSTT) SRCFILE(QUNITTEST) PARM('"prdLib" "dbgView" "tgtRls"')"
+ "STRREXPRC SRCMBR(MKACPTSTT) SRCFILE("prdLib"/QUNITTEST) PARM('"prdLib" "dbgView" "tgtRls"')"
 
  "RUCALLTST  TSTPGM("prdLib"/ACPTSTT)"
 

@@ -121,7 +121,7 @@
  executeUnitTest:
    PARSE ARG buildScript, unitTest
 
-   "STRREXPRC SRCMBR("buildScript") SRCFILE(QUNITTEST) PARM('"prdLib" "dbgView" "tgtRls"')"
+   "STRREXPRC SRCMBR("buildScript") SRCFILE("prdLib"/QUNITTEST) PARM('"prdLib" "dbgView" "tgtRls"')"
    "RUCALLTST  TSTPGM("prdLib"/"unitTest")"
 
    return ''
