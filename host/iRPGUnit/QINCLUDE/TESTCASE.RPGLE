@@ -367,6 +367,7 @@ dcl-pr assertEqual overload(assertEqual_string
                            : assertEqual_date
                            : assertEqual_time
                            : assertEqual_timestamp);
+//                           : assertEqual_ind);
 
 // assertEqual -- Aphanumeric Equality Assertion
 //
@@ -381,8 +382,8 @@ dcl-pr assertEqual overload(assertEqual_string
 //
 // If parameter 'message' is specified that is appened to the log.
 dcl-pr assertEqual_string opdesc extproc('assertEqual_string');
-  expected   like(assertString_t) const;
-  actual     like(assertString_t) const;
+  expected   like(assertString_t) options(*varsize) const;
+  actual     like(assertString_t) options(*varsize) const;
   message    like(msgText_t) options(*nopass: *omit) const;
 end-pr;
 
@@ -495,6 +496,12 @@ end-pr;
 dcl-pr assertEqual_timestamp opdesc extproc(*dclcase);
   expected   timestamp(12) const;
   actual     timestamp(12) const;
+  message    like(msgText_t) options(*nopass: *omit) const;
+end-pr;
+
+dcl-pr assertEqual_ind opdesc extproc(*dclcase);
+  expected   ind options(*exact) const;
+  actual     ind options(*exact) const;
   message    like(msgText_t) options(*nopass: *omit) const;
 end-pr;
 

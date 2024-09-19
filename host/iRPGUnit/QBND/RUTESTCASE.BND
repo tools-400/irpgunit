@@ -64,6 +64,7 @@ STRPGMEXP  PGMLVL(*CURRENT) SIGNATURE('iRPGUNIT V5.0')
   EXPORT SYMBOL("assertEqual_date")            /* public API V2 */
   EXPORT SYMBOL("assertEqual_time")            /* public API V2 */
   EXPORT SYMBOL("assertEqual_timestamp")       /* public API V2 */
+/*EXPORT SYMBOL("assertEqual_ind")*/           /* public API V2 */
   EXPORT SYMBOL("assertThat")                  /* public API V2 */
 
 ENDPGMEXP

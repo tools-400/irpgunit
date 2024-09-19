@@ -45,3 +45,31 @@ dcl-proc OS_getVersion export;
   return data.releaseLvl;
 end-proc;
 
+dcl-proc OS_getPTFLoadedStatus export;
+  dcl-pi *n char(1);
+    ptfID        char(7) const;
+    productID    char(7) const;
+    releaseLvl   char(6) const;
+  end-pi;
+
+  dcl-ds PTF_inf   likeds(PTF_inf_t) inz(*likeds);
+  dcl-ds ptfr0100  likeds(ptfr0100_t) inz(*likeds);
+  dcl-ds errCode   likeds(errorCode_t) inz(*likeds);
+
+  PTF_inf.ptfID      = ptfID;
+  PTF_inf.productID  = productID;
+  PTF_inf.releaseLvl = OS_getVersion();
+
+  api_retrieveProgramTemporaryFixInfo(
+    ptfr0100: %size(ptfr0100): PTF_inf: 'PTFR0100': errCode);
+  if (errCode.bytAvl > 0);
+     if (errCode.excID = 'CPF6602'); // Not found
+       return PTF_LOADED_STATUS_NOT_LOADED;
+     else;
+       return '*';
+     endif;
+  endif;
+
+  return ptfr0100.loadStat;
+
+end-proc;

@@ -29,6 +29,15 @@
 /*                            previous release of the operating system */
 /*                            currently running on your system.        */
 /*                  VxRxMx  : Release in the format of VxRxMx.         */
+/*       style    - Assertion style. The possible values are:          */
+/*                  OLD     : Do not install new assertEqual()         */
+/*                            and assertThat() procedures().           */
+/*                  NEW     : Install new assertions requiring 7.5 or  */
+/*                            7.3 or 7.4 with PTFs:                    */
+/*                            7.3: ILE RPG runtime: SI71535            */
+/*                                 ILE RPG compiler: SI71534           */
+/*                            7.4: ILE RPG runtime: SI71537            */
+/*                                 ILE RPG compiler: SI71536           */
 /* =================================================================== */
 /*   >>PRE-COMPILER<<                                                  */
 /*     >>CRTCMD<<  STRREXPRC SRCMBR(&SM) SRCFILE(&SL/&SF);             */
@@ -51,13 +60,15 @@
  PRD_LIB = 'RPGUNIT'
  DEBUG_VIEW = '*NONE'
  TARGET_RELEASE = '*CURRENT'
+ STYLE = '*NEW'
 
- PARSE ARG option prdLib dbgView tgtrls
+ PARSE ARG option prdLib dbgView tgtrls style
 
  option  = translate(strip(option))
  prdLib  = translate(strip(prdLib))
  dbgView = translate(strip(dbgView))
  tgtRls  = translate(strip(tgtRls))
+ style   = translate(strip(style))
 
  if option = '' then do
    "SNDPGMMSG ",
@@ -107,6 +118,30 @@
      "MSGTYPE(*ESCAPE)"
  end
 
+ if (style = '*OLD' | style = 'OLD') then do
+   "CPYF FROMFILE("prdLib"/QSRC) TOFILE("prdLib"/QSRC) FROMMBR(ASSERTNI) ",
+        "TOMBR(ASSERTV2) MBROPT(*REPLACE)"
+
+   "SNDPGMMSG ",
+     "MSGID(CPF9898) ",
+     "MSGF(QCPFMSG) ",
+     "MSGDTA('Compiling library using OLD style')",
+     "TOPGMQ(*PRV (*CTLBDY)) ",
+     "MSGTYPE(*INFO)"
+ end
+ else do
+   "CPYF FROMFILE("prdLib"/QSRC) TOFILE("prdLib"/QSRC) ",
+        "FROMMBR(ASSERTV2.O) TOMBR(ASSERTV2) MBROPT(*REPLACE)"
+   "SNDPGMMSG ",
+     "MSGID(CPF9898) ",
+     "MSGF(QCPFMSG) ",
+     "MSGDTA('Compiling library using NEW style')",
+     "TOPGMQ(*PRV (*CTLBDY)) ",
+     "MSGTYPE(*INFO)"
+ end
+
+
+
  /* -------------------------------------------- */
  /*  Install iRPGUnit Library.                   */
  /*  Compiles all iRPGUnit objects from source.  */
@@ -153,28 +188,33 @@
    /* - - - - - - - - - - - -   - - - - - - - - */
    /*  Create commands BUILD and CMPMOD.      */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "STRREXPRC SRCMBR(MKBUILD) SRCFILE(QBUILD) PARM('"prdLib" "dbgView" "tgtRls"')"
+   "STRREXPRC SRCMBR(MKBUILD) SRCFILE("prdLib"/QBUILD) PARM('"prdLib" "dbgView" "tgtRls"')"
+
+   /* - - - - - - - - - - - - - - - - - - - - */
+   /*  Create version test programs.          */
+   /* - - - - - - - - - - - - - - - - - - - - */
+   "STRREXPRC SRCMBR(MKVERSION) SRCFILE("prdLib"/QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
 
    /* - - - - - - - - - - - - - - - - - - - - */
    /*  Create service program RUTESTCASE.     */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "STRREXPRC SRCMBR(MKTESTCASE) SRCFILE(QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
+   "STRREXPRC SRCMBR(MKTESTCASE) SRCFILE("prdLib"/QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
 
    /* - - - - - - - - - - - - - - - - - - - - */
    /*  Create commands: RUCALLTST             */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "STRREXPRC SRCMBR(MKCALLTST) SRCFILE(QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
+   "STRREXPRC SRCMBR(MKCALLTST) SRCFILE("prdLib"/QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
 
    /* - - - - - - - - - - - - - - - - - - - - */
    /*  Create commands: RUCRTRPG/RUCRTCBL     */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "STRREXPRC SRCMBR(MKCRTCBL) SRCFILE(QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
-   "STRREXPRC SRCMBR(MKCRTRPG) SRCFILE(QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
+   "STRREXPRC SRCMBR(MKCRTCBL) SRCFILE("prdLib"/QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
+   "STRREXPRC SRCMBR(MKCRTRPG) SRCFILE("prdLib"/QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
 
    /* - - - - - - - - - - - - - - - - - - - - */
    /*  Create program RUPGMRMT (plug-in)      */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "STRREXPRC SRCMBR(MKRMTRUN) SRCFILE(QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
+   "STRREXPRC SRCMBR(MKRMTRUN) SRCFILE("prdLib"/QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
 
    deleteSelfTests(prdLib)
    deleteModules(prdLib)
@@ -263,6 +303,8 @@
    "DLTPGM PGM("_prdlib"/RUCRTCBL)"
    "DLTPGM PGM("_prdlib"/RUPGMRMT)"
    "DLTSRVPGM SRVPGM("_prdlib"/RUTESTCASE)"
+
+   "DLTPGM PGM("_prdlib"/RUGETPTFS)"
 
    "DLTJOBD JOBD("_prdLib"/RPGUNIT)"
    "DLTWSCST WSCST("_prdLib"/RUWSCST)"
@@ -383,6 +425,7 @@
    "DLTMOD MODULE("_prdLib"/EXTPRCT)"
    "DLTMOD MODULE("_prdLib"/EXTTST)"
    "DLTMOD MODULE("_prdLib"/EXTTSTT)"
+   "DLTMOD MODULE("_prdLib"/GETPTFS)"
    "DLTMOD MODULE("_prdLib"/JOBLOG)"
    "DLTMOD MODULE("_prdLib"/JOBLOGT)"
    "DLTMOD MODULE("_prdLib"/LIBL)"

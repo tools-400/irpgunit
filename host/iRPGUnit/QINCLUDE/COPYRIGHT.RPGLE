@@ -8,7 +8,7 @@
       //  http://www.eclipse.org/legal/cpl-v10.html
       // ==========================================================================
      HCopyright('v5.0.0 - xx.xx.xxxx - +
-     H           Copyright (c) 2013-xxxx iRPGUnit Project Team')
+     H           Copyright (c) 2024-xxxx iRPGUnit Project Team')
       /if not defined(COPYRIGHT_DSPEC)
       /eof
       /endif

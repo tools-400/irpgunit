@@ -33,7 +33,12 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import de.tools400.rpgunit.core.Messages;
 import de.tools400.rpgunit.core.RPGUnitCorePlugin;
 import de.tools400.rpgunit.core.helpers.JobLogHelper;
+import de.tools400.rpgunit.core.helpers.LibraryListHelper;
+import de.tools400.rpgunit.core.helpers.LibraryListHelper.LibraryList;
+import de.tools400.rpgunit.core.helpers.OS400Helper;
+import de.tools400.rpgunit.core.helpers.OS400Release;
 import de.tools400.rpgunit.core.helpers.StringHelper;
+import de.tools400.rpgunit.core.host.GetPTFStatus;
 import de.tools400.rpgunit.core.preferences.Preferences;
 import de.tools400.rpgunit.core.ui.dialog.SignOnDialog;
 import de.tools400.rpgunit.core.utils.ExceptionHelper;
@@ -45,6 +50,10 @@ public class ProductLibraryUploader {
     private static final String SAVE_FILE_NAME = "RPGUNIT.SAVF"; //$NON-NLS-1$
     private static final String SAVED_LIBRARY = "RPGUNIT"; //$NON-NLS-1$
     private static final String REMOTE_LIBRARY_TEXT = "iRPGUnit"; //$NON-NLS-1$
+
+    private static final int RECOMPILE_NOT_REQUIRED = 1;
+    private static final int RECOMPILE_CANCELED = 2;
+    private static final int RECOMPILE_CONFIRMED = 3;
 
     private Shell shell;
     private IBMiConnection iSeriesConnection;
@@ -78,7 +87,6 @@ public class ProductLibraryUploader {
     public boolean run() {
 
         boolean isUploadedFine = false;
-        ;
 
         try {
 
@@ -125,23 +133,66 @@ public class ProductLibraryUploader {
                                 if (!restoreLibrary(workLibrary, saveFileName, libraryName, aspDeviceName)) {
                                     setError(Messages.bind(Messages.Could_not_restore_library_A, libraryName));
                                 } else {
-                                    if (!updateLibrary(libraryName)) {
-                                        MessageDialog.openError(shell, Messages.Warning,
-                                            Messages.bind(
-                                                Messages.Library_RPGUNIT_has_been_restored_to_A_but_objects_could_not_be_updated_Try_to_run_command_UPDLIB_A_by_hand_and_check_the_job_log,
-                                                libraryName));
+
+                                    LibraryList oldLibraryList = null;
+
+                                    try {
+
+                                        oldLibraryList = setLibraryList(as400, libraryName);
+
+                                        int recompileRequiredStatus = getRecompileRequiredStatus(libraryName);
+                                        if (recompileRequiredStatus == RECOMPILE_CANCELED) {
+                                            setStatus(Messages.Operation_canceled_by_the_user);
+                                            return false;
+                                        }
+
+                                        if (recompileRequiredStatus == RECOMPILE_CONFIRMED) {
+                                            String targetRelease = OS400Helper.getRelease(as400);
+                                            setStatus(
+                                                Messages.bind(Messages.Recompiling_objects_of_library_A_for_release_B, libraryName, targetRelease));
+                                            String command = String.format(
+                                                "STRREXPRC SRCMBR(A_INSTALL) SRCFILE(%s/QBUILD) PARM('INSTALL %s NONE %s OLD')", libraryName,
+                                                libraryName, targetRelease);
+                                            if (!executeCommand(command, true).equals("")) {
+                                                setError(Messages.bind(Messages.Failed_calling_B_INSTALL_in_library_A, libraryName, "QBUILD"));
+                                            } else {
+                                                isUploadedFine = true;
+                                            }
+                                        } else {
+                                            if (!updateLibrary(libraryName)) {
+                                                MessageDialog.openError(shell, Messages.Warning, Messages.bind(
+                                                    Messages.Library_RPGUNIT_has_been_restored_to_A_but_objects_could_not_be_updated_Try_to_run_command_UPDLIB_A_by_hand_and_check_the_job_log,
+                                                    libraryName));
+                                                isUploadedFine = false;
+                                            } else {
+                                                isUploadedFine = true;
+                                            }
+                                        }
+
+                                        if (isUploadedFine) {
+                                            setStatus(Messages.bind(Messages.Successfully_restored_iRPGUnit_library, libraryName));
+                                        }
+
+                                    } catch (Exception e) {
+                                        setError(
+                                            Messages.bind(Messages.Could_not_update_library_A_after_restore_Reason_B, libraryName, e.getStackTrace()),
+                                            e);
                                         isUploadedFine = false;
-                                    } else {
-                                        setStatus(Messages.bind(Messages.Successfully_restored_iRPGUnit_library, libraryName));
-                                        isUploadedFine = true;
+                                    } finally {
+                                        try {
+                                            restoreLibraryList(as400, oldLibraryList);
+                                        } catch (Exception e) {
+                                            setError(Messages.bind(Messages.Could_not_restore_library_list_Reason_A, e.getLocalizedMessage()), e);
+                                            isUploadedFine = false;
+                                        }
+
                                     }
                                 }
 
                             } catch (Exception e) {
-                                setError(Messages.bind(Messages.Could_not_send_save_file_to_host_A, hostName), e);
+                                setError(Messages.bind(Messages.Could_not_send_save_file_to_host_A_Reason_B, hostName, e.getLocalizedMessage()), e);
                                 isUploadedFine = false;
                             } finally {
-
                                 setStatus(Messages.bind(Messages.Deleting_object_A_B_of_type_C, new String[] { workLibrary, saveFileName, "*FILE" }));
                                 deleteSaveFile(workLibrary, saveFileName, true);
                             }
@@ -151,11 +202,31 @@ public class ProductLibraryUploader {
                 }
             }
 
-            return isUploadedFine;
-
         } finally {
             disconnect();
         }
+
+        return isUploadedFine;
+    }
+
+    private LibraryList setLibraryList(AS400 system, String libraryName) throws Exception {
+
+        LibraryList oldLibraryList = LibraryListHelper.getLibraryList(system);
+
+        setStatus(Messages.bind(Messages.Retrieved_current_library_list_A, oldLibraryList.toString()));
+
+        setStatus(Messages.bind(Messages.Changing_library_list_to_A, oldLibraryList));
+
+        LibraryListHelper.changeLibraryList(as400, libraryName, "QGPL"); //$NON-NLS-1$
+
+        return oldLibraryList;
+    }
+
+    private void restoreLibraryList(AS400 system, LibraryList oldLibraryList) throws Exception {
+
+        setStatus(Messages.bind(Messages.Restoring_library_list_to_A, oldLibraryList.toString()));
+
+        LibraryListHelper.changeLibraryList(system, oldLibraryList.getCurrentLibrary(), oldLibraryList.getUserLibraryList());
     }
 
     public QueuedMessage[] getJobLog() {
@@ -185,11 +256,10 @@ public class ProductLibraryUploader {
                         startingMessageKey = JobLogHelper.getNewestMessageKey(commandCall.getServerJob());
                         return true;
                     } else {
-                        setError(Messages.bind(Messages.Could_not_connect_to_host_A, hostName));
-                        return false;
+                        setError(Messages.bind(Messages.Could_not_connect_to_host_A_Reason_B, hostName, "unknown"));
                     }
                 } catch (Exception e) {
-                    setError(Messages.bind(Messages.Could_not_connect_to_host_A, hostName), e);
+                    setError(Messages.bind(Messages.Could_not_connect_to_host_A_Reason_B, hostName, e.getLocalizedMessage()), e);
                 }
             }
         }
@@ -203,7 +273,7 @@ public class ProductLibraryUploader {
                 jobLog = JobLogHelper.getJobLog(commandCall.getServerJob(), startingMessageKey);
             } catch (Exception e) {
                 jobLog = null;
-                RPGUnitCorePlugin.logError("Failed loading job log.", e);
+                setError(Messages.bind(Messages.Could_not_load_the_job_log_Reason_A, e.getLocalizedMessage()), e);
             }
             as400.disconnectAllServices();
             setStatus(Messages.bind(Messages.Disconnected_from_host_A, hostName));
@@ -323,7 +393,7 @@ public class ProductLibraryUploader {
                 List<QueuedMessage> countIgnored = new LinkedList<QueuedMessage>();
 
                 QueuedMessage[] messages;
-                final int chunkSize = 20;
+                final int chunkSize = 50;
                 int offset = 0;
 
                 jobLog = new JobLog(system, serverJob.getName(), serverJob.getUser(), serverJob.getNumber());
@@ -379,6 +449,65 @@ public class ProductLibraryUploader {
 
         if (!executeCommand(libraryName + "/UPDLIB LIB(" + libraryName + ")", true).equals("")) {
             return false;
+        }
+
+        return true;
+    }
+
+    private int getRecompileRequiredStatus(String libraryName) throws Exception {
+
+        String currentOS400Release = OS400Helper.getRelease(as400);
+        String currentOS400ReleaseShort = OS400Helper.getReleaseShort(as400);
+        String pluginVersion = RPGUnitCorePlugin.getDefault().getVersion();
+        String requiredOS400Release = RPGUnitCorePlugin.getMinOS400Release();
+
+        int requiredStatus;
+        if (OS400Release.V7R4M0.compareTo(currentOS400Release) < 0) {
+            // 7.5 or higher
+            requiredStatus = RECOMPILE_NOT_REQUIRED;
+        } else if (OS400Release.V7R4M0.compareTo(currentOS400Release) == 0) {
+            if (testPTFStatus(as400, "SI71537", "SI71536")) {
+                requiredStatus = RECOMPILE_NOT_REQUIRED;
+            } else {
+                String ptf1 = Messages.bind(Messages.PTF_information_2, "ILE RPG runtime: SI71537");
+                String ptf2 = Messages.bind(Messages.PTF_information_2, "ILE RPG compiler: SI71536");
+                String message = Messages.bind(Messages.PTF_information_1,
+                    new String[] { pluginVersion, requiredOS400Release, currentOS400ReleaseShort, ptf1 + ptf2 });
+                if (MessageDialog.openConfirm(shell, "", message)) {
+                    requiredStatus = RECOMPILE_CONFIRMED;
+                } else {
+                    requiredStatus = RECOMPILE_CANCELED;
+                }
+            }
+        } else if (OS400Release.V7R3M0.compareTo(currentOS400Release) == 0) {
+            if (testPTFStatus(as400, "SI71535", "SI71534")) {
+                requiredStatus = RECOMPILE_NOT_REQUIRED;
+            } else {
+                String ptf1 = Messages.bind(Messages.PTF_information_2, "ILE RPG runtime: SI71535");
+                String ptf2 = Messages.bind(Messages.PTF_information_2, "ILE RPG compiler: SI71534");
+                String message = Messages.bind(Messages.PTF_information_1,
+                    new String[] { pluginVersion, requiredOS400Release, currentOS400ReleaseShort, ptf1 + ptf2 });
+                if (MessageDialog.openConfirm(shell, "", message)) {
+                    requiredStatus = RECOMPILE_CONFIRMED;
+                } else {
+                    requiredStatus = RECOMPILE_CANCELED;
+                }
+            }
+        } else {
+            requiredStatus = RECOMPILE_NOT_REQUIRED;
+        }
+
+        return requiredStatus;
+    }
+
+    private boolean testPTFStatus(AS400 system, String... ptfs) throws Exception {
+
+        for (String ptf : ptfs) {
+            String ptfStatus = OS400Helper.getPTFStatus(as400, ptf);
+            if (!(GetPTFStatus.PTF_STATUS_APPLIED.equals(ptfStatus) || GetPTFStatus.PTF_STATUS_PERMANENTLY_APPLIED.equals(ptfStatus)
+                || GetPTFStatus.PTF_STATUS_SUPERSEDED.equals(ptfStatus))) {
+                return false;
+            }
         }
 
         return true;

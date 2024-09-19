@@ -1,0 +1,6 @@
+<pcml version="7.0">
+   <program name="RUGETPTFS" path="/QSYS.LIB/%LIBL%.LIB/RUGETPTFS.PGM">
+      <data name="i_ptf" type="char" length="7" usage="inputoutput" />
+      <data name="o_status" type="char" length="20" usage="output" />
+   </program>
+</pcml>
