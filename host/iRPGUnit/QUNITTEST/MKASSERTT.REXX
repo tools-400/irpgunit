@@ -91,7 +91,7 @@
  /*  Let's do it!                                */
  /* -------------------------------------------- */
 
- "CMPMOD MODULE("prdLib"/ASSERTT  ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/ASSERTT  ) SRCFILE("prdLib"/QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
  "CRTSRVPGM  SRVPGM("prdLib"/ASSERTT) ",
             "MODULE("prdLib"/ASSERTT) ",
