@@ -93,6 +93,30 @@ public class RPGUnitCorePlugin extends AbstractUIPlugin {
         return plugin;
     }
 
+    /**
+     * Returns the release that is required for installing the RPGUNIT library.
+     * <p>
+     * The minimum required release is 7.5. RPGUNIT can also be installed on 7.4
+     * or 7.3 in case the following PTFs have been applied:
+     * <p>
+     * <b>7.3</b>
+     * <ul>
+     * <li>ILE RPG runtime: SI71535</li>
+     * <li>ILE RPG compiler: SI71534</li>
+     * </ul>
+     * <p>
+     * <b>7.4</b>
+     * <ul>
+     * <li>ILE RPG runtime: SI71537</li>
+     * <li>ILE RPG compiler: SI71536</li>
+     * </ul>
+     * 
+     * @return minimum required release
+     */
+    public static String getMinOS400Release() {
+        return "7.5";
+    }
+
     public static URL getInstallURL() {
         return installURL;
     }

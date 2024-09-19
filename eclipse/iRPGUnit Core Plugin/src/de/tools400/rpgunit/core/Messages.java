@@ -173,7 +173,7 @@ public class Messages extends NLS {
 
     public static String DialogTitle_Delete_Object;
     public static String Connected_to_host_A;
-    public static String Could_not_connect_to_host_A;
+    public static String Could_not_connect_to_host_A_Reason_B;
     public static String Could_not_set_asp_device_name_to_A;
     public static String Checking_library_A_for_existence;
     public static String Library_A_does_already_exist;
@@ -184,7 +184,7 @@ public class Messages extends NLS {
     public static String Creating_save_file_B_in_library_A;
     public static String Could_not_create_save_file_B_in_library_A;
     public static String Sending_save_file_to_host_A;
-    public static String Could_not_send_save_file_to_host_A;
+    public static String Could_not_send_save_file_to_host_A_Reason_B;
     public static String Using_Ftp_port_number;
     public static String Restoring_library_A;
     public static String Could_not_restore_library_A;
@@ -192,6 +192,21 @@ public class Messages extends NLS {
     public static String Updating_objects_of_library_A;
     public static String Library_RPGUNIT_has_been_restored_to_A_but_objects_could_not_be_updated_Try_to_run_command_UPDLIB_A_by_hand_and_check_the_job_log;
     public static String Disconnected_from_host_A;
+    public static String Could_not_execute_program_A_Reason_B;
+    public static String PTF_information_1;
+    public static String PTF_information_2;
+    public static String Could_not_rename_member_C_to_D_in_file_A_B;
+    public static String Could_not_change_source_type_of_member_C_in_file_A_B;
+    public static String Failed_calling_B_INSTALL_in_library_A;
+    public static String Could_not_update_library_A_after_restore_Reason_B;
+    public static String Operation_canceled_by_the_user;
+    public static String Retrieved_current_library_list_A;
+    public static String Changing_library_list_to_A;
+    public static String Restoring_library_list_to_A;
+    public static String Could_not_call_program_A;
+    public static String Recompiling_objects_of_library_A_for_release_B;
+    public static String Could_not_restore_library_list_Reason_A;
+    public static String Could_not_load_the_job_log_Reason_A;
     public static String JobLog_Headline;
 
     public static String Question_Do_you_want_to_delete_object_A_B_type_C;

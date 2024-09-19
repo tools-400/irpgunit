@@ -2,7 +2,7 @@
 // ==========================================================================
 //  iRPGUnit - Assertion Facilities.
 // ==========================================================================
-//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  Copyright (c) 2013-2024 iRPGUnit Project Team
 //  All rights reserved. This program and the accompanying materials
 //  are made available under the terms of the Common Public License v1.0
 //  which accompanies this distribution, and is available at
@@ -52,19 +52,43 @@ ctl-opt NoMain;
 //----------------------------------------------------------------------
 dcl-proc assertEqual_string export;
   dcl-pi *n opdesc;
-    expected   like(assertString_t) const;
-    actual     like(assertString_t) const;
+    expected   like(assertString_t) options(*varsize) const;
+    actual     like(assertString_t) options(*varsize) const;
     message    like(msgText_t) options(*nopass: *omit) const;
   end-pi;
 
   dcl-s msg like(msgText_t);
 
+  dcl-s len_expected int(10);
+  dcl-s len_actual int(10);
+
+  // --- Ugly hack for figurative constants *on/*off ---
+  //     See:
+  //     * https://www.ibm.com/docs/en/i/7.5?topic=constants-rules-figurative#rulfig
+  //     * IBM Case TS017248434 (result: works as designed)
+  if (%len(expected) > 1 and
+      (expected = *on or expected = *off) and
+       %len(expected) = %len(expected: *max));
+    len_expected = 1; // Assuming it's an indicator
+  else;
+    len_expected = %len(expected);
+  endif;
+
+  if (%len(actual) > 1 and
+      (actual = *on or actual = *off) and
+       %len(actual) = %len(actual: *max));
+    len_actual = 1; // Assuming it's an indicator
+  else;
+    len_actual = %len(actual);
+  endif;
+  // ---------------------------------------------------
+
   if (%parms() >= %parmnum(message) and %addr(message) <> *NULL);
     msg = message;
   else;
     msg = msg
-        + 'Expected ' + addQuotes(%trimr(expected)) + ','
-        + ' but was ' + addQuotes(%trimr(actual)) + '.';
+        + 'Expected ' + addQuotes(%trimr(%subst(expected: 1: len_expected))) + ','
+        + ' but was ' + addQuotes(%trimr(%subst(actual: 1: len_actual))) + '.';
   endif;
 
   doAssert(expected = actual: msg
@@ -222,6 +246,31 @@ dcl-proc assertEqual_timestamp export;
            : ONE_CALL_STK_LVL_ABOVE: %proc());
 
 end-proc;
+
+//----------------------------------------------------------------------
+// Assert equality between two indicator variables - V2.
+//----------------------------------------------------------------------
+//dcl-proc assertEqual_ind export;
+//  dcl-pi *n opdesc;
+//    expected   ind options(*exact) const;
+//    actual     ind options(*exact) const;
+//    message    like(msgText_t) options(*nopass: *omit) const;
+//  end-pi;
+//
+//  dcl-s msg like(msgText_t);
+//
+//  if (%parms() >= %parmnum(message) and %addr(message) <> *NULL);
+//    msg = message;
+//  else;
+//    msg = msg
+//        + 'Expected ' + addQuotes(%char(expected)) + ','
+//        + ' but was ' + addQuotes(%char(actual)) + '.';
+//  endif;
+//
+//  doAssert(expected = actual: msg
+//           : ONE_CALL_STK_LVL_ABOVE: %proc());
+//
+//end-proc;
 
 //----------------------------------------------------------------------
 // Assert equality using a matcher callback procedure - V2.

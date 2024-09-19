@@ -53,6 +53,14 @@
      D                 pr                  extproc('testAssertEqual_numeric')
      D testAssertThat...
      D                 pr                  extproc('testAssertThat')
+     D testAssertEqual_date...
+     D                 pr                  extproc('testAssertEqual_date')
+     D testAssertEqual_time...
+     D                 pr                  extproc('testAssertEqual_time')
+     D testAssertEqual_timestamp...
+     D                 pr                  extproc('testAssertEqual_timestamp')
+     D testAssertEqual_ind...
+     D                 pr                  extproc('testAssertEqual_ind')
 
 
       //----------------------------------------------------------------------
@@ -164,9 +172,9 @@
                : assertFailEvt.callStk.Entry(1).qStmt.procNm );
 
         monitor;
-           aEqual( '145'  : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
+           aEqual( '153'  : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
         on-error;
-           aEqual( '14500': assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
+           aEqual( '15300': assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
         endmon;
 
       /end-free
@@ -228,9 +236,9 @@
                                assertFailEvt.callStk.Entry(1).qStmt.procNm );
 
         monitor;
-           aEqual( '207'     : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
+           aEqual( '215'     : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
         on-error;
-           aEqual( '20700'   : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
+           aEqual( '21500'   : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
         endmon;
 
       /end-free
@@ -325,9 +333,9 @@
                              : assertFailEvt.callStk.Entry(1).qStmt.procNm );
 
         monitor;
-           aEqual( '309'     : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
+           aEqual( '317'     : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
         on-error;
-           aEqual( '30900'   : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
+           aEqual( '31700'   : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
         endmon;
 
       /end-free
@@ -485,6 +493,26 @@
      D assertFailEvtLong...
      D                 ds                  likeds(assertFailEvtLong_t)
       /free
+
+        // Test 1-char string
+        assertEqual( '1' :
+                     '1' );
+        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+
+        assertEqual( 'e' :
+                     'e' );
+        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+
+        monitor;
+          assertEqual( 'e' :
+                       'u' );
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Expected ''e'', but was ''u''.'
+                 : 'Error messages does not match expected value.');
+        endmon;
 
         // Test equality
         assertEqual( 'expected' :
@@ -834,6 +862,70 @@
           assertFailEvtLong = getAssertFailEvtLong();
           assert(assertFailEvtLong.msg =
                  'Timestamp values do not match'
+                 : 'Error messages does not match expected value.');
+        endmon;
+
+      /end-free
+     P                 e
+
+     PtestAssertEqual_ind...
+     P                 b                   export
+     D                 pi
+
+     D assertFailEvtLong...
+     D                 ds                  likeds(assertFailEvtLong_t)
+     D ind1            s               n   inz(*on)
+     D ind2            s               n   inz(*on)
+      /free
+
+        // Test indicator figurative constant.
+        monitor;
+        assertEqual( *on :
+                     *off );
+          fail('Expected the asssertion to fail.');
+        on-error;
+          // Does not yet work. Opened IBM support case:
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Expected ''1'', but was ' +
+                 '''0''.'
+                 : 'Error messages does not match expected value.');
+        endmon;
+
+        // Test equality
+        ind2 = *on;
+        ind2 = *on;
+        assertEqual( ind1 :
+                     ind2 );
+        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+
+        // Test unequality without assertion message
+        monitor;
+          ind2 = *on;
+          ind2 = *off;
+          assertEqual( ind1 :
+                       ind2 );
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Expected ''1'', but was ' +
+                 '''0''.'
+                 : 'Error messages does not match expected value.');
+        endmon;
+
+        // Test unequality with assertion message
+        monitor;
+          ind2 = *on;
+          ind2 = *off;
+          assertEqual( ind1 :
+                       ind2 :
+                       'Indicator values do not match');
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Indicator values do not match'
                  : 'Error messages does not match expected value.');
         endmon;
 

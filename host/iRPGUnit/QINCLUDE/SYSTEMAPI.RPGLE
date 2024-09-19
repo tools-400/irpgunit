@@ -451,6 +451,72 @@
      d  reqMetBasOptV        105    105A
      d  level                106    108A
 
+     d api_retrieveProgramTemporaryFixInfo...
+     d                 pr                  extpgm('QPZRTVFX')
+     d  o_rcvVar                  65535A          options(*varsize)
+     d  i_lenRcvVar                  10I 0 const
+     d  i_PTF_inf                    50A   const
+     d  i_format                      8A   const
+     d  io_errCode                65535A          options(*varsize)
+
+     d PTF_LOADED_STATUS_NOT_LOADED...
+     d                 C                   '0'
+     d PTF_LOADED_STATUS_LOADED...
+     d                 C                   '1'
+     d PTF_LOADED_STATUS_APPLIED...
+     d                 C                   '2'
+     d PTF_LOADED_STATUS_PERMANENTLY_APPLIED...
+     d                 C                   '3'
+     d PTF_LOADED_STATUS_PERMANENTLY_REMOVED...
+     d                 C                   '4'
+     d PTF_LOADED_STATUS_DAMAGED...
+     d                 C                   '5'
+     d PTF_LOADED_STATUS_SUPERSEDED...
+     d                 C                   '6'
+
+     d PTF_inf_t...
+     d                 DS                  qualified template
+     d  ptfID                         7A
+     d  productID                     7A
+     d  releaseLvl                    6A
+     d  dirNmeCCSID                  10I 0
+     d  closeDBFiles                  1A
+     d  reserved_1                   25A
+
+     d ptfr0100_t...
+     d                 DS                  qualified template
+     d  bytRet                 1      4I 0
+     d  bytAvl                 5      8I 0
+     d  ofsAddInf              9     12I 0
+     d  productID             13     19A
+     d  ptfID                 20     26A
+     d  releaseLvl            27     32A
+     d  prdOpt                33     36A
+     d  loadID                37     40A
+     d  loadStat              41     41A
+     d  cvrLtrStat            42     42A
+     d  onOdrStat             43     43A
+     d  savFStat              44     44A
+     d  savF                  45     54A
+     d  savFLib               55     64A
+     d  ptfType               65     65A
+     d  iplAct                66     66A
+     d  actPnd                67     67A
+     d  actReq                68     68A
+     d  ptfIsRls              69     69A
+     d  tgtRls                70     75A
+     d  spsdngPtf             76     82A
+     d  currIplSrc            83     83A
+     d  minLvl                84     85A
+     d  maxLvl                86     87A
+     d  fmtInvAvl             88     88A
+     d  statDateTime          89    101A
+     d  licIntCdeGrp         102    108A
+     d  spsByPtfID           109    115A
+     d  currSvrIplSrc        116    116A
+     d  svrIplReq            117    117A
+     d  crtDateTime          118    130A
+
       /include qsysinc,APILIST
       /include qsysinc,OPNLIST
       /include qsysinc,QBNLPGMI

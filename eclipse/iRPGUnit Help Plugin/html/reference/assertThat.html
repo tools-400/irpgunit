@@ -42,24 +42,58 @@ obviously 'Donald Duck' does not match 'Dagobert Duck'.
 <b>Example 2 (data structure):</b>
 <p>
 <code><pre class="indent">
-dcl-ds expected qualified;
-  type    char(10) inz('*HEADER');
-  name    varchar(256) inz('Donald Duck');
+dcl-ds data_t qualified template;
+  type    char(10);
+  seqNbr  int(10);
+  itemNbr char(10);
 end-ds;
 
-dcl-ds actual qualified;
-  type    char(10) inz('*ITEM');
-  name    varchar(256) inz('Dagobert Duck');
-endds;
+dcl-ds expected likeds(data_t) inz;
+dcl-ds actual likeds(data_t) inz;
+
+dcl-pr matcher ind;
+  expected   pointer const;
+  actual     pointer const;
+  message    like(msgText_t) options(*nopass);
+end-pr;
+
+expected.type = '*ITEM';
+expected.seqNbr = 1;
+
+actual.type = '*ITEM';
+actual.seqNbr = 2;
 
 assertThat( %addr(expected) :
             %addr(actual) :
-            %paddr(assertThatMatcher));
+            %paddr(matcher));
+
+// -------------------------------------------------------
+//  Procedure for comparing 'expected'with 'actual'.
+// -------------------------------------------------------
+dcl-proc matcher export;
+  dcl-pi *n ind;
+    expected   pointer const;
+    actual     pointer const;
+    message    like(msgText_t) options(*nopass);
+  end-pi;
+
+  dcl-ds expectedData likeds(data_t) based(expected);
+  dcl-ds actualData likeds(data_t) based(actual);
+
+  if (expectedData.type = actualData.type and 
+      expectedData.seqNbr = actualData.seqNbr and
+      expectedData.itemNbr = actualData.itemNbr);
+    return *on;
+  else;
+    return *off;
+  endif;
+
+end-proc;
 </pre></code>
 <p class="indent">
 In the example above, the matcher must compare the data structures and return <code>*on</code>
 or <code>*off</code> depending on the result. Most likely it returns <code>*off</code>, because
-neither the 'type' nor the 'name' do match.
+neither the 'type' nor the 'seqNbr' do match.
 </p>
 <p>
 <iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
