@@ -91,7 +91,7 @@
  /*  Let's do it!                                */
  /* -------------------------------------------- */
 
- "CMPMOD MODULE("prdLib"/OPDESCT  ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/OPDESCT  ) SRCFILE("prdLib"/QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
  "CRTSRVPGM  SRVPGM("prdLib"/OPDESCT) ",
             "MODULE("prdLib"/OPDESCT) ",

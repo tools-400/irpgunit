@@ -2,26 +2,26 @@
 
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
-	<title>Umsteigen von v1.10.0 nach v2.0.0</title>
+	<title>Aktualisieren von v1.10.0 nach v2.0.0</title>
 </head>
 
 <body>
-<h1>Umsteigen von v1.10.0 nach v2.0.0</h1>
+<h1>Aktualisieren von v1.10.0 nach v2.0.0</h1>
 Alle bestehenden Unit Test Suites sollten sich problemlos mit iRPGUnit 2.0 erstellen und 
-ausführen lassen. Dennoch: 
+ausfï¿½hren lassen. Dennoch: 
 <p>
 <table>
 <tr>
-<td class="notice"><b>Testen sie ihre bestehenden Test Suites sorgfältig innerhalb einer 
-                      geschützten Testumgebung mit iRPGUnit 2.0, bevor sie endgültig auf 
+<td class="notice"><b>Testen sie ihre bestehenden Test Suites sorgfï¿½ltig innerhalb einer 
+                      geschï¿½tzten Testumgebung mit iRPGUnit 2.0, bevor sie endgï¿½ltig auf 
                       die neue Version umsteigen.</b></td>
 </tr>
 </table>
 <p>
-Unit Test, welche ausschließlich die folgenden Zusicherungen verwenden, lassen sich
-problemlos unter allen Versionen von RPGUnit kompilieren und ausführen:
+Unit Test, welche ausschlieï¿½lich die folgenden Zusicherungen verwenden, lassen sich
+problemlos unter allen Versionen von RPGUnit kompilieren und ausfï¿½hren:
 <ul>
 <li>assert()</li>
 <li>aEqual()</li>
@@ -53,9 +53,9 @@ Die folgenden Unit Tests (kompiliert mit v1.10) brechen unter iRPGUnit mit einem
 </ul>
 Die folgenden Unit Tests lassen sich mit iRPGUnit nicht kompilieren: 
 <ul>
-<li>Test Suite <i>CMDRUNT</i>: Prototyp <i>logCompMsg()</i> in Modul <i>CMDRUNLOG</i> wurde geändert.</li>
+<li>Test Suite <i>CMDRUNT</i>: Prototyp <i>logCompMsg()</i> in Modul <i>CMDRUNLOG</i> wurde geï¿½ndert.</li>
 <li>Test Suite <i>EXTTSTT</i>: Parameter <i>mockSrvPgm</i> der Prozedur getTestSuite() wurde entfernt.</li>
-<li>Test Suite <i>RUCRTTSTT</i>: /COPY Teildatei <i>RUCRTTST</i> wurde umbenannt in <i>CRTTST</i> und die Anzahl Parameter von getCrtRpgModCmd() und getCrtSrvPgmCmd() haben sich geändert.</li>
+<li>Test Suite <i>RUCRTTSTT</i>: /COPY Teildatei <i>RUCRTTST</i> wurde umbenannt in <i>CRTTST</i> und die Anzahl Parameter von getCrtRpgModCmd() und getCrtSrvPgmCmd() haben sich geï¿½ndert.</li>
 <li>Test Suite <i>RUNT</i>: /COPY Teildatei <i>RUCRTTST</i> wurde umbenannt in <i>CMDRUNSRV</i>.</li>
 </ul>
 <p>

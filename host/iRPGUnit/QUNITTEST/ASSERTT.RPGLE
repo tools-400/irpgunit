@@ -45,6 +45,22 @@
      D                 pr                  extproc('testAssertWithSuccess')
      D testBigIntegerEquality...
      D                 pr                  extproc('testBigIntegerEquality')
+     D testAssertEqual_string...
+     D                 pr                  extproc('testAssertEqual_string')
+     D testAssertEqual_integer...
+     D                 pr                  extproc('testAssertEqual_integer')
+     D testAssertEqual_numeric...
+     D                 pr                  extproc('testAssertEqual_numeric')
+     D testAssertThat...
+     D                 pr                  extproc('testAssertThat')
+     D testAssertEqual_date...
+     D                 pr                  extproc('testAssertEqual_date')
+     D testAssertEqual_time...
+     D                 pr                  extproc('testAssertEqual_time')
+     D testAssertEqual_timestamp...
+     D                 pr                  extproc('testAssertEqual_timestamp')
+     D testAssertEqual_ind...
+     D                 pr                  extproc('testAssertEqual_ind')
 
 
       //----------------------------------------------------------------------
@@ -156,9 +172,9 @@
                : assertFailEvt.callStk.Entry(1).qStmt.procNm );
 
         monitor;
-           aEqual( '137'  : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
+           aEqual( '153'  : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
         on-error;
-           aEqual( '13700': assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
+           aEqual( '15300': assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
         endmon;
 
       /end-free
@@ -220,9 +236,9 @@
                                assertFailEvt.callStk.Entry(1).qStmt.procNm );
 
         monitor;
-           aEqual( '199'     : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
+           aEqual( '215'     : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
         on-error;
-           aEqual( '19900'   : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
+           aEqual( '21500'   : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
         endmon;
 
       /end-free
@@ -317,9 +333,9 @@
                              : assertFailEvt.callStk.Entry(1).qStmt.procNm );
 
         monitor;
-           aEqual( '301'     : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
+           aEqual( '317'     : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
         on-error;
-           aEqual( '30100'   : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
+           aEqual( '31700'   : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
         endmon;
 
       /end-free
@@ -439,8 +455,6 @@
      P CMDRUNSRV_runProc...
      P                 b
      D                 pi              n
-
-     D msgInfo         ds                  likeds(MsgInfo_t)
       /free
 
           monitor;
@@ -467,6 +481,495 @@
           on-error;
             return *on; // Bad. Message was captured.
           endmon;
+
+      /end-free
+     P                 e
+
+
+     PtestAssertEqual_string...
+     P                 b                   export
+     D                 pi
+
+     D assertFailEvtLong...
+     D                 ds                  likeds(assertFailEvtLong_t)
+      /free
+
+        // Test 1-char string
+        assertEqual( '1' :
+                     '1' );
+        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+
+        assertEqual( 'e' :
+                     'e' );
+        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+
+        monitor;
+          assertEqual( 'e' :
+                       'u' );
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Expected ''e'', but was ''u''.'
+                 : 'Error messages does not match expected value.');
+        endmon;
+
+        // Test equality
+        assertEqual( 'expected' :
+                     'expected' );
+        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+
+        // Test unequality without assertion message
+        monitor;
+          assertEqual( 'expected' :
+                       'unexpected value' );
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Expected ''expected'', but was ''unexpected value''.'
+                 : 'Error messages does not match expected value.');
+        endmon;
+
+        // Test unequality with assertion message
+        monitor;
+          assertEqual( 'expected' :
+                       'unexpected value' :
+                       'String values do not match');
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'String values do not match'
+                 : 'Error messages does not match expected value.');
+        endmon;
+
+      /end-free
+     P                 e
+
+
+     PtestAssertEqual_integer...
+     P                 b                   export
+     D                 pi
+
+     D assertFailEvtLong...
+     D                 ds                  likeds(assertFailEvtLong_t)
+      /free
+
+        // Test equality
+        assertEqual( 9223372036854775807 :
+                     9223372036854775807 );
+        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+
+        // Test unequality without assertion message
+        monitor;
+          assertEqual( -9223372036854775807 :
+                       -123 );
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Expected ''-9223372036854775807'', but was ''-123''.'
+                 : 'Error messages does not match expected value.');
+        endmon;
+
+        // Test unequality with assertion message
+        monitor;
+          assertEqual( 9223372036854775807 :
+                       123 :
+                       'Integer values do not match');
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Integer values do not match'
+                 : 'Error messages does not match expected value.');
+        endmon;
+
+      /end-free
+     P                 e
+
+
+     PtestAssertEqual_numeric...
+     P                 b                   export
+     D                 pi
+
+     D assertFailEvtLong...
+     D                 ds                  likeds(assertFailEvtLong_t)
+
+     D actualExact     s             63p20 inz(*hival)
+     D expectedExact   s             63p20 inz(*hival)
+
+     D actualLess      s             15p 5 inz(*hival)
+     D expectedLess    s             15p 5 inz(*hival)
+
+     D actualLike      s                   like(assertNumeric_t) inz(*hival)
+     D expectedLike    s                   like(assertNumeric_t) inz(*hival)
+
+     D actualShort     s              3i 0 inz(*hival)
+     D expectedShort   s              3i 0 inz(*hival)
+
+     D actualInt       s              5i 0 inz(*hival)
+     D expectedInt     s              5i 0 inz(*hival)
+
+     D actualLong      s             20i 0 inz(*hival)
+     D expectedLong    s             20i 0 inz(*hival)
+
+     D actualZoned     s             20s 0 inz(*hival)
+     D expectedZoned   s             20s 0 inz(*hival)
+
+     D actualSingle    s              4f   inz(*hival)
+     D expectedSingle  s              4f   inz(*hival)
+
+     D actualDouble    s              8f   inz(*hival)
+     D expectedDouble  s              8f   inz(*hival)
+      /free
+
+        // Test compiler
+        assertEqual( actualExact : expectedExact );
+        assertEqual( actualLess : expectedLess );
+        assertEqual( expectedLike: actualLike );
+        assertEqual( expectedInt : actualInt );
+        assertEqual( expectedShort : actualShort );
+        assertEqual( expectedLong : actualLong );
+        assertEqual( expectedZoned : actualZoned );
+
+        assertEqual( expectedSingle : actualSingle );
+        assertEqual( expectedDouble : actualDouble );
+
+        // The following assertEqual() statement produces the following compiler error
+        // message, if 'actualDecLoss' or 'expectedDecLoss' are defined with too many
+        // positions or decimal positions, e.g.:
+        //   63s15    too many positions before the comma
+        //   63s25    too many positions after the comma
+        //   "RNF3245: No prototype in the OVERLOAD keyword of ASSERTEQUAL matches the call."
+        // See test case: ACPTSTT.testOptionsExact() and TESTPGM20
+        //
+        // assertEqual( expectedDecLoss : actualDecLoss );
+
+        // Test equality
+        assertEqual( 1234567890,1234 :
+                     1234567890,1234 );
+        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+
+        // Test unequality without assertion message
+        monitor;
+          assertEqual( -1234567890,123 :
+                       -1234567890,122 );
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Expected ''-1234567890,123'', but was ''-1234567890,122''.'
+                 : 'Error messages does not match expected value.');
+        endmon;
+
+        // Test unequality with assertion message
+        monitor;
+          assertEqual( 1234567890,1234 :
+                       1234567890,1233 :
+                       'Numeric values do not match');
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Numeric values do not match'
+                 : 'Error messages does not match expected value.');
+        endmon;
+
+      /end-free
+     P                 e
+
+
+     PtestAssertThat...
+     P                 b                   export
+     D                 pi
+
+     D expected        s            128a   varying
+     D actual          s            128a   varying
+
+     D assertFailEvtLong...
+     D                 ds                  likeds(assertFailEvtLong_t)
+      /free
+
+        // Test equality
+        expected = 'Donald Duck';
+        actual = expected;
+        assertThat( %addr(expected) :
+                    %addr(actual) :
+                    %paddr(assertThatMatcherWithMsg));
+        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+
+        // Test unequality without assertion message but
+        // with a message returned by the matcher
+        monitor;
+          expected = 'Donald Duck';
+          actual = 'Dagobert Duck';
+          assertThat( %addr(expected) :
+                      %addr(actual) :
+                      %paddr(assertThatMatcherWithMsg));
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Matcher: Actual values does not match expected value.'
+                 : 'Error messages does not match message from matcher.');
+        endmon;
+
+        // Test unequality without any assertion message
+        monitor;
+          expected = 'Donald Duck';
+          actual = 'Dagobert Duck';
+          assertThat( %addr(expected) :
+                      %addr(actual) :
+                      %paddr(assertThatMatcherWithoutMsg));
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 '*N');
+        endmon;
+
+        // Test unequality with error message
+        monitor;
+          expected = 'Donald Duck';
+          actual = 'Dagobert Duck';
+          assertThat( %addr(expected) :
+                      %addr(actual) :
+                      %paddr(assertThatMatcherWithoutMsg) :
+                      'Matcher did not accept actual value.');
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Matcher did not accept actual value.');
+        endmon;
+
+      /end-free
+     P                 e
+
+     PtestAssertEqual_date...
+     P                 b                   export
+     D                 pi
+
+     D assertFailEvtLong...
+     D                 ds                  likeds(assertFailEvtLong_t)
+      /free
+
+        // Test equality
+        assertEqual( D'2024-09-16' : D'2024-09-16' );
+        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+
+        // Test unequality without assertion message
+        monitor;
+          assertEqual( D'2024-09-16' : D'2002-01-02' );
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Expected ''2024-09-16'', but was ''2002-01-02''.'
+                 : 'Error messages does not match expected value.');
+        endmon;
+
+        // Test unequality with assertion message
+        monitor;
+          assertEqual( D'2024-09-16' :
+                       D'2002-01-02' :
+                       'Date values do not match');
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Date values do not match'
+                 : 'Error messages does not match expected value.');
+        endmon;
+
+      /end-free
+     P                 e
+
+     PtestAssertEqual_time...
+     P                 b                   export
+     D                 pi
+
+     D assertFailEvtLong...
+     D                 ds                  likeds(assertFailEvtLong_t)
+      /free
+
+        // Test equality
+        assertEqual( T'11.22.33' : T'11.22.33' );
+        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+
+        // Test unequality without assertion message
+        monitor;
+          assertEqual( T'11.22.33' : T'22.33.44' );
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Expected ''11.22.33'', but was ''22.33.44''.'
+                 : 'Error messages does not match expected value.');
+        endmon;
+
+        // Test unequality with assertion message
+        monitor;
+          assertEqual( T'11.22.33' :
+                       T'22.33.44' :
+                       'Time values do not match');
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Time values do not match'
+                 : 'Error messages does not match expected value.');
+        endmon;
+
+      /end-free
+     P                 e
+
+     PtestAssertEqual_timestamp...
+     P                 b                   export
+     D                 pi
+
+     D assertFailEvtLong...
+     D                 ds                  likeds(assertFailEvtLong_t)
+      /free
+
+        // Test equality
+        assertEqual( Z'2024-09-16-11.22.33.123456789012' :
+                     Z'2024-09-16-11.22.33.123456789012' );
+        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+
+        // Test unequality without assertion message
+        monitor;
+          assertEqual( Z'2024-09-16-11.22.33.123456789012' :
+                       Z'2023-01-16-22.33.44.654321789012' );
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Expected ''2024-09-16-11.22.33.123456789012'', but was ' +
+                 '''2023-01-16-22.33.44.654321789012''.'
+                 : 'Error messages does not match expected value.');
+        endmon;
+
+        // Test unequality with assertion message
+        monitor;
+          assertEqual( Z'2024-09-16-11.22.33.123456789012' :
+                       Z'2023-01-16-22.33.44.654321789012' :
+                       'Timestamp values do not match');
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Timestamp values do not match'
+                 : 'Error messages does not match expected value.');
+        endmon;
+
+      /end-free
+     P                 e
+
+     PtestAssertEqual_ind...
+     P                 b                   export
+     D                 pi
+
+     D assertFailEvtLong...
+     D                 ds                  likeds(assertFailEvtLong_t)
+     D ind1            s               n   inz(*on)
+     D ind2            s               n   inz(*on)
+      /free
+
+        // Test indicator figurative constant.
+        monitor;
+        assertEqual( *on :
+                     *off );
+          fail('Expected the asssertion to fail.');
+        on-error;
+          // Does not yet work. Opened IBM support case:
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Expected ''1'', but was ' +
+                 '''0''.'
+                 : 'Error messages does not match expected value.');
+        endmon;
+
+        // Test equality
+        ind2 = *on;
+        ind2 = *on;
+        assertEqual( ind1 :
+                     ind2 );
+        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+
+        // Test unequality without assertion message
+        monitor;
+          ind2 = *on;
+          ind2 = *off;
+          assertEqual( ind1 :
+                       ind2 );
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Expected ''1'', but was ' +
+                 '''0''.'
+                 : 'Error messages does not match expected value.');
+        endmon;
+
+        // Test unequality with assertion message
+        monitor;
+          ind2 = *on;
+          ind2 = *off;
+          assertEqual( ind1 :
+                       ind2 :
+                       'Indicator values do not match');
+          fail('Expected the asssertion to fail.');
+        on-error;
+          assertFailEvtLong = getAssertFailEvtLong();
+          assert(assertFailEvtLong.msg =
+                 'Indicator values do not match'
+                 : 'Error messages does not match expected value.');
+        endmon;
+
+      /end-free
+     P                 e
+
+     P assertThatMatcherWithMsg...
+     P                 b                   export
+     D                 pi              n
+     D  pExpected                      *   const
+     D  pActual                        *   const
+     D  message                            like(msgText_t)
+
+     D expected        s            128a   varying based(pExpected)
+     D actual          s            128a   varying based(pActual)
+      /free
+
+        if (expected = actual);
+          message = '';
+          return *on;
+        else;
+          message = 'Matcher: Actual values does not match expected value.';
+          return *off;
+        endif;
+
+      /end-free
+     P                 e
+
+
+     P assertThatMatcherWithoutMsg...
+     P                 b                   export
+     D                 pi              n
+     D  pExpected                      *   const
+     D  pActual                        *   const
+
+     D expected        s            128a   varying based(pExpected)
+     D actual          s            128a   varying based(pActual)
+      /free
+
+        if (expected = actual);
+          return *on;
+        else;
+          return *off;
+        endif;
 
       /end-free
      P                 e

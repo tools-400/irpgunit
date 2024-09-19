@@ -9,6 +9,8 @@
         <topic href="html/reference/teardownTestSuite.html"          label="Tear down test suite" />
     </topic>
     <topic label="Assertions">
+        <topic href="html/reference/assertEqual.html"                label="assertEqual" />
+        <topic href="html/reference/assertThat.html"                 label="assertThat" />
         <topic href="html/reference/aEqual.html"                     label="aEqual" />
         <topic href="html/reference/iEqual.html"                     label="iEqual" />
         <topic href="html/reference/nEqual.html"                     label="nEqual" />

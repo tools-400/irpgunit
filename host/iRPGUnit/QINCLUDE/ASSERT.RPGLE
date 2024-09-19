@@ -54,5 +54,11 @@
      D                                     clearAssertCounter+
      D                                     ')
 
+     D doAssert        pr                  extproc('doAssert')
+     D  condition                      n   const
+     D  msgIfFalse                16384a   const varying options(*Varsize)
+     D  toCallStacKE                 10i 0 const
+     D  startProc                   256a   const varying options(*varsize)
+
       /endif
 

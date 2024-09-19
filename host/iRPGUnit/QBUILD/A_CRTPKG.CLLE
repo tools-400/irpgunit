@@ -220,6 +220,12 @@
                           TOFILE(&LIB/&QINCLUDE) FROMMBR(ASSERT) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(ASSERTNI) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(ASSERTV2) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
                           TOFILE(&LIB/&QINCLUDE) FROMMBR(CALLPRC) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
@@ -337,6 +343,14 @@
                           TOFILE(&LIB/&QINCLUDE) FROMMBR(XMLWRITER) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
 
+             /* Create a copy of the original ASSERTV2 member, because     */
+             /* the original member is overwritten during the installation */
+             /* with ASSERTNI in case RPGUNIT is installed on 7.4 or 7.3   */
+             /* without the required PTFs.                                 */
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(ASSERTV2) +
+                          TOMBR(ASSERTV2.O) MBROPT(*REPLACE)
+
              /* ---------------------------------------------------- */
              /*  Copy source members: QLLIST                         */
              /* ---------------------------------------------------- */
@@ -392,6 +406,12 @@
                           TOFILE(&LIB/&QSRC) FROMMBR(ASSERT) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(ASSERTNI) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(ASSERTV2) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
                           TOFILE(&LIB/&QSRC) FROMMBR(CALLPRC) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSRC) +
@@ -425,6 +445,9 @@
                           TOFILE(&LIB/&QSRC) FROMMBR(EXTTST) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(GETPTFS) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
                           TOFILE(&LIB/&QSRC) FROMMBR(JOBLOG) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSRC) +
@@ -447,6 +470,9 @@
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSRC) +
                           TOFILE(&LIB/&QSRC) FROMMBR(MKTESTCASE) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSRC) +
+                          TOFILE(&LIB/&QSRC) FROMMBR(MKVERSION) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSRC) +
                           TOFILE(&LIB/&QSRC) FROMMBR(OBJECT) +
@@ -822,6 +848,19 @@
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
 
              /* ---------------------------------------------------- */
+             /*  Set library list                                    */
+             /* ---------------------------------------------------- */
+             RMVLIBLE   LIB(&LIB)
+             MONMSG     MSGID(CPF2104)
+
+             ADDLIBLE   LIB(&LIB) POSITION(*FIRST)
+
+             RMVLIBLE   LIB(&DEVLIB)
+             MONMSG     MSGID(CPF2104) EXEC(DO)
+               CHGVAR     VAR(&IS_DEVLIB) VALUE('0')
+             ENDDO
+
+             /* ---------------------------------------------------- */
              /*  Update copyright information.                       */
              /* ---------------------------------------------------- */
              CRTBNDRPG  PGM(&TMPLIB/CRTPKGCPR) +
@@ -847,23 +886,8 @@
              /* ---------------------------------------------------- */
              /*  Re-create objects for the specified target release  */
              /* ---------------------------------------------------- */
-             RMVLIBLE   LIB(&LIB)
-             MONMSG     MSGID(CPF2104)
-
-             ADDLIBLE   LIB(&LIB) POSITION(*FIRST)
-
-             RMVLIBLE   LIB(&DEVLIB)
-             MONMSG     MSGID(CPF2104) EXEC(DO)
-               CHGVAR     VAR(&IS_DEVLIB) VALUE('0')
-             ENDDO
-
              STRREXPRC SRCMBR(A_INSTALL) SRCFILE(&LIB/QBUILD) +
                          PARM('INSTALL' *BCAT &LIB *BCAT &DBGVIEW *BCAT &TGTRLS)
-
-             RMVLIBLE   LIB(&LIB)
-             IF         COND(&IS_DEVLIB) THEN(DO)
-               ADDLIBLE   LIB(&DEVLIB) POSITION(*FIRST)
-             ENDDO
 
              /* ---------------------------------------------------- */
              /*  Change object owner to QPGMR.                       */
@@ -915,6 +939,14 @@
              DLTPGM     PGM(&TMPLIB/CRTPKGOWN)
              DLTPGM     PGM(&TMPLIB/CRTPKGMDT)
              DLTPGM     PGM(&TMPLIB/CRTPKGCPR)
+
+             /* ---------------------------------------------------- */
+             /*  Restore library list                                */
+             /* ---------------------------------------------------- */
+             RMVLIBLE   LIB(&LIB)
+             IF         COND(&IS_DEVLIB) THEN(DO)
+               ADDLIBLE   LIB(&DEVLIB) POSITION(*FIRST)
+             ENDDO
 
              SNDPGMMSG  MSGID(CPF9897) MSGF(*LIBL/QCPFMSG) +
                           MSGDTA('*** Successfully create RPGUNIT library ***') +

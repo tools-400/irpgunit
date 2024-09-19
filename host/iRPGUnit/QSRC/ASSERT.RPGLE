@@ -1,20 +1,20 @@
       // ==========================================================================
-       //  iRPGUnit - Assertion Facilities.
+      //  iRPGUnit - Assertion Facilities.
       // ==========================================================================
-       //  Copyright (c) 2013-2019 iRPGUnit Project Team
-       //  All rights reserved. This program and the accompanying materials
-       //  are made available under the terms of the Common Public License v1.0
-       //  which accompanies this distribution, and is available at
-       //  http://www.eclipse.org/legal/cpl-v10.html
+      //  Copyright (c) 2013-2019 iRPGUnit Project Team
+      //  All rights reserved. This program and the accompanying materials
+      //  are made available under the terms of the Common Public License v1.0
+      //  which accompanies this distribution, and is available at
+      //  http://www.eclipse.org/legal/cpl-v10.html
       // ==========================================================================
-       // >>PRE-COMPILER<<
-       //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
-       //   >>IMPORTANT<<
-       //     >>PARM<<  OPTION(*EVENTF);
-       //     >>PARM<<  DBGVIEW(*LIST);
-       //   >>END-IMPORTANT<<
-       //   >>EXECUTE<<
-       // >>END-PRE-COMPILER<<
+      // >>PRE-COMPILER<<
+      //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+      //   >>IMPORTANT<<
+      //     >>PARM<<  OPTION(*EVENTF);
+      //     >>PARM<<  DBGVIEW(*LIST);
+      //   >>END-IMPORTANT<<
+      //   >>EXECUTE<<
+      // >>END-PRE-COMPILER<<
       // ==========================================================================
 
      H NoMain
@@ -43,13 +43,6 @@
        //----------------------------------------------------------------------
 
      D checkStartPgm   pr                  extproc('checkStartPgm')
-
-     D doAssert        pr                  extproc('doAssert')
-     D  condition                      n   const
-     D  msgIfFalse                16384a   const varying options(*Varsize)
-     D  toCallStacKE                 10i 0 const
-     D  startProc                   256a   const varying options(*varsize)
-
 
      D doFail          pr                  extproc('doFail')
      D  msg                       16384a   const varying options(*Varsize)
@@ -103,20 +96,6 @@
        //----------------------------------------------------------------------
        //   GLOBAL CONSTANTS
        //----------------------------------------------------------------------
-
-     D NO_MSG_TEXT     c                   '*N'
-
-     D START_PROC_AEQUAL...
-     D                 c                   'aEqual'
-     D START_PROC_IEQUAL...
-     D                 c                   'iEqual'
-     D START_PROC_NEQUAL...
-     D                 c                   'nEqual'
-     D START_PROC_ASSERT...
-     D                 c                   'assert'
-     D START_PROC_FAIL...
-     D                 c                   'fail'
-
 
        //----------------------------------------------------------------------
        //   TYPE TEMPLATE
@@ -244,7 +223,7 @@
            + 'Expected ' + QUOTE + %trimr(tExpected) + QUOTE + ','
            + ' but was ' + QUOTE + %trimr(tActual  ) + QUOTE + '.';
        doAssert(tExpected = tActual: msg
-                : ONE_CALL_STK_LVL_ABOVE: START_PROC_AEQUAL);
+                : ONE_CALL_STK_LVL_ABOVE: %proc());
 
       /end-free
      P                 e
@@ -269,10 +248,10 @@
        endif;
 
        msg = msg
-           + 'Expected ' + %char(expected) + ','
-           + ' but was ' + %char(actual  ) + '.';
+           + 'Expected ' + formatNumeric(expected) + ','
+           + ' but was ' + formatNumeric(actual) + '.';
        doAssert(expected = actual: msg
-                : ONE_CALL_STK_LVL_ABOVE: START_PROC_IEQUAL);
+                : ONE_CALL_STK_LVL_ABOVE: %proc());
 
       /end-free
      P                 e
@@ -299,7 +278,7 @@
            + 'Expected ' + QUOTE + expected + QUOTE + ','
            + ' but was ' + QUOTE + actual   + QUOTE + '.';
        doAssert(expected = actual: msg
-                : ONE_CALL_STK_LVL_ABOVE: START_PROC_NEQUAL);
+                : ONE_CALL_STK_LVL_ABOVE: %proc());
 
 
       /end-free
@@ -337,11 +316,11 @@
                          descInf: strInf: fc: msgIfFalse: %len(msgIfFalse));
 
          doAssert(condition: tMsgIfFalse
-                  : ONE_CALL_STK_LVL_ABOVE: START_PROC_ASSERT);
+                  : ONE_CALL_STK_LVL_ABOVE: %proc());
        else;
          // Called by Cobol or new RPG after iRPGUnit v4.
          doAssert(condition: NO_MSG_TEXT
-                  : ONE_CALL_STK_LVL_ABOVE: START_PROC_ASSERT);
+                  : ONE_CALL_STK_LVL_ABOVE: %proc());
        endif;
 
       /end-free
@@ -376,10 +355,10 @@
                 : strInf.curLen: strInf.maxLen: fc);
          tMsg = getValueFromDesc(descInf: strInf: fc: msg: %len(msg));
 
-         doFail(tMsg: -1: START_PROC_FAIL);
+         doFail(tMsg: -1: %proc());
        else;
          // Called by Cobol or new RPG after iRPGUnit v4.
-         doFail(NO_MSG_TEXT: -1: START_PROC_FAIL);
+         doFail(NO_MSG_TEXT: -1: %proc());
        endif;
 
       /end-free
@@ -387,7 +366,7 @@
 
 
      P doAssert...
-     P                 b
+     P                 b                   export
      D                 pi
      D  condition                      n   const
      D  msgIfFalse                16384a   const varying options(*Varsize)
@@ -409,7 +388,7 @@
 
 
      P doFail...
-     P                 b
+     P                 b                   export
      D                 pi
      D  msg                       16384a   const varying options(*Varsize)
      D  toCallStacKE                 10i 0 const
@@ -854,7 +833,8 @@
          // Skip all procedures until we saw the
          // assertion procedure
          if (callStkE.qStmt.qPgm.nm = 'RUTESTCASE' and
-             callStkE.qStmt.qMod.nm = 'ASSERT' and
+             (callStkE.qStmt.qMod.nm = 'ASSERT' or
+              callStkE.qStmt.qMod.nm = 'ASSERTV2' ) and
              callStkE.qStmt.procNm = startProc);
            doReturnStckE = *on;
            ent_p += ent.len;

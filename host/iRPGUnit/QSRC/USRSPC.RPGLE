@@ -65,7 +65,7 @@
 
         usrSpcCrtParm.nm        = usrSpc;
         usrSpcCrtParm.attribute = 'USRSPC';
-        usrSpcCrtParm.size      = 1024;
+        usrSpcCrtParm.size      = 16384;
         usrSpcCrtParm.value     = x'00';
         usrSpcCrtParm.auth      = '*ALL';
         usrSpcCrtParm.text      = text;

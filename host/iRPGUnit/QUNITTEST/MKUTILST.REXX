@@ -90,7 +90,8 @@
  /* -------------------------------------------- */
  /*  Let's do it!                                */
  /* -------------------------------------------- */
- "CMPMOD MODULE("prdLib"/TESTUTILST) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/TESTUTILST) SRCFILE("prdLib"/QUNITTEST) ",
+    "DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
  "CRTSRVPGM  SRVPGM("prdLib"/TESTUTILST) ",
             "MODULE("prdLib"/TESTUTILST) ",

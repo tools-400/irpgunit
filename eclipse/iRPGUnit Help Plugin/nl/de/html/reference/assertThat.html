@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="../stylesheet.css">
+    <title>assertThat (assertThat)</title>
+</head>
+
+<body>
+<h1>assertThat</h1>
+<b>Syntax:</b>
+<p class="indent">
+<code>assertThat( 'pErwarteterWert' : 'pTatsächlicherWert' : pMatcher [: 'nachricht');</code>
+</p>
+<b>Beschreibung:</b>
+<p class="indent">
+Prüft, ob die Daten, addressiert durch 'pErwarteterWert' und 'pTatsächlicherWert', den in der
+Prozedur 'pMatcher' hinterlegten Regeln entsprechen. Die Zusicherung gilt als fehlgeschlagen, wenn
+der Matcher <code>*off</code> zurückliefert.
+<p class="indent">
+Diese Zusicherung kann zum Vergleichen besonders langer Zeichenketten oder anderer komplexer
+Datentypen, wie zum Beispiel <b>XML</b> oder <b>Json</b> verwendet werden.
+</p>
+</p>
+<b>Funktionswert:</b>
+<p class="indent">
+void
+</p>
+<b>Beispiel 1 (Zeichenkette):</b>
+<p>
+<code><pre class="indent">
+expected = 'Donald Duck';
+actual = 'Dagobert Duck';
+assertThat( %addr(expected) :
+            %addr(actual) :
+            %paddr(assertThatMatcher));
+</pre></code>
+<p class="indent">
+In diesem Beispiel sollte der Matcher <code>*off</code> zurückgeben, weil 'Donald Duck'
+offensichtlich nicht gleich 'Dagobert Duck' ist.
+</p>
+<b>Beispiel 2 (Datenstruktur):</b>
+<p>
+<code><pre class="indent">
+dcl-ds data_t qualified template;
+  type    char(10);
+  seqNbr  int(10);
+  itemNbr char(10);
+end-ds;
+
+dcl-ds erwarteterWert likeds(data_t) inz;
+dcl-ds tatsaechlicherWert likeds(data_t) inz;
+
+dcl-pr matcher ind;
+  expected   pointer const;
+  actual     pointer const;
+  message    like(msgText_t) options(*nopass);
+end-pr;
+
+erwarteterWert.type = '*ITEM';
+erwarteterWert.seqNbr = 1;
+erwarteterWert.itemNbr = '4715687963';
+
+tatsaechlicherWert.type = '*ITEM';
+tatsaechlicherWert.seqNbr = 2;
+tatsaechlicherWert.itemNbr = '8858416778';
+
+assertThat( %addr(erwarteterWert) :
+            %addr(tatsaechlicherWert) :
+            %paddr(matcher));
+
+// -------------------------------------------------------
+//  Prozedur zum Vergleichen von 'erwarteterWert'
+//  mit 'tatsaechlicherWert'.
+// -------------------------------------------------------
+dcl-proc matcher export;
+  dcl-pi *n ind;
+    expected   pointer const;
+    actual     pointer const;
+    message    like(msgText_t) options(*nopass);
+  end-pi;
+
+  dcl-ds expectedData likeds(data_t) based(expected);
+  dcl-ds actualData likeds(data_t) based(actual);
+
+  if (expectedData.type = actualData.type and 
+      expectedData.seqNbr = actualData.seqNbr and
+      expectedData.itemNbr = actualData.itemNbr);
+    return *on;
+  else;
+    return *off;
+  endif;
+
+end-proc;
+
+</pre></code>
+<p class="indent">
+In diesem Beispiel muss der Matcher die Datenstrukturen vergleichen und, abhängig vom Ergebnis der
+Prüfung, entweder <code>*on</code> oder <code>*off</code> zurückgeben. Sehr wahrscheinlich wird er
+<code>*off</code> zurückgeben, weil weder 'seqNbr' noch 'itemNbr' übereinstimmen.
+</p>
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

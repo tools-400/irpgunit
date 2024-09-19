@@ -197,6 +197,18 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(ASSERTNI) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Assertion Facility V2 Not Implemented.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(ASSERTV2) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Assertion Facilities V2')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
                           MBR(CALLPRC) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - Call a procedure in a SRVPGM.')
@@ -509,6 +521,24 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(ASSERTNI) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Assertion Facility V2 Not Implemented.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(ASSERTV2) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Assertion Facilities V2')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(ASSERTV2.O) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Assertion Facilities V2')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
                           MBR(CALLPRC) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - Call a procedure in a SRVPGM.')
@@ -575,6 +605,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(GETPTFS) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Get OS400 PTF Status.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
                           MBR(JOBLOG) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - Job Log Reader.')
@@ -620,6 +656,12 @@
                           MBR(MKTESTCASE) +
                           SRCTYPE(REXX) +
                           TEXT('iRPGUnit - Test Suite Toolkit.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(MKVERSION) +
+                          SRCTYPE(REXX) +
+                          TEXT('iRPGUnit - Create Version Information Programs.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +
