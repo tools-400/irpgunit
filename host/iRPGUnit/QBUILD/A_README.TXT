@@ -83,10 +83,11 @@ b) Optionally run the RPGUnit self tests:
 
 --------------------------
 
-Version 5.0.0 - 13.09.2024
+Version 5.0.0 - 19.09.2024
 --------------------------
  * Added new assertions:
-    - assertEqual()
+    - assertEqual() (suggested by Rafał Gała)
+    - assertThat()
 
 Version 4.2.1 - 10.09.2024
 --------------------------
