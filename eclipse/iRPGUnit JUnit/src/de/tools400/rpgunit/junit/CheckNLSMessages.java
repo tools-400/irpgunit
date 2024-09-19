@@ -23,9 +23,9 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.junit.Test;
+
+import junit.framework.JUnit4TestAdapter;
 
 /**
  * <b>JUnit 4 Test Case</b>
@@ -112,16 +112,16 @@ public class CheckNLSMessages {
 
             // Check
             System.out.println("Testing: " + nlsMessageConstant);
-            assertTrue("ERROR:" + localeInfo + "NLS string must not be NULL or empty: " + nlsMessageConstant, messageText != null
-                && messageText.trim().length() > 0);
+            assertTrue("ERROR:" + localeInfo + "NLS string must not be NULL or empty: " + nlsMessageConstant,
+                messageText != null && messageText.trim().length() > 0);
             assertFalse("ERROR:" + localeInfo + "NLS String must not end with spaces: " + nlsMessageConstant, messageText.endsWith(" "));
             assertNotNull("ERROR:" + localeInfo + "Message text must not be [null]. Missing property: " + nlsMessageConstant + "("
                 + nlsMessagesObject.getClass().getName() + ")", messageText);
             assertTrue("ERROR:" + localeInfo + "Length of message must be greater than zero. Property: " + nlsMessageConstant,
                 messageText.length() > 0);
             try {
-                assertEquals("ERROR:" + localeInfo + "Assigned message text must match text in properties file: " + nlsMessageConstant, messageText,
-                    field.get(null));
+                assertEquals("ERROR:" + localeInfo + "Assigned message text must match text in properties file: " + nlsMessageConstant
+                    + ". Check properties file for duplicate entries.", messageText, field.get(null));
             } catch (NullPointerException e) {
                 assertTrue("ERROR:" + localeInfo + "'static' modifier missing for: " + field.getName(), false);
             }
