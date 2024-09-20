@@ -23,10 +23,10 @@ iRPGUnit 3.0.
 The Eclipse update sites of the plug-in are:
 
 Release Version:
-   https://tools400.github.io/irpgunit/update-site/eclipse/rdi8.0/
+   https://tools-400.github.io/irpgunit/update-site/eclipse/rdi8.0/
 
 Beta Version:
-   https://tools400.github.io/irpgunit/beta-version/update-site/eclipse/rdi8.0/
+   https://tools-400.github.io/irpgunit/beta-version/update-site/eclipse/rdi8.0/
 
 Let me know your experiences!
 

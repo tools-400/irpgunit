@@ -6,11 +6,11 @@
       provider-name="iRPGUnit Project Team"
       plugin="de.tools400.rpgunit.core">
 
-   <description url="https://tools400.github.io/irpgunit/">
+   <description url="https://tools-400.github.io/irpgunit/">
       %description
    </description>
 
-   <copyright url="https://tools400.github.io/irpgunit/">
+   <copyright url="https://tools-400.github.io/irpgunit/">
       %copyright
    </copyright>
 
