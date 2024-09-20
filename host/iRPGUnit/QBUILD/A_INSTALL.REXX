@@ -39,6 +39,17 @@
 /*                            7.4: ILE RPG runtime: SI71537            */
 /*                                 ILE RPG compiler: SI71536           */
 /* =================================================================== */
+/*  Usually member ASSERTV2 is compiled. But on 7.4 and 7.3 systems    */
+/*  without the required PTFs, member ASSERTV2 is replaced by          */
+/*  as part of the installation process.                               */
+/*  Member ASSERTNI implements the same procedures as member ASSERTV2  */
+/*  but the procedures send the following *ESCAPE message:             */
+/*   "Procedure <proc_name> has not been implemented for this OS400    */
+/*    release."                                                        */
+/*  The original source code of ASSERTV2 is also stored in member      */
+/*  ASSERTV2.O. This member is created by A_CRTPKG.CLLE when           */
+/*  creating the distribution library.                                 */
+/* =================================================================== */
 /*   >>PRE-COMPILER<<                                                  */
 /*     >>CRTCMD<<  STRREXPRC SRCMBR(&SM) SRCFILE(&SL/&SF);             */
 /*     >>IMPORTANT<<                                                   */
