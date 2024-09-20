@@ -214,7 +214,6 @@
             <property name="help.site.url" value="${target.ide.root.beta.help.site.url}" />
             <property name="files.version.regex" value="${files.beta.version.regex}"/>
             <property name="files.version.replace" value="${files.beta.version.replace}"/>
-            <property name="html.css.property.display.div.beta.version" value="inherit" />
         	<property name="build.update.site.url" value="${target.ide.root.beta.update.site.url}" />
         </then>
         <else>
@@ -226,7 +225,6 @@
             <property name="help.site.url" value="${target.ide.root.help.site.url}" />
             <property name="files.version.regex" value="${files.release.version.regex}"/>
             <property name="files.version.replace" value="${files.release.version.replace}"/>
-            <property name="html.css.property.display.div.beta.version" value="none" />
         	<property name="build.update.site.url" value="${target.ide.root.update.site.url}" />
         </else>
     </if>
@@ -263,9 +261,6 @@
 
     <property name="site.xml.property.url.regex" value="(&lt;site)([ ]*url=&quot;\S*&quot;[ ]*)?(&gt;)" />
     <property name="site.xml.property.url.replace" value="\1 url=&quot;${target.ide.root.update.site.url}&quot;\3" />
-
-    <property name="html.css.property.display.regex" value="(style=&quot;display:)\s*(none|inherit)\s*(;&quot;)" />
-    <property name="html.css.property.display.replace" value="\1 ${html.css.property.display.div.beta.version}\3" />
 
     <!-- Set common upload properties -->
     <property name="build.dir" location="./.." />
@@ -558,7 +553,6 @@
         <replace file="${build.upload.dir.home}/${home.page}" token="@BETA_UPDATE_SITE_URL@" value="${target.ide.root.beta.update.site.url}" />
         <replace file="${build.upload.dir.home}/${home.page}" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
         <replace file="${build.upload.dir.home}/${home.page}" token="@BETA_HELP_SITE_URL@" value="${target.ide.root.beta.help.site.url}" />
-        <replace file="${build.upload.dir.home}/${home.page}" token="@HAVE_BETA_VERSION@" value="${html.css.property.display.div.beta.version}" />
         <replace file="${build.upload.dir.home}/${home.page}" token="@FILES_PAGE@" value="${build.pages.files.url}" />
         <replace file="${build.upload.dir.home}/${home.page}" token="@ECLIPSE_MARKETPLACE@" value="${build.eclipse.marketplace.url}"/>
         <replace file="${build.upload.dir.home}/${home.page}" token="@HOME_PAGE@" value="${build.pages.homepage.url}" />
@@ -614,7 +608,6 @@
         <replace file="${build.upload.dir.home}/${files.page}" token="@TARGET_IDE@" value="${target.ide.sf.dir}" />
         <replace file="${build.upload.dir.home}/${files.page}" token="@TARGET_IDE_FULL_NAME@" value="${target.ide.ide.product.full.name}" />
         <replace file="${build.upload.dir.home}/${files.page}" token="@FILES_PAGE@" value="${build.pages.files.url}" />
-        <replace file="${build.upload.dir.home}/${files.page}" token="@HAVE_BETA_VERSION@" value="${html.css.property.display.div.beta.version}" />
 
         <replace file="${build.upload.dir.home}/${files.page}" token="@HOME_PAGE@" value="${build.pages.homepage.url}" />
         <replace file="${build.upload.dir.home}/${files.page}" token="@TARGET_IDE@" value="${target.ide.sf.dir}" />
@@ -785,11 +778,6 @@
 
         <!-- Replace version number -->
         <replaceregexp match="${files.version.regex}" replace="${files.version.replace}" flags="g" byline="true">
-            <fileset file="${target.ide.uload.dir}/${files.page}" />
-        </replaceregexp>
-
-        <!-- Replace CCS property 'display' -->
-        <replaceregexp match="${html.css.property.display.regex}" replace="${html.css.property.display.replace}" flags="g" byline="true">
             <fileset file="${target.ide.uload.dir}/${files.page}" />
         </replaceregexp>
 
