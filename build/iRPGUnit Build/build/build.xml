@@ -215,6 +215,7 @@
             <property name="files.version.regex" value="${files.beta.version.regex}"/>
             <property name="files.version.replace" value="${files.beta.version.replace}"/>
             <property name="html.css.property.display.div.beta.version" value="inherit" />
+        	<property name="build.update.site.url" value="${target.ide.root.beta.update.site.url}" />
         </then>
         <else>
             <echo>Building a RELEASE version.</echo>
@@ -226,6 +227,7 @@
             <property name="files.version.regex" value="${files.release.version.regex}"/>
             <property name="files.version.replace" value="${files.release.version.replace}"/>
             <property name="html.css.property.display.div.beta.version" value="none" />
+        	<property name="build.update.site.url" value="${target.ide.root.update.site.url}" />
         </else>
     </if>
 
@@ -487,7 +489,7 @@
 
         <replace file="${build.upload.dir.web.eclipse}/index.html" token="@PROJECT_HOME@"    value="${build.pages.project.url}" />
         <replace file="${build.upload.dir.web.eclipse}/index.html" token="@HOME_PAGE@"       value="${build.pages.homepage.url}" />
-        <replace file="${build.upload.dir.web.eclipse}/index.html" token="@UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
+        <replace file="${build.upload.dir.web.eclipse}/index.html" token="@UPDATE_SITE_URL@" value="${build.update.site.url}" />
         <replace file="${build.upload.dir.web.eclipse}/index.html" token="@FILES_PAGE@"      value="${build.pages.files.url}" />
         <replace file="${build.upload.dir.web.eclipse}/index.html" token="@HELP_URL@"        value="${help.site.url}" />
 
