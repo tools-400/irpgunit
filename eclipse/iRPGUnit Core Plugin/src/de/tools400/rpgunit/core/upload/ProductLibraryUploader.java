@@ -10,6 +10,10 @@ package de.tools400.rpgunit.core.upload;
 
 import java.io.File;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,7 +42,6 @@ import de.tools400.rpgunit.core.helpers.LibraryListHelper.LibraryList;
 import de.tools400.rpgunit.core.helpers.OS400Helper;
 import de.tools400.rpgunit.core.helpers.OS400Release;
 import de.tools400.rpgunit.core.helpers.StringHelper;
-import de.tools400.rpgunit.core.host.GetPTFStatus;
 import de.tools400.rpgunit.core.preferences.Preferences;
 import de.tools400.rpgunit.core.ui.dialog.SignOnDialog;
 import de.tools400.rpgunit.core.utils.ExceptionHelper;
@@ -500,17 +503,74 @@ public class ProductLibraryUploader {
         return requiredStatus;
     }
 
-    private boolean testPTFStatus(AS400 system, String... ptfs) throws Exception {
+    private boolean testPTFStatus(AS400 system, String... ptfs) {
 
-        for (String ptf : ptfs) {
-            String ptfStatus = OS400Helper.getPTFStatus(as400, ptf);
-            if (!(GetPTFStatus.PTF_STATUS_APPLIED.equals(ptfStatus) || GetPTFStatus.PTF_STATUS_PERMANENTLY_APPLIED.equals(ptfStatus)
-                || GetPTFStatus.PTF_STATUS_SUPERSEDED.equals(ptfStatus))) {
-                return false;
+        int count = 0;
+
+        try {
+
+            Connection jdbcConnection = iSeriesConnection.getJDBCConnection(";prompt=false;big decimal=false", false);
+
+            PreparedStatement preparedStatementSelect = null;
+            ResultSet resultSet = null;
+            try {
+
+                StringBuilder buffer = new StringBuilder();
+
+                for (int i = 0; i < ptfs.length; i++) {
+                    if (i > 0) {
+                        buffer.append(", ");
+                    }
+                    buffer.append("'");
+                    buffer.append(ptfs[i]);
+                    buffer.append("'");
+                }
+
+                //@formatter:off
+                String sqlStatement = 
+                    "SELECT PTF_IDENTIFIER, PTF_LOADED_STATUS FROM QSYS2.PTF_INFO " +
+                       "WHERE PTF_IDENTIFIER IN (" + buffer.toString() + ") AND (" + 
+                             "PTF_LOADED_STATUS = 'APPLIED' OR " + 
+                             "PTF_LOADED_STATUS = 'PERMANENTLY_APPLIED' OR " + 
+                             "PTF_LOADED_STATUS = 'SUPERSEEDED')";
+                //@formatter:on
+
+                preparedStatementSelect = jdbcConnection.prepareStatement(sqlStatement, ResultSet.TYPE_SCROLL_INSENSITIVE,
+                    ResultSet.CONCUR_READ_ONLY);
+
+                // preparedStatementSelect.setString(1, buffer.toString());
+                resultSet = preparedStatementSelect.executeQuery();
+
+                resultSet.beforeFirst();
+                while (resultSet.next()) {
+                    count++;
+                }
+
+            } catch (SQLException e) {
+                setError(Messages.bind(Messages.Could_not_get_PTF_status_Reason_A, e.getLocalizedMessage()), e);
             }
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e1) {
+                }
+            }
+            if (preparedStatementSelect != null) {
+                try {
+                    preparedStatementSelect.close();
+                } catch (SQLException e1) {
+                }
+            }
+
+        } catch (SQLException e) {
+            setError(Messages.bind(Messages.Could_not_get_PTF_status_Reason_A, e.getLocalizedMessage()), e);
         }
 
-        return true;
+        if (count > ptfs.length) {
+            return true;
+        }
+
+        return false;
     }
 
     private boolean checkFile(AS400 system, String library, String fileName) {
