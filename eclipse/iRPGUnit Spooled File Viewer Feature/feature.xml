@@ -2,7 +2,7 @@
 <feature
       id="de.tools400.rpgunit.spooledfileviewer"
       label="iRPGUnit Spooled File Viewer Feature (recommended, if iSphere is missing)"
-      version="5.0.0.b002"
+      version="5.0.0.b003"
       provider-name="Tools400"
       plugin="de.tools400.rpgunit.core">
 
@@ -19,12 +19,12 @@
    </license>
 
    <url>
-      <update label="iRPGUnit - Remote Update Site" url="https://tools400.github.io/irpgunit/update-site/eclipse/rdi8.0/"/>
+      <update label="iRPGUnit - Remote Update Site" url="https://tools-400.github.io/irpgunit/update-site/eclipse/rdi8.0/"/>
       <discovery label="iRPGUnit Project Team" url="http://www.tools400.de"/>
    </url>
 
    <requires>
-      <import feature="de.tools400.rpgunit.core" version="5.0.0.b002" match="greaterOrEqual"/>
+      <import feature="de.tools400.rpgunit.core" version="5.0.0.b003" match="greaterOrEqual"/>
    </requires>
 
    <plugin
