@@ -197,12 +197,6 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
-                          MBR(ASSERTNI) +
-                          SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - Assertion Facility V2 Not Implemented.')
-             MONMSG     MSGID(CPF3288)
-
-             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
                           MBR(ASSERTV2) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - Assertion Facilities V2')
@@ -521,19 +515,7 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +
-                          MBR(ASSERTNI) +
-                          SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - Assertion Facility V2 Not Implemented.')
-             MONMSG     MSGID(CPF3288)
-
-             CHGPFM     FILE(&TARGETLIB/QSRC) +
                           MBR(ASSERTV2) +
-                          SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - Assertion Facilities V2')
-             MONMSG     MSGID(CPF3288)
-
-             CHGPFM     FILE(&TARGETLIB/QSRC) +
-                          MBR(ASSERTV2.O) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - Assertion Facilities V2')
              MONMSG     MSGID(CPF3288)
