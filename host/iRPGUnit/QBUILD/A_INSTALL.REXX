@@ -170,12 +170,6 @@
      "PARM('"prdLib" "dbgView" "tgtRls"')"
 
    /* - - - - - - - - - - - - - - - - - - - - */
-   /*  Create version test programs.          */
-   /* - - - - - - - - - - - - - - - - - - - - */
-   "STRREXPRC SRCMBR(MKVERSION) SRCFILE("prdLib"/QSRC) ",
-     "PARM('"prdLib" "dbgView" "tgtRls"')"
-
-   /* - - - - - - - - - - - - - - - - - - - - */
    /*  Create service program RUTESTCASE.     */
    /* - - - - - - - - - - - - - - - - - - - - */
    "STRREXPRC SRCMBR(MKTESTCASE) SRCFILE("prdLib"/QSRC) ",
@@ -289,8 +283,6 @@
    "DLTPGM PGM("_prdlib"/RUCRTCBL)"
    "DLTPGM PGM("_prdlib"/RUPGMRMT)"
    "DLTSRVPGM SRVPGM("_prdlib"/RUTESTCASE)"
-
-   "DLTPGM PGM("_prdlib"/RUGETPTFS)"
 
    "DLTJOBD JOBD("_prdLib"/RPGUNIT)"
    "DLTWSCST WSCST("_prdLib"/RUWSCST)"
@@ -411,7 +403,6 @@
    "DLTMOD MODULE("_prdLib"/EXTPRCT)"
    "DLTMOD MODULE("_prdLib"/EXTTST)"
    "DLTMOD MODULE("_prdLib"/EXTTSTT)"
-   "DLTMOD MODULE("_prdLib"/GETPTFS)"
    "DLTMOD MODULE("_prdLib"/JOBLOG)"
    "DLTMOD MODULE("_prdLib"/JOBLOGT)"
    "DLTMOD MODULE("_prdLib"/LIBL)"

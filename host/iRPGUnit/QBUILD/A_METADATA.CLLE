@@ -587,12 +587,6 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +
-                          MBR(GETPTFS) +
-                          SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - Get OS400 PTF Status.')
-             MONMSG     MSGID(CPF3288)
-
-             CHGPFM     FILE(&TARGETLIB/QSRC) +
                           MBR(JOBLOG) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - Job Log Reader.')
@@ -638,12 +632,6 @@
                           MBR(MKTESTCASE) +
                           SRCTYPE(REXX) +
                           TEXT('iRPGUnit - Test Suite Toolkit.')
-             MONMSG     MSGID(CPF3288)
-
-             CHGPFM     FILE(&TARGETLIB/QSRC) +
-                          MBR(MKVERSION) +
-                          SRCTYPE(REXX) +
-                          TEXT('iRPGUnit - Create Version Information Programs.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +

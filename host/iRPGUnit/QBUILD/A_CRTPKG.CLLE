@@ -431,9 +431,6 @@
                           TOFILE(&LIB/&QSRC) FROMMBR(EXTTST) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSRC) +
-                          TOFILE(&LIB/&QSRC) FROMMBR(GETPTFS) +
-                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
-             CPYF       FROMFILE(&DEVLIB/&QSRC) +
                           TOFILE(&LIB/&QSRC) FROMMBR(JOBLOG) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSRC) +
@@ -456,9 +453,6 @@
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSRC) +
                           TOFILE(&LIB/&QSRC) FROMMBR(MKTESTCASE) +
-                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
-             CPYF       FROMFILE(&DEVLIB/&QSRC) +
-                          TOFILE(&LIB/&QSRC) FROMMBR(MKVERSION) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSRC) +
                           TOFILE(&LIB/&QSRC) FROMMBR(OBJECT) +
