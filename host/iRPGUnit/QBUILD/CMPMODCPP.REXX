@@ -19,7 +19,7 @@
  SIGNAL ON SYNTAX
 
  PARSE ARG 'MODULE('objLib'/'objName') SRCFILE('srcLib'/'srcFile') SRCMBR('srcMbr')',
-           'DBGVIEW('dbgView') TGTRLS('tgtRls')'
+           'DBGVIEW('dbgView') TGTRLS('tgtRls') DEFINE('define')'
 
  objLib = strip(objLib)
  objName = strip(objName)
@@ -28,6 +28,7 @@
  srcMbr = strip(srcMbr)
  dbgView = strip(dbgView)
  tgtRls = strip(tgtRls)
+ define = strip(define)
 
  dbgView = strip(dbgView,, '''')
  tgtRls = strip(tgtRls,, '''')
@@ -69,7 +70,7 @@
  if srcType = 'RPGLE' then
    do
      'CRTRPGMOD MODULE(&objLib/&objName) SRCFILE(&srcFile) SRCMBR(&srcMbr)',
-               'DBGVIEW(&dbgView) TRUNCNBR(*NO) TGTRLS(&tgtRls)'
+               'DBGVIEW(&dbgView) TRUNCNBR(*NO) TGTRLS(&tgtRls) DEFINE(&define)'
      deleteSpooledFile(objName)
      sendCreatedMessage(objLib, objName)
      EXIT;

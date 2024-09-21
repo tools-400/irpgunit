@@ -62,6 +62,15 @@
                                (*PRV     *P))                +
                         PROMPT('Target release')
 
+             PARM       KWD(DEFINE)                          +
+                        TYPE(*CHAR)                          +
+                        LEN(50)                              +
+                        MIN(0)                               +
+                        MAX(32)                              +
+                        DFT(*NONE)                           +
+                        SPCVAL((*NONE    *N))                 +
+                        PROMPT('Define condition names')
+
 MODULE:      QUAL       TYPE(*NAME) LEN(10) MIN(1)
              QUAL       TYPE(*NAME) LEN(10) MIN(1) +
                           PROMPT('Library')
