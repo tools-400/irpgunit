@@ -151,8 +151,8 @@ public class ProductLibraryUploader {
                                             setStatus(
                                                 Messages.bind(Messages.Recompiling_objects_of_library_A_for_release_B, libraryName, targetRelease));
                                             String command = String.format(
-                                                "STRREXPRC SRCMBR(A_INSTALL) SRCFILE(%s/QBUILD) PARM('INSTALL %s NONE %s OLD')", libraryName,
-                                                libraryName, targetRelease);
+                                                "STRREXPRC SRCMBR(A_INSTALL) SRCFILE(%s/QBUILD) PARM('INSTALL %s NONE %s DISABLE_ASSERT_EQUAL')",
+                                                libraryName, libraryName, targetRelease);
                                             if (!executeCommand(command, true).equals("")) {
                                                 setError(Messages.bind(Messages.Failed_calling_B_INSTALL_in_library_A, libraryName, "QBUILD"));
                                             } else {

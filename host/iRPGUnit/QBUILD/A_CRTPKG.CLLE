@@ -220,9 +220,6 @@
                           TOFILE(&LIB/&QINCLUDE) FROMMBR(ASSERT) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
-                          TOFILE(&LIB/&QINCLUDE) FROMMBR(ASSERTNI) +
-                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
-             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
                           TOFILE(&LIB/&QINCLUDE) FROMMBR(ASSERTV2) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
@@ -343,14 +340,6 @@
                           TOFILE(&LIB/&QINCLUDE) FROMMBR(XMLWRITER) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
 
-             /* Create a copy of the original ASSERTV2 member, because     */
-             /* the original member is overwritten during the installation */
-             /* with ASSERTNI in case RPGUNIT is installed on 7.4 or 7.3   */
-             /* without the required PTFs.                                 */
-             CPYF       FROMFILE(&DEVLIB/&QSRC) +
-                          TOFILE(&LIB/&QSRC) FROMMBR(ASSERTV2) +
-                          TOMBR(ASSERTV2.O) MBROPT(*REPLACE)
-
              /* ---------------------------------------------------- */
              /*  Copy source members: QLLIST                         */
              /* ---------------------------------------------------- */
@@ -404,9 +393,6 @@
              /* ---------------------------------------------------- */
              CPYF       FROMFILE(&DEVLIB/&QSRC) +
                           TOFILE(&LIB/&QSRC) FROMMBR(ASSERT) +
-                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
-             CPYF       FROMFILE(&DEVLIB/&QSRC) +
-                          TOFILE(&LIB/&QSRC) FROMMBR(ASSERTNI) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSRC) +
                           TOFILE(&LIB/&QSRC) FROMMBR(ASSERTV2) +
@@ -887,7 +873,7 @@
              /*  Re-create objects for the specified target release  */
              /* ---------------------------------------------------- */
              STRREXPRC SRCMBR(A_INSTALL) SRCFILE(&LIB/QBUILD) +
-                         PARM('INSTALL' *BCAT &LIB *BCAT &DBGVIEW *BCAT &TGTRLS)
+                         PARM('INSTALL' *BCAT &LIB *BCAT &DBGVIEW *BCAT &TGTRLS *BCAT '*NONE')
 
              /* ---------------------------------------------------- */
              /*  Change object owner to QPGMR.                       */

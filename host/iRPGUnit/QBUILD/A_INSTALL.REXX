@@ -29,26 +29,17 @@
 /*                            previous release of the operating system */
 /*                            currently running on your system.        */
 /*                  VxRxMx  : Release in the format of VxRxMx.         */
-/*       style    - Assertion style. The possible values are:          */
-/*                  OLD     : Do not install new assertEqual()         */
-/*                            and assertThat() procedures().           */
-/*                  NEW     : Install new assertions requiring 7.5 or  */
-/*                            7.3 or 7.4 with PTFs:                    */
-/*                            7.3: ILE RPG runtime: SI71535            */
-/*                                 ILE RPG compiler: SI71534           */
+/*       define   - Compiler conditions:                               */
+/*                  DISABLE_ASSERT_EQUAL                               */
+/*                          : Disable the assertEqual() protoptye      */
+/*                            with the 'overload' keyword to compile   */
+/*                            the library on 7.4 and 7.3 systems       */
+/*                            without the required PTFs.               */
+/*                            Required PTFs:                           */
 /*                            7.4: ILE RPG runtime: SI71537            */
 /*                                 ILE RPG compiler: SI71536           */
-/* =================================================================== */
-/*  Usually member ASSERTV2 is compiled. But on 7.4 and 7.3 systems    */
-/*  without the required PTFs, member ASSERTV2 is replaced by          */
-/*  as part of the installation process.                               */
-/*  Member ASSERTNI implements the same procedures as member ASSERTV2  */
-/*  but the procedures send the following *ESCAPE message:             */
-/*   "Procedure <proc_name> has not been implemented for this OS400    */
-/*    release."                                                        */
-/*  The original source code of ASSERTV2 is also stored in member      */
-/*  ASSERTV2.O. This member is created by A_CRTPKG.CLLE when           */
-/*  creating the distribution library.                                 */
+/*                            7.3: ILE RPG runtime: SI71535            */
+/*                                 ILE RPG compiler: SI71534           */
 /* =================================================================== */
 /*   >>PRE-COMPILER<<                                                  */
 /*     >>CRTCMD<<  STRREXPRC SRCMBR(&SM) SRCFILE(&SL/&SF);             */
@@ -71,15 +62,15 @@
  PRD_LIB = 'RPGUNIT'
  DEBUG_VIEW = '*NONE'
  TARGET_RELEASE = '*CURRENT'
- STYLE = '*NEW'
+ define = '*NONE'
 
- PARSE ARG option prdLib dbgView tgtrls style
+ PARSE ARG option prdLib dbgView tgtrls define
 
  option  = translate(strip(option))
  prdLib  = translate(strip(prdLib))
  dbgView = translate(strip(dbgView))
  tgtRls  = translate(strip(tgtRls))
- style   = translate(strip(style))
+ define  = translate(strip(define))
 
  if option = '' then do
    "SNDPGMMSG ",
@@ -129,30 +120,6 @@
      "MSGTYPE(*ESCAPE)"
  end
 
- if (style = '*OLD' | style = 'OLD') then do
-   "CPYF FROMFILE("prdLib"/QSRC) TOFILE("prdLib"/QSRC) FROMMBR(ASSERTNI) ",
-        "TOMBR(ASSERTV2) MBROPT(*REPLACE)"
-
-   "SNDPGMMSG ",
-     "MSGID(CPF9898) ",
-     "MSGF(QCPFMSG) ",
-     "MSGDTA('Compiling library using OLD style')",
-     "TOPGMQ(*PRV (*CTLBDY)) ",
-     "MSGTYPE(*INFO)"
- end
- else do
-   "CPYF FROMFILE("prdLib"/QSRC) TOFILE("prdLib"/QSRC) ",
-        "FROMMBR(ASSERTV2.O) TOMBR(ASSERTV2) MBROPT(*REPLACE)"
-   "SNDPGMMSG ",
-     "MSGID(CPF9898) ",
-     "MSGF(QCPFMSG) ",
-     "MSGDTA('Compiling library using NEW style')",
-     "TOPGMQ(*PRV (*CTLBDY)) ",
-     "MSGTYPE(*INFO)"
- end
-
-
-
  /* -------------------------------------------- */
  /*  Install iRPGUnit Library.                   */
  /*  Compiles all iRPGUnit objects from source.  */
@@ -199,33 +166,41 @@
    /* - - - - - - - - - - - -   - - - - - - - - */
    /*  Create commands BUILD and CMPMOD.      */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "STRREXPRC SRCMBR(MKBUILD) SRCFILE("prdLib"/QBUILD) PARM('"prdLib" "dbgView" "tgtRls"')"
+   "STRREXPRC SRCMBR(MKBUILD) SRCFILE("prdLib"/QBUILD) ",
+     "PARM('"prdLib" "dbgView" "tgtRls"')"
 
    /* - - - - - - - - - - - - - - - - - - - - */
    /*  Create version test programs.          */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "STRREXPRC SRCMBR(MKVERSION) SRCFILE("prdLib"/QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
+   "STRREXPRC SRCMBR(MKVERSION) SRCFILE("prdLib"/QSRC) ",
+     "PARM('"prdLib" "dbgView" "tgtRls"')"
 
    /* - - - - - - - - - - - - - - - - - - - - */
    /*  Create service program RUTESTCASE.     */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "STRREXPRC SRCMBR(MKTESTCASE) SRCFILE("prdLib"/QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
+   "STRREXPRC SRCMBR(MKTESTCASE) SRCFILE("prdLib"/QSRC) ",
+     "PARM('"prdLib" "dbgView" "tgtRls" "define"')"
 
    /* - - - - - - - - - - - - - - - - - - - - */
    /*  Create commands: RUCALLTST             */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "STRREXPRC SRCMBR(MKCALLTST) SRCFILE("prdLib"/QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
+   "STRREXPRC SRCMBR(MKCALLTST) SRCFILE("prdLib"/QSRC) ",
+     "PARM('"prdLib" "dbgView" "tgtRls"')"
 
    /* - - - - - - - - - - - - - - - - - - - - */
    /*  Create commands: RUCRTRPG/RUCRTCBL     */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "STRREXPRC SRCMBR(MKCRTCBL) SRCFILE("prdLib"/QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
-   "STRREXPRC SRCMBR(MKCRTRPG) SRCFILE("prdLib"/QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
+   "STRREXPRC SRCMBR(MKCRTCBL) SRCFILE("prdLib"/QSRC) ",
+     "PARM('"prdLib" "dbgView" "tgtRls"')"
+
+   "STRREXPRC SRCMBR(MKCRTRPG) SRCFILE("prdLib"/QSRC) ",
+     "PARM('"prdLib" "dbgView" "tgtRls"')"
 
    /* - - - - - - - - - - - - - - - - - - - - */
    /*  Create program RUPGMRMT (plug-in)      */
    /* - - - - - - - - - - - - - - - - - - - - */
-   "STRREXPRC SRCMBR(MKRMTRUN) SRCFILE("prdLib"/QSRC) PARM('"prdLib" "dbgView" "tgtRls"')"
+   "STRREXPRC SRCMBR(MKRMTRUN) SRCFILE("prdLib"/QSRC) ",
+     "PARM('"prdLib" "dbgView" "tgtRls"')"
 
    deleteSelfTests(prdLib)
    deleteModules(prdLib)

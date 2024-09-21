@@ -361,6 +361,7 @@ end-pr;
  //  V2 Prototypes
  // ------------------------------------------------------------------
 
+/if not defined(DISABLE_ASSERT_EQUAL)
 dcl-pr assertEqual overload(assertEqual_string
                            : assertEqual_numeric
                            : assertEqual_float
@@ -368,6 +369,7 @@ dcl-pr assertEqual overload(assertEqual_string
                            : assertEqual_time
                            : assertEqual_timestamp);
 //                           : assertEqual_ind);
+/endif
 
 // assertEqual -- Aphanumeric Equality Assertion
 //

@@ -23,6 +23,17 @@
 /*                            previous release of the operating system */
 /*                            currently running on your system.        */
 /*                  VxRxMx  : Release in the format of VxRxMx.         */
+/*       define   - Compiler conditions:                               */
+/*                  DISABLE_ASSERT_EQUAL                               */
+/*                          : Disable the assertEqual() protoptye      */
+/*                            with the 'overload' keyword to compile   */
+/*                            the library on 7.4 and 7.3 systems       */
+/*                            without the required PTFs.               */
+/*                            Required PTFs:                           */
+/*                            7.4: ILE RPG runtime: SI71537            */
+/*                                 ILE RPG compiler: SI71536           */
+/*                            7.3: ILE RPG runtime: SI71535            */
+/*                                 ILE RPG compiler: SI71534           */
 /* =================================================================== */
 /*   >>PRE-COMPILER<<                                                  */
 /*     >>CRTCMD<<  STRREXPRC SRCMBR(&SM) SRCFILE(&SL/&SF);             */
@@ -43,11 +54,12 @@
  /* The utility that is installed */
  UTILITY = 'RUTESTCASE'
 
- PARSE ARG prdLib dbgView tgtrls
+ PARSE ARG prdLib dbgView tgtrls define
 
  prdLib  = translate(strip(prdLib))
  dbgView = translate(strip(dbgView))
  tgtRls  = translate(strip(tgtRls))
+ define  = translate(strip(define))
 
  if (prdLib = "") then do
    "SNDPGMMSG ",
@@ -81,13 +93,26 @@
  /*  Let's do it!                                */
  /* -------------------------------------------- */
 
- "CMPMOD MODULE("prdLib"/ASSERT   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/ASSERTV2 ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/JOBLOG   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/VERSION  ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/TESTUTILS) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/STRING   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/ASSERT   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") ",
+   "TGTRLS("tgtRls") DEFINE("define")"
+
+ "CMPMOD MODULE("prdLib"/ASSERTV2 ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") ",
+   "TGTRLS("tgtRls") DEFINE("define")"
+
+ "CMPMOD MODULE("prdLib"/JOBLOG   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") ",
+   "TGTRLS("tgtRls") DEFINE("define")"
+
+ "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") ",
+   "TGTRLS("tgtRls") DEFINE("define")"
+
+ "CMPMOD MODULE("prdLib"/VERSION  ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") ",
+   "TGTRLS("tgtRls") DEFINE("define")"
+
+ "CMPMOD MODULE("prdLib"/TESTUTILS) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") ",
+   "TGTRLS("tgtRls") DEFINE("define")"
+
+ "CMPMOD MODULE("prdLib"/STRING   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") ",
+   "TGTRLS("tgtRls") DEFINE("define")"
 
  "CRTSRVPGM  SRVPGM("prdLib"/RUTESTCASE) ",
               "MODULE("prdLib"/ASSERT     ",
