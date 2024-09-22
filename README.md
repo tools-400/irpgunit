@@ -12,6 +12,22 @@ Further information about iRPGUnit are available on the [iRPGUnit Web Site](http
 
 Please refer to the [iRPGUnit Version History](<https://tools-400.github.io/irpgunit/files/iRPGUnit for RDi 9.5.1.3+.pdf>) document to find out which operating system release is required for installing the iRPGUnit library.
 
+## Preconditions
+
+iRPGUnit requires OS400 7.5 for the latest features. It can also be installed on 7.4 and 7.3 if the following PTFs have been installed:
+
+**7.4**
+
+* ILE RPG runtime: SI71537
+* ILE RPG compiler: SI71536
+
+**7.3**
+
+* ILE RPG runtime: SI71535
+* ILE RPG compiler: SI71534
+
+If the PTFs have not been installed, the library must be recompiled to disable the latest features, such as assertEqual().
+
 ## Features
 
 * Executes iRPGUnit test suites (service programs) from RDi
