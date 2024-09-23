@@ -10,8 +10,8 @@ document.write('\<ul id="treemenu" class="treeview">\
     <li><a href="../html/upgrade/upgrade_110.html" target="content" style="text-decoration:none">Upgrading from v1.10 to v2.0.0</a></li>\
     <li><a href="../html/upgrade/upgrade_242.html" target="content" style="text-decoration:none">Upgrading from v2.4.2 to v3.0.0</a></li>\
     <li><a href="../html/upgrade/upgrade_320.html" target="content" style="text-decoration:none">Upgrading from v3.2.0 to v4.0.0</a></li>\
-    <li><a href="../html/upgrade/upgrade_320.html" target="content" style="text-decoration:none">Upgrading from v3.2.0 to v4.0.0</a></li>\
     <li><a href="../html/upgrade/upgrade_404.html" target="content" style="text-decoration:none">Upgrading from v4.0.4 to v4.1.0</a></li>\
+    <li><a href="../html/upgrade/upgrade_421.html" target="content" style="text-decoration:none">Upgrading from v4.2.1 to v5.0.0</a></li>\
   </ul>\
   </li>\
   <li>Quickstart\
@@ -39,6 +39,8 @@ document.write('\<ul id="treemenu" class="treeview">\
     </li>\
     <li>Assertions\
     <ul>\
+      <li><a href="../html/reference/assertEqual.html" target="content" style="text-decoration:none">assertEqual</a></li>\
+      <li><a href="../html/reference/assertThat.html" target="content" style="text-decoration:none">assertThat</a></li>\
       <li><a href="../html/reference/aEqual.html" target="content" style="text-decoration:none">aEqual</a></li>\
       <li><a href="../html/reference/iEqual.html" target="content" style="text-decoration:none">iEqual</a></li>\
       <li><a href="../html/reference/nEqual.html" target="content" style="text-decoration:none">nEqual</a></li>\
