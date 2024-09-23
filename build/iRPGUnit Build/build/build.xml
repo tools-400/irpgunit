@@ -175,11 +175,14 @@
     <property name="site.2.version.regex" value="(&lt;feature.*version=&quot;)(${version.number.search.regex})(&quot;)" />
     <property name="site.2.version.replace" value="\1${build.version}\3" />
 
-    <property name="html.copyright.1.version.regex" value="^(Version: )(${version.number.search.regex})(.*)?" />
+    <property name="html.copyright.1.version.regex" value="(Version: )(${version.number.search.regex})(.*)?" />
     <property name="html.copyright.1.version.replace" value="\1${build.version}\3" />
 
     <property name="html.copyright.2.version.regex" value="(Copyright:\s)([0-9]{4})" />
     <property name="html.copyright.2.version.replace" value="\1${today.year}" />
+
+    <property name="html.copyright.3.version.regex" value="(Updated: )([0-9]{2}\.[0-9]{2}\.[0-9]{4} - [0-9]{2}:[0-9]{2}:[0-9]{2})" />
+    <property name="html.copyright.3.version.replace" value="\1${today.timestamp}" />
 
     <property name="regex.check.variables" value="(@.+?@|\$\{.+?})" />
 
@@ -599,7 +602,7 @@
                 <include name="${files.page}"/>
             </fileset>
         </copy>
-
+    	
         <replace file="${build.upload.dir.home}/${files.page}" token="@VERSION_NUMBER@"  value="${build.version}" />
         <replace file="${build.upload.dir.home}/${files.page}" token="@TODAY_YEAR@"      value="${today.year}" />
         <replace file="${build.upload.dir.home}/${files.page}" token="@TODAY@"           value="${today.timestamp}" />
@@ -747,6 +750,16 @@
             <then>
                 <echo>... copying homepage files, excluding: ${files.page}</echo>
                 <property name="exclude.docs.files.index.html" value="${files.page}"/>
+            	
+                <replaceregexp match="${html.copyright.1.version.regex}" replace="${html.copyright.1.version.replace}" byline="true">
+                    <fileset  file="${target.ide.uload.dir}/${files.page}" />
+                </replaceregexp>
+                <replaceregexp match="${html.copyright.2.version.regex}" replace="${html.copyright.2.version.replace}" byline="true">
+                    <fileset  file="${target.ide.uload.dir}/${files.page}" />
+                </replaceregexp>
+                <replaceregexp match="${html.copyright.3.version.regex}" replace="${html.copyright.3.version.replace}" byline="true">
+                    <fileset  file="${target.ide.uload.dir}/${files.page}" />
+                </replaceregexp>
             </then>
             <else>
                 <echo>... copying homepage files, including: ${files.page}</echo>
