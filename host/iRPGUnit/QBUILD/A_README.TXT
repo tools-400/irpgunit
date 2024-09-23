@@ -83,11 +83,13 @@ b) Optionally run the RPGUnit self tests:
 
 --------------------------
 
-Version 5.0.0 - 19.09.2024
+Version 5.0.0 - 23.09.2024
 --------------------------
  * Added new assertions:
     - assertEqual() (suggested by Rafał Gała)
     - assertThat()
+ * Added parameter 'TGTRLS' to commands RUCRTRPG and RUCRTCBL.
+ * Added parameter 'DEFINE' to commands RUCRTRPG and RUCRTCBL.
 
 Version 4.2.1 - 10.09.2024
 --------------------------

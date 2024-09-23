@@ -208,6 +208,7 @@ public class Messages extends NLS {
     public static String Could_not_restore_library_list_Reason_A;
     public static String Could_not_load_the_job_log_Reason_A;
     public static String Could_not_get_PTF_status_Reason_A;
+    public static String Could_not_change_command_default_of_command_A;
     public static String JobLog_Headline;
 
     public static String Question_Do_you_want_to_delete_object_A_B_type_C;

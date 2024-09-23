@@ -133,9 +133,27 @@ Module (MODULE) - Help
 :p.
 Refer to the MODULE parameter in CRTSRVPGM command help.
 :ehelp.
-.* --------------------------------------
-.*  Additional parameters
-.* --------------------------------------
+.*
+:help name='RUCRTRPG/DEFINE' WIDTH=64.
+Define condition names (DEFINE) - Help
+:xh3.Define condition names (DEFINE)
+:p.
+Specifies condition names that are defined before the
+compilation begins.  Using the parameter
+DEFINE(condition-name) is equivalent to coding the /DEFINE
+condition-name directive on the first line of the source
+file.
+:parml.
+:pt.:pk def.*NONE:epk.
+:pd.No condition names are defined. This is the default.
+:pt.name
+:pd.Up to 32 condition names can be specified. Each name
+can be up to 50 characters long. The condition names
+will be considered to be defined at the start of
+compilation.
+:eparml.
+:ehelp.
+.*
 :help name='RUCRTCBL/DLTSPLF' WIDTH=64.
 Delete spooled files (DLTSPLF) - Help
 :xh3.Delete spooled files (DLTSPLF)
@@ -149,7 +167,9 @@ by the object creations commands are deleted on success.
 :pd.Compile listings are deleted on success.
 :eparml.
 :ehelp.
-.*
+.* --------------------------------------
+.*  Additional parameters
+.* --------------------------------------
 :help name='RUCRTRPG/ACTGRP' WIDTH=64.
 Activation group (ACTGRP) - Help
 :xh3.Activation group (ACTGRP)

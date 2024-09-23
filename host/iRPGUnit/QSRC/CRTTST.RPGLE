@@ -105,6 +105,7 @@
      D  bndSrvPgm                          const likeds(ObjectArray_t)
      D  bndDir                             const likeds(ObjectArray_t)
      D  bOption                            const likeds(Options_t)
+     D  define                             const likeds(defines_t)
      D  dltSplf                            const like(yesNo_t)
      D  actGrp                             const like(ActivationGroup_t)
      D  bModules                           const likeds(ObjectArray_t)
@@ -204,7 +205,7 @@
            addModule( modules : testPgm : *on); // Add to position #1.
            // QDEVTOOLS/QLNCMSG RNS9305 - Module &1 placed in library &2.
            crtRpgMod( testPgm : qSrcFile : srcMbr : cOption : dbgView :
-                      pRpgPpOpt : pOption : compileopt : targetRls);
+                      pRpgPpOpt : pOption : compileopt : targetRls : define);
            modulesCreated = getCreatedModulesFromJobLog(
                               MOD_CRT_RPG : startCompileTime );
            addModules( modules : modulesCreated );
@@ -212,7 +213,7 @@
            // There is no test case module to add for Cobol ==> See: *PGMID
            // QDEVTOOLS/QLNCMSG LNC0899 - Module &1 placed in library &2.
            crtCblMod( testPgm : qSrcFile : srcMbr : cOption : dbgView :
-                      pOption : compileopt : targetRls);
+                      pOption : compileopt : targetRls : define);
            modulesCreated = getCreatedModulesFromJobLog(
                               MOD_CRT_CBL : startCompileTime );
            addModules( modules : modulesCreated );
@@ -441,6 +442,7 @@
      D  pOption                            const likeds(Options_t)
      D  compileopt                 5000a   const varying options(*varsize)
      D  targetRls                          const like(TargetRelease_t)
+     D  define                             const likeds(defines_t)
 
       // A command to be executed.
      D cmd             s                   like(Cmd_t)
@@ -448,7 +450,8 @@
       /free
 
          cmd = getCrtRpgModCmd( testPgm : srcFile : srcMbr : cOption : dbgView:
-                                pRpgPpOpt : pOption : compileopt : targetRls );
+                                pRpgPpOpt : pOption : compileopt : targetRls :
+                                define);
          sndInfoMsg( cmd );
          qcmdexc( cmd : %len(cmd) );
 
@@ -467,6 +470,7 @@
      D  pOption                            const likeds(Options_t)
      D  compileopt                 5000a   const varying options(*varsize)
      D  targetRls                          const like(TargetRelease_t)
+     D  define                             const likeds(defines_t)
 
       // A command to be executed.
      D cmd             s                   like(Cmd_t)
@@ -474,7 +478,8 @@
       /free
 
          cmd = getCrtCblModCmd( testPgm : srcFile : srcMbr : cOption : dbgView:
-                                pOption : compileopt : targetRls);
+                                pOption : compileopt : targetRls :
+                                define);
          sndInfoMsg( cmd );
          qcmdexc( cmd : %len(cmd) );
 
@@ -673,6 +678,7 @@
      D  pOptions                           const likeds(Options_t)
      D  compileopt                 5000a   const varying options(*varsize)
      D  targetRls                          const like(TargetRelease_t)
+     D  define                             const likeds(defines_t)
 
       // Command string accumulator.
      D cmd             s                   like(Cmd_t)
@@ -690,6 +696,7 @@
             cmd += serializeOptions( 'OPTION' : cOptions );
             cmd += serializeValue( 'TGTRLS' : targetRls );
             cmd += serializeValue( 'DBGVIEW' : dbgView );
+            cmd += serializeDefines( 'DEFINE' : define );
 
           // SQLRPGLE
           when getMemberType(srcFile.nm: srcFile.lib: testPgm) = MBR_SQLRPGLE;
@@ -710,8 +717,12 @@
               if (%scan( PARM_DBGVIEW + '(' : uCase( compileOpt )) = 0);
                 dbgCompileOpt += ' ' + serializeValue( 'DBGVIEW' : dbgView );
               endif;
+              if (%scan( PARM_DEFINE + '(' : uCase( compileOpt )) = 0);
+                dbgCompileOpt += ' ' + serializeDefines( 'DEFINE' : define );
+              endif;
             else;
               dbgCompileOpt = serializeValue( 'DBGVIEW' : dbgView);
+              dbgCompileOpt += serializeDefines( 'DEFINE' : define);
             endif;
 
             cmd += serializeString( 'COMPILEOPT' : dbgCompileOpt);
@@ -740,6 +751,7 @@
      D  pOptions                           const likeds(Options_t)
      D  compileopt                 5000a   const varying options(*varsize)
      D  targetRls                          const like(TargetRelease_t)
+     D  define                             const likeds(defines_t)
 
       // Command string accumulator.
      D cmd             s                   like(Cmd_t)
@@ -757,6 +769,7 @@
             cmd += serializeOptions( 'OPTION' : cOptions );
             cmd += serializeValue( 'TGTRLS' : targetRls );
             cmd += serializeValue( 'DBGVIEW' : dbgView );
+            cmd += serializeDefines( 'DEFINE' : define );
 
           // SQLCBLLE
           when getMemberType(srcFile.nm: srcFile.lib: testPgm) = MBR_SQLCBLLE;
@@ -773,8 +786,12 @@
               if (%scan( PARM_DBGVIEW + '(' : uCase( compileOpt )) = 0);
                 dbgCompileOpt += ' ' + serializeValue( 'DBGVIEW' : dbgView );
               endif;
+              if (%scan( PARM_DEFINE + '(' : uCase( compileOpt )) = 0);
+                dbgCompileOpt += ' ' + serializeDefines( 'DEFINE' : define );
+              endif;
             else;
               dbgCompileOpt = serializeValue( 'DBGVIEW' : dbgView);
+              dbgCompileOpt += serializeDefines( 'DEFINE' : define);
             endif;
 
             cmd += serializeString( 'COMPILEOPT' : dbgCompileOpt);
@@ -896,6 +913,40 @@
 
       /end-free
      P                 e
+
+
+     PserializeDefines...
+     P                 b
+     D                 pi                        like(SerializedOptions_t)
+     D headToken                           const like(HeadToken_t)
+     D defines                             const likeds(Defines_t)
+
+      // Serialized Options.
+     D serialized      s                   like(SerializedOptions_t)
+      // Counter.
+     D i               s             10i 0
+
+      /free
+
+        if defines.size = 0;
+          return '';
+        endif;
+
+        serialized = %trim(headToken) + '(';
+
+        for i = 1 to defines.size;
+          serialized += %trim(defines.define(i)) + ' ';
+        endfor;
+
+        if defines.size > 0;
+          serialized += ') ';
+        endif;
+
+        return serialized;
+
+      /end-free
+     P                 e
+
 
      PserializeString...
      P                 b

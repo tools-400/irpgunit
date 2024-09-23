@@ -150,14 +150,8 @@ public class ProductLibraryUploader {
                                         }
 
                                         if (recompileRequiredStatus == RECOMPILE_CONFIRMED) {
-                                            String targetRelease = OS400Helper.getRelease(as400);
-                                            setStatus(
-                                                Messages.bind(Messages.Recompiling_objects_of_library_A_for_release_B, libraryName, targetRelease));
-                                            String command = String.format(
-                                                "STRREXPRC SRCMBR(A_INSTALL) SRCFILE(%s/QBUILD) PARM('INSTALL %s NONE %s DISABLE_ASSERT_EQUAL')",
-                                                libraryName, libraryName, targetRelease);
-                                            if (!executeCommand(command, true).equals("")) {
-                                                setError(Messages.bind(Messages.Failed_calling_B_INSTALL_in_library_A, libraryName, "QBUILD"));
+                                            if (!recompileLibrary(as400, libraryName)) {
+                                                isUploadedFine = false;
                                             } else {
                                                 isUploadedFine = true;
                                             }
@@ -432,6 +426,36 @@ public class ProductLibraryUploader {
         }
 
         return true;
+    }
+
+    private boolean recompileLibrary(AS400 system, String libraryName) throws Exception {
+
+        String command;
+
+        String targetRelease = OS400Helper.getRelease(as400);
+        setStatus(Messages.bind(Messages.Recompiling_objects_of_library_A_for_release_B, libraryName, targetRelease));
+        command = String.format("STRREXPRC SRCMBR(A_INSTALL) SRCFILE(%s/QBUILD) PARM('INSTALL %s NONE %s DISABLE_ASSERT_EQUAL')", libraryName,
+            libraryName, targetRelease);
+        if (!executeCommand(command, true).equals("")) {
+            setError(Messages.bind(Messages.Failed_calling_B_INSTALL_in_library_A, libraryName, "QBUILD"));
+            return false;
+        }
+
+        boolean isError = false;
+
+        command = "CHGCMDDFT CMD(" + libraryName + "/RUCRTRPG) NEWDFT('DEFINE(DISABLE_ASSERT_EQUAL)')";
+        if (!executeCommand(command, true).equals("")) {
+            setError(Messages.bind(Messages.Could_not_change_command_default_of_command_A, "RUCRTRPG"));
+            isError = true;
+        }
+
+        command = "CHGCMDDFT CMD(" + libraryName + "/RUCRTCBL) NEWDFT('DEFINE(DISABLE_ASSERT_EQUAL)')";
+        if (!executeCommand(command, true).equals("")) {
+            setError(Messages.bind(Messages.Could_not_change_command_default_of_command_A, "RUCRTCBL"));
+            isError = true;
+        }
+
+        return !isError;
     }
 
     private boolean updateLibrary(String libraryName) {

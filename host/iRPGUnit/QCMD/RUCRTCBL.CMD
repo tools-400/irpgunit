@@ -145,9 +145,14 @@
                                  *DUPVAR)                    +
                           PROMPT('Binding options')
 
-         /* -------------------------------------- */
-         /*   Additional parameters                */
-         /* -------------------------------------- */
+             PARM       KWD(DEFINE)                          +
+                        TYPE(*CHAR)                          +
+                        LEN(50)                              +
+                        MIN(0)                               +
+                        MAX(32)                              +
+                        DFT(*NONE)                           +
+                        SPCVAL((*NONE    *N))                +
+                        PROMPT('Define condition names')
 
              PARM       KWD(DLTSPLF)                         +
                           TYPE(*CHAR)                        +
@@ -157,6 +162,10 @@
                                  (*NO  '0'))                 +
                           DFT(*NO)                           +
                           PROMPT('Delete spooled files')
+
+         /* -------------------------------------- */
+         /*   Additional parameters                */
+         /* -------------------------------------- */
 
              PARM       KWD(ACTGRP)                          +
                           TYPE(*NAME)                        +

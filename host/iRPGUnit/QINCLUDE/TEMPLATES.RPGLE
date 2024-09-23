@@ -51,6 +51,7 @@
      D MBR_SQLCBLLE    c                   const('SQLCBLLE')
 
      D PARM_DBGVIEW    c                   const('DBGVIEW')
+     D PARM_DEFINE     c                   const('DEFINE')
 
      D SLASH           c                   u'002F'
      D BACK_SLASH      c                   u'005C'
@@ -248,6 +249,11 @@
      D Options_t       ds                  template qualified
      D  size                          5i 0
      D  option                       12a   Dim(25)
+
+       // A sized list of compiler directives.
+     D Defines_t       ds                  template qualified
+     D  size                          5i 0
+     D  define                       50a   Dim(32)
 
      D HeadToken_t     s             10a   template
      D DbgView_t       s             10a   template
