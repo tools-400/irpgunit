@@ -34,7 +34,7 @@
      D  bModules                           const likeds(ObjectArray_t)
      D  pRpgPpOpt                          const like(RpgPpOpt_t)
      D  pOption                            const likeds(Options_t)
-     D  compileopt                 5000a   const varying options(*varsize)
+     D  compileopt                         const like(CompileOpt_t)
      D  targetRls                          const like(TargetRelease_t)
 
      D serializeObjectName...
@@ -53,10 +53,10 @@
      D  srcFile                            const likeds(Object_t)
      D  srcMbr                             const like(SrcMbr_t.mbr)
      D  cOptions                           const likeds(Options_t)
-     D  dbgView                      10a   const
+     D  dbgView                            const like(DbgView_t)
      D  pRpgPpOpt                          const like(RpgPpOpt_t)
      D  pOptions                           const likeds(Options_t)
-     D  compileopt                 5000a   const varying options(*varsize)
+     D  compileopt                         const like(CompileOpt_t)
      D  targetRls                          const like(TargetRelease_t)
      D  define                             const likeds(defines_t)
 
@@ -69,9 +69,9 @@
      D  srcFile                            const likeds(Object_t)
      D  srcMbr                             const like(SrcMbr_t.mbr)
      D  cOptions                           const likeds(Options_t)
-     D  dbgView                      10a   const
+     D  dbgView                            const like(DbgView_t)
      D  pOptions                           const likeds(Options_t)
-     D  compileopt                 5000a   const varying options(*varsize)
+     D  compileopt                         const like(CompileOpt_t)
      D  targetRls                          const like(TargetRelease_t)
      D  define                             const likeds(defines_t)
 
@@ -145,7 +145,7 @@
      D  dbgView                            const like(DbgView_t)
      D  pRpgPpOpt                          const like(RpgPpOpt_t)
      D  pOption                            const likeds(Options_t)
-     D  compileopt                 5000a   const varying options(*varsize)
+     D  compileopt                         const like(CompileOpt_t)
      D  targetRls                          const like(TargetRelease_t)
      D  define                             const likeds(defines_t)
 
@@ -160,7 +160,7 @@
      D  cOption                            const likeds(Options_t)
      D  dbgView                            const like(DbgView_t)
      D  pOption                            const likeds(Options_t)
-     D  compileopt                 5000a   const varying options(*varsize)
+     D  compileopt                         const like(CompileOpt_t)
      D  targetRls                          const like(TargetRelease_t)
      D  define                             const likeds(defines_t)
 

@@ -136,6 +136,9 @@
        // SQL pre-compiler option RPGPPOPT
      D RpgPpOpt_t      s             10a
 
+       // SQL pre-compiler option COMPILEOPT
+     D CompileOpt_t    s           5000a   varying
+
        // Object qualified Name.
      D Object_t        ds                  qualified template
      D  nm                           10a
