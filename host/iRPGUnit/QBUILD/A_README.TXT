@@ -83,6 +83,11 @@ b) Optionally run the RPGUnit self tests:
 
 --------------------------
 
+Version 5.0.1 - 24.09.2024
+--------------------------
+ * Add keyword REQPREXP(*REQUIRE) to enforce prototypes of exported
+   procedures.
+
 Version 5.0.0 - 23.09.2024
 --------------------------
  * Added new assertions:
