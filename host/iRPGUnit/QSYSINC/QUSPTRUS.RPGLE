@@ -8,6 +8,7 @@
      D QUSPTRUS        pr                  ExtPgm('QUSPTRUS')
      D   usrSpc                      20a   const
      D   pointer                       *
+     D   errorCode                32767a   options(*nopass : *varsize)          | OptGrp 1
 
       /endif
 

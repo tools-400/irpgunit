@@ -191,8 +191,7 @@
      D lastChgDate     s               z
       /free
 
-         api_retrieveMemberDescription(
-            mbrd0100: %size(mbrd0100): 'MBRD0100': qSrcFile: srcMbr: '0');
+         QUSRMBRD(mbrd0100: %size(mbrd0100): 'MBRD0100': qSrcFile: srcMbr: '0');
 
          apiDateTime = mbrd0100.srcChgDatTim;
 
@@ -216,8 +215,7 @@
      D mbrd0100        ds                  likeds(mbrd0100_t) inz
       /free
 
-         api_retrieveMemberDescription(
-            mbrd0100: %size(mbrd0100): 'MBRD0100': qSrcFile: srcMbr: '0');
+         QUSRMBRD(mbrd0100: %size(mbrd0100): 'MBRD0100': qSrcFile: srcMbr: '0');
 
          return mbrd0100.text;
 
@@ -236,8 +234,7 @@
      D mbrd0100        ds                  likeds(mbrd0100_t) inz
       /free
 
-         api_retrieveMemberDescription(
-            mbrd0100: %size(mbrd0100): 'MBRD0100': qSrcFile: srcMbr: '0');
+         QUSRMBRD(mbrd0100: %size(mbrd0100): 'MBRD0100': qSrcFile: srcMbr: '0');
 
          return %trim(mbrd0100.srcType);
 

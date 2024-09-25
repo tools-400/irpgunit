@@ -355,7 +355,7 @@
 
        clear errorCode;
        errorCode.bytPrv = 0;
-       api_retrieveUserspacePointer(userspace : usPtr : errorCode);
+       QUSPTRUS(userspace : usPtr : errorCode);
 
        splF = getLogSplF();
 

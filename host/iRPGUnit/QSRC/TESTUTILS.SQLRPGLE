@@ -131,8 +131,7 @@
          qSrcFile.nm = srcFile;
          qSrcFile.lib = srcFileLib;
 
-         api_retrieveMemberDescription(
-               mbrd0100: %size(mbrd0100): 'MBRD0100': qSrcFile: mbr: '0');
+         QUSRMBRD(mbrd0100: %size(mbrd0100): 'MBRD0100': qSrcFile: mbr: '0');
 
          return mbrd0100.srcType;
 
