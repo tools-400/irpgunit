@@ -124,6 +124,8 @@
      D noActGrp        s             10a   varying
        // No target release
      D noTargetRls     s                   like(TargetRelease_t)
+       // No condition names
+     D noDefine        ds                  likeds(defines_t)
 
        // Command to create an RPG module.
      D crtRpgModCmd    s            256a
@@ -170,6 +172,9 @@
         clear noModule;
         noModule.size = 0;
 
+        clear noDefine;
+        noDefine.size = 0;
+
         liblList = getLibl();
         newLiblList = liblList;
         newLiblList.curLib = sds.pgmLib;
@@ -200,7 +205,8 @@
                                         rpgPpOptLvl2 :
                                         noPOption :
                                         noCompileOpt :
-                                        noTargetRls );
+                                        noTargetRls :
+                                        noDefine );
         aEqual( 'CRTRPGMOD MODULE(*CURLIB/SYSTYPES) '
               + 'SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES)' : crtRpgModCmd );
 
@@ -227,7 +233,8 @@
                                         rpgPpOptLvl2 :
                                         noPOption :
                                         noCompileOpt :
-                                        noTargetRls );
+                                        noTargetRls :
+                                        noDefine );
         aEqual( 'CRTRPGMOD MODULE(*CURLIB/SYSTYPES) '
               + 'SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES) '
               + 'OPTION(*SRCSTMT)' : crtRpgModCmd );
@@ -256,7 +263,8 @@
                                         rpgPpOptLvl2 :
                                         noPOption :
                                         noCompileOpt :
-                                        noTargetRls );
+                                        noTargetRls :
+                                        noDefine );
         aEqual( 'CRTRPGMOD MODULE(*CURLIB/SYSTYPES) '
               + 'SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES) '
               + 'OPTION(*SRCSTMT *NODEBUGIO)' : crtRpgModCmd );
@@ -277,7 +285,8 @@
                                         rpgPpOptLvl2 :
                                         noPOption :
                                         noCompileOpt :
-                                        noTargetRls );
+                                        noTargetRls :
+                                        noDefine );
         aEqual( 'CRTRPGMOD MODULE(*CURLIB/SYSTYPES) '
               + 'SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES) '
               + 'DBGVIEW(*LIST)' : crtRpgModCmd );
@@ -303,7 +312,8 @@
                                         rpgPpOptLvl2 :
                                         noPOption :
                                         noCompileOpt :
-                                        '*CURRENT' );
+                                        '*CURRENT' :
+                                        noDefine );
         aEqual( 'CRTRPGMOD MODULE(*CURLIB/SYSTYPES) '
               + 'SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES) '
               + 'DBGVIEW(*LIST) TGTRLS(*CURRENT)' : crtRpgModCmd );
@@ -315,7 +325,8 @@
                                         '*LIST'   :
                                         noPOption :
                                         noCompileOpt :
-                                        '*CURRENT' );
+                                        '*CURRENT' :
+                                        noDefine );
         aEqual( 'CRTCBLMOD MODULE(*PGMID) '
               + 'SRCFILE(QSYSINC/QCBLLESRC) SRCMBR(SQLUDF) '
               + 'DBGVIEW(*LIST) TGTRLS(*CURRENT)' : crtCblModCmd );
