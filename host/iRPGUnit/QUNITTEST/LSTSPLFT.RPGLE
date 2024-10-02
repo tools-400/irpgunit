@@ -24,7 +24,6 @@
 // ==========================================================================
 
 ctl-opt NoMain;
-/include qinclude,H_SPEC
 
 dcl-f QSYSPRT printer(80) oflind(*in70) usropn;
 
@@ -104,9 +103,9 @@ dcl-proc setUp export;
   createSpooledFile('FILE1': 'BAA');
   createSpooledFile('FILE2': 'FOO');
   createSpooledFile('FILE2': 'BAA');
-  createSpooledFile('FILE3': 'FOO-BAA');
-  createSpooledFile('FILE3': 'FOO-BAA');
-  createSpooledFile('FILE3': 'FOO-BAA');
+  createSpooledFile('FILE3': 'FOO-BAR');
+  createSpooledFile('FILE3': 'FOO-BAR');
+  createSpooledFile('FILE3': 'FOO-BAR');
   createSpooledFile('FILE3': 'FOO');
   createSpooledFile('FILE3': 'BAA');
 
@@ -248,7 +247,7 @@ dcl-proc testFile3 export;
   dcl-ds userData likeds(userData_t);
   dcl-ds qJob     likeds(Job_t);
   dcl-s splfNm varchar(10) inz('');
-  dcl-s usrDta varchar(10) inz('FOO-BAA');
+  dcl-s usrDta varchar(10) inz('FOO-BAR');
 
   clear userData;
   userData.countDeleted = 0;
