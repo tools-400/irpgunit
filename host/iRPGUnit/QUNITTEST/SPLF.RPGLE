@@ -272,6 +272,7 @@
 
 
      D splfId          ds                  likeds(SplfId_t) inz
+     D char            s              1a   based(splf.bufPos_p)
       /free
 
         clear splf;
@@ -293,6 +294,13 @@
         // Skip first 15 bytes according to "Decoding a Spooled File after Using the QSPGETSP API":
         // https://www.ibm.com/support/pages/decoding-spooled-file-after-using-qspgetsp-api
         splf.bufPos_p += 15;
+
+        // Patch first byte to x'15' to make it work.
+        // In RPGUNIT spooled files the first byte is x'0D' but
+        // in compiler listings the first byte is x'15'.
+        // The meaning of the first byte is unknown due to the
+        // lack of IBM documentation.
+        char = NL; // = x'15'
 
       /end-free
      P                 e
