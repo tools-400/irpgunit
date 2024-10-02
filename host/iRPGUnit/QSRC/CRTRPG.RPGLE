@@ -18,8 +18,15 @@
 // >>END-PRE-COMPILER<<
 // ==========================================================================
 
+ctl-opt main(crtRpg);
 /include qinclude,H_SPEC
 /include qinclude,COPYRIGHT
+
+//----------------------------------------------------------------------
+//   Exported Procedures
+//----------------------------------------------------------------------
+
+/include qinclude,CRTRPG
 
 
 //----------------------------------------------------------------------
@@ -36,7 +43,7 @@
 //   MAIN PROGRAM
 //----------------------------------------------------------------------
 
-dcl-proc crtRpg reqproto(*no);
+dcl-proc crtRpg;
   dcl-pi *n;
     testPgm      likeds(Object_t) const;
     srcFile      likeds(Object_t) const;

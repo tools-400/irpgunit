@@ -18,8 +18,15 @@
 // >>END-PRE-COMPILER<<
 // ==========================================================================
 
+ctl-opt main(crtCbl);
 /include qinclude,H_SPEC
 /include qinclude,COPYRIGHT
+
+//----------------------------------------------------------------------
+//   Exported Procedures
+//----------------------------------------------------------------------
+
+/include qinclude,CRTCBL
 
 
 //----------------------------------------------------------------------
@@ -36,7 +43,7 @@
 //   MAIN PROGRAM
 //----------------------------------------------------------------------
 
-dcl-proc crtCbl reqproto(*no);
+dcl-proc crtCbl;
   dcl-pi *n;
     testPgm      likeds(Object_t) const;
     srcFile      likeds(Object_t) const;

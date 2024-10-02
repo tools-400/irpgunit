@@ -245,6 +245,18 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(CRTCBL) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Create Cobol Unit Test Suite CPP.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(CRTRPG) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Create RPG Unit Test Suite CPP.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
                           MBR(CRTTST) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - Implementation of RUCRT* commands.')
@@ -869,6 +881,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QPZRTVFX) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Retrieve Program Temporary Fix Information (QPZRTV')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
                           MBR(QSPCLOSP) +
                           SRCTYPE(RPGLE) +
                           TEXT('Close spooled file.')
@@ -890,6 +908,12 @@
                           MBR(QSPRILSP) +
                           SRCTYPE(RPGLE) +
                           TEXT('Retrieve Identity of Last Spooled File Created.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QSZRTVPR) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Retrieve Product Information (QSZRTVPR) API')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSYSINC) +
@@ -1088,6 +1112,12 @@
                           MBR(TESTPGM19) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit Fixture - Errors in setUp/tearDownSuite.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
+                          MBR(TESTPGM20) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit Fixture - Test options(*exact)')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
