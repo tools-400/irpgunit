@@ -24,27 +24,27 @@ dcl-proc setup export;
 end-proc;
 
 dcl-proc test1 export;
-dcl-pi *n extproc(*dclcase);
-end-pi;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-sndInfoMsg( 'test1' );
+  sndInfoMsg( 'test1' );
 
 end-proc;
 
 dcl-proc test2 export;
-dcl-pi *n extproc(*dclcase);
-end-pi;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-sndInfoMsg( 'test2' );
-fail( 'test2' );
+  sndInfoMsg( 'test2' );
+  fail( 'test2' );
 
 end-proc;
 
 dcl-proc teardown export;
-dcl-pi *n extproc(*dclcase);
-end-pi;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-sndInfoMsg( 'teardown' );
+  sndInfoMsg( 'teardown' );
 
 end-proc;
 

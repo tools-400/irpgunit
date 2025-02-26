@@ -63,6 +63,6 @@ dcl-proc sndInfoMsg export;
   qMsgF.lib = '*LIBL';
 
   QMHSNDPM('': qMsgF: %trimr(msg): %len(%trimr(msg)): '*INFO'
-  : '*CTLBDY': CALL_STK_CNT: msgKey: percolateErrors );
+           : '*CTLBDY': CALL_STK_CNT: msgKey: percolateErrors );
 
 end-proc;

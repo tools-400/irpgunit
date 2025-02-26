@@ -27,10 +27,10 @@ dcl-proc setup export;
 end-proc;
 
 dcl-proc test export;
-dcl-pi *n extproc(*dclcase);
-end-pi;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-sndInfoMsg( 'Test should not be called.' );
+  sndInfoMsg( 'Test should not be called.' );
 
 end-proc;
 
@@ -43,26 +43,26 @@ dcl-proc teardown export;
 end-proc;
 
 dcl-proc sndInfoMsg export;
-dcl-pi *n extproc(*dclcase);
-  msg char(256) const;
-end-pi;
+  dcl-pi *n extproc(*dclcase);
+    msg char(256) const;
+  end-pi;
 
-// Call Stack Counter.
-// 1 - QCMDEXC
-// 2 - ACPTST.RUN
-// 3 - ACPTST.TEST...
-dcl-c CALL_STK_CNT 3;
+  // Call Stack Counter.
+  // 1 - QCMDEXC
+  // 2 - ACPTST.RUN
+  // 3 - ACPTST.TEST...
+  dcl-c CALL_STK_CNT 3;
 
-// The message reference key (unique string of characters that identifies
-// a particular instance of a message in a queue).
-dcl-s msgKey char(4);
-dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
-dcl-ds qMsgF likeds(object_t) inz;
+  // The message reference key (unique string of characters that identifies
+  // a particular instance of a message in a queue).
+  dcl-s msgKey char(4);
+  dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
+  dcl-ds qMsgF likeds(object_t) inz;
 
-qMsgF.nm = 'QCPFMSG';
-qMsgF.lib = '*LIBL';
+  qMsgF.nm = 'QCPFMSG';
+  qMsgF.lib = '*LIBL';
 
-QMHSNDPM('': qMsgF: %trimr(msg): %len(%trimr(msg)): '*INFO'
-         : '*CTLBDY': CALL_STK_CNT: msgKey: percolateErrors );
+  QMHSNDPM('': qMsgF: %trimr(msg): %len(%trimr(msg)): '*INFO'
+           : '*CTLBDY': CALL_STK_CNT: msgKey: percolateErrors );
 
 end-proc;
