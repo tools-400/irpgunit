@@ -1,30 +1,32 @@
-      /IF NOT DEFINED(LOCALTIME)
-      /DEFINE LOCALTIME
+**FREE
+/IF NOT DEFINED(LOCALTIME)
+/DEFINE LOCALTIME
 
-      // localtime() -- Correct Local Time, returns tm_t*
-      //    The localtime() function converts a time value, in
-      //    seconds, to a structure of type tm.
-     d localtime...
-     d                 pr              *   extproc('localtime')
-     d  time                         10i 0 const
+// localtime() -- Correct Local Time, returns tm_t*
+//    The localtime() function converts a time value, in
+//    seconds, to a structure of type tm.
+dcl-pr localtime pointer extproc('localtime');
+  time   int(10) const;
+end-pr;
 
-      // localtime_r() -- Correct Local Time
-      //    It is the same as localtime() except that it passes
-      //    in the place to store the returned structure result.
-     d localtime_r...
-     d                 pr              *   extproc('localtime_r')
-     d  time                         10i 0 const
-     d  tm                                 const  likeds(tm_t)
+// localtime_r() -- Correct Local Time
+//    It is the same as localtime() except that it passes
+//    in the place to store the returned structure result.
+dcl-pr localtime_r pointer extproc('localtime_r');
+  time   int(10) const;
+  tm     likeds(tm_t) const;
+end-pr;
 
-     d tm_t            ds                  qualified  template
-     d  tm_sec                       10i 0
-     d  tm_min                       10i 0
-     d  tm_hour                      10i 0
-     d  tm_mday                      10i 0
-     d  tm_mon                       10i 0
-     d  tm_year                      10i 0
-     d  tm_wday                      10i 0
-     d  tm_yday                      10i 0
-     d  tm_isdst                     10i 0
+dcl-ds tm_t qualified  template;
+  tm_sec     int(10);
+  tm_min     int(10);
+  tm_hour    int(10);
+  tm_mDay    int(10);
+  tm_mon     int(10);
+  tm_year    int(10);
+  tm_wDay    int(10);
+  tm_yDay    int(10);
+  tm_isDst   int(10);
+end-ds;
 
-      /ENDIF
+/ENDIF

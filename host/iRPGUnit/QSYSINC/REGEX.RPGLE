@@ -1,97 +1,114 @@
-      /IF NOT DEFINED(REGEX)
-      /DEFINE REGEX
+**FREE
+/IF NOT DEFINED(REGEX)
+/DEFINE REGEX
 
-     d regex_t         DS                  align   qualified       based(pDummy)
-     d  re_nsub                      10U 0
-     d  re_comp                        *
-     d  re_cflags                    10I 0
-     d  re_erroff                    10U 0
-     d  re_len                       10U 0
-     d  re_ucoll                     10I 0 dim(2)
-     d  re_lsub                        *
-     d  lsub_ar                      10I 0 dim(16)
-     d  esub_ar                      10I 0 dim(16)
-     d  reserved1                      *
-     d  re_esub                        *
-     d  re_specchar                    *
-     d  re_phdl                        *
-     d  comp_spc                    112A
-     d  re_map                      256A
-     d  re_shift                      5I 0
-     d  re_dbcs                       5I 0
+dcl-ds regex_t align qualified template;
+  re_nsub         uns(10);
+  re_comp         pointer;
+  re_cflags       int(10);
+  re_erroff       uns(10);
+  re_len          uns(10);
+  re_ucoll        int(10) dim(2);
+  re_lsub         pointer;
+  lsub_ar         int(10) dim(16);
+  esub_ar         int(10) dim(16);
+  reserved1       pointer;
+  re_esub         pointer;
+  re_specchar     pointer;
+  re_phdl         pointer;
+  comp_spc        char(112);
+  re_map          char(256);
+  re_shift        int(5);
+  re_dbcs         int(5);
+end-ds;
 
-     d regmatch_t      DS                  align   qualified       based(pDummy)
-     d  rm_so                        10I 0
-     d  rm_ss                         5I 0
-     d  rm_eo                        10I 0
-     d  rm_es                         5I 0
+dcl-ds regmatch_t align qualified template;
+  rm_so           int(10);
+  rm_ss           int(5);
+  rm_eo           int(10);
+  rm_es           int(5);
+end-ds;
 
-      //    rm_so  -  offset of substring
-      //    rm_ss  -  Shift state at start of substring
-      //    rm_eo  -  offset of first char after substring
-      //    rm_es  -  Shift state at end of substring
-      //
-      //  Constants:   regcomp() cflags
-      //     Basic RE rules  (BRE)
-     d REG_BASIC       C                   0                                    x'0000'
-      //     Extended RE rules (ERE)
-     d REG_EXTENDED    C                   1                                    x'0001'
-      //     Ignore case in match
-     d REG_ICASE       C                   2                                    x'0002'
-      //     Convert <backslash><n> to <newline>
-     d REG_NEWLINE     C                   4                                    x'0004'
-      //     regexec() not report subexpressions
-     d REG_NOSUB       C                   8                                    x'0008'
-      //     POSIX: Use IFS newline
-      //            instead of database newline
-      //     UTF32: Use database newline
-      //            instead of IFS newline.
-     d REG_ALT_NL      C                   16                                   x'0010'
+//    rm_so  -  offset of substring
+//    rm_ss  -  Shift state at start of substring
+//    rm_eo  -  offset of first char after substring
+//    rm_es  -  Shift state at end of substring
 
-      //  Constants:   regexec() eflags
-      //     First character not start of line
-     d REG_NOTBOL      C                   256                                  x'0100'
-      //     Last character not end of line
-     d REG_NOTEOL      C                   512                                  x'0200'
+//  Constants:   regcomp() cflags
+//     Basic RE rules  (BRE)
+dcl-c REG_BASIC    0; // x'0000'
 
-      //  Regular expressions error codes
-     d REG_NOMATCH     C                     1
-     d REG_BADPAT      C                     2
-     d REG_ECOLLATE    C                     3
-     d REG_ECTYPE      C                     4
-     d REG_EESCAPE     C                     5
-     d REG_ESUBREG     C                     6
-     d REG_EBRACK      C                     7
-     d REG_EPAREN      C                     8
-     d REG_EBRACE      C                     9
-     d REG_BADBR       C                    10
-     d REG_ERANGE      C                    11
-     d REG_ESPACE      C                    12
-     d REG_BADRPT      C                    13
-     d REG_ECHAR       C                    14
-     d REG_EBOL        C                    15
+//     Extended RE rules (ERE)
+dcl-c REG_EXTENDED 1; // x'0001'
 
-     d regcomp         PR            10I 0 extproc('regcomp')
-     d   preg                                     likeds(regex_t)
-     d   pattern                       *   value  options(*string)
-     d   cflags                      10I 0 value
+//     Ignore case in match
+dcl-c REG_ICASE    2; // x'0002'
 
-     d regexec         PR            10I 0 extproc('regexec')
-     d   preg                                     likeds(regex_t)
-     d   string                        *   value  options(*string)
-     d   nmatch                      10U 0 value
-     d   pmatch                                   likeds(regmatch_t)
-     d                                            dim(32767)
-     d                                            options(*varsize)
-     d   eflags                      10I 0 value
+//     Convert <backSLASH><n> to <newline>
+dcl-c REG_NEWLINE  4; // x'0004'
 
-     d regerror        PR            10U 0 extproc('regerror')
-     d   errcode                     10I 0 value
-     d   preg                                     like(regex_t)
-     d   errbuf                        *   value
-     d   errbuf_size                 10I 0 value
+//     regexec() not report subexpressions
+dcl-c REG_NOSUB    8; // x'0008'
 
-     d regfree         PR                  extproc('regfree')
-     d   preg                                     likeds(regex_t)
+//     POSIX: Use IFS newline
+//            instead of database newline
+//     UTF32: Use database newline
+//            instead of IFS newline.
+dcl-c REG_ALT_NL  16; // x'0010'
 
-      /ENDIF
+//  Constants:   regexec() eflags
+//     First character not start of line
+dcl-c REG_NOTBOL 256; // x'0100'
+
+//     Last character not end of line
+dcl-c REG_NOTEOL 512; // x'0200'
+
+//  Regular expressions error codes
+dcl-c REG_NOMATCH   1; // RE pattern not found
+dcl-c REG_BADPAT    2; // Invalid Regular Expression
+dcl-c REG_ECOLLATE  3; // Invalid collating element
+dcl-c REG_ECTYPE    4; // Invalid character class
+dcl-c REG_EESCAPE   5; // Last character is \
+dcl-c REG_ESUBREG   6; // Invalid number in \digit
+dcl-c REG_EBRACK    7; // imbalance
+dcl-c REG_EPAREN    8; // \( \) or () imbalance
+dcl-c REG_EBRACE    9; // \{ \} or { } imbalance
+dcl-c REG_BADBR    10; // Invalid \{ \} range exp
+dcl-c REG_ERANGE   11; // Invalid range exp endpoint
+dcl-c REG_ESPACE   12; // Out of memory
+dcl-c REG_BADRPT   13; // ?*+ not preceded by valid RE
+dcl-c REG_ECHAR    14; // invalid multibyte character
+dcl-c REG_EBOL     15; // (shift 6 caret or not) anchor and not BOL
+dcl-c REG_EEOL     16; // $ anchor and not EOL
+dcl-c REG_ECOMP    17; // Unknown error in regcomp() call
+dcl-c REG_EEXEC    18; // Unknown error in regexec() call
+dcl-c REG_LAST     18; // Needs to always be the greatest
+                       // regerror uses it to check for
+                       // valid number
+
+dcl-pr regcomp int(10) extproc('regcomp');
+  preg            likeds(regex_t);
+  pattern         pointer value  options(*string);
+  cflags          int(10) value;
+end-pr;
+
+dcl-pr regexec int(10) extproc('regexec');
+  preg            likeds(regex_t);
+  string          pointer value  options(*string);
+  nmatch          uns(10) value;
+  pmatch          likeds(regmatch_t) dim(32767) options(*varsize);
+  eflags          int(10) value;
+end-pr;
+
+dcl-pr regerror uns(10) extproc('regerror');
+  errcode         int(10) value;
+  preg            like(regex_t);
+  errbuf          pointer value;
+  errbuf_size     int(10) value;
+end-pr;
+
+dcl-pr regfree extproc('regfree');
+  preg            likeds(regex_t);
+end-pr;
+
+/ENDIF

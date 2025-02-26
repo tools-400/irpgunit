@@ -1,35 +1,33 @@
-      // ==========================================================================
-      //  iRPGUnit Fixture - Exported proc is not a test.
-      // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
-      // ==========================================================================
+**free
+// ==========================================================================
+//  iRPGUnit Fixture - Exported proc is not a test.
+// ==========================================================================
+//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ==========================================================================
 
-     h NoMain Option(*SrcStmt: *NoDebugIo)
+ctl-opt nomain option(*srcstmt: *nodebugio);
 
-      /include qinclude,TESTCASE
+/include qinclude,TESTCASE
 
-     Dtest1            pr
-     Dtest2            pr
-     Dnot_a_test       pr
+dcl-proc test1 export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+end-proc;
 
-     Ptest1            b                   export
-     Dtest1            pi
-     Ptest1            e
+dcl-proc test2 export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+end-proc;
 
-     Ptest2            b                   export
-     Dtest2            pi
-     Ptest2            e
+dcl-proc not_a_test export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-     Pnot_a_test       b                   export
-     Dnot_a_test       pi
-      /free
+  fail('not_a_test should not be called.');
 
-        fail('not_a_test should not be called.');
-
-      /end-free
-     Pnot_a_test       e
+end-proc;
 

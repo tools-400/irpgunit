@@ -1,26 +1,19 @@
-      /if not defined (IRPGUNIT_APILIST)
-      /define IRPGUNIT_APILIST
+**FREE
+/if not defined (IRPGUNIT_APILIST)
+/define IRPGUNIT_APILIST
 
-       // List API generic header structure (template).
-     D ListHdr_t       ds                   qualified based(template)
-         // Filler
-     D   filler1                    103a
-         // Status (I=Incomplete,C=Complete,F=Partially Complete)
-     D   status                       1a
-         // Filler
-     D   filler2                     12a
-         // Header Offset
-     D   hdrOff                      10i 0
-         // Header Size
-     D   hdrSize                     10i 0
-         // List Offset
-     D   listOff                     10i 0
-         // List Size
-     D   listSize                    10i 0
-         // Count of Entries in List
-     D   entCnt                      10i 0
-         // Size of a single entry
-     D   entSize                     10i 0
+// List API generic header structure (template).
+dcl-ds listhdr_t  qualified template;
+  filler1         char(103); // Filler
+  status          char(1);   // Status (I=Incomplete,C=Complete,F=Partially Complete)
+  filler2         char(12);  // Filler
+  hdrOffs         int(10);   // Header Offset
+  hdrSize         int(10);   // Header Size
+  listOffs        int(10);   // List Offset
+  listSize        int(10);   // List Size
+  entCnt          int(10);   // Count of Entries in List
+  entSize         int(10);   // Size of a single entry
+end-ds;
 
-      /endif
+/endif
 

@@ -1,248 +1,229 @@
-      // ==========================================================================
-      //  iRPGUnit - Utilities.
-      // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
-      // ==========================================================================
-      // >>PRE-COMPILER<<
-      //   >>CRTCMD<<  CRTSQLRPGI OBJ(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM) +
-      //                 OBJTYPE(*MODULE);
-      //   >>IMPORTANT<<
-      //     >>PARM<<  OPTION(*EVENTF);
-      //     >>PARM<<  DBGVIEW(*NONE);
-      //     >>PARM<<  RPGPPOPT(*LVL2);
-      //     >>PARM<<  COMPILEOPT('TRUNCNBR(*NO) DBGVIEW(*ALL)');
-      //   >>END-IMPORTANT<<
-      //   >>EXECUTE<<
-      // >>END-PRE-COMPILER<<
-      // ==========================================================================
+**FREE
+// ==========================================================================
+//  iRPGUnit - Utilities.
+// ==========================================================================
+//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ==========================================================================
+// >>PRE-COMPILER<<
+//   >>CRTCMD<<  CRTSQLRPGI OBJ(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM) +
+//                 OBJTYPE(*MODULE);
+//   >>IMPORTANT<<
+//     >>PARM<<  OPTION(*EVENTF);
+//     >>PARM<<  DBGVIEW(*NONE);
+//     >>PARM<<  RPGPPOPT(*LVL2);
+//     >>PARM<<  COMPILEOPT('TRUNCNBR(*NO) DBGVIEW(*ALL)');
+//   >>END-IMPORTANT<<
+//   >>EXECUTE<<
+// >>END-PRE-COMPILER<<
+// ==========================================================================
 
-     H NoMain
-      /include qinclude,H_SPEC
-      /include qinclude,COPYRIGHT
+ctl-opt nomain;
+/include qinclude,H_SPEC
+/include qinclude,COPYRIGHT
 
-      //----------------------------------------------------------------------
-      //   Imported Procedures
-      //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Imported Procedures
+//----------------------------------------------------------------------
 
-      /include qinclude,TESTUTILS
-      /include qinclude,MILIB
-      /include qinclude,OBJECT
-      /include qinclude,PGMMSG
-      /include qinclude,SYSTEMAPI
+/include qinclude,TESTUTILS
+/include qinclude,MILIB
+/include qinclude,OBJECT
+/include qinclude,PGMMSG
+/include qinclude,SYSTEMAPI
 
 
-      //----------------------------------------------------------------------
-      //   Type Templates
-      //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Type Templates
+//----------------------------------------------------------------------
 
-      /include qinclude,TEMPLATES
+/include qinclude,TEMPLATES
 
 
-      //----------------------------------------------------------------------
-      //   Global Variables
-      //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Global Variables
+//----------------------------------------------------------------------
 
-       // Message key of the latest message in the
-       // job log, when a test case was started.
-     D g_lowMsgKey     s              4a
+// Message key of the latest message in the
+// job log, when a test case was started.
+dcl-s g_lowMsgKey     char(4);
 
-      //----------------------------------------------------------------------
-      //   Procedure Definitions
-      //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Procedure Definitions
+//----------------------------------------------------------------------
 
 
-     P waitSeconds...
-     P                 b                   export
-     D                 pi                  opdesc
-     D  seconds                      10i 0 const
-     D  message                      50a   const varying options(*nopass: *omit)
+dcl-proc waitSeconds export;
+  dcl-pi *N opdesc;
+    seconds   int(10) const;
+    message   varchar(50) const  options(*nopass: *omit);
+  end-pi;
 
-     D mi_time         s                   like(mi_time_t) inz(*ALLx'00')
-      /free
+  dcl-s mi_time like(mi_time_t) inz(*allx'00');
 
-        if (seconds = 0);
-           return;
-        endif;
+  if (seconds = 0);
+    return;
+  endif;
 
-        if (%parms() >= 2 and %addr(message) <> *NULL);
-           displayStatusMessage(message);
-        endif;
+  if (%parms() >= 2 and %addr(message) <> *null);
+    displayStatusMessage(message);
+  endif;
 
-        mitime(mi_time: 0: 0: seconds: 0);
-        waittime(mi_time :cWAIT_SIGNALS);
+  mitime(mi_time: 0: 0: seconds: 0);
+  waitTime(mi_time: WAIT_SIGNALS);
 
-        if (%parms() >= 2 and %addr(message) <> *NULL);
-           rstStsMsg();
-        endif;
+  if (%parms() >= 2 and %addr(message) <> *null);
+    rstStsMsg();
+  endif;
 
-      /end-free
-     P                 e
+end-proc;
 
 
-     P displayStatusMessage...
-     P                 b                   export
-     D                 pi                  opdesc
-     D  message                     132a   const varying
-      /free
+dcl-proc displayStatusMessage export;
+  dcl-pi *N opdesc;
+    message varchar(132) const;
+  end-pi;
 
-         sndStsMsg(message);
+  sndStsMsg(message);
 
-      /end-free
-     P                 e
+end-proc;
 
 
-     P restoreStatusMessage...
-     P                 b                   export
-     D                 pi                  opdesc
-      /free
+dcl-proc restoreStatusMessage export;
+  dcl-pi *N opdesc;
+  end-pi;
 
-         rstStsMsg();
+  rstStsMsg();
 
-      /end-free
-     P                 e
+end-proc;
 
 
-     P clearStatusMessage...
-     P                 b                   export
-     D                 pi                  opdesc
-      /free
+dcl-proc clearStatusMessage export;
+  dcl-pi *N opdesc;
+  end-pi;
 
-         sndStsMsg('');
+  sndStsMsg('');
 
-      /end-free
-     P                 e
+end-proc;
 
 
-     P getMemberType...
-     P                 b                   export
-     D                 pi            10a   opdesc
-     D  srcFile                      10a   const
-     D  srcFileLib                   10a   const
-     D  mbr                          10a   const
+dcl-proc getMemberType export;
+  dcl-pi *N char(10) opdesc;
+    srcFile      char(10) const;
+    srcFileLib   char(10) const;
+    mbr          char(10) const;
+  end-pi;
 
-     D qSrcFile        ds                  likeds(Object_t)
-     D mbrd0100        ds                  likeds(mbrd0100_t)
-      /free
+  dcl-ds qSrcFile likeds(object_t);
+  dcl-ds mbrd0100 likeds(mbrd0100_t);
 
-         qSrcFile.nm = srcFile;
-         qSrcFile.lib = srcFileLib;
+  qSrcFile.nm = srcFile;
+  qSrcFile.lib = srcFileLib;
 
-         QUSRMBRD(mbrd0100: %size(mbrd0100): 'MBRD0100': qSrcFile: mbr: '0');
+  qusrmbrd(mbrd0100: %size(mbrd0100): 'MBRD0100': qSrcFile: mbr: '0');
 
-         return mbrd0100.srcType;
+  return mbrd0100.srcType;
 
-      /end-free
-     P                 e
+end-proc;
 
-     P getFullTimeStamp...
-     P                 b                   export
-     D                 pi              z   opdesc
+dcl-proc getFullTimestamp export;
+  dcl-pi *N timestamp opdesc;
+  end-pi;
 
-     D now             s               z
-       exec sql SET :now = CURRENT_TIMESTAMP;
-       return now;
-     P                 e
+  dcl-s now timestamp;
 
+  exec sql set :now = current_timestamp;
 
-       //--------------------------------------------------------------------
-       //        Reclaim Activation Group
-       //--------------------------------------------------------------------
-     P rclactgrp...
-     P                 b                   export
-     D                 pi                  opdesc
-     D  w1actGrpNm                   10a   const
+  return now;
 
-     D w1cmd           s          32702a   varying
+end-proc;
 
-      /free
 
-        runCmd( 'RCLACTGRP ' + %trim(w1actGrpNm) );
+//--------------------------------------------------------------------
+//        Reclaim Activation Group
+//--------------------------------------------------------------------
+dcl-proc rclActGrp export;
+  dcl-pi *N opdesc;
+    w1actGrpNm   char(10) const;
+  end-pi;
 
-      /end-free
-     P                 e
+  dcl-s w1cmd varchar(32702);
 
+  runCmd( 'RCLACTGRP ' + %trim(w1actGrpNm) );
 
-       //--------------------------------------------------------------------
-       //        Run Command
-       //--------------------------------------------------------------------
-     P runCmd...
-     P                 b                   export
-     D                 pi                  opdesc
-     D  w1cmd                     32702a   const varying
-      /free
+end-proc;
 
-        qcmdexc( w1cmd : %len(w1cmd) );
 
-      /end-free
-     P                 e
+//--------------------------------------------------------------------
+//        Run Command
+//--------------------------------------------------------------------
+dcl-proc runCmd export;
+  dcl-pi *N opdesc;
+    w1cmd   varchar(32702) const;
+  end-pi;
 
+  qcmdexc( w1cmd : %len(w1cmd) );
 
-     P clrpfm...
-     P                 b                   export
-     D                 pi                  opdesc
-     D  w1fileNm                     10a   const
-     D  w1mbrNm                      10a   const options(*NoPass)
+end-proc;
 
-     D w1cmd           s          32702a   varying
 
-      /free
+dcl-proc clrpfm export;
+  dcl-pi *N opdesc;
+    w1FileNm   char(10) const;
+    w1MbrNm    char(10) const options(*nopass);
+  end-pi;
 
-        if %parms = 1;
-          runCmd( 'CLRPFM FILE(*CURLIB/' + %trim(w1fileNm) + ')' );
-        else;
-          runCmd( 'CLRPFM FILE(*CURLIB/' + %trim(w1fileNm) + ')'
-                + ' MBR(' + %trim(w1mbrNm) + ')' );
-        endif;
+  dcl-s w1cmd varchar(32702);
 
-      /end-free
-     P                 e
+  if %parms = 1;
+    runCmd( 'CLRPFM FILE(*CURLIB/' + %trim(w1FileNm) + ')' );
+  else;
+    runCmd( 'CLRPFM FILE(*CURLIB/' + %trim(w1FileNm) + ')'
+          + ' MBR(' + %trim(w1MbrNm) + ')' );
+  endif;
 
+end-proc;
 
-     P setLowMessageKey...
-     P                 b                   export
-     D                 pi                  opdesc
-     D  msgKey                        4a   const options(*nopass)
 
-     D p_msgKey        c                   1
-      /free
+dcl-proc setLowMessageKey export;
+  dcl-pi *N opdesc;
+    msgKey   char(4) const options(*nopass);
+  end-pi;
 
-       if (%parms() >= p_msgKey);
-          g_lowMsgKey = msgKey;
-       else;
-          g_lowMsgKey = getHighestMsgKey();
-       endif;
+  if (%parms() >= %parmnum(msgKey));
+    g_lowMsgKey = msgKey;
+  else;
+    g_lowMsgKey = getHighestMsgKey();
+  endif;
 
-      /end-free
-     P                 e
+end-proc;
 
 
-     P getMonitoredMessage...
-     P                 b                   export
-     D                 pi                  likeds(MsgInfo_t)
-     D                                     opdesc
-     D  doRmvMsg                       n   const options(*nopass)
+dcl-proc getmonitoredmessage export;
+  dcl-pi *N likeds(msginfo_t) opdesc;
+    doRmvMsg   ind const options(*nopass);
+  end-pi;
 
-     D  msgInfo        ds                  likeds(MsgInfo_t)
-     D  msg            ds                  likeds(Msg_t)
+  dcl-ds msgInfo likeds(msginfo_t);
+  dcl-ds msg likeds(msg_t);
 
-      /free
 
-       if (%parms() >= 1 and %addr(doRmvMsg) <> *null);
-          msg = getLatestEscMsg(g_lowMsgKey: doRmvMsg);
-       else;
-          msg = getLatestEscMsg(g_lowMsgKey: *OFF);
-       endif;
-       msgInfo.id     = msg.id;
-       msgInfo.txt    = msg.txt;
-       msgInfo.pgm    = msg.qSndStmt.qPgm.nm;
-       msgInfo.mod    = msg.qSndStmt.qMod.nm;
-       msgInfo.proc   = msg.qSndStmt.procNm;
-       msgInfo.specNb = msg.qSndStmt.specNb;
-       Return msgInfo;
+  if (%parms() >= %parmnum(doRmvMsg) and %addr(doRmvMsg) <> *null);
+    msg = getLatestEscMsg(g_lowMsgKey: doRmvMsg);
+  else;
+    msg = getLatestEscMsg(g_lowMsgKey: *off);
+  endif;
 
-      /end-free
-     P                 e
+  msgInfo.id = msg.id;
+  msgInfo.txt = msg.txt;
+  msgInfo.pgm = msg.qsndstmt.qpgm.nm;
+  msgInfo.mod = msg.qsndstmt.qmod.nm;
+  msgInfo.proc = msg.qsndstmt.procnm;
+  msgInfo.specnb = msg.qsndstmt.specnb;
+
+  return msgInfo;
+
+end-proc;

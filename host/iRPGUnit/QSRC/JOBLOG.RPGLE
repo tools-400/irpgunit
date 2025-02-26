@@ -116,9 +116,9 @@ dcl-proc JobLogReader_init export;
 
   hReader.fieldSelect.maxMsgLen = 0;
   hReader.fieldSelect.maxMsgHlpLen = 0;
-  hReader.fieldSelect.fldIdOff = 0;
+  hReader.fieldSelect.fldIdOffs = 0;
   hReader.fieldSelect.fldCnt = 0;
-  hReader.fieldSelect.callMsgqNmOff = 0;
+  hReader.fieldSelect.callMsgQNmOffs = 0;
   hReader.fieldSelect.callMsgqNmLen = 0;
 
   hReader.isPrepared = *off;
@@ -152,20 +152,20 @@ dcl-proc JobLogReader_addField export;
     return -1;
   endif;
 
-  if (hReader.fieldSelect.fldIdOff >= %size(hReader.data) - %size(i_fieldId));
+  if (hReader.fieldSelect.fldIdOffs >= %size(hReader.data) - %size(i_fieldId));
     return -1;
   endif;
 
-  hReader.fieldSelect.fldIdOff = %size(hReader.fieldSelect);
+  hReader.fieldSelect.fldIdOffs = %size(hReader.fieldSelect);
 
-  pFieldID = %addr(hReader.fieldSelect) + hReader.fieldSelect.fldIdOff
+  pFieldID = %addr(hReader.fieldSelect) + hReader.fieldSelect.fldIdOffs
                    + FIELD_SIZE * hReader.fieldSelect.fldCnt;
 
   fieldID = i_fieldId;
   hReader.fieldSelect.fldCnt += 1;
 
-  hReader.fieldSelect.callMsgqNmOff = hReader.fieldSelect.fldIdOff +
-                                      (FIELD_SIZE * hReader.fieldSelect.fldCnt);
+  hReader.fieldSelect.callMsgQNmOffs = hReader.fieldSelect.fldIdOffs +
+                                       (FIELD_SIZE * hReader.fieldSelect.fldCnt);
 
   hReader.length += FIELD_SIZE;
 
@@ -271,7 +271,7 @@ dcl-proc JobLogReader_read export;
     endif;
 
     // Go to next message in the job log.
-    p_msgBasicInfo = %addr( jobLogList ) + msgBasicInfo.nextEntOff;
+    p_msgBasicInfo = %addr( jobLogList ) + msgBasicInfo.nextEntOffs;
     hReader.currMsgCnt += 1;
   enddo;
 
@@ -392,13 +392,13 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc JobLogReader_getMsgInfo export;
   dcl-pi *n likeds(jl_rd_msgInfo_t);
-  i_hMsgInfo   pointer const;
+    i_hMsgInfo   pointer const;
   end-pi;
 
   dcl-ds msgInfoRtn likeds(jl_rd_msgInfo_t);
 
   dcl-ds hMsgInfo likeds(hMsgInfo_t) based(i_hMsgInfo);
-    dcl-ds msgBasicInfo likeds(dsOLJL0100EntHdr) based(hMsgInfo.pMsgInfo);
+  dcl-ds msgBasicInfo likeds(dsOLJL0100EntHdr) based(hMsgInfo.pMsgInfo);
 
   msgInfoRtn.severity = msgBasicInfo.msgSeverity;
   msgInfoRtn.id = msgBasicInfo.msgId;
@@ -410,7 +410,7 @@ dcl-proc JobLogReader_getMsgInfo export;
   msgInfoRtn.lib = msgBasicInfo.msgfLib;
   msgInfoRtn.sndTime = %date(msgBasicInfo.sentDate: *cymd0) +
                        %time(msgBasicInfo.sentTime: *hms0) +
-                       %mseconds(%dec(msgBasicInfo.microseconds: 6: 0));
+                       %mseconds(%dec(msgBasicInfo.microSeconds: 6: 0));
   msgInfoRtn.threadId = msgBasicInfo.threadId;
   msgInfoRtn.timeZone = msgBasicInfo.timeZone;
 
@@ -431,41 +431,41 @@ dcl-proc getExtMsgType;
 
   select;
   when (i_typeIntern = '01');
-     msgType = '*COMP';
+    msgType = '*COMP';
   when (i_typeIntern = '02');
-     msgType = '*DIAG';
+    msgType = '*DIAG';
   when (i_typeIntern = '04');
-     msgType = '*INFO';
+    msgType = '*INFO';
   when (i_typeIntern = '05');
-     msgType = '*INQ';
+    msgType = '*INQ';
   when (i_typeIntern = '06');
-     msgType = '*COPY';
+    msgType = '*COPY';
   when (i_typeIntern = '08');
-     msgType = '*RQS';
+    msgType = '*RQS';
   when (i_typeIntern = '10');
-     msgType = '*RQS';
+    msgType = '*RQS';
   when (i_typeIntern = '14');
-     msgType = '*NOTIFY';
+    msgType = '*NOTIFY';
   when (i_typeIntern = '15');
-     msgType = '*ESCAPE';
+    msgType = '*ESCAPE';
   when (i_typeIntern = '16');
-     msgType = '*NOTIFY';
+    msgType = '*NOTIFY';
   when (i_typeIntern = '17');
-     msgType = '*ESCAPE';
+    msgType = '*ESCAPE';
   when (i_typeIntern = '21');
-     msgType = '*REPLY';
+    msgType = '*REPLY';
   when (i_typeIntern = '22');
-     msgType = '*REPLY';
+    msgType = '*REPLY';
   when (i_typeIntern = '23');
-     msgType = '*REPLY';
+    msgType = '*REPLY';
   when (i_typeIntern = '24');
-     msgType = '*REPLY';
+    msgType = '*REPLY';
   when (i_typeIntern = '25');
-     msgType = '*REPLY';
+    msgType = '*REPLY';
   when (i_typeIntern = '26');
-     msgType = '*REPLY';
+    msgType = '*REPLY';
   other;
-     msgType = '*N';
+    msgType = '*N';
   endsl;
 
   return msgType;
@@ -491,7 +491,7 @@ dcl-proc JobLogReader_getCharValue export;
   dcl-s data char(3000) based(pData);
   dcl-s i int(10);
 
-  p_msgFieldInfo = hMsgInfo.pJobLogInfo + msgBasicInfo.retFldOff;
+  p_msgFieldInfo = hMsgInfo.pJobLogInfo + msgBasicInfo.retFldOffs;
 
   for i = 1 to msgBasicInfo.retFldCnt;
 
@@ -505,7 +505,7 @@ dcl-proc JobLogReader_getCharValue export;
       endif;
     endif;
 
-    p_msgFieldInfo = hMsgInfo.pJobLogInfo + msgFieldInfo.nextFldOff;
+    p_msgFieldInfo = hMsgInfo.pJobLogInfo + msgFieldInfo.nextFldOffs;
   endfor;
 
   if (value = '' and %parms() >= %parmnum(i_dftValue));
@@ -530,7 +530,7 @@ dcl-proc hasField;
 
   for i = 1 to i_hReader.fieldSelect.fldCnt;
     pFieldId = %addr(i_hReader.fieldSelect)
-               + i_hReader.fieldSelect.fldIdOff + ((i - 1) * FIELD_SIZE);
+               + i_hReader.fieldSelect.fldIdOffs + ((i - 1) * FIELD_SIZE);
     if (fieldId = i_fieldId);
       return *on;
     endif;
@@ -584,11 +584,11 @@ dcl-proc setMsgQName;
 
   dcl-s msgQName char(10) based(p_msgQName);
 
-  if (io_hReader.fieldSelect.callMsgqNmOff >= %size(io_hReader.data) - %len(io_hReader.msgQ));
+  if (io_hReader.fieldSelect.callMsgQNmOffs >= %size(io_hReader.data) - %len(io_hReader.msgQ));
     return *off;
   endif;
 
-  p_msgQName = %addr(io_hReader.fieldSelect) + io_hReader.fieldSelect.callMsgqNmOff;
+  p_msgQName = %addr(io_hReader.fieldSelect) + io_hReader.fieldSelect.callMsgQNmOffs;
 
   %subst(msgQName: 1: %len(io_hReader.msgQ)) = io_hReader.msgQ;
   io_hReader.fieldSelect.callMsgqNmLen = %len(io_hReader.msgQ);
@@ -611,7 +611,7 @@ dcl-proc getSentTimeJobLogMsg;
   dcl-s sentDateAsIso char(8);
 
   sentDateAsIso = %char(%date(msg.sentDate: *cymd0): *iso0);
-  return %timestamp(sentDateAsIso + msg.sentTime + msg.microseconds: *iso0);
+  return %timestamp(sentDateAsIso + msg.sentTime + msg.microSeconds: *iso0);
 
 end-proc;
 

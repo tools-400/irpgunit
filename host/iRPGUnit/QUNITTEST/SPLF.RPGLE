@@ -330,7 +330,7 @@
 
         aEqual( 'C' : qspGenHdr.compInd );
 
-        splf.bufPos_p    = splf.pUsrSpc + qspGenHdr.firstBufOff;
+        splf.bufPos_p    = splf.pUsrSpc + qspGenHdr.firstBufOffs;
         splf.usrSpcEnd_p = splf.pUsrSpc + qspGenHdr.usrSpcSizeUsed;
 
       /end-free

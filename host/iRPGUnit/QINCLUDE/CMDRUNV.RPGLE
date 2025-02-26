@@ -1,43 +1,39 @@
-      /if not defined(CMDRUNV)
-      /define CMDRUNV
-      // ==========================================================================
-      //  iRPGUnit - RUCALLTST Validity checking program.
-      // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
-      // ==========================================================================
+**FREE
+/if not defined(CMDRUNV)
+/define CMDRUNV
+// ==========================================================================
+//  iRPGUnit - RUCALLTST Validity checking program.
+// ==========================================================================
+//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ==========================================================================
 
-       // The entry point of RUCALLTST. Parameters are provided by RUCALLTST command.
-     D cmdRunV         pr                  extpgm('CMDRUNV')
-     D  gi_testSuite                       const likeds(Object_t)
-     D  gi_testProcs                       const likeds(ProcNms_t)
-     D  gi_order                           const like(order_t)
-     D  gi_detail                          const like(detail_t)
-     D  gi_output                          const like(output_t)
-     D  gi_libl                            const likeds(LibL_t)
-     D  gi_jobd                            const likeds(Object_t)
-     D  gi_rclRsc                          const like(rclrsc_t)
-     D  gi_xmlStmf                         const like(stmf_t)
+// The entry point of RUCALLTST. Parameters are provided by RUCALLTST command.
+dcl-pr cmdrunv extpgm('CMDRUNV');
+  gi_testsuite    likeds(object_t) const;
+  gi_testprocs    likeds(procNms_t) const;
+  gi_order        like(order_t) const;
+  gi_detail       like(detail_t) const;
+  gi_output       like(output_t) const;
+  gi_libl         likeds(libl_t) const;
+  gi_jobd         likeds(object_t) const;
+  gi_rclrsc       like(rclrsc_t) const;
+  gi_xmlstmf      like(stmf_t) const;
+end-pr;
 
-     D validateXmlStmf...
-     D                 pr           256a   varying
-     D                                     extproc('CMDRUNV_+
-     D                                     validateXmlStmf+
-     D                                     ')
-     D  i_xmlStmf                          const like(stmf_t)
-     D  i_testSuite                        const likeds(object_t )
+dcl-pr validateXmlStmf varchar(256) extproc('CMDRUNV_validateXmlStmf');
+  i_xmlstmf       like(stmf_t) const;
+  i_testsuite     likeds(object_t ) const;
+end-pr;
 
-     D resolvePathVariables...
-     D                 pr                  like(stmf_t)
-     D                                     extproc('CMDRUNV_+
-     D                                     resolvePathVariables+
-     D                                     ')
-     D  i_path                             const like(stmf_t)
-     D  i_testSuite                        const likeds(Object_t)
+dcl-pr resolvePathVariables like(stmf_t) extproc('CMDRUNV_resolvePathVariables');
+  i_path          like(stmf_t) const;
+  i_testsuite     likeds(object_t) const;
+end-pr;
 
-      /include qinclude,CMDRUN
-      /endif
+/include qinclude,CMDRUN
+/endif
 

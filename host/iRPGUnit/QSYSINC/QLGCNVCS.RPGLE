@@ -1,56 +1,52 @@
-      /if not defined(QlgConvertCase)
-      /define QlgConvertCase
+**FREE
+/if not defined(QlgConvertCase)
+/define QlgConvertCase
 
-      // Convert Case (QLGCNVCS, QlgConvertCase) API
-     D QlgConvertCase  PR                         extproc('QlgConvertCase')
-     D  i_reqCtrlBlk              32767A   const  options(*varsize)
-     D  i_inData                  32767A   const  options(*varsize)
-     D  o_outData                 32767A          options(*varsize)
-     D  i_length                     10I 0 const
-     D  io_ErrCode                32767A          options(*nopass: *varsize)
+// Convert Case (QLGCNVCS, QlgConvertCase) API
+dcl-pr qlgconvertcase        extproc('QlgConvertCase');
+  i_reqCtrlBlk    char(32767) const  options(*varsize);
+  i_inData        char(32767) const  options(*varsize);
+  o_outData       char(32767) options(*varsize);
+  i_length        int(10) const;
+  io_errCode      char(32767) options(*nopass: *varsize);
+end-pr;
 
-      // Type of request.       ->   reqCtrlBlk.type
-     D cCVTCASE_TYPE_ccsid...
-     D                 C                   const(1)
-     D cCVTCASE_TYPE_table...
-     D                 C                   const(2)
-     D cCVTCASE_TYPE_userDef...
-     D                 C                   const(3)
+// Type of request.       ->   reqCtrlBlk.type
+dcl-c CVTCASE_TYPE_CCSID   1;
+dcl-c CVTCASE_TYPE_TABLE   2;
+dcl-c CVTCASE_TYPE_USERDEF 3;
 
-      // CCSID of input data.   ->   reqCtrlBlk.ccsid
-     D cCVTCASE_CCSID_Job...
-     D                 C                   const(0)
+// CCSID of input data.   ->   reqCtrlBlk.ccsid
+dcl-c CVTCASE_CCSID_JOB    0;
 
-      // Case request.          ->   reqCtrlBlk.case
-     D cCVTCASE_toUpper...
-     D                 C                   const(0)
-     D cCVTCASE_toLower...
-     D                 C                   const(1)
+// Case request.          ->   reqCtrlBlk.case
+dcl-c CVTCASE_TOUPPER  0;
+dcl-c CVTCASE_TOLOWER  1;
 
-      // Request control block, CCSID format.
-     D reqCtrlBlk_ccsid_t...
-     D                 DS                  qualified           based(pDummy)
-     D  type                         10i 0
-     D  ccsid                        10i 0
-     D  case                         10i 0
-     D  reserved                     10a
+// Request control block, CCSID format.
+dcl-ds reqCtrlBlk_ccsid_t qualified template;
+  type            int(10);
+  ccsid           int(10);
+  case            int(10);
+  reserved        char(10);
+end-ds;
 
-      // Request control block, table object format.
-     D reqCtrlBlk_table_t...
-     D                 DS                  qualified           based(pDummy)
-     D  type                         10i 0
-     D  dbcs_ind                     10i 0
-     D  qTable                       20a
-     D   table_name                  10a   overlay(qTable)
-     D   table_lib                   10a   overlay(qTable: *next)
+// Request control block, table object format.
+dcl-ds reqCtrlBlk_table_t qualified template;
+  type            int(10);
+  dbcs_ind        int(10);
+  qTable          char(20);
+  table_name      char(10) overlay(qTable);
+  table_lib       char(10) overlay(qTable: *next);
+end-ds;
 
-      // Request control block, user-defined format.
-     D reqCtrlBlk_user_t...
-     D                 DS                  qualified           based(pDummy)
-     D  type                         10i 0
-     D  dbcs_ind                     10i 0
-     D  reserved_1                   10i 0
-     D  length                       10i 0
-      * userDefinedTable           char(*)
+// Request control block, user-defined format.
+dcl-ds reqCtrlBlk_user_t qualified template;
+  type            int(10);
+  dbcs_ind        int(10);
+  reserved_1      int(10);
+  length          int(10);
+  // userDefinedTable           char(*)
+end-ds;
 
-      /endif
+/endif

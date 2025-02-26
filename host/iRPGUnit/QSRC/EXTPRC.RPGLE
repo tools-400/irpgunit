@@ -1,196 +1,186 @@
-      // ==========================================================================
-      //  iRPGUnit - Extract Procedures From a SRVPGM.
-      // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
-      // ==========================================================================
-      // >>PRE-COMPILER<<
-      //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
-      //   >>IMPORTANT<<
-      //     >>PARM<<  OPTION(*EVENTF);
-      //     >>PARM<<  DBGVIEW(*LIST);
-      //   >>END-IMPORTANT<<
-      //   >>EXECUTE<<
-      // >>END-PRE-COMPILER<<
-      // ==========================================================================
+**FREE
+// ==========================================================================
+//  iRPGUnit - Extract Procedures From a SRVPGM.
+// ==========================================================================
+//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ==========================================================================
+// >>PRE-COMPILER<<
+//   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+//   >>IMPORTANT<<
+//     >>PARM<<  OPTION(*EVENTF);
+//     >>PARM<<  DBGVIEW(*LIST);
+//   >>END-IMPORTANT<<
+//   >>EXECUTE<<
+// >>END-PRE-COMPILER<<
+// ==========================================================================
 
-     H NoMain
-      /include qinclude,H_SPEC
-      /include qinclude,COPYRIGHT
+ctl-opt nomain;
+/include qinclude,H_SPEC
+/include qinclude,COPYRIGHT
 
-       //----------------------------------------------------------------------
-       //   Public Procedure Prototypes
-       //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Public Procedure Prototypes
+//----------------------------------------------------------------------
 
-      /include qinclude,EXTPRC
-      /include qinclude,TEMPLATES
-      /include qinclude,ERRORCODE
+/include qinclude,EXTPRC
+/include qinclude,TEMPLATES
+/include qinclude,ERRORCODE
 
-       //----------------------------------------------------------------------
-       //   Private Procedure Prototypes
-       //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Private Procedure Prototypes
+//----------------------------------------------------------------------
 
-       // Retrieve Procedure Info.
-       // Stores procedure info in a user space.
-     D rtvProcInfo     pr
-        // Service program to analyze.
-     D  srvPgm                             value likeds(Object_t)
-        // Qualified user space name.
-     D  usrSpc                             const likeds(Object_t)
+// Retrieve Procedure Info.
+// Stores procedure info in a user space.
+dcl-pr rtvprocinfo;
+  // Service program to analyze.
+  srvPgm          value likeds(object_t);
+  // Qualified user space name.
+  usrSpc          const likeds(object_t);
+end-pr;
 
-       //----------------------------------------------------------------------
-       //   Imported Procedures
-       //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Imported Procedures
+//----------------------------------------------------------------------
 
-      /include qinclude,SYSTEMAPI
-      /include qinclude,USRSPC
+/include qinclude,SYSTEMAPI
+/include qinclude,USRSPC
 
-       //----------------------------------------------------------------------
-       // Counts the number of procedure in the liste. See prototype.
-       //----------------------------------------------------------------------
-     P cntProc...
-     P                 b                   export
-     D                 pi            10i 0
-     D  procList                           const likeds(ProcList_t)
+//----------------------------------------------------------------------
+// Counts the number of procedure in the liste. See prototype.
+//----------------------------------------------------------------------
+dcl-proc cntProc export;
+  dcl-pi *N              int(10);
+    proclist        const likeds(procList_t);
+  end-pi;
 
-       // Procedure list header.
-     D procListHdr     ds                  likeds(ListHdr_t)
-     D                                     based(procList.hdr)
-
-      /free
-
-        return procListHdr.entCnt;
-
-      /end-free
-     P                 e
+  // Procedure list header.
+  dcl-ds proclisthdr likeds(listhdr_t)
+  based(proclist.hdr);
 
 
-       //----------------------------------------------------------------------
-       // Returns a list of the procedures. See prototype.
-       //----------------------------------------------------------------------
-     P loadProcList...
-     P                 b                   export
-     D                 pi                  likeds(ProcList_t)
-     D  srvPgm                             const likeds(Object_t)
+  return proclisthdr.entcnt;
 
-       // List header structure.
-     D listHdr         ds                  likeds(ListHdr_t)
-     D                                     based(procList.hdr)
-       // Extracted procedure list.
-     D procList        ds                  likeds(ProcList_t)
-       // Qualified name of the user space that stores the proc info.
-     D usrSpc          ds                  likeds(Object_t)
-
-      /free
-
-        usrSpc.nm  = 'RUPROCLIST';
-        usrSpc.lib = 'QTEMP';
-
-        procList.hdr = crtUsrSpc( usrSpc: 'RPGUnit - Procedure list.');
-        rtvProcInfo( srvPgm: usrSpc );
-
-        procList.current = procList.hdr + listHdr.listOff;
-
-        return procList;
-
-      /end-free
-     P                 e
+end-proc;
 
 
-       //----------------------------------------------------------------------
-       // Adapts a ProcList_t interface into a ProcNmList_t. See prototype.
-       //----------------------------------------------------------------------
-     P getProcNmList...
-     P                 b                   export
-     D                 pi                  likeds(ProcNmList_t)
-     D  procList                           likeds(ProcList_t)
+//----------------------------------------------------------------------
+// Returns a list of the procedures. See prototype.
+//----------------------------------------------------------------------
+dcl-proc loadProcList export;
+  dcl-pi *N likeds(procList_t);
+    srvPgm          const likeds(object_t);
+  end-pi;
 
-     D procNmList      ds                  likeds(ProcNmList_t)
-
-      /free
-
-        procNmList.handle   = %addr( procList );
-        procNmList.cnt      = %paddr( cntProc );
-        procNmList.getNm    = %paddr( getProcNm );
-        procNmList.goToNext = %paddr( goToNextProc );
-
-        return procNmList;
-
-      /end-free
-     P                 e
+  // List header structure.
+  dcl-ds listhdr likeds(listhdr_t)
+  based(proclist.hdr);
+  // Extracted procedure list.
+  dcl-ds proclist likeds(procList_t);
+  // Qualified name of the user space that stores the proc info.
+  dcl-ds usrSpc likeds(object_t);
 
 
-       //----------------------------------------------------------------------
-       // Returns the current procedure name. See prototype.
-       //----------------------------------------------------------------------
-     P getProcNm...
-     P                 b                   export
-     D                 pi                  like(ProcNm_t)
-     D  procList                           const likeds(ProcList_t)
+  usrSpc.nm  = 'RUPROCLIST';
+  usrSpc.lib = 'QTEMP';
 
-       // Procedure description.
-     D procDesc        ds                  likeds(SPGL0610_t)
-     D                                     based(procList.current)
-       // A buffer and its pointer to access the procedure name.
-     D procNmBuffer    s            256a   based(procNm_p)
-     D procNm_p        s               *
-       // The procedure name, to be returned.
-     D procNm          s                   like(ProcNm_t)
+  proclist.hdr = crtusrspc( usrSpc: 'RPGUnit - Procedure list.');
+  rtvprocinfo( srvPgm: usrSpc );
 
-      /free
+  proclist.current = proclist.hdr + listhdr.listOffs;
 
-        procNm_p = procList.hdr + procDesc.procNmOff;
-        procNm = %subst(procNmBuffer: 1: procDesc.procNmSize);
+  return proclist;
 
-        return procNm;
-
-      /end-free
-     P                 e
+end-proc;
 
 
-       //----------------------------------------------------------------------
-       // Go to the next procedure info entry. See prototype.
-       //----------------------------------------------------------------------
-     P goToNextProc...
-     P                 b                   export
-     D                 pi
-     D  procList                            likeds(ProcList_t)
+//----------------------------------------------------------------------
+// Adapts a ProcList_t interface into a ProcNmList_t. See prototype.
+//----------------------------------------------------------------------
+dcl-proc getProcNmList export;
+  dcl-pi *N likeds(procNmList_t);
+    proclist        likeds(procList_t);
+  end-pi;
 
-     D procDesc        ds                  likeds(SPGL0610_t)
-     D                                     based(procList.current)
-
-      /free
-
-        procList.current += procDesc.size;
-
-      /end-free
-     P goToNextProc    e
+  dcl-ds procnmlist likeds(procNmList_t);
 
 
-       //----------------------------------------------------------------------
-       // Stores procedure info in a user space. See prototype.
-       //----------------------------------------------------------------------
-     P rtvProcInfo...
-     P                 b
-     D                 pi
-     D  srvPgm                             value likeds(Object_t)
-     D  usrSpc                             const likeds(Object_t)
-     D percolateErrors...
-     D                 ds                  likeds(percolateErrors_t)
-     D                                     inz(*likeds)
-      /free
+  procnmlist.handle   = %addr( proclist );
+  procnmlist.cnt      = %paddr( cntProc );
+  procnmlist.getnm    = %paddr( getProcNm );
+  procnmlist.gotonext = %paddr( goToNextProc );
 
-        if srvPgm.lib = *blank;
-          srvPgm.lib = '*LIBL';
-        endif;
+  return procnmlist;
 
-        QBNLSPGM( usrSpc :
-                  'SPGL0610' :
-                  srvPgm :
-                  percolateErrors );
+end-proc;
 
-      /end-free
-     P                 e
+
+//----------------------------------------------------------------------
+// Returns the current procedure name. See prototype.
+//----------------------------------------------------------------------
+dcl-proc getProcNm export;
+  dcl-pi *N like(procNm_t);
+    proclist        const likeds(procList_t);
+  end-pi;
+
+  // Procedure description.
+  dcl-ds procdesc likeds(spgl0610_t)
+  based(proclist.current);
+  // A buffer and its pointer to access the procedure name.
+  dcl-s procnmbuffer    char(256) based(procnm_p);
+  dcl-s procnm_p        pointer;
+  // The procedure name, to be returned.
+  dcl-s procnm          like(procNm_t);
+
+
+  procnm_p = proclist.hdr + procdesc.procnmoff;
+  procnm = %subst(procnmbuffer: 1: procdesc.procnmsize);
+
+  return procnm;
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+// Go to the next procedure info entry. See prototype.
+//----------------------------------------------------------------------
+dcl-proc goToNextProc export;
+  dcl-pi *N;
+    proclist        likeds(procList_t);
+  end-pi;
+
+  dcl-ds procdesc likeds(spgl0610_t)
+  based(proclist.current);
+
+
+  proclist.current += procdesc.size;
+
+end-proc goToNextProc;
+
+
+//----------------------------------------------------------------------
+// Stores procedure info in a user space. See prototype.
+//----------------------------------------------------------------------
+dcl-proc rtvprocinfo;
+  dcl-pi *N;
+    srvPgm          value likeds(object_t);
+    usrSpc          const likeds(object_t);
+  end-pi;
+  dcl-ds percolateErrors
+         likeds(percolateErrors_t)
+  inz(*likeds);
+
+  if srvPgm.lib = *blank;
+    srvPgm.lib = '*LIBL';
+  endif;
+
+  qbnlspgm( usrSpc :
+            'SPGL0610' :
+            srvPgm :
+            percolateErrors );
+
+end-proc;

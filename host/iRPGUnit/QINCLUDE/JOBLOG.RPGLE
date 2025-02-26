@@ -9,7 +9,7 @@
 //  http://www.eclipse.org/legal/cpl-v10.html
 // ==========================================================================
 
-dcl-s hJobLogReader_t varchar(1024) template;
+dCl-S hJobLogReader_t varchar(1024) template;
 
 dcl-ds jl_rd_msgInfo_t qualified template;
   severity      int(10);

@@ -1,208 +1,603 @@
-      // ==========================================================================
-      //  iRPGUnit - Program message handling.
-      // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
-      //  All rights reserved. Ths program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
-      // ==========================================================================
-      // >>PRE-COMPILER<<
-      //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
-      //   >>IMPORTANT<<
-      //     >>PARM<<  OPTION(*EVENTF);
-      //     >>PARM<<  DBGVIEW(*LIST);
-      //   >>END-IMPORTANT<<
-      //   >>EXECUTE<<
-      // >>END-PRE-COMPILER<<
-      // ==========================================================================
+**FREE
+// ==========================================================================
+//  iRPGUnit - Program message handling.
+// ==========================================================================
+//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  All rights reserved. Ths program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ==========================================================================
+// >>PRE-COMPILER<<
+//   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+//   >>IMPORTANT<<
+//     >>PARM<<  OPTION(*EVENTF);
+//     >>PARM<<  DBGVIEW(*LIST);
+//   >>END-IMPORTANT<<
+//   >>EXECUTE<<
+// >>END-PRE-COMPILER<<
+// ==========================================================================
 
-     H NoMain
-      /include qinclude,H_SPEC
-      /include qinclude,COPYRIGHT
+ctl-opt nomain;
+/include qinclude,H_SPEC
+/include qinclude,COPYRIGHT
 
-      //----------------------------------------------------------------------
-      //   Exported Procedures
-      //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Exported Procedures
+//----------------------------------------------------------------------
 
-      /include qinclude,PGMMSG
+/include qinclude,PGMMSG
 
-      //----------------------------------------------------------------------
-      //   Imported Procedures
-      //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Imported Procedures
+//----------------------------------------------------------------------
 
-      /include qinclude,ERRORCODE
-      /include qinclude,JOBLOG
-      /include qinclude,STRING
-      /include qinclude,SYSTEMAPI
-      /include qinclude,TEMPLATES
+/include qinclude,ERRORCODE
+/include qinclude,JOBLOG
+/include qinclude,STRING
+/include qinclude,SYSTEMAPI
+/include qinclude,TEMPLATES
 
-      //----------------------------------------------------------------------
-      //   Local Procedures
-      //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Local Procedures
+//----------------------------------------------------------------------
 
-     D jobLogCallback...
-     D                 pr              n
-     D                                     extproc('jobLogCallback')
-     D i_hMsgInfo                      *   const
-     D i_pUserData                     *   const
-     D i_msgId                        7a   const
-     D i_msgText                    132a   const varying
-     D i_msgSentTime                   z   const
+dcl-pr jobLogCallback ind extproc('jobLogCallback');
+  i_hmsginfo      pointer const;
+  i_puserdata     pointer const;
+  i_msgid         char(7) const;
+  i_msgtext       varchar(132) const;
+  i_msgsenttime   timestamp const;
+end-pr;
 
-      //----------------------------------------------------------------------
-      //   Global Fields
-      //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Global Fields
+//----------------------------------------------------------------------
 
-     D g_status        ds                  qualified
-     D  lastStsMsg                  256a   inz
-
-
-      //----------------------------------------------------------------------
-      //   Procedure Definitions
-      //----------------------------------------------------------------------
-
-      //----------------------------------------------------------------------
-      // Receives the message data of an escape program message.
-      //----------------------------------------------------------------------
-     P rcvExcpMsgInfo...
-     P                 b                   export
-     D                 pi                  likeds(Msg_t)
-
-     D  msg            ds                  likeds(Msg_t)
-
-      /free
-
-        msg = rcvPgmMsg( '*EXCP' : ONE_CALL_STK_LVL_ABOVE );
-
-        return msg;
-
-      /end-free
-     P                 e
+dcl-ds g_status qualified;
+  lastStsMsg   char(256) inz;
+end-ds;
 
 
-      //----------------------------------------------------------------------
-      // Receives the message data of a program message.
-      //----------------------------------------------------------------------
-     P rcvMsgData...
-     P                 b                   export
-     D                 pi           256a
-     D msgType                       10a   const
+//----------------------------------------------------------------------
+//   Procedure Definitions
+//----------------------------------------------------------------------
 
-     D msg             ds                  likeds(Msg_t)
+//----------------------------------------------------------------------
+// Receives the message data of an escape program message.
+//----------------------------------------------------------------------
+dcl-proc rcvExcpMsgInfo export;
+  dcl-pi *N likeds(msg_t);
+  end-pi;
 
-      /free
+  dcl-ds msg likeds(msg_t);
 
-        msg = rcvPgmMsg( msgType : ONE_CALL_STK_LVL_ABOVE );
-        return msg.rplData;
+  msg = rcvPgmMsg( '*EXCP' : ONE_CALL_STK_LVL_ABOVE );
 
-      /end-free
-     P                 e
+  return msg;
 
-
-      //----------------------------------------------------------------------
-      // Receives the message text of a program message.
-      //----------------------------------------------------------------------
-     P rcvMsgTxt...
-     P                 b                   export
-     D                 pi           256a
-     D msgType                       10a   const
-
-     D msg             ds                  likeds(Msg_t)
-
-      /free
-
-        msg = rcvPgmMsg( msgType : ONE_CALL_STK_LVL_ABOVE );
-        return msg.txt;
-
-      /end-free
-     P                 e
+end-proc;
 
 
-      //----------------------------------------------------------------------
-      // Receives a program message.
-      //----------------------------------------------------------------------
-     P rcvPgmMsg...
-     P                 b                   export
-     D                 pi                  likeds(Msg_t)
-     D  msgType                      10a   const
-     D  callStkCnt                   10i 0 const options(*NoPass)
+//----------------------------------------------------------------------
+// Receives the message data of a program message.
+//----------------------------------------------------------------------
+dcl-proc rcvMsgData export;
+  dcl-pi *N char(256);
+    msgType   char(10) const;
+  end-pi;
 
-       // Safe value for the NoPass parameter callStkCnt.
-     D safeCallStkCnt  s                   like(callStkCnt)
-       // Buffer for message info.
-     D rawMsgBuf       s          32767a
-     D rawMsgHdr       ds                  likeds(RCVM0300Hdr)
-     D                                     based(rawMsgHdr_p)
-     D rawMsgHdr_p     s               *
-       // Position in buffer (starting at 1).
-     D bufPos          s             10i 0
-       // Buffer for message sender info.
-     D senderInfo      ds                  likeds(RCVM0300Sender)
-     D                                     based(senderInfo_p)
-     D senderInfo_p    s               *
-       // The received message.
-     D msg             ds                  likeds(Msg_t)
-     D percolateErrors...
-     D                 ds                  likeds(percolateErrors_t)
-     D                                     inz(*likeds)
-      /free
+  dcl-ds msg likeds(msg_t);
 
-        if %parms() > 1;
-          safeCallStkCnt = callStkCnt;
+  msg = rcvPgmMsg( msgType : ONE_CALL_STK_LVL_ABOVE );
+
+  return msg.rpldata;
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+// Receives the message text of a program message.
+//----------------------------------------------------------------------
+dcl-proc rcvMsgTxt export;
+  dcl-pi *N char(256);
+    msgType   char(10) const;
+  end-pi;
+
+  dcl-ds msg likeds(msg_t);
+
+  msg = rcvPgmMsg( msgType : ONE_CALL_STK_LVL_ABOVE );
+
+  return msg.txt;
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+// Receives a program message.
+//----------------------------------------------------------------------
+dcl-proc rcvPgmMsg export;
+  dcl-pi *N likeds(msg_t);
+    msgType      char(10) const;
+    callStkCnt   int(10) const options(*nopass);
+  end-pi;
+
+  // Safe value for the NoPass parameter callStkCnt.
+  dcl-s safeCallStkCnt  like(callStkCnt);
+
+  // Buffer for message info.
+  dcl-s rawMsgBuf char(32767);
+  dcl-ds rawMsgHdr likeds(rcvm0300hdr) based(rawMsgHdr_p);
+  dcl-s rawMsgHdr_p pointer;
+
+  // Position in buffer (starting at 1).
+  dcl-s bufPos int(10);
+
+  // Buffer for message sender info.
+  dcl-ds senderInfo likeds(rcvm0300sender) based(senderInfo_p);
+  dcl-s senderInfo_p pointer;
+
+  // The received message.
+  dcl-ds msg likeds(msg_t);
+  dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
+
+  if %parms() > 1;
+    safeCallStkCnt = callStkCnt;
+  else;
+    safeCallStkCnt = 0;
+  endif;
+
+  qmhrcvpm( rawMsgBuf :
+            %size(rawMsgBuf) :
+            ALL_MSG_INFO_WITH_SENDER_INFO :
+            THIS_CALL_STK_ENT :
+            ONE_CALL_STK_LVL_ABOVE + safeCallStkCnt :
+            msgType :
+            NO_MSG_KEY :
+            NO_WAIT :
+            MARK_AS_OLD :
+            percolateErrors );
+
+  rawMsgHdr_p = %addr( rawMsgBuf );
+
+  if (rawMsgHdr.bytAvl = 0);
+    sndEscapeMsgToCaller( %trim(msgType) + ' message not found' );
+  endif;
+
+  msg.id = rawMsgHdr.msgID;
+
+  bufPos = %size(rawMsgHdr) + 1;
+  msg.rpldata = %subst( rawMsgBuf :
+                        bufPos :
+                        rawMsgHdr.rplDataLenR );
+
+  bufPos += rawMsgHdr.rplDataLenR;
+  msg.txt = %subst( rawMsgBuf :
+                    bufPos :
+                    rawMsgHdr.msgLenR );
+
+  bufPos += rawMsgHdr.msgLenR;
+  bufPos += rawMsgHdr.msgHlpLenR;
+  senderInfo_p = %addr(rawMsgBuf) + bufPos - 1;
+  msg.key = rawMsgHdr.msgKey;
+  msg.qsndstmt.qpgm.nm = senderInfo.sndPgmNm;
+  msg.qsndstmt.qpgm.lib = '*N';
+  msg.qsndstmt.qmod.nm = senderInfo.sndModNm;
+  msg.qsndstmt.qmod.lib = '*N';
+  msg.qsndstmt.procnm = %trimr(senderInfo.sndProcNm);
+  msg.qsndstmt.specnb = senderInfo.sndPgmSttNb(1);
+
+  msg.qrcvstmt.qpgm.nm = senderInfo.rcvPgmNm;
+  msg.qrcvstmt.qpgm.lib = '*N';
+  msg.qrcvstmt.qmod.nm = senderInfo.rcvModNm;
+  msg.qrcvstmt.qmod.lib = '*N';
+  msg.qrcvstmt.procnm = %trimr(senderInfo.rcvProcNm);
+  msg.qrcvstmt.specnb = senderInfo.rcvPgmSttNb(1);
+
+  if (rawMsgHdr.msgKey <> '');
+    JobLogReader_getMsg(rawMsgHdr.msgKey
+                        : %paddr('jobLogCallback')
+                        : %addr(msg)
+                        : OLJL_SND_PGM_NM
+                        : OLJL_SND_PGM_LIB
+                        : OLJL_SND_MOD_NM
+                        : OLJL_SND_PROC_NM
+                        : OLJL_RCV_PGM_NM
+                        : OLJL_RCV_PGM_LIB
+                        : OLJL_RCV_MOD_NM
+                        : OLJL_RCV_PROC_NM);
+  endif;
+
+  return msg;
+
+end-proc;
+
+dcl-proc jobLogCallback;
+  dcl-pi *N ind;
+    i_hmsginfo      pointer const;
+    i_puserdata     pointer const;
+    i_msgid         char(7) const;
+    i_msgtext       varchar(132) const;
+    i_msgsenttime   timestamp const;
+  end-pi;
+
+  dcl-ds msg likeds(msg_t) based(i_puserdata);
+  dcl-ds msgInfo likeds(jl_rd_msginfo_t) inz;
+
+  msgInfo = JobLogReader_getMsgInfo(i_hmsginfo);
+  if (msgInfo.key <> msg.key);
+    return *on;
+  endif;
+
+  msg.qsndstmt.qpgm.nm = JobLogReader_getCharValue(i_hmsginfo: OLJL_SND_PGM_NM: NO_VALUE);
+  msg.qsndstmt.qpgm.lib = JobLogReader_getCharValue(i_hmsginfo: OLJL_SND_PGM_LIB: NO_VALUE);
+  msg.qsndstmt.qmod.nm = JobLogReader_getCharValue(i_hmsginfo: OLJL_SND_MOD_NM: NO_VALUE);
+  msg.qsndstmt.procnm = JobLogReader_getCharValue(i_hmsginfo: OLJL_SND_PROC_NM: NO_VALUE);
+
+  msg.qrcvstmt.qpgm.nm = JobLogReader_getCharValue(i_hmsginfo: OLJL_RCV_PGM_NM: NO_VALUE);
+  msg.qrcvstmt.qpgm.lib = JobLogReader_getCharValue(i_hmsginfo: OLJL_RCV_PGM_LIB: NO_VALUE);
+  msg.qrcvstmt.qmod.nm = JobLogReader_getCharValue(i_hmsginfo: OLJL_RCV_MOD_NM: NO_VALUE);
+  msg.qrcvstmt.procnm = JobLogReader_getCharValue(i_hmsginfo: OLJL_RCV_PROC_NM: NO_VALUE);
+
+  return *off;
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Send an validation error message. Used by validity checker programs.
+//----------------------------------------------------------------------
+dcl-proc sndVldChkMsg export;
+  dcl-pi *N;
+    msg          varchar(256) const;
+    callStkCnt   int(10) const;
+  end-pi;
+
+  // The message reference key.
+  dcl-s msgKey char(4);
+  dcl-s diagMsg varchar(256);
+  dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
+
+  diagMsg = '0000' + %trimr(msg);
+
+  qmhsndpm( 'CPD0006' :
+            'QCPFMSG   *LIBL' :
+            %trimr(diagMsg) :
+            %len(%trimr(diagMsg)) :
+            '*DIAG' :
+            CUR_CALL_STK_ENT :
+            ONE_CALL_STK_LVL_ABOVE + callStkCnt :
+            msgKey :
+            percolateErrors );
+
+  qmhsndpm( 'CPF0002' :
+            'QCPFMSG   *LIBL' :
+            '' :
+            0 :
+            '*ESCAPE' :
+            CUR_CALL_STK_ENT :
+            ONE_CALL_STK_LVL_ABOVE + callStkCnt :
+            msgKey :
+            percolateErrors );
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+// Send a completion message. See prototype.
+//----------------------------------------------------------------------
+dcl-proc sndCompMsg export;
+  dcl-pi *N;
+    msg   char(256) const;
+  end-pi;
+
+  // The message reference key.
+  dcl-s msgKey char(4);
+  dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
+
+  // CPDA0FF with severity 0.
+  qmhsndpm( 'CPDA0FF' :
+            'QCPFMSG   *LIBL' :
+            %trimr(msg) :
+            %len(%trimr(msg)) :
+            '*COMP' :
+            CONTROL_BOUNDARY :
+            ONE_CALL_STK_LVL_ABOVE :
+            msgKey :
+            percolateErrors );
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+// Send an escape message. See prototype.
+//----------------------------------------------------------------------
+dcl-proc sndEscapeMsg export;
+  dcl-pi *N;
+    msg          char(256) const;
+    callStkCnt   int(10) const;
+  end-pi;
+
+  dcl-s msgKey char(4);
+  dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
+
+  // CPF9897 with severity 40.
+  qmhsndpm( 'CPF9897' :
+            'QCPFMSG   *LIBL' :
+            msg :
+            %len(msg) :
+            '*ESCAPE' :
+            CUR_CALL_STK_ENT :
+            ONE_CALL_STK_LVL_ABOVE + callStkCnt :
+            msgKey :
+            percolateErrors );
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+// Send an escape message to a procedure. See prototype.
+//----------------------------------------------------------------------
+dcl-proc sndEscapeMsgToProcedure export;
+  dcl-pi *N;
+    msg         char(256) const;
+    procedure   varchar(256) const  options(*omit);
+  end-pi;
+
+  dcl-s msgKey char(4);
+  dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
+
+  // CPF9897 with severity 40.
+  qmhsndpm( 'CPF9897' :
+            'QCPFMSG   *LIBL' :
+            msg :
+            %len(msg) :
+            '*ESCAPE' :
+            procedure :
+            0 :
+            msgKey :
+            percolateErrors :
+            %len(procedure) :
+            '*NONE     *NONE' :
+            -1);
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+// Send an escape message to the caller. See prototype.
+//----------------------------------------------------------------------
+dcl-proc sndEscapeMsgToCaller export;
+  dcl-pi *N;
+    msg   char(256) const;
+  end-pi;
+
+  sndEscapeMsg( msg : two_call_stk_lvl_above );
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+// Send an escape message above control boundary. See prototype.
+//----------------------------------------------------------------------
+dcl-proc sndEscapeMsgAboveCtlBdy export;
+  dcl-pi *N;
+    msg char(256) const;
+  end-pi;
+
+  dcl-s msgKey char(4);
+  dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
+
+  // CPF9897 with severity 40.
+  qmhsndpm( 'CPF9897' :
+            'QCPFMSG   *LIBL' :
+            %trimr(msg) :
+            %len(%trimr(msg)) :
+            '*ESCAPE' :
+            CONTROL_BOUNDARY :
+            ONE_CALL_STK_LVL_ABOVE :
+            msgKey :
+            percolateErrors );
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+// Send an information message to the caller. See prototype.
+//----------------------------------------------------------------------
+dcl-proc sndInfoMsg export;
+  dcl-pi *N;
+    msg char(256) const;
+  end-pi;
+
+  // The message reference key.
+  dcl-s msgKey char(4);
+  dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
+
+  // Send an immediate *INFO message without message ID
+  qmhsndpm( '' :
+            'QCPFMSG   *LIBL' :
+            %trimr(msg) :
+            %len(%trimr(msg)) :
+            '*INFO' :
+            CUR_CALL_STK_ENT :
+            ONE_CALL_STK_LVL_ABOVE :
+            msgKey :
+            percolateErrors );
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+// Send a status message.
+//----------------------------------------------------------------------
+dcl-proc sndStsMsg export;
+  dcl-pi *N;
+    msg   char(256) const;
+  end-pi;
+
+  // The message reference key.
+  dcl-s msgKey char(4);
+  dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
+
+  g_status.lastStsMsg = msg;
+
+  // CPDA0FF with severity 40.
+  qmhsndpm( 'CPDA0FF' :
+            'QCPFMSG   *LIBL' :
+            %trimr(msg) :
+            %len(%trimr(msg)) :
+            '*STATUS' :
+            '*EXT' :
+            *zero :
+            msgKey :
+            percolateErrors );
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+// Restores the previous status message.
+//----------------------------------------------------------------------
+dcl-proc rstStsMsg export;
+  dcl-pi *N;
+  end-pi;
+
+  sndStsMsg(g_status.lastStsMsg);
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+// Retrieves the message key of the latest message in the job log.
+//----------------------------------------------------------------------
+dcl-proc getHighestMsgKey export;
+  dcl-pi *N char(4);
+  end-pi;
+
+  // The message reference key.
+  dcl-s msg varchar(128) inz('getHighestMsgKey');
+  dcl-s msgKey char(4);
+  dcl-ds rawmsgbuf qualified;
+    bytRet   int(10);
+    bytAvl   int(10);
+  end-ds;
+  dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
+
+  // Send an immediate *INFO message without message ID
+  qmhsndpm( '':
+            'QCPFMSG   *LIBL' :
+            msg :
+            %len(msg) :
+            '*INFO' :
+            CUR_CALL_STK_ENT :
+            this_call_stk_lvl :
+            msgKey :
+            percolateErrors );
+
+  qmhrcvpm( rawmsgbuf :
+            %size(rawmsgbuf) :
+            EXTENDED_MSG_INFO :
+            THIS_CALL_STK_ENT :
+            this_call_stk_lvl :
+            '*INFO' :
+            msgKey :
+            NO_WAIT :
+            REMOVE_MSG :
+            percolateErrors );
+
+  return msgKey;
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+// Retrieves the latest escape message between 'highMsgKey' and NOW.
+//----------------------------------------------------------------------
+dcl-proc getLatestEscMsg export;
+  dcl-pi *N likeds(msg_t);
+    lowMsgKey   char(4) value;
+    doRmvM#sg   ind value;
+  end-pi;
+
+  dcl-ds msg likeds(msg_t);
+
+  // The message reference key.
+  dcl-s lowKey          int(10) based(pLowKey);
+
+  dcl-ds highMsgKey qualified inz;
+    intValue   int(10);
+  end-ds;
+
+  dcl-s rawMsgBuf char(1024);
+  dcl-ds rcvm0300 likeds(rcvm0300hdr) based(pRcvm0300);
+  dcl-s pRcvm0300 pointer inz(%addr(rawMsgBuf));
+  dcl-ds senderInfo likeds(rcvm0300sender) based(senderinfo_p);
+  dcl-s msgOffs int(10);
+  dcl-s msgLen int(10);
+  dcl-s action char(10);
+  dcl-ds errorCode likeds(errorCode_t) inz(*likeds);
+
+  if (lowMsgKey = *allx'00');
+    sndEscapeMsgToCaller('Invalid lowMsgKey value. lowMsgKey must be greater than 0');
+  endif;
+
+  clear msg;
+
+  pLowKey = %addr(lowMsgKey);
+  highMsgKey = getHighestMsgKey();
+
+  if (doRmvM#sg);
+    action = REMOVE_MSG;
+  else;
+    action = KEEP_UNCHANGED;
+  endif;
+
+  reset errorCode;
+  dow (msg.txt = '' and highMsgKey.intValue > lowKey and errorCode.bytAvl = 0);
+    highMsgKey.intValue -= 1;
+    qmhrcvpm( rawMsgBuf : %size(rawMsgBuf) :
+              ALL_MSG_INFO_WITH_SENDER_INFO :
+              THIS_CALL_STK_ENT : this_call_stk_lvl : '*ANY' :
+              highMsgKey : NO_WAIT : KEEP_UNCHANGED : errorCode );
+    if (errorCode.bytAvl > 0);
+      if (errorCode.excID = 'CPF2410'); // Message key not found
+        reset errorCode;
+      endif;
+    else;
+      if (rcvm0300.bytAvl > 0);
+        if (rcvm0300.msgLenR > 0);
+          // Stored message description
+          msgLen = rcvm0300.msgLenR;
+          msgOffs = %size(rcvm0300) + 1 + rcvm0300.rplDataLenR;
         else;
-          safeCallStkCnt = 0;
+          // Impromptu message
+          msgLen = rcvm0300.rplDataLenR;
+          msgOffs = %size(rcvm0300) + 1;
         endif;
+        msg.id = rcvm0300.msgID;
+        msg.txt = %subst(rawMsgBuf: msgOffs: msgLen);
+        msg.rpldata = %subst(rawMsgBuf: %size(rcvm0300) + 1
+                             : rcvm0300.rplDataLenR);
+        senderinfo_p = %addr(rawMsgBuf) + %size(rcvm0300) +
+                          rcvm0300.rplDataLenR +
+                          rcvm0300.msgLenR +
+                          rcvm0300.msgHlpLenR;
+        msg.qsndstmt.qpgm.nm = senderInfo.sndPgmNm;
+        msg.qsndstmt.qpgm.lib = '*N';
+        msg.qsndstmt.qmod.nm = senderInfo.sndModNm;
+        msg.qsndstmt.qmod.lib = '*N';
+        msg.qsndstmt.procnm = %trimr(senderInfo.sndProcNm);
+        msg.qsndstmt.specnb = senderInfo.sndPgmSttNb(1);
 
-        QMHRCVPM( rawMsgBuf :
-                  %size(rawMsgBuf) :
-                  ALL_MSG_INFO_WITH_SENDER_INFO :
-                  THIS_CALL_STK_ENT :
-                  ONE_CALL_STK_LVL_ABOVE + safeCallStkCnt :
-                  msgType :
-                  NO_MSG_KEY :
-                  NO_WAIT :
-                  MARK_AS_OLD :
-                  percolateErrors );
+        msg.qrcvstmt.qpgm.nm = senderInfo.rcvPgmNm;
+        msg.qrcvstmt.qpgm.lib = '*N';
+        msg.qrcvstmt.qmod.nm = senderInfo.rcvModNm;
+        msg.qrcvstmt.qmod.lib = '*N';
+        msg.qrcvstmt.procnm = %trimr(senderInfo.rcvProcNm);
+        msg.qrcvstmt.specnb = senderInfo.rcvPgmSttNb(1);
 
-        rawMsgHdr_p = %addr( rawMsgBuf );
-
-        if (rawMsgHdr.bytesA = 0);
-          sndEscapeMsgToCaller( %trim(msgType) + ' message not found' );
-        endif;
-
-        msg.id = rawMsgHdr.msgId;
-
-        bufPos = %size(rawMsgHdr) + 1;
-        msg.rplData = %subst( rawMsgBuf :
-                              bufPos :
-                              rawMsgHdr.rplDataLenR );
-
-        bufPos += rawMsgHdr.rplDataLenR;
-        msg.txt = %subst( rawMsgBuf :
-                          bufPos :
-                          rawMsgHdr.msgLenR );
-
-        bufPos += rawMsgHdr.msgLenR;
-        bufPos += rawMsgHdr.msgHlpLenR;
-        senderInfo_p = %addr(rawMsgBuf) + bufPos - 1;
-        msg.key = rawMsgHdr.msgKey;
-        msg.qSndStmt.qPgm.nm = senderInfo.sndPgmNm;
-        msg.qSndStmt.qPgm.lib = '*N';
-        msg.qSndStmt.qMod.nm = senderInfo.sndModNm;
-        msg.qSndStmt.qMod.lib = '*N';
-        msg.qSndStmt.procNm = %trimr(senderInfo.sndProcNm);
-        msg.qSndStmt.specNb = senderInfo.sndPgmSttNb(1);
-
-        msg.qRcvStmt.qPgm.nm = senderInfo.rcvPgmNm;
-        msg.qRcvStmt.qPgm.lib = '*N';
-        msg.qRcvStmt.qMod.nm = senderInfo.rcvModNm;
-        msg.qRcvStmt.qMod.lib = '*N';
-        msg.qRcvStmt.procNm = %trimr(senderInfo.rcvProcNm);
-        msg.qRcvStmt.specNb = senderInfo.rcvPgmSttNb(1);
-
-        if (rawMsgHdr.msgKey <> '');
-          JobLogReader_getMsg(rawMsgHdr.msgKey
+        if (rcvm0300.msgKey <> '');
+          JobLogReader_getMsg(rcvm0300.msgKey
                               : %paddr('jobLogCallback')
                               : %addr(msg)
                               : OLJL_SND_PGM_NM
@@ -215,470 +610,18 @@
                               : OLJL_RCV_PROC_NM);
         endif;
 
-        return msg;
-
-      /end-free
-     P                 e
-
-     P jobLogCallback...
-     P                 b
-     D                 pi              n
-     D i_hMsgInfo                      *   const
-     D i_pUserData                     *   const
-     D i_msgId                        7a   const
-     D i_msgText                    132a   const varying
-     D i_msgSentTime                   z   const
-
-     D msg             ds                  likeds(msg_t)
-     D                                     based(i_pUserData)
-     D msgInfo         ds                  likeds(jl_rd_msgInfo_t) inz
-      /free
-
-        msgInfo = JobLogReader_getMsgInfo(i_hMsgInfo);
-        if (msgInfo.key <> msg.key);
-          return *on;
+        if (doRmvM#sg);
+          qmhrcvpm( rawMsgBuf : 8 :
+                    BRIEF_MSG_INFO :
+                    THIS_CALL_STK_ENT : this_call_stk_lvl : '*ANY' :
+                    rcvm0300.msgKey : NO_WAIT : REMOVE_MSG :
+                    errorCode );
         endif;
+      endif;
+    endif;
+  enddo;
 
-        msg.qSndStmt.qPgm.nm =
-           JobLogReader_getCharValue(i_hMsgInfo: OLJL_SND_PGM_NM: NO_VALUE);
-        msg.qSndStmt.qPgm.lib =
-           JobLogReader_getCharValue(i_hMsgInfo: OLJL_SND_PGM_LIB: NO_VALUE);
-        msg.qSndStmt.qMod.nm =
-           JobLogReader_getCharValue(i_hMsgInfo: OLJL_SND_MOD_NM: NO_VALUE);
-        msg.qSndStmt.procNm =
-           JobLogReader_getCharValue(i_hMsgInfo: OLJL_SND_PROC_NM: NO_VALUE);
+  return msg;
 
-        msg.qRcvStmt.qPgm.nm =
-           JobLogReader_getCharValue(i_hMsgInfo: OLJL_RCV_PGM_NM: NO_VALUE);
-        msg.qRcvStmt.qPgm.lib =
-           JobLogReader_getCharValue(i_hMsgInfo: OLJL_RCV_PGM_LIB: NO_VALUE);
-        msg.qRcvStmt.qMod.nm =
-           JobLogReader_getCharValue(i_hMsgInfo: OLJL_RCV_MOD_NM: NO_VALUE);
-        msg.qRcvStmt.procNm =
-           JobLogReader_getCharValue(i_hMsgInfo: OLJL_RCV_PROC_NM: NO_VALUE);
-
-        return *off;
-
-      /end-free
-     P                 e
-
-      //----------------------------------------------------------------------
-      // Send an validation error message. Used by validity checker programs.
-      //----------------------------------------------------------------------
-     P sndVldChkMsg...
-     P                 b                   export
-     D                 pi
-     D  msg                         256a   const varying
-     D  callStkCnt                   10i 0 const
-
-       // The message reference key.
-     D msgKey          s              4a
-     D diagMsg         s            256a   varying
-     D percolateErrors...
-     D                 ds                  likeds(percolateErrors_t)
-     D                                     inz(*likeds)
-      /free
-
-        diagMsg = '0000' + %trimr(msg);
-
-        QMHSNDPM( 'CPD0006' :
-                  'QCPFMSG   *LIBL' :
-                  %trimr(diagMsg) :
-                  %len(%trimr(diagMsg)) :
-                  '*DIAG' :
-                  CUR_CALL_STK_ENT :
-                  ONE_CALL_STK_LVL_ABOVE + callStkCnt :
-                  msgKey :
-                  percolateErrors );
-
-        QMHSNDPM( 'CPF0002' :
-                  'QCPFMSG   *LIBL' :
-                  '' :
-                  0 :
-                  '*ESCAPE' :
-                  CUR_CALL_STK_ENT :
-                  ONE_CALL_STK_LVL_ABOVE + callStkCnt :
-                  msgKey :
-                  percolateErrors );
-
-      /end-free
-     P                 e
-
-
-      //----------------------------------------------------------------------
-      // Send a completion message. See prototype.
-      //----------------------------------------------------------------------
-     P sndCompMsg...
-     P                 b                   export
-     D                 pi
-     D  msg                         256a   const
-
-       // The message reference key.
-     D msgKey          s              4a
-     D percolateErrors...
-     D                 ds                  likeds(percolateErrors_t)
-     D                                     inz(*likeds)
-      /free
-
-        // CPDA0FF with severity 0.
-        QMHSNDPM( 'CPDA0FF' :
-                  'QCPFMSG   *LIBL' :
-                  %trimr(msg) :
-                  %len(%trimr(msg)) :
-                  '*COMP' :
-                  CONTROL_BOUNDARY :
-                  ONE_CALL_STK_LVL_ABOVE :
-                  msgKey :
-                  percolateErrors );
-
-      /end-free
-     P                 e
-
-
-      //----------------------------------------------------------------------
-      // Send an escape message. See prototype.
-      //----------------------------------------------------------------------
-     P sndEscapeMsg...
-     P                 b                   export
-     D                 pi
-     D  msg                         256a   const
-     D  callStkCnt                   10i 0 const
-
-     D msgKey          s              4a
-     D percolateErrors...
-     D                 ds                  likeds(percolateErrors_t)
-     D                                     inz(*likeds)
-      /free
-
-        // CPF9897 with severity 40.
-        QMHSNDPM( 'CPF9897' :
-                  'QCPFMSG   *LIBL' :
-                  msg :
-                  %len(msg) :
-                  '*ESCAPE' :
-                  CUR_CALL_STK_ENT :
-                  ONE_CALL_STK_LVL_ABOVE + callStkCnt :
-                  msgKey :
-                  percolateErrors );
-
-      /end-free
-     P                 e
-
-
-      //----------------------------------------------------------------------
-      // Send an escape message to a procedure. See prototype.
-      //----------------------------------------------------------------------
-     P sndEscapeMsgToProcedure...
-     P                 b                   export
-     D                 pi
-     D  msg                         256a   const
-     D  procedure                   256a   const varying options(*omit)
-
-     D msgKey          s              4a
-     D percolateErrors...
-     D                 ds                  likeds(percolateErrors_t)
-     D                                     inz(*likeds)
-      /free
-
-        // CPF9897 with severity 40.
-        QMHSNDPM( 'CPF9897' :
-                  'QCPFMSG   *LIBL' :
-                  msg :
-                  %len(msg) :
-                  '*ESCAPE' :
-                  procedure :
-                  0 :
-                  msgKey :
-                  percolateErrors :
-                  %len(procedure) :
-                  '*NONE     *NONE' :
-                  -1);
-
-      /end-free
-     P                 e
-
-
-      //----------------------------------------------------------------------
-      // Send an escape message to the caller. See prototype.
-      //----------------------------------------------------------------------
-     P sndEscapeMsgToCaller...
-     P                 b                   export
-     D                 pi
-     D  msg                         256a   const
-      /free
-
-        sndEscapeMsg( msg : TWO_CALL_STK_LVL_ABOVE );
-
-      /end-free
-     P                 e
-
-
-      //----------------------------------------------------------------------
-      // Send an escape message above control boundary. See prototype.
-      //----------------------------------------------------------------------
-     P sndEscapeMsgAboveCtlBdy...
-     P                 b                   export
-     D                 pi
-     D  msg                         256a   const
-
-     D msgKey          s              4a
-     D percolateErrors...
-     D                 ds                  likeds(percolateErrors_t)
-     D                                     inz(*likeds)
-      /free
-
-        // CPF9897 with severity 40.
-        QMHSNDPM( 'CPF9897' :
-                  'QCPFMSG   *LIBL' :
-                  %trimr(msg) :
-                  %len(%trimr(msg)) :
-                  '*ESCAPE' :
-                  CONTROL_BOUNDARY :
-                  ONE_CALL_STK_LVL_ABOVE :
-                  msgKey :
-                  percolateErrors );
-
-      /end-free
-     P                 e
-
-
-      //----------------------------------------------------------------------
-      // Send an information message to the caller. See prototype.
-      //----------------------------------------------------------------------
-     P sndInfoMsg...
-     P                 b                   export
-     D                 pi
-     D  msg                         256a   const
-
-       // The message reference key.
-     D msgKey          s              4a
-     D percolateErrors...
-     D                 ds                  likeds(percolateErrors_t)
-     D                                     inz(*likeds)
-      /free
-
-        // Send an immediate *INFO message without message ID
-        QMHSNDPM( '' :
-                  'QCPFMSG   *LIBL' :
-                  %trimr(msg) :
-                  %len(%trimr(msg)) :
-                  '*INFO' :
-                  CUR_CALL_STK_ENT :
-                  ONE_CALL_STK_LVL_ABOVE :
-                  msgKey :
-                  percolateErrors );
-
-      /end-free
-     P                 e
-
-
-      //----------------------------------------------------------------------
-      // Send a status message.
-      //----------------------------------------------------------------------
-     P sndStsMsg...
-     P                 b                   export
-     D                 pi
-     D  msg                         256a   const
-
-       // The message reference key.
-     D msgKey          s              4a
-     D percolateErrors...
-     D                 ds                  likeds(percolateErrors_t)
-     D                                     inz(*likeds)
-      /free
-
-        g_status.lastStsMsg = msg;
-
-        // CPDA0FF with severity 40.
-        QMHSNDPM( 'CPDA0FF' :
-                  'QCPFMSG   *LIBL' :
-                  %trimr(msg) :
-                  %len(%trimr(msg)) :
-                  '*STATUS' :
-                  '*EXT' :
-                  *zero :
-                  msgKey :
-                  percolateErrors );
-
-      /end-free
-     P                 e
-
-
-      //----------------------------------------------------------------------
-      // Restores the previous status message.
-      //----------------------------------------------------------------------
-     P rstStsMsg...
-     P                 b                   export
-     D                 pi
-
-      /free
-
-         sndStsMsg(g_status.lastStsMsg);
-
-      /end-free
-     P                 e
-
-
-      //----------------------------------------------------------------------
-      // Retrieves the message key of the latest message in the job log.
-      //----------------------------------------------------------------------
-     P getHighestMsgKey...
-     P                 b                   export
-     D                 pi             4a
-
-       // The message reference key.
-     D msg             s            128a   varying inz('getHighestMsgKey')
-     D msgKey          s              4a
-     D rawMsgBuf       ds                  qualified
-     D  bytRet                       10i 0
-     D  bytAvl                       10i 0
-     D percolateErrors...
-     D                 ds                  likeds(percolateErrors_t)
-     D                                     inz(*likeds)
-      /free
-
-        // Send an immediate *INFO message without message ID
-         QMHSNDPM( '':
-                   'QCPFMSG   *LIBL' :
-                   msg :
-                   %len(msg) :
-                   '*INFO' :
-                   CUR_CALL_STK_ENT :
-                   THIS_CALL_STK_LVL :
-                   msgKey :
-                   percolateErrors );
-
-        QMHRCVPM( rawMsgBuf :
-                  %size(rawMsgBuf) :
-                  EXTENDED_MSG_INFO :
-                  THIS_CALL_STK_ENT :
-                  THIS_CALL_STK_LVL :
-                  '*INFO' :
-                  msgKey :
-                  NO_WAIT :
-                  REMOVE_MSG :
-                  percolateErrors );
-
-         return msgKey;
-
-      /end-free
-     P                 e
-
-
-      //----------------------------------------------------------------------
-      // Retrieves the latest escape message between 'highMsgKey' and NOW.
-      //----------------------------------------------------------------------
-     P getLatestEscMsg...
-     P                 b                   export
-     D                 pi                  likeds(Msg_t)
-     D  lowMsgKey                     4a   Value
-     D  doRmvMsg                       n   Value
-
-     D msg             ds                  likeds(Msg_t)
-
-       // The message reference key.
-     D lowKey          s             10i 0 based(pLowKey)
-     D highMsgKey      ds
-     D  highKey                      10i 0
-     D rawMsgBuf       s           1024a
-     D rcvm0300        ds                  likeds(RCVM0300Hdr)
-     D                                     based(pRcvm0300)
-     D pRcvm0300       s               *   inz(%addr(rawMsgBuf))
-     D senderInfo      ds                  likeds(RCVM0300Sender)
-     D                                     based(senderInfo_p)
-     D msgOffs         s             10i 0
-     D msgLen          s             10i 0
-     D action          s             10a
-     D errorCode       ds                  likeds(errorCode_t) inz(*likeds)
-      /free
-
-         if (lowMsgKey = *ALLx'00');
-            sndEscapeMsgToCaller(
-               'Invalid lowMsgKey value. lowMsgKey must be graeter than 0');
-         endif;
-
-         clear msg;
-
-         pLowKey = %addr(lowMsgKey);
-         highMsgKey = getHighestMsgKey();
-
-         if (doRmvMsg);
-            action = REMOVE_MSG;
-         else;
-            action = KEEP_UNCHANGED;
-         endif;
-
-         reset errorCode;
-         dow (msg.txt = '' and highKey > lowKey and errorCode.bytAvl = 0);
-            highKey -= 1;
-            QMHRCVPM( rawMsgBuf : %size(rawMsgBuf) :
-                      ALL_MSG_INFO_WITH_SENDER_INFO :
-                      THIS_CALL_STK_ENT : THIS_CALL_STK_LVL : '*ANY' :
-                      highMsgKey : NO_WAIT : KEEP_UNCHANGED : errorCode );
-            if (errorCode.bytAvl > 0);
-               if (errorCode.excID = 'CPF2410'); // Message key not found
-                  reset errorCode;
-               endif;
-            else;
-               if (rcvm0300.bytesA > 0);
-                  if (rcvm0300.msgLenR > 0);
-                     // Stored message description
-                     msgLen = rcvm0300.msgLenR;
-                     msgOffs = %size(rcvm0300) + 1 + rcvm0300.rplDataLenR;
-                  else;
-                     // Impromptu message
-                     msgLen = rcvm0300.rplDataLenR;
-                     msgOffs = %size(rcvm0300) + 1;
-                  endif;
-                  msg.id = rcvm0300.msgId;
-                  msg.txt = %subst(rawMsgBuf: msgOffs: msgLen);
-                  msg.rplData = %subst(rawMsgBuf: %size(rcvm0300) + 1
-                                       : rcvm0300.rplDataLenR);
-                  senderInfo_p = %addr(rawMsgBuf) + %size(rcvm0300) +
-                                    rcvm0300.rplDataLenR +
-                                    rcvm0300.msgLenR +
-                                    rcvm0300.msgHlpLenR;
-                  msg.qSndStmt.qPgm.nm = senderInfo.sndPgmNm;
-                  msg.qSndStmt.qPgm.lib = '*N';
-                  msg.qSndStmt.qMod.nm = senderInfo.sndModNm;
-                  msg.qSndStmt.qMod.lib = '*N';
-                  msg.qSndStmt.procNm = %trimr(senderInfo.sndProcNm);
-                  msg.qSndStmt.specNb = senderInfo.sndPgmSttNb(1);
-
-                  msg.qRcvStmt.qPgm.nm = senderInfo.rcvPgmNm;
-                  msg.qRcvStmt.qPgm.lib = '*N';
-                  msg.qRcvStmt.qMod.nm = senderInfo.rcvModNm;
-                  msg.qRcvStmt.qMod.lib = '*N';
-                  msg.qRcvStmt.procNm = %trimr(senderInfo.rcvProcNm);
-                  msg.qRcvStmt.specNb = senderInfo.rcvPgmSttNb(1);
-
-                  if (rcvm0300.msgKey <> '');
-                    JobLogReader_getMsg(rcvm0300.msgKey
-                                        : %paddr('jobLogCallback')
-                                        : %addr(msg)
-                                        : OLJL_SND_PGM_NM
-                                        : OLJL_SND_PGM_LIB
-                                        : OLJL_SND_MOD_NM
-                                        : OLJL_SND_PROC_NM
-                                        : OLJL_RCV_PGM_NM
-                                        : OLJL_RCV_PGM_LIB
-                                        : OLJL_RCV_MOD_NM
-                                        : OLJL_RCV_PROC_NM);
-                  endif;
-
-                  if (doRmvMsg);
-                    QMHRCVPM( rawMsgBuf : 8 :
-                              BRIEF_MSG_INFO :
-                              THIS_CALL_STK_ENT : THIS_CALL_STK_LVL : '*ANY' :
-                              rcvm0300.msgKey : NO_WAIT : REMOVE_MSG :
-                              errorCode );
-                  endif;
-               endif;
-            endif;
-         enddo;
-
-         return msg;
-
-      /end-free
-     P                 e
+end-proc;
 

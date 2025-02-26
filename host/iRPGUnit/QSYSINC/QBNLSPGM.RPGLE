@@ -1,52 +1,54 @@
+**FREE
 
-       // List ILE service program information API
-     D QBNLSPGM        pr                  ExtPgm('QBNLSPGM')
-     D   usrSpc                      20a   const
-     D   fmt                          8a   const
-     D   srvPgm                      20a   const
-     D   errors                   32766a   options(*varsize) noopt
+// List ILE service program information API
+dcl-pr qbnlspgm extpgm('QBNLSPGM');
+  usrSpc          char(20) const;
+  fmt             char(8) const;
+  srvPgm          char(20) const;
+  errors          char(32766) options(*varsize) noopt;
+end-pr;
 
-       // Structure of an entry in a QBNLSPGM list.
-     D SPGL0100_t      ds                  qualified based(template)
-     D  srvPgm                       10a
-     D  srvPgmLib                    10a
-     D  mod                          10a
-     D  modLib                       10a
-     D  srcFile                      10a
-     D  srcLib                       10a
-     D  srcMbr                       10a
-     D  modAttr                      10a
-     D  modCrtDatTim                 13a
-     D  srcUpdDatTim                 13a
-     D  srtSeqTbl                    10a
-     D  srtSeqTblLib                 10a
-     D  langId                       10a
-     D  optLvl                       10i 0
-     D  maxOptLvl                    10i 0
-     D  dbgDta                       10a
-     D  rlsCrtOn                      6a
-     D  rlsCrtFor                     6a
-     D  reserved_1                   20a
-     D  usrModInd                     1a
-     D  licPgm                       13a
-     D  ptfNbr                        5a
-     D  aparId                        6a
-     D  crtDta                        1a
-     D  modCcsid                     10i 0
-     D  objCtlLvl                     8a
-     D  enablePrfCol                  1a
-     D  profilingDta                 10a
-     D  reserved_2                    1a
-      *   ...
+// Structure of an entry in a QBNLSPGM list.
+dcl-ds spgl0100_t qualified template;
+  srvPgm          char(10);
+  srvPgmLib       char(10);
+  mod             char(10);
+  modLib          char(10);
+  srcFile         char(10);
+  srcLib          char(10);
+  srcMbr          char(10);
+  modAttr         char(10);
+  modCrtDatTim    char(13);
+  srcUpdDatTim    char(13);
+  srtSeqTbl       char(10);
+  srtSeqTblLib    char(10);
+  langID          char(10);
+  optLvl          int(10);
+  maxOptLvl       int(10);
+  dbgDta          char(10);
+  rlsCrtOn        char(6);
+  rlsCrtFor       char(6);
+  reserved_1      char(20);
+  usrModInd       char(1);
+  licPgm          char(13);
+  ptfNbr          char(5);
+  aparID          char(6);
+  crtDta          char(1);
+  modCcsid        int(10);
+  objctlLvl       char(8);
+  enablePrfCol    char(1);
+  profilingDta    char(10);
+  reserved_2      char(1);
+end-ds;
+//   ...
 
-       // Structure of an entry in a QBNLSPGM list.
-     D SPGL0610_t      ds                  qualified based(template)
-        // Size of this entry. Each entry has a different size.
-     D  size                         10i 0
-     D  srvPgm                       20a
-     D  ccsid                        10i 0
-        // Memory offset to reach the procedure name.
-     D  procNmOff                    10i 0
-        // Longueur du nom de la procedure.
-     D  procNmSize                   10i 0
+// Structure of an entry in a QBNLSPGM list.
+dcl-ds spgl0610_t qualified template;
+
+  size            int(10);  // Size of this entry. Each entry has a different size.
+  srvPgm          char(20);
+  ccsid           int(10);
+  procnmoff       int(10);  // Memory offset to reach the procedure name.
+  procnmsize      int(10);  // Longueur du nom de la procedure.
+end-ds;
 

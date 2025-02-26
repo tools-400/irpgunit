@@ -1,180 +1,184 @@
-      /IF NOT DEFINED(QUSROBJD)                                                               RADDAT
-      /DEFINE QUSROBJD                                                                        RADDAT
-      *                                                                                       RADDAT
-      *  Retrieve Object Description (QUSROBJD) API                                           RADDAT
-     D QUSROBJD...                                                                            RADDAT
-     D                 PR                         extpgm('QUSROBJD')                          RADDAT
-     D  o_rcvVar                  65535A          options(*varsize)                           RADDAT
-     D  i_lenRcvVar                  10I 0 const                                              RADDAT
-     D  i_format                      8A   const                                              RADDAT
-     D  i_qObj                       20A   const                                              RADDAT
-     D  i_type                       10A   const                                              RADDAT
-     D  io_errCode                65535A          options(*nopass: *varsize)    | OptGrp 1    RADDAT
-     D  i_auxStgCtrl              65535A   const  options(*nopass: *varsize)    | OptGrp 2    RADDAT
-      *                                                                                       RADDAT
-      *  Auxiliary Storage Pool (ASP) Control Format                                          RADDAT
-     D auxStgCtrl_t    DS                  qualified               based(pDummy)              RADDAT
-     D  length                       10I 0                                                    RADDAT
-     D  device                       10A                                                      RADDAT
-     D  searchType                   10A                                                      RADDAT
-      *                                                                                       RADDAT
-     D objd0100_t      DS                  qualified           based(pDummy)                  RADDAT
-     D  bytRet                       10I 0                                                    RADDAT
-     D  bytAvl                       10I 0                                                    RADDAT
-     D  name                         10A                                                      RADDAT
-     D  lib                          10A                                                      RADDAT
-     D  type                         10A                                                      RADDAT
-     D  rtnLib                       10A                                                      RADDAT
-     D  auxStgP                      10I 0                                                    RADDAT
-     D  owner                        10A                                                      RADDAT
-     D  domain                        2A                                                      RADDAT
-     D  crtDatTim                    13A                                                      RADDAT
-     D  chgDatTim                    13A                                                      RADDAT
-      *                                                                                       RADDAT
-     D objd0200_t      DS                  qualified           based(pDummy)                  RADDAT
-      *    OBJD0100 ...                                                                       RADDAT
-     D  bytRet                       10I 0                                                    RADDAT
-     D  bytAvl                       10I 0                                                    RADDAT
-     D  name                         10A                                                      RADDAT
-     D  lib                          10A                                                      RADDAT
-     D  type                         10A                                                      RADDAT
-     D  rtnLib                       10A                                                      RADDAT
-     D  auxStgP                      10I 0                                                    RADDAT
-     D  owner                        10A                                                      RADDAT
-     D  domain                        2A                                                      RADDAT
-     D  crtDatTim                    13A                                                      RADDAT
-     D  chgDatTim                    13A                                                      RADDAT
-      *    OBJD0200 ...                                                                       RADDAT
-     D  extObjAtr                    10A                                                      RADDAT
-     D  text                         50A                                                      RADDAT
-     D  srcFile                      10A                                                      RADDAT
-     D  srcLib                       10A                                                      RADDAT
-     D  srcMbr                       10A                                                      RADDAT
-      *                                                                                       RADDAT
-     D objd0300_t      DS                  qualified           based(pDummy)                  RADDAT
-      *    OBJD0100 ...                                                                       RADDAT
-     D  bytRet                       10I 0                                                    RADDAT
-     D  bytAvl                       10I 0                                                    RADDAT
-     D  name                         10A                                                      RADDAT
-     D  lib                          10A                                                      RADDAT
-     D  type                         10A                                                      RADDAT
-     D  rtnLib                       10A                                                      RADDAT
-     D  auxStgP                      10I 0                                                    RADDAT
-     D  owner                        10A                                                      RADDAT
-     D  domain                        2A                                                      RADDAT
-     D  crtDatTim                    13A                                                      RADDAT
-     D  chgDatTim                    13A                                                      RADDAT
-      *    OBJD0200 ...                                                                       RADDAT
-     D  extObjAtr                    10A                                                      RADDAT
-     D  text                         50A                                                      RADDAT
-     D  srcFile                      10A                                                      RADDAT
-     D  srcLib                       10A                                                      RADDAT
-     D  srcMbr                       10A                                                      RADDAT
-      *    OBJD0300 ...                                                                       RADDAT
-     D  srcFDatTim                   13A                                                      RADDAT
-     D  savDatTim                    13A                                                      RADDAT
-     D  rstDatTim                    13A                                                      RADDAT
-     D  crtUsrPrf                    10A                                                      RADDAT
-     D  crtSys                        8A                                                      RADDAT
-     D  resDat                        7A                                                      RADDAT
-     D  savSize                      10I 0                                                    RADDAT
-     D  savSeqNbr                    10I 0                                                    RADDAT
-     D  stg                          10A                                                      RADDAT
-     D  savCmd                       10A                                                      RADDAT
-     D  savVolID                     71A                                                      RADDAT
-     D  savDev                       10A                                                      RADDAT
-     D  savFName                     10A                                                      RADDAT
-     D  savFLibName                  10A                                                      RADDAT
-     D  savLbl                       17A                                                      RADDAT
-     D  sysLvl                        9A                                                      RADDAT
-     D  compiler                     16A                                                      RADDAT
-     D  objLvl                        8A                                                      RADDAT
-     D  usrChg                        1A                                                      RADDAT
-     D  licPgm                       16A                                                      RADDAT
-     D  ptf                          10A                                                      RADDAT
-     D  apar                         10A                                                      RADDAT
-      *                                                                                       RADDAT
-     D objd0400_t      DS                  qualified           based(pDummy)                  RADDAT
-      *    OBJD0100 ...                                                                       RADDAT
-     D  bytRet                       10I 0                                                    RADDAT
-     D  bytAvl                       10I 0                                                    RADDAT
-     D  name                         10A                                                      RADDAT
-     D  lib                          10A                                                      RADDAT
-     D  type                         10A                                                      RADDAT
-     D  rtnLib                       10A                                                      RADDAT
-     D  auxStgP                      10I 0                                                    RADDAT
-     D  owner                        10A                                                      RADDAT
-     D  domain                        2A                                                      RADDAT
-     D  crtDatTim                    13A                                                      RADDAT
-     D  chgDatTim                    13A                                                      RADDAT
-      *    OBJD0200 ...                                                                       RADDAT
-     D  extObjAtr                    10A                                                      RADDAT
-     D  text                         50A                                                      RADDAT
-     D  srcFile                      10A                                                      RADDAT
-     D  srcLib                       10A                                                      RADDAT
-     D  srcMbr                       10A                                                      RADDAT
-      *    OBJD0300 ...                                                                       RADDAT
-     D  srcFDatTim                   13A                                                      RADDAT
-     D  savDatTim                    13A                                                      RADDAT
-     D  rstDatTim                    13A                                                      RADDAT
-     D  crtUsrPrf                    10A                                                      RADDAT
-     D  crtSys                        8A                                                      RADDAT
-     D  resDat                        7A                                                      RADDAT
-     D  savSize                      10I 0                                                    RADDAT
-     D  savSeqNbr                    10I 0                                                    RADDAT
-     D  stg                          10A                                                      RADDAT
-     D  savCmd                       10A                                                      RADDAT
-     D  savVolID                     71A                                                      RADDAT
-     D  savDev                       10A                                                      RADDAT
-     D  savFName                     10A                                                      RADDAT
-     D  savFLibName                  10A                                                      RADDAT
-     D  savLbl                       17A                                                      RADDAT
-     D  sysLvl                        9A                                                      RADDAT
-     D  compiler                     16A                                                      RADDAT
-     D  objLvl                        8A                                                      RADDAT
-     D  usrChg                        1A                                                      RADDAT
-     D  licPgm                       16A                                                      RADDAT
-     D  ptf                          10A                                                      RADDAT
-     D  apar                         10A                                                      RADDAT
-      *    OBJD0400 ...                                                                       RADDAT
-     D  lastUseDat                    7A                                                      RADDAT
-     D  useInfUpd                     1A                                                      RADDAT
-     D  daysUseCnt                   10I 0                                                    RADDAT
-     D  objSize                      10I 0                                                    RADDAT
-     D  objSizeMlt                   10I 0                                                    RADDAT
-     D  objCmpSts                     1A                                                      RADDAT
-     D  alwChgPgm                     1A                                                      RADDAT
-     D  chgByPgm                      1A                                                      RADDAT
-     D  usrDfnAtr                    10A                                                      RADDAT
-     D  aspOflw                       1A                                                      RADDAT
-     D  savActDatTim                 13A                                                      RADDAT
-     D  objAudVal                    10A                                                      RADDAT
-     D  priGrp                       10A                                                      RADDAT
-     D  jrnStat                       1A                                                      RADDAT
-     D  jrnName                      10A                                                      RADDAT
-     D  jrnLibName                   10A                                                      RADDAT
-     D  jrnImages                     1A                                                      RADDAT
-     D  jrnOmitE                      1A                                                      RADDAT
-     D  jrnStrDatTim                 13A                                                      RADDAT
-     D  dgtSigned                     1A                                                      RADDAT
-     D  savSizeUnits                 10I 0                                                    RADDAT
-     D  savSizeMlt                   10I 0                                                    RADDAT
-     D  libASPNbr                    10I 0                                                    RADDAT
-     D  objASPDev                    10A                                                      RADDAT
-     D  libASPDev                    10A                                                      RADDAT
-     D  dgtSignedTrst                 1A                                                      RADDAT
-     D  dgtSignedMult                 1A                                                      RADDAT
-     D  reserved_1                    2A                                                      RADDAT
-     D  priAscSpcSize                10I 0                                                    RADDAT
-     D  optSpcAlgn                    1A                                                      RADDAT
-     D  objASPGrp                    10A                                                      RADDAT
-     D  libASPGrp                    10A                                                      RADDAT
-     D  strJrnRcv                    10A                                                      RADDAT
-     D  strJrnRcvLib                 10A                                                      RADDAT
-     D  strJrnRcvLibASPDev...                                                                 RADDAT
-     D                               10A                                                      RADDAT
-     D  strJrnRcvLibASPGrp...                                                                 RADDAT
-     D                               10A                                                      RADDAT
-     D  reserved_2                    1A                                                      RADDAT
-      *                                                                                       RADDAT
-      /ENDIF                                                                                  RADDAT
+**FREE
+/IF NOT DEFINED(QUSROBJD)
+/DEFINE QUSROBJD
+
+//  Retrieve Object Description (QUSROBJD) API
+dcl-pr qusrobjd extpgm('QUSROBJD');
+  o_rcvVar        char(65535) options(*varsize);
+  i_lenRcvVar     int(10) const;
+  i_format        char(8) const;
+  i_qobj          char(20) const;
+  i_type          char(10) const;
+  io_errCode      char(65535) options(*nopass: *varsize);
+  i_auxStgCtrl    char(65535) const  options(*nopass: *varsize);
+end-pr;
+
+//  Auxiliary Storage Pool (ASP) Control Format
+dcl-ds auxstgctrl_t qualified template;
+  length          int(10);
+  device          char(10);
+  searchType      char(10);
+end-ds;
+
+dcl-ds objd0100_t qualified template;
+  bytRet          int(10);
+  bytAvl          int(10);
+  name            char(10);
+  lib             char(10);
+  type            char(10);
+  rtnLib          char(10);
+  auxStgP         int(10);
+  owner           char(10);
+  domain          char(2);
+  crtDatTim       char(13);
+  chgDatTim       char(13);
+end-ds;
+
+dcl-ds objd0200_t qualified template;
+  //    OBJD0100 ...
+  bytRet          int(10);
+  bytAvl          int(10);
+  name            char(10);
+  lib             char(10);
+  type            char(10);
+  rtnLib          char(10);
+  auxStgP         int(10);
+  owner           char(10);
+  domain          char(2);
+  crtDatTim       char(13);
+  chgDatTim       char(13);
+  //    OBJD0200 ...
+  extObjAtr       char(10);
+  text            char(50);
+  srcFile         char(10);
+  srcLib          char(10);
+  srcMbr          char(10);
+end-ds;
+
+dcl-ds objd0300_t qualified template;
+  //    OBJD0100 ...
+  bytRet          int(10);
+  bytAvl          int(10);
+  name            char(10);
+  lib             char(10);
+  type            char(10);
+  rtnLib          char(10);
+  auxStgP         int(10);
+  owner           char(10);
+  domain          char(2);
+  crtDatTim       char(13);
+  chgDatTim       char(13);
+  //    OBJD0200 ...
+  extObjAtr       char(10);
+  text            char(50);
+  srcFile         char(10);
+  srcLib          char(10);
+  srcMbr          char(10);
+  //    OBJD0300 ...
+  srcfDatTim      char(13);
+  savDatTim       char(13);
+  rstDatTim       char(13);
+  crtUsrPrf       char(10);
+  crtSys          char(8);
+  resDat          char(7);
+  savSize         int(10);
+  savSeqNbr       int(10);
+  stg             char(10);
+  savCmd          char(10);
+  savVolID        char(71);
+  savDev          char(10);
+  savfName        char(10);
+  savfLibName     char(10);
+  savLbl          char(17);
+  sysLvl          char(9);
+  compiler        char(16);
+  objLvl          char(8);
+  usrChg          char(1);
+  licPgm          char(16);
+  ptf             char(10);
+  apar            char(10);
+end-ds;
+
+dcl-ds objd0400_t qualified template;
+  //    OBJD0100 ...
+  bytRet             int(10);
+  bytAvl             int(10);
+  name               char(10);
+  lib                char(10);
+  type               char(10);
+  rtnLib             char(10);
+  auxStgP            int(10);
+  owner              char(10);
+  domain             char(2);
+  crtDatTim          char(13);
+  chgDatTim          char(13);
+  //    OBJD0200 ...
+  extObjAtr          char(10);
+  text               char(50);
+  srcFile            char(10);
+  srcLib             char(10);
+  srcMbr             char(10);
+  //    OBJD0300 ...
+  srcfDatTim         char(13);
+  savDatTim          char(13);
+  rstDatTim          char(13);
+  crtUsrPrf          char(10);
+  crtSys             char(8);
+  resDat             char(7);
+  savSize            int(10);
+  savSeqNbr          int(10);
+  stg                char(10);
+  savCmd             char(10);
+  savVolID           char(71);
+  savDev             char(10);
+  savfName           char(10);
+  savfLibName        char(10);
+  savLbl             char(17);
+  sysLvl             char(9);
+  compiler           char(16);
+  objLvl             char(8);
+  usrChg             char(1);
+  licPgm             char(16);
+  ptf                char(10);
+  apar               char(10);
+  //    OBJD0400 ...
+  lastUseDat         char(7);
+  useInfUpd          char(1);
+  daysUseCnt         int(10);
+  objSize            int(10);
+  objSizeMlt         int(10);
+  objCmpSts          char(1);
+  alwChgPgm          char(1);
+  chgByPgm           char(1);
+  usrDfnAtr          char(10);
+  aspOflw            char(1);
+  savActDatTim       char(13);
+  objAudVal          char(10);
+  priGrp             char(10);
+  jrnStat            char(1);
+  jrnName            char(10);
+  jrnLibName         char(10);
+  jrnImages          char(1);
+  jrnOmitE           char(1);
+  jrnStrDatTim       char(13);
+  dgtSigned          char(1);
+  savSizeUnits       int(10);
+  savSizeMlt         int(10);
+  libAspNbr          int(10);
+  objAspDev          char(10);
+  libAspDev          char(10);
+  dgtSignedTrst      char(1);
+  dgtSignedMult      char(1);
+  reserved_1         char(2);
+  priAscSpcSize      int(10);
+  optSpcAlgn         char(1);
+  objAspGrp          char(10);
+  libAspGrp          char(10);
+  strJrnRcv          char(10);
+  strJrnRcvLib       char(10);
+  strJrnRcvLibAspDev char(10);
+  strJrnRcvLibAspGrp char(10);
+  reserved_2         char(1);
+end-ds;
+
+/ENDIF

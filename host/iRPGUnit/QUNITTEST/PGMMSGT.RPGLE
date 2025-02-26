@@ -160,7 +160,7 @@
 
       /free
         monitor;
-          callSndEscapeMsgToCaller();
+          callsndEscapeMsgToCaller();
           fail( 'sndEscapeMsgToCaller() did not raise an exception.' );
 
         on-error;

@@ -1,229 +1,261 @@
-      /if not defined (LIBC)
-      /define LIBC
-      // ==========================================================================
-      //  iRPGUnit - Logging Facilities for CMDRUN.
-      // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
-      // ==========================================================================
+**FREE
+/if not defined (LIBC)
+/define LIBC
+// ==========================================================================
+//  iRPGUnit - Logging Facilities for CMDRUN.
+// ==========================================================================
+//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ==========================================================================
 
-      /include qinclude,ERRORCODE
+/include qinclude,ERRORCODE
 
-      *-------------------------------------------------------------------------
-      * Prototypes for C-Functions
-      *-------------------------------------------------------------------------
-      *
-      * string functions
-      *
-     D strtok          PR              *   extproc('strtok')
-     D  i_string                       *   value  options(*string)
-     D  i_token                        *   value  options(*string)
-      *
-     D strlen          PR            10U 0 extproc('strlen')
-     D   string                        *   value
-      *
-     D strcmp          PR            10I 0 extproc('strcmp')
-     D  string1                        *   value
-     D  string2                        *   value
-      *
-     D strncmp         PR            10I 0 extproc('strncmp')
-     D  string1                        *   value
-     D  string2                        *   value
-     D  count                        10I 0 value
-      *
-     D strcmpi         PR            10I 0 extproc('strcmpi')
-     D  string1                        *   value
-     D  string2                        *   value
-      *
-     D strcasecmp      PR            10I 0 extproc('strcasecmp')
-     D  string1                        *   value
-     D  string2                        *   value
-      *
-     D strncasecmp     PR            10I 0 extproc('strncasecmp')
-     D  string1                        *   value
-     D  string2                        *   value
-     D  count                        10I 0 value
-      *
-     D strstr          PR              *   extproc('strstr')
-     D  string1                        *   value
-     D  string2                        *   value
-      *
-     D strcspn         PR            10U 0 extproc('strcspn')
-     D  source                         *   value
-     D  searchChars                    *   value
-      *
-     D strspn          PR            10U 0 extproc('strspn')
-     D  source                         *   value
-     D  searchChars                    *   value
-      *
-     D requestControlBlockLower...
-     D                 DS                  qualified
-     D   type                        10I 0 inz(0)
-     D   ccsid                       10I 0 inz(0)
-     D   case                        10I 0 inz(0)
-     D   res1                        10A   inz(*ALLX'00')
-      *
-     D requestControlBlockUpper...
-     D                 DS                  qualified
-     D   type                        10I 0 inz(1)
-     D   ccsid                       10I 0 inz(0)
-     D   case                        10I 0 inz(0)
-     D   res1                        10A   inz(*ALLX'00')
-      *
-     D caseConvert     PR                  extproc('QlgConvertCase')
-     D   reqContBlock                      const
-     D                                     likeds(requestControlBlockUpper)
-     D   input                     1024A   const options(*varsize)
-     D   output                    1024A   options(*varsize)
-     D   len                         10I 0 const
-     D   errorcode                         likeds(errorCode_t) options(*varsize)
+//-------------------------------------------------------------------------
+// Prototypes for C-Functions
+//-------------------------------------------------------------------------
+//
+// string functions
+//
+dcl-pr strtok pointer extproc('strtok');
+  i_string        pointer value  options(*string);
+  i_token         pointer value  options(*string);
+end-pr;
+//
+dcl-pr strlen uns(10) extproc('strlen');
+  string          pointer value;
+end-pr;
+//
+dcl-pr strcmp int(10) extproc('strcmp');
+  string1         pointer value;
+  string2         pointer value;
+end-pr;
+//
+dcl-pr strncmp int(10) extproc('strncmp');
+  string1         pointer value;
+  string2         pointer value;
+  count           int(10) value;
+end-pr;
+//
+dcl-pr strcmpi int(10) extproc('strcmpi');
+  string1         pointer value;
+  string2         pointer value;
+end-pr;
+//
+dcl-pr strcasecmp int(10) extproc('strcasecmp');
+  string1         pointer value;
+  string2         pointer value;
+end-pr;
+//
+dcl-pr strncasecmp int(10) extproc('strncasecmp');
+  string1         pointer value;
+  string2         pointer value;
+  count           int(10) value;
+end-pr;
+//
+dcl-pr strstr pointer extproc('strstr');
+  string1         pointer value;
+  string2         pointer value;
+end-pr;
+//
+dcl-pr strcspn uns(10) extproc('strcspn');
+  source          pointer value;
+  searchchars     pointer value;
+end-pr;
+//
+dcl-pr strspn uns(10) extproc('strspn');
+  source          pointer value;
+  searchchars     pointer value;
+end-pr;
+//
+dcl-ds requestcontrolblocklower qualified;
+  type            int(10) inz(0);
+  ccsid           int(10) inz(0);
+  case            int(10) inz(0);
+  res1            char(10) inz(*allx'00');
+end-ds;
+//
+dcl-ds requestcontrolblockupper qualified;
+  type            int(10) inz(1);
+  ccsid           int(10) inz(0);
+  case            int(10) inz(0);
+  res1            char(10) inz(*allx'00');
+end-ds;
+//
+dcl-pr caseconvert extproc('QlgConvertCase');
+  reqContBlock    likeds(requestcontrolblockupper) const;
+  input           char(1024) options(*varsize) const;
+  output          char(1024) options(*varsize);
+  len             int(10) const;
+  errorCode       likeds(errorCode_t) options(*varsize);
+end-pr;
 
-      *
-      * memory functions
-      *
-     D memcpy          PR              *          extproc('memcpy')
-     D  dest                           *   value
-     D  source                         *   value
-     D  count                        10U 0 value
-      *
-     D memset          PR              *          extproc('memset')
-     D  i_pDest                        *   value
-     D  i_char                       10I 0 value
-     D  i_count                      10U 0 value
-      *
-     D memmove         PR              *          extproc('memmove')
-     D  pMemDest                       *   value
-     D  pMemSrc                        *   value
-     D  memSize                      10U 0 value
-      *
-     D memcmp          PR            10I 0        extproc('memcmp')
-     D  pBuf1                          *   value
-     D  pBuf2                          *   value
-     D  count                        10U 0 value
-      *
-     D memicmp         PR            10I 0        extproc('__memicmp')
-     D  pBuf1                          *   value
-     D  pBuf2                          *   value
-     D  count                        10U 0 value
-      *
-     D memchr          PR              *   extproc('memchr')
-     D  buffer                         *   value
-     D  char                         10I 0 value
-     D  count                        10U 0 value
+//
+// memory functions
+//
+dcl-pr memcpy pointer extproc('memcpy');
+  dest            pointer value;
+  source          pointer value;
+  count           uns(10) value;
+end-pr;
+//
+dcl-pr memset pointer extproc('memset');
+  i_pDest         pointer value;
+  i_char          int(10) value;
+  i_count         uns(10) value;
+end-pr;
+//
+dcl-pr memmove pointer extproc('memmove');
+  pMemDest        pointer value;
+  pMemSrc         pointer value;
+  memSize         uns(10) value;
+end-pr;
+//
+dcl-pr memcmp int(10) extproc('memcmp');
+  pBuf1           pointer value;
+  pBuf2           pointer value;
+  count           uns(10) value;
+end-pr;
+//
+dcl-pr memicmp int(10) extproc('__memicmp');
+  pBuf1           pointer value;
+  pBuf2           pointer value;
+  count           uns(10) value;
+end-pr;
+//
+dcl-pr memchr pointer extproc('memchr');
+  buffer          pointer value;
+  char            int(10) value;
+  count           uns(10) value;
+end-pr;
 
-      *
-      * math functions
-      *
-     D ceiling         PR             8F   extproc('ceil')
-     D   value                        8F   value
-      *
-     D floor           PR             8F   extproc('floor')
-     D   value                        8F   value
+//
+// math functions
+//
+dcl-pr ceiling float(8) extproc('ceil');
+  value           float(8) value;
+end-pr;
+//
+dcl-pr floor float(8) extproc('floor');
+  value           float(8) value;
+end-pr;
 
-      *
-      * filesystem functions
-      *
-     D tmpnam          PR              *   extproc('tmpnam')
-     D   buffer                      39A   options(*omit)
-      *
-     D tmpnamIFS       PR              *   extproc('_C_IFS_tmpnam')
-     D   buffer                      39A   options(*omit)
+//
+// filesystem functions
+//
+dcl-pr tmpnam pointer extproc('tmpnam');
+  buffer          char(39) options(*omit);
+end-pr;
+//
+dcl-pr tmpnamifs pointer extproc('_C_IFS_tmpnam');
+  buffer          char(39) options(*omit);
+end-pr;
 
-      *
-      * other functions
-      *
-     D getenv          PR              *   extproc('getenv')
-     D   name                          *   value options(*string : *trim)
-      *
-     D system          PR            10I 0 extproc('system')
-     D   command                       *   value options(*string)
-      *
-     D srand           PR                         extproc('srand')
-     D  i_seed                       10U 0 value
-      *
-     D rand            PR            10I 0        extproc('rand')
-      *
-     D qsort           PR              *          extproc('qsort')
-     D  memPtr                         *   value
-     D  numElem                      10U 0 value
-     D  width                        10U 0 value
-     D  pSortFunc                      *   value  procptr
-      *
-     D bsearch         PR              *          extproc('bsearch')
-     D  keyPtr                         *   value
-     D  memPtr                         *   value
-     D  numElem                      10U 0 value
-     D  width                        10U 0 value
-     D  pSearchFnc                     *   value  procptr
-      *
-     D time            PR            10I 0 extproc('time')
-     D   returnValue                   *
+//
+// other functions
+//
+dcl-pr getenv pointer extproc('getenv');
+  name            pointer value options(*string : *trim);
+end-pr;
+//
+dcl-pr system int(10) extproc('system');
+  command         pointer value options(*string);
+end-pr;
+//
+dcl-pr srand extproc('srand');
+  i_seed          uns(10) value;
+end-pr;
+//
+dcl-pr rand int(10) extproc('rand');
+end-pr;
+//
+dcl-pr qsort pointer extproc('qsort');
+  memPtr          pointer value;
+  numElem         uns(10) value;
+  width           uns(10) value;
+  pSortFunc       pointer(*proc) value;
+end-pr;
+//
+dcl-pr bsearch pointer extproc('bsearch');
+  keyPtr          pointer value;
+  memPtr          pointer value;
+  numElem         uns(10) value;
+  width           uns(10) value;
+  pSearchFnc      pointer(*proc) value;
+end-pr;
+//
+dcl-pr time int(10) extproc('time');
+  returnValue     pointer;
+end-pr;
 
-      /if not defined(IFS_H)
-      *
-      * error handling
-      *
-     D errno           PR              *   extproc('__errno')
-      *
-     D strerr          PR              *   extproc('strerror')
-     D  errnum                       10I 0 value
-      * for backwards compatibility
-     D strerror        PR              *   extproc('strerror')
-     D  errnum                       10I 0 value
-      /endif
+/if not defined(IFS_H)
+//
+// error handling
+//
+dcl-pr errno pointer extproc('__errno');
+end-pr;
+//
+dcl-pr strerr pointer extproc('strerror');
+  errNum          int(10) value;
+end-pr;
+// for backwards compatibility
+dcl-pr strerror pointer extproc('strerror');
+  errNum          int(10) value;
+end-pr;
+/endif
 
-      /endif
+/endif
 
-      /if not defined(FCNTL_PROTOTYPE)
-      *
-      * fcntl() commands
-      *
-     D F_DUPFD         C                   0
-     D F_GETFL         C                   6
-     D F_SETFL         C                   7
-     D F_GETOWN        C                   8
-     D F_SETOWN        C                   9
-      *
-      * fcntl() flags
-      *
-     D O_NONBLOCK      C                   128
-     D O_NDELAY        C                   128
-     D FNDELAY         C                   128
-     D FASYNC          C                   512
+/if not defined(FCNTL_PROTOTYPE)
+//
+// fcntl() commands
+//
+dcl-c F_DUPFD    0;
+dcl-c F_GETFL    6;
+dcl-c F_SETFL    7;
+dcl-c F_GETOWN   8;
+dcl-c F_SETOWN   9;
+//
+// fcntl() flags
+//
+dcl-c O_NONBLOCK 128;
+dcl-c O_NDELAY   128;
+dcl-c FNDELAY    128;
+dcl-c FASYNC     512;
 
-      *--------------------------------------------------------------------
-      *   fcntl()--Change Descriptor Attributes
-      *
-      *   int fcntl(int descriptor, int command, ...)
-      *
-      *   The third parameter (when used with sockets) is also an
-      *   integer passed by value.. it specifies an argument for
-      *   some of the commands.
-      *
-      *   commands supported in sockets are:
-      *          F_GETFL -- Return the status flags for the descriptor
-      *          F_SETFL -- Set status flags for the descriptor
-      *                    (Arg =)status flags (ORed) to set.
-      * (the commands below arent terribly useful in RPG)
-      *          F_DUPFD -- Duplicate the descriptor
-      *                    (Arg =)minimum value that new descriptor can be
-      *          F_GETOWN -- Return the process ID or group ID that's
-      *                     set to receive SIGIO & SIGURG
-      *          F_SETOWN -- Set the process ID or group ID that's
-      *                     to receive SIGIO & SIGURG
-      *                    (Arg =)process ID (or neg value for group ID)
-      *
-      *  returns -1 upon error.
-      *          successful values are command-specific.
-      *--------------------------------------------------------------------
-     D fcntl           PR            10I 0 extproc('fcntl')
-     D   socketDesc                  10I 0 value
-     D   command                     10I 0 value
-     D   arg                         10I 0 value options(*nopass)
+//--------------------------------------------------------------------
+//   fcntl()--Change Descriptor Attributes
+//
+//   int fcntl(int descriptor, int command, ...)
+//
+//   The third parameter (when used with sockets) is also an
+//   integer passed by value.. it specifies an argument for
+//   some of the commands.
+//
+//   commands supported in sockets are:
+//          F_GETFL -- Return the status flags for the descriptor
+//          F_SETFL -- Set status flags for the descriptor
+//                    (Arg =)status flags (ORed) to set.
+// (the commands below arent terribly useful in RPG)
+//          F_DUPFD -- Duplicate the descriptor
+//                    (Arg =)minimum value that new descriptor can be
+//          F_GETOWN -- Return the process ID or group ID that's
+//                     set to receive SIGIO & SIGURG
+//          F_SETOWN -- Set the process ID or group ID that's
+//                     to receive SIGIO & SIGURG
+//                    (Arg =)process ID (or neg value for group ID)
+//
+//  returns -1 upon error.
+//          successful values are command-specific.
+//--------------------------------------------------------------------
+dcl-pr fcntl int(10) extproc('fcntl');
+  socketDesc      int(10) value;
+  command         int(10) value;
+  arg             int(10) value options(*nopass);
+end-pr;
 
-      /define FCNTL_PROTOTYPE
-      /endif
+/define FCNTL_PROTOTYPE
+/endif
 

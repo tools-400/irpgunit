@@ -1,14 +1,16 @@
+**FREE
 
-       //
-       // Open Spooled File API
-       //
+//
+// Open Spooled File API
+//
 
-     D QSPOPNSP        pr                  ExtPgm('QSPOPNSP')
-     D   splfHdl                     10i 0
-     D   qlfJobNm                          const like(QlfJobNm_t)
-     D   intJobId                    16a   const
-     D   intSplfId                   16a   const
-     D   splfNm                      10a   const
-     D   splfNb                      10i 0 const
-     D   nbOfBuffers                 10i 0 const
-     D   error                    32766a   options(*varsize) noopt
+dcl-pr qspopnsp extpgm('QSPOPNSP');
+  splfHdl         int(10);
+  qlfJobNm        const like(qlfJobNm_t);
+  intJobID        char(16) const;
+  intSplfID       char(16) const;
+  splfNm          char(10) const;
+  splfNb          int(10) const;
+  nbOfBuffers     int(10) const;
+  error           char(32766) options(*varsize) noopt;
+end-pr;

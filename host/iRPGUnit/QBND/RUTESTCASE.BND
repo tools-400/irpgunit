@@ -39,7 +39,7 @@ STRPGMEXP  PGMLVL(*CURRENT) SIGNATURE('iRPGUNIT V5.0')
   EXPORT SYMBOL("runCmd")                      /* public API */
   EXPORT SYMBOL("clearAssertCounter")          /* internal self-test API */
   EXPORT SYMBOL("nEqual")                      /* public API */
-  EXPORT SYMBOL("getVersion")                  /* internal use */
+  EXPORT SYMBOL("VERSION_getVersion")          /* internal use */
 
   EXPORT SYMBOL("waitSeconds")                 /* public API */
   EXPORT SYMBOL("displayStatusMessage")        /* public API */

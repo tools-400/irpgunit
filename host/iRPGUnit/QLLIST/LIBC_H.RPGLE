@@ -37,7 +37,7 @@
      D   input                     1024A   const options(*varsize)
      D   output                    1024A   options(*varsize)
      D   len                         10I 0 const
-     D   errorcode                         likeds(errorCode_t) options(*varsize)
+     D   errorCode                         likeds(errorCode_t) options(*varsize)
 
       *
       * memory functions

@@ -1,32 +1,34 @@
-      /if not defined(QCAPCMD)
-      /define QCAPCMD
-      //
-      // Prototype for QCAPCMD API.
-      //
-      // Execute Command
-      //
-      // http://publib.boulder.ibm.com/iseries/v5r2/ic2924/info/apis/qcapcmd.htm
-      //
+**FREE
+/if not defined(QCAPCMD)
+/define QCAPCMD
+//
+// Prototype for QCAPCMD API.
+//
+// Execute Command
+//
+// http://publib.boulder.ibm.com/iseries/v5r2/ic2924/info/apis/qcapcmd.htm
+//
 
-     D QCAPCMD...
-     D                 pr                         extpgm('QCAPCMD')
-     D  cmd                       32702A   const  options(*varsize)
-     D  cmdLen                       10I 0 const
-     D  optCtrlBlk                32767A   const  options(*varsize)
-     D  optCtrlBlkLen                10I 0 const
-     D  optCtrlBlkFmt                 8A   const
-     D  chgCmd                    32702A          options(*varsize)
-     D  chgCmdLen                    10I 0 const
-     D  chgCmdLenAvl                 10I 0
-     D                            32767A          options(*varsize)
+dcl-pr qcapcmd
+       extpgm('QCAPCMD');
+  cmd             char(32702) const  options(*varsize);
+  cmdLen          int(10) const;
+  optCtrlBlk      char(32767) const  options(*varsize);
+  optCtrlBlkLen   int(10) const;
+  optCtrlBlkFmt   char(8) const;
+  chgCmd          char(32702) options(*varsize);
+  chgCmdLen       int(10) const;
+  chgCmdLenAvl    int(10);
+  *N              char(32767) options(*varsize);
+end-pr;
 
-     D QCAPCMD_optCtrlBlk_t...
-     D                 ds                  qualified template
-     D  typeCmdPrc             1      4I 0 inz(1)                               QCMDCHK API
-     D  DBCS_data              5      5A   inz('0')                             ignore DBCS
-     D  prmtAction             6      6A   inz('0')                             never prompt
-     D  cmdStrSyntax           7      7A   inz('0')                             AS/400 Syntax
-     D  msgRtvKey              8     11A   inz(*BLANKS)                         no msg key
-     D  res_01                12     20A   inz(*ALLx'00')
+dcl-ds qcapcmd_optCtrlBlk_t qualified template;
+  typeCmdPrc      int(10) inz(1);         // QCMDCHK API
+  dbcs_data       char(1) inz('0');       // ignore DBCS
+  prmtAction      char(1) inz('0');       // never prompt
+  cmdStrSyntax    char(1) inz('0');       // AS/400 Syntax
+  msgRtvKey       char(4) inz(*blanks);   // no msg key
+  res_01          char(9) inz(*allx'00');
+end-ds;
 
-      /endif
+/endif

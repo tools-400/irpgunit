@@ -1,45 +1,47 @@
-      /IF NOT DEFINED(STAT)
-      /DEFINE START
+**FREE
+/IF NOT DEFINED(STAT)
+/DEFINE START
 
-      /include qsysinc,localtime
+/include qsysinc,localtime
 
-      // stat() -- Get File Information
-      //    The stat() function gets status information about a specified
-      //    file and places it in the area of memory pointed to by the buf
-      //    argument.
-      // Return value:
-      //  0  stat() was successful. The information is returned in buf.
-      // -1  stat() was not successful. The errno global variable is set to
-      //            indicate the error.
+// stat() -- Get File Information
+//    The stat() function gets status information about a specified
+//    file and places it in the area of memory pointed to by the buf
+//    argument.
+// Return value:
+//  0  stat() was successful. The information is returned in buf.
+// -1  stat() was not successful. The errno global variable is set to
+//            indicate the error.
 
-     d stat...
-     d                 pr            10i 0 extproc('stat')
-     d  path                           *   value options(*string)
-     d  stat                               const likeds(st_stat_t)
+dcl-pr stat int(10) extproc('stat');
+  path            pointer value options(*string);
+  stat            const likeds(st_stat_t);
+end-pr;
 
-     d st_stat_t       ds                  qualified based(pDummy)
-     d  mode                         10u 0
-     d  ino                          10u 0
-     d  nlink                         5u 0
-     d  reserved2                     2a
-     d  uid                          10u 0
-     d  gid                          10u 0
-     d  size                         10i 0
-     d  atime                        10i 0
-     d  mtime                        10i 0
-     d  ctime                        10i 0
-     d  dev                          10u 0
-     d  blksize                      10u 0
-     d  allocsize                    10u 0
-     d  objtype                      11A
-     d  reserved3                     1a
-     d  codepage                      5u 0
-     d  ccsid                         5u 0
-     d  rdev                         10u 0
-     d  nlink32                      10u 0
-     d  rdev64                       20U 0
-     d  dev64                        20U 0
-     d  reserved1                    36A
-     d  ino_gen_id                   10u 0
+dcl-ds st_stat_t qualified template;
+  mode            uns(10);
+  ino             uns(10);
+  nlink           uns(5);
+  reserved2       char(2);
+  uid             uns(10);
+  gid             uns(10);
+  size            int(10);
+  atime           int(10);
+  mtime           int(10);
+  ctime           int(10);
+  dev             uns(10);
+  blksize         uns(10);
+  allocsize       uns(10);
+  objType         char(11);
+  reserved3       char(1);
+  codepage        uns(5);
+  ccsid           uns(5);
+  rdev            uns(10);
+  nlink32         uns(10);
+  rdev64          uns(20);
+  dev64           uns(20);
+  reserved1       char(36);
+  ino_gen_id      uns(10);
+end-ds;
 
-      /ENDIF
+/ENDIF

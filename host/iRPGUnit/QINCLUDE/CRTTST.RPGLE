@@ -1,237 +1,178 @@
-      /if not defined (IRPGUNIT_CRTTST)
-      /define IRPGUNIT_CRTTST
-      // ==========================================================================
-      //  iRPGUnit - Implementation of RUCRT* commands.
-      // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
-      // ==========================================================================
+**FREE
+/if not defined (IRPGUNIT_CRTTST)
+/define IRPGUNIT_CRTTST
+// ==========================================================================
+//  iRPGUnit - Implementation of RUCRT* commands.
+// ==========================================================================
+//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ==========================================================================
 
-       //----------------------------------------------------------------------
-       //   PUBLIC PROTOTYPES
-       //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   PUBLIC PROTOTYPES
+//----------------------------------------------------------------------
 
-     D crtTst...
-     D                 pr
-     D                                     extproc('CRTTST_+
-     D                                     crtTst+
-     D                                     ')
-     D  testPgm                            const likeds(Object_t)
-     D  srcFile                            const likeds(Object_t)
-     D  srcMbr                             const like(SrcMbr_t.mbr)
-     D  text                               const like(Text_t)
-     D  cOption                            const likeds(Options_t)
-     D  dbgView                            const like(DbgView_t)
-     D  bndSrvPgm                          const likeds(ObjectArray_t)
-     D  bndDir                             const likeds(ObjectArray_t)
-     D  bOption                            const likeds(Options_t)
-     D  define                             const likeds(defines_t)
-     D  dltSplf                            const like(yesNo_t)
-     D  actGrp                             const like(ActivationGroup_t)
-     D  bModules                           const likeds(ObjectArray_t)
-     D  pRpgPpOpt                          const like(RpgPpOpt_t)
-     D  pOption                            const likeds(Options_t)
-     D  compileopt                         const like(CompileOpt_t)
-     D  targetRls                          const like(TargetRelease_t)
+dcl-pr crtTst extproc('CRTTST_crtTst');
+  testPgm         likeds(object_t) const;
+  srcFile         likeds(object_t) const;
+  srcMbr          like(srcMbr_t.mbr) const;
+  text            like(text_t) const;
+  cOption         likeds(options_t) const;
+  dbgView         like(dbgView_t) const;
+  bndSrvPgm       likeds(objectArray_t) const;
+  bndDir          likeds(objectArray_t) const;
+  bOption         likeds(options_t) const;
+  define          likeds(defines_t) const;
+  dltSplF         like(yesno_t) const;
+  actGrp          like(activationGroup_t) const;
+  bModules        likeds(objectArray_t) const;
+  pRpgPpOpt       like(rpgPpOpt_t) const;
+  pOption         likeds(options_t) const;
+  compileOpt      like(compileOpt_t) const;
+  targetRls       like(targetRelease_t) const;
+end-pr;
 
-     D serializeObjectName...
-     D                 pr            21a   varying
-     D                                     extproc('CRTTST_+
-     D                                     serializeObjectName+
-     D                                     ')
-     D  object                             const likeds(Object_t)
+dcl-pr serializeObjectName varchar(21) extproc('CRTTST_serializeObjectName');
+  object          likeds(object_t) const;
+end-pr;
 
-     D getCrtRpgModCmd...
-     D                 pr                        like(Cmd_t)
-     D                                     extproc('CRTTST_+
-     D                                     getCrtRpgModCmd+
-     D                                     ')
-     D  pgm                                const likeds(Object_t)
-     D  srcFile                            const likeds(Object_t)
-     D  srcMbr                             const like(SrcMbr_t.mbr)
-     D  cOptions                           const likeds(Options_t)
-     D  dbgView                            const like(DbgView_t)
-     D  pRpgPpOpt                          const like(RpgPpOpt_t)
-     D  pOptions                           const likeds(Options_t)
-     D  compileopt                         const like(CompileOpt_t)
-     D  targetRls                          const like(TargetRelease_t)
-     D  define                             const likeds(defines_t)
+dcl-pr getCrtRpgModCmd like(cmd_t) extproc('CRTTST_getCrtRpgModCmd');
+  pgm             likeds(object_t) const;
+  srcFile         likeds(object_t) const;
+  srcMbr          like(srcMbr_t.mbr) const;
+  cOptions        likeds(options_t) const;
+  dbgView         like(dbgView_t) const;
+  pRpgPpOpt       like(rpgPpOpt_t) const;
+  pOptions        likeds(options_t) const;
+  compileopt      like(compileOpt_t) const;
+  targetRls       like(targetRelease_t) const;
+  define          likeds(defines_t) const;
+end-pr;
 
-     D getCrtCblModCmd...
-     D                 pr                        like(Cmd_t)
-     D                                     extproc('CRTTST_+
-     D                                     getCrtCblModCmd+
-     D                                     ')
-     D  pgm                                const likeds(Object_t)
-     D  srcFile                            const likeds(Object_t)
-     D  srcMbr                             const like(SrcMbr_t.mbr)
-     D  cOptions                           const likeds(Options_t)
-     D  dbgView                            const like(DbgView_t)
-     D  pOptions                           const likeds(Options_t)
-     D  compileopt                         const like(CompileOpt_t)
-     D  targetRls                          const like(TargetRelease_t)
-     D  define                             const likeds(defines_t)
+dcl-pr getCrtCblModCmd like(cmd_t) extproc('CRTTST_getCrtCblModCmd');
+  pgm             likeds(object_t) const;
+  srcFile         likeds(object_t) const;
+  srcMMr          like(srcMbr_t.mbr) const;
+  cOptions        likeds(options_t) const;
+  dbgView         like(dbgView_t) const;
+  pOptions        likeds(options_t) const;
+  compileOpt      like(compileOpt_t) const;
+  targetRls       like(targetRelease_t) const;
+  define          likeds(defines_t) const;
+end-pr;
 
-     D getCrtSrvPgmCmd...
-     D                 pr                        like(Cmd_t)
-     D                                     extproc('CRTTST_+
-     D                                     getCrtSrvPgmCmd+
-     D                                     ')
-     D  pgm                                const likeds(Object_t)
-     D  bndSrvPgm                          const likeds(ObjectArray_t)
-     D  bndDir                             const likeds(ObjectArray_t)
-     D  module                             const likeds(ObjectArray_t)
-     D  options                            const likeds(Options_t)
-     D  export                       10a   const
-     D  actGrp                             const like(ActivationGroup_t)
-     D  text                               const like(Text_t )
-     D  targetRls                          const like(TargetRelease_t)
+dcl-pr getCrtSrvPgmCmd like(cmd_t) extproc('CRTTST_getCrtSrvPgmCmd');
+  pgm             likeds(object_t) const;
+  bndSrvPgm       likeds(objectArray_t) const;
+  bndDir          likeds(objectArray_t) const;
+  module          likeds(objectArray_t) const;
+  options         likeds(options_t) const;
+  export          char(10) const;
+  actGrp          like(activationGroup_t) const;
+  text            like(text_t ) const;
+  targetRls       like(targetRelease_t) const;
+end-pr;
 
-       //----------------------------------------------------------------------
-       //   PRIVATE PROTOTYPES
-       //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   PRIVATE PROTOTYPES
+//----------------------------------------------------------------------
 
-     d formatCommand...
-     d                 pr                  like(Cmd_t)
-     D                                     extproc('+
-     D                                     formatCommand+
-     D                                     ')
-     d  cmd                                const like(Cmd_t)
+dcl-pr formatCommand like(cmd_t) extproc('formatCommand');
+  cmd             like(cmd_t) const;
+end-pr;
 
-     D getCreatedModulesFromJobLog...
-     D                 pr                  likeds(ObjectArray_t)
-     D                                     extproc('+
-     D                                     getCreatedModulesFromJobLog+
-     D                                     ')
-     D  crtMsgId                      7a   const
-     D  timeLimit                      z   const
+dcl-pr getCreatedModulesFromJobLog likeds(objectArray_t) extproc('getCreatedModulesFromJobLog');
+  crtMsgID        char(7) const;
+  timeLimit       timestamp const;
+end-pr;
 
-     D addModules...
-     D                 pr
-     D                                     extproc('+
-     D                                     addModules+
-     D                                     ')
-     D  modules                                  likeds(ObjectArray_t)
-     D  items                                    likeds(ObjectArray_t)
+dcl-pr addModules extproc('addModules');
+  modules         likeds(objectArray_t);
+  items           likeds(objectArray_t);
+end-pr;
 
-     D addModule...
-     D                 pr
-     D                                     extproc('+
-     D                                     addModule+
-     D                                     ')
-     D  modules                                  likeds(ObjectArray_t)
-     D  module                             const likeds(Object_t)
-     D  isFirstMod                     n   const options(*nopass)
+dcl-pr addModule extproc('addModule');
+  modules         likeds(objectArray_t);
+  module          likeds(object_t) const;
+  isFirstMod      ind options(*nopass) const;
+end-pr;
 
-     D resolveLibraries...
-     D                 pr                  likeds(ObjectArray_t)
-     D                                     extproc('+
-     D                                     resolveLibraries+
-     D                                     ')
-     D  modules                            const likeds(ObjectArray_t)
+dcl-pr resolvelibraries likeds(objectArray_t) extproc('resolveLibraries');
+  modules         likeds(objectArray_t) const;
+end-pr;
 
-     D crtRpgMod...
-     D                 pr
-     D                                     extproc('+
-     D                                     crtRpgMod+
-     D                                     ')
-     D  testPgm                            const likeds(Object_t)
-     D  srcFile                            const likeds(Object_t)
-     D  srcMbr                             const like(SrcMbr_t.mbr)
-     D  cOption                            const likeds(Options_t)
-     D  dbgView                            const like(DbgView_t)
-     D  pRpgPpOpt                          const like(RpgPpOpt_t)
-     D  pOption                            const likeds(Options_t)
-     D  compileopt                         const like(CompileOpt_t)
-     D  targetRls                          const like(TargetRelease_t)
-     D  define                             const likeds(defines_t)
+dcl-pr crtrpgmod extproc('crtRpgMod');
+  testPgm         likeds(object_t) const;
+  srcFile         likeds(object_t) const;
+  srcMbr          like(srcMbr_t.mbr) const;
+  cOption         likeds(options_t) const;
+  dbgView         like(dbgView_t) const;
+  pRpgPpOpt       like(rpgPpOpt_t) const;
+  pOption         likeds(options_t) const;
+  compileOpt      like(compileOpt_t) const;
+  targetRls       like(targetRelease_t) const;
+  define          likeds(defines_t) const;
+end-pr;
 
-     D crtCblMod...
-     D                 pr
-     D                                     extproc('+
-     D                                     crtCblMod+
-     D                                     ')
-     D  testPgm                            const likeds(Object_t)
-     D  srcFile                            const likeds(Object_t)
-     D  srcMbr                             const like(SrcMbr_t.mbr)
-     D  cOption                            const likeds(Options_t)
-     D  dbgView                            const like(DbgView_t)
-     D  pOption                            const likeds(Options_t)
-     D  compileopt                         const like(CompileOpt_t)
-     D  targetRls                          const like(TargetRelease_t)
-     D  define                             const likeds(defines_t)
+dcl-pr crtCblMod extproc('crtCblMod');
+  testPgm         likeds(object_t) const;
+  srcFile         likeds(object_t) const;
+  srcMbr          like(srcMbr_t.mbr) const;
+  cOption         likeds(options_t) const;
+  dbgView         like(dbgView_t) const;
+  pOption         likeds(options_t) const;
+  compileOpt      like(compileOpt_t) const;
+  targetRls       like(targetRelease_t) const;
+  define          likeds(defines_t) const;
+end-pr;
 
-     D crtSrvPgm...
-     D                 pr                  likeds(Object_t)
-     D                                     extproc('+
-     D                                     crtSrvPgm+
-     D                                     ')
-     D  testPgm                            const likeds(Object_t)
-     D  bndSrvPgm                          const likeds(ObjectArray_t)
-     D  bndDir                             const likeds(ObjectArray_t)
-     D  module                             const likeds(ObjectArray_t)
-     D  bOption                            const likeds(Options_t)
-     D  actGrp                             const like(ActivationGroup_t)
-     D  text                               const like(Text_t)
-     D  targetRls                          const like(TargetRelease_t)
+dcl-pr crtSrvPgm likeds(object_t) extproc('crtSrvPgm');
+  testPgm         likeds(object_t) const;
+  bndSrvPgm       likeds(objectArray_t) const;
+  bndDir          likeds(objectArray_t) const;
+  module          likeds(objectArray_t) const;
+  bOption         likeds(options_t) const;
+  actGrp          like(activationGroup_t) const;
+  text            like(text_t) const;
+  targetRls       like(targetRelease_t) const;
+end-pr;
 
-     D deleteModulesAndSpooledFiles...
-     D                 pr
-     D                                     extproc('+
-     D                                     deleteModulesAndSpooledFiles+
-     D                                     ')
-     D  dltSplf                        n   const
-     D  startTime                      z   const
-     D  modules                            const likeds(ObjectArray_t)
+dcl-pr deleteModulesAndSpooledFiles extproc('deleteModulesAndSpooledFiles');
+  dltSplF         ind const;
+  startTime       timestamp const;
+  modules         likeds(objectArray_t) const;
+end-pr;
 
-     D getDltModCmd...
-     D                 pr                        like(Cmd_t)
-     D                                     extproc('+
-     D                                     getDltModCmd+
-     D                                     ')
-     D  testPgm                            const likeds(Object_t)
+dcl-pr getdltmodcmd like(cmd_t) extproc('getDltModCmd');
+  testPgm         likeds(object_t) const;
+end-pr;
 
-     D serializeObjectArray...
-     D                 pr                        like(SerializedArray_t)
-     D                                     extproc('+
-     D                                     serializeObjectArray+
-     D                                     ')
-     D  headToken                    10a   const
-     D  array                              const likeds(ObjectArray_t)
+dcl-pr serializeObjectArray like(serializedArray_t) extproc('serializeObjectArray');
+  headToken       char(10) const;
+  array           likeds(objectArray_t) const;
+end-pr;
 
-     D serializeOptions...
-     D                 pr                        like(SerializedOptions_t)
-     D                                     extproc('+
-     D                                     serializeOptions+
-     D                                     ')
-     D headToken                     10a   const
-     D options                             const likeds(Options_t)
+dcl-pr serializeOptions like(serializedOptions_t) extproc('serializeOptions');
+  headToken       char(10) const;
+  options         likeds(options_t) const;
+end-pr;
 
-     D serializeString...
-     D                 pr                        like(SerializedString_t)
-     D                                     extproc('+
-     D                                     serializeString+
-     D                                     ')
-     D headToken                     10a   const
-     D text                        5000a   const varying options(*varsize)
+dcl-pr serializeString like(serializedString_t) extproc('serializeString');
+  headToken       char(10) const;
+  text            varchar(5000) options(*varsize) const;
+end-pr;
 
-     D serializeValue...
-     D                 pr                        like(SerializedString_t)
-     D                                     extproc('+
-     D                                     serializeValue+
-     D                                     ')
-     D headToken                     10a   const
-     D value                               const like(String_t)
+dcl-pr serializeValue like(serializedString_t) extproc('serializeValue');
+  headToken       char(10) const;
+  value           like(string_t) const;
+end-pr;
 
-     D addTestCaseModule...
-     D                 pr                        likeds(ObjectArray_t)
-     D                                     extproc('+
-     D                                     addTestCaseModule+
-     D                                     ')
-     D  modules                            const likeds(ObjectArray_t)
-     D  testCase                           const likeds(Object_t)
+dcl-pr addtestcasemodule likeds(objectArray_t) extproc('addTestCaseModule');
+  modules         likeds(objectArray_t) const;
+  testCase        likeds(object_t) const;
+end-pr;
 
-      /endif
+/endif

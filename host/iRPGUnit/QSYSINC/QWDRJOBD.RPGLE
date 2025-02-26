@@ -1,65 +1,66 @@
-      /IF NOT DEFINED(QWDRJOBD)
-      /DEFINE QWDRJOBD
-      *
-      *  Retrieve Job Description Information (QWDRJOBD) API
-     D QWDRJOBD...
-     D                 PR                         extpgm('QWDRJOBD')
-     D  o_rcvVar                  65535A          options(*varsize)
-     D  i_lenRcvVar                  10I 0 const
-     D  i_format                      8A   const
-     D  i_qJobD                      20A   const
-     D  io_errCode                65535A          options(*varsize)
-      *
-     D QWDRJOBD_qObj_t...
-     D                 DS                  qualified               based(pDummy)
-     D  name                         10A
-     D  lib                          10A
-      *
-      *  JOBD0100 Format
-     D jobd0100_t...
-     D                 DS                  qualified               based(pDummy)
-     D  bytRet                       10I 0
-     D  bytAvl                       10I 0
-     D  qJobD                              likeds(QWDRJOBD_qObj_t)
-     D  user                         10A
-     D  date                          8A
-     D  sws                           8A
-     D  qJobQ                              likeds(QWDRJOBD_qObj_t)
-     D  jobPty                        2A
-     D  hold                         10A
-     D  qOutQ                              likeds(QWDRJOBD_qObj_t)
-     D  outPty                        2A
-     D  prtDev                       10A
-     D  prtText                      30A
-     D  syntax                       10I 0
-     D  endSev                       10I 0
-     D  logSev                       10I 0
-     D  logLvl                        1A
-     D  logText                      10A
-     D  logClPgm                     10A
-     D  inqMsgRpy                    10A
-     D  devRcyAcn                    13A
-     D  tsePool                      10A
-     D  acgCde                       15A
-     D  rtgDta                       80A
-     D  text                         50A
-     D  reserved_1                    1A
-     D  ofsInlLibl                   10I 0
-     D  numInlLiblE                  10I 0
-     D  ofsRqsDta                    10I 0
-     D  lenRqsDta                    10I 0
-     D  jobMsgQMx                    10I 0
-     D  jobMsgQFl                    10A
-     D  dateCYMD                     10A
-     D  alwMltThd                    10A
-     D  splfAcn                      10A
-     D  ofsInlAspGrp                 10I 0
-     D  numInlAspGrpE                10I 0
-     D  lenInlAspGrpE                10I 0
-     D  ddmCnv                       10A
-     D  logOutput                    10A
-      *   Initial library list                  Array (*) of CHAR(11)
-      *   Request data                          CHAR(*)
-      *   Initial ASP group information entry   Array (*) of CHAR(*)
-      *
-      /ENDIF
+**FREE
+/IF NOT DEFINED(QWDRJOBD)
+/DEFINE QWDRJOBD
+
+//  Retrieve Job Description Information (QWDRJOBD) API
+dcl-pr qwdrjobd extpgm('QWDRJOBD');
+  o_rcvVar        char(65535) options(*varsize);
+  i_lenRcvVar     int(10) const;
+  i_format        char(8) const;
+  i_qJobD         char(20) const;
+  io_errCode      char(65535) options(*varsize);
+end-pr;
+
+dcl-ds qwdrjobd_qObj_t qualified template;
+  name            char(10);
+  lib             char(10);
+end-ds;
+
+//  JOBD0100 Format
+dcl-ds jobd0100_t qualified template;
+  bytRet          int(10);
+  bytAvl          int(10);
+  qJobD           likeds(qwdrjobd_qObj_t);
+  user            char(10);
+  date            char(8);
+  sws             char(8);
+  qJobQ           likeds(qwdrjobd_qObj_t);
+  jobPty          char(2);
+  hold            char(10);
+  qOutQ           likeds(qwdrjobd_qObj_t);
+  outPty          char(2);
+  prtDev          char(10);
+  prtText         char(30);
+  syntax          int(10);
+  endSev          int(10);
+  logSev          int(10);
+  logLvl          char(1);
+  logText         char(10);
+  logCLPgm        char(10);
+  inqMsgRpy       char(10);
+  devRcyAcn       char(13);
+  tsePool         char(10);
+  acgCde          char(15);
+  rtgDta          char(80);
+  text            char(50);
+  reserved_1      char(1);
+  ofsInlLibl      int(10);
+  numInlLiblE     int(10);
+  ofsRqsDta       int(10);
+  lenRqsDta       int(10);
+  jobMsgQMx       int(10);
+  jobMsgQFl       char(10);
+  dateCymd        char(10);
+  alwMltThd       char(10);
+  splfAcn         char(10);
+  ofsInlAspGrp    int(10);
+  numInlAspGrpE   int(10);
+  lenInlAspGrpE   int(10);
+  ddmCnv          char(10);
+  logOutput       char(10);
+  //   Initial library list                  Array (*) of CHAR(11)
+  //   Request data                          CHAR(*)
+  //   Initial ASP group information entry   Array (*) of CHAR(*)
+end-ds;
+
+/ENDIF

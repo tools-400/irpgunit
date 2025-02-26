@@ -24,14 +24,14 @@
      D   charDate                    20A   const options(*varsize)
      D   formatString                20A   const options(*varsize)
      D   lilianDate                  10I 0
-     D   errorcode                32767A   options(*varsize : *nopass)
+     D   errorCode                32767A   options(*varsize : *nopass)
       *
      D cee_getDateFromLilian...
      D                 PR                  extproc('CEEDATE') opdesc
      D   lilianDate                  10I 0 const
      D   formatString                20A   const options(*varsize)
      D   dateString                  20A   options(*varsize)
-     D   errorcode                32767A   options(*varsize : *nopass)
+     D   errorCode                32767A   options(*varsize : *nopass)
       *
       * CEEDYWK returns the weekday as a number between 1 and 7
       *
@@ -49,7 +49,7 @@
      D                 PR                  extproc('CEEDYWK') opdesc
      D   lilianDate                  10I 0 const
      D   dayOfWeek                   10I 0
-     D   errorcode                32767A   options(*varsize : *nopass)
+     D   errorCode                32767A   options(*varsize : *nopass)
       *
 
       *-------------------------------------------------------------------------

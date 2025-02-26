@@ -1,14 +1,16 @@
-       /if not defined (IRPGUNIT_QUSPTRUS)
-       /define IRPGUNIT_QUSPTRUS
+**FREE
+/if not defined (irpgunit_qusptrus)
+/define irpgunit_qusptrus
 
-       //
-       // Retrieve pointer to user space API
-       //
+//
+// Retrieve pointer to user space API
+//
 
-     D QUSPTRUS        pr                  ExtPgm('QUSPTRUS')
-     D   usrSpc                      20a   const
-     D   pointer                       *
-     D   errorCode                32767a   options(*nopass : *varsize)          | OptGrp 1
+dcl-pr qusptrus extpgm('QUSPTRUS');
+  usrSpc          char(20) const;
+  pointer         pointer;
+  errorCode       char(32767) options(*nopass : *varsize);               // | OptGrp 1
+end-pr;
 
-      /endif
+/endif
 

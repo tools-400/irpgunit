@@ -41,7 +41,9 @@ dcl-proc OS_getVersion export;
   clear errorCode;
 
   QSZRTVPR(data : %size(data) : 'PRDR0100' : productInfo : errorCode);
+
   return data.releaseLvl;
+
 end-proc;
 
 dcl-proc OS_getPTFLoadedStatus export;
@@ -61,11 +63,11 @@ dcl-proc OS_getPTFLoadedStatus export;
 
   QPZRTVFX(ptfr0100: %size(ptfr0100): PTF_inf: 'PTFR0100': errCode);
   if (errCode.bytAvl > 0);
-     if (errCode.excID = 'CPF6602'); // Not found
-       return PTF_LOADED_STATUS_NOT_LOADED;
-     else;
-       return '*';
-     endif;
+    if (errCode.excID = 'CPF6602'); // Not found
+      return PTF_LOADED_STATUS_NOT_LOADED;
+    else;
+      return '*';
+    endif;
   endif;
 
   return ptfr0100.loadStat;

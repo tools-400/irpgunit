@@ -1,228 +1,219 @@
-      // ==========================================================================
-      //  iRPGUnit - Library list Utilities.
-      // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
-      // ==========================================================================
-      // >>PRE-COMPILER<<
-      //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
-      //   >>IMPORTANT<<
-      //     >>PARM<<  OPTION(*EVENTF);
-      //     >>PARM<<  DBGVIEW(*LIST);
-      //   >>END-IMPORTANT<<
-      //   >>EXECUTE<<
-      // >>END-PRE-COMPILER<<
-      // ==========================================================================
+**FREE
+// ==========================================================================
+//  iRPGUnit - Library list Utilities.
+// ==========================================================================
+//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ==========================================================================
+// >>PRE-COMPILER<<
+//   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+//   >>IMPORTANT<<
+//     >>PARM<<  OPTION(*EVENTF);
+//     >>PARM<<  DBGVIEW(*LIST);
+//   >>END-IMPORTANT<<
+//   >>EXECUTE<<
+// >>END-PRE-COMPILER<<
+// ==========================================================================
 
-     H NoMain
-      /include qinclude,H_SPEC
-      /include qinclude,COPYRIGHT
+ctl-opt nomain;
+/include qinclude,H_SPEC
+/include qinclude,COPYRIGHT
 
-      //----------------------------------------------------------------------
-      //   Exported Procedures
-      //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Exported Procedures
+//----------------------------------------------------------------------
 
-      /include qinclude,LIBL
+/include qinclude,LIBL
 
-      //----------------------------------------------------------------------
-      //   Imported Procedures
-      //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Imported Procedures
+//----------------------------------------------------------------------
 
-      /include qinclude,TEMPLATES
-      /include qinclude,SYSTEMAPI
-      /include qinclude,ERRORCODE
+/include qinclude,TEMPLATES
+/include qinclude,SYSTEMAPI
+/include qinclude,ERRORCODE
 
-      //----------------------------------------------------------------------
-      //   Procedure Definitions
-      //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Procedure Definitions
+//----------------------------------------------------------------------
 
-     P getLibl...
-     P                 b                   export
-     D                 pi                  likeds(LiblData_t   )
+dcl-proc getLibl export;
+  dcl-pi *N likeds(liblData_t   );
+  end-pi;
 
-     D i               s             10i 0
-     D liblData        ds                  likeds(LiblData_t)
-     D apiInfo         ds                  qualified
-     D  bytRet                       10I 0
-     D  bytAvl                       10I 0
-     D jobi0700        ds                  likeds(jobi0700_t) based(pJOBI0700)
-     D liblE           s             11a   based(pLiblE)
-     D percolateErrors...
-     D                 ds                  likeds(percolateErrors_t)
-     D                                     inz(*likeds)
-      /free
+  dcl-s i               int(10);
+  dcl-ds libldata likeds(liblData_t);
+  dcl-ds apiinfo qualified;
+    bytRet          int(10);
+    bytAvl          int(10);
+  end-ds;
+  dcl-ds jobi0700 likeds(jobi0700_t) based(pjobi0700);
+  dcl-s lible           char(11) based(plible);
+  dcl-ds percolateErrors
+         likeds(percolateErrors_t)
+  inz(*likeds);
 
-         QUSRJOBI(
-               apiInfo: %size(apiInfo): 'JOBI0700': '*': '': percolateErrors);
-
-
-         pJOBI0700 = %alloc(apiInfo.bytAvl);
-
-         QUSRJOBI(
-               jobi0700: apiInfo.bytAvl: 'JOBI0700': '*': '': percolateErrors);
-
-         clear liblData;
-         liblData.libL.numE = jobi0700.numUsrLibE;
-
-         pLiblE = %addr(jobi0700) + %size(jobi0700)
-                                  + jobi0700.numSysLibE * 11
-                                  + jobi0700.numPrdLibE * 11
-                                  + jobi0700.numCurLibE * 11;
-         for i = 1 to liblData.libL.numE;
-            liblData.libL.lib(i) = liblE;
-            pLiblE = pLiblE + 11;
-         endfor;
-
-         if (jobi0700.numCurLibE > 0);
-            pLiblE = %addr(jobi0700) + %size(jobi0700)
-                                     + jobi0700.numSysLibE * 11
-                                     + jobi0700.numPrdLibE * 11;
-            liblData.curLib = liblE;
-         else;
-            liblData.curLib = '*CRTDFT';
-         endif;
-
-         dealloc(N) pJOBI0700;
-
-         Return liblData;
-
-      /end-free
-     P                 e
+  qusrjobi(
+        apiinfo: %size(apiinfo): 'JOBI0700': '*': '': percolateErrors);
 
 
-     P loadLibl...
-     P                 b                   export
-     D                 pi                  likeds(LiblData_t   )
-     D  qJobD                              const  likeds(Object_t  )
+  pjobi0700 = %alloc(apiinfo.bytAvl);
 
-     D i               s             10i 0
-     D liblData        ds                  likeds(LiblData_t)
-     D apiInfo         ds                  qualified
-     D  bytRet                       10I 0
-     D  bytAvl                       10I 0
-     D jobd0100        ds                  likeds(jobd0100_t) based(pJOBD0100)
-     D liblE           s             11a   based(pLiblE)
-     D percolateErrors...
-     D                 ds                  likeds(percolateErrors_t)
-     D                                     inz(*likeds)
-      /free
+  qusrjobi(
+        jobi0700: apiinfo.bytAvl: 'JOBI0700': '*': '': percolateErrors);
 
-         QWDRJOBD(
-               apiInfo: %size(apiInfo): 'JOBD0100': qJobD: percolateErrors);
+  clear libldata;
+  libldata.libl.nume = jobi0700.numUsrLibE;
 
-         pJOBD0100 = %alloc(apiInfo.bytAvl);
+  plible = %addr(jobi0700) + %size(jobi0700)
+                           + jobi0700.numSysLibE * 11
+                           + jobi0700.numPrdLibE * 11
+                           + jobi0700.numCurLibE * 11;
+  for i = 1 to libldata.libl.nume;
+    libldata.libl.lib(i) = lible;
+    plible = plible + 11;
+  endfor;
 
-         QWDRJOBD(
-               jobd0100: apiInfo.bytAvl: 'JOBD0100': qJobD: percolateErrors);
+  if (jobi0700.numCurLibE > 0);
+    plible = %addr(jobi0700) + %size(jobi0700)
+                             + jobi0700.numSysLibE * 11
+                             + jobi0700.numPrdLibE * 11;
+    libldata.curlib = lible;
+  else;
+    libldata.curlib = '*CRTDFT';
+  endif;
 
-         clear liblData;
-         liblData.libL.numE = jobd0100.numInlLiblE;
+  dealloc(n) pjobi0700;
 
-         pLiblE = %addr(jobd0100) + jobd0100.ofsInlLibl;
-         for i = 1 to liblData.libL.numE;
-            liblData.libL.lib(i) = liblE;
-            pLiblE = pLiblE + 11;
-         endfor;
+  return libldata;
 
-         liblData.curLib = '*CRTDFT';
-
-         dealloc(N) pJOBD0100;
-
-         Return liblData;
-
-      /end-free
-     P                 e
+end-proc;
 
 
-     P restoreLibl...
-     P                 b                   export
-     D                 pi
-     D  liblData                           const  likeds(LiblData_t)
+dcl-proc loadLibl export;
+  dcl-pi *N likeds(liblData_t   );
+    qJobD           const  likeds(object_t  );
+  end-pi;
 
-     D i               s             10i 0 inz
+  dcl-s i               int(10);
+  dcl-ds libldata likeds(liblData_t);
+  dcl-ds apiinfo qualified;
+    bytRet          int(10);
+    bytAvl          int(10);
+  end-ds;
+  dcl-ds jobd0100 likeds(jobd0100_t) based(pjobd0100);
+  dcl-s lible           char(11) based(plible);
+  dcl-ds percolateErrors
+         likeds(percolateErrors_t)
+  inz(*likeds);
 
-     D inlLibL         ds                  qualified
-     D  numE                   1      4i 0 inz
-     D  lib                    5   2754a   inz dim(250)
-     D  libs                   5   2754a
-     D percolateErrors...
-     D                 ds                  likeds(percolateErrors_t)
-     D                                     inz(*likeds)
-      /free
+  qwdrjobd(
+        apiinfo: %size(apiinfo): 'JOBD0100': qJobD: percolateErrors);
 
-         for i = 1 to liblData.libL.numE;
-            inlLibL.lib(i) = liblData.libL.lib(i);
-            inlLibL.numE += 1;
-         endfor;
+  pjobd0100 = %alloc(apiinfo.bytAvl);
 
-         QLICHGLL(liblData.curLib: '*SAME': '*SAME'
-                  : inlLibL.libs: inlLibL.numE: percolateErrors);
+  qwdrjobd(
+        jobd0100: apiinfo.bytAvl: 'JOBD0100': qJobD: percolateErrors);
 
-      /end-free
-     P                 e
+  clear libldata;
+  libldata.libl.nume = jobd0100.numInlLiblE;
 
+  plible = %addr(jobd0100) + jobd0100.ofsInlLibl;
+  for i = 1 to libldata.libl.nume;
+    libldata.libl.lib(i) = lible;
+    plible = plible + 11;
+  endfor;
 
-     P changeLibl...
-     P                 b                   export
-     D                 pi
-     D  curLib                       10a   const
-     D  libL                               const  likeds(LibL_t)
+  libldata.curlib = '*CRTDFT';
 
-     D i               s             10i 0
-     D liblData        ds                  likeds(LiblData_t) inz
-      /free
+  dealloc(n) pjobd0100;
 
-         liblData.curLib = curLib;
+  return libldata;
 
-         for i = 1 to libL.numE;
-            liblData.libL.lib(i) = libL.lib(i);
-            liblData.libL.numE += 1;
-         endfor;
-
-         restoreLibl(liblData);
-
-      /end-free
-     P                 e
+end-proc;
 
 
-     P setTestSuiteLibl...
-     P                 b                   export
-     D                 pi              n
-     D  libl                               value likeds(LibL_t)
-     D  jobd                               value likeds(Object_t)
-     D  testPgmLib                   10a   Value
+dcl-proc restoreLibl export;
+  dcl-pi *N;
+    libldata        const  likeds(liblData_t);
+  end-pi;
 
-     D loadedLibl      ds                  likeds(LiblData_t)
-      /free
+  dcl-s i               int(10) inz;
 
-          select;
-          when (libl.numE = 1);
-             select;
-             when (libl.lib(1) = LIBRARY_LIST_JOBD);
-                if (jobd.nm = JOBD_DEFAULT);
-                   jobd.nm = 'RPGUNIT';
-                   jobd.lib = testPgmLib;
-                endif;
-                loadedLibl = loadLibl(jobd);
-                restoreLibl(loadedLibl);
-                return *ON;
-             when (libl.lib(1) = LIBRARY_LIST_CURRENT);
-                // keep current library list
-             other;
-                changeLibl('*CRTDFT': libL);
-                return *ON;
-             endsl;
+  dcl-ds inllibl qualified;
+    nume            int(10) pos(1) inz;
+    lib             char(11) dim(250) pos(5) inz;
+    libs            char(2750) pos(5);
+  end-ds;
+  dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
 
-          when (libl.numE > 1);
-             changeLibl('*CRTDFT': libL);
-             return *ON;
-          endsl;
+  for i = 1 to libldata.libl.nume;
+    inllibl.lib(i) = libldata.libl.lib(i);
+    inllibl.nume += 1;
+  endfor;
 
-          return *OFF;
+  qlichgll(libldata.curlib: '*SAME': '*SAME': inllibl.libs: inllibl.nume: percolateErrors);
 
-      /end-free
-     P                 e
+end-proc;
+
+
+dcl-proc changeLibl export;
+  dcl-pi *N;
+    curlib          char(10) const;
+    libl            const  likeds(libl_t);
+  end-pi;
+
+  dcl-s i               int(10);
+  dcl-ds libldata likeds(liblData_t) inz;
+
+  libldata.curlib = curlib;
+
+  for i = 1 to libl.nume;
+    libldata.libl.lib(i) = libl.lib(i);
+    libldata.libl.nume += 1;
+  endfor;
+
+  restoreLibl(libldata);
+
+end-proc;
+
+
+dcl-proc setTestSuiteLibl export;
+  dcl-pi *N              ind;
+    libl            value likeds(libl_t);
+    jobD            value likeds(object_t);
+    testpgmlib      char(10) value;
+  end-pi;
+
+  dcl-ds loadedlibl likeds(liblData_t);
+
+  select;
+  when (libl.nume = 1);
+    select;
+    when (libl.lib(1) = LIBRARY_LIST_JOBD);
+      if (jobD.nm = JOBD_DEFAULT);
+        jobD.nm = 'RPGUNIT';
+        jobD.lib = testpgmlib;
+      endif;
+      loadedlibl = loadLibl(jobD);
+      restoreLibl(loadedlibl);
+      return *on;
+    when (libl.lib(1) = LIBRARY_LIST_CURRENT);
+    // keep current library list
+    other;
+      changeLibl('*CRTDFT': libl);
+      return *on;
+    endsl;
+
+  when (libl.nume > 1);
+    changeLibl('*CRTDFT': libl);
+    return *on;
+  endsl;
+
+  return *off;
+
+end-proc;
 

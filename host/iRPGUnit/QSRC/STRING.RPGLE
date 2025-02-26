@@ -79,9 +79,9 @@ dcl-proc uCase export;
   endif;
 
   clear reqCtrlBlk;
-  reqCtrlBlk.type     = cCVTCASE_TYPE_ccsid;
-  reqCtrlBlk.CCSID    = cCVTCASE_CCSID_Job;
-  reqCtrlBlk.case     = cCVTCASE_toUpper;
+  reqCtrlBlk.type = CVTCASE_TYPE_CCSID;
+  reqCtrlBlk.CCSID = CVTCASE_CCSID_JOB;
+  reqCtrlBlk.case = CVTCASE_TOUPPER;
   reqCtrlBlk.reserved = *ALLx'00';
   clear errCode;
   QlgConvertCase(reqCtrlBlk:
@@ -541,7 +541,7 @@ dcl-proc parseNum export;
           fraction = fraction + c1;
         else;
           if (not is1NumDigit and c1 = '0');
-            // skip leading ignore '0'
+          // skip leading ignore '0'
           else;
             digits = digits + c1;
           endif;

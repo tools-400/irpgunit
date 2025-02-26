@@ -116,7 +116,7 @@ dcl-proc SplfLister_init export;
   hLister.filterInfo.lenUsrNmE = %size(OSPF0200_userNameE_t);
   hLister.filterInfo.lenOutQNm = %size(OSPF0200_outQueueE_t);
   hLister.filterInfo.lenSplfSts = %size(OSPF0200_fileStatusE_t);
-  hLister.filterInfo.lenPrtDevN = %size(OSPF0200_prtDevNameE_t);
+  hLister.filterInfo.lenPrtDevNm = %size(OSPF0200_prtDevNameE_t);
   hLister.filterInfo.frmType = FRMTYPE_ALL;
 
   if (usrDta <> USRDTA_ALL);

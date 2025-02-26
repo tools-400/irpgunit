@@ -219,7 +219,7 @@ end-pr;
  // getFullTimeStamp -- Get Full Timestamp
  //
  // Returns the full current timestamp, without rounding the
- // microseconds like %timestamp() does.
+ // microSeconds like %timestamp() does.
  //
  // Example:
  //   tmStmp = getFullTimeStamp();
@@ -241,15 +241,15 @@ dcl-pr clrpfm extproc('CLRPFM') opdesc;
 end-pr;
 
 
- // rclactgrp -- Reclaim Activation Group
+ // rclActGrp -- Reclaim Activation Group
  //
  // Uses RCLACTGRP to reclaim the activation group specified at
  // parameter 'activationGroup'.
  //
  // Example:
- //   rclactgrp( '*ELIGIBLE' );
+ //   rclActGrp( '*ELIGIBLE' );
 
-dcl-pr rclactgrp extproc('RCLACTGRP') opdesc;
+dcl-pr rclActGrp extproc('RCLACTGRP') opdesc;
   w1actGrpNm  char(10) const;
 end-pr;
 
@@ -357,12 +357,54 @@ dcl-pr setLowMessageKey extproc('setLowMessageKey') opdesc;
   msgKey  char(4) options(*nopass) const;
 end-pr;
 
+
+ // ------------------------------------
+ //  Self-test procedures.
+ // ------------------------------------
+
+dcl-pr clrAssertFailEvt extproc('clrAssertFailEvt');
+end-pr;
+
+dcl-pr getAssertCalled int(10) extproc('getAssertCalled');
+end-pr;
+
+dcl-pr getAssertFailEvt extproc('getAssertFailEvt')
+       likeds(assertfailevt_t);
+end-pr;
+
+dcl-pr getAssertFailEvtLong extproc('getAssertFailEvtLong')
+       likeds(assertFailEvtLong_t);
+end-pr;
+
+dcl-pr clearAssertCounter extproc('clearAssertCounter');
+end-pr;
+
+
+ // ------------------------------------
+ //   Prototypes of internal procedures
+ // ------------------------------------
+
+dcl-pr registerStartPgm extproc('ASSERT_registerStartPgm');
+  lib             char(10) const;
+  pgm             char(10) const;
+end-pr;
+
+
+ // ------------------------------------
+ //   Prototypes of module VERSION
+ // ------------------------------------
+
+dcl-pr getversion extproc('VERSION_getVersion');
+  version         char(20);
+  date            char(10);
+end-pr;
+
  // ------------------------------------------------------------------
  //  V2 Prototypes
  // ------------------------------------------------------------------
 
 /if not defined(DISABLE_ASSERT_EQUAL)
-dcl-pr assertEqual overload(assertEqual_string
+dcl-pr assertEqual   overload(assertEqual_string
                            : assertEqual_numeric
                            : assertEqual_float
                            : assertEqual_date
@@ -459,7 +501,7 @@ end-pr;
 //   Expected '2024-09-16', but was '2023-01-11'.
 //
 // If parameter 'message' is specified that is appened to the log.
-dcl-pr assertEqual_date opdesc extproc(*dclcase);
+dcl-pr assertEqual_date opdesc extproc('assertEqual_date');
   expected   date const;
   actual     date const;
   message    like(msgText_t) options(*nopass: *omit) const;
@@ -477,7 +519,7 @@ end-pr;
 //   Expected '11.22.33', but was '22.33.44'.
 //
 // If parameter 'message' is specified that is appened to the log.
-dcl-pr assertEqual_time opdesc extproc(*dclcase);
+dcl-pr assertEqual_time opdesc extproc('assertEqual_time');
   expected   time const;
   actual     time const;
   message    like(msgText_t) options(*nopass: *omit) const;
@@ -495,13 +537,13 @@ end-pr;
 //   Expected '2024-09-16-11.22.33.123456', but was '2024-01-11-11.22.33.123456'.
 //
 // If parameter 'message' is specified that is appened to the log.
-dcl-pr assertEqual_timestamp opdesc extproc(*dclcase);
+dcl-pr assertEqual_timestamp opdesc extproc('assertEqual_timestamp');
   expected   timestamp(12) const;
   actual     timestamp(12) const;
   message    like(msgText_t) options(*nopass: *omit) const;
 end-pr;
 
-dcl-pr assertEqual_ind opdesc extproc(*dclcase);
+dcl-pr assertEqual_ind opdesc extproc('assertEqual_ind');
   expected   ind options(*exact) const;
   actual     ind options(*exact) const;
   message    like(msgText_t) options(*nopass: *omit) const;

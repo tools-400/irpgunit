@@ -47,13 +47,13 @@ dcl-pr SplFLister_addStatus int(10) extproc('LSTSPLF_SplFLister_addStatus');
 end-pr;
 
 dcl-pr SplFLister_setStartTime ind extproc('LSTSPLF_SplFLister_setStartTime');
-    io_hLister   like(hSplfLister_t);
-    i_startTime  timestamp const;
+  io_hLister   like(hSplfLister_t);
+  i_startTime  timestamp const;
 end-pr;
 
 dcl-pr SplFLister_setEndTime ind extproc('LSTSPLF_SplFLister_setEndTime');
-    io_hLister  like(hSplfLister_t);
-    i_endTime   timestamp const;
+  io_hLister  like(hSplfLister_t);
+  i_endTime   timestamp const;
 end-pr;
 
 dcl-pr SplFLister_list ind extproc('LSTSPLF_SplFLister_list');

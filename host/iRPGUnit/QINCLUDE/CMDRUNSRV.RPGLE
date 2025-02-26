@@ -1,48 +1,51 @@
-      // ==========================================================================
-      //  iRPGUnit - Command Line Toolkit.
-      // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
-      // ==========================================================================
+**FREE
+// ==========================================================================
+//  iRPGUnit - Command Line Toolkit.
+// ==========================================================================
+//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ==========================================================================
 
-       // Runs a given test case procedure.
-     D runTestProc     pr                  extproc('CMDRUNSRV_runTestProc')
-     D                                     likeds(TestResult_t)
-     D  testProc                           const likeds(Proc_t)
-     D  setUp                              const likeds(Proc_t)
-     D  tearDown                           const likeds(Proc_t)
+// Runs a given test case procedure.
+dcl-pr runTestProc extproc('CMDRUNSRV_runTestProc') likeds(testResult_t);
+  testproc        likeds(proc_t) const;
+  setup           likeds(proc_t) const;
+  teardown        likeds(proc_t) const;
+end-pr;
 
-      // Load and activate a test suite.
-     D loadTestSuite   pr                  extproc('CMDRUNSRV_loadTestSuite')
-     D                                     likeds(TestSuite_t)
-     D  srvPgm                             const likeds(Object_t)
+// Load and activate a test suite.
+dcl-pr loadTestSuite extproc('CMDRUNSRV_loadTestSuite') likeds(testSuite_t);
+  srvPgm          likeds(object_t) const;
+end-pr;
 
-      // Raise an RPGUnit error.
-     D raiseRUError    pr                  extproc('CMDRUNSRV_raiseRUError')
-     D  msg                         256a   const varying
+// Raise an RPGUnit error.
+dcl-pr raiseRUError extproc('CMDRUNSRV_raiseRUError');
+  msg             varchar(256) const;
+end-pr;
 
-      // Reclaim a test suite's allocated ressources.
-     D rclTestSuite    pr                  extproc('CMDRUNSRV_rclTestSuite')
-     D  testSuite                          likeds(TestSuite_t)
+// Reclaim a test suite's allocated ressources.
+dcl-pr rclTestSuite extproc('CMDRUNSRV_rclTestSuite');
+  testSuite       likeds(testSuite_t);
+end-pr;
 
-      // Run a test case in a test suite.
-     D runTest         pr                  extproc('CMDRUNSRV_runTest')
-     D                                     likeds(TestResult_t)
-     D  testSuite                          const likeds(TestSuite_t)
-     D  testIdx                      10i 0 const
+// Run a test case in a test suite.
+dcl-pr runTest extproc('CMDRUNSRV_runTest') likeds(testResult_t);
+  testSuite       likeds(testSuite_t) const;
+  testIdx         int(10) const;
+end-pr;
 
-      // Run a setup, teardown or test procedure. See prototype.
-      // Constant TEMPLATES.TEST_CASE_EXECUTOR must match procedure name!
-     D runProc         pr                  likeds(TestResult_t)
-     D                                     extproc('CMDRUNSRV_runProc')
-     D  proc                           *   const procptr
-     D  result                             likeds(TestResult_t)
+// Run a setup, teardown or test procedure. See prototype.
+// Constant TEMPLATES.TEST_CASE_EXECUTOR must match procedure name!
+dcl-pr runProc likeds(testResult_t) extproc('CMDRUNSRV_runProc');
+  proc            pointer(*proc) const;
+  result          likeds(testResult_t);
+end-pr;
 
-      // Run a test case. See prototype.
-     D initTestResult  pr                  likeds(TestResult_t)
-     D                                     extproc('CMDRUNSRV_initTestResult')
-     D  testName                           const like(ProcNm_t)
+// Run a test case. See prototype.
+dcl-pr initTestResult likeds(testResult_t) extproc('CMDRUNSRV_initTestResult');
+  testName        like(procNm_t) const;
+end-pr;
 

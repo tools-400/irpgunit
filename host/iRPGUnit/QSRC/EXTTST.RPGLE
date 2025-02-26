@@ -1,237 +1,232 @@
-      // ==========================================================================
-      //  iRPGUnit - Extract Test Cases.
-      // ==========================================================================
-      //  Copyright (c) 2013-2020 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
-      // ==========================================================================
-      // >>PRE-COMPILER<<
-      //   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
-      //   >>IMPORTANT<<
-      //     >>PARM<<  OPTION(*EVENTF);
-      //     >>PARM<<  DBGVIEW(*LIST);
-      //   >>END-IMPORTANT<<
-      //   >>EXECUTE<<
-      // >>END-PRE-COMPILER<<
-      // ==========================================================================
+**FREE
+// ==========================================================================
+//  iRPGUnit - Extract Test Cases.
+// ==========================================================================
+//  Copyright (c) 2013-2020 iRPGUnit Project Team
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ==========================================================================
+// >>PRE-COMPILER<<
+//   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+//   >>IMPORTANT<<
+//     >>PARM<<  OPTION(*EVENTF);
+//     >>PARM<<  DBGVIEW(*LIST);
+//   >>END-IMPORTANT<<
+//   >>EXECUTE<<
+// >>END-PRE-COMPILER<<
+// ==========================================================================
 
-     H NoMain
-      /include qinclude,H_SPEC
-      /include qinclude,COPYRIGHT
+ctl-opt nomain;
+/include qinclude,H_SPEC
+/include qinclude,COPYRIGHT
 
-      //----------------------------------------------------------------------
-      //   Exported Procedures
-      //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Exported Procedures
+//----------------------------------------------------------------------
 
-      /include qinclude,EXTTST
+/include qinclude,EXTTST
 
-      //---------------f------------------------------------------------------
-      //   Imported Procedures
-      //----------------------------------------------------------------------
+//---------------f------------------------------------------------------
+//   Imported Procedures
+//----------------------------------------------------------------------
 
-      /include qinclude,CALLPRC
-      /include qinclude,EXTPRC
-      /include qinclude,TEMPLATES
-      /include qinclude,STRING
-      /include qllist,llist_h
+/include qinclude,CALLPRC
+/include qinclude,EXTPRC
+/include qinclude,TEMPLATES
+/include qinclude,STRING
+/include qllist,llist_h
 
-     D memset          PR              *          extproc('memset')
-     D  i_pDest                        *   value
-     D  i_char                       10I 0 value
-     D  i_count                      10U 0 value
+dcl-pr memset          pointer extproc('memset');
+  i_pDest         pointer value;
+  i_char          int(10) value;
+  i_count         uns(10) value;
+end-pr;
 
-      //----------------------------------------------------------------------
-      //   Private Procedures
-      //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Private Procedures
+//----------------------------------------------------------------------
 
-     D cnt             pr            10i 0 extproc(cnt_p)
-     D  procNmListHandle...
-     D                                 *   const
+dcl-pr cnt             int(10) extproc(cnt_p);
+  procnmlisthandle
+  pointer const;
+end-pr;
 
-     D getNm           pr                  like(ProcNm_t) extproc(getNm_p)
-     D  procNmListHandle...
-     D                                 *   const
+dcl-pr getnm like(procNm_t) extproc(getnm_p);
+  procnmlisthandle
+  pointer const;
+end-pr;
 
-     D getTestCasePtr  pr              *
-     D  testSuite                          const likeds(TestSuite_t)
-     D  testIdx                      10i 0 const
+dcl-pr gettestcaseptr  pointer;
+  testsuite       const likeds(testSuite_t);
+  testidx         int(10) const;
+end-pr;
 
-     D goToNext        pr                  extproc(goToNext_p)
-     D  procNmListHandle...
-     D                                 *   const
+dcl-pr gotonext extproc(gotonext_p);
+  procnmlisthandle
+  pointer const;
+end-pr;
 
-     D isTest          pr              n
-     D  nm                                 const like(ProcNm_t)
-
-
-      //----------------------------------------------------------------------
-      //   Global Variables
-      //----------------------------------------------------------------------
-
-       // Procedure pointers for ProcNmList_t.
-     D cnt_p           s               *   procptr
-     D getNm_p         s               *   procptr
-     D goToNext_p      s               *   procptr
+dcl-pr istest          ind;
+  nm              const like(procNm_t);
+end-pr;
 
 
-      //----------------------------------------------------------------------
-      //   Procedure Definitions
-      //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Global Variables
+//----------------------------------------------------------------------
 
-     P activateTestSuite...
-     P                 b                   export
-     D                 pi
-     D  testSuite                          likeds(TestSuite_t)
-     D  actMark                            const like(ActMark_t)
-
-     D testCase        ds                  likeds(Proc_t) based(testCase_p)
-     D testCase_p      s               *
-     D testIdx         s             10i 0
-
-      /free
-
-        rslvProc( testSuite.setUpSuite : actMark );
-        rslvProc( testSuite.setUp      : actMark );
-
-        for testIdx = 1 to testSuite.testCasesCnt;
-          testCase_p = getTestCasePtr( testSuite : testIdx );
-          rslvProc( testCase : actMark );
-        endfor;
-
-        rslvProc( testSuite.tearDown      : actMark );
-        rslvProc( testSuite.tearDownSuite : actMark );
-
-      /end-free
-     P                 e
+// Procedure pointers for ProcNmList_t.
+dcl-s cnt_p           pointer(*proc);
+dcl-s getnm_p         pointer(*proc);
+dcl-s gotonext_p      pointer(*proc);
 
 
-     P getTestCasePtr...
-     P                 b
-     D                 pi              *
-     D  testSuite                          const likeds(TestSuite_t)
-     D  testIdx                      10i 0 const
-      /free
+//----------------------------------------------------------------------
+//   Procedure Definitions
+//----------------------------------------------------------------------
 
-        return testSuite.testList + %size( Proc_t ) * ( testIdx - 1 );
+dcl-proc activateTestSuite export;
+  dcl-pi *N;
+    testsuite       likeds(testSuite_t);
+    actMark         const like(actMark_t);
+  end-pi;
 
-      /end-free
-     P                 e
-
-
-     P getTestNm...
-     P                 b                   export
-     D                 pi                  like(ProcNm_t)
-     D  testSuite                          const likeds(TestSuite_t)
-     D  testIdx                      10i 0 const
-
-     D testProc        ds                  likeds(Proc_t)
-
-      /free
-
-        testProc = getTestProc( testSuite : testIdx );
-        return testProc.procNm;
-
-      /end-free
-     P                 e
+  dcl-ds testcase likeds(proc_t) based(testcase_p);
+  dcl-s testcase_p      pointer;
+  dcl-s testidx         int(10);
 
 
-     P getTestProc...
-     P                 b                   export
-     D                 pi                  likeds(Proc_t)
-     D  testSuite                          const likeds(TestSuite_t)
-     D  testIdx                      10i 0 const
+  rslvProc( testsuite.setupsuite : actMark );
+  rslvProc( testsuite.setup      : actMark );
 
-     D testCase        ds                  likeds(Proc_t) based(testCase_p)
-     D testCase_p      s               *
+  for testidx = 1 to testsuite.testcasescnt;
+    testcase_p = gettestcaseptr( testsuite : testidx );
+    rslvProc( testcase : actMark );
+  endfor;
 
-      /free
+  rslvProc( testsuite.teardown      : actMark );
+  rslvProc( testsuite.teardownsuite : actMark );
 
-        testCase_p = getTestCasePtr( testSuite : testIdx );
-        return testCase;
-
-      /end-free
-     P                 e
+end-proc;
 
 
-     P getTestSuite...
-     P                 b                   export
-     D                 pi                  likeds(TestSuite_t)
-     D  procNmList                         const likeds(ProcNmList_t)
+dcl-proc gettestcaseptr;
+  dcl-pi *N              pointer;
+    testsuite       const likeds(testSuite_t);
+    testidx         int(10) const;
+  end-pi;
 
-     D testSuite       ds                  likeds(TestSuite_t)
-     D testCase        ds                  likeds(Proc_t)
-     D                                     based(testCase_p)
-     D testCase_p      s               *
+  return testsuite.testlist + %size( proc_t ) * ( testidx - 1 );
 
-     D privateData     s               *   based(procNmList.handle)
-     D procCnt         s             10i 0
-     D procIdx         s             10i 0
-     D procNm          s                   like(ProcNm_t)
-
-      /free
-
-        cnt_p      = procNmList.cnt;
-        getNm_p    = procNmList.getNm;
-        goToNext_p = procNmList.goToNext;
-
-        procCnt = cnt( privateData );
-
-        clear testSuite;
-        testSuite.testList = %alloc( procCnt * %size( Proc_t ) );
-        memset(testSuite.testList : x'00' : procCnt * %size( Proc_t ));
-        testSuite.testResults = list_create();
-
-        for procIdx = 1 to procCnt;
-          procNm = getNm( privateData );
-          select;
-            when isTest( procNm );
-              testSuite.testCasesCnt += 1;
-              testCase_p = getTestCasePtr( testSuite :
-                                           testSuite.testCasesCnt );
-              clear testCase;
-              testCase.procNm = procNm;
-            when uCase(procNm) = 'SETUPSUITE';
-              testSuite.setUpSuite.procNm = procNm;
-            when uCase(procNm) = 'SETUP';
-              testSuite.setUp.procNm = procNm;
-            when uCase(procNm) = 'TEARDOWN';
-              testSuite.tearDown.procNm = procNm;
-            when uCase(procNm) = 'TEARDOWNSUITE';
-              testSuite.tearDownSuite.procNm = procNm;
-
-            // Cobol procedures
-
-            when uCase(procNm) = 'SETUPSTE';
-              testSuite.setUpSuite.procNm = procNm;
-            when uCase(procNm) = 'SETUP';
-              testSuite.setUp.procNm = procNm;
-            when uCase(procNm) = 'TEARDWN';
-              testSuite.tearDown.procNm = procNm;
-            when uCase(procNm) = 'TEARDWNSTE';
-              testSuite.tearDownSuite.procNm = procNm;
-          endsl;
-          goToNext( privateData );
-        endfor;
-
-        return testSuite;
-
-      /end-free
-     P                 e
+end-proc;
 
 
-     P isTest...
-     P                 b
-     D                 pi              n
-     D  nm                                 const like(ProcNm_t)
+dcl-proc getTestNm export;
+  dcl-pi *N like(procNm_t);
+    testsuite       const likeds(testSuite_t);
+    testidx         int(10) const;
+  end-pi;
 
-     D nmPrefix        s                   like(ProcNm_t)
+  dcl-ds testproc likeds(proc_t);
 
-      /free
 
-        return startsWith(TEST_PREFIX: nm);
+  testproc = getTestProc( testsuite : testidx );
+  return testproc.procnm;
 
-      /end-free
-     P isTest          e
+end-proc;
+
+
+dcl-proc getTestProc export;
+  dcl-pi *N likeds(proc_t);
+    testsuite       const likeds(testSuite_t);
+    testidx         int(10) const;
+  end-pi;
+
+  dcl-ds testcase likeds(proc_t) based(testcase_p);
+  dcl-s testcase_p      pointer;
+
+
+  testcase_p = gettestcaseptr( testsuite : testidx );
+  return testcase;
+
+end-proc;
+
+
+dcl-proc getTestSuite export;
+  dcl-pi *N likeds(testSuite_t);
+    procnmlist      const likeds(procNmList_t);
+  end-pi;
+
+  dcl-ds testsuite likeds(testSuite_t);
+  dcl-ds testcase likeds(proc_t)
+  based(testcase_p);
+  dcl-s testcase_p      pointer;
+
+  dcl-s privatedata     pointer based(procnmlist.handle);
+  dcl-s proccnt         int(10);
+  dcl-s procidx         int(10);
+  dcl-s procnm          like(procNm_t);
+
+
+  cnt_p      = procnmlist.cnt;
+  getnm_p    = procnmlist.getnm;
+  gotonext_p = procnmlist.gotonext;
+
+  proccnt = cnt( privatedata );
+
+  clear testsuite;
+  testsuite.testlist = %alloc( proccnt * %size( proc_t ) );
+  memset(testsuite.testlist : x'00' : proccnt * %size( proc_t ));
+  testsuite.testresults = list_create();
+
+  for procidx = 1 to proccnt;
+    procnm = getnm( privatedata );
+    select;
+    when istest( procnm );
+      testsuite.testcasescnt += 1;
+      testcase_p = gettestcaseptr( testsuite :
+                                   testsuite.testcasescnt );
+      clear testcase;
+      testcase.procnm = procnm;
+    when uCase(procnm) = 'SETUPSUITE';
+      testsuite.setupsuite.procnm = procnm;
+    when uCase(procnm) = 'SETUP';
+      testsuite.setup.procnm = procnm;
+    when uCase(procnm) = 'TEARDOWN';
+      testsuite.teardown.procnm = procnm;
+    when uCase(procnm) = 'TEARDOWNSUITE';
+      testsuite.teardownsuite.procnm = procnm;
+
+    // Cobol procedures
+
+    when uCase(procnm) = 'SETUPSTE';
+      testsuite.setupsuite.procnm = procnm;
+    when uCase(procnm) = 'SETUP';
+      testsuite.setup.procnm = procnm;
+    when uCase(procnm) = 'TEARDWN';
+      testsuite.teardown.procnm = procnm;
+    when uCase(procnm) = 'TEARDWNSTE';
+      testsuite.teardownsuite.procnm = procnm;
+    endsl;
+    gotonext( privatedata );
+  endfor;
+
+  return testsuite;
+
+end-proc;
+
+
+dcl-proc istest;
+  dcl-pi *N              ind;
+    nm              const like(procNm_t);
+  end-pi;
+
+  dcl-s nmprefix        like(procNm_t);
+
+
+  return startswith(TEST_PREFIX: nm);
+
+end-proc istest;
 

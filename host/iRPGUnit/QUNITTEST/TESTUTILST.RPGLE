@@ -208,7 +208,7 @@
         // Check.
 
         assert(mSecsAreValid
-               : 'No valid microseconds found in '
+               : 'No valid microSeconds found in '
                  + %char(MAX_SECONDS) + ' seconds');
 
       /end-free

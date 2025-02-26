@@ -1,527 +1,447 @@
-      * ===================================================================
-      *  iRPGUnit - Create iRPGUnit Meta Data.
-      * ===================================================================
-      *  Copyright (c) 2013-2019 iRPGUnit Project Team
-      *  All rights reserved. This program and the accompanying materials
-      *  are made available under the terms of the Common Public License v1.0
-      *  which accompanies this distribution, and is available at
-      *  http://www.eclipse.org/legal/cpl-v10.html
-      * ===================================================================
-      * >>PRE-COMPILER<<
-      *   >>CRTCMD<< CRTBNDRPG    PGM(&LI/&OB) +
-      *                           SRCFILE(&SL/&SF) SRCMBR(&SM);
-      *   >>COMPILE<<
-      *     >>PARM<< OPTION(*EVENTF);
-      *     >>PARM<< TRUNCNBR(*NO);
-      *     >>PARM<< DBGVIEW(*LIST);
-      *   >>END-COMPILE<<
-      *   >>EXECUTE<<
-      * >>END-PRE-COMPILER<<
-      * ===================================================================
-      /include qinclude,H_SPEC
-     H DFTACTGRP(*NO) ACTGRP(*NEW)
-      /define COPYRIGHT_DSPEC
-      /include qinclude,COPYRIGHT
-      * ===================================================================
-     FQAFDMBRL  IF   E             DISK    usropn
-     F                                     extfile(g_outfile)
-      *
-     FQBUILD    UF A E             DISK    usropn
-     F                                     rename(QBUILD: FQBUILD)
-     F                                     extfile(g_srcfile)
-     F                                     extmbr(g_srcmbr  )
-      *
-     D g_outfile       S             20A   varying inz('QTEMP/#CRTMBRD')
-     D g_srcfile       S             20A   varying inz
-     D g_srcmbr        S             10A   varying inz('A_METADATA')
-      *
-     D g_copybooks     S             20A   varying inz
-      *
-      * ------------------------------------
-      *  External Prototypes
-      * ------------------------------------
-      *
-      *  ... Execute Command (QCMDEXC) API
-     D QCMDEXC...
-     D                 PR                  extpgm('QCMDEXC')
-     D  i_cmd                     32702A   const  options(*varsize)
-     D  i_length                     15P 5 const
-     D  i_IGCprcCtrl                  3A   const  options(*nopass)
-      *
-     D QCMDEXC_IGC     C                   'IGC'
-      *
-      * ------------------------------------
-      *  Global Fields
-      * ------------------------------------
-     D QUOTE           C                   ''''
-     D LEFT_MARGIN     C                   13
-     D LEFT_INDENT     C                   26
-     D TARGET_LIB      C                   '&TARGETLIB'
-      *
-     D g_header        S             80A   dim(21) ctdata
-      *
-      * ------------------------------------
-      *  Globale Konstanten
-      * ------------------------------------
-      *
-      * ------------------------------------
-      *  Prototypes
-      * ------------------------------------
-     D PGM_ENTRY_POINT...
-     D                 PR                  extpgm('#CRTMBRD')
-     D  gi_lib                       10A   const  options(*nopass)
-     D  go_release                   20A          options(*nopass)
-      *
-     D main...
-     D                 PR                  extproc('main')
-     D  i_lib                        10A   const  varying
-     D  o_release                    20A
-      *
-      *  Executes the DSPFD command for a given file and library.
-     D File_exportMemberList...
-     D                 PR                  extproc('File_exportMemberList')
-     D  i_lib                        10A   const  varying
-     D  i_file                       10A   const  varying
-      *
-      *  Appends a record to QBUILD.
-     D SrcMbr_write...
-     D                 PR                  extproc('SrcMbr_write')
-     D  i_text                      100A   const  varying options(*varsize)
-     D  i_spaces                     10I 0 const
-      *
-      *  Appends command CHGPFM to the output source member.
-     D SrcMbr_appendCmdChgPfm...
-     D                 PR                  extproc('SrcMbr_appendCmdChgPfm')
-     D  i_file                       10A   const
-     D  i_lib                        10A   const
-     D  i_mbr                        10A   const
-     D  i_type                       10A   const
-     D  i_text                       50A   const
-      *
-      *  Appends command MONMSG to the output source member.
-     D SrcMbr_appendCmdMonMsg...
-     D                 PR                  extproc('SrcMbr_appendCmdMonMsg')
-     D  i_msgId                       7A   const
-      *
-      *  Appends and empty line to the output source member.
-     D SrcMbr_appendEmptyLine...
-     D                 PR                  extproc('SrcMbr_appendEmptyLine')
-      *
-      *  Doubles a single quote.
-     D doubleQuotes...
-     D                 PR           100A   varying
-     D                                     extproc('doubleQuotes')
-     D  i_text                       50A   const
-      *
-      *  Sends a message to QCMD
-     D sndMsg...
-     D                 PR                         extproc('sndMsg')
-     D  i_text                      128A   value  varying
-      *
-      *===============================================================*
-      *  Program Entry Point
-      *===============================================================*
-     D PGM_ENTRY_POINT...
-     D                 PI
-     D  gi_lib                       10A   const  options(*nopass)
-     D  go_release                   20A          options(*nopass)
-      *
-     D release         S             20A   inz
-      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      /FREE
+**FREE
+// ===================================================================
+//  iRPGUnit - Create iRPGUnit Meta Data.
+// ===================================================================
+//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ===================================================================
+// >>PRE-COMPILER<<
+//   >>CRTCMD<< CRTBNDRPG    PGM(&LI/&OB) +
+//                           SRCFILE(&SL/&SF) SRCMBR(&SM);
+//   >>COMPILE<<
+//     >>PARM<< OPTION(*EVENTF);
+//     >>PARM<< TRUNCNBR(*NO);
+//     >>PARM<< DBGVIEW(*LIST);
+//   >>END-COMPILE<<
+//   >>EXECUTE<<
+// >>END-PRE-COMPILER<<
+// ===================================================================
+/include qinclude,H_SPEC
+ctl-opt DFTACTGRP(*NO) ACTGRP(*NEW);
+/define COPYRIGHT_DSPEC
+/include qinclude,COPYRIGHT
+// ===================================================================
+dcl-f QAFDMBRL usropn extfile(g_outfile);
 
-         if (%parms() >= 1);
-            main(%trim(gi_lib): release);
-         else;
-            main('*LIBL': release);
-         endif;
+dcl-f QBUILD usage(*update:*delete:*output)
+      usropn rename(QBUILD: FQBUILD) extfile(g_srcfile)
+      extmbr(g_srcmbr  );
 
-         if (%parms() >= 2);
-            go_release = release;
-         endif;
+dcl-s g_outfile       varchar(20) inz('QTEMP/#CRTMBRD');
+dcl-s g_srcfile       varchar(20) inz;
+dcl-s g_srcmbr        varchar(10) inz('A_METADATA');
+//
+dcl-s g_copybooks     varchar(20) inz;
 
-         *inlr = *on;
+// ------------------------------------
+//  External Prototypes
+// ------------------------------------
 
-         return;
+//  ... Execute Command (QCMDEXC) API
+dcl-pr QCMDEXC extpgm('QCMDEXC');
+  i_cmd           char(32702) const  options(*varsize);
+  i_length        packed(15:5) const;
+  i_IGCprcCtrl    char(3) const  options(*nopass);
+end-pr;
 
-      /END-FREE
-      *
-      *===============================================================*
-      *  *** private ***
-      *  Sends a message to the caller.
-      *===============================================================*
-     P sndMsg...
-     P                 B
-      *
-     D sndMsg...
-     D                 PI
-     D  i_text                      128A   value  varying
-      *
-      *  Return value
-     D pBuffer         S               *   inz
-      *
-      *  Local fields
-     D msgKey          S              4A                        inz
-      *
-     D qMsgF           DS                  qualified            inz
-     D  name                         10A
-     D  lib                          10A
-      *
-     D errCode         DS                  qualified            inz
-     D  bytPrv                       10I 0
-     D  bytAvl                       10I 0
-     D  excID                         7A
-     D  reserved                      1A
-     D  excDta                      256A
-      *
-      *  Send Program Message (QMHSNDPM) API
-     D QMHSNDPM        PR                         extpgm('QMHSNDPM')
-     D   i_msgID                      7A   const
-     D   i_qMsgF                     20A   const
-     D   i_msgData                32767A   const  options(*varsize )
-     D   i_length                    10I 0 const
-     D   i_msgType                   10A   const
-     D   i_callStkE               32767A   const  options(*varsize )
-     D   i_callStkC                  10I 0 const
-     D   o_msgKey                     4A
-     D   io_ErrCode               32767A          options(*varsize )
-     D   i_lenStkE                   10I 0 const  options(*nopass  )
-     D   i_callStkEQ                 20A   const  options(*nopass  )
-     D   i_wait                      10I 0 const  options(*nopass  )
-     D   i_callStkEDT                10A   const  options(*nopass  )
-     D   i_ccsid                     10I 0 const  options(*nopass  )
-      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      /FREE
+dcl-c QCMDEXC_IGC 'IGC';
 
-         clear qMsgF;
-         qMsgF.name = 'QCPFMSG';
-         qMsgF.lib  = '*LIBL';
+// ------------------------------------
+//  Global Fields
+// ------------------------------------
+dcl-c QUOTE '''';
+dcl-c LEFT_MARGIN 13;
+dcl-c LEFT_INDENT 26;
+dcl-c TARGET_LIB '&TARGETLIB';
 
-         clear errCode;
-         errCode.bytPrv = %size(errCode);
+dcl-s g_header        char(80) dim(21) ctdata;
 
-         QMHSNDPM('CPF9897': qMsgF: i_text: %len(i_text): '*INFO'
-                  : '*CTLBDY': 1
-                  : msgKey: errCode);
+// ------------------------------------
+//  Prototypes
+// ------------------------------------
+dcl-pr PGM_ENTRY_POINT extpgm('#CRTMBRD');
+  gi_lib          char(10) const  options(*nopass);
+  go_release      char(20) options(*nopass);
+end-pr;
 
-         return;
+dcl-pr main extproc('main');
+  i_lib           varchar(10) const;
+  o_release       char(20);
+end-pr;
 
-      /END-FREE
-      *
-     P sndMsg...
-     P                 E
-      *
-      *===============================================================*
-      *  Main procedure
-      *===============================================================*
-     P main...
-     P                 B
-      *
-     D main...
-     D                 PI
-     D  i_lib                        10A   const  varying
-     D  o_release                    20A
-      *
-      *  Helper fields
-     D isFirstRcd      S               N   inz(*ON)
-     D x               S             10I 0 inz
-     D cmd             S           1024A   varying inz
-      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      /FREE
+//  Executes the DSPFD command for a given file and library.
+dcl-pr File_exportMemberList extproc('File_exportMemberList');
+  i_lib           varchar(10) const;
+  i_file          varchar(10) const;
+end-pr;
 
-         // Do until everything is done or an error occured
-         monitor;
+//  Appends a record to QBUILD.
+dcl-pr SrcMbr_write extproc('SrcMbr_write');
+  i_text          varchar(100) const   options(*varsize);
+  i_spaces        int(10) const;
+end-pr;
 
-            // Check existance of output file and clear its content
-            monitor;
-               cmd = 'CHKOBJ OBJ(' + g_outfile + ') OBJTYPE(*FILE)';
-               qcmdexc(cmd: %len(cmd));
-               cmd = 'CLRPFM FILE(' + g_outfile + ')';
-               qcmdexc(cmd: %len(cmd));
-            on-error;
-            endmon;
+//  Appends command CHGPFM to the output source member.
+dcl-pr SrcMbr_appendCmdChgPfm extproc('SrcMbr_appendCmdChgPfm');
+  i_file          char(10) const;
+  i_lib           char(10) const;
+  i_mbr           char(10) const;
+  i_type          char(10) const;
+  i_text          char(50) const;
+end-pr;
 
-            // Check existance of output source member
-            g_srcfile = %trim(i_lib) + '/QBUILD';
+//  Appends command MONMSG to the output source member.
+dcl-pr SrcMbr_appendCmdMonMsg extproc('SrcMbr_appendCmdMonMsg');
+  i_msgId         char(7) const;
+end-pr;
 
-            monitor;
-               cmd = 'CHKOBJ OBJ(' + g_srcfile + ') +
-                             OBJTYPE(*FILE) MBR(' + g_srcmbr + ')';
-               qcmdexc(cmd: %len(cmd));
-               cmd = 'CLRPFM FILE(' + g_srcfile + ') MBR(' + g_srcmbr + ')';
-               qcmdexc(cmd: %len(cmd));
-            on-error;
-               cmd = 'ADDPFM FILE(' + g_srcfile + ') MBR(' + g_srcmbr + ')';
-               qcmdexc(cmd: %len(cmd));
-            endmon;
+//  Appends and empty line to the output source member.
+dcl-pr SrcMbr_appendEmptyLine extproc('SrcMbr_appendEmptyLine');
+end-pr;
 
-            cmd = 'CHGPFM FILE(' + g_srcfile + ') MBR(' + g_srcmbr + ') +
-                     TEXT(' + QUOTE +
-                       'iRPGUnit - Apply source member''''s metadata.' +
-                       QUOTE + ') +
-                     SRCTYPE(CLLE)';
-            qcmdexc(cmd: %len(cmd));
+//  Doubles a single quote.
+dcl-pr doubleQuotes varchar(100) extproc('doubleQuotes');
+  i_text          char(50) const;
+end-pr;
 
-            // Get member list into output file
-            File_exportMemberList(i_lib: 'QBND');
-            File_exportMemberList(i_lib: 'QBUILD');
-            File_exportMemberList(i_lib: 'QCMD');
-            File_exportMemberList(i_lib: 'QINCLUDE');
-            File_exportMemberList(i_lib: 'QLLIST' );
-            File_exportMemberList(i_lib: 'QMISC' );
-            File_exportMemberList(i_lib: 'QPNLGRP' );
-            File_exportMemberList(i_lib: 'QSRC' );
-            File_exportMemberList(i_lib: 'QSYSINC' );
-            File_exportMemberList(i_lib: 'QTESTCASES' );
-            File_exportMemberList(i_lib: 'QUNITTEST' );
+//  Sends a message to QCMD
+dcl-pr sndMsg extproc('sndMsg');
+  i_text          varchar(128) value;
+end-pr;
 
-            // Write source member ...
-            open QBUILD;
-            clear FQBUILD;
+//===============================================================*
+//  Program Entry Point
+//===============================================================*
+dcl-pi PGM_ENTRY_POINT;
+  gi_lib          char(10) const  options(*nopass);
+  go_release      char(20) options(*nopass);
+end-pi;
 
-            // ... header
-            for x = 1 to %elem(g_header);
-               SrcMbr_write(g_header(x): 0);
-            endfor;
+  dcl-s release char(20) inz;
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-            SrcMbr_write('PGM        PARM(&TARGETLIB)': LEFT_MARGIN);
-            SrcMbr_write('': 0);
+  if (%parms() >= 1);
+    main(%trim(gi_lib): release);
+  else;
+    main('*LIBL': release);
+  endif;
 
-            // ... commands
-            open QAFDMBRL;
+  if (%parms() >= 2);
+    go_release = release;
+  endif;
 
-            setll 1 QAFDMBRL;
-            dow (%found(QAFDMBRL));
-               read QAFDMBRL;
-               if (%eof(QAFDMBRL));
-                  leave;
-               endif;
+  *inlr = *on;
 
-               if (isFirstRcd);
-                  SrcMbr_write('DCL        +
-                                  VAR(' + TARGET_LIB + ') +
-                                  TYPE(*CHAR) LEN(10) +
-                                  VALUE(' + %trim(MLLIB) + ')': LEFT_MARGIN);
-                  SrcMbr_write('': 0);
+//===============================================================*
+//  *** private ***
+//  Sends a message to the caller.
+//===============================================================*
+dcl-proc sndMsg;
+  dcl-pi *n;
+    i_text          varchar(128) value;
+  end-pi;
 
-                  SrcMbr_write('CHGVAR     +
-                                  VAR(' + TARGET_LIB + ') +
-                                  VALUE(' + TARGET_LIB + ')': LEFT_MARGIN);
+  //  Return value
+  dcl-s pBuffer         pointer inz;
 
-                  SrcMbr_write('MONMSG     +
-                                 MSGID(MCH3601) EXEC(SNDPGMMSG MSGID(CPF9898) +'
-                                : LEFT_MARGIN);
-                  SrcMbr_write('MSGF(QCPFMSG) MSGDTA(''Target library +'
-                                : LEFT_INDENT);
-                  SrcMbr_write('parameter required.'') MSGTYPE(*ESCAPE))'
-                                : LEFT_INDENT);
-                  SrcMbr_write('': 0);
+  //  Local fields
+  dcl-s msgKey          char(4) inz;
 
-                  isFirstRcd = *OFF;
-               endif;
+  dcl-ds qMsgF qualified            inz;
+    name            char(10);
+    lib             char(10);
+  end-ds;
 
-               SrcMbr_appendCmdChgPfm(
-                              MLFILE: TARGET_LIB: MLNAME: MLSEU2: MLMTXT);
-               SrcMbr_appendCmdMonMsg('CPF3288');
-               SrcMbr_appendEmptyLine();
-            enddo;
+  dcl-ds errCode qualified            inz;
+    bytPrv          int(10);
+    bytAvl          int(10);
+    excID           char(7);
+    reserved        char(1);
+    excDta          char(256);
+  end-ds;
 
-            close QAFDMBRL;
+  //  Send Program Message (QMHSNDPM) API
+  dcl-pr QMHSNDPM        extpgm('QMHSNDPM');
+    i_msgID         char(7) const;
+    i_qMsgF         char(20) const;
+    i_msgData       char(32767) const  options(*varsize );
+    i_length        int(10) const;
+    i_msgType       char(10) const;
+    i_callStkE      char(32767) const  options(*varsize );
+    i_callStkC      int(10) const;
+    o_msgKey        char(4);
+    io_ErrCode      char(32767) options(*varsize );
+    i_lenStkE       int(10) const  options(*nopass  );
+    i_callStkEQ     char(20) const  options(*nopass  );
+    i_wait          int(10) const  options(*nopass  );
+    i_callStkEDT    char(10) const  options(*nopass  );
+    i_ccsid         int(10) const  options(*nopass  );
+  end-pr;
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-            // ... footer
-            SrcMbr_write('ENDPGM': LEFT_MARGIN);
+  clear qMsgF;
+  qMsgF.name = 'QCPFMSG';
+  qMsgF.lib  = '*LIBL';
 
-            close QBUILD;
+  clear errCode;
+  errCode.bytPrv = %size(errCode);
 
-            release = cRPGUNIT_VERSION;
+  QMHSNDPM('CPF9897': qMsgF: i_text: %len(i_text): '*INFO'
+           : '*CTLBDY': 1
+           : msgKey: errCode);
 
-         on-error;
-            sndMsg('*** Unexpected error! ***');
-         endmon;
+end-proc;
 
-         return;
+//===============================================================*
+//  Main procedure
+//===============================================================*
+dcl-proc main;
+  dcl-pi *n;
+    i_lib           varchar(10) const;
+    o_release       char(20);
+  end-pi;
 
-      /END-FREE
-      *
-     P main...
-     P                 E
-      *
-      *===============================================================*
-      *  Executes the DSPFD command for a given file and library.
-      *===============================================================*
-     P File_exportMemberList...
-     P                 B
-      *
-     D File_exportMemberList...
-     D                 PI
-     D  i_lib                        10A   const  varying
-     D  i_file                       10A   const  varying
-      *
-     D cmd             S           1024A   varying inz
-      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      /FREE
+  //  Helper fields
+  dcl-s isFirstRcd      ind inz(*ON);
+  dcl-s x               int(10) inz;
+  dcl-s cmd             varchar(1024) inz;
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-         // Get member list into output file
-         cmd = 'DSPFD FILE(' + i_lib + '/' + i_file + ') +
-                      TYPE(*MBRLIST) OUTPUT(*OUTFILE) +
-                      OUTFILE(' + g_outfile + ') +
-                      OUTMBR(*FIRST *ADD)';
-         qcmdexc(cmd: %len(cmd));
+   // Do until everything is done or an error occured
+   monitor;
 
-         return;
+     // Check existance of output file and clear its content
+     monitor;
+       cmd = 'CHKOBJ OBJ(' + g_outfile + ') OBJTYPE(*FILE)';
+       qcmdexc(cmd: %len(cmd));
+       cmd = 'CLRPFM FILE(' + g_outfile + ')';
+       qcmdexc(cmd: %len(cmd));
+     on-error;
+     endmon;
 
-      /END-FREE
-      *
-     P File_exportMemberList...
-     P                 E
-      *
-      *===============================================================*
-      *  Appends a record to QBUILD.
-      *===============================================================*
-     P SrcMbr_write...
-     P                 B
-      *
-     D SrcMbr_write...
-     D                 PI
-     D  i_text                      100A   const  varying options(*varsize)
-     D  i_spaces                     10I 0 const
-      *
-      *  Helper fields
-     D spaces          S            100A   inz
-      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      /FREE
+     // Check existance of output source member
+     g_srcfile = %trim(i_lib) + '/QBUILD';
 
-         SRCSEQ = SRCSEQ + 1;
-         SRCDAT = 0;
-         SRCDTA = %subst(spaces: 1: i_spaces) + i_text;
+     monitor;
+       cmd = 'CHKOBJ OBJ(' + g_srcfile + ') +
+                 OBJTYPE(*FILE) MBR(' + g_srcmbr + ')';
+       qcmdexc(cmd: %len(cmd));
+       cmd = 'CLRPFM FILE(' + g_srcfile + ') MBR(' + g_srcmbr + ')';
+       qcmdexc(cmd: %len(cmd));
+     on-error;
+       cmd = 'ADDPFM FILE(' + g_srcfile + ') MBR(' + g_srcmbr + ')';
+       qcmdexc(cmd: %len(cmd));
+     endmon;
 
-         write FQBUILD;
+     cmd = 'CHGPFM FILE(' + g_srcfile + ') MBR(' + g_srcmbr + ') +
+             TEXT(' + QUOTE + 'iRPGUnit - Apply source member''''s metadata.' + QUOTE + ') +
+             SRCTYPE(CLLE)';
+     qcmdexc(cmd: %len(cmd));
 
-         return;
+     // Get member list into output file
+     File_exportMemberList(i_lib: 'QBND');
+     File_exportMemberList(i_lib: 'QBUILD');
+     File_exportMemberList(i_lib: 'QCMD');
+     File_exportMemberList(i_lib: 'QINCLUDE');
+     File_exportMemberList(i_lib: 'QLLIST' );
+     File_exportMemberList(i_lib: 'QMISC' );
+     File_exportMemberList(i_lib: 'QPNLGRP' );
+     File_exportMemberList(i_lib: 'QSRC' );
+     File_exportMemberList(i_lib: 'QSYSINC' );
+     File_exportMemberList(i_lib: 'QTESTCASES' );
+     File_exportMemberList(i_lib: 'QUNITTEST' );
 
-      /END-FREE
-      *
-     P SrcMbr_write...
-     P                 E
-      *
-      *===============================================================*
-      *  Appends command CHGPFM to the output source member.
-      *===============================================================*
-     P SrcMbr_appendCmdChgPfm...
-     P                 B
-      *
-     D SrcMbr_appendCmdChgPfm...
-     D                 PI
-     D  i_file                       10A   const
-     D  i_lib                        10A   const
-     D  i_mbr                        10A   const
-     D  i_type                       10A   const
-     D  i_text                       50A   const
-      *
-      *  Helper fields
-     D line            S             80A   inz
-      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      /FREE
+     // Write source member ...
+     open QBUILD;
+     clear FQBUILD;
 
-         line = 'CHGPFM     FILE(' + %trim(i_lib) + '/' + %trim(i_file) + ') +';
-         SrcMbr_write(line: LEFT_MARGIN);
+     // ... header
+     for x = 1 to %elem(g_header);
+       SrcMbr_write(g_header(x): 0);
+     endfor;
 
-         line = 'MBR(' + %trim(i_mbr) + ') +';
-         SrcMbr_write(line: LEFT_INDENT);
+     SrcMbr_write('PGM        PARM(&TARGETLIB)': LEFT_MARGIN);
+     SrcMbr_write('': 0);
 
-         line = 'SRCTYPE(' + %trim(i_type) + ') +';
-         SrcMbr_write(line: LEFT_INDENT);
+     // ... commands
+     open QAFDMBRL;
 
-         line = 'TEXT(' + QUOTE + doubleQuotes(i_text) + QUOTE + ')';
-         SrcMbr_write(line: LEFT_INDENT);
+     setll 1 QAFDMBRL;
+     dow (%found(QAFDMBRL));
+       read QAFDMBRL;
+       if (%eof(QAFDMBRL));
+         leave;
+       endif;
 
-         return;
-
-      /END-FREE
-      *
-     P SrcMbr_appendCmdChgPfm...
-     P                 E
-      *
-      *===============================================================*
-      *  Appends command MONMSG to the output source member.
-      *===============================================================*
-     P SrcMbr_appendCmdMonMsg...
-     P                 B
-      *
-     D SrcMbr_appendCmdMonMsg...
-     D                 PI
-     D  i_msgId                       7A   const
-      *
-      *  Helper fields
-     D line            S             80A   inz
-      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      /FREE
-
-         line = 'MONMSG     MSGID(' + %trim(i_msgId) + ') ';
-         SrcMbr_write(line: LEFT_MARGIN);
-
-         return;
-
-      /END-FREE
-      *
-     P SrcMbr_appendCmdMonMsg...
-     P                 E
-      *
-      *===============================================================*
-      *  Appends and empty line to the output source member.
-      *===============================================================*
-     P SrcMbr_appendEmptyLine...
-     P                 B
-      *
-     D SrcMbr_appendEmptyLine...
-     D                 PI
-      *
-      *  Helper fields
-      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      /FREE
+       if (isFirstRcd);
+         SrcMbr_write('DCL VAR(' + TARGET_LIB + ') +
+                         TYPE(*CHAR) LEN(10) VALUE(' + %trim(MLLIB) + ')': LEFT_MARGIN);
 
          SrcMbr_write('': 0);
 
-         return;
+         SrcMbr_write('CHGVAR VAR(' + TARGET_LIB + ') +
+                         VALUE(' + TARGET_LIB + ')': LEFT_MARGIN);
 
-      /END-FREE
-      *
-     P SrcMbr_appendEmptyLine...
-     P                 E
-      *
-      *===============================================================*
-      *  Doubles a single quote.
-      *===============================================================*
-     P doubleQuotes...
-     P                 B
-      *
-     D doubleQuotes...
-     D                 PI           100A   varying
-     D  i_text                       50A   const
-      *
-      *  Return value
-     D text            S            100A   varying inz
-      *
-      *  Helper fields
-     D x               S             10I 0 inz
-      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      /FREE
+         SrcMbr_write('MONMSG MSGID(MCH3601) EXEC(SNDPGMMSG MSGID(CPF9898) +': LEFT_MARGIN);
+         SrcMbr_write('MSGF(QCPFMSG) MSGDTA(''Target library +': LEFT_INDENT);
+         SrcMbr_write('parameter required.'') MSGTYPE(*ESCAPE))': LEFT_INDENT);
+         SrcMbr_write('': 0);
 
-         for x = 1 to %len(%trimR(i_text));
-            if (%subst(i_text: x: 1) = QUOTE);
-               text = text + QUOTE + QUOTE;
-            else;
-               text = text + %subst(i_text: x: 1);
-            endif;
-         endfor;
+         isFirstRcd = *OFF;
+       endif;
 
-         return text;
+       SrcMbr_appendCmdChgPfm(MLFILE: TARGET_LIB: MLNAME: MLSEU2: MLMTXT);
+       SrcMbr_appendCmdMonMsg('CPF3288');
+       SrcMbr_appendEmptyLine();
+     enddo;
 
-      /END-FREE
-      *
-     P doubleQuotes...
-     P                 E
-      *
+     close QAFDMBRL;
+
+     // ... footer
+     SrcMbr_write('ENDPGM': LEFT_MARGIN);
+
+     close QBUILD;
+
+     release = RPGUNIT_VERSION;
+
+   on-error;
+     sndMsg('*** Unexpected error! ***');
+   endmon;
+
+end-proc;
+
+//===============================================================*
+//  Executes the DSPFD command for a given file and library.
+//===============================================================*
+dcl-proc File_exportMemberList;
+  dcl-pi *n;
+    i_lib           varchar(10) const;
+    i_file          varchar(10) const;
+  end-pi;
+
+  dcl-s cmd             varchar(1024) inz;
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  // Get member list into output file
+  cmd = 'DSPFD FILE(' + i_lib + '/' + i_file + ') +
+          TYPE(*MBRLIST) OUTPUT(*OUTFILE) +
+          OUTFILE(' + g_outfile + ') +
+          OUTMBR(*FIRST *ADD)';
+  qcmdexc(cmd: %len(cmd));
+
+end-proc;
+
+//===============================================================*
+//  Appends a record to QBUILD.
+//===============================================================*
+dcl-proc SrcMbr_write;
+  dcl-pi *n;
+    i_text          varchar(100) const   options(*varsize);
+    i_spaces        int(10) const;
+  end-pi;
+
+  //  Helper fields
+  dcl-s spaces          char(100) inz;
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  SRCSEQ = SRCSEQ + 1;
+  SRCDAT = 0;
+  SRCDTA = %subst(spaces: 1: i_spaces) + i_text;
+
+  write FQBUILD;
+
+end-proc;
+
+//===============================================================*
+//  Appends command CHGPFM to the output source member.
+//===============================================================*
+dcl-proc SrcMbr_appendCmdChgPfm;
+  dcl-pi *n;
+    i_file          char(10) const;
+    i_lib           char(10) const;
+    i_mbr           char(10) const;
+    i_type          char(10) const;
+    i_text          char(50) const;
+  end-pi;
+
+  //  Helper fields
+  dcl-s line            char(80) inz;
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  line = 'CHGPFM     FILE(' + %trim(i_lib) + '/' + %trim(i_file) + ') +';
+  SrcMbr_write(line: LEFT_MARGIN);
+
+  line = 'MBR(' + %trim(i_mbr) + ') +';
+  SrcMbr_write(line: LEFT_INDENT);
+
+  line = 'SRCTYPE(' + %trim(i_type) + ') +';
+  SrcMbr_write(line: LEFT_INDENT);
+
+  line = 'TEXT(' + QUOTE + doubleQuotes(i_text) + QUOTE + ')';
+  SrcMbr_write(line: LEFT_INDENT);
+
+end-proc;
+
+//===============================================================*
+//  Appends command MONMSG to the output source member.
+//===============================================================*
+dcl-proc SrcMbr_appendCmdMonMsg;
+  dcl-pi *n;
+    i_msgId         char(7) const;
+  end-pi;
+
+  //  Helper fields
+  dcl-s line            char(80) inz;
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  line = 'MONMSG     MSGID(' + %trim(i_msgId) + ') ';
+  SrcMbr_write(line: LEFT_MARGIN);
+
+end-proc;
+
+//===============================================================*
+//  Appends and empty line to the output source member.
+//===============================================================*
+dcl-proc SrcMbr_appendEmptyLine;
+  dcl-pi *n;
+  end-pi;
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  SrcMbr_write('': 0);
+
+end-proc;
+
+//===============================================================*
+//  Doubles a single quote.
+//===============================================================*
+dcl-proc doubleQuotes;
+  dcl-pi *n varchar(100);
+    i_text          char(50) const;
+  end-pi;
+
+  //  Return value
+  dcl-s text            varchar(100) inz;
+
+  //  Helper fields
+  dcl-s x               int(10) inz;
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  for x = 1 to %len(%trimR(i_text));
+    if (%subst(i_text: x: 1) = QUOTE);
+      text = text + QUOTE + QUOTE;
+    else;
+      text = text + %subst(i_text: x: 1);
+    endif;
+  endfor;
+
+  return text;
+
+end-proc;
+
 **ctdata g_header
      /* =================================================================== */
      /*  Regenerates source member's meta data (type and text).             */

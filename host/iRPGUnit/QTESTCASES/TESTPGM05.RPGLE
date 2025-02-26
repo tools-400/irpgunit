@@ -1,91 +1,74 @@
-      // ==========================================================================
-      //  iRPGUnit Fixture - Setup and teardown.
-      // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
-      // ==========================================================================
+**free
+// ==========================================================================
+//  iRPGUnit Fixture - Setup and teardown.
+// ==========================================================================
+//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ==========================================================================
 
-     H NoMain Option(*SrcStmt: *NoDebugIo)
+ctl-opt nomain option(*srcstmt: *nodebugio);
 
-      /include qinclude,TESTCASE
-      /include qinclude,ERRORCODE
-      /include qinclude,SYSTEMAPI
+/include qinclude,TESTCASE
+/include qinclude,ERRORCODE
+/include qinclude,SYSTEMAPI
 
-     Dsetup            pr
-     Dtest1            pr
-     Dtest2            pr
-     Dteardown         pr
-     D sndInfoMsg      pr
-     D  msg                         256a   const
+dcl-proc setup export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-     Psetup            b                   export
-     Dsetup            pi
-      /free
+  sndInfoMsg( 'setup' );
 
-        sndInfoMsg( 'setup' );
+end-proc;
 
-      /end-free
-     Psetup            e
+dcl-proc test1 export;
+dcl-pi *n extproc(*dclcase);
+end-pi;
 
-     Ptest1            b                   export
-     Dtest1            pi
-      /free
+sndInfoMsg( 'test1' );
 
-        sndInfoMsg( 'test1' );
+end-proc;
 
-      /end-free
-     Ptest1            e
+dcl-proc test2 export;
+dcl-pi *n extproc(*dclcase);
+end-pi;
 
-     Ptest2            b                   export
-     Dtest2            pi
-      /free
+sndInfoMsg( 'test2' );
+fail( 'test2' );
 
-        sndInfoMsg( 'test2' );
-        fail( 'test2' );
+end-proc;
 
-      /end-free
-     Ptest2            e
+dcl-proc teardown export;
+dcl-pi *n extproc(*dclcase);
+end-pi;
 
-     Pteardown         b                   export
-     Dteardown         pi
-      /free
+sndInfoMsg( 'teardown' );
 
-        sndInfoMsg( 'teardown' );
+end-proc;
 
-      /end-free
-     Pteardown         e
+dcl-proc sndInfoMsg export;
+  dcl-pi *n extproc(*dclcase);
+    msg char(256) const;
+  end-pi;
 
+  // Call Stack Counter.
+  // 1 - QCMDEXC
+  // 2 - ACPTST.RUN
+  // 3 - ACPTST.TEST...
+  dcl-c CALL_STK_CNT 3;
 
-     P sndInfoMsg      b                   export
-     D sndInfoMsg      pi
-     D  msg                         256a   const
+  // The message reference key (unique string of characters that identifies
+  // a particular instance of a message in a queue).
+  dcl-s msgKey char(4);
+  dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
+  dcl-ds qMsgF likeds(object_t) inz;
 
-       // Call Stack Counter.
-       // 1 - QCMDEXC
-       // 2 - ACPTST.RUN
-       // 3 - ACPTST.TEST...
-     D callStkCnt      c                   const(3)
+  qMsgF.nm = 'QCPFMSG';
+  qMsgF.lib = '*LIBL';
 
-       // The message reference key (unique string of characters that identifies
-       // a particular instance of a message in a queue).
-     D msgKey          s              4a
-     D percolateErrors...
-     D                 ds                  likeds(percolateErrors_t)
-     D                                     inz(*likeds)
-      /free
+  QMHSNDPM('': qMsgF: %trimr(msg): %len(%trimr(msg)): '*INFO'
+           : '*CTLBDY': CALL_STK_CNT: msgKey: percolateErrors );
 
-        QMHSNDPM( *blank :
-                  'QCPFMSG   *LIBL' :
-                  %trimr(msg) :
-                  %len(%trimr(msg)) :
-                  '*INFO' :
-                  '*CTLBDY' :
-                  callStkCnt :
-                  msgKey :
-                  percolateErrors );
-
-      /end-free
-     P sndInfoMsg      e
+end-proc;

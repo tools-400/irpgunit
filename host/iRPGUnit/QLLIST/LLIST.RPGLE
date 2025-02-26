@@ -1322,28 +1322,28 @@
      D  szRtnMsgKey                   4A
      D  error                       265A   options(*varsize)
       *
-     D msgdata         S            512A
-     D msgkey          S              4A
+     D msgData         S            512A
+     D msgKey          S              4A
      D apiError        S            265A
       /free
        if (id = MSG_NO_LIST_IMPL);
-         msgdata = 'The pointer does not point to a list data structure.';
+         msgData = 'The pointer does not point to a list data structure.';
        elseif (id = MSG_POSITION_OUT_OF_BOUNDS);
-         msgdata = 'The index points outside the list. No such element in ' +
+         msgData = 'The index points outside the list. No such element in ' +
                    'the list.';
        elseif (id = MSG_INVALID_VALUE_TYPE);
-         msgdata = 'The requested type does not correspond to the list ' +
+         msgData = 'The requested type does not correspond to the list ' +
                    'entry type.';
        endif;
 
        sendProgramMessage('CPF9898' :
                           'QCPFMSG   *LIBL     ' :
-                          %trimr(msgdata) :
-                          %len(%trimr(msgdata)) :
+                          %trimr(msgData) :
+                          %len(%trimr(msgData)) :
                           '*ESCAPE   ' :
                           '*' :
                           1 :
-                          msgkey :
+                          msgKey :
                           apiError);
       /end-free
      P                 E

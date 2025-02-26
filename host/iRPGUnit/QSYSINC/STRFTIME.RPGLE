@@ -1,16 +1,17 @@
-      /IF NOT DEFINED(STRFTIME)
-      /DEFINE STRFTIME
+**FREE
+/IF NOT DEFINED(STRFTIME)
+/DEFINE STRFTIME
 
-      /include qsysinc,localtime
+/include qsysinc,localtime
 
-      // strftime -- Convert to Formatted Time
-      //    strftime() returns the number of bytes placed into the
-      //    array pointed to by 'dest'.
-     d strftime...
-     d                 pr            10i 0 extproc('strftime')
-     d  dest                           *   value
-     d  maxsize                      10i 0 value
-     d  format                         *   value options(*string)
-     d  timeptr                            const  likeds(tm_t)
+// strftime -- Convert to Formatted Time
+//    strftime() returns the number of bytes placed into the
+//    array pointed to by 'dest'.
+dcl-pr strftime int(10) extproc('strftime');
+  dest            pointer value;
+  maxsize         int(10) value;
+  format          pointer value options(*string);
+  timeptr         const  likeds(tm_t);
+end-pr;
 
-      /ENDIF
+/ENDIF

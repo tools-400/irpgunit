@@ -1,9 +1,10 @@
+**FREE
 
-      //  Change Object Description (QLICOBJD) API
-     D QLICOBJD...
-     D                 PR                  extpgm('QLICOBJD')
-     D   rtnLib                      10A
-     D   qObj                        20A   const
-     D   type                        10A   const
-     D   chgObjInf                32767A   const options(*varsize)
-     D   errCode                  32767A   const options(*varsize)
+//  Change Object Description (QLICOBJD) API
+dcl-pr qlicobjd extpgm('QLICOBJD');
+  rtnLib          char(10);
+  qObj            char(20) const;
+  type            char(10) const;
+  chgObjInf       char(32767) const options(*varsize);
+  errcode         char(32767) const options(*varsize);
+end-pr;

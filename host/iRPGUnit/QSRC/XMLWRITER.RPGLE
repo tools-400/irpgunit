@@ -87,7 +87,7 @@ dcl-proc getXmlFileHandle;
     // could not open file handle
     errorPtr = errno();
     sndEscapeMsg('Could not create file ' + %trimr(filePath) +
-                 ': ' + %str(strerror(errorNumber)) :
+                 ': ' + %str(strError(errorNumber)) :
                  ONE_CALL_STK_LVL_ABOVE);
   endif;
 
@@ -149,7 +149,7 @@ dcl-proc writeProperties;
   rc =  write(fileHandle : %addr(text : *data) : %len(text));
 
   text = TAB + TAB + '<property name="os.version" value="' + OS_getVersion() + '"/>' + CRLF;
-  text += TAB + TAB + '<property name="irpgunit.version" value="' + cRPGUNIT_VERSION + '"/>' + CRLF;
+  text += TAB + TAB + '<property name="irpgunit.version" value="' + RPGUNIT_VERSION + '"/>' + CRLF;
 
   text += TAB + '</properties>' + CRLF;
   rc =  write(fileHandle : %addr(text : *data) : %len(text));
@@ -182,29 +182,29 @@ dcl-proc writeTestCases;
     text += '>' + CRLF;
 
     select;
-      when (testResult.outcome = TEST_CASE_ERROR);
-        text += TAB + TAB + '<error message="' + escapeXml(%trimr(testResult.error.txt)) +
-            '" type="' + escapeXml(%trimr(testResult.error.id)) + '">' + CRLF;
-        text += escapeXml(
-            %trimr(testResult.error.qSndStmt.procNm) + ' (' +
-            %trim(testResult.error.qSndStmt.qPgm.nm) + '->' +
-            %trim(testResult.error.qSndStmt.qMod.nm) + ':');
-        if (testResult.error.qSndStmt.specNb = *blank);
-            text += '*N)' + CRLF;
-        else;
-            text += escapeXml(%trim(testResult.error.qSndStmt.specNb) + ')') + CRLF;
-        endif;
-        text += TAB + TAB + '</error>' + CRLF;
+    when (testResult.outcome = TEST_CASE_ERROR);
+      text += TAB + TAB + '<error message="' + escapeXml(%trimr(testResult.error.txt)) +
+          '" type="' + escapeXml(%trimr(testResult.error.id)) + '">' + CRLF;
+      text += escapeXml(
+          %trimr(testResult.error.qSndStmt.procNm) + ' (' +
+          %trim(testResult.error.qSndStmt.qPgm.nm) + '->' +
+          %trim(testResult.error.qSndStmt.qMod.nm) + ':');
+      if (testResult.error.qSndStmt.specNb = *blank);
+        text += '*N)' + CRLF;
+      else;
+        text += escapeXml(%trim(testResult.error.qSndStmt.specNb) + ')') + CRLF;
+      endif;
+      text += TAB + TAB + '</error>' + CRLF;
 
-      when (testResult.outcome = TEST_CASE_FAILURE);
-        text += TAB + TAB + '<failure message="';
-        text += %trimr(testResult.failure.msg);
-        text += '">' + CRLF;
-        text += escapeXml(buildCallStack(testResult.failure.callStk));
-        text += TAB + TAB + '</failure>' + CRLF;
+    when (testResult.outcome = TEST_CASE_FAILURE);
+      text += TAB + TAB + '<failure message="';
+      text += %trimr(testResult.failure.msg);
+      text += '">' + CRLF;
+      text += escapeXml(buildCallStack(testResult.failure.callStk));
+      text += TAB + TAB + '</failure>' + CRLF;
 
-      other;
-        // test case ran successful
+    other;
+    // test case ran successful
     endsl;
 
     text += TAB + '</testcase>' + CRLF;

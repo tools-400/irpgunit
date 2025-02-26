@@ -87,7 +87,7 @@
       /free
 
         if (TestSuite_isDirty('SRVPGM1': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/SRVPGM1) SRCFILE(QTESTCASES)' );
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/SRVPGM1) SRCFILE(QTESTCASES)' );
         endif;
 
         procList = loadProcList( 'SRVPGM1' );
@@ -113,7 +113,7 @@
       /free
 
         if (TestSuite_isDirty('SRVPGM2': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/SRVPGM2) SRCFILE(QTESTCASES)' );
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/SRVPGM2) SRCFILE(QTESTCASES)' );
         endif;
 
         procList = loadProcList( 'SRVPGM2' );
@@ -144,7 +144,7 @@
       /free
 
         if (TestSuite_isDirty('SRVPGM2': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/SRVPGM2) SRCFILE(QTESTCASES)' );
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/SRVPGM2) SRCFILE(QTESTCASES)' );
         endif;
 
         // Setup.

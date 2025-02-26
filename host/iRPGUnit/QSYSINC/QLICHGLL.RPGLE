@@ -1,14 +1,15 @@
-      /IF NOT DEFINED(QLICHGLL)
-      /DEFINE QLICHGLL
-      *
-      *  Change Library List (QLICHGLL) API
-     D QLICHGLL...
-     D                 PR                         extpgm('QLICHGLL')
-     D  i_curlib                     11A   const
-     D  i_prodlib1                   11A   const
-     D  i_prodlib2                   11A   const
-     D  i_userLibl                 2750A   const  options(*varsize)
-     D  i_numE                       10I 0 const
-     D  io_errCode                65535A          options(*varsize)
-      *
-      /ENDIF
+**FREE
+/IF NOT DEFINED(QLICHGLL)
+/DEFINE QLICHGLL
+
+//  Change Library List (QLICHGLL) API
+dcl-pr qlichgll extpgm('QLICHGLL');
+  i_curLib        char(11) const;
+  i_prodLib1      char(11) const;
+  i_prodLib2      char(11) const;
+  i_userLibl      char(2750) const  options(*varsize);
+  i_numE          int(10) const;
+  io_errCode      char(65535) options(*varsize);
+end-pr;
+
+/ENDIF

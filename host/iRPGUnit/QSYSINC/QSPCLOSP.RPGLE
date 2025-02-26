@@ -1,9 +1,11 @@
+**FREE
 
-       //
-       // Close Spooled File API
-       //
+//
+// Close Spooled File API
+//
 
-     D QSPCLOSP        pr                  ExtPgm('QSPCLOSP')
-     D   splfHdl                     10i 0
-     D   error                    32766a   options(*varsize) noopt
+dcl-pr qspclosp extpgm('QSPCLOSP');
+  splfHdl         int(10);
+  error           char(32766) options(*varsize) noopt;
+end-pr;
 

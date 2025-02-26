@@ -200,7 +200,7 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM01': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM01) +
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM01) +
                       SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
@@ -223,7 +223,7 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM02': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM02) +
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM02) +
                       SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
@@ -247,7 +247,7 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM03': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM03) +
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM03) +
                       SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
@@ -273,14 +273,14 @@
         enddo;
         splfSkipLine();  // Skip [blank line]
 
-        splfLineStartsWith( 'TESTFALSE - FAILURE' );
+        splfLineStartsWith( 'testFalse - FAILURE' );
         splfLineStartsWith( 'Expected 5, but was 4.' );
-        splfLineStartsWith( 'TESTFALSE (TESTPGM03->TESTPGM03:22' );
+        splfLineStartsWith( 'testFalse (TESTPGM03->TESTPGM03:20' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
-        splfLineStartsWith( 'TESTFALSE2 - FAILURE' );
+        splfLineStartsWith( 'testFalse2 - FAILURE' );
         splfLineStartsWith( 'Expected 6, but was 4.' );
-        splfLineStartsWith( 'TESTFALSE2 (TESTPGM03->TESTPGM03:31' );
+        splfLineStartsWith( 'testFalse2 (TESTPGM03->TESTPGM03:28' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'FAILURE. 2 test cases, 2 assertions,'
@@ -297,7 +297,7 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM04': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM04) +
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM04) +
                       SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
@@ -320,7 +320,7 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM05': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM05) +
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM05) +
                       SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
@@ -353,7 +353,7 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM06': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM06) +
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM06) +
                       SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
@@ -382,9 +382,9 @@
         enddo;
         splfSkipLine();  // Skip [blank line]
 
-        splfLineStartsWith( 'TESTERROR - ERROR' );
+        splfLineStartsWith( 'testError - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
-        splfLineStartsWith( 'TESTERROR (TESTPGM06->TESTPGM06:23' );
+        splfLineStartsWith( 'testError (TESTPGM06->TESTPGM06:23' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'ERROR. 1 test case, 0 assertion,'
@@ -402,7 +402,7 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM07': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM07) +
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM07) +
                       SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
@@ -428,10 +428,10 @@
         enddo;
         splfSkipLine();  // Skip [blank line]
 
-        splfLineStartsWith( 'TESTSTACK - FAILURE' );
+        splfLineStartsWith( 'testStack - FAILURE' );
         splfLineStartsWith( 'Expected 5, but was 4.' );
-        splfLineStartsWith( 'FAILINGPROC (TESTPGM07->TESTPGM07:22' );
-        splfLineStartsWith( 'TESTSTACK (TESTPGM07->TESTPGM07:31' );
+        splfLineStartsWith( 'failingProc (TESTPGM07->TESTPGM07:20' );
+        splfLineStartsWith( 'testStack (TESTPGM07->TESTPGM07:28' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'FAILURE. 1 test case, 1 assertion,'
@@ -449,7 +449,7 @@
       /free
 
         if (TestSuite_exists('TESTPGM08': 'QTEMP'));
-           runcmd( 'DLTSRVPGM SRVPGM(QTEMP/TESTPGM08)' ); // Must not exists!
+           runCmd( 'DLTSRVPGM SRVPGM(QTEMP/TESTPGM08)' ); // Must not exists!
         endif;
 
         callp(e) run( 'DLTSRVPGM TESTPGM08' );    // No TESTPGM08.
@@ -493,7 +493,7 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM09': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM09) +
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM09) +
                       SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
@@ -523,9 +523,9 @@
         enddo;
         splfSkipLine();  // Skip [blank line]
 
-        splfLineStartsWith( 'TEST - ERROR' );
+        splfLineStartsWith( 'test - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
-        splfLineStartsWith( 'SETUP (TESTPGM09->TESTPGM09:30' );
+        splfLineStartsWith( 'setup (TESTPGM09->TESTPGM09:25' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'ERROR. 1 test case, 0 assertion,'
@@ -543,7 +543,7 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM10': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM10) +
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM10) +
                       SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
@@ -569,9 +569,9 @@
         enddo;
         splfSkipLine();  // Skip [blank line]
 
-        splfLineStartsWith( 'TEST - ERROR' );
+        splfLineStartsWith( 'test - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
-        splfLineStartsWith( 'TEARDOWN (TESTPGM10->TESTPGM10:28' );
+        splfLineStartsWith( 'tearDown (TESTPGM10->TESTPGM10:27' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'ERROR. 1 test case, 0 assertion,'
@@ -588,7 +588,7 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM11': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM11) +
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM11) +
                       SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
@@ -612,7 +612,7 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM12': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM12) +
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM12) +
                       SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
@@ -644,7 +644,7 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM13': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM13) +
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM13) +
                       SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
@@ -668,7 +668,7 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM14': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM14) +
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM14) +
                       SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
@@ -694,11 +694,11 @@
         enddo;
         splfSkipLine();  // Skip [blank line]
 
-        splfLineStartsWith( 'TEST_DIFFERENT - FAILURE' );
+        splfLineStartsWith( 'test_Different - FAILURE' );
         splfLineStartsWith( 'Expected 123456789012345678901234567890'
                           + '1, but was 12345678901234567890' );
         splfLineStartsWith( '12345678900.' );
-        splfLineStartsWith( 'TEST_DIFFERENT (TESTPGM14->TESTPGM14:31');
+        splfLineStartsWith( 'test_Different (TESTPGM14->TESTPGM14:30');
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'FAILURE. 2 test cases, 2 assertions,'
@@ -716,7 +716,7 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM15': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM15) +
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM15) +
                       SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
@@ -745,11 +745,11 @@
         enddo;
         splfSkipLine();  // Skip [blank line]
 
-        splfLineStartsWith( 'TESTTRUE - Success' );
+        splfLineStartsWith( 'testTrue - Success' );
         splfLineStartsWith( '1 assertions' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
-        splfLineStartsWith( 'TESTTRUE2 - Success' );
+        splfLineStartsWith( 'testTrue2 - Success' );
         splfLineStartsWith( '2 assertions' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
@@ -767,7 +767,7 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM16': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM16) +
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM16) +
                       SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
@@ -801,7 +801,7 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM05': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM05) +
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM05) +
                       SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
@@ -832,9 +832,9 @@
         enddo;
         splfSkipLine();  // Skip [blank line]
 
-        splfLineStartsWith( 'TEST2 - FAILURE' );
+        splfLineStartsWith( 'test2 - FAILURE' );
         splfLineStartsWith( 'test2' );
-        splfLineStartsWith( 'TEST2 (TESTPGM05' );
+        splfLineStartsWith( 'test2 (TESTPGM05' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'FAILURE. 1 test case, 0 assertion,'
@@ -852,7 +852,7 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM05': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM05) +
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM05) +
                       SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
@@ -898,7 +898,7 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM17': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM17) +
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM17) +
                       SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
@@ -927,9 +927,9 @@
         enddo;
         splfSkipLine();  // Skip [blank line]
 
-        splfLineStartsWith( 'SETUPSUITE - ERROR' );
+        splfLineStartsWith( 'setupSuite - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
-        splfLineStartsWith( 'SETUPSUITE (TESTPGM17->TESTPGM17:30' );
+        splfLineStartsWith( 'setupSuite (TESTPGM17->TESTPGM17:25' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'ERROR. 0 test case, 0 assertion,'
@@ -947,7 +947,7 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM18': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM18) +
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM18) +
                       SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
@@ -977,9 +977,9 @@
         enddo;
         splfSkipLine();  // Skip [blank line]
 
-        splfLineStartsWith( 'TEARDOWNSUITE - ERROR' );
+        splfLineStartsWith( 'teardownSuite - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
-        splfLineStartsWith( 'TEARDOWNSUITE (TESTPGM18->TESTPGM18:48' );
+        splfLineStartsWith( 'teardownSuite (TESTPGM18->TESTPGM18:41' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'ERROR. 1 test case, 0 assertion,'
@@ -997,7 +997,7 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM19': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM19) +
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM19) +
                       SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
@@ -1026,14 +1026,14 @@
         enddo;
         splfSkipLine();  // Skip [blank line]
 
-        splfLineStartsWith( 'SETUPSUITE - ERROR' );
+        splfLineStartsWith( 'setupSuite - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
-        splfLineStartsWith( 'SETUPSUITE (TESTPGM19->TESTPGM19:30' );
+        splfLineStartsWith( 'setupSuite (TESTPGM19->TESTPGM19:25' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
-        splfLineStartsWith( 'TEARDOWNSUITE - ERROR' );
+        splfLineStartsWith( 'teardownSuite - ERROR' );
         splfLineStartsWith( 'MCH1211 - ' );
-        splfLineStartsWith( 'TEARDOWNSUITE (TESTPGM19->TESTPGM19:51' );
+        splfLineStartsWith( 'teardownSuite (TESTPGM19->TESTPGM19:44' );
         splfLineStartsWith( '-----------------------' );
         splfSkipLine();  // Skip [blank line]
         splfLineStartsWith( 'ERROR. 0 test case, 0 assertion,'
@@ -1050,7 +1050,7 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM02': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM02) +
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM02) +
                       SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
@@ -1075,7 +1075,7 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM03': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM03) +
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM03) +
                       SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
@@ -1100,7 +1100,7 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM06': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM06) +
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM06) +
                       SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
@@ -1126,7 +1126,7 @@
       /free
 
         if (TestSuite_exists('TESTPGM08': 'QTEMP'));
-           runcmd( 'DLTSRVPGM SRVPGM(QTEMP/TESTPGM08)' ); // Must not exists!
+           runCmd( 'DLTSRVPGM SRVPGM(QTEMP/TESTPGM08)' ); // Must not exists!
         endif;
 
         dltSplFs( 'RPGUNIT' : 'TESTPGM08' );
@@ -1151,7 +1151,7 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM11': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM11) +
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM11) +
                       SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
@@ -1177,7 +1177,7 @@
       /free
 
         if (TestSuite_isDirty('TESTPGM02': 'QTEMP'));
-           runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM02) +
+           runCmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM02) +
                       SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
         endif;
 
@@ -1203,7 +1203,7 @@
       /free
 
         monitor;
-          runcmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM20) +
+          runCmd( 'RUCRTRPG TSTPGM(QTEMP/TESTPGM20) +
                      SRCFILE(QTESTCASES) DLTSPLF(*YES)' );
           fail('Expected compiler error: RNF3245');
         on-error;
@@ -1211,8 +1211,8 @@
 
         opnSplf( 'TESTPGM20' : '' );
 
-        splfContains('*RNF3245 30        002600  No prototype +
-                      in the OVERLOAD keyword of ASSERTEQUAL matches');
+        // No prototype in the OVERLOAD keyword matches the parameters of the call.
+        splfContains('*RNF3245 30');
 
         cloSplf();
 

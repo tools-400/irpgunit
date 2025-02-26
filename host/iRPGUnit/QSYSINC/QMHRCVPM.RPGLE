@@ -1,157 +1,146 @@
-      //
-      // Receive Program Message API prototype.
-      //
-      // http://publib.boulder.ibm.com/iseries/v5r2/ic2924/index.htm?info/apis/QMHRCVPM.HTM
-      //
+**FREE
+//
+// Receive Program Message API prototype.
+//
+// http://publib.boulder.ibm.com/iseries/v5r2/ic2924/index.htm?info/apis/QMHRCVPM.HTM
+//
 
-     D QMHRCVPM        pr                  ExtPgm('QMHRCVPM')
-     D  msgInfo                   32767a   options(*varsize)
-     D  msgInfoLen                   10i 0 const
-     D  fmtNm                         8a   const
-     D  callStkEnt                   10a   const
-     D  callStkCnt                   10i 0 const
-     D  msgType                      10a   const
-     D  msgKey                        4a   const
-     D  waitTime                     10i 0 const
-     D  msgAction                    10a   const
-     D  errorCode                 32767a   options(*varsize) noopt
+dcl-pr qmhrcvpm extpgm('QMHRCVPM');
+  msgInfo         char(32767) options(*varsize);
+  msgInfoLen      int(10) const;
+  fmtNm           char(8) const;
+  callStkEnt      char(10) const;
+  callStkCnt      int(10) const;
+  msgType         char(10) const;
+  msgKey          char(4) const;
+  waitTime        int(10) const;
+  msgAction       char(10) const;
+  errorCode       char(32767) options(*varsize) noopt;
+end-pr;
 
-     D RCVM0200Hdr     ds                  qualified based(template)
-     D  bytesR                       10i 0
-     D  bytesA                       10i 0
-     D  msgSev                       10i 0
-     D  msgId                         7a
-     D  msgType                       2a
-     D  msgKey                        4a
-     D  msgFileNm                    10a
-     D  msgFileLibS                  10a
-     D  msgFileLibU                  10a
-     D  sendingJob                   10a
-     D  sendingUsr                   10a
-     D  sendingJobNb                  6a
-     D  sendingPgmNm                 12a
-     D  sendingPgmSttNb...
-     D                                4a
-     D  dateSent                      7a
-     D  timeSent                      6a
-     D  rcvPgmNm                     10a
-     D  rcvPgmSttNb                   4a
-     D  sendingType                   1a
-     D  rcvType                       1a
-     D                                1a
-     D  CCSIDCnvStsIndForTxt...
-     D                               10i 0
-     D  CCSIDCnvStsIndForData...
-     D                               10i 0
-     D  alertOpt                      9a
-     D  CCSIDMsgAndMsgHlp...
-     D                               10i 0
-     D  CCSIDRplData                 10i 0
-     D  rplDataLenR                  10i 0
-     D  rplDataLenA                  10i 0
-     D  msgLenR                      10i 0
-     D  msgLenA                      10i 0
-     D  msgHlpLenR                   10i 0
-     D  msgHlpLenA                   10i 0
+dcl-ds rcvm0200hdr qualified template;
+  bytRet                int(10);
+  bytAvl                int(10);
+  msgSev                int(10);
+  msgID                 char(7);
+  msgType               char(2);
+  msgKey                char(4);
+  msgFileNm             char(10);
+  msgFileLibS           char(10);
+  msgFileLibU           char(10);
+  sendingJob            char(10);
+  sendingUsr            char(10);
+  sendingJobNb          char(6);
+  sendingPgmNm          char(12);
+  sendingPgmSttNb       char(4);
+  dateSent              char(7);
+  timeSent              char(6);
+  rcvPgmNm              char(10);
+  rcvPgmSttNb           char(4);
+  sendingType           char(1);
+  rcvType               char(1);
+  *N                    char(1);
+  ccsidCnvStsIndForTxt  int(10);
+  ccsidCnvStsIndForData int(10);
+  alertOpt              char(9);
+  ccsidMsgAndMsgHlp     int(10);
+  ccsidRplData          int(10);
+  rplDataLenR           int(10);
+  rpldataLenA           int(10);
+  msgLenR               int(10);
+  msgLenA               int(10);
+  msgHlpLenR            int(10);
+  msgHlpLenA            int(10);
+end-ds;
 
-     D RCVM0300Hdr     ds                  qualified based(template)
-     D  bytesR                       10i 0
-     D  bytesA                       10i 0
-     D  msgSev                       10i 0
-     D  msgId                         7a
-     D  msgType                       2a
-     D  msgKey                        4a
-     D  msgFileNm                    10a
-     D  msgFileLibS                  10a
-     D  msgFileLibU                  10a
-     D  alertOpt                      9a
-     D  CCSIDCnvStsIndOfMsg...
-     D                               10i 0
-     D  CCSIDCnvStsIndForData...
-     D                               10i 0
-     D  CCSIDRplData                 10i 0
-     D  CCSIDRplDataMsgHlp...
-     D                               10i 0
-     D  rplDataLenR                  10i 0
-     D  rplDataLenA                  10i 0
-     D  msgLenR                      10i 0
-     D  msgLenA                      10i 0
-     D  msgHlpLenR                   10i 0
-     D  msgHlpLenA                   10i 0
-     D  sndInfoLenR                  10i 0
-     D  sndInfoLenA                  10i 0
+dcl-ds rcvm0300hdr qualified template;
+  bytRet                int(10);
+  bytAvl                int(10);
+  msgSev                int(10);
+  msgID                 char(7);
+  msgType               char(2);
+  msgKey                char(4);
+  msgFileNm             char(10);
+  msgFileLibS           char(10);
+  msgFileLibU           char(10);
+  alertOpt              char(9);
+  ccsidCnvStsIndOfMsg   int(10);
+  ccsidCnvStsIndForData int(10);
+  ccsidRplData          int(10);
+  ccsidRplDataMsgHlp    int(10);
+  rplDataLenR           int(10);
+  rpldataLenA           int(10);
+  msgLenR               int(10);
+  msgLenA               int(10);
+  msgHlpLenR            int(10);
+  msgHlpLenA            int(10);
+  sndInfoLenR           int(10);
+  sndInfoLenA           int(10);
+end-ds;
 
-     D RCVM0300Sender  ds                  qualified based(template)
-     D  sndJob                       10a
-     D  sndJobUsrPrf                 10a
-     D  sndJobNb                      6a
-     D  dateSent                      7a
-     D  timeSent                      6a
-     D  sndType                       1a
-     D  rcvType                       1a
-     D  sndPgmNm                     12a
-     D  sndModNm                     10a
-     D  sndProcNm                   256a
-     D  reserved_1                    1a
-     D  sndPgmSttCnt                 10i 0
-     D  sndPgmSttNb                  10a   dim(3)
-     D  rcvPgmNm                     10a
-     D  rcvModNm                     10a
-     D  rcvProcNm                   256a
-     D  reserved_2                   10a
-     D  rcvPgmSttCnt                 10i 0
-     D  rcvPgmSttNb                  10a   dim(3)
-     D  reserved_3                    2a
-     D  offsLngSndPgmNm...
-     D                               10i 0
-     D  lenLngSndPgmNm...
-     D                               10i 0
-     D  offsLngSndProcNm...
-     D                               10i 0
-     D  lenLngSndProcNm...
-     D                               10i 0
-     D  offsLngRcvProcNm...
-     D                               10i 0
-     D  lenLngRcvProcNm...
-     D                               10i 0
-     D  mSecs                         6a
-     D  sndUsrPrf                    10a
-      //   char(*)   Long sending program name
-      //   char(*)   Long sending procedure name
-      //   char(*)   Long receiving procedure name
+dcl-ds rcvm0300sender qualified template;
+  sndJob           char(10);
+  sndJobUsrPrf     char(10);
+  sndjobnb         char(6);
+  dateSent         char(7);
+  timeSent         char(6);
+  sndType          char(1);
+  rcvType          char(1);
+  sndPgmNm         char(12);
+  sndModNm         char(10);
+  sndProcNm        char(256);
+  reserved_1       char(1);
+  sndPgmSttCnt     int(10);
+  sndPgmSttNb      char(10) dim(3);
+  rcvPgmNm         char(10);
+  rcvModNm         char(10);
+  rcvProcNm        char(256);
+  reserved_2       char(10);
+  rcvPgmSttCnt     int(10);
+  rcvPgmSttNb      char(10) dim(3);
+  reserved_3       char(2);
+  offsLngSndPgmNm  int(10);
+  lenLngSndPgmNm   int(10);
+  offsLngSndProcNm int(10);
+  lenLngSndProcNm  int(10);
+  offsLngRcvProcNm int(10);
+  lenLngRcvProcNm  int(10);
+  mSecs            char(6);
+  sndUsrPrf        char(10);
+  //   char(*)   Long sending program name
+  //   char(*)   Long sending procedure name
+  //   char(*)   Long receiving procedure name
+end-ds;
 
-      //----------------------------------------------------------------------
-      //   Symbolic Constants
-      //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Symbolic Constants
+//----------------------------------------------------------------------
 
-       // Format Name:
-       // - brief message information format for QMHRCVPM API.
-     D BRIEF_MSG_INFO...
-     D                 c                   const('RCVM0100')
-       // - extended format for QMHRCVPM API.
-     D EXTENDED_MSG_INFO...
-     D                 c                   const('RCVM0200')
-       // - most detailed format for QMHRCVPM API.
-     D ALL_MSG_INFO_WITH_SENDER_INFO...
-     D                 c                   const('RCVM0300')
+// Format Name:
 
-      /if not defined(THIS_CALL_STK_ENT)
-      /define THIS_CALL_STK_ENT
-       // The current call stack entry.
-     D THIS_CALL_STK_ENT...
-     D                 c                   const('*')
-      /endif
+dcl-c BRIEF_MSG_INFO                 'RCVM0100'; // - brief message information format
+dcl-c EXTENDED_MSG_INFO              'RCVM0200'; // - extended format
+dcl-c ALL_MSG_INFO_WITH_SENDER_INFO  'RCVM0300'; // - most detailed format
 
-       // No message key.
-     D NO_MSG_KEY      c                   const(*blank)
+/if not defined(THIS_CALL_STK_ENT)
+/define THIS_CALL_STK_ENT
+// The current call stack entry.
+dcl-c THIS_CALL_STK_ENT  '*';
+/endif
 
-       // Do not wait for receiving the message.
-     D NO_WAIT         c                   const(0)
+// No message key.
+dcl-c NO_MSG_KEY  '';
 
-       // Message action:
-       // - keep the message in the message queue and mark it as an old message
-     D KEEP_UNCHANGED  c                   const('*SAME')
-       // - keep the message in the message queue and mark it as an old message
-     D MARK_AS_OLD     c                   const('*OLD')
-       // - remove the message after receiving it
-     D REMOVE_MSG      c                   const('*REMOVE')
+// Do not wait for receiving the message.
+dcl-c NO_WAIT     0;
+
+// Message action:
+// - keep the message in the message queue and mark it as an old message
+dcl-c KEEP_UNCHANGED  '*SAME';
+
+// - keep the message in the message queue and mark it as an old message
+dcl-c MARK_AS_OLD     '*OLD';
+
+// - remove the message after receiving it
+dcl-c REMOVE_MSG      '*REMOVE';
+
