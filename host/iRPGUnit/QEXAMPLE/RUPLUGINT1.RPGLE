@@ -1,162 +1,129 @@
-      // ==========================================================================
-      //  iRPGUnit Dev. of RDP Plugin. OK + Failure
-      // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
-      // ==========================================================================
-      //    >>PRE-COMPILER<<
-      //      >>CRTCMD<<  RUCRTRPG    TSTPGM(&LI/&OB) +
-      //                              SRCFILE(&SL/&SF) SRCMBR(&SM);
-      //      >>IMPORTANT<<
-      //        >>PARM<< COPTION(*SRCSTMT *EVENTF);
-      //        >>PARM<< DBGVIEW(*LIST);
-      //      >>END-IMPORTANT<<
-      //      >>EXECUTE<<
-      //    >>END-PRE-COMPILER<<
-      // ==========================================================================
+**FREE
+// ==========================================================================
+//  iRPGUnit Dev. of RDP Plugin. OK + Failure
+//  ERROR. 5 test cases, 9 assertions, 3 failures, 1 error.
+// ==========================================================================
+//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ==========================================================================
+//    >>PRE-COMPILER<<
+//      >>CRTCMD<<  RUCRTRPG    TSTPGM(&LI/&OB) +
+//                              SRCFILE(&SL/&SF) SRCMBR(&SM);
+//      >>IMPORTANT<<
+//        >>PARM<< COPTION(*SRCSTMT *EVENTF);
+//        >>PARM<< DBGVIEW(*LIST);
+//      >>END-IMPORTANT<<
+//      >>EXECUTE<<
+//    >>END-PRE-COMPILER<<
+// ==========================================================================
 
-     H NoMain Option(*SrcStmt)
+ctl-opt NoMain Option(*SrcStmt);
 
-      //----------------------------------------------------------------------
-      //   Exported Procedures
-      //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Imported Procedures
+//----------------------------------------------------------------------
 
-     D testAllOK_4...
-     D                 pr                  extproc('testAllOK_4')
+/include qinclude,TESTCASE
+/include qinclude,ASSERT
+/include qinclude,TEMPLATES
 
-     D testAllFailure_4...
-     D                 pr                  extproc('testAllFailure_4')
+//----------------------------------------------------------------------
+//   Test Procedures
+//----------------------------------------------------------------------
 
-     D testOK_1_Failure_2...
-     D                 pr                  extproc('testOK_1_Failure_2')
+dcl-proc testAllOK_4 export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-     D testFailInsideMonitorBlock...
-     D                 pr                  extproc('testFailInsideMonitorBlock')
+  dcl-ds assertFailEvt_v1 likeds(assertFailEvt_t) inz;
+  dcl-ds assertFailEvt_v2 likeds(assertFailEvtLong_t) inz;
 
-     D testNumFailure_noMessage...
-     D                 pr                  extproc('testNumFailure_noMessage')
+  assert(*on: 'OK: 1');
+  assert(*on: 'OK: 2');
 
-     D procInError...
-     D                 pr                  extproc('procInError')
-     D  level                        10i 0 value
-     D  maxLevel                     10i 0 value
+  aEqual('Hello' : 'Hello');
 
-      //----------------------------------------------------------------------
-      //   Imported Procedures
-      //----------------------------------------------------------------------
+  // Keine Fehler aufgetreten => OK.
+  assertFailEvt_v1 = getAssertFailEvt();
+  aEqual(*blank : assertFailEvt_v1.msg);
 
-      /include qinclude,TESTCASE
-      /include qinclude,ASSERT
-      /include qinclude,TEMPLATES
+  assertFailEvt_v2 = getAssertFailEvtLong();
+  aEqual(*blank : assertFailEvt_v2.msg);
 
-      //----------------------------------------------------------------------
-      //   Test Procedures
-      //----------------------------------------------------------------------
+end-proc;
 
-     P testAllOK_4...
-     P                 b                   export
-     D                 pi
+dcl-proc testAllFailure_4 export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-     D assertFailEvt_v1...
-     D                 ds                  likeds(assertFailEvt_t) inz
-     D assertFailEvt_v2...
-     D                 ds                  likeds(assertFailEvtLong_t) inz
-      /free
+  dcl-s a1 int(10);
+  dcl-s a2 int(10);
 
-        assert(*on : 'OK: 1');
-        assert(*on : 'OK: 2');
+  a1 = a1 / a2;
 
-        aEqual( 'Hello' : 'Hello' );
+  callp(E) assert(*off : 'FAILURE: 1'); // continue on error
 
-        // Keine Fehler aufgetreten => OK.
-        assertFailEvt_v1 = getAssertFailEvt();
-        aEqual( *blank : assertFailEvt_v1.msg );
+  callp(E) assert(*off : 'FAILURE: 2'); // continue on error
 
-        assertFailEvt_v2 = getAssertFailEvtLong();
-        aEqual( *blank : assertFailEvt_v2.msg );
+  a1 = getAssertCalled(); // Number of failed assertions
+  callp(E) aEqual( 'HelloWorld' : 'Hello' );
+  a2 = getAssertCalled(); // Number of failed assertions
 
-      /end-free
-     P                 e
+  // Fehler aufgetreten => OK.
+  assert(a2 = (a1+1): 'There must be one more assertion!');
 
-     P testAllFailure_4...
-     P                 b                   export
-     D                 pi
-     D a1              s             10I 0
-     D a2              s             10I 0
-      /free
+end-proc;
 
-        a1 = a1 / a2;
+dcl-proc testOK_1_Failure_2 export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        callp(E) assert(*off : 'FAILURE: 1'); // continue on error
+  callp(E) assert(*off : 'FAILURE: 1');  // continue on error
 
-        callp(E) assert(*off : 'FAILURE: 2'); // continue on error
+  assert(*on: 'OK: 1');
+  assert(*off: 'FAILURE: 2');           // break on error
 
-        a1 = getAssertCalled(); // Number of failed assertions
-        callp(E) aEqual( 'HelloWorld' : 'Hello' );
-        a2 = getAssertCalled(); // Number of failed assertions
+end-proc;
 
-        // Fehler aufgetreten => OK.
-        assert(a2 = (a1+1): 'There must be one more assertion!');
 
-      /end-free
-     P                 e
+dcl-proc testFailInsideMonitorBlock export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-     P testOK_1_Failure_2...
-     P                 b                   export
-     D                 pi
-      /free
+  monitor;
+    fail('Fail from inside a monitor block');
+  on-error;
+    fail('fail() must not be captured from the monitor block');
+  endmon;
 
-        callp(E) assert(*off : 'FAILURE: 1');  // continue on error
+end-proc;
 
-        assert(*on  : 'OK: 1');
-        assert(*off : 'FAILURE: 2');           // break on error
 
-      /end-free
-     P                 e
+dcl-proc testNumFailure_noMessage export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-     P testFailInsideMonitorBlock...
-     P                 b                   export
-     D                 pi
-      /free
+  dcl-s level int(10);
 
-         monitor;
-            fail('Fail from inside a monitor block');
-         on-error;
-            fail('fail() must not be captured from the monitor block');
-         endmon;
+  procInError(level: 6);
 
-      /end-free
-     P                 e
+  end-proc;
 
-     P testNumFailure_noMessage...
-     P                 b                   export
-     D                 pi
+  dcl-proc procInError export;
+  dcl-pi *n extproc(*dclcase);
+    level      int(10) value;
+    maxLevel   int(10) value;
+  end-pi;
 
-     D level           s             10i 0
-      /free
+  level += 1;
+  if (level < maxLevel);
+    procInError(level: maxLevel);
+  endif;
 
-         procInError(level: 6);
+  iEqual(1: 2); // Failure, no message
 
-      /end-free
-     P                 e
-
-     P procInError...
-     P                 b                   export
-     D                 pi
-     D  level                        10i 0 value
-     D  maxLevel                     10i 0 value
-      /free
-
-         level += 1;
-         if (level < maxLevel);
-            procInError(level: maxLevel);
-         endif;
-
-         iEqual(1: 2); // Failure, no message
-
-      /end-free
-     P                 e
+end-proc;
 

@@ -1,160 +1,121 @@
-      // ==========================================================================
-      //  iRPGUnit Dev. of RDP Plugin. ON-EXIT op-code.
-      // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
-      // ==========================================================================
-      //    >>PRE-COMPILER<<
-      //      >>CRTCMD<<  RUCRTRPG    TSTPGM(&LI/&OB) +
-      //                              SRCFILE(&SL/&SF) SRCMBR(&SM);
-      //      >>IMPORTANT<<
-      //        >>PARM<< COPTION(*SRCSTMT *EVENTF);
-      //        >>PARM<< DBGVIEW(*LIST);
-      //      >>END-IMPORTANT<<
-      //      >>EXECUTE<<
-      //    >>END-PRE-COMPILER<<
-      // ==========================================================================
+**FREE
+// ==========================================================================
+//  iRPGUnit Dev. of RDP Plugin. ON-EXIT op-code.
+//  Success. 2 test cases, 3 assertions, 0 failure, 0 error.
+// ==========================================================================
+//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ==========================================================================
+//    >>PRE-COMPILER<<
+//      >>CRTCMD<<  RUCRTRPG    TSTPGM(&LI/&OB) +
+//                              SRCFILE(&SL/&SF) SRCMBR(&SM);
+//      >>IMPORTANT<<
+//        >>PARM<< COPTION(*SRCSTMT *EVENTF);
+//        >>PARM<< DBGVIEW(*LIST);
+//      >>END-IMPORTANT<<
+//      >>EXECUTE<<
+//    >>END-PRE-COMPILER<<
+// ==========================================================================
 
-     H NoMain Option(*SrcStmt)
+ctl-opt NoMain Option(*SrcStmt);
 
-      //----------------------------------------------------------------------
-      //   Exported Procedures
-      //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Imported Procedures
+//----------------------------------------------------------------------
 
-     D setUpSuite...
-     D                 pr                  extproc('setUpSuite')
+/include qinclude,TESTCASE
 
-      //----------------------------------------------------------------------
-      //   Imported Procedures
-      //----------------------------------------------------------------------
+// ============================================================
+//  Set up test suite. Executed once per RUCALLTST.
+// ============================================================
+dcl-proc setUpSuite export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-      /include qinclude,TESTCASE
+end-proc;
 
-      //----------------------------------------------------------------------
-      //   Test Procedures
-      //----------------------------------------------------------------------
+// ============================================================
+//  Test that on-exit is called and that
+//  isAbnormalEnd is set to *OFF.
+// ============================================================
+dcl-proc testOnExitNoError export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-     D testOnExitNoError...
-     D                 pr                  extproc('testOnExitNoError')
-     D testOnExitWithError...
-     D                 pr                  extproc('testOnExitWithError')
+  dcl-s onExitWasCalled ind;
 
-     D onExitProcNoError...
-     D                 pr                  extproc('onExitProcNoError')
-     D  io_onExitWasCalled...
-     D                                 N
+  onExitProcNoError(onExitWasCalled);
 
-     D onExitProcWithError...
-     D                 pr                  extproc('onExitProcWithError')
-     D  io_onExitWasCalled...
-     D                                 N
+  nEqual(*on: onExitWasCalled: 'onExitWasCalled');
 
-      // ============================================================
-      //  Set up test suite. Executed once per RUCALLTST.
-      // ============================================================
-     P setUpSuite...
-     P                 b                   export
-     D                 pi
+end-proc;
 
-     D rc              S              1A
-      /free
+// ============================================================
+//  Test that on-exit is called and that
+//  isAbnormalEnd is set to *OFF.
+// ============================================================
+dcl-proc testOnExitWithError export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
+  dcl-s onExitWasCalled ind;
+  dcl-s excpWasSeen ind;
 
-      /end-free
-     P                 e
+  monitor;
+    onExitProcWithError(onExitWasCalled);
+    excpWasSeen = *off;
+  on-error;
+    excpWasSeen = *on;
+  endmon;
 
-      // ============================================================
-      //  Test that on-exit is called and that
-      //  isAbnormalEnd is set to *OFF.
-      // ============================================================
-     P testOnExitNoError...
-     P                 b                   export
-     D                 pi
+  nEqual(*on: excpWasSeen: 'excpWasSeen');
+  nEqual(*on: onExitWasCalled: 'onExitWasCalled');
 
-     D onExitWasCalled...
-     D                 S               N
-      /free
+end-proc;
 
-         onExitProcNoError(onExitWasCalled);
+// ============================================================
+//  Procedure, that is called on-exit.
+// ============================================================
+dcl-proc onExitProcNoError export;
+  dcl-pi *n extproc(*dclcase);
+    io_onExitWasCalled
+    ind;
+  end-pi;
 
-         nEqual(*on: onExitWasCalled: 'onExitWasCalled');
+  dcl-s isAbnormalEnde ind;
 
-      /end-free
-     P                 e
+  on-exit isAbnormalEnde;
 
-      // ============================================================
-      //  Test that on-exit is called and that
-      //  isAbnormalEnd is set to *OFF.
-      // ============================================================
-     P testOnExitWithError...
-     P                 b                   export
-     D                 pi
+  io_onExitWasCalled = *on;
 
-     D onExitWasCalled...
-     D                 S               N
-     D excpWasSeen     S               N
-      /free
+end-proc;
 
-         monitor;
-            onExitProcWithError(onExitWasCalled);
-            excpWasSeen = *off;
-         on-error;
-            excpWasSeen = *on;
-         endmon;
+// ============================================================
+//  Procedure, that is called on-exit.
+// ============================================================
+dcl-proc onExitProcWithError export;
+  dcl-pi *n extproc(*dclcase);
+    io_onExitWasCalled
+    ind;
+  end-pi;
 
-         nEqual(*on: excpWasSeen: 'excpWasSeen');
-         nEqual(*on: onExitWasCalled: 'onExitWasCalled');
+  dcl-s value1 int(10);
+  dcl-s value2 int(10);
 
-      /end-free
-     P                 e
+  dcl-s isAbnormalEnde ind;
 
-      // ============================================================
-      //  Procedure, that is called on-exit.
-      // ============================================================
-     P onExitProcNoError...
-     P                 b                   export
-     D                 pi
-     D  io_onExitWasCalled...
-     D                                 N
+  value1 = 10;
+  value2 = 0;
 
-     D isAbnormalEnde  s               N
-      /free
+  // division by zero!
+  value2 = value1 / value2;
 
-         on-exit isAbnormalEnde;
+  on-exit isAbnormalEnde;
 
-            io_onExitWasCalled = *on;
+  io_onExitWasCalled = *on;
 
-      /end-free
-     P                 e
-
-      // ============================================================
-      //  Procedure, that is called on-exit.
-      // ============================================================
-     P onExitProcWithError...
-     P                 b                   export
-     D                 pi
-     D  io_onExitWasCalled...
-     D                                 N
-
-     D value1          s             10i 0
-     D value2          s             10i 0
-
-     D isAbnormalEnde  s               N
-      /free
-
-         value1 = 10;
-         value2 = 0;
-
-         // division by zero!
-         value2 = value1 / value2;
-
-         on-exit isAbnormalEnde;
-
-            io_onExitWasCalled = *on;
-
-      /end-free
-     P                 e
+end-proc;
 

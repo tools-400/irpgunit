@@ -1,86 +1,119 @@
-      // ==========================================================================
-      //  iRPGUnit Dev. of RDP Plugin. OK + Error
-      // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
-      // ==========================================================================
-      //    >>PRE-COMPILER<<
-      //      >>CRTCMD<<  RUCRTRPG    TSTPGM(&LI/&OB) +
-      //                              SRCFILE(&SL/&SF) SRCMBR(&SM);
-      //      >>IMPORTANT<<
-      //        >>PARM<< COPTION(*SRCSTMT *EVENTF);
-      //        >>PARM<< DBGVIEW(*LIST);
-      //      >>END-IMPORTANT<<
-      //      >>EXECUTE<<
-      //    >>END-PRE-COMPILER<<
-      // ==========================================================================
+**FREE
+// ==========================================================================
+//  iRPGUnit Dev. of RDP Plugin. ON-EXIT op-code.
+//  Success. 2 test cases, 3 assertions, 0 failure, 0 error.
+// ==========================================================================
+//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ==========================================================================
+//    >>PRE-COMPILER<<
+//      >>CRTCMD<<  RUCRTRPG    TSTPGM(&LI/&OB) +
+//                              SRCFILE(&SL/&SF) SRCMBR(&SM);
+//      >>IMPORTANT<<
+//        >>PARM<< COPTION(*SRCSTMT *EVENTF);
+//        >>PARM<< DBGVIEW(*LIST);
+//      >>END-IMPORTANT<<
+//      >>EXECUTE<<
+//    >>END-PRE-COMPILER<<
+// ==========================================================================
 
-     H NoMain Option(*SrcStmt)
+ctl-opt NoMain Option(*SrcStmt);
 
-      //----------------------------------------------------------------------
-      //   Exported Procedures
-      //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Imported Procedures
+//----------------------------------------------------------------------
 
-     D testAllOK_2...
-     D                 pr                  extproc('testAllOK_2')
+/include qinclude,TESTCASE
 
-     D testError_1...
-     D                 pr                  extproc('testError_1')
+// ============================================================
+//  Set up test suite. Executed once per RUCALLTST.
+// ============================================================
+dcl-proc setUpSuite export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-     D testError_2...
-     D                 pr                  extproc('testError_2')
+end-proc;
 
-      //----------------------------------------------------------------------
-      //   Imported Procedures
-      //----------------------------------------------------------------------
+// ============================================================
+//  Test that on-exit is called and that
+//  isAbnormalEnd is set to *OFF.
+// ============================================================
+dcl-proc testOnExitNoError export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-      /include qinclude,TESTCASE
+  dcl-s onExitWasCalled ind;
 
-      //----------------------------------------------------------------------
-      //   Test Procedures
-      //----------------------------------------------------------------------
+  onExitProcNoError(onExitWasCalled);
 
-     P testAllOK_2...
-     P                 b                   export
-     D                 pi
-      /free
+  nEqual(*on: onExitWasCalled: 'onExitWasCalled');
 
-        assert(*on : 'OK: 1');
-        assert(*on : 'OK: 2');
+end-proc;
 
-      /end-free
-     P                 e
+// ============================================================
+//  Test that on-exit is called and that
+//  isAbnormalEnd is set to *OFF.
+// ============================================================
+dcl-proc testOnExitWithError export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-     P testError_1...
-     P                 b                   export
-     D                 pi
+  dcl-s onExitWasCalled ind;
+  dcl-s excpWasSeen ind;
 
-     D a               s             10i 0
-     D b               s             10i 0
-      /free
+  monitor;
+    onExitProcWithError(onExitWasCalled);
+    excpWasSeen = *off;
+  on-error;
+    excpWasSeen = *on;
+  endmon;
 
-        b = a / b;
+  nEqual(*on: excpWasSeen: 'excpWasSeen');
+  nEqual(*on: onExitWasCalled: 'onExitWasCalled');
 
-        assert(*on :  'NEVER REACHED');
+end-proc;
 
-      /end-free
-     P                 e
+// ============================================================
+//  Procedure, that is called on-exit.
+// ============================================================
+dcl-proc onExitProcNoError export;
+  dcl-pi *n extproc(*dclcase);
+    io_onExitWasCalled ind;
+  end-pi;
 
-     P testError_2...
-     P                 b                   export
-     D                 pi
+  dcl-s isAbnormalEnde ind;
 
-     D a               s             10i 0
-     D b               s             10i 0
-      /free
+  on-exit isAbnormalEnde;
 
-        b = a / b;
+  io_onExitWasCalled = *on;
 
-        assert(*on :  'NEVER REACHED');
+end-proc;
 
-      /end-free
-     P                 e
+// ============================================================
+//  Procedure, that is called on-exit.
+// ============================================================
+dcl-proc onExitProcWithError export;
+  dcl-pi *n extproc(*dclcase);
+    io_onExitWasCalled ind;
+  end-pi;
+
+  dcl-s value1 int(10);
+  dcl-s value2 int(10);
+
+  dcl-s isAbnormalEnde ind;
+
+  value1 = 10;
+  value2 = 0;
+
+  // division by zero!
+  value2 = value1 / value2;
+
+  on-exit isAbnormalEnde;
+
+  io_onExitWasCalled = *on;
+
+end-proc;
 

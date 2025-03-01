@@ -1,172 +1,129 @@
-      // ==========================================================================
-      //  iRPGUnit Dev. of RDP Plugin. OK + Toggle
-      // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
-      // ==========================================================================
-      //    >>PRE-COMPILER<<
-      //      >>CRTCMD<<  RUCRTRPG    TSTPGM(&LI/&OB) +
-      //                              SRCFILE(&SL/&SF) SRCMBR(&SM);
-      //      >>IMPORTANT<<
-      //        >>PARM<< COPTION(*SRCSTMT *EVENTF);
-      //        >>PARM<< DBGVIEW(*LIST);
-      //      >>END-IMPORTANT<<
-      //      >>EXECUTE<<
-      //    >>END-PRE-COMPILER<<
-      // ==========================================================================
+**FREE
+// ==========================================================================
+//  iRPGUnit Dev. of RDP Plugin. OK + Toggle
+//  FAILURE. 4 test cases, 5 assertions, 1 failure, 0 error.
+//  (Toggles the test result with each call.)
+// ==========================================================================
+//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ==========================================================================
+//    >>PRE-COMPILER<<
+//      >>CRTCMD<<  RUCRTRPG    TSTPGM(&LI/&OB) +
+//                              SRCFILE(&SL/&SF) SRCMBR(&SM);
+//      >>IMPORTANT<<
+//        >>PARM<< COPTION(*SRCSTMT *EVENTF);
+//        >>PARM<< DBGVIEW(*LIST);
+//      >>END-IMPORTANT<<
+//      >>EXECUTE<<
+//    >>END-PRE-COMPILER<<
+// ==========================================================================
 
-     H NoMain Option(*SrcStmt : *NoDebugIO)
+ctl-opt NoMain Option(*SrcStmt : *NoDebugIO);
 
-     D g_dtaara        s             21a   inz
+dcl-s g_dtaara char(21) inz;
 
-     D dataStore       ds            50    dtaara(*var:g_dtaara) qualified
-     D  toggle1                       1n   inz
-     D  toggle2                       1n   inz
-     D  reserved                     48a   inz
+dcl-ds dataStore len(50) dtaara(g_dtaara) qualified;
+  toggle1  ind inz;
+  toggle2  ind inz;
+  reserved char(48) inz;
+end-ds;
 
-     D sds            sds                  qualified
-     D  pgmName                1     10a
-     D  pgmLib                81     90a
+dcl-ds sds qualified psds;
+  pgmName char(10) pos(1);
+  pgmLib  char(10) pos(81);
+end-ds;
 
-      //----------------------------------------------------------------------
-      //   Exported Procedures
-      //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Imported Procedures
+//----------------------------------------------------------------------
 
-     D setUpSuite...
-     D                 pr                  extproc('setUpSuite')
+/include qinclude,TESTCASE
 
-     D testAllOK_1...
-     D                 pr                  extproc('testAllOK_1')
+//----------------------------------------------------------------------
+//   Test Procedures
+//----------------------------------------------------------------------
 
-     D testAllOK_2...
-     D                 pr                  extproc('testAllOK_2')
+// ============================================================
+//  Set up test suite. Executed once per RUCALLTST.
+// ============================================================
+dcl-proc setUpSuite export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-     D testToggleOK_1...
-     D                 pr                  extproc('testToggleOK_1')
+  monitor;
+    g_dtaara = %trim(sds.pgmLib) + '/' + %trim(sds.pgmName);
+    runCmd('CRTDTAARA DTAARA(' + %trim(g_dtaara) + ') TYPE(*CHAR) LEN(50) +
+            TEXT(''RPGUnit Data Store of ' + %trim(sds.pgmName) + ''')');
+  on-error;
+    // ignore errors ...
+  endmon;
 
-     D testToggleOK_2...
-     D                 pr                  extproc('testToggleOK_2')
+end-proc;
 
-      //----------------------------------------------------------------------
-      //   Imported Procedures
-      //----------------------------------------------------------------------
+// ============================================================
+//  Contains 1 assertion, all TRUE.
+// ============================================================
+dcl-proc testAllOK_1 export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-      /include qinclude,TESTCASE
+  assert(*on: 'OK: 1');
 
-      //----------------------------------------------------------------------
-      //   Private Procedures
-      //----------------------------------------------------------------------
+end-proc;
 
-      //  Internal procedure to toggle the boolean flag 2.
-     D internalToggleOK_2...
-     D                 pr                  extproc('internalToggleOK_2')
+// ============================================================
+//  Contains 2 assertions, all TRUE.
+// ============================================================
+dcl-proc testAllOK_2 export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-      //----------------------------------------------------------------------
-      //   Test Procedures
-      //----------------------------------------------------------------------
+  assert(*on: 'OK: 1');
+  assert(*on: 'OK: 2');
 
-      // ============================================================
-      //  Set up test suite. Executed once per RUCALLTST.
-      // ============================================================
-     P setUpSuite...
-     P                 b                   export
-     D                 pi
+end-proc;
 
-     D rc              S              1A
-      /free
+// ============================================================
+//  Toggles the boolean flag 1. Checks the flag for *ON.
+// ============================================================
+dcl-proc testToggleOK_1 export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-         monitor;
-            g_dtaara = %trim(sds.pgmLib) + '/' + %trim(sds.pgmName);
-            runCmd(
-               'CRTDTAARA DTAARA(' + %trim(g_dtaara) + ') TYPE(*CHAR) LEN(50) +
-                  TEXT(''RPGUnit Data Store of ' + %trim(sds.pgmName) + ''')');
-         on-error;
-            // ignore errors ...
-         endmon;
+  in *lock dataStore;
+  dataStore.toggle1 = not dataStore.toggle1;
+  out dataStore;
 
-      /end-free
-     P                 e
+  assert(dataStore.toggle1: 'Toggle flag 1 must be *ON');
 
-      // ============================================================
-      //  Contains 1 assertion, all TRUE.
-      // ============================================================
-     P testAllOK_1...
-     P                 b                   export
-     D                 pi
-      /free
+end-proc;
 
-        assert(*on : 'OK: 1');
+// ============================================================
+//  Toggles the boolean flag 2. Checks the flag for *OFF.
+// ============================================================
+dcl-proc testToggleOK_2 export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-      /end-free
-     P                 e
+  internalToggleOK_2();
 
-      // ============================================================
-      //  Contains 2 assertions, all TRUE.
-      // ============================================================
-     P testAllOK_2...
-     P                 b                   export
-     D                 pi
-      /free
+end-proc;
 
-        assert(*on : 'OK: 1');
-        assert(*on : 'OK: 2');
+// ============================================================
+//  Internal procedure to toggle the boolean flag 2.
+// ============================================================
+dcl-proc internalToggleOK_2 export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-      /end-free
-     P                 e
+  in *lock dataStore;
+  dataStore.toggle2 = not dataStore.toggle2;
+  out dataStore;
 
-      // ============================================================
-      //  Toggles the boolean flag 1. Checks the flag for *ON.
-      // ============================================================
-     P testToggleOK_1...
-     P                 b                   export
-     D                 pi
+  assert(not dataStore.toggle2: 'Toggle flag 2 must be *OFF');
 
-     D seconds         s             10i 0 inz
-      /free
-
-        in *lock dataStore;
-        dataStore.toggle1 = not dataStore.toggle1;
-        out dataStore;
-
-        assert(dataStore.toggle1: 'Toggle flag 1 must be *ON');
-
-      /end-free
-     P                 e
-
-      // ============================================================
-      //  Toggles the boolean flag 2. Checks the flag for *OFF.
-      // ============================================================
-     P testToggleOK_2...
-     P                 b                   export
-     D                 pi
-
-     D seconds         s             10i 0 inz
-      /free
-
-        internalToggleOK_2();
-
-      /end-free
-     P                 e
-
-      // ============================================================
-      //  Internal procedure to toggle the boolean flag 2.
-      // ============================================================
-     P internalToggleOK_2...
-     P                 b                   export
-     D                 pi
-
-     D seconds         s             10i 0 inz
-      /free
-
-        in *lock dataStore;
-        dataStore.toggle2 = not dataStore.toggle2;
-        out dataStore;
-
-        assert(not dataStore.toggle2: 'Toggle flag 2 must be *OFF');
-
-      /end-free
-     P                 e
+end-proc;
 
