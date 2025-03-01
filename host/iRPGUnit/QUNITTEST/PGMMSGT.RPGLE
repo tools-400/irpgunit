@@ -1,268 +1,237 @@
-      // ==========================================================================
-      //  iRPGUnit SelfTest - Test PGMMSG.
-      // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
-      // ==========================================================================
-      // >>PRE-COMPILER<<
-      //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
-      //   >>IMPORTANT<<
-      //     >>PARM<<  MODULE(&LI/JOBLOG    +
-      //                      &LI/PGMMSG    +
-      //                      );
-      //     >>PARM<<    COPTION(*SRCSTMT *EVENTF);
-      //   >>END-IMPORTANT<<
-      //   >>CMD<<     CMPMOD MODULE(&LI/JOBLOG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-      //   >>CMD<<     CMPMOD MODULE(&LI/PGMMSG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-      //   >>EXECUTE<<
-      // >>END-PRE-COMPILER<<
-      // ==========================================================================
+**FREE
+// ==========================================================================
+//  iRPGUnit SelfTest - Test PGMMSG.
+// ==========================================================================
+//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ==========================================================================
+// >>PRE-COMPILER<<
+//   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+//   >>IMPORTANT<<
+//     >>PARM<<  MODULE(&LI/JOBLOG    +
+//                      &LI/PGMMSG    +
+//                      );
+//     >>PARM<<    COPTION(*SRCSTMT *EVENTF);
+//   >>END-IMPORTANT<<
+//   >>CMD<<     CMPMOD MODULE(&LI/JOBLOG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/PGMMSG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>EXECUTE<<
+// >>END-PRE-COMPILER<<
+// ==========================================================================
 
-     H NoMain Option(*SrcStmt)
+ctl-opt NoMain Option(*SrcStmt);
 
-      //----------------------------------------------------------------------
-      //   Imported Procedures
-      //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Imported Procedures
+//----------------------------------------------------------------------
 
-      /copy qinclude,ASSERT
-      /copy qinclude,ERRORCODE
-      /copy qinclude,PGMMSG
-      /copy qinclude,TEMPLATES
-      /copy qinclude,TESTUTILS
+/copy qinclude,ASSERT
+/copy qinclude,ERRORCODE
+/copy qinclude,PGMMSG
+/copy qinclude,TEMPLATES
+/copy qinclude,TESTUTILS
 
-      /include qinclude,SDS
+/include qinclude,SDS
 
+//----------------------------------------------------------------------
+//   Private Procedures
+//----------------------------------------------------------------------
 
-      //----------------------------------------------------------------------
-      //   Exported Procedures
-      //----------------------------------------------------------------------
+//dcl-pr callSndEscapeMsgToCaller
+//       extproc('callSndEscapeMsgToCaller');
+//end-pr;
+//dcl-pr monitorEscapeMsgAndResendIt
+//       extproc('monitorEscapeMsgAndResendIt+
+//       ');
+//end-pr;
+//dcl-pr procWithError
+//       int(10) extproc('procWithError');
+//end-pr;
 
-     D test_rcvExcpMsgInfo...
-     D                 pr                  extproc('test_rcvExcpMsgInfo')
-     D test_sndEscapeMsgToCaller...
-     D                 pr                  extproc('test_sndEscapeMsgToCaller')
-     D test_resendEscapeMsg...
-     D                 pr                  extproc('test_resendEscapeMsg')
-     D test_monitorMessage...
-     D                 pr                  extproc('test_monitorMessage')
+//----------------------------------------------------------------------
+//   Helper Procedures Definitions
+//----------------------------------------------------------------------
 
+dcl-proc callSndEscapeMsgToCaller;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-      //----------------------------------------------------------------------
-      //   Private Procedures
-      //----------------------------------------------------------------------
+  sndEscapeMsgToCaller('Dummy error message');
 
-     D callSndEscapeMsgToCaller...
-     D                 pr                  extproc('callSndEscapeMsgToCaller')
-     D monitorEscapeMsgAndResendIt...
-     D                 pr                  extproc('monitorEscapeMsgAndResendIt+
-     D                                     ')
-     D procWithError...
-     D                 pr            10i 0 extproc('procWithError')
-
-
-      //----------------------------------------------------------------------
-      //   Helper Procedures Definitions
-      //----------------------------------------------------------------------
-
-     P callSndEscapeMsgToCaller...
-     P                 b
-     D                 pi
-      /free
-
-        sndEscapeMsgToCaller( 'Dummy error message' );
-
-      /end-free
-     P                 e
+end-proc;
 
 
-     P monitorEscapeMsgAndResendIt...
-     P                 b
-     D                 pi
+dcl-proc monitorEscapeMsgAndResendIt;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-     D percolateErrors...
-     D                 ds                  likeds(percolateErrors_t)
-     D                                     inz(*likeds)
-      /free
+  dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
 
-        monitor;
-          procWithError();
-        on-error;
-          resendEscapeMsg( LAST_NEW_ESCAPE_MSG : percolateErrors );
-        endmon;
+  monitor;
+    procWithError();
+  on-error;
+    resendEscapeMsg(LAST_NEW_ESCAPE_MSG : percolateErrors);
+  endmon;
 
-      /end-free
-     P                 e
+end-proc;
 
 
-     P procWithError   b
-     D                 pi            10i 0
-     D  zero           s             10i 0 inz(0)
-      /free
+dcl-proc procWithError;
+  dcl-pi *n int(10) extproc(*dclcase);
+  end-pi;
 
-        return (1 / zero);
+  dcl-s zero int(10) inz(0);
 
-      /end-free
-     P procWithError   e
+  return (1 / zero);
 
-
-      //----------------------------------------------------------------------
-      //   Test Procedure Definitions
-      //----------------------------------------------------------------------
-
-     P test_rcvExcpMsgInfo...
-     P                 b                   export
-     D                 pi
-
-     D excpMsgInfo     ds                  likeds(Msg_t)
-     D msgKey          s              4a
-      /free
-
-        setLowMessageKey(getHighestMsgKey());
-
-        monitor;
-          procWithError();
-          fail( 'procWithError() did not raise an error.' );
-
-        on-error;
-          // Success.
-        endmon;
-
-        excpMsgInfo = rcvExcpMsgInfo();
-
-        aEqual( 'MCH1211': excpMsgInfo.Id );
-        assert( excpMsgInfo.txt <> *blank : 'Exception message not retrieved' );
-            // We should be checking the message content, but I do not know how to
-            // do that, since it depends on the locale.
-        aEqual( 'PGMMSGT': excpMsgInfo.qSndStmt.qPgm.nm );
-        aEqual( sds.pgmLib: excpMsgInfo.qSndStmt.qPgm.lib );
-        aEqual( 'procWithError': excpMsgInfo.qSndStmt.procNm );
-
-        monitor;
-           msgKey = getHighestMsgKey();
-           aEqual( '105'   : excpMsgInfo.qSndStmt.specNb );   // IFS Compile
-        on-error;
-           getLatestEscMsg(msgKey: *ON);
-           aEqual( '10500' : excpMsgInfo.qSndStmt.specNb );   // QSYS Compile
-        endmon;
-
-      /end-free
-     P                 e
+end-proc procWithError;
 
 
-     P test_sndEscapeMsgToCaller...
-     P                 b                   export
-     D                 pi
+//----------------------------------------------------------------------
+//   Test Procedure Definitions
+//----------------------------------------------------------------------
 
-     D excpMsgInfo     ds                  likeds(Msg_t)
+dcl-proc test_rcvExcpMsgInfo export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-      /free
-        monitor;
-          callsndEscapeMsgToCaller();
-          fail( 'sndEscapeMsgToCaller() did not raise an exception.' );
+  dcl-ds excpMsgInfo likeds(Msg_t);
+  dcl-s msgKey char(4);
 
-        on-error;
-          // Success.
-        endmon;
+  setLowMessageKey(getHighestMsgKey());
 
-        excpMsgInfo = rcvExcpMsgInfo();
+  monitor;
+    procWithError();
+    fail('procWithError() did not raise an error.');
+  on-error;
+     // Success.
+  endmon;
 
-        aEqual( 'Dummy error message' : excpMsgInfo.txt );
+  excpMsgInfo = rcvExcpMsgInfo();
 
-      /end-free
-     P                 e
+  aEqual('MCH1211': excpMsgInfo.Id);
+  assert(excpMsgInfo.txt <> *blank: 'Exception message not retrieved');
+  // We should be checking the message content, but I do not know how to
+  // do that, since it depends on the locale.
+  aEqual('PGMMSGT': excpMsgInfo.qSndStmt.qPgm.nm);
+  aEqual(sds.pgmLib: excpMsgInfo.qSndStmt.qPgm.lib);
+  aEqual('procWithError': excpMsgInfo.qSndStmt.procNm);
 
+  monitor;
+    msgKey = getHighestMsgKey();
+    aEqual('88': excpMsgInfo.qSndStmt.specNb);   // IFS Compile
+  on-error;
+    getLatestEscMsg(msgKey: *ON);
+    aEqual('8800': excpMsgInfo.qSndStmt.specNb);   // QSYS Compile
+  endmon;
 
-     P test_resendEscapeMsg...
-     P                 b                   export
-     D                 pi
-
-     D resentMsgSeen   s               n
-     D msg             ds                  likeds(Msg_t)
-
-      /free
-
-        monitor;
-          monitorEscapeMsgAndResendIt();
-          resentMsgSeen = *off;
-        on-error;
-          resentMsgSeen = *on;
-        endmon;
-
-        assert( resentMsgSeen : 'Resent msg not seen' );
-        msg = rcvPgmMsg( '*ESCAPE' );
-        aEqual( 'MCH1211' : msg.id );
-
-      /end-free
-     P                 e
+end-proc;
 
 
-     P test_monitorMessage...
-     P                 b                   export
-     D                 pi
+dcl-proc test_sndEscapeMsgToCaller export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-     D msgInfo         ds                  likeds(MsgInfo_t)
-     D msgInfo2        ds                  likeds(MsgInfo_t)
-     D msgInfo3        ds                  likeds(MsgInfo_t)
-     D a               s             10i 0
-     D b               s             10i 0
-     D c               s             10i 0
-     D msgKey          s              4a
-      /free
+  dcl-ds excpMsgInfo likeds(Msg_t);
 
-         setLowMessageKey(getHighestMsgKey());
+  monitor;
+    callsndEscapeMsgToCaller();
+    fail('sndEscapeMsgToCaller() did not raise an exception.');
+  on-error;
+     // Success.
+  endmon;
 
-         monitor;
-           a = 10;
-           b = 0;     // Attempt made to divide by zero for
-           c = a / b; // fixed point operation. (MCH1211)
-           fail( 'Division by zero did not raise an error.' );
-         on-error;
-           msgInfo = getMonitoredMessage();
-         endmon;
+  excpMsgInfo = rcvExcpMsgInfo();
 
-         aEqual( 'MCH1211': msgInfo.Id );
+  aEqual('Dummy error message' : excpMsgInfo.txt);
 
-         // receive message info again
-         // and remove message
-         msgInfo2 = getMonitoredMessage(*ON);
-         assert(msgInfo = msgInfo2: 'Message info values must match');
-
-         // try to receive it a third time
-         msgInfo3 = getMonitoredMessage();
-         assert(msgInfo3.id     = '' and
-                msgInfo3.txt    = '' and
-                msgInfo3.pgm    = '' and
-                msgInfo3.mod    = '' and
-                msgInfo3.proc   = '' and
-                msgInfo3.specNb = ''
-                : 'Message MCH1211 must habe been removed +
-                   from the job log');
+end-proc;
 
 
-        monitor;
-          procWithError();
-          fail( 'procWithError() did not raise an error.' );
-        on-error;
-          msgInfo = getMonitoredMessage();
-        endmon;
+dcl-proc test_resendEscapeMsg export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        aEqual( 'MCH1211': msgInfo.Id );
-        assert( msgInfo.txt <> *blank : 'Exception message not retrieved' );
-            // We should be checking the message content, but I do not know how to
-            // do that, since it depends on the locale.
-        aEqual( 'PGMMSGT': msgInfo.pgm );
-        aEqual( 'procWithError': msgInfo.proc );
+  dcl-s resentMsgSeen ind;
+  dcl-ds msg likeds(Msg_t);
 
-        monitor;
-           msgKey = getHighestMsgKey();
-           aEqual( '105'   : msgInfo.specNb );   // IFS Compile
-        on-error;
-           getLatestEscMsg(msgKey: *ON);
-           aEqual( '10500' : msgInfo.specNb );   // QSYS Compile
-        endmon;
+  monitor;
+    monitorEscapeMsgAndResendIt();
+    resentMsgSeen = *off;
+  on-error;
+    resentMsgSeen = *on;
+  endmon;
 
-      /end-free
-     P                 e
+  assert(resentMsgSeen: 'Resent msg not seen');
+  msg = rcvPgmMsg('*ESCAPE');
+  aEqual('MCH1211': msg.id);
+
+end-proc;
+
+
+dcl-proc test_monitorMessage export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-ds msgInfo likeds(MsgInfo_t);
+  dcl-ds msgInfo2 likeds(MsgInfo_t);
+  dcl-ds msgInfo3 likeds(MsgInfo_t);
+  dcl-s a int(10);
+  dcl-s b int(10);
+  dcl-s c int(10);
+  dcl-s msgKey char(4);
+
+  setLowMessageKey(getHighestMsgKey());
+
+  monitor;
+    a = 10;
+    b = 0;     // Attempt made to divide by zero for
+    c = a / b; // fixed point operation. (MCH1211)
+    fail('Division by zero did not raise an error.');
+  on-error;
+    msgInfo = getMonitoredMessage();
+  endmon;
+
+  aEqual('MCH1211': msgInfo.Id);
+
+  // receive message info again
+  // and remove message
+  msgInfo2 = getMonitoredMessage(*ON);
+  assert(msgInfo = msgInfo2: 'Message info values must match');
+
+  // try to receive it a third time
+  msgInfo3 = getMonitoredMessage();
+  assert(msgInfo3.id     = '' and
+         msgInfo3.txt    = '' and
+         msgInfo3.pgm    = '' and
+         msgInfo3.mod    = '' and
+         msgInfo3.proc   = '' and
+         msgInfo3.specNb = ''
+         : 'Message MCH1211 must habe been removed from the job log');
+
+  monitor;
+    procWithError();
+    fail('procWithError() did not raise an error.');
+  on-error;
+    msgInfo = getMonitoredMessage();
+  endmon;
+
+  aEqual('MCH1211': msgInfo.Id );
+  assert(msgInfo.txt <> *blank: 'Exception message not retrieved');
+  // We should be checking the message content, but I do not know how to
+  // do that, since it depends on the locale.
+  aEqual('PGMMSGT': msgInfo.pgm);
+  aEqual('procWithError': msgInfo.proc);
+
+  monitor;
+    msgKey = getHighestMsgKey();
+    aEqual('88': msgInfo.specNb);   // IFS Compile
+  on-error;
+    getLatestEscMsg(msgKey: *ON);
+    aEqual('8800': msgInfo.specNb);   // QSYS Compile
+  endmon;
+
+end-proc;

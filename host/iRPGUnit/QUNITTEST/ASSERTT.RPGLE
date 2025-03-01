@@ -1,976 +1,799 @@
-      // ==========================================================================
-      //  iRPGUnit SelfTest - Test ASSERT.
-      // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
-      // ==========================================================================
-      // >>PRE-COMPILER<<
-      //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
-      //   >>IMPORTANT<<
-      //     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
-      //   >>END-IMPORTANT<<
-      //   >>EXECUTE<<
-      // >>END-PRE-COMPILER<<
-      // ==========================================================================
-
-     H NoMain Option(*SrcStmt)
-
-      //----------------------------------------------------------------------
-      //   Exported Procedures
-      //----------------------------------------------------------------------
-
-     D testFailInsideMonitorBlock...
-     D                 pr                  extproc('testFailInsideMonitorBlock')
-     D testHelloEqualsHello...
-     D                 pr                  extproc('testHelloEqualsHello')
-     D testGoodByeIsNotHello...
-     D                 pr                  extproc('testGoodByeIsNotHello')
-     D testTwoAndTwoEqualsFour...
-     D                 pr                  extproc('testTwoAndTwoEqualsFour')
-     D testTwoAndTwoIsNotEqualToFive...
-     D                 pr                  extproc('testTwoAndTwoIsNotEqualToFi+
-     D                                     ve')
-     D testAssertCount...
-     D                 pr                  extproc('testAssertCount')
-     D testAssertClear...
-     D                 pr                  extproc('testAssertClear')
-     D testGetAssertFailEvt...
-     D                 pr                  extproc('testGetAssertFailEvt')
-     D testAssertWithFailure...
-     D                 pr                  extproc('testAssertWithFailure')
-     D testAssertWithSuccess...
-     D                 pr                  extproc('testAssertWithSuccess')
-     D testBigIntegerEquality...
-     D                 pr                  extproc('testBigIntegerEquality')
-     D testAssertEqual_string...
-     D                 pr                  extproc('testAssertEqual_string')
-     D testAssertEqual_integer...
-     D                 pr                  extproc('testAssertEqual_integer')
-     D testAssertEqual_numeric...
-     D                 pr                  extproc('testAssertEqual_numeric')
-     D testAssertThat...
-     D                 pr                  extproc('testAssertThat')
-     D testAssertEqual_date...
-     D                 pr                  extproc('testAssertEqual_date')
-     D testAssertEqual_time...
-     D                 pr                  extproc('testAssertEqual_time')
-     D testAssertEqual_timestamp...
-     D                 pr                  extproc('testAssertEqual_timestamp')
-     D testAssertEqual_ind...
-     D                 pr                  extproc('testAssertEqual_ind')
-
-
-      //----------------------------------------------------------------------
-      //   Imported Procedures
-      //----------------------------------------------------------------------
-
-      /include qinclude,ASSERT
-      /include qinclude,TEMPLATES
-
-      //----------------------------------------------------------------------
-      //   Private Procedures
-      //----------------------------------------------------------------------
-
-     D CMDRUNSRV_runProc...
-     D                 pr              n   extproc('CMDRUNSRV_runProc')
-     D failInsideMonitorBlock...
-     D                 pr              n   extproc('failInsideMonitorBlock')
-
-
-      //----------------------------------------------------------------------
-      //   Global Constants
-      //----------------------------------------------------------------------
-     D FAILURE_MESSAGE...
-     D                 c                   'Failure message'
-
-
-      //----------------------------------------------------------------------
-      //   Test Procedures
-      //----------------------------------------------------------------------
-
-     P testFailInsideMonitorBlock...
-     P                 b                   export
-     D                 pi
-
-     D excpWasCaught   s               n   inz(*off)
-     D success         s               n   inz(*off)
-
-     D msgInfo         ds                  likeds(MsgInfo_t)
-      /free
+**FREE
+// ==========================================================================
+//  iRPGUnit SelfTest - Test ASSERT.
+// ==========================================================================
+//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ==========================================================================
+// >>PRE-COMPILER<<
+//   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+//   >>IMPORTANT<<
+//     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
+//   >>END-IMPORTANT<<
+//   >>EXECUTE<<
+// >>END-PRE-COMPILER<<
+// ==========================================================================
 
-        success = CMDRUNSRV_runProc();
+ctl-opt NoMain Option(*SrcStmt);
 
-        select;
-          when success;
-            // Success.
-            msgInfo = getMonitoredMessage(*off);
-            assert( msgInfo.txt = FAILURE_MESSAGE );
-          when excpWasCaught;
-            fail( 'The failure exception'
-                + ' should not be caught by the monitor block' );
-          other;
-            fail( 'fail() should have raised an exception' );
-        endsl;
+//----------------------------------------------------------------------
+//   Imported Procedures
+//----------------------------------------------------------------------
 
-      /end-free
-     P                 e
+/include qinclude,ASSERT
+/include qinclude,TEMPLATES
 
+//----------------------------------------------------------------------
+//   Private Procedures
+//----------------------------------------------------------------------
 
-     PtestTwoAndTwoEqualsFour...
-     P                 b                   export
-     D                 pi
-      /free
+//----------------------------------------------------------------------
+//   Global Constants
+//----------------------------------------------------------------------
+dcl-c FAILURE_MESSAGE 'Failure message';
 
-        // Execution.
+//----------------------------------------------------------------------
+//   Test Procedures
+//----------------------------------------------------------------------
 
-        iEqual(4: 2 + 2);
+dcl-proc testFailInsideMonitorBlock export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        // Controls.
+  dcl-s excpWasCaught   ind inz(*off);
+  dcl-s success         ind inz(*off);
 
-        // No exception message => OK.
+  dcl-ds msgInfo likeds(MsgInfo_t);
 
-        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+  success = CMDRUNSRV_runProc(); // statement in error
 
-      /end-free
-     P                 e
+  select;
+  when success;
+    // Success.
+    msgInfo = getMonitoredMessage(*off);
+    assert( msgInfo.txt = FAILURE_MESSAGE );
+  when excpWasCaught;
+    fail('The failure exception should not be caught by the monitor block');
+  other;
+    fail('fail() should have raised an exception');
+  endsl;
 
+end-proc;
 
-     PtestTwoAndTwoIsNotEqualToFive...
-     P                 b                   export
-     D                 pi
 
-     D excpWasSeen     s               n
-     D assertFailEvt   ds                  likeds(AssertFailEvt_t)
+dcl-proc testTwoAndTwoEqualsFour export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-      /free
+  // Execution.
 
-        // Execution.
+  iEqual(4: 2 + 2);
 
-        monitor;
-          iEqual(5: 2 + 2);
-          excpWasSeen = *off;
+  // Controls.
 
-        on-error;
-          excpWasSeen = *on;
-        endmon;
+  // No exception message => OK.
 
-        // Controls.
+  aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
 
-        assertFailEvt = getAssertFailEvt();
+end-proc;
 
-        assert( excpWasSeen :
-                'iEqual(5: 2 + 2) should have raised an error message.' );
 
-        aEqual( 'Expected 5, but was 4.' : assertFailEvt.msg );
+dcl-proc testTwoAndTwoIsNotEqualToFive export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        aEqual( 'ASSERTT' : assertFailEvt.callStk.Entry(1).qStmt.qPgm.nm );
-        aEqual( 'ASSERTT' : assertFailEvt.callStk.Entry(1).qStmt.qMod.nm );
-        aEqual( 'testTwoAndTwoIsNotEqualToFive'
-               : assertFailEvt.callStk.Entry(1).qStmt.procNm );
+  dcl-s excpWasSeen ind;
+  dcl-ds assertFailEvt likeds(AssertFailEvt_t);
 
-        monitor;
-           aEqual( '153'  : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
-        on-error;
-           aEqual( '15300': assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
-        endmon;
 
-      /end-free
-     P                 e
+  // Execution.
 
+  monitor;
+    iEqual(5: 2 + 2); // statement in error
+    excpWasSeen = *off;
+  on-error;
+    excpWasSeen = *on;
+  endmon;
 
-     PtestHelloEqualsHello...
-     P                 b                   export
-     D                 pi
-      /free
+  // Controls.
 
-        // Execution.
+  assertFailEvt = getAssertFailEvt();
 
-        aEqual( 'Hello' : 'Hello' );
+  assert(excpWasSeen: 'iEqual(5: 2 + 2) should have raised an error message.');
 
-        // Control.
+  aEqual('Expected 5, but was 4.': assertFailEvt.msg);
 
-        // No exception message => OK.
+  aEqual('ASSERTT': assertFailEvt.callStk.Entry(1).qStmt.qPgm.nm);
+  aEqual('ASSERTT': assertFailEvt.callStk.Entry(1).qStmt.qMod.nm);
+  aEqual('testTwoAndTwoIsNotEqualToFive': assertFailEvt.callStk.Entry(1).qStmt.procNm);
 
-        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+  monitor;
+    aEqual('95'  : assertFailEvt.callStk.Entry(1).qStmt.specNb);  // IFS Compile
+  on-error;
+    aEqual('9500': assertFailEvt.callStk.Entry(1).qStmt.specNb);  // QSYS Compile
+  endmon;
 
-      /end-free
-     P                 e
+end-proc;
 
 
-     PtestGoodByeIsNotHello...
-     P                 b                   export
-     D                 pi
+dcl-proc testHelloEqualsHello export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-     D excpWasSeen     s               n
-     D assertFailEvt   ds                  likeds(AssertFailEvt_t)
+  // Execution.
 
-      /free
+  aEqual( 'Hello' : 'Hello' );
 
-        // Execution.
+  // Control.
 
-        monitor;
-          aEqual( 'Hello' : 'Good bye' );
-          excpWasSeen = *off;
+  // No exception message => OK.
 
-        on-error;
-          excpWasSeen = *on;
-        endmon;
+  aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
 
-        // Controls.
+end-proc;
 
-        assertFailEvt = getAssertFailEvt();
 
-        assert( excpWasSeen :
-                'aEqual( Hello : Good bye )'
-              + ' should have raised an error message.' );
+dcl-proc testGoodByeIsNotHello export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        aEqual( 'Expected ''Hello'', but was ''Good bye''.' :
-                assertFailEvt.msg );
+  dcl-s excpWasSeen ind;
+  dcl-ds assertFailEvt likeds(AssertFailEvt_t);
 
-        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).qStmt.qPgm.nm );
-        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).qStmt.qMod.nm );
-        aEqual( 'testGoodByeIsNotHello' :
-                               assertFailEvt.callStk.Entry(1).qStmt.procNm );
 
-        monitor;
-           aEqual( '215'     : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
-        on-error;
-           aEqual( '21500'   : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
-        endmon;
+  // Execution.
 
-      /end-free
-     P                 e
+  monitor;
+    aEqual('Hello': 'Good bye'); // statement in error
+    excpWasSeen = *off;
+  on-error;
+    excpWasSeen = *on;
+  endmon;
 
+  // Controls.
 
-     PtestAssertCount...
-     P                 b                   export
-     D                 pi
+  assertFailEvt = getAssertFailEvt();
 
-     D assertCallCntAtBeg...
-     D                 s             10i 0
-     D assertCallCnt   s             10i 0 Dim(4)
-      /free
+  assert(excpWasSeen: 'aEqual( Hello : Good bye ) should have raised an error message.');
 
-        // Setup.
+  aEqual('Expected ''Hello'', but was ''Good bye''.': assertFailEvt.msg);
+  aEqual('ASSERTT': assertFailEvt.callStk.Entry(1).qStmt.qPgm.nm);
+  aEqual('ASSERTT': assertFailEvt.callStk.Entry(1).qStmt.qMod.nm);
+  aEqual('testGoodByeIsNotHello': assertFailEvt.callStk.Entry(1).qStmt.procNm);
 
-        assertCallCntAtBeg = getAssertCalled();
+  monitor;
+    aEqual('150'  : assertFailEvt.callStk.Entry(1).qStmt.specNb); // IFS Compile
+  on-error;
+    aEqual('15000': assertFailEvt.callStk.Entry(1).qStmt.specNb); // QSYS Compile
+  endmon;
 
-        // Execution.
+end-proc;
 
-        assert( *on: *blank );
-        assertCallCnt(1) = getAssertCalled();
 
-        iEqual( 4: 2+2 );
-        assertCallCnt(2) = getAssertCalled();
+dcl-proc testAssertCount export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        aEqual( 'Hello': 'Hello' );
-        assertCallCnt(3) = getAssertCalled();
+  dcl-s assertCallCntAtBeg int(10);
+  dcl-s assertCallCnt int(10) Dim(4);
 
-        callp(e) assert( *off : *blank );
-        assertCallCnt(4) = getAssertCalled();
+  // Setup.
 
-        // Controls.
+  assertCallCntAtBeg = getAssertCalled();
 
-        iEqual( assertCallCntAtBeg + 1 : assertCallCnt(1) );
-        iEqual( assertCallCntAtBeg + 2 : assertCallCnt(2) );
-        iEqual( assertCallCntAtBeg + 3 : assertCallCnt(3) );
-        iEqual( assertCallCntAtBeg + 4 : assertCallCnt(4) );
+  // Execution.
 
-      /end-free
-     P                 e
+  assert( *on: *blank );
+  assertCallCnt(1) = getAssertCalled();
 
+  iEqual( 4: 2+2 );
+  assertCallCnt(2) = getAssertCalled();
 
-     PtestAssertWithSuccess...
-     P                 b                   export
-     DtestAssertWithSuccess...
-     D                 pi
-      /free
+  aEqual( 'Hello': 'Hello' );
+  assertCallCnt(3) = getAssertCalled();
 
-        // Execution.
+  callp(e) assert( *off : *blank );
+  assertCallCnt(4) = getAssertCalled();
 
-        assert( *on : 'Should not raise an error' );
+  // Controls.
 
-        // Controls.
+  iEqual(assertCallCntAtBeg + 1: assertCallCnt(1));
+  iEqual(assertCallCntAtBeg + 2: assertCallCnt(2));
+  iEqual(assertCallCntAtBeg + 3: assertCallCnt(3));
+  iEqual(assertCallCntAtBeg + 4: assertCallCnt(4));
 
-        // No exception message => OK.
+end-proc;
 
-        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
 
-      /end-free
-     P                 e
+dcl-proc testAssertWithSuccess export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
+  // Execution.
 
-     PtestAssertWithFailure...
-     P                 b                   export
-     D                 pi
+  assert( *on : 'Should not raise an error' );
 
-     D assertFailEvt   ds                  likeds(AssertFailEvt_t)
+  // Controls.
 
-      /free
+  // No exception message => OK.
 
-        // Execution.
+  aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
 
-        monitor;
-          assert( *off : 'Failure message.' );
-          fail( 'assert( *off : ...) should have raised an error.' );
+end-proc;
 
-        on-error;
-          // Success. Failure exception was seen.
-        endmon;
 
-        // Controls.
+dcl-proc testAssertWithFailure export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        assertFailEvt = getAssertFailEvt();
+  dcl-ds assertFailEvt likeds(AssertFailEvt_t);
 
-        aEqual( 'Failure message.' : assertFailEvt.msg );
 
-        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).qStmt.qPgm.nm );
-        aEqual( 'ASSERTT'    : assertFailEvt.callStk.Entry(1).qStmt.qMod.nm );
-        aEqual( 'testAssertWithFailure'
-                             : assertFailEvt.callStk.Entry(1).qStmt.procNm );
+  // Execution.
 
-        monitor;
-           aEqual( '317'     : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // IFS Compile
-        on-error;
-           aEqual( '31700'   : assertFailEvt.callStk.Entry(1).qStmt.specNb );  // QSYS Compile
-        endmon;
+  monitor;
+    assert(*off: 'Failure message.'); // statement in error
+    fail('assert( *off : ...) should have raised an error.');
+  on-error;
+     // Success. Failure exception was seen.
+  endmon;
 
-      /end-free
-     P                 e
+  // Controls.
 
+  assertFailEvt = getAssertFailEvt();
 
-     PtestBigIntegerEquality...
-     P                 b                   export
-     D                 pi
-      /free
+  aEqual('Failure message.': assertFailEvt.msg);
 
-             // 0000000001111111111222222222233
-             // 1234567890123456789012345678901
-        iEqual( 9999999999999999999999999999999 :
-                9999999999999999999999999999999 );
+  aEqual('ASSERTT': assertFailEvt.callStk.Entry(1).qStmt.qPgm.nm);
+  aEqual('ASSERTT': assertFailEvt.callStk.Entry(1).qStmt.qMod.nm);
+  aEqual('testAssertWithFailure': assertFailEvt.callStk.Entry(1).qStmt.procNm);
 
-        // Control.
+  monitor;
+    aEqual('238'  : assertFailEvt.callStk.Entry(1).qStmt.specNb); // IFS Compile
+  on-error;
+    aEqual('23800': assertFailEvt.callStk.Entry(1).qStmt.specNb); // QSYS Compile
+  endmon;
 
-        // No exception message => OK.
+end-proc;
 
-        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
 
-      /end-free
-     P                 e
+dcl-proc testBigIntegerEquality export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
+  // 0000000001111111111222222222233
+  // 1234567890123456789012345678901
+  iEqual( 9999999999999999999999999999999 :
+          9999999999999999999999999999999 );
 
-     P testAssertClear...
-     P                 b                   export
-     D                 pi
+  // Control.
 
-     D assertCallCnt   s             10i 0
-      /free
+  // No exception message => OK.
 
-        // Setup.
+  aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
 
-        assertCallCnt = getAssertCalled();
+end-proc;
 
-        // Execution.
 
-        assert( *on: *blank );
-        iEqual( 4: 2+2 );
-        aEqual( 'Hello': 'Hello' );
-        callp(e) assert( *off : *blank );
+dcl-proc testAssertClear export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        // Controls.
+  dcl-s assertCallCnt int(10);
 
-        iEqual( assertCallCnt + 4 : getAssertCalled() );
-        clearAssertCounter();
-        iEqual( 0 : getAssertCalled() );
+  // Setup.
 
-      /end-free
-     P                 e
+  assertCallCnt = getAssertCalled();
 
+  // Execution.
 
-     P testGetAssertFailEvt...
-     P                 b                   export
-     D                 pi
+  assert(*on: *blank);
+  iEqual(4: 2+2);
+  aEqual('Hello': 'Hello');
+  callp(e) assert(*off: *blank);
 
-     D assertFailEvt   ds                  likeds(assertFailEvt_t)
-     D assertFailEvtLong...
-     D                 ds                  likeds(assertFailEvtLong_t)
+  // Controls.
 
-     D url1            s            200a   varying
-     D url2            s            200a   varying
-     D expectedMsg     s            500a   varying
-      /free
+  iEqual(assertCallCnt + 4: getAssertCalled());
+  clearAssertCounter();
+  iEqual(0: getAssertCalled());
 
-        // Setup.
+end-proc;
 
-         url1 = 'https://portal.azure.com/#resource/subscriptions/07ac1a17-d+
-                 004-4d62-8d1b-0e2ec9809770/resourceGroups/RG-VM-AXDEVTR01/p+
-                 roviders/Microsoft.Compute/virtualMachines/VM-AXDEVTR01/ove+
-                 rview';
 
-         url2 = 'https://foobaa.portal.azure.com/#resource/subscriptions/07a+
-                 c1a17-d004-4d62-8d1b-0e2ec9809770/resourceGroups/RG-VM-AXDE+
-                 VTR01/providers/Microsoft.Compute/virtualMachines/VM-AXDEVT+
-                 rview/joe.street';
+dcl-proc testGetAssertFailEvt export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-         expectedMsg =
-                'URL: Expected ''https://portal.azure.com/#resource/subscrip+
-                 tions/07ac1a17-d004-4d62-8d1b-0e2ec9809770/resourceGroups/R+
-                 G-VM-AXDEVTR01/providers/Microsoft.Compute/virtualMachines/+
-                 VM-AXDEVTR01/overview'', but was ''https://foobaa.portal.az+
-                 ure.com/#resource/subscriptions/07ac1a17-d004-4d62-8d1b-0e2+
-                 ec9809770/resourceGroups/RG-VM-AXDEVTR01/providers/Microsof+
-                 t.Compute/virtualMachines/VM-AXDEVTrview/joe.street''.';
+  dcl-ds assertFailEvt likeds(assertFailEvt_t);
+  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t);
 
-        // Execution.
+  dcl-s url1 varchar(200);
+  dcl-s url2 varchar(200);
+  dcl-s expectedMsg varchar(500);
 
-        monitor;
-           aEqual(url1: url2:  'URL');
-           fail('Should have thrown an error');
-        on-error;
-        endmon;
+  // Setup.
 
-        // Controls.
+  url1 = 'https://portal.azure.com/#resource/subscriptions/07ac1a17-d+
+          004-4d62-8d1b-0e2ec9809770/resourceGroups/RG-VM-AXDEVTR01/p+
+          roviders/Microsoft.Compute/virtualMachines/VM-AXDEVTR01/ove+
+          rview';
 
-        assertFailEvt = getAssertFailEvt();
-        assertFailEvtLong = getAssertFailEvtLong();
+  url2 = 'https://foobaa.portal.azure.com/#resource/subscriptions/07a+
+          c1a17-d004-4d62-8d1b-0e2ec9809770/resourceGroups/RG-VM-AXDE+
+          VTR01/providers/Microsoft.Compute/virtualMachines/VM-AXDEVT+
+          rview/joe.street';
 
-        assert(assertFailEvtLong.msg = expectedMsg
-               : 'Message does not match the expected value');
-        assert(assertFailEvt.msg =
-               %subst(assertFailEvtLong.msg : 1: %len(assertFailEvt.msg))
-               : 'Message texts must match');
+  expectedMsg =
+         'URL: Expected ''https://portal.azure.com/#resource/subscrip+
+          tions/07ac1a17-d004-4d62-8d1b-0e2ec9809770/resourceGroups/R+
+          G-VM-AXDEVTR01/providers/Microsoft.Compute/virtualMachines/+
+          VM-AXDEVTR01/overview'', but was ''https://foobaa.portal.az+
+          ure.com/#resource/subscriptions/07ac1a17-d004-4d62-8d1b-0e2+
+          ec9809770/resourceGroups/RG-VM-AXDEVTR01/providers/Microsof+
+          t.Compute/virtualMachines/VM-AXDEVTrview/joe.street''.';
 
-      /end-free
-     P                 e
+  // Execution.
 
+  monitor;
+    aEqual(url1: url2: 'URL');
+    fail('Should have thrown an error');
+  on-error;
+  endmon;
 
-      //----------------------------------------------------------------------
-      //   Procedure that simulates the test case executor procedure
-      //   of module CMDRUNSRV. It must receive the message sent by fail().
-      //----------------------------------------------------------------------
+  // Controls.
 
-     P CMDRUNSRV_runProc...
-     P                 b
-     D                 pi              n
-      /free
+  assertFailEvt = getAssertFailEvt();
+  assertFailEvtLong = getAssertFailEvtLong();
 
-          monitor;
-            if (failInsideMonitorBlock());
-              return *off; // Let the caller report the error.
-            endif;
-          on-error;
-            // Success, exception seen.
-            return *on;
-          endmon;
+  assert(assertFailEvtLong.msg = expectedMsg: 'Message does not match the expected value');
+  assert(assertFailEvt.msg = %subst(assertFailEvtLong.msg : 1: %len(assertFailEvt.msg))
+         : 'Message texts must match');
 
-      /end-free
-     P                 e
+end-proc;
 
 
-     P failInsideMonitorBlock...
-     P                 b
-     D                 pi              n
-      /free
+//----------------------------------------------------------------------
+//   Procedure that simulates the test case executor procedure
+//   of module CMDRUNSRV. It must receive the message sent by fail().
+//----------------------------------------------------------------------
 
-          monitor;
-            fail( FAILURE_MESSAGE );
-            return *off;
-          on-error;
-            return *on; // Bad. Message was captured.
-          endmon;
+dcl-proc CMDRUNSRV_runProc;
+  dcl-pi *n ind extproc(*dclcase);
+  end-pi;
 
-      /end-free
-     P                 e
+  monitor;
+    if (failInsideMonitorBlock());
+      return *off; // Let the caller report the error.
+    endif;
+  on-error;
+    // Success, exception seen.
+    return *on;
+  endmon;
 
+end-proc;
 
-     PtestAssertEqual_string...
-     P                 b                   export
-     D                 pi
 
-     D assertFailEvtLong...
-     D                 ds                  likeds(assertFailEvtLong_t)
-      /free
+dcl-proc failInsideMonitorBlock;
+  dcl-pi *n ind extproc(*dclcase);
+  end-pi;
 
-        // Test 1-char string
-        assertEqual( '1' :
-                     '1' );
-        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+  monitor;
+    fail(FAILURE_MESSAGE);
+    return *off;
+  on-error;
+    return *on; // Bad. Message was captured.
+  endmon;
 
-        assertEqual( 'e' :
-                     'e' );
-        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+end-proc;
 
-        monitor;
-          assertEqual( 'e' :
-                       'u' );
-          fail('Expected the asssertion to fail.');
-        on-error;
-          assertFailEvtLong = getAssertFailEvtLong();
-          assert(assertFailEvtLong.msg =
-                 'Expected ''e'', but was ''u''.'
-                 : 'Error messages does not match expected value.');
-        endmon;
 
-        // Test equality
-        assertEqual( 'expected' :
-                     'expected' );
-        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+dcl-proc testAssertEqual_string export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        // Test unequality without assertion message
-        monitor;
-          assertEqual( 'expected' :
-                       'unexpected value' );
-          fail('Expected the asssertion to fail.');
-        on-error;
-          assertFailEvtLong = getAssertFailEvtLong();
-          assert(assertFailEvtLong.msg =
-                 'Expected ''expected'', but was ''unexpected value''.'
-                 : 'Error messages does not match expected value.');
-        endmon;
+  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t);
 
-        // Test unequality with assertion message
-        monitor;
-          assertEqual( 'expected' :
-                       'unexpected value' :
-                       'String values do not match');
-          fail('Expected the asssertion to fail.');
-        on-error;
-          assertFailEvtLong = getAssertFailEvtLong();
-          assert(assertFailEvtLong.msg =
-                 'String values do not match'
-                 : 'Error messages does not match expected value.');
-        endmon;
+  // Test 1-char string
+  assertEqual('1': '1');
+  aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
 
-      /end-free
-     P                 e
+  assertEqual('e': 'e');
+  aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
 
+  monitor;
+    assertEqual('e': 'u');
+    fail('Expected the asssertion to fail.');
+  on-error;
+    assertFailEvtLong = getAssertFailEvtLong();
+    assert(assertFailEvtLong.msg = 'Expected ''e'', but was ''u''.'
+           : 'Error messages does not match expected value.');
+  endmon;
 
-     PtestAssertEqual_integer...
-     P                 b                   export
-     D                 pi
+  // Test equality
+  assertEqual('expected': 'expected');
+  aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
 
-     D assertFailEvtLong...
-     D                 ds                  likeds(assertFailEvtLong_t)
-      /free
+  // Test unequality without assertion message
+  monitor;
+    assertEqual('expected': 'unexpected value');
+    fail('Expected the asssertion to fail.');
+  on-error;
+    assertFailEvtLong = getAssertFailEvtLong();
+    assert(assertFailEvtLong.msg = 'Expected ''expected'', but was ''unexpected value''.'
+           : 'Error messages does not match expected value.');
+  endmon;
 
-        // Test equality
-        assertEqual( 9223372036854775807 :
-                     9223372036854775807 );
-        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+  // Test unequality with assertion message
+  monitor;
+    assertEqual('expected': 'unexpected value': 'String values do not match');
+    fail('Expected the asssertion to fail.');
+  on-error;
+    assertFailEvtLong = getAssertFailEvtLong();
+    assert(assertFailEvtLong.msg = 'String values do not match'
+           : 'Error messages does not match expected value.');
+  endmon;
 
-        // Test unequality without assertion message
-        monitor;
-          assertEqual( -9223372036854775807 :
-                       -123 );
-          fail('Expected the asssertion to fail.');
-        on-error;
-          assertFailEvtLong = getAssertFailEvtLong();
-          assert(assertFailEvtLong.msg =
-                 'Expected ''-9223372036854775807'', but was ''-123''.'
-                 : 'Error messages does not match expected value.');
-        endmon;
+end-proc;
 
-        // Test unequality with assertion message
-        monitor;
-          assertEqual( 9223372036854775807 :
-                       123 :
-                       'Integer values do not match');
-          fail('Expected the asssertion to fail.');
-        on-error;
-          assertFailEvtLong = getAssertFailEvtLong();
-          assert(assertFailEvtLong.msg =
-                 'Integer values do not match'
-                 : 'Error messages does not match expected value.');
-        endmon;
 
-      /end-free
-     P                 e
+dcl-proc testAssertEqual_integer export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
+  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t);
 
-     PtestAssertEqual_numeric...
-     P                 b                   export
-     D                 pi
+  // Test equality
+  assertEqual(9223372036854775807: 9223372036854775807);
+  aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
 
-     D assertFailEvtLong...
-     D                 ds                  likeds(assertFailEvtLong_t)
+  // Test unequality without assertion message
+  monitor;
+    assertEqual(-9223372036854775807: -123);
+    fail('Expected the asssertion to fail.');
+  on-error;
+    assertFailEvtLong = getAssertFailEvtLong();
+    assert(assertFailEvtLong.msg = 'Expected ''-9223372036854775807'', but was ''-123''.'
+           : 'Error messages does not match expected value.');
+  endmon;
 
-     D actualExact     s             63p20 inz(*hival)
-     D expectedExact   s             63p20 inz(*hival)
+  // Test unequality with assertion message
+  monitor;
+    assertEqual(9223372036854775807: 123: 'Integer values do not match');
+    fail('Expected the asssertion to fail.');
+  on-error;
+    assertFailEvtLong = getAssertFailEvtLong();
+    assert(assertFailEvtLong.msg = 'Integer values do not match'
+           : 'Error messages does not match expected value.');
+  endmon;
 
-     D actualLess      s             15p 5 inz(*hival)
-     D expectedLess    s             15p 5 inz(*hival)
+end-proc;
 
-     D actualLike      s                   like(assertNumeric_t) inz(*hival)
-     D expectedLike    s                   like(assertNumeric_t) inz(*hival)
 
-     D actualShort     s              3i 0 inz(*hival)
-     D expectedShort   s              3i 0 inz(*hival)
+dcl-proc testAssertEqual_numeric export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-     D actualInt       s              5i 0 inz(*hival)
-     D expectedInt     s              5i 0 inz(*hival)
+  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t);
 
-     D actualLong      s             20i 0 inz(*hival)
-     D expectedLong    s             20i 0 inz(*hival)
+  dcl-s actualExact     packed(63:20) inz(*hival);
+  dcl-s expectedExact   packed(63:20) inz(*hival);
 
-     D actualZoned     s             20s 0 inz(*hival)
-     D expectedZoned   s             20s 0 inz(*hival)
+  dcl-s actualLess      packed(15:5) inz(*hival);
+  dcl-s expectedLess    packed(15:5) inz(*hival);
 
-     D actualSingle    s              4f   inz(*hival)
-     D expectedSingle  s              4f   inz(*hival)
+  dcl-s actualLike      like(assertNumeric_t) inz(*hival);
+  dcl-s expectedLike    like(assertNumeric_t) inz(*hival);
 
-     D actualDouble    s              8f   inz(*hival)
-     D expectedDouble  s              8f   inz(*hival)
-      /free
+  dcl-s actualShort     int(3) inz(*hival);
+  dcl-s expectedShort   int(3) inz(*hival);
 
-        // Test compiler
-        assertEqual( actualExact : expectedExact );
-        assertEqual( actualLess : expectedLess );
-        assertEqual( expectedLike: actualLike );
-        assertEqual( expectedInt : actualInt );
-        assertEqual( expectedShort : actualShort );
-        assertEqual( expectedLong : actualLong );
-        assertEqual( expectedZoned : actualZoned );
+  dcl-s actualInt       int(5) inz(*hival);
+  dcl-s expectedInt     int(5) inz(*hival);
 
-        assertEqual( expectedSingle : actualSingle );
-        assertEqual( expectedDouble : actualDouble );
+  dcl-s actualLong      int(20) inz(*hival);
+  dcl-s expectedLong    int(20) inz(*hival);
 
-        // The following assertEqual() statement produces the following compiler error
-        // message, if 'actualDecLoss' or 'expectedDecLoss' are defined with too many
-        // positions or decimal positions, e.g.:
-        //   63s15    too many positions before the comma
-        //   63s25    too many positions after the comma
-        //   "RNF3245: No prototype in the OVERLOAD keyword of ASSERTEQUAL matches the call."
-        // See test case: ACPTSTT.testOptionsExact() and TESTPGM20
-        //
-        // assertEqual( expectedDecLoss : actualDecLoss );
+  dcl-s actualZoned     zoned(20) inz(*hival);
+  dcl-s expectedZoned   zoned(20) inz(*hival);
 
-        // Test equality
-        assertEqual( 1234567890,1234 :
-                     1234567890,1234 );
-        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+  dcl-s actualSingle    float(4) inz(*hival);
+  dcl-s expectedSingle  float(4) inz(*hival);
 
-        // Test unequality without assertion message
-        monitor;
-          assertEqual( -1234567890,123 :
-                       -1234567890,122 );
-          fail('Expected the asssertion to fail.');
-        on-error;
-          assertFailEvtLong = getAssertFailEvtLong();
-          assert(assertFailEvtLong.msg =
-                 'Expected ''-1234567890,123'', but was ''-1234567890,122''.'
-                 : 'Error messages does not match expected value.');
-        endmon;
+  dcl-s actualDouble    float(8) inz(*hival);
+  dcl-s expectedDouble  float(8) inz(*hival);
 
-        // Test unequality with assertion message
-        monitor;
-          assertEqual( 1234567890,1234 :
-                       1234567890,1233 :
-                       'Numeric values do not match');
-          fail('Expected the asssertion to fail.');
-        on-error;
-          assertFailEvtLong = getAssertFailEvtLong();
-          assert(assertFailEvtLong.msg =
-                 'Numeric values do not match'
-                 : 'Error messages does not match expected value.');
-        endmon;
+  // Test compiler
+  assertEqual(actualExact: expectedExact);
+  assertEqual(actualLess: expectedLess);
+  assertEqual(expectedLike: actualLike);
+  assertEqual(expectedInt: actualInt);
+  assertEqual(expectedShort: actualShort);
+  assertEqual(expectedLong: actualLong);
+  assertEqual(expectedZoned: actualZoned);
 
-      /end-free
-     P                 e
+  assertEqual(expectedSingle: actualSingle);
+  assertEqual(expectedDouble: actualDouble);
 
+  // The following assertEqual() statement produces the following compiler error
+  // message, if 'actualDecLoss' or 'expectedDecLoss' are defined with too many
+  // positions or decimal positions, e.g.:
+  //   63s15    too many positions before the comma
+  //   63s25    too many positions after the comma
+  //   "RNF3245: No prototype in the OVERLOAD keyword of ASSERTEQUAL matches the call."
+  // See test case: ACPTSTT.testOptionsExact() and TESTPGM20
+  //
+  // assertEqual( expectedDecLoss : actualDecLoss );
 
-     PtestAssertThat...
-     P                 b                   export
-     D                 pi
+  // Test equality
+  assertEqual(1234567890,1234: 1234567890,1234);
+  aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
 
-     D expected        s            128a   varying
-     D actual          s            128a   varying
+  // Test unequality without assertion message
+  monitor;
+    assertEqual(-1234567890,123: -1234567890,122);
+    fail('Expected the asssertion to fail.');
+  on-error;
+    assertFailEvtLong = getAssertFailEvtLong();
+    assert(assertFailEvtLong.msg = 'Expected ''-1234567890,123'', but was ''-1234567890,122''.'
+           : 'Error messages does not match expected value.');
+  endmon;
 
-     D assertFailEvtLong...
-     D                 ds                  likeds(assertFailEvtLong_t)
-      /free
+  // Test unequality with assertion message
+  monitor;
+    assertEqual(1234567890,1234: 1234567890,1233: 'Numeric values do not match');
+    fail('Expected the asssertion to fail.');
+  on-error;
+    assertFailEvtLong = getAssertFailEvtLong();
+    assert(assertFailEvtLong.msg = 'Numeric values do not match'
+           : 'Error messages does not match expected value.');
+  endmon;
 
-        // Test equality
-        expected = 'Donald Duck';
-        actual = expected;
-        assertThat( %addr(expected) :
-                    %addr(actual) :
-                    %paddr(assertThatMatcherWithMsg));
-        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+end-proc;
 
-        // Test unequality without assertion message but
-        // with a message returned by the matcher
-        monitor;
-          expected = 'Donald Duck';
-          actual = 'Dagobert Duck';
-          assertThat( %addr(expected) :
-                      %addr(actual) :
-                      %paddr(assertThatMatcherWithMsg));
-          fail('Expected the asssertion to fail.');
-        on-error;
-          assertFailEvtLong = getAssertFailEvtLong();
-          assert(assertFailEvtLong.msg =
-                 'Matcher: Actual values does not match expected value.'
-                 : 'Error messages does not match message from matcher.');
-        endmon;
-
-        // Test unequality without any assertion message
-        monitor;
-          expected = 'Donald Duck';
-          actual = 'Dagobert Duck';
-          assertThat( %addr(expected) :
-                      %addr(actual) :
-                      %paddr(assertThatMatcherWithoutMsg));
-          fail('Expected the asssertion to fail.');
-        on-error;
-          assertFailEvtLong = getAssertFailEvtLong();
-          assert(assertFailEvtLong.msg =
-                 '*N');
-        endmon;
-
-        // Test unequality with error message
-        monitor;
-          expected = 'Donald Duck';
-          actual = 'Dagobert Duck';
-          assertThat( %addr(expected) :
-                      %addr(actual) :
-                      %paddr(assertThatMatcherWithoutMsg) :
-                      'Matcher did not accept actual value.');
-          fail('Expected the asssertion to fail.');
-        on-error;
-          assertFailEvtLong = getAssertFailEvtLong();
-          assert(assertFailEvtLong.msg =
-                 'Matcher did not accept actual value.');
-        endmon;
-
-      /end-free
-     P                 e
-
-     PtestAssertEqual_date...
-     P                 b                   export
-     D                 pi
-
-     D assertFailEvtLong...
-     D                 ds                  likeds(assertFailEvtLong_t)
-      /free
-
-        // Test equality
-        assertEqual( D'2024-09-16' : D'2024-09-16' );
-        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
-
-        // Test unequality without assertion message
-        monitor;
-          assertEqual( D'2024-09-16' : D'2002-01-02' );
-          fail('Expected the asssertion to fail.');
-        on-error;
-          assertFailEvtLong = getAssertFailEvtLong();
-          assert(assertFailEvtLong.msg =
-                 'Expected ''2024-09-16'', but was ''2002-01-02''.'
-                 : 'Error messages does not match expected value.');
-        endmon;
-
-        // Test unequality with assertion message
-        monitor;
-          assertEqual( D'2024-09-16' :
-                       D'2002-01-02' :
-                       'Date values do not match');
-          fail('Expected the asssertion to fail.');
-        on-error;
-          assertFailEvtLong = getAssertFailEvtLong();
-          assert(assertFailEvtLong.msg =
-                 'Date values do not match'
-                 : 'Error messages does not match expected value.');
-        endmon;
-
-      /end-free
-     P                 e
-
-     PtestAssertEqual_time...
-     P                 b                   export
-     D                 pi
-
-     D assertFailEvtLong...
-     D                 ds                  likeds(assertFailEvtLong_t)
-      /free
-
-        // Test equality
-        assertEqual( T'11.22.33' : T'11.22.33' );
-        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
-
-        // Test unequality without assertion message
-        monitor;
-          assertEqual( T'11.22.33' : T'22.33.44' );
-          fail('Expected the asssertion to fail.');
-        on-error;
-          assertFailEvtLong = getAssertFailEvtLong();
-          assert(assertFailEvtLong.msg =
-                 'Expected ''11.22.33'', but was ''22.33.44''.'
-                 : 'Error messages does not match expected value.');
-        endmon;
-
-        // Test unequality with assertion message
-        monitor;
-          assertEqual( T'11.22.33' :
-                       T'22.33.44' :
-                       'Time values do not match');
-          fail('Expected the asssertion to fail.');
-        on-error;
-          assertFailEvtLong = getAssertFailEvtLong();
-          assert(assertFailEvtLong.msg =
-                 'Time values do not match'
-                 : 'Error messages does not match expected value.');
-        endmon;
-
-      /end-free
-     P                 e
-
-     PtestAssertEqual_timestamp...
-     P                 b                   export
-     D                 pi
-
-     D assertFailEvtLong...
-     D                 ds                  likeds(assertFailEvtLong_t)
-      /free
-
-        // Test equality
-        assertEqual( Z'2024-09-16-11.22.33.123456789012' :
-                     Z'2024-09-16-11.22.33.123456789012' );
-        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
-
-        // Test unequality without assertion message
-        monitor;
-          assertEqual( Z'2024-09-16-11.22.33.123456789012' :
-                       Z'2023-01-16-22.33.44.654321789012' );
-          fail('Expected the asssertion to fail.');
-        on-error;
-          assertFailEvtLong = getAssertFailEvtLong();
-          assert(assertFailEvtLong.msg =
-                 'Expected ''2024-09-16-11.22.33.123456789012'', but was ' +
-                 '''2023-01-16-22.33.44.654321789012''.'
-                 : 'Error messages does not match expected value.');
-        endmon;
-
-        // Test unequality with assertion message
-        monitor;
-          assertEqual( Z'2024-09-16-11.22.33.123456789012' :
-                       Z'2023-01-16-22.33.44.654321789012' :
-                       'Timestamp values do not match');
-          fail('Expected the asssertion to fail.');
-        on-error;
-          assertFailEvtLong = getAssertFailEvtLong();
-          assert(assertFailEvtLong.msg =
-                 'Timestamp values do not match'
-                 : 'Error messages does not match expected value.');
-        endmon;
-
-      /end-free
-     P                 e
-
-     PtestAssertEqual_ind...
-     P                 b                   export
-     D                 pi
-
-     D assertFailEvtLong...
-     D                 ds                  likeds(assertFailEvtLong_t)
-     D ind1            s               n   inz(*on)
-     D ind2            s               n   inz(*on)
-      /free
-
-        // Test indicator figurative constant.
-        monitor;
-        assertEqual( *on :
-                     *off );
-          fail('Expected the asssertion to fail.');
-        on-error;
-          // Does not yet work. Opened IBM support case:
-          assertFailEvtLong = getAssertFailEvtLong();
-          assert(assertFailEvtLong.msg =
-                 'Expected ''1'', but was ' +
-                 '''0''.'
-                 : 'Error messages does not match expected value.');
-        endmon;
-
-        // Test equality
-        ind2 = *on;
-        ind2 = *on;
-        assertEqual( ind1 :
-                     ind2 );
-        aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
-
-        // Test unequality without assertion message
-        monitor;
-          ind2 = *on;
-          ind2 = *off;
-          assertEqual( ind1 :
-                       ind2 );
-          fail('Expected the asssertion to fail.');
-        on-error;
-          assertFailEvtLong = getAssertFailEvtLong();
-          assert(assertFailEvtLong.msg =
-                 'Expected ''1'', but was ' +
-                 '''0''.'
-                 : 'Error messages does not match expected value.');
-        endmon;
-
-        // Test unequality with assertion message
-        monitor;
-          ind2 = *on;
-          ind2 = *off;
-          assertEqual( ind1 :
-                       ind2 :
-                       'Indicator values do not match');
-          fail('Expected the asssertion to fail.');
-        on-error;
-          assertFailEvtLong = getAssertFailEvtLong();
-          assert(assertFailEvtLong.msg =
-                 'Indicator values do not match'
-                 : 'Error messages does not match expected value.');
-        endmon;
-
-      /end-free
-     P                 e
-
-     P assertThatMatcherWithMsg...
-     P                 b                   export
-     D                 pi              n
-     D  pExpected                      *   const
-     D  pActual                        *   const
-     D  message                            like(msgText_t)
-
-     D expected        s            128a   varying based(pExpected)
-     D actual          s            128a   varying based(pActual)
-      /free
-
-        if (expected = actual);
-          message = '';
-          return *on;
-        else;
-          message = 'Matcher: Actual values does not match expected value.';
-          return *off;
-        endif;
-
-      /end-free
-     P                 e
-
-
-     P assertThatMatcherWithoutMsg...
-     P                 b                   export
-     D                 pi              n
-     D  pExpected                      *   const
-     D  pActual                        *   const
-
-     D expected        s            128a   varying based(pExpected)
-     D actual          s            128a   varying based(pActual)
-      /free
-
-        if (expected = actual);
-          return *on;
-        else;
-          return *off;
-        endif;
-
-      /end-free
-     P                 e
+
+dcl-proc testAssertThat export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-s expected varchar(128);
+  dcl-s actual   varchar(128);
+
+  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t);
+
+  // Test equality
+  expected = 'Donald Duck';
+  actual = expected;
+  assertThat(%addr(expected): %addr(actual): %paddr(assertThatMatcherWithMsg));
+  aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
+
+  // Test unequality without assertion message but
+  // with a message returned by the matcher
+  monitor;
+    expected = 'Donald Duck';
+    actual = 'Dagobert Duck';
+    assertThat(%addr(expected): %addr(actual): %paddr(assertThatMatcherWithMsg));
+    fail('Expected the asssertion to fail.');
+  on-error;
+    assertFailEvtLong = getAssertFailEvtLong();
+    assert(assertFailEvtLong.msg = 'Matcher: Actual values does not match expected value.'
+           : 'Error messages does not match message from matcher.');
+  endmon;
+
+  // Test unequality without any assertion message
+  monitor;
+    expected = 'Donald Duck';
+    actual = 'Dagobert Duck';
+    assertThat(%addr(expected): %addr(actual): %paddr(assertThatMatcherWithoutMsg));
+    fail('Expected the asssertion to fail.');
+  on-error;
+    assertFailEvtLong = getAssertFailEvtLong();
+    assert(assertFailEvtLong.msg = '*N');
+  endmon;
+
+  // Test unequality with error message
+  monitor;
+    expected = 'Donald Duck';
+    actual = 'Dagobert Duck';
+    assertThat(%addr(expected): %addr(actual): %paddr(assertThatMatcherWithoutMsg):
+               'Matcher did not accept actual value.');
+    fail('Expected the asssertion to fail.');
+  on-error;
+    assertFailEvtLong = getAssertFailEvtLong();
+    assert(assertFailEvtLong.msg = 'Matcher did not accept actual value.');
+  endmon;
+
+end-proc;
+
+dcl-proc testAssertEqual_date export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t);
+
+  // Test equality
+  assertEqual(D'2024-09-16': D'2024-09-16');
+  aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
+
+  // Test unequality without assertion message
+  monitor;
+    assertEqual(D'2024-09-16' : D'2002-01-02');
+    fail('Expected the asssertion to fail.');
+  on-error;
+    assertFailEvtLong = getAssertFailEvtLong();
+    assert(assertFailEvtLong.msg = 'Expected ''2024-09-16'', but was ''2002-01-02''.'
+           : 'Error messages does not match expected value.');
+  endmon;
+
+  // Test unequality with assertion message
+  monitor;
+    assertEqual(D'2024-09-16': D'2002-01-02': 'Date values do not match');
+    fail('Expected the asssertion to fail.');
+  on-error;
+    assertFailEvtLong = getAssertFailEvtLong();
+    assert(assertFailEvtLong.msg = 'Date values do not match'
+           : 'Error messages does not match expected value.');
+  endmon;
+
+end-proc;
+
+dcl-proc testAssertEqual_time export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-ds assertFailEvtLong
+         likeds(assertFailEvtLong_t);
+
+  // Test equality
+  assertEqual( T'11.22.33' : T'11.22.33' );
+  aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+
+  // Test unequality without assertion message
+  monitor;
+    assertEqual(T'11.22.33': T'22.33.44');
+    fail('Expected the asssertion to fail.');
+  on-error;
+    assertFailEvtLong = getAssertFailEvtLong();
+    assert(assertFailEvtLong.msg = 'Expected ''11.22.33'', but was ''22.33.44''.'
+           : 'Error messages does not match expected value.');
+  endmon;
+
+  // Test unequality with assertion message
+  monitor;
+    assertEqual(T'11.22.33': T'22.33.44': 'Time values do not match');
+    fail('Expected the asssertion to fail.');
+  on-error;
+    assertFailEvtLong = getAssertFailEvtLong();
+    assert(assertFailEvtLong.msg = 'Time values do not match'
+           : 'Error messages does not match expected value.');
+  endmon;
+
+end-proc;
+
+dcl-proc testAssertEqual_timestamp export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t);
+
+  // Test equality
+  assertEqual(Z'2024-09-16-11.22.33.123456789012': Z'2024-09-16-11.22.33.123456789012');
+  aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
+
+  // Test unequality without assertion message
+  monitor;
+    assertEqual(Z'2024-09-16-11.22.33.123456789012': Z'2023-01-16-22.33.44.654321789012');
+    fail('Expected the asssertion to fail.');
+  on-error;
+    assertFailEvtLong = getAssertFailEvtLong();
+    assert(assertFailEvtLong.msg =
+           'Expected ''2024-09-16-11.22.33.123456789012'', but was ' +
+           '''2023-01-16-22.33.44.654321789012''.'
+           : 'Error messages does not match expected value.');
+  endmon;
+
+  // Test unequality with assertion message
+  monitor;
+    assertEqual(Z'2024-09-16-11.22.33.123456789012': Z'2023-01-16-22.33.44.654321789012':
+                'Timestamp values do not match');
+    fail('Expected the asssertion to fail.');
+  on-error;
+    assertFailEvtLong = getAssertFailEvtLong();
+    assert(assertFailEvtLong.msg = 'Timestamp values do not match'
+           : 'Error messages does not match expected value.');
+  endmon;
+
+end-proc;
+
+dcl-proc testAssertEqual_ind export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t);
+  dcl-s ind1 ind inz(*on);
+  dcl-s ind2 ind inz(*on);
+
+  // Test indicator figurative constant.
+  monitor;
+    assertEqual(*on: *off);
+    fail('Expected the asssertion to fail.');
+  on-error;
+    // Does not yet work. Opened IBM support case:
+    assertFailEvtLong = getAssertFailEvtLong();
+    assert(assertFailEvtLong.msg = 'Expected ''1'', but was ''0''.'
+           : 'Error messages does not match expected value.');
+  endmon;
+
+  // Test equality
+  ind2 = *on;
+  ind2 = *on;
+  assertEqual(ind1: ind2);
+  aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
+
+  // Test unequality without assertion message
+  monitor;
+    ind2 = *on;
+    ind2 = *off;
+    assertEqual(ind1: ind2);
+    fail('Expected the asssertion to fail.');
+  on-error;
+    assertFailEvtLong = getAssertFailEvtLong();
+    assert(assertFailEvtLong.msg = 'Expected ''1'', but was ''0''.'
+           : 'Error messages does not match expected value.');
+  endmon;
+
+  // Test unequality with assertion message
+  monitor;
+    ind2 = *on;
+    ind2 = *off;
+    assertEqual(ind1: ind2: 'Indicator values do not match');
+    fail('Expected the asssertion to fail.');
+  on-error;
+    assertFailEvtLong = getAssertFailEvtLong();
+    assert(assertFailEvtLong.msg = 'Indicator values do not match'
+           : 'Error messages does not match expected value.');
+  endmon;
+
+end-proc;
+
+dcl-proc assertThatMatcherWithMsg export;
+  dcl-pi *n ind extproc(*dclcase);
+    pExpected   pointer const;
+    pActual     pointer const;
+    message     like(msgText_t);
+  end-pi;
+
+  dcl-s expected varchar(128) based(pExpected);
+  dcl-s actual   varchar(128) based(pActual);
+
+  if (expected = actual);
+    message = '';
+    return *on;
+  else;
+    message = 'Matcher: Actual values does not match expected value.';
+    return *off;
+  endif;
+
+end-proc;
+
+
+dcl-proc assertThatMatcherWithoutMsg export;
+  dcl-pi *n ind extproc(*dclcase);
+    pExpected   pointer const;
+    pActual     pointer const;
+  end-pi;
+
+  dcl-s expected varchar(128) based(pExpected);
+  dcl-s actual   varchar(128) based(pActual);
+
+  if (expected = actual);
+    return *on;
+  else;
+    return *off;
+  endif;
+
+end-proc;
 

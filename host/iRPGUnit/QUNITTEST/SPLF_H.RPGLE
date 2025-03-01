@@ -1,33 +1,38 @@
-      // ==========================================================================
-      //  iRPGUnit - ACPTSTT Unit Test Helper.
-      // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
-      // ==========================================================================
+**FREE
+// ==========================================================================
+//  iRPGUnit - ACPTSTT Unit Test Helper.
+// ==========================================================================
+//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ==========================================================================
 
-     D chkAndCloSplF   pr                  extproc('chkAndCloSplF')
+dcl-pr chkAndCloSplF extproc('chkAndCloSplF');
+end-pr;
 
-     D cloSplf         pr                  extproc('cloSplf')
+dcl-pr cloSplf extproc('cloSplf');
+end-pr;
 
-     D opnSplf         pr                  extproc('opnSplf')
-     D  splfNm                       10a   const
-     D  usrData                      10a   const
+dcl-pr opnSplf extproc('opnSplf');
+  splfNm      char(10) const;
+  usrData     char(10) const;
+end-pr;
 
-     D splfLineStartsWith...
-     D                 pr                  extproc('splfLineStartsWith')
-     D  expString                   256a   const varying
+dcl-pr splfLineStartsWith extproc('splfLineStartsWith');
+  expString   varchar(256) const;
+end-pr;
 
-     D splfContains...
-     D                 pr                  extproc('splfContains')
-     D  expString                   256a   const varying
+dcl-pr splfContains extproc('splfContains');
+  expString   varchar(256) const;
+end-pr;
 
-     D splfSkipLine...
-     D                 pr                  extproc('splfSkipLine')
+dcl-pr splfSkipLine extproc('splfSkipLine');
+end-pr;
 
-     D dltSplfs        pr            10i 0 extproc('dltSplfs')
-     D  splfNm                       10a   const
-     D  usrData                      10a   const
+dcl-pr dltSplfs int(10) extproc('dltSplfs');
+  splfNm      char(10) const;
+  usrData     char(10) const;
+end-pr;
 

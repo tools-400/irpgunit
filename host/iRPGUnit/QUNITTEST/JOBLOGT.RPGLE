@@ -1,150 +1,120 @@
-      // ==========================================================================
-      //  iRPGUnit SelfTest - Test JOBLOG.
-      // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
-      // ==========================================================================
-      // >>PRE-COMPILER<<
-      //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
-      //   >>IMPORTANT<<
-      //     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
-      //   >>END-IMPORTANT<<
-      //   >>EXECUTE<<
-      // >>END-PRE-COMPILER<<
-      // ==========================================================================
+**FREE
+// ==========================================================================
+//  iRPGUnit SelfTest - Test JOBLOG.
+// ==========================================================================
+//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ==========================================================================
+// >>PRE-COMPILER<<
+//   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+//   >>IMPORTANT<<
+//     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
+//   >>END-IMPORTANT<<
+//   >>EXECUTE<<
+// >>END-PRE-COMPILER<<
+// ==========================================================================
 
-     H NoMain Option(*SrcStmt)
+ctl-opt NoMain Option(*SrcStmt);
 
-      //----------------------------------------------------------------------
-      //   Exported Procedures
-      //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Imported Procedures
+//----------------------------------------------------------------------
 
-     D setUp...
-     D                 pr                  extproc('setUp')
-     D testNoMsgInJobLog...
-     D                 pr                  extproc('testNoMsgInJobLog')
-     D testMsgInJobLog...
-     D                 pr                  extproc('testMsgInJobLog')
+/copy qinclude,ASSERT
+/copy qinclude,TESTUTILS
+/copy qinclude,TEMPLATES
 
+//----------------------------------------------------------------------
+//   Global Variables
+//----------------------------------------------------------------------
 
-      //----------------------------------------------------------------------
-      //   Imported Procedures
-      //----------------------------------------------------------------------
+dcl-s testStartTime timestamp;
+dcl-s assertCntBefore int(10);
+dcl-s assertCntAfter int(10);
 
-      /copy qinclude,ASSERT
-      /copy qinclude,TESTUTILS
-      /copy qinclude,TEMPLATES
+//----------------------------------------------------------------------
+//   Tests
+//----------------------------------------------------------------------
 
+dcl-proc setUp export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-      //----------------------------------------------------------------------
-      //   Private Procedure Prototypes
-      //----------------------------------------------------------------------
+  testStartTime = getFullTimeStamp();
+  clear assertCntBefore;
+  clear assertCntAfter;
 
-     D sndMCH1211Msg...
-     D                 pr                  extproc('sndMCH1211Msg')
-
-
-      //----------------------------------------------------------------------
-      //   Global Variables
-      //----------------------------------------------------------------------
-
-     D testStartTime   s               z
-     D assertCntBefore...
-     D                 s             10i 0
-     D assertCntAfter  s             10i 0
+end-proc;
 
 
-      //----------------------------------------------------------------------
-      //   Tests
-      //----------------------------------------------------------------------
+dcl-proc testNoMsgInJobLog export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-     P setUp           b                   export
-     D                 pi
-      /free
+  dcl-ds assertFailEvt likeds(AssertFailEvt_t);
 
-        testStartTime = getFullTimeStamp();
-        clear assertCntBefore;
-        clear assertCntAfter;
+  // Setup.
 
-      /end-free
-     P                 e
+  assertCntBefore = getAssertCalled();
 
+  // Run.
 
-     P testNoMsgInJobLog...
-     P                 b                   export
-     D                 pi
+  monitor;
+    assertJobLogContains('MCH1211': testStartTime);
+    fail('assertJobLogContains(...) should have raised a failure.');
+  on-error;
+    // Exception message, as expected.
+    assertFailEvt = getAssertFailEvt();
+    assertCntAfter = getAssertCalled();
+  endmon;
 
-     D assertFailEvt   ds                  likeds(AssertFailEvt_t)
+  // Check.
 
-      /free
+  iEqual(assertCntBefore + 1: assertCntAfter);
+  aEqual('Message MCH1211 not found in the job log.': assertFailEvt.msg);
 
-        // Setup.
-
-        assertCntBefore = getAssertCalled();
-
-        // Run.
-
-        monitor;
-          assertJobLogContains( 'MCH1211' : testStartTime );
-          fail( 'assertJobLogContains(...) should have raised a failure.' );
-        on-error;
-          // Exception message, as expected.
-          assertFailEvt  = getAssertFailEvt();
-          assertCntAfter = getAssertCalled();
-        endmon;
-
-        // Check.
-
-        iEqual( assertCntBefore + 1 : assertCntAfter );
-        aEqual( 'Message MCH1211 not found in the job log.' :
-                assertFailEvt.msg );
-
-      /end-free
-     P                 e
+end-proc;
 
 
-     P testMsgInJobLog...
-     P                 b                   export
-     D                 pi
-      /free
+dcl-proc testMsgInJobLog export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        // Setup.
+  // Setup.
 
-        sndMCH1211Msg();
-        assertCntBefore = getAssertCalled();
+  sndMCH1211Msg();
+  assertCntBefore = getAssertCalled();
 
-        // Run.
+  // Run.
 
-        assertJobLogContains( 'MCH1211' : testStartTime );
+  assertJobLogContains('MCH1211': testStartTime);
 
-        // Check.
+  // Check.
 
-        assertCntAfter = getAssertCalled();
-        iEqual( assertCntBefore + 1 : assertCntAfter );
+  assertCntAfter = getAssertCalled();
+  iEqual(assertCntBefore + 1: assertCntAfter);
 
-      /end-free
-     P                 e
+end-proc;
 
 
-      //----------------------------------------------------------------------
-      //   Private Helper Procedures
-      //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Private Helper Procedures
+//----------------------------------------------------------------------
 
-     P sndMCH1211Msg   b
-     D                 pi
+dcl-proc sndMCH1211Msg;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-     D zero            s             10i 0 inz(0)
-     D x               s             10i 0 inz(1)
+  dcl-s zero int(10) inz(0);
+  dcl-s x int(10) inz(1);
 
-      /free
 
-        monitor;
-          x = 1 / zero;
-        on-error;
-        endmon;
+  monitor;
+    x = 1 / zero;
+  on-error;
+  endmon;
 
-      /end-free
-     P                 e
+end-proc;

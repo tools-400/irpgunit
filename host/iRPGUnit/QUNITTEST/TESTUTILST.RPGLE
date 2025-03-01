@@ -1,278 +1,238 @@
-      // ==========================================================================
-      //  iRPGUnit SelfTest - Test TESTUTILS.
-      // ==========================================================================
-      //  Copyright (c) 2013-2020 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
-      // ==========================================================================
-      // >>PRE-COMPILER<<
-      //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM) +
-      //                        RPGPPOPT(*LVL2);
-      //   >>IMPORTANT<<
-      //     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
-      //   >>END-IMPORTANT<<
-      //   >>EXECUTE<<
-      // >>END-PRE-COMPILER<<
-      // ==========================================================================
-
-     H NoMain Option(*SrcStmt)
-
-      //----------------------------------------------------------------------
-      //   Exported Procedures
-      //----------------------------------------------------------------------
-
-     D setUpSuite...
-     D                 pr                  extproc('setUpSuite')
-     D tearDownSuite...
-     D                 pr                  extproc('tearDownSuite')
-
-     d addMemberOfType...
-     d                 pr
-     d                                     extproc('addMemberOfType')
-     d  srcType                      10a   const varying
-
-     D test_getFullTimestamp...
-     D                 pr                  extproc('test_getFullTimestamp')
-     D test_waitSeconds...
-     D                 pr                  extproc('test_waitSeconds')
-     D test_getMemberType...
-     D                 pr                  extproc('test_getMemberType')
-     D test_getMemberType_error...
-     D                 pr                  extproc('test_getMemberType_error')
-
-
-      //----------------------------------------------------------------------
-      //   Imported Procedures
-      //----------------------------------------------------------------------
+**FREE
+// ==========================================================================
+//  iRPGUnit SelfTest - Test TESTUTILS.
+// ==========================================================================
+//  Copyright (c) 2013-2020 iRPGUnit Project Team
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ==========================================================================
+// >>PRE-COMPILER<<
+//   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM) +
+//                        RPGPPOPT(*LVL2);
+//   >>IMPORTANT<<
+//     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
+//   >>END-IMPORTANT<<
+//   >>EXECUTE<<
+// >>END-PRE-COMPILER<<
+// ==========================================================================
 
-      /copy qinclude,ASSERT
-      /copy qinclude,TESTUTILS
-      /copy qinclude,TEMPLATES
+ctl-opt NoMain Option(*SrcStmt);
 
-      /copy qsysinc,QCMDEXC
+//----------------------------------------------------------------------
+//   Exported Procedures
+//----------------------------------------------------------------------
 
+//----------------------------------------------------------------------
+//   Imported Procedures
+//----------------------------------------------------------------------
 
-      //----------------------------------------------------------------------
-      //   Private Procedure Prototypes
-      //----------------------------------------------------------------------
+/copy qinclude,ASSERT
+/copy qinclude,TESTUTILS
+/copy qinclude,TEMPLATES
 
-      //----------------------------------------------------------------------
-      //   Global Variables
-      //----------------------------------------------------------------------
+/copy qsysinc,QCMDEXC
 
-     D mustDeleteFile  s               n   inz(*off)
+//----------------------------------------------------------------------
+//   Global Variables
+//----------------------------------------------------------------------
 
-      //----------------------------------------------------------------------
-      //   Setup/Teardown
-      //----------------------------------------------------------------------
+dcl-s mustDeleteFile ind inz(*off);
 
-     P setUpSuite...
-     P                 b                   export
-     D                 pi
+//----------------------------------------------------------------------
+//   Setup/Teardown
+//----------------------------------------------------------------------
 
-     D cmd             s            500a   varying
-      /free
+dcl-proc setUpSuite export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-       mustDeleteFile = *off;
+  dcl-s cmd varchar(500);
 
-       monitor;
-         cmd = 'CRTSRCPF FILE(QTEMP/RPGUNITTST) RCDLEN(112)';
-         QCMDEXC( cmd : %len(cmd) );
-         mustDeleteFile = *on;
-       on-error;
-         tearDownSuite();
-       endmon;
+  mustDeleteFile = *off;
 
-       addMemberOfType(MBR_RPGLE);
-       addMemberOfType(MBR_SQLRPGLE);
-       addMemberOfType(MBR_CBLLE);
-       addMemberOfType(MBR_SQLCBLLE);
+  monitor;
+    cmd = 'CRTSRCPF FILE(QTEMP/RPGUNITTST) RCDLEN(112)';
+    QCMDEXC(cmd: %len(cmd));
+    mustDeleteFile = *on;
+  on-error;
+    tearDownSuite();
+  endmon;
 
-      /free
-     P                 e
+  addMemberOfType(MBR_RPGLE);
+  addMemberOfType(MBR_SQLRPGLE);
+  addMemberOfType(MBR_CBLLE);
+  addMemberOfType(MBR_SQLCBLLE);
 
+end-proc;
 
-     P tearDownSuite...
-     P                 b                   export
-     D                 pi
 
-     D cmd             s            500a   varying
-      /free
+dcl-proc tearDownSuite export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-       monitor;
-         cmd = 'DLTF FILE(QTEMP/RPGUNITTST)';
-         QCMDEXC( cmd : %len(cmd) );
-         mustDeleteFile = *off;
-       on-error;
-       endmon;
+  dcl-s cmd varchar(500);
 
-      /free
-     P                 e
+  monitor;
+    cmd = 'DLTF FILE(QTEMP/RPGUNITTST)';
+    QCMDEXC(cmd: %len(cmd));
+    mustDeleteFile = *off;
+  on-error;
+  endmon;
 
+end-proc;
 
-     p addMemberOfType...
-     p                 b
-     d                 pi
-     d  srcType                      10a   const varying
 
-     d cmd             s            500a   varying
-      /free
+dcl-proc addMemberOfType;
+  dcl-pi *n extproc(*dclcase);
+    srcType   varchar(10) const;
+  end-pi;
 
-       cmd = 'ADDPFM FILE(QTEMP/RPGUNITTST) MBR(' + srcType + ') +
-                TEXT(''iRPGUnit Test Member'') +
-                SRCTYPE(' + srcType + ')';
+  dcl-s cmd varchar(500);
 
-       QCMDEXC( cmd : %len(cmd) );
+  cmd = 'ADDPFM FILE(QTEMP/RPGUNITTST) MBR(' + srcType + ') +
+           TEXT(''iRPGUnit Test Member'') +
+           SRCTYPE(' + srcType + ')';
 
-      /end-free
-     p                 e
+  QCMDEXC(cmd: %len(cmd));
 
+end-proc;
 
-      //----------------------------------------------------------------------
-      //   Tests
-      //----------------------------------------------------------------------
 
-     P test_waitSeconds...
-     P                 b                   export
-     D                 pi
+//----------------------------------------------------------------------
+//   Tests
+//----------------------------------------------------------------------
 
-     D startTime       s               z
-     D endTime         s               z
-     D lowerBoundary   s               z
-     D upperBoundary   s               z
-     D mSecsPassed     s             10u 0
+dcl-proc test_waitSeconds export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-     D WAIT_SECONDS    c                   1
+  dcl-s startTime       timestamp;
+  dcl-s endTime         timestamp;
+  dcl-s lowerBoundary   timestamp;
+  dcl-s upperBoundary   timestamp;
+  dcl-s mSecsPassed     uns(10);
 
-      // Tolerance is +/- 0.2 seconds
-     D TOLERANCE       c                   200000
-      /free
+  dcl-c WAIT_SECONDS 1;
 
-        // Setup.
+  // Tolerance is +/- 0.2 seconds
+  dcl-c TOLERANCE 200000;
 
-        startTime = %timestamp();
+  // Setup.
 
-        // Run.
+  startTime = %timestamp();
 
-        waitSeconds(WAIT_SECONDS);
+  // Run.
 
-        // Check.
+  waitSeconds(WAIT_SECONDS);
 
-        endTime = %timestamp();
+  // Check.
 
-        mSecsPassed = %diff(endTime: startTime: *mseconds);
+  endTime = %timestamp();
 
-        lowerBoundary =
-          startTime + %seconds(WAIT_SECONDS) - %mseconds(TOLERANCE);
+  mSecsPassed = %diff(endTime: startTime: *mseconds);
 
-        upperBoundary =
-          startTime + %seconds(WAIT_SECONDS) + %mseconds(TOLERANCE);
+  lowerBoundary =
+    startTime + %seconds(WAIT_SECONDS) - %mseconds(TOLERANCE);
 
-        assert(endTime > lowerBoundary
-               : 'Time passed must be greater than lower boundary.');
+  upperBoundary =
+    startTime + %seconds(WAIT_SECONDS) + %mseconds(TOLERANCE);
 
-        assert(endTime < upperBoundary
-               : 'Time passed must be greater than upper boundary.');
+  assert(endTime > lowerBoundary
+         : 'Time passed must be greater than lower boundary.');
 
-      /end-free
-     P                 e
+  assert(endTime < upperBoundary
+         : 'Time passed must be greater than upper boundary.');
 
+end-proc;
 
-     P test_getFullTimestamp...
-     P                 b                   export
-     D                 pi
 
-     D startTime       s               z
-     D timestamp       s               z
-     D mSecsAreValid   s               n
+dcl-proc test_getFullTimestamp export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-     D MAX_SECONDS     c                   5
-      /free
+  dcl-s startTime timestamp;
+  dcl-s timestamp timestamp;
+  dcl-s mSecsAreValid ind;
 
-        // Setup.
+  dcl-c MAX_SECONDS 5;
 
-        mSecsAreValid = *off;
-        startTime = %timestamp();
+  // Setup.
 
-        // Run.
+  mSecsAreValid = *off;
+  startTime = %timestamp();
 
-        dou (mSecsAreValid or maxTimeReached(startTime: MAX_SECONDS));
-          timestamp = %timestamp();
-          if (%subdt(timestamp: *mseconds) > 0);
-            mSecsAreValid = *on;
-          endif;
-        enddo;
+  // Run.
 
-        // Check.
+  dou (mSecsAreValid or maxTimeReached(startTime: MAX_SECONDS));
+    timestamp = %timestamp();
+    if (%subdt(timestamp: *mseconds) > 0);
+      mSecsAreValid = *on;
+    endif;
+  enddo;
 
-        assert(mSecsAreValid
-               : 'No valid microSeconds found in '
-                 + %char(MAX_SECONDS) + ' seconds');
+  // Check.
 
-      /end-free
-     P                 e
+  assert(mSecsAreValid
+         : 'No valid microSeconds found in ' +
+            %char(MAX_SECONDS) + ' seconds');
 
+end-proc;
 
-     P test_getMemberType...
-     P                 b                   export
-     D                 pi
 
-     D srcType         s             10a   varying
-      /free
+dcl-proc test_getMemberType export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-       srcType = getMemberType( 'RPGUNITTST' : 'QTEMP' : MBR_RPGLE );
-       assert( srcType = MBR_RPGLE : 'getMemberType() must return RPGLE' );
+  dcl-s srcType varchar(10);
 
-       srcType = getMemberType( 'RPGUNITTST' : 'QTEMP' : MBR_SQLRPGLE );
-       assert( srcType = MBR_SQLRPGLE : 'getMemberType() must return SQLRPGLE');
+  srcType = getMemberType('RPGUNITTST': 'QTEMP': MBR_RPGLE);
+  assert(srcType = MBR_RPGLE: 'getMemberType() must return RPGLE');
 
-       srcType = getMemberType( 'RPGUNITTST' : 'QTEMP' : MBR_CBLLE );
-       assert( srcType = MBR_CBLLE : 'getMemberType() must return CBLLE' );
+  srcType = getMemberType('RPGUNITTST': 'QTEMP': MBR_SQLRPGLE);
+  assert(srcType = MBR_SQLRPGLE: 'getMemberType() must return SQLRPGLE');
 
-       srcType = getMemberType( 'RPGUNITTST' : 'QTEMP' : MBR_SQLCBLLE );
-       assert( srcType = MBR_SQLCBLLE : 'getMemberType() must return SQLCBLLE');
+  srcType = getMemberType('RPGUNITTST' : 'QTEMP': MBR_CBLLE);
+  assert(srcType = MBR_CBLLE: 'getMemberType() must return CBLLE');
 
-      /end-free
-     P                 e
+  srcType = getMemberType('RPGUNITTST': 'QTEMP': MBR_SQLCBLLE);
+  assert(srcType = MBR_SQLCBLLE: 'getMemberType() must return SQLCBLLE');
 
+end-proc;
 
-     P test_getMemberType_error...
-     P                 b                   export
-     D                 pi
 
-     D srcType         s             10a   varying
-      /free
+dcl-proc test_getMemberType_error export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-       monitor;
-         srcType = getMemberType( 'RPGUNITTST' : 'QTEMP' : 'NOT.FOUND' );
-         fail('getMember() should have raised an error');
-       on-error;
-         // Good, error seen.
-       endmon;
+  dcl-s srcType varchar(10);
 
-      /end-free
-     P                 e
+  monitor;
+    srcType = getMemberType('RPGUNITTST': 'QTEMP': 'NOT.FOUND');
+    fail('getMember() should have raised an error');
+  on-error;
+    // Good, error seen.
+  endmon;
 
+end-proc;
 
-      //----------------------------------------------------------------------
-      //   Returns TRUE, when the maximun processing time has been reached.
-      //----------------------------------------------------------------------
 
-     P maxTimeReached...
-     P                 b
-     D                 pi              n
-     D  startTime                      z   const
-     D  maxSecs                      10u 0 const
-      /free
+//----------------------------------------------------------------------
+//   Returns TRUE, when the maximun processing time has been reached.
+//----------------------------------------------------------------------
 
-        if (startTime + %seconds(maxSecs) < %timestamp());
-          return *on;
-        endif;
+dcl-proc maxTimeReached;
+  dcl-pi *n ind extproc(*dclcase);
+    startTime   timestamp const;
+    maxSecs     uns(10) const;
+  end-pi;
 
-        return *off;
+  if (startTime + %seconds(maxSecs) < %timestamp());
+    return *on;
+  endif;
 
-      /end-free
-     P                 e
+  return *off;
+
+end-proc;
 

@@ -1,308 +1,262 @@
-      // ==========================================================================
-      //  iRPGUnit SelfTest - Test Message Queue.
-      // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
-      // ==========================================================================
-      // >>PRE-COMPILER<<
-      //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM) +
-      //                 COPTION(*EVENTF);
-      //   >>IMPORTANT<<
-      //     >>PARM<<  MODULE(&LI/JOBLOG +
-      //                      &LI/PGMMSG );
-      //     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
-      //   >>END-IMPORTANT<<
-      //   >>CMD<<     CMPMOD MODULE(&LI/JOBLOG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-      //   >>CMD<<     CMPMOD MODULE(&LI/PGMMSG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-      //   >>EXECUTE<<
-      // >>END-PRE-COMPILER<<
-      // ==========================================================================
-
-     H NoMain Option(*SrcStmt)
-
-      //----------------------------------------------------------------------
-      //   Exported Procedures
-      //----------------------------------------------------------------------
-
-     D setUp...
-     D                 pr                  extproc('setUp')
-     D tearDown...
-     D                 pr                  extproc('tearDown')
-     D testNoMsgInMessageQueue...
-     D                 pr                  extproc('testNoMsgInMessageQueue')
-     D testMsgInMessageQueue...
-     D                 pr                  extproc('testMsgInMessageQueue')
-     D testMsgTooOldInMessageQueue...
-     D                 pr                  extproc('+
-     D                                     testMsgTooOldInMessageQueue')
-     D testSpecialValueEmpty...
-     D                 pr                  extproc('testSpecialValueEmpty')
-
-
-      //----------------------------------------------------------------------
-      //   Imported Procedures
-      //----------------------------------------------------------------------
-
-      /copy qinclude,ASSERT
-      /copy qinclude,PGMMSG
-      /copy qinclude,TESTUTILS
-      /copy qinclude,TEMPLATES
+**FREE
+// ==========================================================================
+//  iRPGUnit SelfTest - Test Message Queue.
+// ==========================================================================
+//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ==========================================================================
+// >>PRE-COMPILER<<
+//   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM) +
+//                 COPTION(*EVENTF);
+//   >>IMPORTANT<<
+//     >>PARM<<  MODULE(&LI/JOBLOG +
+//                      &LI/PGMMSG );
+//     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
+//   >>END-IMPORTANT<<
+//   >>CMD<<     CMPMOD MODULE(&LI/JOBLOG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/PGMMSG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>EXECUTE<<
+// >>END-PRE-COMPILER<<
+// ==========================================================================
 
-
-      //----------------------------------------------------------------------
-      //   Private Procedure Prototypes
-      //----------------------------------------------------------------------
+ctl-opt NoMain Option(*SrcStmt);
 
-     D sndQueueMsg...
-     D                 pr                  extproc('sndQueueMsg')
-     D  queueNm                      10a   const
-     D  queueLb                      10a   const
-     D  text                        256a   const varying
+//----------------------------------------------------------------------
+//   Imported Procedures
+//----------------------------------------------------------------------
 
+/copy qinclude,ASSERT
+/copy qinclude,PGMMSG
+/copy qinclude,TESTUTILS
+/copy qinclude,TEMPLATES
 
-      //----------------------------------------------------------------------
-      //   Global Constants
-      //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Global Constants
+//----------------------------------------------------------------------
 
-     D MSG_QUEUE_QNM   c                   'QTEMP/MSGQT'
-     D MSG_QUEUE_NM    c                   'MSGQT'
-     D MSG_QUEUE_LB    c                   'QTEMP'
+dcl-c MSG_QUEUE_QNM 'QTEMP/MSGQT';
+dcl-c MSG_QUEUE_NM 'MSGQT';
+dcl-c MSG_QUEUE_LB 'QTEMP';
 
+//----------------------------------------------------------------------
+//   Global Variables
+//----------------------------------------------------------------------
 
-      //----------------------------------------------------------------------
-      //   Global Variables
-      //----------------------------------------------------------------------
+dcl-s testStartTime timestamp;
+dcl-s assertCntBefore int(10);
+dcl-s assertCntAfter int(10);
 
-     D testStartTime   s               z
-     D assertCntBefore...
-     D                 s             10i 0
-     D assertCntAfter  s             10i 0
+//----------------------------------------------------------------------
+//   Tests
+//----------------------------------------------------------------------
 
+dcl-proc setUp export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-      //----------------------------------------------------------------------
-      //   Tests
-      //----------------------------------------------------------------------
+  testStartTime = getFullTimeStamp();
+  clear assertCntBefore;
+  clear assertCntAfter;
 
-     P setUp           b                   export
-     D                 pi
-      /free
+  monitor;
+     runCmd('DLTMSGQ MSGQ(' + MSG_QUEUE_QNM + ')');
+  on-error;
+     // Ignore errors
+  endmon;
 
-        testStartTime = getFullTimeStamp();
-        clear assertCntBefore;
-        clear assertCntAfter;
+  runCmd('CRTMSGQ MSGQ(' + MSG_QUEUE_QNM + ') +
+          TEXT(''IRPGUnit SelfTest - Tet Message Queue.'')');
 
-        monitor;
-          runCmd('DLTMSGQ MSGQ(' + MSG_QUEUE_QNM + ')');
-        on-error;
-          // Ignore errors
-        endmon;
+end-proc;
 
-        runCmd('CRTMSGQ MSGQ(' + MSG_QUEUE_QNM + ') +
-                TEXT(''IRPGUnit SelfTest - Tet Message Queue.'')');
 
-      /end-free
-     P                 e
+dcl-proc tearDown export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
+  runCmd('DLTMSGQ MSGQ(' + MSG_QUEUE_QNM + ')');
 
-     P tearDown        b                   export
-     D                 pi
-      /free
+end-proc;
 
-        runCmd('DLTMSGQ MSGQ(' + MSG_QUEUE_QNM + ')');
 
-      /end-free
-     P                 e
+dcl-proc testNoMsgInMessageQueue export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
+  dcl-ds assertFailEvt likeds(AssertFailEvt_t);
 
-     P testNoMsgInMessageQueue...
-     P                 b                   export
-     D                 pi
 
-     D assertFailEvt   ds                  likeds(AssertFailEvt_t)
+  // Setup.
 
-      /free
+  assertCntBefore = getAssertCalled();
 
-        // Setup.
+  // Run.
 
-        assertCntBefore = getAssertCalled();
+  monitor;
+     assertMessageQueueContains(MSG_QUEUE_NM: MSG_QUEUE_LB:
+       *omit: 'MSGQUEUET*': *omit: testStartTime);
+     fail('assertMessageQueueContains(...) should have raised a failure.');
+  on-error;
+     // Exception message, as expected.
+     assertFailEvt = getAssertFailEvt();
+     assertCntAfter = getAssertCalled();
+  endmon;
 
-        // Run.
+  // Check.
 
-        monitor;
-          assertMessageQueueContains( MSG_QUEUE_NM : MSG_QUEUE_LB :
-            *omit : 'MSGQUEUET*' : *omit : testStartTime );
-          fail('assertMessageQueueContains(...) should have raised a failure.');
-        on-error;
-          // Exception message, as expected.
-          assertFailEvt  = getAssertFailEvt();
-          assertCntAfter = getAssertCalled();
-        endmon;
+  iEqual(assertCntBefore + 1 : assertCntAfter);
+  aEqual('Message not found in message queue.': assertFailEvt.msg);
 
-        // Check.
+  assertMessageQueueContains(MSG_QUEUE_NM: MSG_QUEUE_LB:
+    '*EMPTY': *omit: *omit: testStartTime);
 
-        iEqual( assertCntBefore + 1 : assertCntAfter );
-        aEqual( 'Message not found in message queue.' :
-                assertFailEvt.msg );
+end-proc;
 
-        assertMessageQueueContains( MSG_QUEUE_NM : MSG_QUEUE_LB :
-          '*EMPTY' : *omit : *omit : testStartTime );
 
-      /end-free
-     P                 e
+dcl-proc testMsgInMessageQueue export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
+  // Setup.
 
-     P testMsgInMessageQueue...
-     P                 b                   export
-     D                 pi
-      /free
+  sndQueueMsg(MSG_QUEUE_NM: MSG_QUEUE_LB: 'MSGQT - iRPGUnit' + '.1');
+  assertCntBefore = getAssertCalled();
 
-        // Setup.
+  sndQueueMsg(MSG_QUEUE_NM: MSG_QUEUE_LB: 'MSGQT - iRPGUnit' + '.2');
+  assertCntBefore = getAssertCalled();
 
-        sndQueueMsg(MSG_QUEUE_NM : MSG_QUEUE_LB : 'MSGQT - iRPGUnit' + '.1' );
-        assertCntBefore = getAssertCalled();
+  sndQueueMsg(MSG_QUEUE_NM: MSG_QUEUE_LB: 'MSGQT - iRPGUnit' + '.3');
+  assertCntBefore = getAssertCalled();
 
-        sndQueueMsg(MSG_QUEUE_NM : MSG_QUEUE_LB : 'MSGQT - iRPGUnit' + '.2' );
-        assertCntBefore = getAssertCalled();
+  // Run.
 
-        sndQueueMsg(MSG_QUEUE_NM : MSG_QUEUE_LB : 'MSGQT - iRPGUnit' + '.3' );
-        assertCntBefore = getAssertCalled();
+  // exact match
+  assertMessageQueueContains(MSG_QUEUE_NM: MSG_QUEUE_LB:
+    *omit: 'MSGQT - iRPGUnit.1': *omit: testStartTime);
 
-        // Run.
+  // any message starting with 'MSGQT'
+  assertMessageQueueContains(MSG_QUEUE_NM: MSG_QUEUE_LB:
+    *omit: 'MSGQT*': *omit: testStartTime);
 
-        // exact match
-        assertMessageQueueContains( MSG_QUEUE_NM : MSG_QUEUE_LB :
-          *omit : 'MSGQT - iRPGUnit.1' : *omit : testStartTime );
+  // any message starting containing 'iRPGUnit'
+  assertMessageQueueContains(MSG_QUEUE_NM: MSG_QUEUE_LB:
+    *omit: '*iRPGUnit*': *omit: testStartTime);
 
-        // any message starting with 'MSGQT'
-        assertMessageQueueContains( MSG_QUEUE_NM : MSG_QUEUE_LB :
-          *omit : 'MSGQT*' : *omit : testStartTime );
+  // message ending with '.2'
+  assertMessageQueueContains(MSG_QUEUE_NM: MSG_QUEUE_LB:
+    *omit: '*.2': *omit: testStartTime);
 
-        // any message starting containing 'iRPGUnit'
-        assertMessageQueueContains( MSG_QUEUE_NM : MSG_QUEUE_LB :
-          *omit : '*iRPGUnit*' : *omit : testStartTime );
+  // Check.
 
-        // message ending with '.2'
-        assertMessageQueueContains( MSG_QUEUE_NM : MSG_QUEUE_LB :
-          *omit : '*.2' : *omit : testStartTime );
+  assertCntAfter = getAssertCalled();
+  iEqual(assertCntBefore + 4: assertCntAfter);
 
-        // Check.
+end-proc;
 
-        assertCntAfter = getAssertCalled();
-        iEqual( assertCntBefore + 4 : assertCntAfter );
 
-      /end-free
-     P                 e
+dcl-proc testMsgTooOldInMessageQueue export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
+  dcl-ds assertFailEvt likeds(AssertFailEvt_t);
 
-     P testMsgTooOldInMessageQueue...
-     P                 b                   export
-     D                 pi
+  // Setup.
 
-     D assertFailEvt   ds                  likeds(AssertFailEvt_t)
-      /free
+  sndQueueMsg(MSG_QUEUE_NM: MSG_QUEUE_LB: 'MSGQT - iRPGUnit - too old');
 
-        // Setup.
+  // Ensure message is in queue
+  assertMessageQueueContains(MSG_QUEUE_NM: MSG_QUEUE_LB:
+    *omit: 'MSGQT - iRPGUnit - too old': *omit: testStartTime);
 
-        sndQueueMsg(MSG_QUEUE_NM : MSG_QUEUE_LB : 'MSGQT - iRPGUnit - too old');
+  // Set new start time
+  testStartTime = getFullTimeStamp();
 
-        // Ensure message is in queue
-        assertMessageQueueContains( MSG_QUEUE_NM : MSG_QUEUE_LB :
-          *omit : 'MSGQT - iRPGUnit - too old' : *omit : testStartTime );
+  // Add a valid message
+  sndQueueMsg(MSG_QUEUE_NM: MSG_QUEUE_LB: 'MSGQT - iRPGUnit - new');
 
-        // Set new start time
-        testStartTime = getFullTimeStamp();
+  assertCntBefore = getAssertCalled();
 
-        // Add a valid message
-        sndQueueMsg(MSG_QUEUE_NM : MSG_QUEUE_LB : 'MSGQT - iRPGUnit - new');
+  // Run.
 
-        assertCntBefore = getAssertCalled();
+  assertMessageQueueContains(MSG_QUEUE_NM: MSG_QUEUE_LB:
+    *omit: 'MSGQT - iRPGUnit - new': *omit: testStartTime);
 
-        // Run.
+  monitor;
+     assertMessageQueueContains(MSG_QUEUE_NM: MSG_QUEUE_LB:
+       *omit: 'MSGQT - iRPGUnit - too old': *omit: testStartTime);
+     fail('testMsgTooOldInMessageQueue(..) should have raised a failure.');
+  on-error;
+     // Exception message, as expected.
+     assertFailEvt = getAssertFailEvt();
+     assertCntAfter = getAssertCalled();
+  endmon;
 
-        assertMessageQueueContains( MSG_QUEUE_NM : MSG_QUEUE_LB :
-          *omit : 'MSGQT - iRPGUnit - new' : *omit : testStartTime );
+  // Check.
 
-        monitor;
-          assertMessageQueueContains( MSG_QUEUE_NM : MSG_QUEUE_LB :
-            *omit : 'MSGQT - iRPGUnit - too old' : *omit : testStartTime );
-          fail('testMsgTooOldInMessageQueue(..) should have raised a failure.');
-        on-error;
-          // Exception message, as expected.
-          assertFailEvt  = getAssertFailEvt();
-          assertCntAfter = getAssertCalled();
-        endmon;
+  iEqual(assertCntBefore + 2: assertCntAfter);
+  aEqual('Message not found in message queue.': assertFailEvt.msg );
 
-        // Check.
+end-proc;
 
-        iEqual( assertCntBefore + 2 : assertCntAfter );
-        aEqual( 'Message not found in message queue.' :
-                assertFailEvt.msg );
 
-      /end-free
-     P                 e
+dcl-proc testSpecialValueEmpty export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
+  dcl-ds assertFailEvt likeds(AssertFailEvt_t);
+  dcl-ds msgInfo likeds(MsgInfo_t);
 
-     P testSpecialValueEmpty...
-     P                 b                   export
-     D                 pi
+  // Setup.
 
-     D assertFailEvt   ds                  likeds(AssertFailEvt_t)
-     D msgInfo         ds                  likeds(MsgInfo_t)
-      /free
+  assertCntBefore = getAssertCalled();
+  setLowMessageKey(getHighestMsgKey());
 
-        // Setup.
+  // Run.
 
-        assertCntBefore = getAssertCalled();
-        setLowMessageKey(getHighestMsgKey());
+  monitor;
+     assertMessageQueueContains(MSG_QUEUE_NM: MSG_QUEUE_LB:
+       '*EMPTY': 'MSGQUEUET*': *omit: testStartTime);
+     fail('Other parameters must be omitted when msgId = *EMPTY');
+  on-error;
+     // Exception message, as expected.
+     assertFailEvt = getAssertFailEvt();
+     assertCntAfter = getAssertCalled();
+     msgInfo = getMonitoredMessage();
+  endmon;
 
-        // Run.
+  // Check.
 
-        monitor;
-          assertMessageQueueContains( MSG_QUEUE_NM : MSG_QUEUE_LB :
-            '*EMPTY' : 'MSGQUEUET*' : *omit : testStartTime );
-          fail('Other parameters must be omitted when msgId = *EMPTY');
-        on-error;
-          // Exception message, as expected.
-          assertFailEvt  = getAssertFailEvt();
-          assertCntAfter = getAssertCalled();
-          msgInfo = getMonitoredMessage();
-        endmon;
+  iEqual(assertCntBefore: assertCntAfter);
+  aEqual('' : assertFailEvt.msg);
+  aEqual('All other selection parameters must be omitted, when msgId is set to ''*EMPTY'''
+         : msgInfo.txt);
 
-        // Check.
+  assertMessageQueueContains(MSG_QUEUE_NM: MSG_QUEUE_LB:
+    '*EMPTY': *omit: *omit: testStartTime);
 
-        iEqual( assertCntBefore : assertCntAfter );
-        aEqual( '' : assertFailEvt.msg );
-        aEqual( 'All other selection parameters must +
-                 be omitted, when msgId is set to ''*EMPTY''' : msgInfo.txt);
+end-proc;
 
-        assertMessageQueueContains( MSG_QUEUE_NM : MSG_QUEUE_LB :
-          '*EMPTY' : *omit : *omit : testStartTime );
 
-      /end-free
-     P                 e
+//----------------------------------------------------------------------
+//   Private Helper Procedures
+//----------------------------------------------------------------------
 
+dcl-proc sndQueueMsg;
+  dcl-pi *n extproc(*dclcase);
+    queueNm   char(10) const;
+    queueLb   char(10) const;
+    text      varchar(256) const;
+  end-pi;
 
-      //----------------------------------------------------------------------
-      //   Private Helper Procedures
-      //----------------------------------------------------------------------
+  dcl-s cmd varchar(1024);
 
-     P sndQueueMsg     b
-     D                 pi
-     D  queueNm                      10a   const
-     D  queueLb                      10a   const
-     D  text                        256a   const varying
+  cmd = 'SNDMSG MSG(''' + %trim(text) + ''') +
+           TOMSGQ(' + %trim(queueLb) + '/' + %trim(queueNm) + ') +
+           MSGTYPE(*INFO)';
 
-     D cmd             s           1024a   varying
-      /free
+  runCmd(cmd);
 
-        cmd = 'SNDMSG MSG(''' + %trim(text) + ''') +
-                 TOMSGQ(' + %trim(queueLb) + '/' + %trim(queueNm) + ') +
-                 MSGTYPE(*INFO)';
-
-        runCmd(cmd);
-
-      /end-free
-     P                 e
+end-proc;

@@ -1,648 +1,522 @@
-      // ==========================================================================
-      //  iRPGUnit SelfTest - Test CMDRUN.
-      // ==========================================================================
-      //  Copyright (c) 2013-2020 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
-      // ==========================================================================
-      // >>PRE-COMPILER<<
-      //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
-      //   >>IMPORTANT<<
-      //     >>PARM<<  MODULE(&LI/CMDRUN    +
-      //                      &LI/CALLPRC   +
-      //                      &LI/CMDRUNLOG +
-      //                      &LI/CMDRUNPRT +
-      //                      &LI/CMDRUNSRV +
-      //                      &LI/CMDRUNV   +
-      //                      &LI/EXTTST    +
-      //                      &LI/EXTPRC    +
-      //                      &LI/JOBLOG    +
-      //                      &LI/LIBL      +
-      //                      &LI/LLIST     +
-      //                      &LI/OBJECT    +
-      //                      &LI/OSVERSION +
-      //                      &LI/PGMMSG    +
-      //                      &LI/SRCMBR    +
-      //                      &LI/STRING    +
-      //                      &LI/USRSPC    +
-      //                      &LI/XMLWRITER +
-      //                      );
-      //     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
-      //     >>PARM<<  BOPTION(*DUPPROC);
-      //   >>END-IMPORTANT<<
-      //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUN   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-      //   >>CMD<<     CMPMOD MODULE(&LI/CALLPRC  ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-      //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNLOG) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-      //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNPRT) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-      //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNSRV) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-      //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNV  ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-      //   >>CMD<<     CMPMOD MODULE(&LI/EXTTST   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-      //   >>CMD<<     CMPMOD MODULE(&LI/EXTPRC   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-      //   >>CMD<<     CMPMOD MODULE(&LI/JOBLOG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-      //   >>CMD<<     CMPMOD MODULE(&LI/LIBL     ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-      //   >>CMD<<     CMPMOD MODULE(&LI/LLIST    ) SRCFILE(&SL/QLLIST) DBGVIEW(*LIST);
-      //   >>CMD<<     CMPMOD MODULE(&LI/OBJECT   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-      //   >>CMD<<     CMPMOD MODULE(&LI/OSVERSION) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-      //   >>CMD<<     CMPMOD MODULE(&LI/PGMMSG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-      //   >>CMD<<     CMPMOD MODULE(&LI/SRCMBR   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-      //   >>CMD<<     CMPMOD MODULE(&LI/STRING   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-      //   >>CMD<<     CMPMOD MODULE(&LI/USRSPC   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-      //   >>CMD<<     CMPMOD MODULE(&LI/XMLWRITER) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-      //   >>EXECUTE<<
-      // >>END-PRE-COMPILER<<
-      // ==========================================================================
-
-     H NoMain Option(*SrcStmt)
-
-      //----------------------------------------------------------------------
-      //   Imported Procedures
-      //----------------------------------------------------------------------
-
-      // This module mocks the CMDRUNLOG procedures.
-      /copy qinclude,CMDRUNLOG
-
-      /copy qinclude,ASSERT
-      /copy qinclude,CMDRUN
-      /copy qinclude,PGMMSG
-      /copy qinclude,TEMPLATES
-      /copy qllist,llist_h
-
-
-      //----------------------------------------------------------------------
-      //   Exported Procedures
-      //----------------------------------------------------------------------
-
-     D setUp           pr                  extproc('setUp')
-
-     D tearDown        pr                  extproc('tearDown')
-
-       // Test runTests with a one-test test suite, with DETAIL(*BASIC) option.
-     D test_runTests_SuccessfulTestWithDetailBasic...
-     D                 pr                  extproc('test_runTests_SuccessfulTes+
-     D                                     tWithDetailBasic')
-       // Test runTests with a one-test test suite, with DETAIL(*ALL) option.
-     D test_runTests_SuccessfulTestWithDetailAllAndOneAssertion...
-     D                 pr                  extproc('test_runTests_SuccessfulTes+
-     D                                     tWithDetailAllAndOneAssertion')
-     D test_runTests_SuccessfulTestWithDetailAllAndTwoAssertions...
-     D                 pr                  extproc('test_runTests_SuccessfulTes+
-     D                                     tWithDetailAllAndTwoAssertions')
-       // Test runTests with a two-test test suite, with DETAIL(*ALL) option.
-     D test_runTests_TwoSuccessfulTestsWithDetailAll...
-     D                 pr                  extproc('test_runTests_TwoSuccessful+
-     D                                     TestsWithDetailAll')
-       // Test runTests with a two-test test suite, with ORDER(*REVERSE) option.
-     D test_runTests_TwoSuccessfulTestsWithOrderReverse...
-     D                 pr                  extproc('test_runTests_TwoSuccessful+
-     D                                     TestsWithOrderReverse')
-       // Test runTests with TSTPRC option.
-     D test_runTests_ChooseOneTestProc...
-     D                 pr                  extproc('test_runTests_ChooseOneTest+
-     D                                     Proc')
-       // Test runTests, choosing a non existing TSTPRC option.
-     D test_runTests_ChooseNonExistingTestProc...
-     D                 pr                  extproc('test_runTests_ChooseNonExis+
-     D                                     tingTestProc')
-       // Test fmtObjNm.
-     D test_fmtObjNm   pr                  extproc('test_fmtObjNm')
-       // Test callWithLogging when the call is successful.
-     D test_callWithLogging_withSuccess...
-     D                 pr                  extproc('test_callWithLogging_withSu+
-     D                                     ccess')
-       // Test callWithLogging when the call raises an error.
-     D test_callWithLogging_withError...
-     D                 pr                  extproc('test_callWithLogging_withEr+
-     D                                     ror')
-       // Test fmtCompMsg.
-     D test_fmtCompMsg...
-     D                 pr                  extproc('test_fmtCompMsg')
-
-
-      //----------------------------------------------------------------------
-      //   Private Procedures
-      //----------------------------------------------------------------------
-
-     D successful_test_1...
-     D                 pr                  extproc('successful_test_1')
-     D successful_test_2...
-     D                 pr                  extproc('successful_test_2')
-     D successful_test_with_one_assertion...
-     D                 pr                  extproc('successful_test_with_one_as+
-     D                                     sertion')
-     D successful_test_with_two_assertions...
-     D                 pr                  extproc('successful_test_with_two_as+
-     D                                     sertions')
-     D proc_with_no_error...
-     D                 pr                  extproc('proc_with_no_error')
-     D proc_with_error...
-     D                 pr                  extproc('proc_with_error')
-
-
-      //----------------------------------------------------------------------
-      //   Constants
-      //----------------------------------------------------------------------
-
-       // TSTPRC option.
-     D ALL_PROCS       c                   const('*ALL')
-
-       // Dummy test program name.
-     D*testPgm         c                   const('MYTSTPGM')
-
-
-      //----------------------------------------------------------------------
-      //   Global Variables
-      //----------------------------------------------------------------------
-
-       // In-memory log spool, made of an array and its index.
-     D logLine         ds                  qualified Dim(2)
-     D  type                               like(TestResult_t.outcome)
-     D  procNm                             like(ProcNm_t)
-     D  assertionCnt                 10i 0
-     D  msg                                like(Msg_t.txt)
-     D logIdx          s             10i 0
-
-       // An array of test cases, for testing purpose.
-     D testCase        ds                  Dim(2) likeds(Proc_t)
-       // A test suite, for testing purpose.
-     D testSuite       ds                  likeds(TestSuite_t)
-       // Procedures to run
-     D procNms         ds                  likeds(ProcNms_t)
-       // Test result
-     D result          ds                  likeds(result_t)
-
-       // Spying flag.
-     D procWithNoErrorWasCalled...
-     D                 s               n
-
-
-      //----------------------------------------------------------------------
-      //   Test Definitions
-      //----------------------------------------------------------------------
-
-     P setUp           b                   export
-     D setUp           pi
-      /free
-
-        clear logIdx;
-        clear logLine;
-
-        clear testCase;
-        clear testSuite;
-        testSuite.testList = %addr(testCase);
-        testSuite.testResults = list_create();
+**FREE
+// ==========================================================================
+//  iRPGUnit SelfTest - Test CMDRUN.
+// ==========================================================================
+//  Copyright (c) 2013-2020 iRPGUnit Project Team
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ==========================================================================
+// >>PRE-COMPILER<<
+//   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+//   >>IMPORTANT<<
+//     >>PARM<<  MODULE(&LI/CMDRUN    +
+//                      &LI/CALLPRC   +
+//                      &LI/CMDRUNLOG +
+//                      &LI/CMDRUNPRT +
+//                      &LI/CMDRUNSRV +
+//                      &LI/CMDRUNV   +
+//                      &LI/EXTTST    +
+//                      &LI/EXTPRC    +
+//                      &LI/JOBLOG    +
+//                      &LI/LIBL      +
+//                      &LI/LLIST     +
+//                      &LI/OBJECT    +
+//                      &LI/OSVERSION +
+//                      &LI/PGMMSG    +
+//                      &LI/SRCMBR    +
+//                      &LI/STRING    +
+//                      &LI/USRSPC    +
+//                      &LI/XMLWRITER +
+//                      );
+//     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
+//     >>PARM<<  BOPTION(*DUPPROC);
+//   >>END-IMPORTANT<<
+//   >>CMD<<     CMPMOD MODULE(&LI/CMDRUN   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/CALLPRC  ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNLOG) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNPRT) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNSRV) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNV  ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/EXTTST   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/EXTPRC   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/JOBLOG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/LIBL     ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/LLIST    ) SRCFILE(&SL/QLLIST) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/OBJECT   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/OSVERSION) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/PGMMSG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/SRCMBR   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/STRING   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/USRSPC   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/XMLWRITER) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>EXECUTE<<
+// >>END-PRE-COMPILER<<
+// ==========================================================================
+
+ctl-opt NoMain Option(*SrcStmt);
+
+//----------------------------------------------------------------------
+//   Imported Procedures
+//----------------------------------------------------------------------
+
+// This module mocks the CMDRUNLOG procedures.
+/copy qinclude,CMDRUNLOG
+
+/copy qinclude,ASSERT
+/copy qinclude,CMDRUN
+/copy qinclude,PGMMSG
+/copy qinclude,TEMPLATES
+/copy qllist,llist_h
+
+//----------------------------------------------------------------------
+//   Constants
+//----------------------------------------------------------------------
+
+// TSTPRC option.
+dcl-c ALL_PROCS const('*ALL');
+
+// Dummy test program name.
+//testPgm         c                   const('MYTSTPGM')
+
+
+//----------------------------------------------------------------------
+//   Global Variables
+//----------------------------------------------------------------------
+
+// In-memory log spool, made of an array and its index.
+dcl-ds logLine qualified Dim(2);
+  type            like(TestResult_t.outcome);
+  procNm          like(ProcNm_t);
+  assertionCnt    int(10);
+  msg             like(Msg_t.txt);
+end-ds;
+
+dcl-s logIdx int(10);
+
+// An array of test cases, for testing purpose.
+dcl-ds testCase dim(2) likeds(Proc_t);
+// A test suite, for testing purpose.
+dcl-ds testSuite likeds(TestSuite_t);
+// Procedures to run
+dcl-ds procNms likeds(ProcNms_t);
+// Test result
+dcl-ds result likeds(result_t);
 
-        clear procWithNoErrorWasCalled;
-        clear procNms;
-        clear result;
+// Spying flag.
+dcl-s procWithNoErrorWasCalled ind;
 
-      /end-free
-     P                 e
+//----------------------------------------------------------------------
+//   Test Definitions
+//----------------------------------------------------------------------
 
-     P tearDown        b                   export
-     D tearDown        pi
-      /free
+dcl-proc setUp export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        list_dispose(testSuite.testResults);
+  clear logIdx;
+  clear logLine;
 
-      /end-free
-     P                 e
+  clear testCase;
+  clear testSuite;
+  testSuite.testList = %addr(testCase);
+  testSuite.testResults = list_create();
 
+  clear procWithNoErrorWasCalled;
+  clear procNms;
+  clear result;
 
-     P test_runTests_SuccessfulTestWithDetailBasic...
-     P                 b                   export
-     D test_runTests_SuccessfulTestWithDetailBasic...
-     D                 pi
-      /free
+end-proc;
 
-        // Setup.
+dcl-proc tearDown export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        testSuite.testCasesCnt = 1;
-        testCase(1).procNm = 'successful_test_1';
-        procNms.numE = 1;
-        procNms.name(1) = ALL_PROCS;
+  list_dispose(testSuite.testResults);
 
-        // Execution.
+end-proc;
 
-        runTests( result : testSuite : procNms :
-                  ORDER_API : DETAIL_BASIC : RCLRSC_NO);
 
-        // Controls.
+dcl-proc test_runTests_SuccessfulTestWithDetailBasic export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        // iEqual( 0 : logIdx );
-        iEqual( 1 : logIdx );   // logIdx is 1, because now handleSuccess() is
-                                // called by runTests() regardless of the value
-                                // of 'detail'.
+  // Setup.
 
-      /end-free
-     P                 e
+  testSuite.testCasesCnt = 1;
+  testCase(1).procNm = 'successful_test_1';
+  procNms.numE = 1;
+  procNms.name(1) = ALL_PROCS;
 
+  // Execution.
 
-     P test_runTests_SuccessfulTestWithDetailAllAndOneAssertion...
-     P                 b                   export
-     D test_runTests_SuccessfulTestWithDetailAllAndOneAssertion...
-     D                 pi
-      /free
+  runTests(result: testSuite: procNms: ORDER_API: DETAIL_BASIC: RCLRSC_NO);
 
-        // Setup.
+  // Controls.
 
-        testSuite.testCasesCnt = 1;
-        testCase(1).procNm = 'successful_test_with_one_assertion';
-        testCase(1).procPtr = %paddr(successful_test_with_one_assertion);
-        procNms.numE = 1;
-        procNms.name(1) = ALL_PROCS;
+  // iEqual( 0 : logIdx );
+  iEqual(1 :logIdx);   // logIdx is 1, because now handleSuccess() is
+  // called by runTests() regardless of the value
+  // of 'detail'.
 
-        // Execution.
+end-proc;
 
-        runTests( result : testSuite : procNms :
-                  ORDER_API : DETAIL_ALL : RCLRSC_NO);
 
+dcl-proc test_runTests_SuccessfulTestWithDetailAllAndOneAssertion export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        // Controls.
+  // Setup.
 
-        iEqual( 1 : logIdx );
-        aEqual( TEST_CASE_SUCCESS : logLine(1).type );
-        aEqual( 'successful_test_with_one_assertion' : logLine(1).procNm );
-        iEqual( 1 : logLine(1).assertionCnt );
+  testSuite.testCasesCnt = 1;
+  testCase(1).procNm = 'successful_test_with_one_assertion';
+  testCase(1).procPtr = %paddr(successful_test_with_one_assertion);
+  procNms.numE = 1;
+  procNms.name(1) = ALL_PROCS;
 
-      /end-free
-     P                 e
+  // Execution.
 
+  runTests(result: testSuite: procNms: ORDER_API: DETAIL_ALL: RCLRSC_NO);
 
-     P test_runTests_SuccessfulTestWithDetailAllAndTwoAssertions...
-     P                 b                   export
-     D test_runTests_SuccessfulTestWithDetailAllAndTwoAssertions...
-     D                 pi
-      /free
 
-        // Setup.
+  // Controls.
 
-        testSuite.testCasesCnt = 1;
-        testCase(1).procNm = 'successful_test_with_two_assertions';
-        testCase(1).procPtr = %paddr(successful_test_with_two_assertions);
-        procNms.numE = 1;
-        procNms.name(1) = ALL_PROCS;
+  iEqual(1 : logIdx);
+  aEqual(TEST_CASE_SUCCESS: logLine(1).type);
+  aEqual('successful_test_with_one_assertion': logLine(1).procNm);
+  iEqual(1: logLine(1).assertionCnt);
 
-        // Execution.
+end-proc;
 
-        runTests( result : testSuite : procNms :
-                  ORDER_API : DETAIL_ALL : RCLRSC_NO);
 
-        // Controls.
+dcl-proc test_runTests_SuccessfulTestWithDetailAllAndTwoAssertions export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        iEqual( 1 : logIdx );
-        aEqual( 'successful_test_with_two_assertions' : logLine(1).procNm );
-        iEqual( 2 : logLine(1).assertionCnt );
+  // Setup.
 
-      /end-free
-     P                 e
+  testSuite.testCasesCnt = 1;
+  testCase(1).procNm = 'successful_test_with_two_assertions';
+  testCase(1).procPtr = %paddr(successful_test_with_two_assertions);
+  procNms.numE = 1;
+  procNms.name(1) = ALL_PROCS;
 
+  // Execution.
 
-     P test_runTests_TwoSuccessfulTestsWithDetailAll...
-     P                 b                   export
-     D test_runTests_TwoSuccessfulTestsWithDetailAll...
-     D                 pi
-      /free
+  runTests(result: testSuite: procNms: ORDER_API: DETAIL_ALL: RCLRSC_NO);
 
-        // Setup.
+  // Controls.
 
-        testSuite.testCasesCnt = 2;
-        testCase(1).procNm = 'successful_test_1';
-        testCase(2).procNm = 'successful_test_2';
-        procNms.numE = 1;
-        procNms.name(1) = ALL_PROCS;
+  iEqual(1: logIdx );
+  aEqual('successful_test_with_two_assertions': logLine(1).procNm);
+  iEqual(2: logLine(1).assertionCnt);
 
-        // Execution.
+end-proc;
 
-        runTests( result : testSuite : procNms :
-                  ORDER_API : DETAIL_ALL : RCLRSC_NO);
 
-        // Controls.
+dcl-proc test_runTests_TwoSuccessfulTestsWithDetailAll export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        iEqual( 2 : logIdx );
-        aEqual( 'successful_test_1' : logLine(1).procNm );
-        aEqual( 'successful_test_2' : logLine(2).procNm );
+  // Setup.
 
-      /end-free
-     P                 e
+  testSuite.testCasesCnt = 2;
+  testCase(1).procNm = 'successful_test_1';
+  testCase(2).procNm = 'successful_test_2';
+  procNms.numE = 1;
+  procNms.name(1) = ALL_PROCS;
 
+  // Execution.
 
-     P test_runTests_TwoSuccessfulTestsWithOrderReverse...
-     P                 b                   export
-     D test_runTests_TwoSuccessfulTestsWithOrderReverse...
-     D                 pi
-      /free
+  runTests(result: testSuite: procNms: ORDER_API: DETAIL_ALL: RCLRSC_NO);
 
-        // Setup.
+  // Controls.
 
-        testSuite.testCasesCnt = 2;
-        testCase(1).procNm = 'successful_test_1';
-        testCase(2).procNm = 'successful_test_2';
-        procNms.numE = 1;
-        procNms.name(1) = ALL_PROCS;
+  iEqual(2: logIdx);
+  aEqual('successful_test_1': logLine(1).procNm);
+  aEqual('successful_test_2': logLine(2).procNm);
 
-        // Execution.
+end-proc;
 
-        runTests( result : testSuite : procNms :
-                  ORDER_REVERSE : DETAIL_ALL : RCLRSC_NO);
 
-        // Controls.
+dcl-proc test_runTests_TwoSuccessfulTestsWithOrderReverse export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        iEqual( 2 : logIdx );
-        aEqual( 'successful_test_2' : logLine(1).procNm );
-        aEqual( 'successful_test_1' : logLine(2).procNm );
+  // Setup.
 
-      /end-free
-     P                 e
+  testSuite.testCasesCnt = 2;
+  testCase(1).procNm = 'successful_test_1';
+  testCase(2).procNm = 'successful_test_2';
+  procNms.numE = 1;
+  procNms.name(1) = ALL_PROCS;
 
+  // Execution.
 
-     P test_runTests_ChooseOneTestProc...
-     P                 b                   export
-     D test_runTests_ChooseOneTestProc...
-     D                 pi
-      /free
+  runTests(result: testSuite: procNms: ORDER_REVERSE: DETAIL_ALL: RCLRSC_NO);
 
-        // Setup.
+  // Controls.
 
-        testSuite.testCasesCnt = 2;
-        testCase(1).procNm = 'successful_test_1';
-        testCase(2).procNm = 'successful_test_2';
-        procNms.numE = 1;
-        procNms.name(1) = 'successful_test_2';
+  iEqual(2: logIdx);
+  aEqual('successful_test_2': logLine(1).procNm);
+  aEqual('successful_test_1': logLine(2).procNm);
 
-        // Execution.
+end-proc;
 
-        runTests( result : testSuite : procNms :
-                  ORDER_API : DETAIL_ALL : RCLRSC_NO );
 
-        // Controls.
+dcl-proc test_runTests_ChooseOneTestProc export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        iEqual( 1 : logIdx );
-        aEqual( 'successful_test_2' : logLine(1).procNm );
+  // Setup.
 
-      /end-free
-     P                 e
+  testSuite.testCasesCnt = 2;
+  testCase(1).procNm = 'successful_test_1';
+  testCase(2).procNm = 'successful_test_2';
+  procNms.numE = 1;
+  procNms.name(1) = 'successful_test_2';
 
+  // Execution.
 
-     P test_runTests_ChooseNonExistingTestProc...
-     P                 b                   export
-     D test_runTests_ChooseNonExistingTestProc...
-     D                 pi
-      /free
+  runTests(result: testSuite: procNms: ORDER_API: DETAIL_ALL: RCLRSC_NO);
 
-        // Setup.
+  // Controls.
 
-        testSuite.testCasesCnt = 1;
-        testCase(1).procNm = 'test_1';
-        procNms.numE = 1;
-        procNms.name(1) = 'test_2';
+  iEqual(1: logIdx);
+  aEqual('successful_test_2': logLine(1).procNm);
 
-        // Execution.
+end-proc;
 
-        runTests( result : testSuite : procNms :
-                  ORDER_API : DETAIL_ALL : RCLrSC_NO );
 
-        // Controls.
+dcl-proc test_runTests_ChooseNonExistingTestProc export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        iEqual( 1 : logIdx );
-        aEqual( 'test_2' : logLine(1).procNm );
-        aEqual( TEST_CASE_ERROR : logLine(1).type );
-        aEqual( 'Test procedure not found.' : logLine(1).msg );
+  // Setup.
 
-      /end-free
-     P                 e
+  testSuite.testCasesCnt = 1;
+  testCase(1).procNm = 'test_1';
+  procNms.numE = 1;
+  procNms.name(1) = 'test_2';
 
+  // Execution.
 
-     P test_fmtObjNm   b                   export
-     D test_fmtObjNm   pi
+  runTests(result: testSuite: procNms: ORDER_API: DETAIL_ALL: RCLrSC_NO);
 
-     D object          ds                  likeds(Object_t)
+  // Controls.
 
-      /free
+  iEqual(1: logIdx);
+  aEqual('test_2': logLine(1).procNm);
+  aEqual(TEST_CASE_ERROR: logLine(1).type);
+  aEqual('Test procedure not found.': logLine(1).msg);
 
-        object.nm  = 'MYOBJ';
-        object.lib = 'MYLIB';
+end-proc;
 
-        aEqual( 'MYLIB/MYOBJ' : fmtObjNm( object ) );
-        iEqual( %len( 'MYLIB/MYOBJ' ) : %len( fmtObjNm( object ) ) );
 
-      /end-free
-     P                 e
+dcl-proc test_fmtObjNm export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
+  dcl-ds object likeds(Object_t);
 
-     P test_callWithLogging_withSuccess...
-     P                 b                   export
-     D test_callWithLogging_withSuccess...
-     D                 pi
 
-     D procWithNoError...
-     D                 ds                  likeds(Proc_t)
+  object.nm  = 'MYOBJ';
+  object.lib = 'MYLIB';
 
-      /free
+  aEqual('MYLIB/MYOBJ': fmtObjNm(object));
+  iEqual(%len('MYLIB/MYOBJ'): %len(fmtObjNm(object)));
 
-        procWithNoError.procNm  =        'proc_with_no_error';
-        procWithNoError.procPtr = %paddr( proc_with_no_error );
+end-proc;
 
-        callWithLogging( procWithNoError );
 
-        assert( procWithNoErrorWasCalled : 'proc_with_no_error not called' );
-        iEqual( 0 : logIdx );    // No logging if success.
+dcl-proc test_callWithLogging_withSuccess export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-      /end-free
-     P                 e
+  dcl-ds procWithNoError likeds(Proc_t);
 
+  procWithNoError.procNm = 'proc_with_no_error';
+  procWithNoError.procPtr = %paddr( proc_with_no_error );
 
-     P test_callWithLogging_withError...
-     P                 b                   export
-     D test_callWithLogging_withError...
-     D                 pi
+  callWithLogging(procWithNoError);
 
-     D procWithError   ds                  likeds(Proc_t)
+  assert(procWithNoErrorWasCalled: 'proc_with_no_error not called');
+  iEqual(0: logIdx);    // No logging if success.
 
-      /free
+end-proc;
 
-        procWithError.procNm  =        'proc_with_error';
-        procWithError.procPtr = %paddr( proc_with_error );
 
-        monitor;
-          callWithLogging( procWithError );
-        on-error;
-          fail( 'callWithLogging should never raise an error' );
-        endmon;
+dcl-proc test_callWithLogging_withError export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        iEqual( 1 : logIdx );
-        aEqual( 'proc_with_error'  : logLine(1).procNm );
-        aEqual( TEST_CASE_ERROR    : logLine(1).type );
-        aEqual( 'Artificial error' : logLine(1).msg );
+  dcl-ds procWithError likeds(Proc_t);
 
-      /end-free
-     P                 e
+  procWithError.procNm = 'proc_with_error';
+  procWithError.procPtr = %paddr(proc_with_error);
 
+  monitor;
+    callWithLogging(procWithError);
+  on-error;
+     fail('callWithLogging should never raise an error');
+  endmon;
 
-     P test_fmtCompMsg...
-     P                 b                   export
-     D test_fmtCompMsg...
-     D                 pi
-      /free
+  iEqual(1: logIdx);
+  aEqual('proc_with_error': logLine(1).procNm);
+  aEqual(TEST_CASE_ERROR: logLine(1).type);
+  aEqual('Artificial error': logLine(1).msg);
 
-        aEqual( 'Success. 0 test case, 0 assertion, 0 failure, 0 error.' :
-                fmtCompMsg( 0 : 0 : 0 : 0 ) );
+end-proc;
 
-        aEqual( 'Success. 2 test cases, 0 assertion, 0 failure, 0 error.' :
-                fmtCompMsg( 2 : 0 : 0 : 0 ) );
 
-        aEqual( 'Success. 0 test case, 2 assertions, 0 failure, 0 error.' :
-                fmtCompMsg( 0 : 2 : 0 : 0 ) );
+dcl-proc test_fmtCompMsg export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        aEqual( 'FAILURE. 0 test case, 0 assertion, 2 failures, 0 error.' :
-                fmtCompMsg( 0 : 0 : 2 : 0 ) );
+  aEqual('Success. 0 test case, 0 assertion, 0 failure, 0 error.': fmtCompMsg(0: 0: 0: 0));
 
-        aEqual( 'ERROR. 0 test case, 0 assertion, 0 failure, 2 errors.' :
-                fmtCompMsg( 0 : 0 : 0 : 2 ) );
+  aEqual('Success. 2 test cases, 0 assertion, 0 failure, 0 error.': fmtCompMsg(2: 0: 0: 0));
 
-        // Errors have priority over failures.
-        aEqual( 'ERROR. 0 test case, 0 assertion, 2 failures, 1 error.' :
-                fmtCompMsg( 0 : 0 : 2 : 1 ) );
+  aEqual('Success. 0 test case, 2 assertions, 0 failure, 0 error.': fmtCompMsg(0: 2: 0: 0));
 
-      /end-free
-     P                 e
+  aEqual('FAILURE. 0 test case, 0 assertion, 2 failures, 0 error.': fmtCompMsg(0: 0: 2: 0));
 
+  aEqual('ERROR. 0 test case, 0 assertion, 0 failure, 2 errors.': fmtCompMsg(0: 0: 0: 2));
 
-      //----------------------------------------------------------------------
-      //   Mock Procedures (mocking CMDRUNLOG)
-      //----------------------------------------------------------------------
+  // Errors have priority over failures.
+  aEqual('ERROR. 0 test case, 0 assertion, 2 failures, 1 error.': fmtCompMsg(0: 0: 2: 1));
 
-     P logCompMsg      b                   export
-     D logCompMsg      pi
-     D  msg                       16384a   const varying options(*Varsize)
-     D  failures                     10i 0 const
-     D  errors                       10i 0 const
-      /free
-        fail( 'Mock logCompMsg not implemented' );
-      /end-free
-     P                 e
+end-proc;
 
 
-     P logError        b                   export
-     D logError        pi
-     D  testNm                             const like(ProcNm_t)
-     D  excpMsgInfo                        const likeds(Msg_t)
-      /free
+//----------------------------------------------------------------------
+//   Mock Procedures (mocking CMDRUNLOG)
+//----------------------------------------------------------------------
 
-        logIdx += 1;
-        logLine(logIdx).type = TEST_CASE_ERROR;
-        logLine(logIdx).procNm = testNm;
-        logLine(logIdx).msg = excpMsgInfo.txt;
+dcl-proc logCompMsg export;
+  dcl-pi *n;
+    msg             varchar(16384) const  options(*Varsize);
+    failures        int(10) const;
+    errors          int(10) const;
+  end-pi;
 
-      /end-free
-     P                 e
+  fail('Mock logCompMsg not implemented');
 
+end-proc;
 
-     P logFailure      b                   export
-     D logFailure      pi
-     D  testNm                             const like(ProcNm_t)
-     D  failure                            const likeds(AssertFailEvtLong_t)
-      /free
-        fail( 'Mock logFailure not implemented' );
-      /end-free
-     P                 e
 
+dcl-proc logError export;
+  dcl-pi *n;
+    testNm          const like(ProcNm_t);
+    excpMsgInfo     const likeds(Msg_t);
+  end-pi;
 
-     P logSuccess      b                   export
-     D logSuccess      pi
-     D  testNm                             const like(ProcNm_t)
-     D  assertionCnt                 10i 0 const
-      /free
+  logIdx += 1;
+  logLine(logIdx).type = TEST_CASE_ERROR;
+  logLine(logIdx).procNm = testNm;
+  logLine(logIdx).msg = excpMsgInfo.txt;
 
-        logIdx += 1;
-        logLine(logIdx).type = TEST_CASE_SUCCESS;
-        logLine(logIdx).procNm = testNm;
-        logLine(logIdx).assertionCnt = assertionCnt;
+end-proc;
 
-      /end-free
-     P                 e
 
+dcl-proc logFailure export;
+  dcl-pi *n;
+    testNm          const like(ProcNm_t);
+    failure         const likeds(AssertFailEvtLong_t);
+  end-pi;
 
-     P setLogContext   b                   export
-     D setLogContext   pi
-     D  testPgm                            const likeds(Object_t)
-     D  detail                       10a   const
-     D  output                       10a   const
-      /free
-        fail( 'Mock setLogContext not implemented' );
-      /end-free
-     P                 e
+  fail('Mock logFailure not implemented');
 
+end-proc;
 
-      //----------------------------------------------------------------------
-      //   Support Procedures
-      //----------------------------------------------------------------------
 
-       // Dummy procedure with error.
-     P proc_with_error...
-     P                 b                   export
-     D proc_with_error...
-     D                 pi
-      /free
+dcl-proc logSuccess export;
+  dcl-pi *n;
+    testNm          const like(ProcNm_t);
+    assertionCnt    int(10) const;
+  end-pi;
 
-        sndEscapeMsgToCaller( 'Artificial error' );
+  logIdx += 1;
+  logLine(logIdx).type = TEST_CASE_SUCCESS;
+  logLine(logIdx).procNm = testNm;
+  logLine(logIdx).assertionCnt = assertionCnt;
 
-      /end-free
-     P                 e
+end-proc;
 
 
-       // Dummy procedure with no error.
-     P proc_with_no_error...
-     P                 b                   export
-     D proc_with_no_error...
-     D                 pi
-      /free
+dcl-proc setLogContext export;
+  dcl-pi *n;
+    testPgm         const likeds(Object_t);
+    detail          char(10) const;
+    output          char(10) const;
+  end-pi;
 
-        procWithNoErrorWasCalled = *on;
+  fail('Mock setLogContext not implemented');
 
-      /end-free
-     P                 e
+end-proc;
 
 
-       // Dummy test procedure.
-     P successful_test_1...
-     P                 b                   export
-     D                 pi
-      /free
-        iEqual( 4 : 2+2 );
-      /end-free
-     P                 e
+//----------------------------------------------------------------------
+//   Support Procedures
+//----------------------------------------------------------------------
 
+// Dummy procedure with error.
+dcl-proc proc_with_error export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-       // Dummy test procedure.
-     P successful_test_2...
-     P                 b                   export
-     D                 pi
-      /free
-        iEqual( 4 : 2+2 );
-      /end-free
-     P                 e
+  sndEscapeMsgToCaller('Artificial error');
 
+end-proc;
 
-       // Dummy test procedure.
-     P successful_test_with_one_assertion...
-     P                 b                   export
-     D successful_test_with_one_assertion...
-     D                 pi
-      /free
-        iEqual( 4 : 2+2 );
-      /end-free
-     P                 e
 
-       // Dummy test procedure.
-     P successful_test_with_two_assertions...
-     P                 b                   export
-     D successful_test_with_two_assertions...
-     D                 pi
-      /free
-        iEqual( 4 : 2+2 );
-        iEqual( 4 : 2+2 );
-      /end-free
-     P                 e
+// Dummy procedure with no error.
+dcl-proc proc_with_no_error export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  procWithNoErrorWasCalled = *on;
+
+end-proc;
+
+
+// Dummy test procedure.
+dcl-proc successful_test_1 export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  iEqual(4: 2+2);
+
+end-proc;
+
+
+// Dummy test procedure.
+dcl-proc successful_test_2 export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  iEqual(4: 2+2);
+
+end-proc;
+
+
+// Dummy test procedure.
+dcl-proc successful_test_with_one_assertion export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  iEqual(4: 2+2);
+
+end-proc;
+
+// Dummy test procedure.
+dcl-proc successful_test_with_two_assertions export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  iEqual(4: 2+2);
+  iEqual(4: 2+2);
+
+end-proc;
 

@@ -1,764 +1,672 @@
-      // ==========================================================================
-      //  iRPGUnit SelfTest - Test STRING.
-      // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
-      // ==========================================================================
-      // >>PRE-COMPILER<<
-      //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
-      //   >>IMPORTANT<<
-      //     >>PARM<<  MODULE(&LI/JOBLOG    +
-      //                      &LI/STRING    +
-      //                      &LI/PGMMSG    +
-      //                      );
-      //     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
-      //   >>END-IMPORTANT<<
-      //   >>CMD<<     CMPMOD MODULE(&LI/JOBLOG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-      //   >>CMD<<     CMPMOD MODULE(&LI/STRING   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-      //   >>CMD<<     CMPMOD MODULE(&LI/PGMMSG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-      //   >>EXECUTE<<
-      // >>END-PRE-COMPILER<<
-      // ==========================================================================
+**FREE
+// ==========================================================================
+//  iRPGUnit SelfTest - Test STRING.
+// ==========================================================================
+//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ==========================================================================
+// >>PRE-COMPILER<<
+//   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+//   >>IMPORTANT<<
+//     >>PARM<<  MODULE(&LI/JOBLOG    +
+//                      &LI/STRING    +
+//                      &LI/PGMMSG    +
+//                      );
+//     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
+//   >>END-IMPORTANT<<
+//   >>CMD<<     CMPMOD MODULE(&LI/JOBLOG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/STRING   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/PGMMSG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>EXECUTE<<
+// >>END-PRE-COMPILER<<
+// ==========================================================================
 
-     H NoMain Option(*SrcStmt)
-      // The following control options are required
-      // for test case testParseNum().
-     H ExprOpts(*RESDECPOS) DecEdit('0,')
+ctl-opt NoMain Option(*SrcStmt);
+// The following control options are required
+// for test case testParseNum().
+ctl-opt ExprOpts(*RESDECPOS) DecEdit('0,');
 
+//----------------------------------------------------------------------
+//   Internal Procedures
+//----------------------------------------------------------------------
 
-      //----------------------------------------------------------------------
-      //   Exported Procedures
-      //----------------------------------------------------------------------
+//dcl-pr toJobFmt
+//       varchar(96)
+//       extproc('toJobFmt');
+//  i_value         varchar(96) const;
+//end-pr;
+//
+//dcl-pr getDecFmt
+//       char(1) extproc('getDecFmt');
+//end-pr;
 
-     D setupSuite...
-     D                 pr                  extproc('setupSuite')
+//----------------------------------------------------------------------
+//   Global Constants
+//----------------------------------------------------------------------
 
-     D testUCase...
-     D                 pr                  extproc('testUCase')
+dcl-c FOX 'The quick brown fox jumps over the lazy dog.';
 
-     D testLeftStr...
-     D                 pr                  extproc('testLeftStr')
+//----------------------------------------------------------------------
+//   Test Suite Status
+//----------------------------------------------------------------------
 
-     D testStartsWith...
-     D                 pr                  extproc('testStartsWith')
+dcl-ds g_status qualified;
+  decFmt char(1);
+end-ds;
 
-     D testEndsWith...
-     D                 pr                  extproc('testEndsWith')
+//----------------------------------------------------------------------
+//   Imported Procedures
+//----------------------------------------------------------------------
 
-     D testIsQuoted...
-     D                 pr                  extproc('testIsQuoted')
+/include qinclude,ASSERT
+/include qinclude,STRING
+/include qinclude,TEMPLATES
+/include qinclude,ERRORCODE
 
-     D testAddQuotes...
-     D                 pr                  extproc('testAddQuotes')
+/include qsysinc,QUSRJOBI
 
-     D testRemoveQuotes...
-     D                 pr                  extproc('testRemoveQuotes')
+//----------------------------------------------------------------------
+//   Setup & Tear Down
+//----------------------------------------------------------------------
 
-     D testSpaces...
-     D                 pr                  extproc('testSpaces')
+dcl-proc setupSuite export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-     D testSpacesWithChar...
-     D                 pr                  extproc('testSpacesWithChar')
+  g_status.decFmt = getDecFmt();
 
-     D testSpacesTooLong...
-     D                 pr                  extproc('testSpacesTooLong')
+end-proc;
 
-     D testContains...
-     D                 pr                  extproc('testContains')
+//----------------------------------------------------------------------
+//   Tests
+//----------------------------------------------------------------------
 
-     D testCompare...
-     D                 pr                  extproc('testCompare')
+dcl-proc testUCase export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-     D testParseNum...
-     D                 pr                  extproc('testParseNum')
+  dcl-s uString varchar(512) inz;
 
+  // Setup.
 
-      //----------------------------------------------------------------------
-      //   Internal Procedures
-      //----------------------------------------------------------------------
 
-     D toJobFmt...
-     D                 pr            96a   varying
-     D                                     extproc('toJobFmt')
-     D  i_value                      96a   const varying
+  // Run.
 
-     D getDecFmt...
-     D                 pr             1a   extproc('getDecFmt')
+  uString = uCase('abcdefghijklmnopqrstuvwxyz');
 
-      //----------------------------------------------------------------------
-      //   Global Constants
-      //----------------------------------------------------------------------
+  // Check.
 
-     D FOX             c                    'The quick brown fox jumps over +
-     D                                      the lazy dog.'
+  aEqual('ABCDEFGHIJKLMNOPQRSTUVWXYZ' : uString);
 
-      //----------------------------------------------------------------------
-      //   Test Suite Status
-      //----------------------------------------------------------------------
+end-proc;
 
-     D g_status        ds                  qualified
-     D  decFmt                        1a
+dcl-proc testLeftStr export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-      //----------------------------------------------------------------------
-      //   Imported Procedures
-      //----------------------------------------------------------------------
+  dcl-c HELLO_WORLD 'Hello World';
 
-      /include qinclude,ASSERT
-      /include qinclude,STRING
-      /include qinclude,TEMPLATES
-      /include qinclude,ERRORCODE
+  dcl-ds errMsgInfo likeds(MsgInfo_t) inz;
 
-      /include qsysinc,QUSRJOBI
+  // Setup.
 
+  // Run.
 
+  // Check.
 
-      //----------------------------------------------------------------------
-      //   Setup & Tear Down
-      //----------------------------------------------------------------------
+  assert(leftStr(HELLO_WORLD: %len(HELLO_WORLD) + 1) = HELLO_WORLD:
+         'Expected the complete input string (length > len(input))');
 
-     P setupSuite...
-     P                 b                   export
-     D                 pi
+  assert(leftStr(HELLO_WORLD: %len(HELLO_WORLD)) = HELLO_WORLD:
+         'Expected the complete input string (length = len(input))');
 
-        g_status.decFmt = getDecFmt();
+  assert(leftStr(HELLO_WORLD: 5) = 'Hello':
+         'Expected: Hello');
 
-     P                 e
+  assert(leftStr(HELLO_WORLD: 0) = '':
+         'Expected: empty string');
 
-      //----------------------------------------------------------------------
-      //   Tests
-      //----------------------------------------------------------------------
+  monitor;
+    assert(leftStr(HELLO_WORLD: -1) = '':
+           'Expected RNX0100: Length or start position is out of range');
+    fail('Expected to see a RPG runtime exception');
+  on-error;
+    errMsgInfo = getMonitoredMessage(*on);
+    assert(errMsgInfo.id = 'RNX0100':
+           'Expected RNX0100: Length or start position is out of range');
+  endmon;
 
-     P testUCase...
-     P                 b                   export
-     D                 pi
+end-proc;
 
-     D uString         s            512a   varying inz
-      /free
 
-        // Setup.
+dcl-proc testStartsWith export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
+  // Setup.
 
-        // Run.
+  // Run.
 
-        uString = uCase('abcdefghijklmnopqrstuvwxyz');
+  // Check.
 
-        // Check.
+  assert(startsWith('Hello': 'Hello World'):
+         '''Hello World'' starts with ''Hello''');
 
-        aEqual('ABCDEFGHIJKLMNOPQRSTUVWXYZ' : uString);
+  assert(startsWith('hello': 'Hello World'):
+         '''Hello World'' starts with ''hello''');
 
-      /end-free
-     P                 e
+  assert(not startsWith('hello': '   Hello World'):
+         ''' Hello World'' does not start with ''hello'' due +
+         to leading spaces');
 
-     P testLeftStr...
-     P                 b                   export
-     D                 pi
+  assert(not startsWith('hello': 'Greet the World'):
+         '''Greet the World'' obviously does not start with ''hello''');
 
-     D HELLO_WORLD     c                   'Hello World'
+end-proc;
 
-     D errMsgInfo      ds                  likeds(MsgInfo_t) inz
-      /free
 
-        // Setup.
+dcl-proc testEndsWith export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        // Run.
+  // Setup.
 
-        // Check.
+  // Run.
 
-        assert(leftStr(HELLO_WORLD: %len(HELLO_WORLD) + 1) = HELLO_WORLD:
-               'Expected the complete input string (length > len(input))');
+  // Check.
 
-        assert(leftStr(HELLO_WORLD: %len(HELLO_WORLD)) = HELLO_WORLD:
-               'Expected the complete input string (length = len(input))');
+  assert(endsWith('World': 'Hello World'):
+         '''Hello World'' ends with ''world''');
 
-        assert(leftStr(HELLO_WORLD: 5) = 'Hello':
-               'Expected: Hello');
+  assert(endsWith('world': 'Hello World'):
+         '''Hello World'' ends with ''world''');
 
-        assert(leftStr(HELLO_WORLD: 0) = '':
-               'Expected: empty string');
+  assert(not endsWith('world': 'Hello World   '):
+         ''' Hello World'' does not end with ''world'' due +
+         to trailing spaces');
 
-        monitor;
-           assert(leftStr(HELLO_WORLD: -1) = '':
-                  'Expected RNX0100: Length or start position is out of range');
-           fail( 'Expected to see a RPG runtime exception' );
-        on-error;
-           errMsgInfo = getMonitoredMessage(*on);
-           assert(errMsgInfo.id = 'RNX0100':
-                  'Expected RNX0100: Length or start position is out of range');
-        endmon;
+  assert(not endsWith('greet': 'Greet the World'):
+         '''Greet the World'' obviously does not end with ''greet''');
 
+end-proc;
 
-      /end-free
-     P                 e
 
-     P testStartsWith...
-     P                 b                   export
-     D                 pi
-      /free
+dcl-proc testIsQuoted export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        // Setup.
+  // Setup.
 
-        // Run.
+  // Run.
 
-        // Check.
+  // Check.
 
-        assert(startsWith('Hello': 'Hello World'):
-               '''Hello World'' starts with ''Hello''');
+  assert(isQuoted(QUOTE + 'A simple quoted string' + QUOTE):
+         'String passed to testIsQuoted() is quoted');
 
-        assert(startsWith('hello': 'Hello World'):
-               '''Hello World'' starts with ''hello''');
+  assert(not isQuoted('A simple string without quotes'):
+         'String passed to testIsQuoted() is not quoted');
 
-        assert(not startsWith('hello': '   Hello World'):
-               ''' Hello World'' does not start with ''hello'' due +
-               to leading spaces');
+  assert(not isQuoted(QUOTE + 'A simple string starting with a quote'):
+         'String passed to testIsQuoted() is not quoted due +
+         to missing end quote'); // Starting quote is recognized as apostrophe
 
-        assert(not startsWith('hello': 'Greet the World'):
-               '''Greet the World'' obviously does not start with ''hello''');
+  assert(not isQuoted('A simple string ending with a quote' + QUOTE):
+         'String passed to testIsQuoted() is not quoted due +
+         to missing start quote'); // Ending quote is recognized as apostrophe
 
-      /end-free
-     P                 e
+end-proc;
 
-     P testEndsWith...
-     P                 b                   export
-     D                 pi
-      /free
 
-        // Setup.
+dcl-proc testAddQuotes export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        // Run.
+  dcl-s string varchar(128);
+  dcl-s quoted varchar(128);
 
-        // Check.
+  // Setup.
 
-        assert(endsWith('World': 'Hello World'):
-               '''Hello World'' ends with ''world''');
+  // Run.
 
-        assert(endsWith('world': 'Hello World'):
-               '''Hello World'' ends with ''world''');
+  // Check.
 
-        assert(not endsWith('world': 'Hello World   '):
-               ''' Hello World'' does not end with ''world'' due +
-               to trailing spaces');
+  string = QUOTE + 'A simple quoted string' + QUOTE;
+  quoted = addQuotes(string);
+  aEqual(string: quoted);   // String must be unchanged.
 
-        assert(not endsWith('greet': 'Greet the World'):
-               '''Greet the World'' obviously does not end with ''greet''');
+  string = 'A simple string without quotes';
+  quoted = addQuotes(string);
+  aEqual(QUOTE + 'A simple string without quotes' + QUOTE: quoted);
 
-      /end-free
-     P                 e
+  string = 'Programmer''s coffee cup';
+  quoted = addQuotes(string);
+  aEqual(QUOTE + 'Programmer' + QUOTE + QUOTE + 's coffee cup' + QUOTE
+         : quoted);
 
-     P testIsQuoted...
-     P                 b                   export
-     D                 pi
-      /free
+  string = QUOTE + 's coffee cup';
+  quoted = addQuotes(string);
+  // String gets quoted and leading apostrophe is doubled
+  aEqual(QUOTE + QUOTE + QUOTE + 's coffee cup' + QUOTE: quoted);
 
-        // Setup.
+  string = 'coffee cup' + QUOTE;
+  quoted = addQuotes(string);
+  // String gets quoted and ending apostrophe is doubled
+  aEqual(QUOTE + 'coffee cup' + QUOTE + QUOTE + QUOTE: quoted);
 
-        // Run.
+end-proc;
 
-        // Check.
 
-        assert(isQuoted(QUOTE + 'A simple quoted string' + QUOTE):
-               'String passed to testIsQuoted() is quoted');
+dcl-proc testRemoveQuotes export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        assert(not isQuoted('A simple string without quotes'):
-               'String passed to testIsQuoted() is not quoted');
+  dcl-s expected varchar(128);
+  dcl-s actual varchar(128);
 
-        assert(not isQuoted(QUOTE + 'A simple string starting with a quote'):
-               'String passed to testIsQuoted() is not quoted due +
-               to missing end quote'); // Starting quote is recognized as apostrophe
+  // Setup.
 
-        assert(not isQuoted('A simple string ending with a quote' + QUOTE):
-               'String passed to testIsQuoted() is not quoted due +
-               to missing start quote'); // Ending quote is recognized as apostrophe
+  // Run.
 
-      /end-free
-     P                 e
+  // Check.
 
-     P testAddQuotes...
-     P                 b                   export
-     D                 pi
+  expected = QUOTE + 'A simple quoted string' + QUOTE;
+  actual = addQuotes(removeQuotes(expected));
+  aEqual(expected: actual);
 
-     D string          s            128a   varying
-     D quoted          s            128a   varying
-      /free
+  expected = 'A simple string without quotes';
+  actual = removeQuotes(expected);
+  aEqual(expected: actual);
 
-        // Setup.
+  expected = 'Programmer''s coffee cup'; // embedded apostrophe
+  actual = removeQuotes(addQuotes(expected));
+  aEqual(expected: actual);
 
-        // Run.
+  expected = QUOTE + 's coffee cup'; // leading apostrophe
+  actual = removeQuotes(addQuotes(expected));
+  aEqual(expected: actual);
 
-        // Check.
+  expected = 'coffee cup' + QUOTE; // trailing apostrophe
+  actual = removeQuotes(addQuotes(expected));
+  aEqual(expected: actual);
 
-        string = QUOTE + 'A simple quoted string' + QUOTE;
-        quoted = addQuotes(string);
-        aEqual(string: quoted);   // String must be unchanged.
+end-proc;
 
-        string = 'A simple string without quotes';
-        quoted = addQuotes(string);
-        aEqual(QUOTE + 'A simple string without quotes' + QUOTE: quoted);
 
-        string = 'Programmer''s coffee cup';
-        quoted = addQuotes(string);
-        aEqual(QUOTE + 'Programmer' + QUOTE + QUOTE + 's coffee cup' + QUOTE
-               : quoted);
+dcl-proc testSpaces export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        string = QUOTE + 's coffee cup';
-        quoted = addQuotes(string);
-        // String gets quoted and leading apostrophe is doubled
-        aEqual(QUOTE + QUOTE + QUOTE + 's coffee cup' + QUOTE: quoted);
+  dcl-s expected varchar(128);
 
-        string = 'coffee cup' + QUOTE;
-        quoted = addQuotes(string);
-        // String gets quoted and ending apostrophe is doubled
-        aEqual(QUOTE + 'coffee cup' + QUOTE + QUOTE + QUOTE: quoted);
+  // Setup.
 
-      /end-free
-     P                 e
+  expected = 'Donald   Duck';
 
-     P testRemoveQuotes...
-     P                 b                   export
-     D                 pi
+  // Run.
 
-     D expected        s            128a   varying
-     D actual          s            128a   varying
-      /free
+  // Check.
 
-        // Setup.
+  aEqual(expected: 'Donald' + spaces(3) + 'Duck');
 
-        // Run.
+end-proc;
 
-        // Check.
 
-        expected = QUOTE + 'A simple quoted string' + QUOTE;
-        actual = addQuotes(removeQuotes(expected));
-        aEqual(expected: actual);
+dcl-proc testSpacesWithChar export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        expected = 'A simple string without quotes';
-        actual = removeQuotes(expected);
-        aEqual(expected: actual);
+  dcl-s expected varchar(128);
 
-        expected = 'Programmer''s coffee cup'; // embedded apostrophe
-        actual = removeQuotes(addQuotes(expected));
-        aEqual(expected: actual);
+  // Setup.
 
-        expected = QUOTE + 's coffee cup'; // leading apostrophe
-        actual = removeQuotes(addQuotes(expected));
-        aEqual(expected: actual);
+  expected = 'Donald---Duck';
 
-        expected = 'coffee cup' + QUOTE; // trailing apostrophe
-        actual = removeQuotes(addQuotes(expected));
-        aEqual(expected: actual);
+  // Run.
 
-      /end-free
-     P                 e
+  // Check.
 
-     P testSpaces...
-     P                 b                   export
-     D                 pi
+  aEqual(expected: 'Donald' + spaces(3: '-') + 'Duck');
 
-     D expected        s            128a   varying
-      /free
+end-proc;
 
-        // Setup.
 
-        expected = 'Donald   Duck';
+dcl-proc testSpacesTooLong export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        // Run.
+  dcl-s expected  varchar(8000);
+  dcl-s actual varchar(8000);
+  dcl-s tmpString like(String_t);
+  dcl-s maxSpaces int(10);
 
-        // Check.
+  // Setup.
 
-        aEqual(expected: 'Donald' + spaces(3) + 'Duck');
+  maxSpaces = %size(tmpString) - 2;
+  assert(maxSpaces < %size(expected) - 2:
+         'Field ''expected'' must be longer than ' + %char(maxSpaces));
 
-      /end-free
-     P                 e
+  // Run.
 
-     P testSpacesWithChar...
-     P                 b                   export
-     D                 pi
+  expected = 'Donald' + spaces(maxSpaces) + 'Duck';
+  actual = 'Donald' + spaces(maxSpaces * 2) + 'Duck';
 
-     D expected        s            128a   varying
-      /free
+  // Check.
 
-        // Setup.
+  aEqual(expected: actual);
 
-        expected = 'Donald---Duck';
+end-proc;
 
-        // Run.
 
-        // Check.
+dcl-proc testContains export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        aEqual(expected: 'Donald' + spaces(3: '-') + 'Duck');
+  dcl-s result ind;
 
-      /end-free
-     P                 e
+  // Check not found.
 
-     P testSpacesTooLong...
-     P                 b                   export
-     D                 pi
+  result = contains( 'foo bar' : FOX);
+  assert(not result:
+    'contains() must return FALSE, +
+     because string does not contain ''foo bar''' );
 
-     D expected        s           8000a   varying
-     D actual          s           8000a   varying
-     D tmpString       s                   like(String_t)
-     D maxSpaces       s             10i 0
-      /free
+  // Check.
 
-        // Setup.
+  result = contains( 'The' : FOX);
+  assert(result:
+    'contains() must return TRUE, because string starts with ''The''' );
 
-        maxSpaces = %size(tmpString) - 2;
-        assert(maxSpaces < %size(expected) - 2:
-               'Field ''expected'' must be longer than ' + %char(maxSpaces));
+  result = contains( 'quick' : FOX);
+  assert(result:
+    'contains() must return TRUE, because string contains ''quick''' );
 
-        // Run.
+  result = contains( 'dog.' : FOX);
+  assert(result:
+    'contains() must return TRUE, because string ends with ''dog.''' );
 
-        expected = 'Donald' + spaces(maxSpaces) + 'Duck';
-        actual = 'Donald' + spaces(maxSpaces * 2) + 'Duck';
+  // Check ignore case.
 
-        // Check.
+  result = contains( 'THE' : FOX);
+  assert(result:
+    'contains() must return TRUE, because string starts with ''The''' );
 
-        aEqual(expected: actual);
+  result = contains( 'QUICK' : FOX);
+  assert(result:
+    'contains() must return TRUE, because string contains ''quick''' );
 
-      /end-free
-     P                 e
+  result = contains( 'DOG.' : FOX);
+  assert(result:
+    'contains() must return TRUE, because string ends with ''dog.''' );
 
+end-proc;
 
-     P testContains...
-     P                 b                   export
-     D                 pi
 
-     D result          s               n
-      /free
+dcl-proc testCompare export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        // Check not found.
+  dcl-s result          ind;
 
-        result = contains( 'foo bar' : FOX);
-        assert( not result :
-          'contains() must return FALSE, +
-           because string does not contain ''foo bar''' );
+  // Check not found.
 
-        // Check.
+  result = compare( 'foo bar' : FOX);
+  assert(not result:
+    'compare() must return FALSE, +
+     because string does not match ''foo bar''' );
 
-        result = contains( 'The' : FOX);
-        assert( result :
-          'contains() must return TRUE, because string starts with ''The''' );
+  result = compare( 'Foo*' : FOX);
+  assert(not result:
+    'compare() must return FALSE, +
+     because string does not start with ''Foo''' );
 
-        result = contains( 'quick' : FOX);
-        assert( result :
-          'contains() must return TRUE, because string contains ''quick''' );
+  result = compare( '*foo-bar*' : FOX);
+  assert(not result:
+    'compare() must return FALSE, +
+     because string does not contain ''foo-bar''' );
 
-        result = contains( 'dog.' : FOX);
-        assert( result :
-          'contains() must return TRUE, because string ends with ''dog.''' );
+  result = compare( '*bar.' : FOX);
+  assert(not result:
+    'compare() must return FALSE, +
+     because string does not end with ''bar.''' );
 
-        // Check ignore case.
+  // Check.
 
-        result = contains( 'THE' : FOX);
-        assert( result :
-          'contains() must return TRUE, because string starts with ''The''' );
+  result = compare( 'The*' : FOX);
+  assert(result:
+    'compare() must return TRUE, because string starts with ''The''' );
 
-        result = contains( 'QUICK' : FOX);
-        assert( result :
-          'contains() must return TRUE, because string contains ''quick''' );
+  result = compare( '*quick*' : FOX);
+  assert(result:
+    'compare() must return TRUE, because string contains ''quick''' );
 
-        result = contains( 'DOG.' : FOX);
-        assert( result :
-          'contains() must return TRUE, because string ends with ''dog.''' );
+  result = compare( '*dog.' : FOX);
+  assert(result:
+    'compare() must return TRUE, because string ends with ''dog.''' );
 
-      /end-free
-     P                 e
+  // Check ignore case.
 
+  result = compare( 'THE*' : FOX);
+  assert(result:
+    'compare() must return TRUE, because string starts with ''The''' );
 
-     P testCompare...
-     P                 b                   export
-     D                 pi
+  result = compare( '*QUICK*' : FOX);
+  assert(result:
+    'compare() must return TRUE, because string contains ''quick''' );
 
-     D result          s               n
-      /free
+  result = compare( '*DOG.' : FOX);
+  assert(result:
+    'compare() must return TRUE, because string ends with ''dog.''' );
 
-        // Check not found.
+  // Check special cases
 
-        result = compare( 'foo bar' : FOX);
-        assert( not result :
-          'compare() must return FALSE, +
-           because string does not match ''foo bar''' );
+  result = compare( '*' : FOX);
+  assert(result:
+    'compare() must return TRUE, because string is not empty');
 
-        result = compare( 'Foo*' : FOX);
-        assert( not result :
-          'compare() must return FALSE, +
-           because string does not start with ''Foo''' );
+  result = compare( '*' : '');
+  assert(not result:
+    'compare() must return FALSE, because string is empty');
 
-        result = compare( '*foo-bar*' : FOX);
-        assert( not result :
-          'compare() must return FALSE, +
-           because string does not contain ''foo-bar''' );
+  result = compare( '' : '');
+  assert(result:
+    'compare() must return TRUE, because both strings are empty');
 
-        result = compare( '*bar.' : FOX);
-        assert( not result :
-          'compare() must return FALSE, +
-           because string does not end with ''bar.''' );
+end-proc;
 
-        // Check.
+//----------------------------------------------------------------------
+//   Test case of: parseNum()
+//----------------------------------------------------------------------
+dcl-proc testParseNum export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        result = compare( 'The*' : FOX);
-        assert( result :
-          'compare() must return TRUE, because string starts with ''The''' );
+  dcl-c MAX_VALUE_0 '9999999999999999999999999999999999999999999,99999999999999999999';
+  dcl-c MAX_VALUE '9.999.999.999.999.999.999.999.999.999.999.999.999.999.999,99999999999999999999';
+  dcl-s input varchar(96);
+  dcl-s actual zoned(63:20);
+  dcl-s expected zoned(63:20);
+  dcl-ds msgInfo likeds(MsgInfo_t);
 
-        result = compare( '*quick*' : FOX);
-        assert( result :
-          'compare() must return TRUE, because string contains ''quick''' );
+  input = '';
+  actual = parseNum(input);
+  expected = 0;
+  assert(actual = expected: 'Error parsing: ' + input);
 
-        result = compare( '*dog.' : FOX);
-        assert( result :
-          'compare() must return TRUE, because string ends with ''dog.''' );
+  input = toJobFmt(MAX_VALUE);
+  actual = parseNum(input);
+  expected = %dec(MAX_VALUE_0: 63: 20);
+  assert(actual = expected: 'Error parsing: ' + input);
 
-        // Check ignore case.
+  input = toJobFmt(MAX_VALUE) + '-';
+  actual = parseNum(input);
+  expected = %dec(MAX_VALUE_0: 63: 20) * -1;
+  assert(actual = expected: 'Error parsing: ' + input);
 
-        result = compare( 'THE*' : FOX);
-        assert( result :
-          'compare() must return TRUE, because string starts with ''The''' );
+  input = '-' + toJobFmt(MAX_VALUE);
+  actual = parseNum(input);
+  expected = %dec(MAX_VALUE_0: 63: 20) * -1;
+  assert(actual = expected: 'Error parsing: ' + input);
 
-        result = compare( '*QUICK*' : FOX);
-        assert( result :
-          'compare() must return TRUE, because string contains ''quick''' );
+  input = toJobFmt(MAX_VALUE) + 'CR';
+  actual = parseNum(input);
+  expected = %dec(MAX_VALUE_0: 63: 20) * -1;
+  assert(actual = expected: 'Error parsing: ' + input);
 
-        result = compare( '*DOG.' : FOX);
-        assert( result :
-          'compare() must return TRUE, because string ends with ''dog.''' );
+  input = toJobFmt('12.34.56,789'); // Unusual digit groups
+  actual = parseNum(input);
+  expected = %dec('123456,789': 63: 20);
+  assert(actual = expected: 'Error parsing: ' + input);
 
-        // Check special cases
+  input = toJobFmt('.12.34.56,789'); // Unusual digit groups
+  actual = parseNum(input);
+  expected = %dec('123456,789': 63: 20);
+  assert(actual = expected: 'Error parsing: ' + input);
 
-        result = compare( '*' : FOX);
-        assert( result :
-          'compare() must return TRUE, because string is not empty');
+  input = toJobFmt('   ' + MAX_VALUE); // Leading blanks (positive value)
+  actual = parseNum(input);
+  expected = %dec(MAX_VALUE_0: 63: 20);
+  assert(actual = expected: 'Error parsing: ' + input);
 
-        result = compare( '*' : '');
-        assert( not result :
-          'compare() must return FALSE, because string is empty');
+  input = toJobFmt(' -' + MAX_VALUE); // Leading blanks (negative value)
+  actual = parseNum(input);
+  expected = %dec(MAX_VALUE_0: 63: 20) * -1;
+  assert(actual = expected: 'Error parsing: ' + input);
 
-        result = compare( '' : '');
-        assert( result :
-          'compare() must return TRUE, because both strings are empty');
+  input = toJobFmt(MAX_VALUE + '   '); // Trailing blanks (positive value)
+  actual = parseNum(input);
+  expected = %dec(MAX_VALUE_0: 63: 20);
+  assert(actual = expected: 'Error parsing: ' + input);
 
-      /end-free
-     P                 e
+  input = toJobFmt(MAX_VALUE + '- '); // Trailing blanks (negative value)
+  actual = parseNum(input);
+  expected = %dec(MAX_VALUE_0: 63: 20) * -1;
+  assert(actual = expected: 'Error parsing: ' + input);
 
-      //----------------------------------------------------------------------
-      //   Test case of: parseNum()
-      //----------------------------------------------------------------------
-     P testParseNum...
-     P                 b                   export
-     D                 pi
+  input = toJobFmt(MAX_VALUE + 'CR '); // Trailing blanks (negative value)
+  actual = parseNum(input);
+  expected = %dec(MAX_VALUE_0: 63: 20) * -1;
+  assert(actual = expected: 'Error parsing: ' + input);
 
-     D MAX_VALUE_0     c                   '9+
-     D                                      999999999999999999999+
-     D                                      999999999999999999999,+
-     D                                      99999999999999999999'
-     D MAX_VALUE       c                   '9.+
-     D                                      999.999.999.999.999.999.999.+
-     D                                      999.999.999.999.999.999.999,+
-     D                                      99999999999999999999'
-     D input           s             96a   varying
-     D actual          s             63S20
-     D expected        s             63S20
-     D msgInfo         ds                  likeds(MsgInfo_t)
-      /free
+  monitor;
+    input = toJobFmt('- 123,456'); // Blanks between sign and digits
+    actual = parseNum(input);
+    fail('Expected format error: blanks between sign and digits');
+  on-error;
+    msgInfo = getMonitoredMessage(*on);
+    assert(msgInfo.id = 'CPF9897': 'Expected msg id was: CPF9897');
+  endmon;
 
-       input = '';
-       actual = parseNum(input);
-       expected = 0;
-       assert(actual = expected
-              : 'Error parsing: ' + input);
+  monitor;
+    input = toJobFmt('123,456 CR'); // Blanks between sign and digits
+    actual = parseNum(input);
+    fail('Expected format error: blanks between sign and digits');
+  on-error;
+    msgInfo = getMonitoredMessage(*on);
+    assert(msgInfo.id = 'CPF9897': 'Expected msg id was: CPF9897');
+  endmon;
 
-       input = toJobFmt(MAX_VALUE);
-       actual = parseNum(input);
-       expected = %dec(MAX_VALUE_0: 63: 20);
-       assert(actual = expected
-              : 'Error parsing: ' + input);
+  monitor;
+    input = toJobFmt('--123,456'); // duplicate sign
+    actual = parseNum(input);
+    fail('Expected format error: duplicate sign');
+  on-error;
+    msgInfo = getMonitoredMessage(*on);
+    assert(msgInfo.id = 'CPF9897': 'Expected msg id was: CPF9897');
+  endmon;
 
-       input = toJobFmt(MAX_VALUE) + '-';
-       actual = parseNum(input);
-       expected = %dec(MAX_VALUE_0: 63: 20) * -1;
-       assert(actual = expected
-              : 'Error parsing: ' + input);
+  monitor;
+    input = toJobFmt('-1-123,456'); // duplicate sign
+    actual = parseNum(input);
+    fail('Expected format error: duplicate sign');
+  on-error;
+    msgInfo = getMonitoredMessage(*on);
+    assert(msgInfo.id = 'CPF9897': 'Expected msg id was: CPF9897');
+  endmon;
 
-       input = '-' + toJobFmt(MAX_VALUE);
-       actual = parseNum(input);
-       expected = %dec(MAX_VALUE_0: 63: 20) * -1;
-       assert(actual = expected
-              : 'Error parsing: ' + input);
+  monitor;
+    input = toJobFmt('-123,456CR'); // duplicate sign
+    actual = parseNum(input);
+    fail('Expected format error: duplicate sign');
+  on-error;
+    msgInfo = getMonitoredMessage(*on);
+    assert(msgInfo.id = 'CPF9897': 'Expected msg id was: CPF9897');
+  endmon;
 
-       input = toJobFmt(MAX_VALUE) + 'CR';
-       actual = parseNum(input);
-       expected = %dec(MAX_VALUE_0: 63: 20) * -1;
-       assert(actual = expected
-              : 'Error parsing: ' + input);
+  monitor;
+    input = toJobFmt('CR'); // sign without digits
+    actual = parseNum(input);
+    fail('Expected format error: sign without digits');
+  on-error;
+    msgInfo = getMonitoredMessage(*on);
+    assert(msgInfo.id = 'CPF9897': 'Expected msg id was: CPF9897');
+  endmon;
 
-       input = toJobFmt('12.34.56,789'); // Unusual digit groups
-       actual = parseNum(input);
-       expected = %dec('123456,789': 63: 20);
-       assert(actual = expected
-              : 'Error parsing: ' + input);
+  monitor;
+    input = toJobFmt('12a3,456CR'); // invalid characters
+    actual = parseNum(input);
+    fail('Expected format error: invalid character');
+  on-error;
+    msgInfo = getMonitoredMessage(*on);
+    assert(msgInfo.id = 'CPF9897': 'Expected msg id was: CPF9897');
+  endmon;
 
-       input = toJobFmt('.12.34.56,789'); // Unusual digit groups
-       actual = parseNum(input);
-       expected = %dec('123456,789': 63: 20);
-       assert(actual = expected
-              : 'Error parsing: ' + input);
+  monitor;
+    input = toJobFmt('12a3,456CR12'); // invalid characters following CR
+    actual = parseNum(input);
+    fail('Expected format error: invalid character');
+  on-error;
+    msgInfo = getMonitoredMessage(*on);
+    assert(msgInfo.id = 'CPF9897': 'Expected msg id was: CPF9897');
+  endmon;
 
-       input = toJobFmt('   ' + MAX_VALUE); // Leading blanks (positive value)
-       actual = parseNum(input);
-       expected = %dec(MAX_VALUE_0: 63: 20);
-       assert(actual = expected
-              : 'Error parsing: ' + input);
+end-proc;
 
-       input = toJobFmt(' -' + MAX_VALUE); // Leading blanks (negative value)
-       actual = parseNum(input);
-       expected = %dec(MAX_VALUE_0: 63: 20) * -1;
-       assert(actual = expected
-              : 'Error parsing: ' + input);
+//----------------------------------------------------------------------
+//   Convert decimal string to job decimal format.
+//   Input string must be in decimal format 'J'.
+//----------------------------------------------------------------------
+dcl-proc toJobFmt export;
+  dcl-pi *n varchar(96) extproc(*dclcase);
+    i_value   varchar(96) const;
+  end-pi;
 
-       input = toJobFmt(MAX_VALUE + '   '); // Trailing blanks (positive value)
-       actual = parseNum(input);
-       expected = %dec(MAX_VALUE_0: 63: 20);
-       assert(actual = expected
-              : 'Error parsing: ' + input);
+  dcl-s rtnValue        varchar(96);
 
-       input = toJobFmt(MAX_VALUE + '- '); // Trailing blanks (negative value)
-       actual = parseNum(input);
-       expected = %dec(MAX_VALUE_0: 63: 20) * -1;
-       assert(actual = expected
-              : 'Error parsing: ' + input);
+  // Info: Input value must be in format 'J'.
+  //       A comma (,) is used for the decimal format.
 
-       input = toJobFmt(MAX_VALUE + 'CR '); // Trailing blanks (negative value)
-       actual = parseNum(input);
-       expected = %dec(MAX_VALUE_0: 63: 20) * -1;
-       assert(actual = expected
-              : 'Error parsing: ' + input);
+  if (i_value = '');
+    return i_value;
+  endif;
 
-       monitor;
-         input = toJobFmt('- 123,456'); // Blanks between sign and digits
-         actual = parseNum(input);
-         fail('Expected format error: blanks between sign and digits');
-       on-error;
-         msgInfo = getMonitoredMessage(*on);
-         assert(msgInfo.id = 'CPF9897': 'Expected msg id was: CPF9897');
-       endmon;
+  if (g_status.decFmt = '');
+    rtnValue = %xlate(',': '/': i_value);
+    rtnValue = %xlate('.': ',': rtnValue);
+    rtnValue = %xlate('/': '.': rtnValue);
+    return rtnValue;
+  else;
+    return i_value;
+  endif;
 
-       monitor;
-         input = toJobFmt('123,456 CR'); // Blanks between sign and digits
-         actual = parseNum(input);
-         fail('Expected format error: blanks between sign and digits');
-       on-error;
-         msgInfo = getMonitoredMessage(*on);
-         assert(msgInfo.id = 'CPF9897': 'Expected msg id was: CPF9897');
-       endmon;
+end-proc;
 
-       monitor;
-         input = toJobFmt('--123,456'); // duplicate sign
-         actual = parseNum(input);
-         fail('Expected format error: duplicate sign');
-       on-error;
-         msgInfo = getMonitoredMessage(*on);
-         assert(msgInfo.id = 'CPF9897': 'Expected msg id was: CPF9897');
-       endmon;
+//----------------------------------------------------------------------
+//   Get job decimal format.
+//----------------------------------------------------------------------
+dcl-proc getDecFmt export;
+  dcl-pi *n char(1) extproc(*dclcase);
+  end-pi;
 
-       monitor;
-         input = toJobFmt('-1-123,456'); // duplicate sign
-         actual = parseNum(input);
-         fail('Expected format error: duplicate sign');
-       on-error;
-         msgInfo = getMonitoredMessage(*on);
-         assert(msgInfo.id = 'CPF9897': 'Expected msg id was: CPF9897');
-       endmon;
+  dcl-ds jobi0400 likeds(jobi0400_t) inz;
 
-       monitor;
-         input = toJobFmt('-123,456CR'); // duplicate sign
-         actual = parseNum(input);
-         fail('Expected format error: duplicate sign');
-       on-error;
-         msgInfo = getMonitoredMessage(*on);
-         assert(msgInfo.id = 'CPF9897': 'Expected msg id was: CPF9897');
-       endmon;
+  dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
 
-       monitor;
-         input = toJobFmt('CR'); // sign without digits
-         actual = parseNum(input);
-         fail('Expected format error: sign without digits');
-       on-error;
-         msgInfo = getMonitoredMessage(*on);
-         assert(msgInfo.id = 'CPF9897': 'Expected msg id was: CPF9897');
-       endmon;
+  QUSRJOBI(jobi0400: %size(jobi0400): 'JOBI0400': '*': '': percolateErrors);
+  return jobi0400.decFmt;
 
-       monitor;
-         input = toJobFmt('12a3,456CR'); // invalid characters
-         actual = parseNum(input);
-         fail('Expected format error: invalid character');
-       on-error;
-         msgInfo = getMonitoredMessage(*on);
-         assert(msgInfo.id = 'CPF9897': 'Expected msg id was: CPF9897');
-       endmon;
-
-       monitor;
-         input = toJobFmt('12a3,456CR12'); // invalid characters following CR
-         actual = parseNum(input);
-         fail('Expected format error: invalid character');
-       on-error;
-         msgInfo = getMonitoredMessage(*on);
-         assert(msgInfo.id = 'CPF9897': 'Expected msg id was: CPF9897');
-       endmon;
-
-
-      /end-free
-     P                 e
-
-      //----------------------------------------------------------------------
-      //   Convert decimal string to job decimal format.
-      //   Input string must be in decimal format 'J'.
-      //----------------------------------------------------------------------
-     P toJobFmt...
-     P                 b                   export
-     D                 pi            96a   varying
-     D  i_value                      96a   const varying
-
-     D rtnValue        s             96a   varying
-      /free
-
-       // Info: Input value must be in format 'J'.
-       //       A comma (,) is used for the decimal format.
-
-       if (i_value = '');
-         return i_value;
-       endif;
-
-       if (g_status.decFmt = '');
-         rtnValue = %xlate(',': '/': i_value);
-         rtnValue = %xlate('.': ',': rtnValue);
-         rtnValue = %xlate('/': '.': rtnValue);
-         return rtnValue;
-       else;
-         return i_value;
-       endif;
-
-      /end-free
-     P                 e
-
-      //----------------------------------------------------------------------
-      //   Get job decimal format.
-      //----------------------------------------------------------------------
-     P getDecFmt...
-     P                 b                   export
-     D                 pi             1a
-
-     D jobi0400        ds                  likeds(jobi0400_t) inz
-
-     D percolateErrors...
-     D                 ds                  likeds(percolateErrors_t)
-     D                                     inz(*likeds)
-      /free
-
-       QUSRJOBI(jobi0400: %size(jobi0400): 'JOBI0400'
-                : '*': '': percolateErrors);
-       return jobi0400.decFmt;
-
-      /end-free
-     P                 e
+end-proc;
 

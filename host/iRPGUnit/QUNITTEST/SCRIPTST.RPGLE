@@ -1,517 +1,471 @@
-      // ==========================================================================
-      //  iRPGUnit SelfTest - Test MK* Scripts.
-      // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
-      // ==========================================================================
-      // >>PRE-COMPILER<<
-      //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
-      //   >>IMPORTANT<<
-      //     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
-      //   >>END-IMPORTANT<<
-      //   >>EXECUTE<<
-      // >>END-PRE-COMPILER<<
-      // ==========================================================================
-
-     H NoMain Option(*SrcStmt)
-
-      //----------------------------------------------------------------------
-      //   Exported Procedures
-      //----------------------------------------------------------------------
-
-     D setUp...
-     D                 pr                  extproc('setUp')
-     D tearDownSuite...
-     D                 pr                  extproc('tearDownSuite')
-     D testMKACPTSTT...
-     D                 pr                  extproc('testMKACPTSTT')
-     D testMKASSERTT...
-     D                 pr                  extproc('testMKASSERTT')
-     D testMKCALLPRCT...
-     D                 pr                  extproc('testMKCALLPRCT')
-     D testMKCMDRUNLT...
-     D                 pr                  extproc('testMKCMDRUNLT')
-     D testMKCMDRUNT...
-     D                 pr                  extproc('testMKCMDRUNT')
-     D testMKCRTTSTT...
-     D                 pr                  extproc('testMKCRTTSTT')
-     D testMKEXTPRCT...
-     D                 pr                  extproc('testMKEXTPRCT')
-     D testMKEXTTSTT...
-     D                 pr                  extproc('testMKEXTTSTT')
-     D testMKJOBLOGT...
-     D                 pr                  extproc('testMKJOBLOGT')
-     D testMKLIBLT...
-     D                 pr                  extproc('testMKLIBLT')
-     D testMKMSGQT...
-     D                 pr                  extproc('testMKMSGQT')
-     D testMKPGMMSGT...
-     D                 pr                  extproc('testMKPGMMSGT')
-     D testMKRUNT...
-     D                 pr                  extproc('testMKRUNT')
-     D testMKSTRINGT...
-     D                 pr                  extproc('testMKSTRINGT')
+**FREE
+// ==========================================================================
+//  iRPGUnit SelfTest - Test MK* Scripts.
+// ==========================================================================
+//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ==========================================================================
+// >>PRE-COMPILER<<
+//   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+//   >>IMPORTANT<<
+//     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
+//   >>END-IMPORTANT<<
+//   >>EXECUTE<<
+// >>END-PRE-COMPILER<<
+// ==========================================================================
 
+ctl-opt NoMain Option(*SrcStmt);
 
-      //----------------------------------------------------------------------
-      //   Imported Procedures
-      //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Imported Procedures
+//----------------------------------------------------------------------
 
-      /copy qinclude,TESTCASE
+/copy qinclude,TESTCASE
 
+//----------------------------------------------------------------------
+//   Program Status Data Structure
+//----------------------------------------------------------------------
 
-      //----------------------------------------------------------------------
-      //   Private Procedures
-      //----------------------------------------------------------------------
+/copy qinclude,SDS
 
-     d executeScript...
-     d                 pr                  extproc('executeScript')
-     d  script                       10a   const varying options(*trim)
+//----------------------------------------------------------------------
+//   Tests
+//----------------------------------------------------------------------
 
-     d deleteTestSuite...
-     d                 pr                  extproc('deleteTestSuite')
-     d  srvPgm                       10a   const varying options(*trim)
+dcl-proc setUp export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-     d checkTestSuite...
-     d                 pr              n   extproc('checkTestSuite')
-     d  srvPgm                       10a   const varying options(*trim)
+  cleanup();
 
-     d cleanup...
-     d                 pr                  extproc('cleanup')
+end-proc;
 
 
-      //----------------------------------------------------------------------
-      //   Program Status Data Structure
-      //----------------------------------------------------------------------
+dcl-proc tearDownSuite export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-      /copy qinclude,SDS
+  cleanup();
 
+end-proc;
 
-      //----------------------------------------------------------------------
-      //   Tests
-      //----------------------------------------------------------------------
 
-     P setUp           b                   export
-     D                 pi
-      /free
+dcl-proc testMKACPTSTT export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        cleanup();
+  dcl-c TEST_SUITE 'ACPTSTT';
 
-      /end-free
-     P                 e
+  // Setup.
 
+  deleteTestSuite(TEST_SUITE);
 
-     P tearDownSuite   b                   export
-     D                 pi
-      /free
+  // Run.
 
-        cleanup();
+  executeScript('MKACPTSTT');
 
-      /end-free
-     P                 e
+  // Check.
 
+  assert(checkTestSuite(TEST_SUITE): 'Service program ' + TEST_SUITE + ' not found.');
 
-     P testMKACPTSTT...
-     P                 b                   export
-     D                 pi
+end-proc;
 
-     D TEST_SUITE      c                   'ACPTSTT'
-      /free
 
-        // Setup.
+dcl-proc testMKASSERTT export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        deleteTestSuite(TEST_SUITE);
+  dcl-c TEST_SUITE 'ASSERTT';
 
-        // Run.
+  // Setup.
 
-        executeScript('MKACPTSTT');
+  deleteTestSuite(TEST_SUITE);
 
-        // Check.
+  // Run.
 
-        assert(checkTestSuite(TEST_SUITE)
-               : 'Service program ' + TEST_SUITE + ' not found.');
+  executeScript('MKASSERTT');
 
-      /end-free
-     P                 e
+  // Check.
 
+  assert(checkTestSuite(TEST_SUITE): 'Service program ' + TEST_SUITE + ' not found.');
 
-     P testMKASSERTT...
-     P                 b                   export
-     D                 pi
+end-proc;
 
-     D TEST_SUITE      c                   'ASSERTT'
-      /free
 
-        // Setup.
+dcl-proc testMKCALLPRCT export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        deleteTestSuite(TEST_SUITE);
+  dcl-c TEST_SUITE 'CALLPRCT';
 
-        // Run.
+  // Setup.
 
-        executeScript('MKASSERTT');
+  deleteTestSuite(TEST_SUITE);
 
-        // Check.
+  // Run.
 
-        assert(checkTestSuite(TEST_SUITE)
-               : 'Service program ' + TEST_SUITE + ' not found.');
+  executeScript('MKCALLPRCT');
 
-      /end-free
-     P                 e
+  // Check.
 
+  assert(checkTestSuite(TEST_SUITE): 'Service program ' + TEST_SUITE + ' not found.');
 
-     P testMKCALLPRCT...
-     P                 b                   export
-     D                 pi
+end-proc;
 
-     D TEST_SUITE      c                   'CALLPRCT'
-      /free
 
-        // Setup.
+dcl-proc testMKCMDRUNLT export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        deleteTestSuite(TEST_SUITE);
+  dcl-c TEST_SUITE 'CMDRUNLOGT';
 
-        // Run.
+  // Setup.
 
-        executeScript('MKCALLPRCT');
+  deleteTestSuite(TEST_SUITE);
 
-        // Check.
+  // Run.
 
-        assert(checkTestSuite(TEST_SUITE)
-               : 'Service program ' + TEST_SUITE + ' not found.');
+  executeScript('MKCMDRUNLT');
 
-      /end-free
-     P                 e
+  // Check.
 
+  assert(checkTestSuite(TEST_SUITE): 'Service program ' + TEST_SUITE + ' not found.');
 
-     P testMKCMDRUNLT...
-     P                 b                   export
-     D                 pi
+end-proc;
 
-     D TEST_SUITE      c                   'CMDRUNLOGT'
-      /free
 
-        // Setup.
+dcl-proc testMKCMDRUNT export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        deleteTestSuite(TEST_SUITE);
+  dcl-c TEST_SUITE 'CMDRUNT';
 
-        // Run.
+  // Setup.
 
-        executeScript('MKCMDRUNLT');
+  deleteTestSuite(TEST_SUITE);
 
-        // Check.
+  // Run.
 
-        assert(checkTestSuite(TEST_SUITE)
-               : 'Service program ' + TEST_SUITE + ' not found.');
+  executeScript('MKCMDRUNT');
 
-      /end-free
-     P                 e
+  // Check.
 
+  assert(checkTestSuite(TEST_SUITE): 'Service program ' + TEST_SUITE + ' not found.');
 
-     P testMKCMDRUNT...
-     P                 b                   export
-     D                 pi
+end-proc;
 
-     D TEST_SUITE      c                   'CMDRUNT'
-      /free
 
-        // Setup.
+dcl-proc testMKCRTTSTT export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        deleteTestSuite(TEST_SUITE);
+  dcl-c TEST_SUITE 'CRTTSTT';
 
-        // Run.
+  // Setup.
 
-        executeScript('MKCMDRUNT');
+  deleteTestSuite(TEST_SUITE);
 
-        // Check.
+  // Run.
 
-        assert(checkTestSuite(TEST_SUITE)
-               : 'Service program ' + TEST_SUITE + ' not found.');
+  executeScript('MKCRTTSTT');
 
-      /end-free
-     P                 e
+  // Check.
 
+  assert(checkTestSuite(TEST_SUITE): 'Service program ' + TEST_SUITE + ' not found.');
 
-     P testMKCRTTSTT...
-     P                 b                   export
-     D                 pi
+end-proc;
 
-     D TEST_SUITE      c                   'CRTTSTT'
-      /free
 
-        // Setup.
+dcl-proc testMKEXTPRCT export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        deleteTestSuite(TEST_SUITE);
+  dcl-c TEST_SUITE 'EXTPRCT';
 
-        // Run.
+  // Setup.
 
-        executeScript('MKCRTTSTT');
+  deleteTestSuite(TEST_SUITE);
 
-        // Check.
+  // Run.
 
-        assert(checkTestSuite(TEST_SUITE)
-               : 'Service program ' + TEST_SUITE + ' not found.');
+  executeScript('MKEXTPRCT');
 
-      /end-free
-     P                 e
+  // Check.
 
+  assert(checkTestSuite(TEST_SUITE): 'Service program ' + TEST_SUITE + ' not found.');
 
-     P testMKEXTPRCT...
-     P                 b                   export
-     D                 pi
+end-proc;
 
-     D TEST_SUITE      c                   'EXTPRCT'
-      /free
 
-        // Setup.
+dcl-proc testMKEXTTSTT export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        deleteTestSuite(TEST_SUITE);
+  dcl-c TEST_SUITE 'EXTTSTT';
 
-        // Run.
+  // Setup.
 
-        executeScript('MKEXTPRCT');
+  deleteTestSuite(TEST_SUITE);
 
-        // Check.
+  // Run.
 
-        assert(checkTestSuite(TEST_SUITE)
-               : 'Service program ' + TEST_SUITE + ' not found.');
+  executeScript('MKEXTTSTT');
 
-      /end-free
-     P                 e
+  // Check.
 
+  assert(checkTestSuite(TEST_SUITE): 'Service program ' + TEST_SUITE + ' not found.');
 
-     P testMKEXTTSTT...
-     P                 b                   export
-     D                 pi
+end-proc;
 
-     D TEST_SUITE      c                   'EXTTSTT'
-      /free
 
-        // Setup.
+dcl-proc testMKJOBLOGT export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        deleteTestSuite(TEST_SUITE);
+  dcl-c TEST_SUITE 'JOBLOGT';
 
-        // Run.
+  // Setup.
 
-        executeScript('MKEXTTSTT');
+  deleteTestSuite(TEST_SUITE);
 
-        // Check.
+  // Run.
 
-        assert(checkTestSuite(TEST_SUITE)
-               : 'Service program ' + TEST_SUITE + ' not found.');
+  executeScript('MKJOBLOGT');
 
-      /end-free
-     P                 e
+  // Check.
 
+  assert(checkTestSuite(TEST_SUITE): 'Service program ' + TEST_SUITE + ' not found.');
 
-     P testMKJOBLOGT...
-     P                 b                   export
-     D                 pi
+end-proc;
 
-     D TEST_SUITE      c                   'JOBLOGT'
-      /free
 
-        // Setup.
+dcl-proc testMKLIBLT export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        deleteTestSuite(TEST_SUITE);
+  dcl-c TEST_SUITE 'LIBLT';
 
-        // Run.
+  // Setup.
 
-        executeScript('MKJOBLOGT');
+  deleteTestSuite(TEST_SUITE);
 
-        // Check.
+  // Run.
 
-        assert(checkTestSuite(TEST_SUITE)
-               : 'Service program ' + TEST_SUITE + ' not found.');
+  executeScript('MKLIBLT');
 
-      /end-free
-     P                 e
+  // Check.
 
+  assert(checkTestSuite(TEST_SUITE): 'Service program ' + TEST_SUITE + ' not found.');
 
-     P testMKLIBLT...
-     P                 b                   export
-     D                 pi
+end-proc;
 
-     D TEST_SUITE      c                   'LIBLT'
-      /free
 
-        // Setup.
+dcl-proc testMKLSTSPLFT export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        deleteTestSuite(TEST_SUITE);
+  dcl-c TEST_SUITE 'LSTSPLFT';
 
-        // Run.
+  // Setup.
 
-        executeScript('MKLIBLT');
+  deleteTestSuite(TEST_SUITE);
 
-        // Check.
+  // Run.
 
-        assert(checkTestSuite(TEST_SUITE)
-               : 'Service program ' + TEST_SUITE + ' not found.');
+  executeScript('MKLSTSPLFT');
 
-      /end-free
-     P                 e
+  // Check.
 
+  assert(checkTestSuite(TEST_SUITE): 'Service program ' + TEST_SUITE + ' not found.');
 
-     P testMKMSGQT...
-     P                 b                   export
-     D                 pi
+end-proc;
 
-     D TEST_SUITE      c                   'MSGQT'
-      /free
 
-        // Setup.
+dcl-proc testMKMSGQT export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        deleteTestSuite(TEST_SUITE);
+  dcl-c TEST_SUITE 'MSGQT';
 
-        // Run.
+  // Setup.
 
-        executeScript('MKMSGQT');
+  deleteTestSuite(TEST_SUITE);
 
-        // Check.
+  // Run.
 
-        assert(checkTestSuite(TEST_SUITE)
-               : 'Service program ' + TEST_SUITE + ' not found.');
+  executeScript('MKMSGQT');
 
-      /end-free
-     P                 e
+  // Check.
 
+  assert(checkTestSuite(TEST_SUITE): 'Service program ' + TEST_SUITE + ' not found.');
 
-     P testMKPGMMSGT...
-     P                 b                   export
-     D                 pi
+end-proc;
 
-     D TEST_SUITE      c                   'PGMMSGT'
-      /free
 
-        // Setup.
+dcl-proc testMKOPDESCT export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        deleteTestSuite(TEST_SUITE);
+  dcl-c TEST_SUITE 'OPDESCT';
 
-        // Run.
+  // Setup.
 
-        executeScript('MKPGMMSGT');
+  deleteTestSuite(TEST_SUITE);
 
-        // Check.
+  // Run.
 
-        assert(checkTestSuite(TEST_SUITE)
-               : 'Service program ' + TEST_SUITE + ' not found.');
+  executeScript('MKOPDESCT');
 
-      /end-free
-     P                 e
+  // Check.
 
+  assert(checkTestSuite(TEST_SUITE): 'Service program ' + TEST_SUITE + ' not found.');
 
-     P testMKRUNT...
-     P                 b                   export
-     D                 pi
+end-proc;
 
-     D TEST_SUITE      c                   'RUNT'
-      /free
 
-        // Setup.
+dcl-proc testMKPGMMSGT export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        deleteTestSuite(TEST_SUITE);
+  dcl-c TEST_SUITE 'PGMMSGT';
 
-        // Run.
+  // Setup.
 
-        executeScript('MKRUNT');
+  deleteTestSuite(TEST_SUITE);
 
-        // Check.
+  // Run.
 
-        assert(checkTestSuite(TEST_SUITE)
-               : 'Service program ' + TEST_SUITE + ' not found.');
+  executeScript('MKPGMMSGT');
 
-      /end-free
-     P                 e
+  // Check.
 
+  assert(checkTestSuite(TEST_SUITE): 'Service program ' + TEST_SUITE + ' not found.');
 
-     P testMKSTRINGT...
-     P                 b                   export
-     D                 pi
+end-proc;
 
-     D TEST_SUITE      c                   'STRINGT'
-      /free
 
-        // Setup.
+dcl-proc testMKRUNT export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        deleteTestSuite(TEST_SUITE);
+  dcl-c TEST_SUITE 'RUNT';
 
-        // Run.
+  // Setup.
 
-        executeScript('MKSTRINGT');
+  deleteTestSuite(TEST_SUITE);
 
-        // Check.
+  // Run.
 
-        assert(checkTestSuite(TEST_SUITE)
-               : 'Service program ' + TEST_SUITE + ' not found.');
+  executeScript('MKRUNT');
 
-      /end-free
-     P                 e
+  // Check.
 
+  assert(checkTestSuite(TEST_SUITE): 'Service program ' + TEST_SUITE + ' not found.');
 
-     p executeScript...
-     p                 b
-     d                 pi
-     d  script                       10a   const varying options(*trim)
-     D params          s            100a   varying
-      /free
+end-proc;
 
-        params = %trim(sds.pgmLib) + ' NONE';
 
-        runCmd('STRREXPRC SRCMBR(' + script + ') +
-                SRCFILE(' + %trim(sds.pgmLib) + '/QUNITTEST) +
-                PARM(''' + params + ''')');
+dcl-proc testMKSTRINGT export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-      /end-free
-     p                 e
+  dcl-c TEST_SUITE 'STRINGT';
 
+  // Setup.
 
-     p deleteTestSuite...
-     p                 b
-     d                 pi
-     d  srvPgm                       10a   const varying options(*trim)
-      /free
+  deleteTestSuite(TEST_SUITE);
 
-        monitor;
-          runCmd('DLTSRVPGM SRVPGM(' + %trim(sds.pgmLib) + '/' + srvPgm + ')');
-        on-error;
-          // Ignore not found error
-        endmon;
+  // Run.
 
-      /end-free
-     p                 e
+  executeScript('MKSTRINGT');
 
+  // Check.
 
-     p checkTestSuite...
-     p                 b
-     d                 pi              n
-     d  srvPgm                       10a   const varying options(*trim)
-      /free
+  assert(checkTestSuite(TEST_SUITE): 'Service program ' + TEST_SUITE + ' not found.');
 
-        monitor;
-          runCmd('CHKOBJ OBJ(' + %trim(sds.pgmLib) + '/' + srvPgm + ') +
-                  OBJTYPE(*SRVPGM)');
-          return *on;
-        on-error;
-          return *off;
-        endmon;
+end-proc;
 
-      /end-free
-     p                 e
 
+dcl-proc testMKUTILST export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-     P cleanup         b                   export
-     D                 pi
-     D params          s            100a   varying
-      /free
+  dcl-c TEST_SUITE 'TESTUTILST';
 
-        params = 'CLEAN ' + %trim(sds.pgmLib);
+  // Setup.
 
-        runCmd('STRREXPRC SRCMBR(A_INSTALL) +
-                SRCFILE(' + %trim(sds.pgmLib) + '/QBUILD) +
-                PARM(''' + params + ''')');
+  deleteTestSuite(TEST_SUITE);
 
-      /end-free
-     P                 e
+  // Run.
+
+  executeScript('MKUTILST');
+
+  // Check.
+
+  assert(checkTestSuite(TEST_SUITE): 'Service program ' + TEST_SUITE + ' not found.');
+
+end-proc;
+
+
+dcl-proc executeScript;
+  dcl-pi *n extproc(*dclcase);
+    script varchar(10) options(*trim) const;
+  end-pi;
+  dcl-s params varchar(100);
+
+  params = %trim(sds.pgmLib) + ' NONE';
+
+  runCmd('STRREXPRC SRCMBR(' + script + ') +
+          SRCFILE(' + %trim(sds.pgmLib) + '/QUNITTEST) +
+          PARM(''' + params + ''')');
+
+  end-proc;
+
+
+  dcl-proc deleteTestSuite;
+  dcl-pi *n extproc(*dclcase);
+    srvPgm varchar(10) options(*trim) const;
+  end-pi;
+
+  monitor;
+    runCmd('DLTSRVPGM SRVPGM(' + %trim(sds.pgmLib) + '/' + srvPgm + ')');
+  on-error;
+    // Ignore not found error
+  endmon;
+
+end-proc;
+
+
+dcl-proc checkTestSuite;
+  dcl-pi *n ind extproc(*dclcase);
+    srvPgm varchar(10) options(*trim) const;
+  end-pi;
+
+  monitor;
+     runCmd('CHKOBJ OBJ(' + %trim(sds.pgmLib) + '/' + srvPgm + ') +
+             OBJTYPE(*SRVPGM)');
+     return *on;
+  on-error;
+     return *off;
+  endmon;
+
+end-proc;
+
+
+dcl-proc cleanup export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-s params varchar(100);
+
+  params = 'CLEAN ' + %trim(sds.pgmLib);
+
+  runCmd('STRREXPRC SRCMBR(A_INSTALL) +
+          SRCFILE(' + %trim(sds.pgmLib) + '/QBUILD) +
+          PARM(''' + params + ''')');
+
+end-proc;
 

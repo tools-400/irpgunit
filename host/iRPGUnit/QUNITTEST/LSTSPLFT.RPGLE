@@ -66,35 +66,11 @@ dcl-ds g_status qualified;
 end-ds;
 
 //----------------------------------------------------------------------
-//   PRIVATE PROTOTYPES
+//   Test Procedures
 //----------------------------------------------------------------------
 
-dcl-pr setUp extproc('setUp');
-end-pr;
-
-dcl-pr tearDown extproc('tearDown');
-end-pr;
-
-dcl-pr deleteSplfCallback ind extproc('deleteSplfCallback');
-  i_hSplF       pointer       const;
-  i_pUserData   pointer       const;
-  i_splfNm      char(10)      const;
-  i_qJob        likeds(Job_t) const;
-  i_splFNbr     int(10)       const;
-  i_fileStatus  char(10)      const;
-end-pr;
-
-dcl-pr createSpooledFile extproc('createSpooledFile');
-  i_name   varchar(10) options(*trim) const;
-  i_usrDta varchar(10) options(*trim) const;
-end-pr;
-
-dcl-pr waitSecs timestamp extproc('waitSecs');
-  i_seconds int(10) const options(*nopass);
-end-pr;
-
 dcl-proc setUp export;
-  dcl-pi *n;
+  dcl-pi *n extproc(*dclcase);
   end-pi;
 
   g_status.testCaseStarted = %timestamp();
@@ -112,7 +88,7 @@ dcl-proc setUp export;
 end-proc;
 
 dcl-proc tearDown export;
-  dcl-pi *n;
+  dcl-pi *n extproc(*dclcase);
   end-pi;
 
   dcl-s hLister   like(hSplFLister_t);
@@ -135,14 +111,10 @@ dcl-proc tearDown export;
 end-proc;
 
 //----------------------------------------------------------------------
-//   TEST CASES
-//----------------------------------------------------------------------
-
-//----------------------------------------------------------------------
 //  Test setting status filter.
 //----------------------------------------------------------------------
 dcl-proc testAddStatus export;
-  dcl-pi *n;
+  dcl-pi *n extproc(*dclcase);
   end-pi;
 
   dcl-s hLister like(hSplFLister_t);
@@ -180,7 +152,7 @@ end-proc;
 //  Select spooled files by name and user data.
 //----------------------------------------------------------------------
 dcl-proc testFile1 export;
-  dcl-pi *n;
+  dcl-pi *n extproc(*dclcase);
   end-pi;
 
   dcl-s hLister   like(hSplFLister_t);
@@ -201,8 +173,7 @@ dcl-proc testFile1 export;
   SplFLister_list(hLister: %paddr('deleteSplfCallback'): %addr(userData));
 
   assert(userData.countDeleted = 1
-         : 'Expected to delete 1 file, but was ' +
-            %char(userData.countDeleted) + ' files');
+         : 'Expected to delete 1 file, but was ' + %char(userData.countDeleted) + ' files');
 
 end-proc;
 
@@ -210,7 +181,7 @@ end-proc;
 //  Select spooled files by name.
 //----------------------------------------------------------------------
 dcl-proc testFile2 export;
-  dcl-pi *n;
+  dcl-pi *n extproc(*dclcase);
   end-pi;
 
   dcl-s hLister   like(hSplFLister_t);
@@ -231,8 +202,7 @@ dcl-proc testFile2 export;
   SplFLister_list(hLister: %paddr('deleteSplfCallback'): %addr(userData));
 
   assert(userData.countDeleted = 2
-         : 'Expected to delete 2 files, but was ' +
-            %char(userData.countDeleted) + ' files');
+         : 'Expected to delete 2 files, but was ' + %char(userData.countDeleted) + ' files');
 
 end-proc;
 
@@ -240,7 +210,7 @@ end-proc;
 //  Select spooled files by user data.
 //----------------------------------------------------------------------
 dcl-proc testFile3 export;
-  dcl-pi *n;
+  dcl-pi *n extproc(*dclcase);
   end-pi;
 
   dcl-s hLister   like(hSplFLister_t);
@@ -261,8 +231,7 @@ dcl-proc testFile3 export;
   SplFLister_list(hLister: %paddr('deleteSplfCallback'): %addr(userData));
 
   assert(userData.countDeleted = 3
-         : 'Expected to delete 3 files, but was ' +
-            %char(userData.countDeleted) + ' files');
+         : 'Expected to delete 3 files, but was ' + %char(userData.countDeleted) + ' files');
 
 end-proc;
 
@@ -270,7 +239,7 @@ end-proc;
 //  Select spooled files by creation time.
 //----------------------------------------------------------------------
 dcl-proc testStartAndEndTime export;
-  dcl-pi *n;
+  dcl-pi *n extproc(*dclcase);
   end-pi;
 
   dcl-s hLister   like(hSplFLister_t);
@@ -303,8 +272,7 @@ dcl-proc testStartAndEndTime export;
   SplFLister_list(hLister: %paddr('deleteSplfCallback'): %addr(userData));
 
   assert(userData.countDeleted = 3
-         : 'Expected to delete 3 files, but was ' +
-            %char(userData.countDeleted) + ' files');
+         : 'Expected to delete 3 files, but was ' + %char(userData.countDeleted) + ' files');
 
   clear userData;
   userData.countDeleted = 0;
@@ -316,8 +284,7 @@ dcl-proc testStartAndEndTime export;
   SplFLister_list(hLister: %paddr('deleteSplfCallback'): %addr(userData));
 
   assert(userData.countDeleted = 1
-         : 'Expected to delete 1 file, but was ' +
-            %char(userData.countDeleted) + ' files');
+         : 'Expected to delete 1 file, but was ' + %char(userData.countDeleted) + ' files');
 
 end-proc;
 
@@ -325,7 +292,7 @@ end-proc;
 //  Delete spooled file callback.
 //----------------------------------------------------------------------
 dcl-proc deleteSplfCallback export;
-  dcl-pi *n ind;
+  dcl-pi *n ind extproc(*dclcase);
     i_hSplF       pointer       const;
     i_pUserData   pointer       const;
     i_splfNm      char(10)      const;
@@ -366,7 +333,7 @@ end-proc;
 //  Create spooled file helper procedure.
 //----------------------------------------------------------------------
 dcl-proc createSpooledFile;
-  dcl-pi *n;
+  dcl-pi *n extproc(*dclcase);
     i_name   varchar(10) options(*trim) const;
     i_usrDta varchar(10) options(*trim) const;
   end-pi;
@@ -390,7 +357,7 @@ end-proc;
 //  Wait for the next minute.
 //----------------------------------------------------------------------
 dcl-proc waitSecs;
-  dcl-pi *n timestamp;
+  dcl-pi *n timestamp extproc(*dclcase);
     i_seconds int(10) const options(*nopass);
   end-pi;
 

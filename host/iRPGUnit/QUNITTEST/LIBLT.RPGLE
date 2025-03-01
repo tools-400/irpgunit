@@ -1,224 +1,189 @@
-      // ==========================================================================
-      //  iRPGUnit SelfTest - Test LIBL.
-      // ==========================================================================
-      //  Copyright (c) 2013-2019 iRPGUnit Project Team
-      //  All rights reserved. This program and the accompanying materials
-      //  are made available under the terms of the Common Public License v1.0
-      //  which accompanies this distribution, and is available at
-      //  http://www.eclipse.org/legal/cpl-v10.html
-      // ==========================================================================
-      // >>PRE-COMPILER<<
-      //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
-      //   >>IMPORTANT<<
-      //     >>PARM<<  MODULE(&LI/LIBL      +
-      //                      &LI/LIBLC     +
-      //                      );
-      //     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
-      //   >>END-IMPORTANT<<
-      //   >>CMD<<     CMPMOD MODULE(&LI/LIBL     ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-      //   >>CMD<<     CMPMOD MODULE(&LI/LIBLC    ) SRCFILE(&SL/QUNITTEST) DBGVIEW(*LIST);
-      //   >>EXECUTE<<
-      // >>END-PRE-COMPILER<<
-      // ==========================================================================
+**FREE
+// ==========================================================================
+//  iRPGUnit SelfTest - Test LIBL.
+// ==========================================================================
+//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Common Public License v1.0
+//  which accompanies this distribution, and is available at
+//  http://www.eclipse.org/legal/cpl-v10.html
+// ==========================================================================
+// >>PRE-COMPILER<<
+//   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+//   >>IMPORTANT<<
+//     >>PARM<<  MODULE(&LI/LIBL      +
+//                      &LI/LIBLC     +
+//                      );
+//     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
+//   >>END-IMPORTANT<<
+//   >>CMD<<     CMPMOD MODULE(&LI/LIBL     ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/LIBLC    ) SRCFILE(&SL/QUNITTEST) DBGVIEW(*LIST);
+//   >>EXECUTE<<
+// >>END-PRE-COMPILER<<
+// ==========================================================================
 
-     H NoMain Option(*SrcStmt)
+ctl-opt NoMain Option(*SrcStmt);
 
-      //----------------------------------------------------------------------
-      //   Exported Procedures
-      //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Imported Procedures
+//----------------------------------------------------------------------
 
-     D setUpSuite...
-     D                 pr                  extproc('setUpSuite')
-     D tearDownSuite...
-     D                 pr                  extproc('tearDownSuite')
-     D testGetLibl...
-     D                 pr                  extproc('testGetLibl')
-     D testLoadLibl...
-     D                 pr                  extproc('testLoadLibl')
-     D testRestoreLibl...
-     D                 pr                  extproc('testRestoreLibl')
-
+/copy qinclude,ASSERT
+/copy qinclude,LIBL
+/copy qinclude,TEMPLATES
 
-      //----------------------------------------------------------------------
-      //   Imported Procedures
-      //----------------------------------------------------------------------
+dcl-pr LIBLC extproc('LIBLC');
+  curLib    char(10);
+  usrLibl   char(2750);
+end-pr;
 
-      /copy qinclude,ASSERT
-      /copy qinclude,LIBL
-      /copy qinclude,TEMPLATES
+dcl-pr system int(10) extproc('system');
+  i_clCommand   pointer value options(*string);
+end-pr;
 
-     D LIBLC           pr                  extproc('LIBLC')
-     D  curLib                       10a
-     D  usrLibl                    2750a
+dcl-s EXCP_MSGID char(7) import('_EXCP_MSGID');
 
-     D system          PR            10I 0 extproc('system')
-     D  i_clCommand                    *   value options(*string)
 
-     D EXCP_MSGID      S              7A   import('_EXCP_MSGID')
+//----------------------------------------------------------------------
+//   Global Variables
+//----------------------------------------------------------------------
 
+dcl-ds expected qualified;
+  curLib       char(10) pos(1);
+  usrLibl      char(11) dim(250) pos(11);
+  usrLiblArray char(2750) pos(11);
+end-ds;
 
-      //----------------------------------------------------------------------
-      //   Global Variables
-      //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//   Set up & Tear down
+//----------------------------------------------------------------------
 
-     D expected        ds                  qualified
-     D  curLib                 1     10a
-     D  usrLibl               11   2760a   dim(250)
-     D  usrLiblArray          11   2760a
+dcl-proc setUpSuite export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-      //----------------------------------------------------------------------
-      //   Set up & Tear down
-      //----------------------------------------------------------------------
+  system('DLTJOBD JOBD(QTEMP/RPGUNITT)');
+  system('CRTJOBD JOBD(QTEMP/RPGUNITT) INLLIBL(QGPL QTEMP)');
 
-     P setUpSuite      b                   export
-     D                 pi
-      /free
+  callp LIBLC(expected.curLib: expected.usrLiblArray);
 
-         system('DLTJOBD JOBD(QTEMP/RPGUNITT)');
-         system('CRTJOBD JOBD(QTEMP/RPGUNITT) INLLIBL(QGPL QTEMP)');
+end-proc;
 
-         callp LIBLC(expected.curLib: expected.usrLiblArray);
 
-      /end-free
-     P                 e
+dcl-proc tearDownSuite export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
+  system('DLTJOBD JOBD(QTEMP/RPGUNITT)');
 
-     P tearDownSuite   b                   export
-     D                 pi
-      /free
+end-proc;
 
-         system('DLTJOBD JOBD(QTEMP/RPGUNITT)');
 
-      /end-free
-     P                 e
+//----------------------------------------------------------------------
+//   Tests
+//----------------------------------------------------------------------
 
+dcl-proc testGetLibl export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-      //----------------------------------------------------------------------
-      //   Tests
-      //----------------------------------------------------------------------
+  dcl-ds liblData likeds(LiblData_t);
+  dcl-s i int(10);
+  dcl-s prvLib char(11) inz;
+  dcl-s numLibs int(10) inz;
 
-     P testGetLibl...
-     P                 b                   export
-     D                 pi
+  // Setup.
 
-     D liblData        ds                  likeds(LiblData_t)
-     D i               s             10i 0
-     D prvLib          s             11a   inz
-     D numLibs         s             10i 0 inz
-      /free
+  // Run.
 
-        // Setup.
+  liblData = getLibl();
 
+  // Check.
 
-        // Run.
+  assert(liblData.libL.numE > 0: 'Number of libraries shoud be greater than 0');
 
-        liblData = getLibl();
+  for i = 1 to liblData.libL.numE;
+    assert(liblData.libL.lib(i) = expected.usrLibl(i):
+      'Library list entry ' + %char(i) + ' does not match expected value');
+    if (i > 1);
+      assert(prvLib <> liblData.libL.lib(i):
+        'Previous library list entry must not match current entry');
+    endif;
+    prvLib = liblData.libL.lib(i);
+  endfor;
 
-        // Check.
+  for i = liblData.libL.numE + 1 to MAX_NUM_LIB;
+     assert(liblData.libL.lib(i) = '':
+       'Library list entry ' + %char(i) + ' should be empty');
+  endfor;
 
-        assert(liblData.libL.numE > 0:
-           'Number of libraries shoud be greater than 0');
+  assert(liblData.curLib = expected.curLib:
+    'Current library ' + %char(i) + ' does not match expected value');
 
-        for i = 1 to liblData.libL.numE;
-           assert(liblData.libL.lib(i) = expected.usrLibl(i):
-              'Library list entry ' + %char(i) +
-              ' does not match expected value');
-           if (i > 1);
-              assert(prvLib <> liblData.libL.lib(i):
-                 'Previous library list entry must not match current entry');
-           endif;
-           prvLib = liblData.libL.lib(i);
-        endfor;
+end-proc;
 
-        for i = liblData.libL.numE + 1 to MAX_NUM_LIB;
-           assert(liblData.libL.lib(i) = '':
-              'Library list entry ' + %char(i) + ' should be empty');
-        endfor;
 
-        assert(liblData.curLib = expected.curLib:
-           'Current library ' + %char(i) + ' does not match expected value');
+dcl-proc testLoadLibl export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-      /end-free
-     P                 e
+  dcl-ds qJobD likeds(Object_t);
+  dcl-ds liblData likeds(LiblData_t);
 
+  // Setup.
 
-     P testLoadLibl...
-     P                 b                   export
-     D                 pi
+  // Run.
 
-     D qJobD           ds                  likeds(Object_t)
-     D liblData        ds                  likeds(LiblData_t)
-      /free
+  qJobD.nm = 'RPGUNITT';
+  qJobD.lib = 'QTEMP';
+  liblData = loadLibl(qJobD);
 
-        // Setup.
+  // Check.
 
+  assert(liblData.libL.numE = 2: 'Number of libraries shoud equal 2');
 
-        // Run.
+  assert(liblData.libL.lib(1) = 'QGPL': 'First library list entry should match: QGPL');
 
-        qJobD.nm = 'RPGUNITT';
-        qJobD.lib = 'QTEMP';
-        liblData = loadLibl(qJobD);
+  assert(liblData.libL.lib(2) = 'QTEMP': 'Third library list entry should match: QTEMP');
 
-        // Check.
+end-proc;
 
-        assert(liblData.libL.numE = 2:
-           'Number of libraries shoud equal 2');
 
-        assert(liblData.libL.lib(1) = 'QGPL':
-           'First library list entry should match: QGPL');
+dcl-proc testRestoreLibl export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
-        assert(liblData.libL.lib(2) = 'QTEMP':
-           'Third library list entry should match: QTEMP');
+  dcl-ds qJobD likeds(Object_t);
+  dcl-ds savedLibl likeds(LiblData_t);
+  dcl-ds currentLibl likeds(LiblData_t);
+  dcl-ds newLibl likeds(LiblData_t);
+  dcl-ds restoredLibl likeds(LiblData_t);
 
-      /end-free
-     P                 e
+  // Setup.
 
+  // Run.
 
-     P testRestoreLibl...
-     P                 b                   export
-     D                 pi
+  // Save library list
+  savedLibl = getLibl();
 
-     D qJobD           ds                  likeds(Object_t)
-     D savedLibl       ds                  likeds(LiblData_t)
-     D currentLibl     ds                  likeds(LiblData_t)
-     D newLibl         ds                  likeds(LiblData_t)
-     D restoredLibl    ds                  likeds(LiblData_t)
-      /free
+  // Change library list
+  qJobD.nm = 'RPGUNITT';
+  qJobD.lib = 'QTEMP';
+  newLibl = loadLibl(qJobD);
+  changeLibl(newLibl.curLib: newLibl.libL);
 
-        // Setup.
+  currentLibl = getLibl();
 
+  // Restore library list
+  changeLibl(savedLibl.curLib: savedLibl.libL);
 
-        // Run.
+  // Get final library list
+  restoredLibl = getLibl();
 
-        // Save library list
-        savedLibl = getLibl();
+  // Check.
+  assert(savedLibl <> newLibl: 'Library list had not been properly changed for testing');
 
-        // Change library list
-        qJobD.nm = 'RPGUNITT';
-        qJobD.lib = 'QTEMP';
-        newLibl = loadLibl(qJobD);
-        changeLibl(newLibl.curLib: newLibl.libL);
+  assert(savedLibl = restoredLibl: 'Restored library list does not match saved library list');
 
-        currentLibl = getLibl();
+end-proc;
 
-        // Restore library list
-        changeLibl(savedLibl.curLib: savedLibl.libL);
-
-        // Get final library list
-        restoredLibl = getLibl();
-
-        // Check.
-        assert(savedLibl <> newLibl:
-           'Library list had not been properly changed for testing');
-
-        assert(savedLibl = restoredLibl:
-           'Restored library list does not match saved library list');
-
-
-      /end-free
-     P                 e
-
-
-      //----------------------------------------------------------------------
-      //   Private Helper Procedures
-      //----------------------------------------------------------------------
