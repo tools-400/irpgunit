@@ -1,110 +1,127 @@
-      /if not defined LIBC
-      /define LIBC
+**FREE
+/if not defined LIBC
+/define LIBC
 
-      *-------------------------------------------------------------------------
-      * Prototypes for C-Functions
-      *-------------------------------------------------------------------------
+//-------------------------------------------------------------------------
+// Prototypes for C-Functions
+//-------------------------------------------------------------------------
 
-      /include qinclude,ERRORCODE
+/include qinclude,ERRORCODE
 
-      *
-      * string functions
-      *
-     D strtok          PR              *          extproc('strtok')
-     D  i_string                       *   value  options(*string)
-     D  i_token                        *   value  options(*string)
-      *
-     D strlen          PR            10U 0 extproc('strlen')
-     D   string                        *   value
-      *
-     D requestControlBlockLower...
-     D                 DS                  qualified
-     D   type                        10I 0 inz(0)
-     D   ccsid                       10I 0 inz(0)
-     D   case                        10I 0 inz(0)
-     D   res1                        10A   inz(*ALLX'00')
-      *
-     D requestControlBlockUpper...
-     D                 DS                  qualified
-     D   type                        10I 0 inz(1)
-     D   ccsid                       10I 0 inz(0)
-     D   case                        10I 0 inz(0)
-     D   res1                        10A   inz(*ALLX'00')
-      *
-     D caseConvert     PR                  extproc('QlgConvertCase')
-     D   reqContBlock                      const
-     D                                     likeds(requestControlBlockUpper)
-     D   input                     1024A   const options(*varsize)
-     D   output                    1024A   options(*varsize)
-     D   len                         10I 0 const
-     D   errorCode                         likeds(errorCode_t) options(*varsize)
+//
+// string functions
+//
+dcl-pr strtok pointer extproc('strtok');
+  i_string        pointer value  options(*string);
+  i_token         pointer value  options(*string);
+end-pr;
 
-      *
-      * memory functions
-      *
-     D memcpy          PR              *          extproc('memcpy')
-     D  dest                           *   value
-     D  source                         *   value
-     D  count                        10U 0 value
-      *
-     D memset          PR              *          extproc('memset')
-     D  i_pDest                        *   value
-     D  i_char                       10I 0 value
-     D  i_count                      10U 0 value
-      *
-     D memmove         PR              *          extproc('memmove')
-     D  pMemDest                       *   value
-     D  pMemSrc                        *   value
-     D  memSize                      10U 0 value
-      *
-     D memcmp          PR            10I 0        extproc('memcmp')
-     D  pBuf1                          *   value
-     D  pBuf2                          *   value
-     D  count                        10U 0 value
-      *
-     D memicmp         PR            10I 0        extproc('__memicmp')
-     D  pBuf1                          *   value
-     D  pBuf2                          *   value
-     D  count                        10U 0 value
+dcl-pr strlen uns(10) extproc('strlen');
+  string          pointer value;
+end-pr;
 
-      *
-      * math functions
-      *
-     D ceiling         PR             8F   extproc('ceil')
-     D   value                        8F   value
-      *
-     D floor           PR             8F   extproc('floor')
-     D   value                        8F   value
+dcl-ds requestControlBlockLower qualified;
+  type            int(10) inz(0);
+  ccsid           int(10) inz(0);
+  case            int(10) inz(0);
+  res1            char(10) inz(*ALLX'00');
+end-ds;
 
-      *
-      * other functions
-      *
-     D tmpnam          PR              *   extproc('tmpnam')
-     D   buffer                      39A   options(*omit)
-      *
-     D tmpnamIFS       PR              *   extproc('_C_IFS_tmpnam')
-     D   buffer                      39A   options(*omit)
-      *
-     D system          PR            10I 0 extproc('system')
-     D   command                       *   value options(*string)
-      *
-     D srand           PR                         extproc('srand')
-     D  i_seed                       10U 0 value
-      *
-     D rand            PR            10I 0        extproc('rand')
-      *
-     D qsort           PR              *          extproc('qsort')
-     D  memPtr                         *   value
-     D  numElem                      10U 0 value
-     D  width                        10U 0 value
-     D  pSortFunc                      *   value  procptr
-      *
-     D bsearch         PR              *          extproc('bsearch')
-     D  keyPtr                         *   value
-     D  memPtr                         *   value
-     D  numElem                      10U 0 value
-     D  width                        10U 0 value
-     D  pSearchFnc                     *   value  procptr
+dcl-ds requestControlBlockUpper qualified;
+  type            int(10) inz(1);
+  ccsid           int(10) inz(0);
+  case            int(10) inz(0);
+  res1            char(10) inz(*ALLX'00');
+end-ds;
 
-      /endif
+dcl-pr caseConvert extproc('QlgConvertCase');
+  reqContBlock    likeds(requestControlBlockUpper) const;
+  input           char(1024) const options(*varsize);
+  output          char(1024) options(*varsize);
+  len             int(10) const;
+  errorCode       likeds(errorCode_t) options(*varsize);
+end-pr;
+
+//
+// memory functions
+//
+dcl-pr memcpy pointer extproc('memcpy');
+  dest            pointer value;
+  source          pointer value;
+  count           uns(10) value;
+end-pr;
+
+dcl-pr memset pointer extproc('memset');
+  i_pDest         pointer value;
+  i_char          int(10) value;
+  i_count         uns(10) value;
+end-pr;
+
+dcl-pr memmove pointer extproc('memmove');
+  pMemDest        pointer value;
+  pMemSrc         pointer value;
+  memSize         uns(10) value;
+end-pr;
+
+dcl-pr memcmp int(10) extproc('memcmp');
+  pBuf1           pointer value;
+  pBuf2           pointer value;
+  count           uns(10) value;
+end-pr;
+
+dcl-pr memicmp int(10) extproc('__memicmp');
+  pBuf1           pointer value;
+  pBuf2           pointer value;
+  count           uns(10) value;
+end-pr;
+
+//
+// math functions
+//
+dcl-pr ceiling float(8) extproc('ceil');
+  value           float(8) value;
+end-pr;
+
+dcl-pr floor float(8) extproc('floor');
+  value           float(8) value;
+end-pr;
+
+//
+// other functions
+//
+dcl-pr tmpnam pointer extproc('tmpnam');
+  buffer          char(39) options(*omit);
+end-pr;
+
+dcl-pr tmpnamIFS pointer extproc('_C_IFS_tmpnam');
+  buffer          char(39) options(*omit);
+end-pr;
+
+dcl-pr system int(10) extproc('system');
+  command         pointer value options(*string);
+end-pr;
+
+dcl-pr srand extproc('srand');
+  i_seed          uns(10) value;
+end-pr;
+
+dcl-pr rand int(10) extproc('rand');
+end-pr;
+
+dcl-pr qsort pointer extproc('qsort');
+  memPtr          pointer value;
+  numElem         uns(10) value;
+  width           uns(10) value;
+  pSortFunc       pointer(*proc) value;
+end-pr;
+
+dcl-pr bsearch pointer extproc('bsearch');
+  keyPtr          pointer value;
+  memPtr          pointer value;
+  numElem         uns(10) value;
+  width           uns(10) value;
+  pSearchFnc      pointer(*proc) value;
+end-pr;
+
+/endif
 
