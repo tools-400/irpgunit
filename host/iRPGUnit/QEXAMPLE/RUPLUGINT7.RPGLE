@@ -1,6 +1,7 @@
 **free
       // ==========================================================================
       //  iRPGUnit Dev. of RDP Plugin. Produce Job Log.
+      //  ERROR. 1 test case, 0 assertion, 0 failure, 1 error.
       // ==========================================================================
       //  Copyright (c) 2013-2019 iRPGUnit Project Team
       //  All rights reserved. This program and the accompanying materials
@@ -25,8 +26,13 @@ ctl-opt nomain;
 /include qinclude,TESTCASE
 
 dcl-proc Test_BadCall export;
-   dcl-pr bad_pgm extpgm;
-   end-pr;
-   bad_pgm();
-   assert (%status() = 0 : 'Expect status <> 0');
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-pr bad_pgm extpgm;
+  end-pr;
+
+  bad_pgm();
+  assert (%status() = 0 : 'Expect status <> 0');
+
 end-proc;

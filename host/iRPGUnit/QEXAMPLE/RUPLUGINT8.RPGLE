@@ -1,6 +1,7 @@
 **free
       // ==========================================================================
       //  iRPGUnit Dev. of RDP Plugin. All OK
+      //  Success. 4 test cases, 4 assertions, 0 failure, 0 error.
       // ==========================================================================
       //  Copyright (c) 2013-2019 iRPGUnit Project Team
       //  All rights reserved. This program and the accompanying materials
@@ -25,6 +26,8 @@ ctl-opt nomain;
 /include qinclude,TESTCASE
 
 dcl-proc test_aEqual export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
   dcl-s actual varchar(50) inz('Donald Duck');
 
@@ -33,6 +36,8 @@ dcl-proc test_aEqual export;
 end-proc;
 
 dcl-proc test_iEqual export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
   dcl-s actual int(10) inz(123);
 
@@ -41,6 +46,8 @@ dcl-proc test_iEqual export;
 end-proc;
 
 dcl-proc test_nEqual export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
   dcl-s actual ind inz(*on);
 
@@ -49,6 +56,8 @@ dcl-proc test_nEqual export;
 end-proc;
 
 dcl-proc test_assert export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
   dcl-s actual varchar(50) inz('Donald Duck');
 
