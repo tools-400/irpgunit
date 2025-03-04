@@ -34,6 +34,8 @@ ctl-opt nomain;
 /include qinclude,OBJECT
 /include qinclude,PGMMSG
 /include qinclude,SYSTEMAPI
+/include qinclude,SRCMBR
+/include qinclude,STMF
 
 
 //----------------------------------------------------------------------
@@ -117,15 +119,12 @@ dcl-proc getMemberType export;
     mbr          char(10) const;
   end-pi;
 
-  dcl-ds qSrcFile likeds(object_t);
-  dcl-ds mbrd0100 likeds(mbrd0100_t);
+  dcl-ds qSrcFile likeds(Object_t);
 
-  qSrcFile.nm = srcFile;
   qSrcFile.lib = srcFileLib;
+  qSrcFile.nm = srcFile;
 
-  qusrmbrd(mbrd0100: %size(mbrd0100): 'MBRD0100': qSrcFile: mbr: '0');
-
-  return mbrd0100.srcType;
+  return SrcMbr_getType(qSrcFile: mbr);
 
 end-proc;
 
@@ -135,24 +134,7 @@ dcl-proc getStmfType export;
     srcStmf     like(ifsStmf_t) const;
   end-pi;
 
-  dcl-s localSrcStmf like(srcStmf);
-  dcl-s fileExtension char(10);
-  dcl-s i int(10);
-
-  localSrcStmf = %xlate('\': '/': srcStmf);
-
-  i = %scanr('.': localSrcStmf);
-  if (%scanr('/': localSrcStmf) > i);
-    return '';
-  endif;
-
-  if (i = %len(localSrcStmf));
-    return '';
-  endif;
-
-  fileExtension = %subst(localSrcStmf: i+1);
-
-  return fileExtension;
+  return Stmf_getType(srcStmf);
 
 end-proc;
 
