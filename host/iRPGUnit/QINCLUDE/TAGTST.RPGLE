@@ -10,8 +10,9 @@
 // ==========================================================================
 
 dcl-pr tagTstSrvPgm extproc('TAGTST_tagTstSrvPgm');
-  qsrvpgm         const likeds(object_t);
-  qsrcfile        const likeds(object_t);
-  srcMbr          char(10) const;
+  qsrvpgm         likeds(object_t) const;
+  qsrcfile        likeds(object_t) const;
+  srcMbr          like(srcMbr_t.mbr) const;
+  srcStmf         like(ifsStmf_t) const;
 end-pr;
 

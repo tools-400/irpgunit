@@ -48,6 +48,7 @@ dcl-proc crtCbl;
     testPgm      likeds(Object_t) const;
     srcFile      likeds(Object_t) const;
     srcMbr       like(SrcMbr_t.mbr) const;
+    srcStmf      like(ifsStmf_t) const;
     text         like(Text_t) const;
     cOption      likeds(Options_t) const;
     dbgView      like(DbgView_t) const;
@@ -61,35 +62,13 @@ dcl-proc crtCbl;
     pOption      likeds(Options_t) const;
     compileOpt   like(CompileOpt_t) const;
     targetRls    like(TargetRelease_t) const;
+    incDir       likeds(incDir_t) const;
+    tgtCcsid     like(tgtCcsid_t) const;
   end-pi;
 
-  dcl-s srcMbrRslv like(srcMbr);
-  dcl-s srcType char(10);
-
-  if (srcMbr = '*TSTPGM');
-    srcMbrRslv = testPgm.nm;
-  else;
-    srcMbrRslv = srcMbr;
-  endif;
-
-  monitor;
-    srcType = getMemberType( srcFile.nm : srcFile.lib : srcMbrRslv );
-  on-error;
-    sndEscapeMsgAboveCtlBdy( 'Could not retrieve source type of member '
-                           + %trim(srcMbrRslv)
-                           + ' of file '
-                           + %trim(srcFile.lib) + '/' + %trim(srcFile.nm)
-                           + '.' );
-  endmon;
-
-  if (srcType <> MBR_CBLLE and srcType <> MBR_SQLCBLLE );
-    sndEscapeMsgAboveCtlBdy( 'Source type ' + %trim(srcType)
-                           + ' is not supported by command RUCRTCBL' );
-  endif;
-
-  crtTst( testPgm : srcFile : srcMbrRslv : text : cOption : dbgView
-         : bndSrvPgm : bndDir : bOption : define : dltSplf : actGrp
-         : bModules : '*N' : pOption : compileOpt : targetRls);
+  crtTst(testPgm: srcFile: srcMbr: srcStmf: text: cOption: dbgView
+         : bndSrvPgm: bndDir: bOption: define: dltSplf: actGrp
+         : bModules: '*N': pOption: compileOpt: targetRls: incDir: tgtCcsid);
 
   *inlr = *on;
 

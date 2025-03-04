@@ -50,6 +50,7 @@ dcl-c MBR_SQLCBLLE 'SQLCBLLE';
 
 dcl-c PARM_DBGVIEW 'DBGVIEW';
 dcl-c PARM_DEFINE 'DEFINE';
+dcl-c PARM_TGTCCSID 'TGTCCSID';
 
 dcl-c SLASH u'002F';
 dcl-c BACK_SLASH u'005C';
@@ -139,6 +140,18 @@ dcl-s rpgPpOpt_t char(10);
 
 // SQL pre-compiler option COMPILEOPT
 dcl-s compileOpt_t varchar(5000);
+
+// CRTRPGMOD INCDIR parameter
+dcl-ds incdir_t qualified template;
+  size     int(5);
+  path     like(ifsStmf_t) dim(32);
+end-ds;
+
+// CRTRPGMOD TGTCCSID parameter
+dcl-s tgtCcsid_t int(10);
+
+// CRTRPGMOD SRCSTMF parameter
+dcl-s ifsStmf_t varchar(4096);
 
 // Object qualified Name.
 dcl-ds object_t qualified template;
@@ -277,6 +290,9 @@ dcl-s serializedString_t varchar(5136) template;
 dcl-s targetRelease_t char(10) template;
 dcl-s assertString_t varchar(32565:4) CCSID(*UTF8) TEMPLATE;
 dcl-s assertNumeric_t zoned(63:20) template;
+dcl-s serializedIncDir_t varchar(131072) template; // 32 * 4096
+dcl-s serializedStmf_t varchar(4098) template; // 4096 + 2 * len(QUOTES)
+dcl-s serializedTgtCcsid_t varchar(20) template;
 
 // Program Status Data Structure.
 dcl-ds sds_t template qualified;

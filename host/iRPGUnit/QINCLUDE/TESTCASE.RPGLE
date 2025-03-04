@@ -342,6 +342,18 @@ dcl-pr getMemberType char(10) extproc('getMemberType') opdesc;
 end-pr;
 
 
+ // getStmfType -- Get Stream File Type.
+ //
+ // Returns the type of a given stream file.
+ //
+ // Example:
+ //   srcType = getStmfType('/home/dev/mypgm.rpgle');
+
+dcl-pr getStmfType char(10) extproc('getStmfType') opdesc;
+  srcStmf     like(ifsStmf_t) const;
+end-pr;
+
+
  // setLowMessageKey -- Set lowest (oldest) message key.
  //
  // Sets the message key of the oldest message in the job log, that

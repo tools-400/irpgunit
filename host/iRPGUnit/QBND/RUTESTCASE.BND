@@ -25,7 +25,53 @@
 /* >>END-PRE-COMPILER<<                                                       */
 /* ========================================================================== */
 
-STRPGMEXP  PGMLVL(*CURRENT) SIGNATURE('iRPGUNIT V5.0')
+STRPGMEXP  PGMLVL(*CURRENT) SIGNATURE('iRPGUNIT V5.1')
+
+  EXPORT SYMBOL("aEqual")                      /* public API */
+  EXPORT SYMBOL("assert")                      /* public API */
+  EXPORT SYMBOL("clrAssertFailEvt")            /* internal self-test API */
+  EXPORT SYMBOL("fail")                        /* public API */
+  EXPORT SYMBOL("getAssertCalled")             /* internal self-test API */
+  EXPORT SYMBOL("getAssertFailEvt")            /* internal self-test API */
+  EXPORT SYMBOL("iEqual")                      /* public API */
+  EXPORT SYMBOL("CLRPFM")                      /* public API */
+  EXPORT SYMBOL("RCLACTGRP")                   /* public API */
+  EXPORT SYMBOL("runCmd")                      /* public API */
+  EXPORT SYMBOL("clearAssertCounter")          /* internal self-test API */
+  EXPORT SYMBOL("nEqual")                      /* public API */
+  EXPORT SYMBOL("VERSION_getVersion")          /* internal use */
+
+  EXPORT SYMBOL("waitSeconds")                 /* public API */
+  EXPORT SYMBOL("displayStatusMessage")        /* public API */
+  EXPORT SYMBOL("restoreStatusMessage")        /* public API */
+  EXPORT SYMBOL("clearStatusMessage")          /* public API */
+  EXPORT SYMBOL("getMemberType")               /* public API */
+  EXPORT SYMBOL("getMonitoredMessage")         /* public API */
+  EXPORT SYMBOL("setLowMessageKey")            /* public API */
+
+  EXPORT SYMBOL("getAssertFailEvtLong")        /* internal self-test API */
+  EXPORT SYMBOL("assertJobLogContains")        /* public API */
+  EXPORT SYMBOL("getFullTimeStamp")            /* public API */
+  EXPORT SYMBOL("assertMessageQueueContains")  /* public API */
+
+  EXPORT SYMBOL("ASSERT_registerStartPgm")     /* internally used procedure */
+
+  EXPORT SYMBOL("assertEqual_string")          /* public API V2 */
+/* Procedure disabled, because it is handled by: assertEqual_numeric */
+/*EXPORT SYMBOL("assertEqual_integer")*/       /* public API V2 */
+  EXPORT SYMBOL("assertEqual_numeric")         /* public API V2 */
+  EXPORT SYMBOL("assertEqual_float")           /* public API V2 */
+  EXPORT SYMBOL("assertEqual_date")            /* public API V2 */
+  EXPORT SYMBOL("assertEqual_time")            /* public API V2 */
+  EXPORT SYMBOL("assertEqual_timestamp")       /* public API V2 */
+/*EXPORT SYMBOL("assertEqual_ind")*/           /* public API V2 */
+  EXPORT SYMBOL("assertThat")                  /* public API V2 */
+
+  EXPORT SYMBOL("getStmfType")                 /* public API */
+
+ENDPGMEXP
+
+STRPGMEXP  PGMLVL(*PRV) SIGNATURE('iRPGUNIT V5.0')
 
   EXPORT SYMBOL("aEqual")                      /* public API */
   EXPORT SYMBOL("assert")                      /* public API */

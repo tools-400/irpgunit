@@ -35,18 +35,20 @@ ctl-opt nomain;
 /include qinclude,TEMPLATES
 /include qsysinc,QLICOBJD
 /include qinclude,SRCMBR
+/include qinclude,STMF
 
 //*
 // \brief main procedure
 ///
 dcl-proc tagTstSrvPgm export;
   dcl-pi *N;
-    qsrvpgm         const likeds(object_t);
-    qsrcfile        const likeds(object_t);
-    srcMbr          char(10) const;
+    qsrvpgm         likeds(object_t) const;
+    qsrcfile        likeds(object_t) const;
+    srcMbr          like(srcMbr_t.mbr) const;
+    srcStmf         like(ifsStmf_t) const;
   end-pi;
-  //
-  dcl-s rtnLib          char(10);
+
+  dcl-s rtnLib char(10);
 
   dcl-ds objInfo qualified;
     keys        int(10);
@@ -76,7 +78,12 @@ dcl-proc tagTstSrvPgm export;
   qlicobjd(rtnLib : qsrvpgm : '*SRVPGM' : objInfo : errorCode);
 
   // Retrieve source member last changed date and time
-  lastChgDate = SrcMbr_getLastChgDate(qsrcfile: srcMbr);
+  // TODO: fix for stream files
+  if (isStmf(srcStmf));
+    lastChgDate = Stmf_getLastChgDate(srcStmf);
+  else;
+    lastChgDate = SrcMbr_getLastChgDate(qsrcfile: srcMbr);
+  endif;
 
   // Change: last changed date and time
   objInfo.keys = 1;
@@ -86,3 +93,18 @@ dcl-proc tagTstSrvPgm export;
   qlicobjd(rtnLib : qsrvpgm : '*SRVPGM' : objInfo : errorCode);
 
 end-proc;
+
+
+dcl-proc isStmf;
+  dcl-pi *N ind extproc(*dclcase);
+    stmf   const like(ifsStmf_t);
+  end-pi;
+
+  if (stmf <> '');
+    return *on;
+  else;
+    return *off;
+  endif;
+
+end-proc;
+

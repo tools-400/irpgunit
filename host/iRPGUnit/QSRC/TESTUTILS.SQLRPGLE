@@ -129,6 +129,34 @@ dcl-proc getMemberType export;
 
 end-proc;
 
+
+dcl-proc getStmfType export;
+  dcl-pi *N char(10) opdesc;
+    srcStmf     like(ifsStmf_t) const;
+  end-pi;
+
+  dcl-s localSrcStmf like(srcStmf);
+  dcl-s fileExtension char(10);
+  dcl-s i int(10);
+
+  localSrcStmf = %xlate('\': '/': srcStmf);
+
+  i = %scanr('.': localSrcStmf);
+  if (%scanr('/': localSrcStmf) > i);
+    return '';
+  endif;
+
+  if (i = %len(localSrcStmf));
+    return '';
+  endif;
+
+  fileExtension = %subst(localSrcStmf: i+1);
+
+  return fileExtension;
+
+end-proc;
+
+
 dcl-proc getFullTimestamp export;
   dcl-pi *N timestamp opdesc;
   end-pi;

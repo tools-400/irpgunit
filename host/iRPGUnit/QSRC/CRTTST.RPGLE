@@ -39,6 +39,7 @@
 /include qinclude,ERRORCODE
 
 /include qsysinc,QCAPCMD
+/include qsysinc,STAT
 
 
 //----------------------------------------------------------------------
@@ -47,39 +48,11 @@
 
 /include qinclude,CRTTST
 
-
-//----------------------------------------------------------------------
-//   PRIVATE PROTOTYPES
-//----------------------------------------------------------------------
-
-dcl-pr joblogcallback
-       ind
-       extproc('jobLogCallback');
-  i_hmsginfo      pointer const;
-  i_puserdata     pointer const;
-  i_msgid         char(7) const;
-  i_msgtext       varchar(132) const;
-  i_msgsenttime   timestamp const;
-end-pr;
-
-dcl-pr deletesplfcallback
-       ind
-       extproc('deleteSplfCallback');
-  i_hsplf         pointer const;
-  i_puserdata     pointer const;
-  i_splfnm        char(10) const;
-  i_qJob          const likeds(job_t);
-  i_splfnbr       int(10) const;
-  i_filestatus    char(10) const;
-end-pr;
-
-
 //----------------------------------------------------------------------
 //   TYPE TEMPLATE
 //----------------------------------------------------------------------
 
-dcl-ds jobloguserdata_t
-       qualified template;
+dcl-ds jobloguserdata_t qualified template;
   timelimit       timestamp;
   crtmsgid        char(7);
   modules         likeds(objectArray_t) inz;
@@ -99,143 +72,192 @@ dcl-ds srvPgm likeds(object_t);
 
 dcl-proc crtTst export;
   dcl-pi *N;
-    testpgm         const likeds(object_t);
-    srcFile         const likeds(object_t);
-    srcMbr          const like(srcMbr_t.mbr);
-    text            const like(text_t);
-    coption         const likeds(options_t);
-    dbgview         const like(dbgView_t);
-    bndsrvpgm       const likeds(objectArray_t);
-    bnddir          const likeds(objectArray_t);
-    boption         const likeds(options_t);
-    define          const likeds(defines_t);
-    dltsplf         const like(yesno_t);
-    actgrp          const like(activationGroup_t);
-    bmodules        const likeds(objectArray_t);
-    prpgppopt       const like(rpgPpOpt_t);
-    poption         const likeds(options_t);
-    compileopt      const like(compileOpt_t);
-    targetrls       const like(targetRelease_t);
+    testPgm         likeds(object_t) const;
+    srcFile         likeds(object_t) const;
+    srcMbr          like(srcMbr_t.mbr) const;
+    srcStmf         like(ifsStmf_t) const;
+    text            like(text_t) const;
+    cOption         likeds(options_t) const;
+    dbgView         like(dbgView_t) const;
+    bndSrvPgm       likeds(objectArray_t) const;
+    bndDir          likeds(objectArray_t) const;
+    bOption         likeds(options_t) const;
+    define          likeds(defines_t) const;
+    dltSplF         like(yesno_t) const;
+    actGrp          like(activationGroup_t) const;
+    bModules        likeds(objectArray_t) const;
+    pRpgPpOpt       like(rpgPpOpt_t) const;
+    pOption         likeds(options_t) const;
+    compileOpt      like(compileOpt_t) const;
+    targetRls       like(targetRelease_t) const;
+    incDir          likeds(incDir_t) const;
+    tgtCcsid        like(tgtCcsid_t) const;
   end-pi;
 
-  dcl-ds modules likeds(bmodules) inz;
-  dcl-s srcType         varchar(10);
-  dcl-s textrslv        like(text) inz;
-  dcl-s i               int(10);
-  dcl-s mbrtype         char(10);
+  dcl-ds modules likeds(bModules) inz;
+  dcl-s srcType varchar(10);
+  dcl-s textRslv like(text) inz;
+  dcl-s i int(10);
+  dcl-s mbrtype char(10);
   dcl-ds tmpopts likeds(options_t) inz;
   dcl-ds qsrcfile likeds(object_t) inz;
-  dcl-s librslv         char(10);
-  dcl-s startcompiletime
-        timestamp;
+  dcl-s librslv char(10);
+  dcl-s startcompiletime timestamp;
   dcl-ds modulescreated likeds(objectArray_t) inz;
+  dcl-s srcMbrRslv like(srcMbr);
+  dcl-s localSrcStmf like(srcStmf);
+  dcl-ds st_stat likeds(st_stat_t) inz;
+  dcl-s rc int(10);
 
-  dcl-s iserror         ind;
+  dcl-s isError ind;
 
   qsrcfile = srcFile;
-  modules = resolvelibraries(bmodules);
-
-  if (not Object_exists(qsrcfile: '*FILE'));
-    sndEscapeMsgAboveCtlBdy(
-       'Source file ' + %trim(qsrcfile.nm) + ' not found in library ' +
-                        %trim(qsrcfile.lib) + '.' );
-  endif;
-
-  if (%subst(qsrcfile.lib: 1: 1) = '*');
-    librslv = Object_resolveLibrary(qsrcfile: '*FILE');
-  else;
-    if (not Object_exists(qsrcfile: '*FILE'));
-      librslv = '';
-    else;
-      librslv = qsrcfile.lib;
-    endif;
-  endif;
-
-  if (librslv = '');
-    sndEscapeMsgAboveCtlBdy(
-      'Library ' + %trim(qsrcfile.lib) + ' not found.' );
-  endif;
-
-  qsrcfile.lib = librslv;
-
-  if (not Object_exists(qsrcfile: '*FILE': srcMbr));
-    sndEscapeMsgAboveCtlBdy(
-       'Member ' + %trim(srcMbr) + ' not found in source file ' +
-                   %trim(qsrcfile.lib) + '/' + %trim(qsrcfile.nm) + '.' );
-  endif;
 
   if (srcMbr = '*TSTPGM');
-    mbrtype = getMemberType(qsrcfile.nm: qsrcfile.lib: testpgm);
-    if (mbrtype = MBR_RPGLE);
-      tmpopts = coption;
-    else;
-      tmpopts = poption;
-    endif;
-    for i = 1 to tmpopts.size;
-      if (tmpopts.option(i) = '*EVENTF');
-        sndEscapeMsgAboveCtlBdy(
-           'Compile option *EVENTF is not +
-            allowed with source member *TSTPGM, +
-            because it does not work in RDi. Specify +
-            the name of the source member.' );
-      endif;
-    endfor;
+    srcMbrRslv = testPgm.nm;
+  else;
+    srcMbrRslv = srcMbr;
   endif;
 
-  iserror = *off;
+  if (isStmf(srcStmf));
+
+    // Verify that the source stream file exists
+    localSrcStmf = %trim(%xlate('\': '/': srcStmf));
+    rc = stat(localSrcStmf: st_stat); // -1 = error, not found
+    if (rc = -1);
+      sndEscapeMsgAboveCtlBdy('Stream file not found: ' + localSrcStmf);
+    endif;
+
+    // Validate we have a source member type
+    srcType = uCase(getStmfType(localSrcStmf));
+    if (srcType = '');
+      sndEscapeMsgAboveCtlBdy( 'Could not retrieve source type of stream file '
+                             + localSrcStmf
+                             + '.' );
+    endif;
+  else;
+
+    // Verify that the source file exists
+    if (not Object_exists(qsrcfile: '*FILE'));
+      sndEscapeMsgAboveCtlBdy(
+         'Source file ' + %trim(qsrcfile.nm) + ' not found in library ' +
+                          %trim(qsrcfile.lib) + '.' );
+    endif;
+
+    // Resolve source file library special values
+    if (%subst(qsrcfile.lib: 1: 1) = '*');
+      librslv = Object_resolveLibrary(qsrcfile: '*FILE');
+    else;
+      if (not Object_exists(qsrcfile: '*FILE'));
+        librslv = '';
+      else;
+        librslv = qsrcfile.lib;
+      endif;
+    endif;
+
+    if (librslv = '');
+      sndEscapeMsgAboveCtlBdy(
+        'Library ' + %trim(qsrcfile.lib) + ' not found.' );
+    endif;
+
+    qsrcfile.lib = librslv;
+
+    // Verify that the source member exists
+    if (not Object_exists(qsrcfile: '*FILE': srcMbrRslv));
+      sndEscapeMsgAboveCtlBdy(
+         'Member ' + %trim(srcMbrRslv) + ' not found in source file ' +
+                     %trim(qsrcfile.lib) + '/' + %trim(qsrcfile.nm) + '.' );
+    endif;
+
+    // Ensure we have a valid EVFEVENT file member name for RDi
+    if (srcMbrRslv = '*TSTPGM');
+      mbrtype = getMemberType(qsrcfile.nm: qsrcfile.lib: testPgm);
+      if (mbrtype = MBR_RPGLE);
+        tmpopts = coption;
+      else;
+        tmpopts = poption;
+      endif;
+      for i = 1 to tmpopts.size;
+        if (tmpopts.option(i) = '*EVENTF');
+          sndEscapeMsgAboveCtlBdy(
+             'Compile option *EVENTF is not +
+              allowed with source member *TSTPGM, +
+              because it does not work in RDi. Specify +
+              the name of the source member.' );
+        endif;
+      endfor;
+    endif;
+
+    // Validate we have a source member type
+    srcType = uCase(SrcMbr_getType(srcFile: srcMbrRslv));
+    if (srcType = '');
+      sndEscapeMsgAboveCtlBdy( 'Could not retrieve source type of member '
+                             + %trim(srcMbrRslv)
+                             + ' of file '
+                             + %trim(srcFile.lib) + '/' + %trim(srcFile.nm)
+                             + '.' );
+    endif;
+  endif;
+
+  modules = resolveLibraries(bModules);
+
+  isError = *off;
 
   monitor;
 
     select;
     when text = '*SRCMBRTXT';
-      textrslv = SrcMbr_getDescription(qsrcfile: srcMbr);
+      if (isStmf(localSrcStmf));
+        textRslv = '';
+      else;
+        textRslv = SrcMbr_getDescription(qsrcfile: srcMbrRslv);
+      endif;
     when text = '*BLANK';
-      textrslv = '';
+      textRslv = '';
     when text = '*DEFAULT';
-      textrslv = 'RPGUnit - Test Case';
+      textRslv = 'RPGUnit - Test Case';
     when not startswith('RPGUnit' : text);
-      textrslv = 'RPGUnit - ' + text;
+      textRslv = 'RPGUnit - ' + text;
     other;
-      textrslv = text;
+      textRslv = text;
     endsl;
-
-    srcType = SrcMbr_getType( qsrcfile : srcMbr );
 
     startcompiletime = %timestamp();
 
     select;
     when (srcType = MBR_RPGLE or srcType = MBR_SQLRPGLE);
-      addModule( modules : testpgm : *on); // Add to position #1.
+      addModule( modules : testPgm : *on); // Add to position #1.
       // QDEVTOOLS/QLNCMSG RNS9305 - Module &1 placed in library &2.
-      crtrpgmod( testpgm : qsrcfile : srcMbr : coption : dbgview :
-                 prpgppopt : poption : compileopt : targetrls : define);
+      crtRpgMod(testPgm: qsrcfile: srcMbrRslv: localSrcStmf: coption: dbgview:
+                 prpgppopt: poption: compileopt: targetRls: define: incDir: tgtCcsid);
       modulescreated = getCreatedModulesFromJobLog(
                          MOD_CRT_RPG : startcompiletime );
       addModules( modules : modulescreated );
     when (srcType = MBR_CBLLE or srcType = MBR_SQLCBLLE);
       // There is no test case module to add for Cobol ==> See: *PGMID
       // QDEVTOOLS/QLNCMSG LNC0899 - Module &1 placed in library &2.
-      crtCblMod( testpgm : qsrcfile : srcMbr : coption : dbgview :
-                 poption : compileopt : targetrls : define);
+      crtCblMod(testPgm: qsrcfile: srcMbrRslv: localSrcStmf: coption: dbgview:
+                 poption: compileopt: targetRls: define: incDir: tgtCcsid);
       modulescreated = getCreatedModulesFromJobLog(
                          MOD_CRT_CBL : startcompiletime );
       addModules( modules : modulescreated );
     other;
       sndEscapeMsgAboveCtlBdy(
-        'Source type ' + addquotes(srcType) + ' is not supported.' );
+        'Source type ' + addQuotes(srcType) + ' is not supported.' );
     endsl;
 
     srvPgm = crtSrvPgm(
-                testpgm : bndsrvpgm : bnddir : modules : boption :
-                actgrp : textrslv : targetrls);
+                testPgm : bndSrvPgm : bndDir : modules : bOption :
+                actGrp : textRslv : targetRls);
 
-    tagTstSrvPgm(srvPgm : qsrcfile : srcMbr);
+      tagTstSrvPgm(srvPgm : qsrcfile : srcMbrRslv: localSrcStmf);
+      // sndCompMsg( 'Updated (tagged) test suite ' + %trim(srvPgm.nm) + '.' );
 
     sndCompMsg( 'Test program ' + %trim(srvPgm.nm)
               + ' created in library ' + %trim(srvPgm.lib) + '.' );
 
   on-error;
-    iserror = *on;
+    isError = *on;
   endmon;
 
   monitor;
@@ -244,9 +266,14 @@ dcl-proc crtTst export;
   on-error;
   endmon;
 
-  if (iserror);
-    sndEscapeMsgAboveCtlBdy( 'Unable to create test '
-                             + %trim(testpgm.nm) + '.' );
+  if (isError);
+    if (srvPgm.nm <> '' and srvPgm.lib <> '');
+      sndEscapeMsgAboveCtlBdy( 'Unable to update (tag) test suite '
+                               + %trim(srvPgm.nm) + '.' );
+    else;
+      sndEscapeMsgAboveCtlBdy( 'Unable to create test '
+                               + %trim(testPgm.nm) + '.' );
+    endif;
   endif;
 
   *inlr = *on;
@@ -254,7 +281,20 @@ dcl-proc crtTst export;
 end-proc;
 
 
-dcl-proc resolvelibraries;
+dcl-proc isStmf;
+  dcl-pi *N ind extproc(*dclcase);
+    stmf   const like(ifsStmf_t);
+  end-pi;
+
+  if (stmf <> '');
+    return *on;
+  else;
+    return *off;
+  endif;
+
+end-proc;
+
+dcl-proc resolveLibraries;
   dcl-pi *N likeds(objectArray_t);
     modules         const likeds(objectArray_t);
   end-pi;
@@ -310,8 +350,8 @@ dcl-proc getCreatedModulesFromJobLog;
 end-proc;
 
 
-dcl-proc joblogcallback;
-  dcl-pi *N              ind;
+dcl-proc jobLogCallback;
+  dcl-pi *n ind extproc(*dclcase);
     i_hmsginfo      pointer const;
     i_puserdata     pointer const;
     i_msgid         char(7) const;
@@ -426,11 +466,12 @@ dcl-proc addModule;
 end-proc;
 
 
-dcl-proc crtrpgmod;
+dcl-proc crtRpgMod;
   dcl-pi *N;
     testpgm         const likeds(object_t);
     srcFile         const likeds(object_t);
     srcMbr          const like(srcMbr_t.mbr);
+    srcStmf         like(ifsStmf_t) const;
     coption         const likeds(options_t);
     dbgview         const like(dbgView_t);
     prpgppopt       const like(rpgPpOpt_t);
@@ -438,41 +479,46 @@ dcl-proc crtrpgmod;
     compileopt      const like(compileOpt_t);
     targetrls       const like(targetRelease_t);
     define          const likeds(defines_t);
+    incDir          likeds(incDir_t) const;
+    tgtCcsid        like(tgtCcsid_t) const;
   end-pi;
 
   // A command to be executed.
   dcl-s cmd             like(cmd_t);
 
 
-  cmd = getCrtRpgModCmd( testpgm : srcFile : srcMbr : coption : dbgview:
-                         prpgppopt : poption : compileopt : targetrls :
-                         define);
-  sndInfoMsg( cmd );
-  qcmdexc( cmd : %len(cmd) );
+  cmd = getCrtRpgModCmd(testpgm: srcFile: srcMbr: srcStmf: coption: dbgview:
+                         prpgppopt: poption: compileopt: targetrls:
+                         define: incDir: tgtCcsid);
+  sndInfoMsg(cmd);
+  qcmdexc(cmd: %len(cmd));
 
 end-proc;
 
 
 dcl-proc crtCblMod;
   dcl-pi *N;
-    testpgm         const likeds(object_t);
-    srcFile         const likeds(object_t);
-    srcMbr          const like(srcMbr_t.mbr);
-    coption         const likeds(options_t);
-    dbgview         const like(dbgView_t);
-    poption         const likeds(options_t);
-    compileopt      const like(compileOpt_t);
-    targetrls       const like(targetRelease_t);
-    define          const likeds(defines_t);
+    testpgm         likeds(object_t) const;
+    srcFile         likeds(object_t) const;
+    srcMbr          like(srcMbr_t.mbr) const;
+    srcStmf         like(ifsStmf_t) const;
+    coption         likeds(options_t) const;
+    dbgview         like(dbgView_t) const;
+    poption         likeds(options_t) const;
+    compileopt      like(compileOpt_t) const;
+    targetrls       like(targetRelease_t) const;
+    define          likeds(defines_t) const;
+    incDir          likeds(incDir_t) const;
+    tgtCcsid        like(tgtCcsid_t) const;
   end-pi;
 
   // A command to be executed.
   dcl-s cmd             like(cmd_t);
 
 
-  cmd = getCrtCblModCmd( testpgm : srcFile : srcMbr : coption : dbgview:
-                         poption : compileopt : targetrls :
-                         define);
+  cmd = getCrtCblModCmd(testpgm: srcFile: srcMbr: srcStmf: coption: dbgview:
+                        poption: compileopt: targetrls:
+                        define: incDir: tgtCcsid);
   sndInfoMsg( cmd );
   qcmdexc( cmd : %len(cmd) );
 
@@ -497,7 +543,7 @@ dcl-proc deleteModulesAndSpooledFiles;
   qjob.name = '*';
 
   for i = 1 to modules.size;
-    cmd = getdltmodcmd( modules.object(i) );
+    cmd = getDltModCmd( modules.object(i) );
     qcmdexc( cmd : %len(cmd) );
 
     if (dltsplf);
@@ -509,8 +555,8 @@ dcl-proc deleteModulesAndSpooledFiles;
 end-proc;
 
 
-dcl-proc deletesplfcallback;
-  dcl-pi *N              ind;
+dcl-proc deleteSplfCallback;
+  dcl-pi *n ind extproc(*dclcase);
     i_hsplf         pointer const;
     i_puserdata     pointer const;
     i_splfnm        char(10) const;
@@ -650,40 +696,60 @@ end-proc;
 
 dcl-proc getCrtRpgModCmd export;
   dcl-pi *N       like(cmd_t);
-    testpgm         const likeds(object_t);
-    srcFile         const likeds(object_t);
-    srcMbr          const like(srcMbr_t.mbr);
-    coptions        const likeds(options_t);
-    dbgview         const like(dbgView_t);
-    prpgppopt       const like(rpgPpOpt_t);
-    poptions        const likeds(options_t);
-    compileopt      const like(compileOpt_t);
-    targetrls       const like(targetRelease_t);
-    define          const likeds(defines_t);
+    testpgm         likeds(object_t) const;
+    srcFile         likeds(object_t) const;
+    srcMbr          like(srcMbr_t.mbr) const;
+    srcStmf         like(ifsStmf_t) const;
+    coptions        likeds(options_t)const;
+    dbgview         like(dbgView_t)const;
+    prpgppopt       like(rpgPpOpt_t)const;
+    poptions        likeds(options_t)const;
+    compileopt      like(compileOpt_t)const;
+    targetrls       like(targetRelease_t)const;
+    define          likeds(defines_t)const;
+    incDir          likeds(incDir_t) const;
+    tgtCcsid        like(tgtCcsid_t) const;
   end-pi;
 
   // Command string accumulator.
-  dcl-s cmd             like(cmd_t);
-  dcl-s dbgcompileopt   like(compileopt);
+  dcl-s cmd like(cmd_t);
+  dcl-s dbgCompileOpt like(compileopt);
+  dcl-s srcType char(10);
 
+  if (isStmf(srcStmf));
+    srcType = uCase(getStmfType(srcStmf));
+  else;
+    srcType = uCase(getMemberType(srcFile.nm: srcFile.lib: srcMbr));
+  endif;
 
   // source type determines the compile command
   select;
   // RPGLE
-  when getMemberType(srcFile.nm: srcFile.lib: testpgm) = MBR_RPGLE;
+  when (srcType = MBR_RPGLE);
     cmd = 'CRTRPGMOD MODULE(' + serializeObjectName( testpgm ) + ') ';
-    cmd += 'SRCFILE(' + serializeObjectName( srcFile ) + ') ';
-    cmd += serializeValue( 'SRCMBR' : srcMbr );
+    if (isStmf(srcStmf));
+      cmd += 'SRCSTMF(' + serializeStmfPath( srcStmf ) + ') ';
+      cmd += serializeIncDir( 'INCDIR' : incDir );
+    else;
+      cmd += 'SRCFILE(' + serializeObjectName( srcFile ) + ') ';
+      cmd += serializeValue( 'SRCMBR' : srcMbr );
+    endif;
     cmd += serializeOptions( 'OPTION' : coptions );
     cmd += serializeValue( 'TGTRLS' : targetrls );
     cmd += serializeValue( 'DBGVIEW' : dbgview );
-    cmd += serializedefines( 'DEFINE' : define );
+    cmd += serializeDefines( 'DEFINE' : define );
+    cmd += serializeTgtCcsid( 'TGTCCSID' : tgtCcsid );
 
   // SQLRPGLE
-  when getMemberType(srcFile.nm: srcFile.lib: testpgm) = MBR_SQLRPGLE;
+  when (srcType = MBR_SQLRPGLE);
     cmd = 'CRTSQLRPGI OBJ(' + serializeObjectName( testpgm ) + ') ';
-    cmd += 'SRCFILE(' + serializeObjectName( srcFile ) + ') ';
-    cmd += serializeValue( 'SRCMBR' : srcMbr );
+    if (isStmf(srcStmf));
+      cmd += 'SRCSTMF(' + serializeStmfPath( srcStmf ) + ') ';
+      cmd += serializeIncDir( 'INCDIR' : incDir );
+    else;
+      cmd += 'SRCFILE(' + serializeObjectName( srcFile ) + ') ';
+      cmd += serializeValue( 'SRCMBR' : srcMbr );
+    endif;
     cmd += serializeOptions( 'OPTION' : poptions );
     cmd += serializeValue('OBJTYPE': '*MODULE');
     cmd += serializeValue( 'TGTRLS' : targetrls );
@@ -694,19 +760,23 @@ dcl-proc getCrtRpgModCmd export;
     endif;
 
     if compileopt <> *blank;
-      dbgcompileopt = removequotes(compileopt);
+      dbgCompileOpt = removequotes(compileopt);
       if (%scan( PARM_DBGVIEW + '(' : uCase( compileopt )) = 0);
-        dbgcompileopt += ' ' + serializeValue( 'DBGVIEW' : dbgview );
+        dbgCompileOpt += ' ' + serializeValue( 'DBGVIEW' : dbgview );
       endif;
       if (%scan( PARM_DEFINE + '(' : uCase( compileopt )) = 0);
-        dbgcompileopt += ' ' + serializedefines( 'DEFINE' : define );
+        dbgCompileOpt += ' ' + serializeDefines( 'DEFINE' : define );
+      endif;
+      if (%scan( PARM_TGTCCSID + '(' : uCase( compileopt )) = 0);
+        dbgCompileOpt += ' ' + serializeTgtCcsid( 'TGTCCSID' : tgtCcsid );
       endif;
     else;
-      dbgcompileopt = serializeValue( 'DBGVIEW' : dbgview);
-      dbgcompileopt += serializedefines( 'DEFINE' : define);
+      dbgCompileOpt = serializeValue( 'DBGVIEW' : dbgview);
+      dbgCompileOpt += serializeDefines( 'DEFINE' : define);
+      dbgCompileOpt += serializeTgtCcsid( 'TGTCCSID' : tgtCcsid);
     endif;
 
-    cmd += serializeString( 'COMPILEOPT' : dbgcompileopt);
+    cmd += serializeString( 'COMPILEOPT' : dbgCompileOpt);
 
   // something we don't know about yet
   other;
@@ -725,35 +795,56 @@ dcl-proc getCrtCblModCmd export;
     testpgm         const likeds(object_t);
     srcFile         const likeds(object_t);
     srcMbr          const like(srcMbr_t.mbr);
+    srcStmf         like(ifsStmf_t) const;
     coptions        const likeds(options_t);
     dbgview         const like(dbgView_t);
     poptions        const likeds(options_t);
     compileopt      const like(compileOpt_t);
     targetrls       const like(targetRelease_t);
     define          const likeds(defines_t);
+    incDir          likeds(incDir_t) const;
+    tgtCcsid        like(tgtCcsid_t) const;
   end-pi;
 
   // Command string accumulator.
-  dcl-s cmd             like(cmd_t);
-  dcl-s dbgcompileopt   like(compileopt);
+  dcl-s cmd like(cmd_t);
+  dcl-s dbgCompileOpt like(compileopt);
+  dcl-s srcType char(10);
 
+  if (isStmf(srcStmf));
+    srcType = uCase(getStmfType(srcStmf));
+  else;
+    srcType = uCase(getMemberType(srcFile.nm: srcFile.lib: srcMbr));
+  endif;
 
   // source type determines the compile command
   select;
   // CBLLE
-  when getMemberType(srcFile.nm: srcFile.lib: testpgm) = MBR_CBLLE;
+  when (srcType = MBR_CBLLE);
     cmd = 'CRTCBLMOD MODULE(*PGMID) ';
-    cmd += 'SRCFILE(' + serializeObjectName( srcFile ) + ') ';
-    cmd += serializeValue( 'SRCMBR' : srcMbr );
+    if (isStmf(srcStmf));
+      cmd += 'SRCSTMF(' + serializeStmfPath( srcStmf ) + ') ';
+      cmd += serializeIncDir( 'INCDIR' : incDir );
+    else;
+      cmd += 'SRCFILE(' + serializeObjectName( srcFile ) + ') ';
+      cmd += serializeValue( 'SRCMBR' : srcMbr );
+    endif;
     cmd += serializeOptions( 'OPTION' : coptions );
     cmd += serializeValue( 'TGTRLS' : targetrls );
     cmd += serializeValue( 'DBGVIEW' : dbgview );
-    cmd += serializedefines( 'DEFINE' : define );
+    cmd += serializeDefines( 'DEFINE' : define );
+    cmd += serializeTgtCcsid( 'TGTCCSID' : tgtCcsid );
 
   // SQLCBLLE
-  when getMemberType(srcFile.nm: srcFile.lib: testpgm) = MBR_SQLCBLLE;
+  when (srcType = MBR_SQLCBLLE);
     cmd = 'CRTSQLCBLI OBJ(' + serializeObjectName( testpgm ) + ') ';
-    cmd += 'SRCFILE(' + serializeObjectName( srcFile ) + ') ';
+    if (isStmf(srcStmf));
+      cmd += 'SRCSTMF(' + serializeStmfPath( srcStmf ) + ') ';
+      cmd += serializeIncDir( 'INCDIR' : incDir );
+    else;
+      cmd += 'SRCFILE(' + serializeObjectName( srcFile ) + ') ';
+      cmd += serializeValue( 'SRCMBR' : srcMbr );
+    endif;
     cmd += serializeValue( 'SRCMBR' : srcMbr );
     cmd += serializeOptions( 'OPTION' : poptions );
     cmd += serializeValue('OBJTYPE': '*MODULE');
@@ -761,19 +852,23 @@ dcl-proc getCrtCblModCmd export;
     cmd += serializeValue( 'DBGVIEW' : '*NONE');
 
     if compileopt <> *blank;
-      dbgcompileopt = removequotes(compileopt);
+      dbgCompileOpt = removequotes(compileopt);
       if (%scan( PARM_DBGVIEW + '(' : uCase( compileopt )) = 0);
-        dbgcompileopt += ' ' + serializeValue( 'DBGVIEW' : dbgview );
+        dbgCompileOpt += ' ' + serializeValue( 'DBGVIEW' : dbgview );
       endif;
       if (%scan( PARM_DEFINE + '(' : uCase( compileopt )) = 0);
-        dbgcompileopt += ' ' + serializedefines( 'DEFINE' : define );
+        dbgCompileOpt += ' ' + serializeDefines( 'DEFINE' : define );
+      endif;
+      if (%scan( PARM_TGTCCSID + '(' : uCase( compileopt )) = 0);
+        dbgCompileOpt += ' ' + serializeTgtCcsid( 'TGTCCSID' : tgtCcsid );
       endif;
     else;
-      dbgcompileopt = serializeValue( 'DBGVIEW' : dbgview);
-      dbgcompileopt += serializedefines( 'DEFINE' : define);
+      dbgCompileOpt = serializeValue( 'DBGVIEW' : dbgview);
+      dbgCompileOpt += serializeDefines( 'DEFINE' : define);
+      dbgCompileOpt += serializeTgtCcsid( 'TGTCCSID' : tgtCcsid);
     endif;
 
-    cmd += serializeString( 'COMPILEOPT' : dbgcompileopt);
+    cmd += serializeString( 'COMPILEOPT' : dbgCompileOpt);
 
   // something we don't know about yet
   other;
@@ -787,7 +882,7 @@ dcl-proc getCrtCblModCmd export;
 end-proc;
 
 
-dcl-proc getdltmodcmd;
+dcl-proc getDltModCmd;
   dcl-pi *N       like(cmd_t);
     testpgm         const likeds(object_t);
   end-pi;
@@ -854,6 +949,21 @@ dcl-proc serializeObjectName export;
 end-proc;
 
 
+dcl-proc serializeStmfPath export;
+  dcl-pi *N       like(serializedStmf_t);
+    srcStmf         like(ifsStmf_t) const;
+  end-pi;
+
+  // Serialized object name.
+  dcl-s serialized like(serializedStmf_t) inz('');
+
+  serialized = addQuotes(%trim(srcStmf));
+
+  return serialized;
+
+end-proc;
+
+
 dcl-proc serializeOptions;
   dcl-pi *N       like(serializedOptions_t);
     headtoken       const like(headToken_t);
@@ -885,7 +995,7 @@ dcl-proc serializeOptions;
 end-proc;
 
 
-dcl-proc serializedefines;
+dcl-proc serializeDefines;
   dcl-pi *N       like(serializedOptions_t);
     headtoken       const like(headToken_t);
     defines         const likeds(defines_t);
@@ -908,6 +1018,68 @@ dcl-proc serializedefines;
   endfor;
 
   if defines.size > 0;
+    serialized += ') ';
+  endif;
+
+  return serialized;
+
+end-proc;
+
+
+dcl-proc serializeTgtCcsid;
+  dcl-pi *N       like(serializedTgtCcsid_t);
+    headtoken       const like(headToken_t);
+    tgtCcsid        const like(tgtCcsid_t);
+  end-pi;
+
+  // Serialized Options.
+  dcl-s serialized      like(serializedTgtCcsid_t);
+
+  if (tgtCcsid = 0);
+    return '';
+  endif;
+
+  serialized = %trim(headtoken) + '(';
+
+  select;
+  when (tgtCcsid = -2);
+    serialized += '*SRC';
+  when (tgtCcsid = -1);
+    serialized += '*JOB';
+  other;
+    serialized += %char(tgtCcsid);
+  endsl;
+
+  serialized += ') ';
+
+  return serialized;
+
+end-proc;
+
+
+dcl-proc serializeIncDir;
+  dcl-pi *N       like(serializedIncDir_t);
+    headtoken       like(headToken_t) const;
+    incDir          likeds(incDir_t) const;
+  end-pi;
+
+  // Serialized Options.
+  dcl-s serialized      like(serializedIncDir_t);
+  // Counter.
+  dcl-s i               int(10);
+
+
+  if incDir.size = 1 and incDir.path(1) = '*NONE';
+    return '';
+  endif;
+
+  serialized = %trim(headtoken) + '(';
+
+  for i = 1 to incDir.size;
+    serialized += addQuotes(%trim(incDir.path(i))) + ' ';
+  endfor;
+
+  if incDir.size > 0;
     serialized += ') ';
   endif;
 

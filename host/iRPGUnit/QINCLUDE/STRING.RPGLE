@@ -15,6 +15,10 @@ dcl-pr uCase like(String_t) extproc('STRING_uCase');
   string  like(String_t) const options(*varsize);
 end-pr;
 
+dcl-pr lCase like(String_t) extproc('STRING_lCase');
+  string  like(String_t) const options(*varsize);
+end-pr;
+
 dcl-pr leftStr like(String_t) extproc('STRING_leftStr');
   string  like(String_t) const options(*varsize);
   length  int(10) const;

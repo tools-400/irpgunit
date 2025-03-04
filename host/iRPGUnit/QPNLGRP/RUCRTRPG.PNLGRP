@@ -43,8 +43,8 @@ TSTPGM. This member must be a valid, nomain RPGLE  or SQLRPGLEsource member.
 :ehelp.
 .*
 :help name='RUCRTRPG/SRCMBR' WIDTH=64.
-Source file (SRCFILE) - Help
-:xh3.Source file (SRCFILE)
+Source member (SRCMBR) - Help
+:xh3.Source member (SRCMBR)
 :p.
 Specifies the name of the member of the source file that contains the ILE RPG or
 SQL RPG source specifications to be compiled.
@@ -59,6 +59,19 @@ source file member name.
 :pd.Enter the name of the member that contains the ILE RPG
 or SQL RPG source specifications.
 :eparml.
+:ehelp.
+.*
+:help name='RUCRTRPG/SRCSTMF' WIDTH=64.
+Source stream file (SRCSTMF) - Help
+:xh3.Source stream file (SRCSTMF)
+:p.
+Specifies the path name of the stream file containing the ILE RPG source
+code to be compiled.
+:p.
+This parameter overrules the SRCFILE and SRCMBR parameters.
+:p.
+This parameter allows up to 4096 characters. The maximum length accepted
+by the IBM i object creation command is not known.
 :ehelp.
 .*
 :help name='RUCRTRPG/TEXT' WIDTH=64.
@@ -101,7 +114,7 @@ Debugging views (DBGVIEW) - Help
 :p.
 Refer to the DBGVIEW parameter in CRTRPGMOD command help.
 :p.
-:HP2.Note::EHP2.For SQLRPGLE source members, the debug view parameter is
+:HP2.Note::EHP2.For SQL source members, the debug view parameter is
 automatically added to parameter COMPILEOPT of command CRTSQLRPGI, if DBGVIEW
 is not already specified at COMPILEOPT.
 :ehelp.
@@ -143,6 +156,10 @@ compilation begins.  Using the parameter
 DEFINE(condition-name) is equivalent to coding the /DEFINE
 condition-name directive on the first line of the source
 file.
+:p.
+:HP2.Note::EHP2.For SQL source members, the define condition names parameter is
+automatically added to parameter COMPILEOPT of command CRTSQLRPGI, if DEFINE
+is not already specified at COMPILEOPT.
 :parml.
 :pt.:pk def.*NONE:epk.
 :pd.No condition names are defined. This is the default.
@@ -154,7 +171,7 @@ compilation.
 :eparml.
 :ehelp.
 .*
-:help name='RUCRTCBL/DLTSPLF' WIDTH=64.
+:help name='RUCRTRPG/DLTSPLF' WIDTH=64.
 Delete spooled files (DLTSPLF) - Help
 :xh3.Delete spooled files (DLTSPLF)
 :p.
@@ -219,6 +236,58 @@ Target release (TGTRLS) - Help
 :xh3.Target release (TGTRLS)
 :p.
 Refer to the TGTRLS parameter in CRTSRVPGM command help.
+:ehelp.
+.*
+:help name='RUCRTRPG/INCDIR' WIDTH=64.
+Include directory (INCDIR) - Help
+:xh3.Include directory (INCDIR)
+:p.
+Specifies one or more directories to add to the search path used by the
+compiler to find copy files. The compiler will search the directories
+specified here if the copy files in the source program can not be
+resolved.
+:p.
+Please remeber that the :HP2.CRTRPGMOD:EHP2. command allows up to 32
+directories but :HP2.CRTSQLRPGI:EHP2. is limited to one directory.
+:p.
+Each directory entry can be up to 4096 characters. The maximum length
+accepted by the IBM i object creation command is not known.
+:p.
+Values:
+:parml.
+:pt.:pk def.*NONE:epk.
+:pd.No user directories are searched for copy files. By default, the
+source directory will still be searched.
+:pt.'directory'
+:pd.Specify up to 32 directories in which to search for copy files.  In
+addition to the specified directories, the source directory is also
+searched for copy files.
+:eparml.
+:ehelp.
+.*
+:help name='RUCRTRPG/TGTCCSID' WIDTH=64.
+Target CCSID (TGTCCSID) - Help
+:xh3.Target CCSID (TGTCCSID)
+:p.
+Specifies the CCSID that the compiler uses to read the source files.
+:p.
+:HP2.Note::EHP2.For SQL source members, the target ccsid parameter is
+automatically added to parameter COMPILEOPT of command CRTSQLRPGI, if TGTCCSID
+is not already specified at COMPILEOPT.
+:p.
+Values:
+:parml.
+:pt.:pk def.*SRC:epk.
+:pd.The source is read in the CCSID of the primary source file, or if
+the file is an IFS file with an ASCII CCSID, the EBCDIC CCSID related
+to the ASCII CCSID.  This is the default.
+:pt.*JOB
+:pd.The source is read in the job CCSID.  If the job CCSID is 65535,
+the source is read in the default CCSID of the job.
+:pt.1-65534
+:pd.The source is read in the specified CCSID.  The CCSID must be a
+single-byte or mixed-byte EBCDIC CCSID.
+:eparml.
 :ehelp.
 .*
 :epnlgrp.

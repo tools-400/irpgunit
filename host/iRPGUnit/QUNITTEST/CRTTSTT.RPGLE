@@ -45,6 +45,8 @@ ctl-opt NoMain Option(*SrcStmt);
 //----------------------------------------------------------------------
 
 /copy qinclude,ASSERT
+/copy qinclude,IFSIO_H
+/copy qinclude,LIBC_H
 /copy qinclude,LIBL
 /copy qinclude,CRTTST
 /copy qinclude,TEMPLATES
@@ -62,10 +64,20 @@ dcl-c noExport const(*blank);
 // No text.
 dcl-c noText const(*blank);
 
+dcl-c TEMP_DIR      '/temp/';
+dcl-c STMF_RPGLE    'temp_irpgunit1.rpgle';
+dcl-c STMF_SQLRPGLE 'temp_irpgunit1.sqlrpgle';
+
 //----------------------------------------------------------------------
 //   Global Variables
 //----------------------------------------------------------------------
 
+// No source file.
+dcl-ds noSrcFile likeds(Object_t);
+// No source member.
+dcl-s noSrcMbr like(SrcMbr_t.mbr);
+// No source stream file.
+dcl-s noSrcStmf like(ifsStmf_t);
 // No compile option.
 dcl-ds noCOption likeds(Options_t);
 // No SQL pre-compiler option.
@@ -86,6 +98,10 @@ dcl-s noActGrp        varchar(10);
 dcl-s noTargetRls     like(TargetRelease_t);
 // No condition names
 dcl-ds noDefine likeds(defines_t);
+// No include directories.
+dcl-ds noIncDir likeds(incDir_t);
+// No target CCSID.
+dcl-s noTgtCcsid like(tgtCcsid_t);
 
 // Command to create an RPG module.
 dcl-s crtRpgModCmd    char(256);
@@ -115,8 +131,15 @@ dcl-proc setup export;
 
   clear crtRpgModCmd;
 
+  clear noSrcFile;
+  noSrcFile.nm = '';
+  noSrcFile.lib = '*LIBL';
+
   clear noCOption;
   noCOption.size = 0;
+
+  clear noPOption;
+  noPOption.size = 0;
 
   clear noBndSrvPgm;
   noBndSrvPgm.size = 0;
@@ -133,16 +156,26 @@ dcl-proc setup export;
   clear noDefine;
   noDefine.size = 0;
 
+  clear noIncDir;
+  noIncDir.size = 1;
+  noIncDir.path(1) = '*NONE';
+
   liblList = getLibl();
   newLiblList = liblList;
   newLiblList.curLib = sds.pgmLib;
   restoreLibl(newLiblList);
+
+  crtStmf(STMF_RPGLE);
+  crtStmf(STMF_SQLRPGLE);
 
 end-proc;
 
 dcl-proc tearDown export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
+
+  dltStmf(STMF_RPGLE);
+  dltStmf(STMF_SQLRPGLE);
 
   restoreLibl(liblList);
 
@@ -156,15 +189,109 @@ dcl-proc testSrcFile export;
   crtRpgModCmd = getCrtRpgModCmd('SYSTYPES  *CURLIB   ':
                                  'QRPGLESRC QSYSINC   ':
                                  'SYSTYPES':
+                                 noSrcStmf:
                                  noCOption:
                                  noDbgView:
                                  rpgPpOptLvl2:
                                  noPOption:
                                  noCompileOpt:
                                  noTargetRls:
-                                 noDefine);
+                                 noDefine:
+                                 noIncDir:
+                                 noTgtCcsid);
   aEqual('CRTRPGMOD MODULE(*CURLIB/SYSTYPES) +
           SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES)': crtRpgModCmd);
+
+end-proc;
+
+
+dcl-proc testSrcStmfRpgle export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-ds incDir likeds(incDir_t) inz;
+
+  clear incDir;
+  incDir.size = 2;
+  incDir.path(1) = '/home/dev/dir1';
+  incDir.path(2) = '/home/dev/dir2';
+
+  crtRpgModCmd = getCrtRpgModCmd('SYSTYPES  *CURLIB   ':
+                                 noSrcFile:
+                                 noSrcMbr:
+                                 STMF_RPGLE:
+                                 noCOption:
+                                 noDbgView:
+                                 rpgPpOptLvl2:
+                                 noPOption:
+                                 noCompileOpt:
+                                 noTargetRls:
+                                 noDefine:
+                                 incDir:
+                                 noTgtCcsid);
+  aEqual('CRTRPGMOD MODULE(*CURLIB/SYSTYPES) +
+          SRCSTMF(''' + STMF_RPGLE + ''') +
+          INCDIR(''/home/dev/dir1'' ''/home/dev/dir2'') +
+          ': crtRpgModCmd);
+
+end-proc;
+
+
+dcl-proc testSrcStmfSqlrpgle export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-ds incDir likeds(incDir_t) inz;
+
+  clear incDir;
+  incDir.size = 1;
+  incDir.path(1) = '/home/dev/dir1';
+
+  // Parameter TGTCCSID is added to COMPILEOPT, because
+  // TGTCCSID is not specified in COMPILEOPT
+  crtRpgModCmd = getCrtRpgModCmd('SYSTYPES  *CURLIB   ':
+                                 noSrcFile:
+                                 noSrcMbr:
+                                 STMF_SQLRPGLE:
+                                 noCOption:
+                                 noDbgView:
+                                 rpgPpOptLvl2:
+                                 noPOption:
+                                 noCompileOpt:
+                                 noTargetRls:
+                                 noDefine:
+                                 incDir:
+                                 -1); // -1 = *JOB
+  aEqual('CRTSQLRPGI OBJ(*CURLIB/SYSTYPES) +
+          SRCSTMF(''' + STMF_SQLRPGLE + ''') +
+          OBJTYPE(*MODULE) RPGPPOPT(*LVL2) +
+          INCDIR(''/home/dev/dir1'') +
+          DBGVIEW(*NONE) +
+          COMPILEOPT(''TGTCCSID(*JOB)'') +
+          ': crtRpgModCmd);
+
+  // Parameter TGTCCSID is taken from COMPILEOPT, because
+  // COMPILEOPT overrides it.
+  crtRpgModCmd = getCrtRpgModCmd('SYSTYPES  *CURLIB   ':
+                                 noSrcFile:
+                                 noSrcMbr:
+                                 STMF_SQLRPGLE:
+                                 noCOption:
+                                 noDbgView:
+                                 rpgPpOptLvl2:
+                                 noPOption:
+                                 'TGTCCSID(*SRC)':
+                                 noTargetRls:
+                                 noDefine:
+                                 incDir:
+                                 -1); // -1 = *JOB
+  aEqual('CRTSQLRPGI OBJ(*CURLIB/SYSTYPES) +
+          SRCSTMF(''' + STMF_SQLRPGLE + ''') +
+          OBJTYPE(*MODULE) RPGPPOPT(*LVL2) +
+          INCDIR(''/home/dev/dir1'') +
+          DBGVIEW(*NONE) +
+          COMPILEOPT(''TGTCCSID(*SRC)'') +
+          ': crtRpgModCmd);
 
 end-proc;
 
@@ -181,13 +308,16 @@ dcl-proc testOneCompileOption export;
   crtRpgModCmd = getCrtRpgModCmd('SYSTYPES  *CURLIB   ':
                                  'QRPGLESRC QSYSINC   ':
                                  'SYSTYPES' :
+                                 noSrcStmf:
                                  oneCOption:
                                  noDbgView:
                                  rpgPpOptLvl2:
                                  noPOption:
                                  noCompileOpt:
                                  noTargetRls:
-                                 noDefine);
+                                 noDefine:
+                                 noIncDir:
+                                 noTgtCcsid);
   aEqual('CRTRPGMOD MODULE(*CURLIB/SYSTYPES) +
           SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES) +
           OPTION(*SRCSTMT)': crtRpgModCmd);
@@ -209,13 +339,16 @@ dcl-proc testTwoCompileOptions export;
   crtRpgModCmd = getCrtRpgModCmd('SYSTYPES  *CURLIB   ':
                                  'QRPGLESRC QSYSINC   ':
                                  'SYSTYPES':
+                                 noSrcStmf:
                                  twoCOptions:
                                  noDbgView:
                                  rpgPpOptLvl2:
                                  noPOption:
                                  noCompileOpt:
                                  noTargetRls:
-                                 noDefine);
+                                 noDefine:
+                                 noIncDir:
+                                 noTgtCcsid);
   aEqual('CRTRPGMOD MODULE(*CURLIB/SYSTYPES) +
           SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES) +
           OPTION(*SRCSTMT *NODEBUGIO)': crtRpgModCmd);
@@ -230,13 +363,16 @@ dcl-proc testDbgView export;
   crtRpgModCmd = getCrtRpgModCmd('SYSTYPES  *CURLIB   ':
                                  'QRPGLESRC QSYSINC   ':
                                  'SYSTYPES':
+                                 noSrcStmf:
                                  noCOption:
                                  '*LIST':
                                  rpgPpOptLvl2:
                                  noPOption:
                                  noCompileOpt:
                                  noTargetRls:
-                                 noDefine);
+                                 noDefine:
+                                 noIncDir:
+                                 noTgtCcsid);
   aEqual('CRTRPGMOD MODULE(*CURLIB/SYSTYPES) +
           SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES) +
           DBGVIEW(*LIST)': crtRpgModCmd);
@@ -255,29 +391,35 @@ dcl-proc testModTargetRls export;
   crtRpgModCmd = getCrtRpgModCmd('SYSTYPES  *CURLIB   ':
                                  'QRPGLESRC QSYSINC   ':
                                  'SYSTYPES':
+                                 noSrcStmf:
                                  noCOption:
                                  '*LIST':
                                  rpgPpOptLvl2:
                                  noPOption:
                                  noCompileOpt:
                                  '*CURRENT':
-                                 noDefine);
+                                 noDefine:
+                                 noIncDir:
+                                 -2); // -2 = *SRC
   aEqual('CRTRPGMOD MODULE(*CURLIB/SYSTYPES) +
           SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES) +
-          DBGVIEW(*LIST) TGTRLS(*CURRENT)': crtRpgModCmd);
+          DBGVIEW(*LIST) TGTRLS(*CURRENT) TGTCCSID(*SRC)': crtRpgModCmd);
 
   crtCblModCmd = getCrtCblModCmd('SQLUDF    *CURLIB   ':
                                  'QCBLLESRC QSYSINC   ':
                                  'SQLUDF':
+                                 noSrcStmf:
                                  noCOption:
                                  '*LIST':
                                  noPOption:
                                  noCompileOpt:
                                  '*CURRENT':
-                                 noDefine);
+                                 noDefine:
+                                 noIncDir:
+                                 -1); // -1 = *JOB
   aEqual('CRTCBLMOD MODULE(*PGMID) +
           SRCFILE(QSYSINC/QCBLLESRC) SRCMBR(SQLUDF) +
-          DBGVIEW(*LIST) TGTRLS(*CURRENT)': crtCblModCmd);
+          DBGVIEW(*LIST) TGTRLS(*CURRENT) TGTCCSID(*JOB)': crtCblModCmd);
 
 end-proc;
 
@@ -613,5 +755,52 @@ dcl-proc testSerializeObjectNameWithoutLibrary export;
   // Execute and control.
 
   aEqual('OBJNAME': serializeObjectName(object));
+
+end-proc;
+
+
+dcl-proc crtStmf export;
+  dcl-pi *n extproc(*dclcase);
+    stmf   like(ifsStmf_t) value;
+  end-pi;
+
+  dcl-s fd int(10);
+  dcl-s errorNbr int(10) based(pErrorNbr);
+  dcl-s errorText char(256);
+
+  monitor;
+    stmf = TEMP_DIR + stmf;
+    fd = open(stmf: O_EXCL + O_CREAT + O_RDWR + O_SHARE_NONE + O_CCSID
+              : S_IRUSR + S_IWUSR + S_IRGRP + S_IROTH: 819);
+    if (fd <> -1);
+      callp close(fd);
+    else;
+      pErrorNbr = errno();
+      errorText = %str(strerror(errorNbr));
+    endif;
+  on-error;
+  endmon;
+
+end-proc;
+
+
+dcl-proc dltStmf export;
+  dcl-pi *n extproc(*dclcase);
+    stmf   like(ifsStmf_t) value;
+  end-pi;
+
+  dcl-s rc int(10);
+  dcl-s errorNbr int(10) based(pErrorNbr);
+  dcl-s errorText char(256);
+
+  monitor;
+    stmf = TEMP_DIR + stmf;
+    rc = unlink(stmf);
+    if (rc = -1);
+      pErrorNbr = errno();
+      errorText = %str(strerror(errorNbr));
+    endif;
+  on-error;
+  endmon;
 
 end-proc;
