@@ -240,35 +240,11 @@ dcl-proc test_getStmfType export;
   srcType = getStmfType('\home\dev\missingExtension\member.sqlcblle');
   assert(srcType = lCase(MBR_SQLCBLLE): 'getStmfType() must return SQLCBLLE');
 
-end-proc;
+  srcType = getStmfType('/home/dev/missingExtension');
+  assert(srcType = '': 'getStmfType() must return an empty value');
 
-
-dcl-proc test_getStmfType_error export;
-  dcl-pi *n extproc(*dclcase);
-  end-pi;
-
-  dcl-s srcType varchar(10);
-
-  monitor;
-    srcType = getStmfType('/home/dev/missingExtension');
-    fail('getStmfType() should have raised an error');
-  on-error;
-    // Good, error seen.
-  endmon;
-
-  monitor;
-    srcType = getStmfType('/home/dev.de/missingExtension');
-    fail('getStmfType() should have raised an error');
-  on-error;
-    // Good, error seen.
-  endmon;
-
-  monitor;
-    srcType = getStmfType('\home\dev.de\missingExtension');
-    fail('getStmfType() should have raised an error');
-  on-error;
-    // Good, error seen.
-  endmon;
+  srcType = getStmfType('/home/dev.de/missingExtension');
+  assert(srcType = '': 'getStmfType() must return an empty value');
 
 end-proc;
 
