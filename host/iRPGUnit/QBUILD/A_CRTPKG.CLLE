@@ -503,15 +503,6 @@
                           TOFILE(&LIB/&QSRC) FROMMBR(TAGTST) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSRC) +
-                          TOFILE(&LIB/&QSRC) FROMMBR(TEMPLATE) +
-                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
-             CPYF       FROMFILE(&DEVLIB/&QSRC) +
-                          TOFILE(&LIB/&QSRC) FROMMBR(TEMPLCBL) +
-                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
-             CPYF       FROMFILE(&DEVLIB/&QSRC) +
-                          TOFILE(&LIB/&QSRC) FROMMBR(TEMPLSQL) +
-                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
-             CPYF       FROMFILE(&DEVLIB/&QSRC) +
                           TOFILE(&LIB/&QSRC) FROMMBR(TESTUTILS) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSRC) +
