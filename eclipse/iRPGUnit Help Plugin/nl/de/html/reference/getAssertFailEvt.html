@@ -28,7 +28,7 @@ Liefert eine Datenstruktur mit Information über die zuletzt fehlgeschlagene Zus
 <code><pre class="indent">
 <span class="r-cmt">&nbsp;&nbsp;// Assertion Failure Event.</span>
 D AssertFailEvt_t...
-D                 ds                  Qualified Based(template)
+D                 ds                  Qualified Template
 D  msg                         256a
 D  callStkEnt                         LikeDs(CallStkEnt_t)
 D                                     Dim(MAX_CALL_STK_SIZE)
@@ -37,7 +37,7 @@ D MAX_CALL_STK_SIZE...
 D                 c                   Const(64)
 
 <span class="r-cmt">&nbsp;&nbsp;// Call Stack Entry.</span>
-D CallStkEnt_t    ds                  Qualified Based(template)
+D CallStkEnt_t    ds                  Qualified Template
 D  pgmNm                        10a
 D  modNm                        10a
 D  procNm                      256a

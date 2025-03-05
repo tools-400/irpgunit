@@ -24,7 +24,7 @@ Funktion liefert bis zu 1024 Zeichen langen Nachrichtendatentext und löst die F
 <code><pre class="indent">
 <span class="r-cmt">&nbsp;&nbsp;// Assertion Failure Event.</span>
 D AssertFailEvtLong_t...
-D                 ds                  Qualified Based(template)
+D                 ds                  Qualified Template
 D  msg                                Like(msgText_t)
 D  callStkEnt                         LikeDs(CallStkEnt_t)
 D                                     Dim(MAX_CALL_STK_SIZE)
@@ -33,10 +33,10 @@ D MAX_CALL_STK_SIZE...
 D                 c                   Const(64)
 
 <span class="r-cmt">&nbsp;&nbsp;// // Message replacement data or message text.</span>
-D msgText_t       s           1024a   varying based(template) 
+D msgText_t       s           1024a   Varying Template 
 
 <span class="r-cmt">&nbsp;&nbsp;// Call Stack Entry.</span>
-D CallStkEnt_t    ds                  Qualified Based(template)
+D CallStkEnt_t    ds                  Qualified Template
 D  pgmNm                        10a
 D  modNm                        10a
 D  procNm                      256a

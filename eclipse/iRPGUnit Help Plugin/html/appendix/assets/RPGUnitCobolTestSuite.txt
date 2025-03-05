@@ -241,4 +241,4 @@
 
            GOBACK.
 
-       END PROGRAM TEST_FAIL1.
+       END PROGRAM TEST_FAIL1. 
