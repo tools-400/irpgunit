@@ -52,7 +52,7 @@
 //   TYPE TEMPLATE
 //----------------------------------------------------------------------
 
-dcl-ds jobloguserdata_t qualified template;
+dcl-ds jobLogUserData_t qualified template;
   timelimit       timestamp;
   crtmsgid        char(7);
   modules         likeds(objectArray_t) inz;
@@ -283,7 +283,7 @@ end-proc;
 
 dcl-proc isStmf;
   dcl-pi *N ind extproc(*dclcase);
-    stmf   const like(ifsStmf_t);
+    stmf   like(ifsStmf_t) const;
   end-pi;
 
   if (stmf <> '');
@@ -296,34 +296,34 @@ end-proc;
 
 dcl-proc resolveLibraries;
   dcl-pi *N likeds(objectArray_t);
-    modules         const likeds(objectArray_t);
+    modules   likeds(objectArray_t) const;
   end-pi;
 
-  dcl-s i               int(10);
-  dcl-ds rtnmodules likeds(modules) inz;
-  dcl-s libresolved     char(10);
+  dcl-s i int(10);
+  dcl-ds rtnModules likeds(modules) inz;
+  dcl-s libResolved char(10);
 
-  clear rtnmodules;
+  clear rtnModules;
 
   for i = 1 to modules.size;
 
     if (startswith( '*' : modules.object(i).lib));
-      libresolved = Object_resolveLibrary(modules.object(i): '*MODULE');
+      libResolved = Object_resolveLibrary(modules.object(i): '*MODULE');
     else;
-      libresolved = modules.object(i).lib;
+      libResolved = modules.object(i).lib;
     endif;
 
-    if (libresolved = '');
+    if (libResolved = '');
       sndEscapeMsgAboveCtlBdy( 'Could not resolve module '
                              +  Object_qName(modules.object(i)) );
     endif;
 
-    rtnmodules.size += 1;
-    rtnmodules.object(rtnmodules.size).nm = modules.object(i).nm;
-    rtnmodules.object(rtnmodules.size).lib = libresolved;
+    rtnModules.size += 1;
+    rtnModules.object(rtnModules.size).nm = modules.object(i).nm;
+    rtnModules.object(rtnModules.size).lib = libResolved;
   endfor;
 
-  return rtnmodules;
+  return rtnModules;
 
 end-proc;
 
@@ -334,8 +334,8 @@ dcl-proc getCreatedModulesFromJobLog;
     timelimit       timestamp const;
   end-pi;
 
-  dcl-s hreader         like(hjoblogreader_t);
-  dcl-ds userdata likeds(jobloguserdata_t);
+  dcl-s hreader like(hjoblogreader_t);
+  dcl-ds userdata likeds(jobLogUserData_t);
 
   clear userdata;
   userdata.timelimit = timelimit;
@@ -352,48 +352,47 @@ end-proc;
 
 dcl-proc jobLogCallback;
   dcl-pi *n ind extproc(*dclcase);
-    i_hmsginfo      pointer const;
-    i_puserdata     pointer const;
-    i_msgid         char(7) const;
-    i_msgtext       varchar(132) const;
-    i_msgsenttime   timestamp const;
+    i_hMsgInfo      pointer const;
+    i_pUserData     pointer const;
+    i_msgId         char(7) const;
+    i_msgText       varchar(132) const;
+    i_msgSentTime   timestamp const;
   end-pi;
 
-  dcl-ds userdata likeds(jobloguserdata_t)
-  based(i_puserdata);
+  dcl-ds userData likeds(jobLogUserData_t) based(i_pUserData);
 
-  dcl-s msgData         char(100);
+  dcl-s msgData char(100);
   dcl-ds module likeds(object_t);
 
-  dcl-ds rns9305 qualified based(pmsgdata);
-    mod             char(10);
-    lib             char(10);
+  dcl-ds rns9305 qualified based(pMsgData);
+    mod   char(10);
+    lib   char(10);
   end-ds;
 
-  dcl-ds lnc0899 qualified based(pmsgdata);
-    length          int(5);
-    data            char(10);
+  dcl-ds lnc0899 qualified based(pMsgData);
+    length   int(5);
+    data     char(10);
   end-ds;
 
-  if i_msgsenttime < userdata.timelimit;
+  if (i_msgSentTime < userData.timelimit);
     return *off;
   endif;
 
-  if (i_msgid = userdata.crtmsgid);
+  if (i_msgId = userData.crtmsgid);
 
-    msgData = JobLogReader_getCharValue(i_hmsginfo: OLJL_RPL_DATA);
-    pmsgdata = %addr(msgData);
+    msgData = JobLogReader_getCharValue(i_hMsgInfo: OLJL_RPL_DATA);
+    pMsgData = %addr(msgData);
 
     select;
-    when (userdata.crtmsgid = MOD_CRT_RPG);
+    when (userData.crtmsgid = MOD_CRT_RPG);
       module.nm = rns9305.mod;
       module.lib = rns9305.lib;
-      addModule( userdata.modules : module );
-    when (userdata.crtmsgid = MOD_CRT_CBL);
+      addModule( userData.modules : module );
+    when (userData.crtmsgid = MOD_CRT_CBL);
       module.nm = %subst(lnc0899.data: 1: lnc0899.length);
-      pmsgdata += lnc0899.length + %size(lnc0899.length); // push pointer to next *VARY field
+      pMsgData += lnc0899.length + %size(lnc0899.length); // push pointer to next *VARY field
       module.lib = %subst(lnc0899.data: 1: lnc0899.length);
-      addModule( userdata.modules : module );
+      addModule( userData.modules : module );
     endsl;
   endif;
 
@@ -404,15 +403,15 @@ end-proc;
 
 dcl-proc addModules;
   dcl-pi *N;
-    modules         likeds(objectArray_t);
-    items           likeds(objectArray_t);
+    modules   likeds(objectArray_t);
+    items     likeds(objectArray_t);
   end-pi;
 
-  dcl-s i               int(10);
+  dcl-s i int(10);
 
 
   for i = 1 to items.size;
-    addModule( modules : items.object(i) );
+    addModule(modules: items.object(i));
   endfor;
 
 end-proc;
@@ -420,13 +419,13 @@ end-proc;
 
 dcl-proc addModule;
   dcl-pi *N;
-    modules         likeds(objectArray_t);
-    module          const likeds(object_t);
-    isfirstmod      ind const options(*nopass);
+    modules      likeds(objectArray_t);
+    module       likeds(object_t) const;
+    isfirstmod   ind options(*nopass) const;
   end-pi;
 
-  dcl-s i               int(10);
-  dcl-s r               int(10);
+  dcl-s i int(10);
+  dcl-s r int(10);
 
 
   if (%parms() >= %parmnum(isfirstmod));
@@ -484,7 +483,7 @@ dcl-proc crtRpgMod;
   end-pi;
 
   // A command to be executed.
-  dcl-s cmd             like(cmd_t);
+  dcl-s cmd like(cmd_t);
 
 
   cmd = getCrtRpgModCmd(testpgm: srcFile: srcMbr: srcStmf: coption: dbgview:
@@ -513,14 +512,14 @@ dcl-proc crtCblMod;
   end-pi;
 
   // A command to be executed.
-  dcl-s cmd             like(cmd_t);
+  dcl-s cmd like(cmd_t);
 
 
   cmd = getCrtCblModCmd(testpgm: srcFile: srcMbr: srcStmf: coption: dbgview:
                         poption: compileopt: targetrls:
                         define: incDir: tgtCcsid);
-  sndInfoMsg( cmd );
-  qcmdexc( cmd : %len(cmd) );
+  sndInfoMsg(cmd);
+  qcmdexc(cmd: %len(cmd));
 
 end-proc;
 
@@ -533,22 +532,22 @@ dcl-proc deleteModulesAndSpooledFiles;
   end-pi;
 
 
-  dcl-s i               int(10);
-  dcl-s cmd             like(cmd_t);
+  dcl-s i int(10);
+  dcl-s cmd like(cmd_t);
 
-  dcl-s hlister         like(hsplflister_t);
-  dcl-ds qjob likeds(job_t);
+  dcl-s hLister like(hsplflister_t);
+  dcl-ds qJob likeds(job_t);
 
-  clear qjob;
-  qjob.name = '*';
+  clear qJob;
+  qJob.name = '*';
 
   for i = 1 to modules.size;
     cmd = getDltModCmd( modules.object(i) );
-    qcmdexc( cmd : %len(cmd) );
+    qcmdexc(cmd: %len(cmd));
 
     if (dltsplf);
-      hlister = splflister_init(qjob);
-      splflister_list(hlister: %paddr('deleteSplfCallback'));
+      hLister = splflister_init(qJob);
+      splfLister_list(hLister: %paddr('deleteSplfCallback'));
     endif;
   endfor;
 
@@ -573,7 +572,7 @@ dcl-proc deleteSplfCallback;
                    %trim(i_qJob.name) + ') +
            SPLNBR(' + %char(i_splfnbr) + ')';
 
-  qcmdexc( cmd : %len(cmd) );
+  qcmdexc(cmd: %len(cmd));
 
   return *on;
 
@@ -655,7 +654,7 @@ dcl-proc getCrtSrvPgmCmd export;
   end-pi;
 
   // Command string accumulator.
-  dcl-s cmd             like(cmd_t);
+  dcl-s cmd like(cmd_t);
 
 
   cmd = 'CRTSRVPGM SRVPGM(' + serializeObjectName( testpgm ) + ') ';
@@ -680,13 +679,13 @@ end-proc;
 
 dcl-proc formatCommand;
   dcl-pi *N like(cmd_t);
-    cmd             const like(cmd_t);
+    cmd   like(cmd_t) const;
   end-pi;
 
   dcl-ds optCtrlBlk likeds(qcapcmd_optCtrlBlk_t);
 
-  dcl-s rtncmd          char(32702);
-  dcl-s rtncmdlenavl    int(10);
+  dcl-s rtncmd char(32702);
+  dcl-s rtncmdlenavl int(10);
   dcl-ds errcode likeds(percolateErrors_t)
   inz(*likeds);
 
@@ -903,15 +902,15 @@ end-proc;
 
 
 dcl-proc getDltModCmd;
-  dcl-pi *N       like(cmd_t);
-    testpgm         const likeds(object_t);
+  dcl-pi *N like(cmd_t);
+    testPgm   const likeds(object_t);
   end-pi;
 
   // Command string accumulator.
-  dcl-s cmd             like(cmd_t);
+  dcl-s cmd like(cmd_t);
 
 
-  cmd = 'DLTMOD MODULE(' + serializeObjectName( testpgm ) + ') ';
+  cmd = 'DLTMOD MODULE(' + serializeObjectName( testPgm ) + ') ';
 
   cmd = formatCommand(cmd);
 
