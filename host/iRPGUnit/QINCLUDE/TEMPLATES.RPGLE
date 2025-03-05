@@ -42,7 +42,6 @@ dcl-c NO_VALUE '*N';
 
 dcl-c NO_MSG_TEXT '*N';
 
-// Source member types
 dcl-c MBR_RPGLE 'RPGLE';
 dcl-c MBR_SQLRPGLE 'SQLRPGLE';
 dcl-c MBR_CBLLE 'CBLLE';
@@ -51,6 +50,7 @@ dcl-c MBR_SQLCBLLE 'SQLCBLLE';
 dcl-c PARM_DBGVIEW 'DBGVIEW';
 dcl-c PARM_DEFINE 'DEFINE';
 dcl-c PARM_TGTCCSID 'TGTCCSID';
+dcl-c PARM_INCDIR 'INCDIR';
 
 dcl-c SLASH u'002F';
 dcl-c BACK_SLASH u'005C';
