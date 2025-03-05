@@ -712,10 +712,10 @@ dcl-proc getCrtRpgModCmd export;
     srcFile         likeds(object_t) const;
     srcMbr          like(srcMbr_t.mbr) const;
     srcStmf         like(ifsStmf_t) const;
-    coptions        likeds(options_t)const;
+    cOptions        likeds(options_t)const;
     dbgview         like(dbgView_t)const;
     prpgppopt       like(rpgPpOpt_t)const;
-    poptions        likeds(options_t)const;
+    pOptions        likeds(options_t)const;
     compileopt      like(compileOpt_t)const;
     targetrls       like(targetRelease_t)const;
     define          likeds(defines_t)const;
@@ -741,28 +741,28 @@ dcl-proc getCrtRpgModCmd export;
     cmd = 'CRTRPGMOD MODULE(' + serializeObjectName( testpgm ) + ') ';
     if (isStmf(srcStmf));
       cmd += 'SRCSTMF(' + serializeStmfPath( srcStmf ) + ') ';
-      cmd += serializeIncDir( 'INCDIR' : incDir );
+      cmd += serializeIncDir(incDir);
     else;
       cmd += 'SRCFILE(' + serializeObjectName( srcFile ) + ') ';
       cmd += serializeValue( 'SRCMBR' : srcMbr );
     endif;
-    cmd += serializeOptions( 'OPTION' : coptions );
+    cmd += serializeOptions( 'OPTION' : cOptions );
     cmd += serializeValue( 'TGTRLS' : targetrls );
     cmd += serializeValue( 'DBGVIEW' : dbgview );
-    cmd += serializeDefines( 'DEFINE' : define );
-    cmd += serializeTgtCcsid( 'TGTCCSID' : tgtCcsid );
+    cmd += serializeDefines(define);
+    cmd += serializeTgtCcsid(tgtCcsid);
 
   // SQLRPGLE
   when (srcType = MBR_SQLRPGLE);
     cmd = 'CRTSQLRPGI OBJ(' + serializeObjectName( testpgm ) + ') ';
     if (isStmf(srcStmf));
       cmd += 'SRCSTMF(' + serializeStmfPath( srcStmf ) + ') ';
-      cmd += serializeIncDir( 'INCDIR' : incDir );
+      cmd += serializeIncDir(incDir);
     else;
       cmd += 'SRCFILE(' + serializeObjectName( srcFile ) + ') ';
       cmd += serializeValue( 'SRCMBR' : srcMbr );
     endif;
-    cmd += serializeOptions( 'OPTION' : poptions );
+    cmd += serializeOptions( 'OPTION' : pOptions );
     cmd += serializeValue('OBJTYPE': '*MODULE');
     cmd += serializeValue( 'TGTRLS' : targetrls );
     cmd += serializeValue( 'DBGVIEW' : '*NONE');
@@ -777,19 +777,19 @@ dcl-proc getCrtRpgModCmd export;
         dbgCompileOpt += ' ' + serializeValue( 'DBGVIEW' : dbgview );
       endif;
       if (%scan( PARM_DEFINE + '(' : uCase( compileopt )) = 0);
-        dbgCompileOpt += ' ' + serializeDefines( 'DEFINE' : define );
+        dbgCompileOpt += ' ' + serializeDefines(define);
       endif;
       if (%scan( PARM_TGTCCSID + '(' : uCase( compileopt )) = 0);
-        dbgCompileOpt += ' ' + serializeTgtCcsid( 'TGTCCSID' : tgtCcsid );
+        dbgCompileOpt += ' ' + serializeTgtCcsid(tgtCcsid);
       endif;
       if (%scan( PARM_INCDIR + '(' : uCase( compileopt )) = 0);
-        dbgCompileOpt += ' ' + serializeIncDir( 'INCDIR' : incDir );
+        dbgCompileOpt += ' ' + serializeIncDir(incDir);
       endif;
     else;
       dbgCompileOpt = serializeValue( 'DBGVIEW' : dbgview);
-      dbgCompileOpt += serializeDefines( 'DEFINE' : define);
-      dbgCompileOpt += serializeTgtCcsid( 'TGTCCSID' : tgtCcsid);
-      dbgCompileOpt += serializeIncDir( 'INCDIR' : incDir );
+      dbgCompileOpt += serializeDefines(define);
+      dbgCompileOpt += serializeTgtCcsid(tgtCcsid);
+      dbgCompileOpt += serializeIncDir(incDir);
     endif;
 
     cmd += serializeString( 'COMPILEOPT' : dbgCompileOpt);
@@ -812,9 +812,9 @@ dcl-proc getCrtCblModCmd export;
     srcFile         const likeds(object_t);
     srcMbr          const like(srcMbr_t.mbr);
     srcStmf         like(ifsStmf_t) const;
-    coptions        const likeds(options_t);
+    cOptions        const likeds(options_t);
     dbgview         const like(dbgView_t);
-    poptions        const likeds(options_t);
+    pOptions        const likeds(options_t);
     compileopt      const like(compileOpt_t);
     targetrls       const like(targetRelease_t);
     define          const likeds(defines_t);
@@ -840,29 +840,29 @@ dcl-proc getCrtCblModCmd export;
     cmd = 'CRTCBLMOD MODULE(*PGMID) ';
     if (isStmf(srcStmf));
       cmd += 'SRCSTMF(' + serializeStmfPath( srcStmf ) + ') ';
-      cmd += serializeIncDir( 'INCDIR' : incDir );
+      cmd += serializeIncDir(incDir);
     else;
       cmd += 'SRCFILE(' + serializeObjectName( srcFile ) + ') ';
       cmd += serializeValue( 'SRCMBR' : srcMbr );
     endif;
-    cmd += serializeOptions( 'OPTION' : coptions );
+    cmd += serializeOptions( 'OPTION' : cOptions );
     cmd += serializeValue( 'TGTRLS' : targetrls );
     cmd += serializeValue( 'DBGVIEW' : dbgview );
-    cmd += serializeDefines( 'DEFINE' : define );
-    cmd += serializeTgtCcsid( 'TGTCCSID' : tgtCcsid );
+    cmd += serializeDefines(define);
+    cmd += serializeTgtCcsid(tgtCcsid);
 
   // SQLCBLLE
   when (srcType = MBR_SQLCBLLE);
     cmd = 'CRTSQLCBLI OBJ(' + serializeObjectName( testpgm ) + ') ';
     if (isStmf(srcStmf));
       cmd += 'SRCSTMF(' + serializeStmfPath( srcStmf ) + ') ';
-      cmd += serializeIncDir( 'INCDIR' : incDir );
+      cmd += serializeIncDir(incDir);
     else;
       cmd += 'SRCFILE(' + serializeObjectName( srcFile ) + ') ';
       cmd += serializeValue( 'SRCMBR' : srcMbr );
     endif;
     cmd += serializeValue( 'SRCMBR' : srcMbr );
-    cmd += serializeOptions( 'OPTION' : poptions );
+    cmd += serializeOptions( 'OPTION' : pOptions );
     cmd += serializeValue('OBJTYPE': '*MODULE');
     cmd += serializeValue( 'TGTRLS' : targetrls );
     cmd += serializeValue( 'DBGVIEW' : '*NONE');
@@ -873,19 +873,19 @@ dcl-proc getCrtCblModCmd export;
         dbgCompileOpt += ' ' + serializeValue( 'DBGVIEW' : dbgview );
       endif;
       if (%scan( PARM_DEFINE + '(' : uCase( compileopt )) = 0);
-        dbgCompileOpt += ' ' + serializeDefines( 'DEFINE' : define );
+        dbgCompileOpt += ' ' + serializeDefines(define);
       endif;
       if (%scan( PARM_TGTCCSID + '(' : uCase( compileopt )) = 0);
-        dbgCompileOpt += ' ' + serializeTgtCcsid( 'TGTCCSID' : tgtCcsid );
+        dbgCompileOpt += ' ' + serializeTgtCcsid(tgtCcsid);
       endif;
       if (%scan( PARM_INCDIR + '(' : uCase( compileopt )) = 0);
-        dbgCompileOpt += ' ' + serializeIncDir( 'INCDIR' : incDir );
+        dbgCompileOpt += ' ' + serializeIncDir(incDir);
       endif;
     else;
       dbgCompileOpt = serializeValue( 'DBGVIEW' : dbgview);
-      dbgCompileOpt += serializeDefines( 'DEFINE' : define);
-      dbgCompileOpt += serializeTgtCcsid( 'TGTCCSID' : tgtCcsid);
-      dbgCompileOpt += serializeIncDir( 'INCDIR' : incDir );
+      dbgCompileOpt += serializeDefines(define);
+      dbgCompileOpt += serializeTgtCcsid(tgtCcsid);
+      dbgCompileOpt += serializeIncDir(incDir);
     endif;
 
     cmd += serializeString( 'COMPILEOPT' : dbgCompileOpt);
@@ -921,15 +921,15 @@ end-proc;
 
 
 dcl-proc serializeObjectArray;
-  dcl-pi *N       like(serializedArray_t);
-    headtoken       const like(headToken_t);
-    array           const likeds(objectArray_t);
+  dcl-pi *N like(serializedArray_t) extproc(*dclcase);
+    headtoken   const like(headToken_t);
+    array       const likeds(objectArray_t);
   end-pi;
 
   // Serialized Object Array.
-  dcl-s serialized      like(serializedArray_t);
+  dcl-s serialized like(serializedArray_t);
   // Counter.
-  dcl-s i               int(10);
+  dcl-s i int(10);
 
 
   if array.size = 0;
@@ -950,13 +950,12 @@ end-proc;
 
 
 dcl-proc serializeObjectName export;
-  dcl-pi *N       like(serializedObject_t);
-    object          const likeds(object_t);
+  dcl-pi *N like(serializedObject_t);
+    object   likeds(object_t) const;
   end-pi;
 
   // Serialized object name.
-  dcl-s serialized      like(serializedObject_t) inz('');
-
+  dcl-s serialized like(serializedObject_t) inz('');
 
   if object.lib <> *blank;
     serialized += %trim(object.lib) + '/';
@@ -969,9 +968,9 @@ dcl-proc serializeObjectName export;
 end-proc;
 
 
-dcl-proc serializeStmfPath export;
-  dcl-pi *N       like(serializedStmf_t);
-    srcStmf         like(ifsStmf_t) const;
+dcl-proc serializeStmfPath;
+  dcl-pi *N like(serializedStmf_t) extproc(*dclcase);
+    srcStmf   like(ifsStmf_t) options(*varsize) const;
   end-pi;
 
   // Serialized object name.
@@ -985,16 +984,15 @@ end-proc;
 
 
 dcl-proc serializeOptions;
-  dcl-pi *N       like(serializedOptions_t);
-    headtoken       const like(headToken_t);
-    options         const likeds(options_t);
+  dcl-pi *N like(serializedOptions_t) extproc(*dclcase);
+    headtoken   const like(headToken_t);
+    options     const likeds(options_t);
   end-pi;
 
   // Serialized Options.
-  dcl-s serialized      like(serializedOptions_t);
+  dcl-s serialized like(serializedOptions_t);
   // Counter.
-  dcl-s i               int(10);
-
+  dcl-s i int(10);
 
   if options.size = 0;
     return '';
@@ -1016,22 +1014,20 @@ end-proc;
 
 
 dcl-proc serializeDefines;
-  dcl-pi *N       like(serializedOptions_t);
-    headtoken       const like(headToken_t);
-    defines         const likeds(defines_t);
+  dcl-pi *N like(serializedOptions_t) extproc(*dclcase);
+    defines     const likeds(defines_t);
   end-pi;
 
   // Serialized Options.
-  dcl-s serialized      like(serializedOptions_t);
+  dcl-s serialized like(serializedOptions_t);
   // Counter.
-  dcl-s i               int(10);
-
+  dcl-s i int(10);
 
   if defines.size = 0;
     return '';
   endif;
 
-  serialized = %trim(headtoken) + '(';
+  serialized = 'DEFINE(';
 
   for i = 1 to defines.size;
     serialized += %trim(defines.define(i)) + ' ';
@@ -1047,19 +1043,18 @@ end-proc;
 
 
 dcl-proc serializeTgtCcsid;
-  dcl-pi *N       like(serializedTgtCcsid_t);
-    headtoken       const like(headToken_t);
-    tgtCcsid        const like(tgtCcsid_t);
+  dcl-pi *N like(serializedTgtCcsid_t) extproc(*dclcase);
+    tgtCcsid    const like(tgtCcsid_t);
   end-pi;
 
   // Serialized Options.
-  dcl-s serialized      like(serializedTgtCcsid_t);
+  dcl-s serialized like(serializedTgtCcsid_t);
 
   if (tgtCcsid = 0);
     return '';
   endif;
 
-  serialized = %trim(headtoken) + '(';
+  serialized = 'TGTCCSID(';
 
   select;
   when (tgtCcsid = -2);
@@ -1078,22 +1073,21 @@ end-proc;
 
 
 dcl-proc serializeIncDir;
-  dcl-pi *N       like(serializedIncDir_t);
-    headtoken       like(headToken_t) const;
-    incDir          likeds(incDir_t) const;
+  dcl-pi *N like(serializedIncDir_t) extproc(*dclcase);
+    incDir      likeds(incDir_t) const;
   end-pi;
 
   // Serialized Options.
-  dcl-s serialized      like(serializedIncDir_t);
+  dcl-s serialized like(serializedIncDir_t);
   // Counter.
-  dcl-s i               int(10);
+  dcl-s i int(10);
 
 
   if incDir.size = 1 and incDir.path(1) = '*NONE';
     return '';
   endif;
 
-  serialized = %trim(headtoken) + '(';
+  serialized = 'INCDIR(';
 
   for i = 1 to incDir.size;
     serialized += addQuotes(%trim(incDir.path(i))) + ' ';
@@ -1109,16 +1103,15 @@ end-proc;
 
 
 dcl-proc serializeString;
-  dcl-pi *N       like(serializedString_t);
-    headtoken       const like(headToken_t);
-    text            varchar(5000) const  options(*varsize);
+  dcl-pi *N like(serializedString_t) extproc(*dclcase);
+    headtoken   like(headToken_t) const;
+    text        varchar(5000) options(*varsize) const;
   end-pi;
 
   // Serialized Options.
-  dcl-s serialized      like(serializedString_t);
+  dcl-s serialized like(serializedString_t);
   // Counter.
-  dcl-s i               int(10);
-
+  dcl-s i int(10);
 
   if %len(%trimr(text)) = 0;
     return '';
@@ -1145,14 +1138,13 @@ dcl-proc serializeString;
 end-proc;
 
 dcl-proc serializeValue;
-  dcl-pi *N       like(serializedString_t);
-    headtoken       char(10) const;
-    value           const like(string_t);
+  dcl-pi *N like(serializedString_t) extproc(*dclcase);
+    headtoken   char(10) const;
+    value       const like(string_t);
   end-pi;
 
   // Serialized Options.
-  dcl-s serialized      like(serializedString_t);
-
+  dcl-s serialized like(serializedString_t);
 
   if %len(%trim(value)) = 0;
     return '';

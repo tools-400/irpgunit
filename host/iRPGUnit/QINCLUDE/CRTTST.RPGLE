@@ -38,14 +38,6 @@ dcl-pr crtTst extproc('CRTTST_crtTst');
   tgtCcsid        like(tgtCcsid_t) const;
 end-pr;
 
-dcl-pr serializeObjectName varchar(21) extproc('CRTTST_serializeObjectName');
-  object          likeds(object_t) const;
-end-pr;
-
-dcl-pr serializeStmfPath like(serializedStmf_t) extproc('CRTTST_serializeStmfPath');
-  srcStmf         like(ifsStmf_t) const;
-end-pr;
-
 dcl-pr getCrtRpgModCmd like(cmd_t) extproc('CRTTST_getCrtRpgModCmd');
   pgm             likeds(object_t) const;
   srcFile         likeds(object_t) const;
@@ -169,29 +161,13 @@ dcl-pr getdltmodcmd like(cmd_t) extproc('getDltModCmd');
   testPgm         likeds(object_t) const;
 end-pr;
 
-dcl-pr serializeObjectArray like(serializedArray_t) extproc('serializeObjectArray');
-  headToken       char(10) const;
-  array           likeds(objectArray_t) const;
-end-pr;
-
-dcl-pr serializeOptions like(serializedOptions_t) extproc('serializeOptions');
-  headToken       char(10) const;
-  options         likeds(options_t) const;
-end-pr;
-
-dcl-pr serializeString like(serializedString_t) extproc('serializeString');
-  headToken       char(10) const;
-  text            varchar(5000) options(*varsize) const;
-end-pr;
-
-dcl-pr serializeValue like(serializedString_t) extproc('serializeValue');
-  headToken       char(10) const;
-  value           like(string_t) const;
-end-pr;
-
 dcl-pr addtestcasemodule likeds(objectArray_t) extproc('addTestCaseModule');
   modules         likeds(objectArray_t) const;
   testCase        likeds(object_t) const;
+end-pr;
+
+dcl-pr serializeObjectName varchar(21) extproc('serializeObjectName');
+  object          likeds(object_t) const;
 end-pr;
 
 /endif
