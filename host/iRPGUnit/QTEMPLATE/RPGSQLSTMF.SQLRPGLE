@@ -3,17 +3,24 @@
 //  Empty Unit Test Case. Prints a protocol of the execution flow.
 //=====================================================================
 //  Command to create the service program:
-//  RUCRTRPG TSTPGM(RPGUNIT/RPG) SRCFILE(RPGUNIT/QTEMPLATE)
+//  cd /home/raddatz
+//  git clone git@github.com:tools-400/irpgunit.git
+//  CD DIR('/home/Raddatz/iRpgUnit/host')
+//  RUCRTRPG TSTPGM(RPGUNIT/RPGSTMF) SRCFILE(RPGUNIT/QSRC)
+//    SRCSTMF('./iRPGUnit/QTEMPLATE/rpgsqlstmf.sqlrpgle')
+//    DEFINE('stmf') RPGPPOPT(*LVL2)
+//    INCDIR('./iRPGUnit')
+//    TGTCCSID(*JOB)
 //=====================================================================
 //  Tools/400 STRPREPRC instructions:
 //   >>PRE-COMPILER<<
-//     >>CRTCMD<<  RUCRTRPG    TSTPGM(&LI/&OB) +
-//                             SRCFILE(&SL/&SF) +
-//                             SRCMBR(&SM);
+//     >>CRTCMD<<  RUCRTRPG  TSTPGM(RPGUNIT/RPGSTMF) +
+//                           SRCSTMF('./iRPGUnit/QTEMPLATE/rpgsqlstmf.sqlrpgle');
 //     >>COMPILE<<
-//       >>PARM<< COPTION(*EVENTF);
-//       >>PARM<< DBGVIEW(*LIST);
-//       >>PARM<< BNDDIR(*N);
+//       >>PARM<< DEFINE('stmf');
+//       >>PARM<< RPGPPOPT(*LVL2);
+//       >>PARM<< INCDIR('./iRPGUnit');
+//       >>PARM<< TGTCCSID(*JOB);
 //     >>END-COMPILE<<
 //     >>EXECUTE<<
 //   >>END-PRE-COMPILER<<
@@ -30,8 +37,15 @@
 ctl-opt NoMain Option(*SrcStmt : *NoDebugIO);
 dcl-f QSYSPRT printer(80) oflind(*in70) usropn;
 
-/include qinclude,TESTCASE                  iRPGUnit Test Suite
-/include qinclude,SDS                       Program status data structure
+/include qinclude/TESTCASE.RPGLE            iRPGUnit Test Suite
+/include qinclude/SDS.RPGLE                 Program status data structure
+
+// ------------------------------------------------------------
+//  SQL Options.
+// ------------------------------------------------------------
+
+exec sql
+  set option commit = *none;
 
 // ------------------------------------------------------------
 //  Global type templates.
@@ -218,12 +232,26 @@ end-proc;
 dcl-proc testWhatever_1 export;
   dcl-pi *n extproc(*dclcase) end-pi;
 
+  dcl-s count int(10);
+
   print('Executing:       * testWhatever_1()');
 
-// Run
-assert(sds.pgmName = 'TEMPLATE': 'Name of the test suite should be ''TEMPLATE''');
+  // Run
+  exec sql
+    SELECT COUNT(DAY_NUM) INTO :count
+      FROM ( VALUES (1, 'Monday'),
+                           (2, 'Tuesday'),
+                           (3, 'Wednesday'),
+                           (4, 'Thursday'),
+                           (5, 'Friday'),
+                           (6, 'Saturday'),
+                           (7, 'Sunday') )
+      AS week_days (DAY_NUM, DAY_NAME);
 
-// Place your assertions here.
+  // Place your assertions here.
+  assert(not isSqlError(sqlState));
+
+  assert(count = 7: 'A week must have 7 days');
 
 end-proc;
 
@@ -233,12 +261,27 @@ end-proc;
 dcl-proc testWhatever_2 export;
   dcl-pi *n extproc(*dclcase) end-pi;
 
+  dcl-s count int(10);
+
   print('Executing:       * testWhatever_2()');
 
-// Run
+  // Run
+  exec sql
+    SELECT COUNT(DAY_NUM) INTO :count
+      FROM ( VALUES (1, 'Monday'),
+                           (2, 'Tuesday'),
+                           (3, 'Wednesday'),
+                           (4, 'Thursday'),
+                           (5, 'Friday'),
+                           (6, 'Saturday'),
+                           (7, 'Sunday') )
+      AS week_days (DAY_NUM, DAY_NAME)
+      WHERE DAY_NUM < 1 OR DAY_NUM > 7;
 
-// Place your assertions here.
-assert(sds.excData = '': 'There should be no exception data in SDS');
+  // Place your assertions here.
+  assert(not isSqlError(sqlState));
+
+  assert(count = 0: 'Ordinal numbers of days must be between 1 and 7');
 
 end-proc;
- 
+

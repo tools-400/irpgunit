@@ -241,4 +241,4 @@ dcl-proc testWhatever_2 export;
 assert(sds.excData = '': 'There should be no exception data in SDS');
 
 end-proc;
- 
+

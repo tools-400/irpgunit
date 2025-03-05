@@ -3,17 +3,24 @@
 //  Empty Unit Test Case. Prints a protocol of the execution flow.
 //=====================================================================
 //  Command to create the service program:
-//  RUCRTRPG TSTPGM(RPGUNIT/RPG) SRCFILE(RPGUNIT/QTEMPLATE)
+//  cd /home/raddatz
+//  git clone git@github.com:tools-400/irpgunit.git
+//  CD DIR('/home/Raddatz/iRpgUnit/host')
+//  RUCRTRPG TSTPGM(RPGUNIT/RPGSTMF) SRCFILE(RPGUNIT/QSRC)
+//    SRCSTMF('./iRPGUnit/QTEMPLATE/rpgstmf.rpgle')
+//    DEFINE('stmf') RPGPPOPT(*LVL2)
+//    INCDIR('./iRPGUnit')
+//    TGTCCSID(*JOB)
 //=====================================================================
 //  Tools/400 STRPREPRC instructions:
 //   >>PRE-COMPILER<<
-//     >>CRTCMD<<  RUCRTRPG    TSTPGM(&LI/&OB) +
-//                             SRCFILE(&SL/&SF) +
-//                             SRCMBR(&SM);
+//     >>CRTCMD<<  RUCRTRPG  TSTPGM(RPGUNIT/RPGSTMF) +
+//                           SRCSTMF('./iRPGUnit/QTEMPLATE/rpgstmf.rpgle');
 //     >>COMPILE<<
-//       >>PARM<< COPTION(*EVENTF);
-//       >>PARM<< DBGVIEW(*LIST);
-//       >>PARM<< BNDDIR(*N);
+//       >>PARM<< DEFINE('stmf');
+//       >>PARM<< RPGPPOPT(*LVL2);
+//       >>PARM<< INCDIR('./iRPGUnit');
+//       >>PARM<< TGTCCSID(*JOB);
 //     >>END-COMPILE<<
 //     >>EXECUTE<<
 //   >>END-PRE-COMPILER<<
@@ -30,8 +37,8 @@
 ctl-opt NoMain Option(*SrcStmt : *NoDebugIO);
 dcl-f QSYSPRT printer(80) oflind(*in70) usropn;
 
-/include qinclude,TESTCASE                  iRPGUnit Test Suite
-/include qinclude,SDS                       Program status data structure
+/include qinclude/TESTCASE.RPGLE            iRPGUnit Test Suite
+/include qinclude/SDS.RPGLE                 Program status data structure
 
 // ------------------------------------------------------------
 //  Global type templates.
@@ -241,4 +248,4 @@ dcl-proc testWhatever_2 export;
 assert(sds.excData = '': 'There should be no exception data in SDS');
 
 end-proc;
- 
+

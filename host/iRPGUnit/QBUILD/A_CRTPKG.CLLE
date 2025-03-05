@@ -51,6 +51,7 @@
              DCL        VAR(&QPNLGRP   ) TYPE(*CHAR) LEN(10) VALUE('QPNLGRP')
              DCL        VAR(&QSRC      ) TYPE(*CHAR) LEN(10) VALUE('QSRC')
              DCL        VAR(&QSYSINC   ) TYPE(*CHAR) LEN(10) VALUE('QSYSINC')
+             DCL        VAR(&QTEMPLATE ) TYPE(*CHAR) LEN(10) VALUE('QTEMPLATE')
              DCL        VAR(&QTESTCASES) TYPE(*CHAR) LEN(10) VALUE('QTESTCASES')
              DCL        VAR(&QUNITTEST ) TYPE(*CHAR) LEN(10) VALUE('QUNITTEST')
 
@@ -122,6 +123,8 @@
                         TEXT('iRPGUnit - Sources')
              CRTSRCPF   FILE(&LIB/&QSYSINC   ) RCDLEN(112) CCSID(&CCSID) +
                         TEXT('iRPGUnit - System Header Files')
+             CRTSRCPF   FILE(&LIB/&QTEMPLATE ) RCDLEN(112) CCSID(&CCSID) +
+                        TEXT('iRPGUnit - Test Suite Templates')
              CRTSRCPF   FILE(&LIB/&QTESTCASES) RCDLEN(112) CCSID(&CCSID) +
                         TEXT('iRPGUnit - SelfTests Test Cases')
              CRTSRCPF   FILE(&LIB/&QUNITTEST ) RCDLEN(112) CCSID(&CCSID) +
@@ -649,6 +652,25 @@
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
                           TOFILE(&LIB/&QSYSINC) FROMMBR(TIME) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+
+             /* ---------------------------------------------------- */
+             /*  Copy source members: QTEMPLATE                      */
+             /* ---------------------------------------------------- */
+             CPYF       FROMFILE(&DEVLIB/&QTEMPLATE) +
+                          TOFILE(&LIB/&QTEMPLATE) FROMMBR(CBL) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTEMPLATE) +
+                          TOFILE(&LIB/&QTEMPLATE) FROMMBR(RPG) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTEMPLATE) +
+                          TOFILE(&LIB/&QTEMPLATE) FROMMBR(RPGSQL) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTEMPLATE) +
+                          TOFILE(&LIB/&QTEMPLATE) FROMMBR(RPGSQLSTMF) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTEMPLATE) +
+                          TOFILE(&LIB/&QTEMPLATE) FROMMBR(RPGSTMF) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
 
              /* ---------------------------------------------------- */
