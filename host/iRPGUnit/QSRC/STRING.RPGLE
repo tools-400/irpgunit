@@ -44,7 +44,7 @@ ctl-opt decedit(*jobrun);
 //----------------------------------------------------------------------
 /include qinclude,TEMPLATES
 
-dcl-ds errCode_t qualified               based(pDummy);
+dcl-ds errCode_t qualified template;
   bytPrv int(10);
   bytAvl int(10);
   excID char(7);
