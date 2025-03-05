@@ -581,50 +581,62 @@ end-proc;
 
 dcl-proc crtSrvPgm;
   dcl-pi *N likeds(object_t);
-    testpgm         const likeds(object_t);
-    bndsrvpgm       const likeds(objectArray_t);
-    bnddir          const likeds(objectArray_t);
+    testPgm         const likeds(object_t);
+    bndSrvPgm       const likeds(objectArray_t);
+    bndDir          const likeds(objectArray_t);
     module          const likeds(objectArray_t);
-    boption         const likeds(options_t);
-    actgrp          const like(activationGroup_t);
+    bOption         const likeds(options_t);
+    actGrp          const like(activationGroup_t);
     text            const like(text_t);
-    targetrls       const like(targetRelease_t);
+    targetRls       const like(targetRelease_t);
   end-pi;
 
   // Export all procedures from the service program.
   dcl-c export_all const('*ALL');
   // A command to be executed.
-  dcl-s cmd             like(cmd_t);
+  dcl-s cmd like(cmd_t);
   // Bound Service Programs, with RPGUnit services included.
-  dcl-ds bndsrvpgmwithru
-         likeds(objectArray_t);
+  dcl-ds bndSrvPgmWithRU likeds(objectArray_t);
   // Completion message data.
-  dcl-s compmsgdata     char(256);
+  dcl-s compMsgData char(256);
   // Target service program.
-  dcl-ds targetsrvpgm likeds(object_t);
+  dcl-ds targetSrvPgm likeds(object_t);
 
+  dcl-s i int(10);
+  dcl-s haveRpgUnitRuntime ind;
 
-  bndsrvpgmwithru = bndsrvpgm;
-  bndsrvpgmwithru.size += 1;
-  bndsrvpgmwithru.object(bndsrvpgmwithru.size).nm = 'RUTESTCASE';
-  bndsrvpgmwithru.object(bndsrvpgmwithru.size).lib = '*LIBL';
+  clear bndSrvPgmWithRU;
+  haveRpgUnitRuntime = *off;
+  for i = 1 to bndSrvPgm.size;
+    bndSrvPgmWithRU.object = bndSrvPgm.object;
+    bndSrvPgmWithRU.size += 1;
+    if (bndSrvPgmWithRU.object(i).nm = 'RUTESTCASE');
+      haveRpgUnitRuntime = *on;
+    endif;
+  endfor;
 
-  cmd = getCrtSrvPgmCmd( testpgm :
-                         bndsrvpgmwithru :
-                         bnddir :
+  if (not haveRpgUnitRuntime);
+    bndSrvPgmWithRU.size += 1;
+    bndSrvPgmWithRU.object(bndSrvPgmWithRU.size).nm = 'RUTESTCASE';
+    bndSrvPgmWithRU.object(bndSrvPgmWithRU.size).lib = '*LIBL';
+  endif;
+
+  cmd = getCrtSrvPgmCmd( testPgm:
+                         bndSrvPgmWithRU:
+                         bndDir:
                          module :
-                         boption :
+                         bOption:
                          export_all :
-                         actgrp :
+                         actGrp:
                          text :
-                         targetrls );
+                         targetRls );
   sndInfoMsg( cmd );
   qcmdexc( cmd : %len(cmd) );
 
-  compmsgdata = rcvMsgData( '*COMP' );
-  targetsrvpgm = %subst( compmsgdata : 1 : 20 );
+  compMsgData = rcvMsgData( '*COMP' );
+  targetSrvPgm = %subst( compMsgData : 1 : 20 );
 
-  return targetsrvpgm;
+  return targetSrvPgm;
 
 end-proc;
 
@@ -770,10 +782,14 @@ dcl-proc getCrtRpgModCmd export;
       if (%scan( PARM_TGTCCSID + '(' : uCase( compileopt )) = 0);
         dbgCompileOpt += ' ' + serializeTgtCcsid( 'TGTCCSID' : tgtCcsid );
       endif;
+      if (%scan( PARM_INCDIR + '(' : uCase( compileopt )) = 0);
+        dbgCompileOpt += ' ' + serializeIncDir( 'INCDIR' : incDir );
+      endif;
     else;
       dbgCompileOpt = serializeValue( 'DBGVIEW' : dbgview);
       dbgCompileOpt += serializeDefines( 'DEFINE' : define);
       dbgCompileOpt += serializeTgtCcsid( 'TGTCCSID' : tgtCcsid);
+      dbgCompileOpt += serializeIncDir( 'INCDIR' : incDir );
     endif;
 
     cmd += serializeString( 'COMPILEOPT' : dbgCompileOpt);
@@ -862,10 +878,14 @@ dcl-proc getCrtCblModCmd export;
       if (%scan( PARM_TGTCCSID + '(' : uCase( compileopt )) = 0);
         dbgCompileOpt += ' ' + serializeTgtCcsid( 'TGTCCSID' : tgtCcsid );
       endif;
+      if (%scan( PARM_INCDIR + '(' : uCase( compileopt )) = 0);
+        dbgCompileOpt += ' ' + serializeIncDir( 'INCDIR' : incDir );
+      endif;
     else;
       dbgCompileOpt = serializeValue( 'DBGVIEW' : dbgview);
       dbgCompileOpt += serializeDefines( 'DEFINE' : define);
       dbgCompileOpt += serializeTgtCcsid( 'TGTCCSID' : tgtCcsid);
+      dbgCompileOpt += serializeIncDir( 'INCDIR' : incDir );
     endif;
 
     cmd += serializeString( 'COMPILEOPT' : dbgCompileOpt);
