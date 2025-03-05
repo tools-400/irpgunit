@@ -12,7 +12,11 @@
 //  http://www.eclipse.org/legal/cpl-v10.html
 /// ==========================================================================
 
+/if defined(IRPGUNIT_STMF)
+/include qinclude/TEMPLATES.rpgle
+/else
 /include qinclude,TEMPLATES
+/endif
 
 /// ------------------------------------
 //  Assertions of module ASSERT.

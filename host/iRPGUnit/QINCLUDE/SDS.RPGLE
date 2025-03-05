@@ -11,7 +11,11 @@
 //  http://www.eclipse.org/legal/cpl-v10.html
 // ==========================================================================
 
-/include QINCLUDE,TEMPLATES
+/if defined(IRPGUNIT_STMF)
+/include qinclude/TEMPLATES.rpgle
+/else
+/include qinclude,TEMPLATES
+/endif
 
 dcl-ds sds likeds(sds_t) psds;
 
