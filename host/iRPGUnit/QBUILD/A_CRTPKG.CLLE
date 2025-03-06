@@ -5,7 +5,7 @@
      /*  RPGUNIT library to save file RPGUNIT/RPGUNIT.                      */
      /*  Creating a new package:                                            */
      /*   CALL PGM(RPGUNITDVP/A_CRTPKG)                                     */
-     /*        PARM(('RPGUNITDVP') ('RPGUNIT') ('*NONE'))                   */
+     /*        PARM('RPGUNITDVP' 'RPGUNIT' '*NONE')                         */
      /*   CPYTOSTMF FROMMBR('/QSYS.LIB/RPGUNIT.LIB/RPGUNIT.FILE')           */
      /*        TOSTMF('/home/raddatz/iRPGUnit/RPGUNIT.SAVF')                */
      /*        STMFOPT(*REPLACE) CVTDTA(*NONE)                              */
