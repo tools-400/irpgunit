@@ -18,6 +18,7 @@
 //                      &LI/OBJECT    +
 //                      &LI/PGMMSG    +
 //                      &LI/SRCMBR    +
+//                      &LI/STMF      +
 //                      &LI/STRING    +
 //                      &LI/TAGTST    +
 //                      &LI/USRSPC    +
@@ -31,6 +32,7 @@
 //   >>CMD<<     CMPMOD MODULE(&LI/OBJECT   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/PGMMSG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/SRCMBR   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/STMF     ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/STRING   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/TAGTST   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/USRSPC   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
@@ -237,6 +239,71 @@ dcl-proc testSrcStmfRpgle export;
 end-proc;
 
 
+dcl-proc testSrcSrcMbrIncDirIgnored export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-ds incDir likeds(incDir_t) inz;
+
+  clear incDir;
+  incDir.size = 1;
+  incDir.path(1) = '/home/dev/dir1';
+
+  // INCDIR is not added, because it is not relevant
+  // if the object is compiled from a source member.
+  crtRpgModCmd = getCrtRpgModCmd('SYSTYPES  *CURLIB   ':
+                                 'QRPGLESRC QSYSINC   ':
+                                 'SYSTYPES':
+                                 noSrcStmf:
+                                 noCOption:
+                                 noDbgView:
+                                 rpgPpOptLvl2:
+                                 noPOption:
+                                 noCompileOpt:
+                                 noTargetRls:
+                                 noDefine:
+                                 incDir:
+                                 noTgtCcsid);
+  aEqual('CRTRPGMOD MODULE(*CURLIB/SYSTYPES) +
+          SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES) +
+          ': crtRpgModCmd);
+
+end-proc;
+
+
+dcl-proc testSrcSrcStmfIncDirIgnored export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-ds incDir likeds(incDir_t) inz;
+
+  clear incDir;
+  incDir.size = 1;
+  incDir.path(1) = '/home/dev/dir1';
+
+  // INCDIR is not added, because it is not relevant
+  // if the object is compiled from a source member.
+  crtRpgModCmd = getCrtRpgModCmd('SYSTYPES  *CURLIB   ':
+                                 'QRPGLESRC QSYSINC   ':
+                                 noSrcMbr:
+                                 STMF_RPGLE:
+                                 noCOption:
+                                 noDbgView:
+                                 rpgPpOptLvl2:
+                                 noPOption:
+                                 noCompileOpt:
+                                 noTargetRls:
+                                 noDefine:
+                                 incDir:
+                                 noTgtCcsid);
+  aEqual('CRTRPGMOD MODULE(*CURLIB/SYSTYPES) +
+          SRCSTMF(''' + STMF_RPGLE + ''') +
+          INCDIR(''/home/dev/dir1'') +
+          ': crtRpgModCmd);
+
+end-proc;
+
+
 dcl-proc testSrcStmfSqlrpgle export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
@@ -267,7 +334,7 @@ dcl-proc testSrcStmfSqlrpgle export;
           OBJTYPE(*MODULE) RPGPPOPT(*LVL2) +
           INCDIR(''/home/dev/dir1'') +
           DBGVIEW(*NONE) +
-          COMPILEOPT(''TGTCCSID(*JOB)'') +
+          COMPILEOPT(''TGTCCSID(*JOB) INCDIR(''''/home/dev/dir1'''' )'') +
           ': crtRpgModCmd);
 
   // Parameter TGTCCSID is taken from COMPILEOPT, because
@@ -290,7 +357,7 @@ dcl-proc testSrcStmfSqlrpgle export;
           OBJTYPE(*MODULE) RPGPPOPT(*LVL2) +
           INCDIR(''/home/dev/dir1'') +
           DBGVIEW(*NONE) +
-          COMPILEOPT(''TGTCCSID(*SRC)'') +
+          COMPILEOPT(''TGTCCSID(*SRC)   INCDIR(''''/home/dev/dir1'''' )'') +
           ': crtRpgModCmd);
 
 end-proc;
