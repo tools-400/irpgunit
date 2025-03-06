@@ -485,12 +485,98 @@ dcl-proc crtRpgMod;
   // A command to be executed.
   dcl-s cmd like(cmd_t);
 
-
   cmd = getCrtRpgModCmd(testpgm: srcFile: srcMbr: srcStmf: coption: dbgview:
                          prpgppopt: poption: compileopt: targetrls:
                          define: incDir: tgtCcsid);
-  sndInfoMsg(cmd);
+  sndCmdToJobLog(cmd);
   qcmdexc(cmd: %len(cmd));
+
+end-proc;
+
+
+dcl-proc sndCmdToJobLog;
+  dcl-pi *N extproc(*dclcase);
+    cmd   like(cmd_t) const options(*varsize);
+  end-pi;
+
+  dcl-s start int(10);
+  dcl-s end int(10);
+  dcl-s chunk varchar(74);
+
+  dcl-c INDENT_2 '  ';
+
+  // Send CL command
+  start = 1;
+  end = %scan(' ': cmd);
+  if (end = 0);
+    sndInfoMsg(cmd);
+    return;
+  endif;
+
+  chunk = %subst(cmd: start: end - 1);
+  sndInfoMsg(chunk);
+  start = end + 1;
+
+  // Send command parameters
+  sndCmdParmToJobLog(%subst(cmd: start): INDENT_2);
+
+end-proc;
+
+
+dcl-proc sndCmdParmToJobLog;
+  dcl-pi *N extproc(*dclcase);
+    cmdParams     like(cmd_t) const options(*varsize);
+    firstIndent   varchar(4) const;
+  end-pi;
+
+  dcl-s start int(10);
+  dcl-s end int(10);
+  dcl-s length int(10);
+  dcl-s offset int(10);
+  dcl-s chunk varchar(74);
+  dcl-s count int(10);
+  dcl-s indention varchar(4);
+
+  dcl-c INDENT_2 '  ';
+
+  start = 1;
+  count = 0;
+
+  dou (start > %len(cmdParams) or end = 0);
+
+    // Skip keyword
+    end = %scan('(': cmdParams: start);
+    if (end > 0);
+      // Find end of keywork parameters
+      dow (end <= %len(cmdParams));
+        if (%subst(cmdParams: end: 1) = '(');
+          count += 1;
+        elseif (%subst(cmdParams: end: 1) = ')');
+          count -= 1;
+          if (count = 0);
+            // Send KEYWORD(...) to job log
+            indention = firstIndent;
+            length = end - start + 1;
+            offset = 0;
+            dow (length > 0);
+              if (length + %len(indention) <= %len(chunk: *max));
+                chunk = %subst(cmdParams: offset + start: length);
+              else;
+                chunk = %subst(cmdParams: offset + start: %len(chunk: *max) - %len(indention));
+              endif;
+              sndInfoMsg(indention + %trim(chunk));
+              indention = firstIndent + INDENT_2;
+              length -= %len(chunk);
+              offset += %len(chunk);
+            enddo;
+            start = end + 1;
+          endif;
+        endif;
+        end += 1;
+      enddo;
+    endif;
+
+  enddo;
 
 end-proc;
 
