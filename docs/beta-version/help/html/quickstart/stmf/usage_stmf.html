@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+	<title>Cobol</title>
+</head>
+
+<body>
+<h1>Stream Files</h1>
+Stream file support was added with version 5.1. From that on you can compile test  
+suites from source stream files stored in the IFS <code>/root</code> file system.
+<p>
+<h2>Template File</h2>
+<p>
+The stream file source templates are stored in members <code>RPGSTMF</code> and
+<code>RPGSQLSTMF</code> of file <code>QTEMPLATE</code>. They can be stored in
+the <code>/root</code> file system on demand.
+<p>
+<h2>Compiling Test Suite</h2>
+<p>
+The new parameters for compiling stream files are:
+<ul>
+<li>SRCSTMF (Source stream file)</li>
+<li>INCDIR (Include directory)</li>
+<li>TGTCCSID (Target CCSID)</li>
+</ul>
+<p>
+Please refer to the help of the <code>CRTRPGMOD</code> command for a detailed 
+description of the parameters.
+<p>
+<h2>Include Stream Files</h2>
+<p>
+The test suite template includes the <code>TESTCASE</code> member/stream file
+for loading the assertion prototypes. By default it is loaded from the iRPGUnit
+library. But it is also possible to load it from a stream file by setting the
+compiler condition <code>IRPGUNIT_STMF</code>.
+<p>
+Example:
+<p> 
+<code><pre class="indent">
+RPGUNITDVP/RUCRTRPG 
+  TSTPGM(QTEMP/RPGSTMF)          
+  SRCSTMF('./iRPGUnit/QTEMPLATE/rpgsqlstmf.sqlrpgle')
+  BNDSRVPGM(RPGUNIT/RUTESTCASE)                      
+  DEFINE(IRPGUNIT_STMF)                              
+  RPGPPOPT(*LVL1)                                    
+  INCDIR('./iRPGUnit')                               
+  TGTCCSID(*JOB)                                     
+</pre></code>
+<p>
+Description of parameters:
+<p>
+<table>
+<tr><td valign="top">1.</td><td valign="top">TSTPGM   </td><td width="30">&nbsp;</td><td>Specifies the name of the test suite service program.
+                                             <br>Applies for compiling from source members as well.</td></tr>
+<tr><td valign="top">2.</td><td valign="top">SRCSTMF  </td><td width="30">&nbsp;</td><td>Specifies the stream file for compiling the service program.
+                                             <br>Only used for compiling from stream files.</td></tr>
+<tr><td valign="top">3.</td><td valign="top">BNDSRVPGM</td><td width="30">&nbsp;</td><td>Specifies the iRPGUnit runtime service program.
+                                             <br>Used here, because the author does not have the iRPGUnit library in the library list.</td></tr>
+<tr><td valign="top">4.</td><td valign="top">DEFINE   </td><td width="30">&nbsp;</td><td>Sets compiler condition <code>IRPGUNIT_STMF</code>.
+                                             <br>Required, because the author wants to load includes from stream files.</td></tr>
+<tr><td valign="top">5.</td><td valign="top">RPGPPOPT </td><td width="30">&nbsp;</td><td>Instructs the SQL pre-compiler to resolve includes before processing the source.
+                                             <br>Required for getting around error message SQL8032: <i>The source file CCSID 1208 is a Unicode CCSID which cannot be used with CVTCCSID(*NONE).</i></td></tr>
+<tr><td valign="top">6.</td><td valign="top">INCDIR   </td><td width="30">&nbsp;</td><td>Specifies path for loading included source stream files.
+                                             <br>Required for resolving included source stream files.</td></tr>
+<tr><td valign="top">3.</td><td valign="top">TGTCCSID </td><td width="30">&nbsp;</td><td>Specifies the CCSID for translating the source stream file.
+                                             <br>Required for getting around error message RNS9380: <i>The source file CCSID 1208 is a Unicode CCSID which cannot be used with TGTCCSID(*SRC).</i></td></tr>
+</table>
+<p>
+<iframe src="../../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

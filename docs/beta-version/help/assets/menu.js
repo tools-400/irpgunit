@@ -17,9 +17,11 @@ document.write('\<ul id="treemenu" class="treeview">\
   <li>Quickstart\
   <ul>\
     <li><a href="../html/quickstart/preferences.html" target="content" style="text-decoration:none">Preferences</a></li>\
-    <li><a href="../html/quickstart/usage.html" target="content" style="text-decoration:none">Usage</a>\
+    <li>Usage</li>\
+    <li><a href="../html/quickstart/usage.html" target="content" style="text-decoration:none">Common</a>\
     <ul>\
       <li><a href="../html/quickstart/cobol/usage_cobol.html" target="content" style="text-decoration:none">Cobol</a></li>\
+      <li><a href="../html/quickstart/stmf/usage_stmf.html" target="content" style="text-decoration:none">Stream Files</a></li>\
     </ul>\
     </li>\
     <li><a href="../html/quickstart/debug.html" target="content" style="text-decoration:none">Debugging Test Cases</a></li>\
@@ -66,6 +68,7 @@ document.write('\<ul id="treemenu" class="treeview">\
       <li><a href="../html/reference/restoreStatusMessage.html" target="content" style="text-decoration:none">restoreStatusMessage</a></li>\
       <li><a href="../html/reference/clearStatusMessage.html" target="content" style="text-decoration:none">clearStatusMessage</a></li>\
       <li><a href="../html/reference/getMemberType.html" target="content" style="text-decoration:none">getMemberType</a></li>\
+      <li><a href="../html/reference/getStmfType.html" target="content" style="text-decoration:none">getStmfType</a></li>\
       <li><a href="../html/reference/setLowMessageKey.html" target="content" style="text-decoration:none">setLowMessageKey</a></li>\
     </ul>\
     </li>\

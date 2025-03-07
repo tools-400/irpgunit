@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iRPGUnit iSphere Integration (optional)
 Bundle-SymbolicName: de.tools400.rpgunit.isphere;singleton:=true
-Bundle-Version: 5.0.0.r
+Bundle-Version: 5.1.0.b001
 Bundle-Activator: de.tools400.rpgunit.isphere.RPGUnitISphereIntegrationPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
