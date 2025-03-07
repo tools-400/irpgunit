@@ -32,6 +32,7 @@
         <topic href="html/reference/restoreStatusMessage.html"       label="restoreStatusMessage" />
         <topic href="html/reference/clearStatusMessage.html"         label="clearStatusMessage" />
         <topic href="html/reference/getMemberType.html"              label="getMemberType" />
+        <topic href="html/reference/getStmfType.html"                label="getStmfType" />
         <topic href="html/reference/setLowMessageKey.html"           label="setLowMessageKey" />
     </topic>
     <topic href="html/reference/selftest.html"                       label="Selbsttest">
