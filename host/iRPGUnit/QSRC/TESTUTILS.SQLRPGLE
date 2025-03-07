@@ -34,6 +34,8 @@ ctl-opt nomain;
 /include qinclude,OBJECT
 /include qinclude,PGMMSG
 /include qinclude,SYSTEMAPI
+/include qinclude,SRCMBR
+/include qinclude,STMF
 
 
 //----------------------------------------------------------------------
@@ -117,17 +119,25 @@ dcl-proc getMemberType export;
     mbr          char(10) const;
   end-pi;
 
-  dcl-ds qSrcFile likeds(object_t);
-  dcl-ds mbrd0100 likeds(mbrd0100_t);
+  dcl-ds qSrcFile likeds(Object_t);
 
-  qSrcFile.nm = srcFile;
   qSrcFile.lib = srcFileLib;
+  qSrcFile.nm = srcFile;
 
-  qusrmbrd(mbrd0100: %size(mbrd0100): 'MBRD0100': qSrcFile: mbr: '0');
-
-  return mbrd0100.srcType;
+  return SrcMbr_getType(qSrcFile: mbr);
 
 end-proc;
+
+
+dcl-proc getStmfType export;
+  dcl-pi *N char(10) opdesc;
+    srcStmf     like(ifsStmf_t) const;
+  end-pi;
+
+  return Stmf_getType(srcStmf);
+
+end-proc;
+
 
 dcl-proc getFullTimestamp export;
   dcl-pi *N timestamp opdesc;

@@ -10,7 +10,7 @@
 // ==========================================================================
 ctl-opt
 copyright('v5.1.0 - xx.xx.xxxx - +
-           Copyright (c) 2024-xxxx iRPGUnit Project Team');
+           Copyright (c) 2025-xxxx iRPGUnit Project Team');
 /if not defined(COPYRIGHT_DSPEC)
 /eof
 /endif

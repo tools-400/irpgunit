@@ -12,7 +12,11 @@
 //  http://www.eclipse.org/legal/cpl-v10.html
 /// ==========================================================================
 
+/if defined(IRPGUNIT_STMF)
+/include qinclude/TEMPLATES.rpgle
+/else
 /include qinclude,TEMPLATES
+/endif
 
 /// ------------------------------------
 //  Assertions of module ASSERT.
@@ -68,7 +72,7 @@ end-pr;
 //
 // @param Expected value
 // @param Actual value
-// @param Field name (optional). 
+// @param Field name (optional).
 //
 // @throws CPF9897 Expected '{expected}', but was '{actual}'.
 ///
@@ -155,7 +159,7 @@ end-pr;
 //     // Exception seen. Success.
 //   endmon;
 //
-// @param Message 
+// @param Message
 // @throws CPF9897 {msg}, e.g. 'PGM should have thrown an exception'
 ///
 dcl-pr fail extproc('fail') opdesc;
@@ -397,6 +401,22 @@ dcl-pr getMemberType char(10) extproc('getMemberType') opdesc;
   srcFile     char(10) const;
   srcFileLib  char(10) const;
   mbr         char(10) const;
+end-pr;
+
+///
+ // getStmfType -- Get Stream File Type.
+ //
+ // Returns the source type of a given stream file.
+ //
+ // Example:
+ //   srcType = getStmfType('/home/dev/mypgm.rpgle');
+//
+// @param Stream file path
+//
+// @return Stream file type
+///
+dcl-pr getStmfType char(10) extproc('getStmfType') opdesc;
+  srcStmf     like(ifsStmf_t) const;
 end-pr;
 
 ///

@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+	<title>Cobol</title>
+</head>
+
+<body>
+<h1>Datenstromdateien</h1>
+Die Unterstüzung für Datenstromdateien wurde mit der Version 5.1 hinzugefügt. Ab
+dieser Version können Test Suite Serviceprogramme aus im <code>/root</code> Dateisystem
+abgelegten Datenstromdateien kompiliert werden.  
+<p>
+<h2>Template File</h2>
+<p>
+Die Datenstromdatei Templates sind in den Quellenteildateien <code>RPGSTMF</code> und
+<code>RPGSQLSTMF</code> der Datei <code>QTEMPLATE</code> gespeichert. Sie können bei
+Bedarf im <code>/root</code> Dateisystem abgelegt werden.
+<p>
+<h2>Kompilieren Test Suite</h2>
+<p>
+Die neuen Parameter für das Kompilieren von Datenstromdateien sind:
+<ul>
+<li>SRCSTMF (Source stream file)</li>
+<li>INCDIR (Include directory)</li>
+<li>TGTCCSID (Target CCSID)</li>
+</ul>
+<p>
+Die Hilfe zum Befehl <code>CRTRPGMOD</code> enthält eine detaillierte Beschreibung der
+Parameter.
+<p>
+<h2>Einbinden Datenstromdateien</h2>
+<p>
+Das Test Suite Template <code>TESTCASE</code> inkludiert die Quellenteildateien/Datenstromdateien
+der Prototypen der Zusicherungen (assertions). Standardmäßig werden diese aus der iRPGUnit
+Bibliothek geladen. Durch Setzen der Compiler Bedingung <code>IRPGUNIT_STMF</code> können diese
+auch aus Datenstromdateien geladen werden.
+<p>
+Beispiel:
+<p> 
+<code><pre class="indent">
+RPGUNITDVP/RUCRTRPG 
+  TSTPGM(QTEMP/RPGSTMF)          
+  SRCSTMF('./iRPGUnit/QTEMPLATE/rpgsqlstmf.sqlrpgle')
+  BNDSRVPGM(RPGUNIT/RUTESTCASE)                      
+  DEFINE(IRPGUNIT_STMF)                              
+  RPGPPOPT(*LVL1)                                    
+  INCDIR('./iRPGUnit')                               
+  TGTCCSID(*JOB)                                     
+</pre></code>
+<p>
+Description of parameters:
+<p>
+<table>
+<tr><td valign="top">1.</td><td valign="top">TSTPGM   </td><td width="30">&nbsp;</td><td>Gibt den Namen des Test Suite Serviceprogramms an.    
+                                             <br>Gilt genau so auch für das Kompilieren aus Quellenteildateien.</td></tr>
+<tr><td valign="top">2.</td><td valign="top">SRCSTMF  </td><td width="30">&nbsp;</td><td>Gibt den Pfad auf die Datenstromdatei zum Kompilieren des Serviceprogramms an.
+                                             <br>Gilt nur für das Kompilieren aus Datenstromdateien.</td></tr>
+<tr><td valign="top">3.</td><td valign="top">BNDSRVPGM</td><td width="30">&nbsp;</td><td>Gibt den Namen des iRPGUnit Laufzeitserviceprogramms an.
+                                             <br>Wurde hier verwendet, weil der Author die iRPGUnit Bibliothek nicht in der Bibliotheksliste hat.</td></tr>
+<tr><td valign="top">4.</td><td valign="top">DEFINE   </td><td width="30">&nbsp;</td><td>Setzt die Compiler Bedingung <code>IRPGUNIT_STMF</code>.
+                                             <br>Erforderlich, weil der Author eingebundene Quellen aus Datenstromdateien laden möchte.</td></tr>
+<tr><td valign="top">5.</td><td valign="top">RPGPPOPT </td><td width="30">&nbsp;</td><td>Instruiert den SQL Pre-Compiler eingebettete Quellen vor dem Vorgang des Vorkompilierens auszulösen.
+                                             <br>Erforderlich, um die Fehlernachricht SQL8032 zu vermeiden: <i>Die CCSID &1 der Quellendatei ist eine Unicode-CCSID, die nicht mit CVTCCSID(*NONE) verwendet werden kann.</i></td></tr>
+<tr><td valign="top">6.</td><td valign="top">INCDIR   </td><td width="30">&nbsp;</td><td>Gibt den Pfad zum Auffinden eingebundener Quellen an.
+                                             <br>Erforderlich zum Auffinden von eingebundenen Datenstromdateien.</td></tr>
+<tr><td valign="top">3.</td><td valign="top">TGTCCSID </td><td width="30">&nbsp;</td><td>Gibt die CCSID für die Konvertierung von Datenstromdateien an.
+                                             <br>Erforderlich, um die Fehlernachricht RNS9380 zu vermeiden: <i>Die CCSID &1 der Quellendatei ist eine Unicode-CCSID, die nicht mit TGTCCSID(*SRC) verwendet werden darf.</i></td></tr>
+</table>
+<p>
+<iframe src="../../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

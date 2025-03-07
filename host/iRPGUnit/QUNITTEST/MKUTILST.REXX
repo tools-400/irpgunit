@@ -93,8 +93,15 @@
  "CMPMOD MODULE("prdLib"/TESTUTILST) SRCFILE("prdLib"/QUNITTEST) ",
     "DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
+ "CMPMOD MODULE("prdLib"/JOBLOG   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/STRING    ) SRCFILE("prdLib"/QSRC    ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+
  "CRTSRVPGM  SRVPGM("prdLib"/TESTUTILST) ",
-            "MODULE("prdLib"/TESTUTILST) ",
+            "MODULE("prdLib"/TESTUTILST",
+                     prdLib"/JOBLOG    ",
+                     prdLib"/PGMMSG    ",
+                     prdLib"/STRING  ) ",
             "EXPORT(*ALL) ",
             "OPTION(*DUPPROC) ",
             "BNDSRVPGM("prdLib"/RUTESTCASE) ",

@@ -103,6 +103,25 @@ dcl-proc testUCase export;
 
 end-proc;
 
+dcl-proc testLCase export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-s lString varchar(512) inz;
+
+  // Setup.
+
+
+  // Run.
+
+  lString = lCase('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+
+  // Check.
+
+  aEqual('abcdefghijklmnopqrstuvwxyz' : lString);
+
+end-proc;
+
 dcl-proc testLeftStr export;
   dcl-pi *n extproc(*dclcase);
   end-pi;

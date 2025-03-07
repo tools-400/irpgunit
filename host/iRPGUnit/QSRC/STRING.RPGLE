@@ -44,7 +44,7 @@ ctl-opt decedit(*jobrun);
 //----------------------------------------------------------------------
 /include qinclude,TEMPLATES
 
-dcl-ds errCode_t qualified               based(pDummy);
+dcl-ds errCode_t qualified template;
   bytPrv int(10);
   bytAvl int(10);
   excID char(7);
@@ -84,11 +84,44 @@ dcl-proc uCase export;
   reqCtrlBlk.case = CVTCASE_TOUPPER;
   reqCtrlBlk.reserved = *ALLx'00';
   clear errCode;
-  QlgConvertCase(reqCtrlBlk:
-                 string: stringBuf: %len(string): errCode);
+  QlgConvertCase(reqCtrlBlk: string: stringBuf: %len(string): errCode);
   uCase = %subst(stringBuf: 1: %len(string));
 
   return uCase;
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+//  Converts a given string to lower case.
+//----------------------------------------------------------------------
+dcl-proc lCase export;
+  dcl-pi *n like(String_t);
+    string  like(String_t) const options(*varsize);
+  end-pi;
+
+  dcl-s lCase varchar(4096) inz;
+
+  dcl-s stringBuf char(4096) inz;
+  dcl-ds errCode likeds(errCode_t ) inz;
+
+  dcl-ds reqCtrlBlk likeds(reqCtrlBlk_ccsid_t) inz;
+
+
+  if (string = '');
+    return string;
+  endif;
+
+  clear reqCtrlBlk;
+  reqCtrlBlk.type = CVTCASE_TYPE_CCSID;
+  reqCtrlBlk.CCSID = CVTCASE_CCSID_JOB;
+  reqCtrlBlk.case = CVTCASE_TOLOWER;
+  reqCtrlBlk.reserved = *ALLx'00';
+  clear errCode;
+  QlgConvertCase(reqCtrlBlk: string: stringBuf: %len(string): errCode);
+  lCase = %subst(stringBuf: 1: %len(string));
+
+  return lCase;
 
 end-proc;
 

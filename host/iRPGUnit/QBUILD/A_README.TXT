@@ -87,6 +87,13 @@ Version 5.0.1 - 24.09.2024
 --------------------------
  * Add keyword REQPREXP(*REQUIRE) to enforce prototypes of exported
    procedures.
+ * Moved and renamed test suite templates to file QTEMPLATE:
+    - TEMPLATE renamed to RPG
+    - TEMPLCBL renamed to CBL
+    - TEMPLSQL renamed to RPGSQL
+ * Added test suite templates:
+    - RPGSQLSTMF
+    - RPGSTMF
 
 Version 5.0.0 - 23.09.2024
 --------------------------

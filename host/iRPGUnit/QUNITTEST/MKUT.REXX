@@ -99,11 +99,12 @@
  executeUnitTest('MKEXTTSTT', 'EXTTSTT')
  executeUnitTest('MKJOBLOGT', 'JOBLOGT')
  executeUnitTest('MKLIBLT', 'LIBLT')
- executeUnitTest('MKLIBLT', 'LSTSPLFT')
+ executeUnitTest('MKLSTSPLFT', 'LSTSPLFT')
  executeUnitTest('MKMSGQT', 'MSGQT')
  executeUnitTest('MKOPDESCT', 'OPDESCT')
  executeUnitTest('MKPGMMSGT', 'PGMMSGT')
  executeUnitTest('MKRUNT', 'RUNT')
+ executeUnitTest('MKSTMFT', 'STMFT')
  executeUnitTest('MKSTRINGT', 'STRINGT')
  executeUnitTest('MKUTILST', 'TESTUTILST')
 

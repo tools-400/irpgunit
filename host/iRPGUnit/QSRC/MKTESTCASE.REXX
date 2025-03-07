@@ -114,6 +114,15 @@
  "CMPMOD MODULE("prdLib"/STRING   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") ",
    "TGTRLS("tgtRls") DEFINE("define")"
 
+ "CMPMOD MODULE("prdLib"/SRCMBR   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") ",
+   "TGTRLS("tgtRls") DEFINE("define")"
+
+ "CMPMOD MODULE("prdLib"/STMF     ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") ",
+   "TGTRLS("tgtRls") DEFINE("define")"
+
+ "CMPMOD MODULE("prdLib"/USRSPC   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") ",
+   "TGTRLS("tgtRls") DEFINE("define")"
+
  "CRTSRVPGM  SRVPGM("prdLib"/RUTESTCASE) ",
               "MODULE("prdLib"/ASSERT     ",
                        prdLib"/ASSERTV2   ",
@@ -121,7 +130,10 @@
                        prdLib"/PGMMSG     ",
                        prdLib"/VERSION    ",
                        prdLib"/TESTUTILS  ",
-                       prdLib"/STRING)    ",
+                       prdLib"/STRING     ",
+                       prdLib"/SRCMBR     ",
+                       prdLib"/STMF       ",
+                       prdLib"/USRSPC)    ",
               "EXPORT(*SRCFILE) ",
               "SRCFILE("prdLib"/QBND) SRCMBR(RUTESTCASE) ",
               "TGTRLS("tgtRls") ",

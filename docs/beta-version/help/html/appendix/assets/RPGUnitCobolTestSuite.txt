@@ -2,7 +2,7 @@
       *  Empty Unit Test Case (Cobol).                                      *
       *=====================================================================*
       *  Command to create the service program:                             *
-      *  RUCRTCBL TSTPGM(RPGUNIT/TEMPLCBL) SRCFILE(RPGUNIT/QSRC)            *
+      *  RUCRTCBL TSTPGM(RPGUNIT/CBL) SRCFILE(RPGUNIT/QTEMPLATE)            *
       *=====================================================================*
       *  Tools/400 STRPREPRC instructions:                                  *
       *   >>PRE-COMPILER<<                                                  *
@@ -241,4 +241,4 @@
 
            GOBACK.
 
-       END PROGRAM TEST_FAIL1.
+       END PROGRAM TEST_FAIL1. 

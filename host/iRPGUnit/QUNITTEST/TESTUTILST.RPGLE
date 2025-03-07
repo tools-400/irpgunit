@@ -31,6 +31,7 @@ ctl-opt NoMain Option(*SrcStmt);
 /copy qinclude,ASSERT
 /copy qinclude,TESTUTILS
 /copy qinclude,TEMPLATES
+/copy qinclude,STRING
 
 /copy qsysinc,QCMDEXC
 
@@ -210,10 +211,40 @@ dcl-proc test_getMemberType_error export;
 
   monitor;
     srcType = getMemberType('RPGUNITTST': 'QTEMP': 'NOT.FOUND');
-    fail('getMember() should have raised an error');
+    fail('getMemberType() should have raised an error');
   on-error;
     // Good, error seen.
   endmon;
+
+end-proc;
+
+
+dcl-proc test_getStmfType export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-s srcType varchar(10);
+
+  srcType = getStmfType('/home/dev/missingExtension/member.rpgle');
+  assert(srcType = lCase(MBR_RPGLE): 'getStmfType() must return RPGLE');
+
+  srcType = getStmfType('/home/dev/missingExtension/member.sqlrpgle');
+  assert(srcType = lCase(MBR_SQLRPGLE): 'getStmfType() must return SQLRPGLE');
+
+  srcType = getStmfType('/home/dev/missingExtension/member.cblle');
+  assert(srcType = lCase(MBR_CBLLE): 'getStmfType() must return CBLLE');
+
+  srcType = getStmfType('/home/dev/missingExtension/member.sqlcblle');
+  assert(srcType = lCase(MBR_SQLCBLLE): 'getStmfType() must return SQLCBLLE');
+
+  srcType = getStmfType('\home\dev\missingExtension\member.sqlcblle');
+  assert(srcType = lCase(MBR_SQLCBLLE): 'getStmfType() must return SQLCBLLE');
+
+  srcType = getStmfType('/home/dev/missingExtension');
+  assert(srcType = '': 'getStmfType() must return an empty value');
+
+  srcType = getStmfType('/home/dev.de/missingExtension');
+  assert(srcType = '': 'getStmfType() must return an empty value');
 
 end-proc;
 

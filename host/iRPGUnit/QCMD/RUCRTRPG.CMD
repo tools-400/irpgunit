@@ -22,30 +22,39 @@
              CMD        PROMPT('Create RPG Test Suite')
 
              PARM       KWD(TSTPGM)                          +
-                        TYPE(PGM)                            +
-                        MIN(1)                               +
-                        PROMPT('Test program')
+                          TYPE(PGM)                          +
+                          MIN(1)                             +
+                          PROMPT('Test program')
 
              PARM       KWD(SRCFILE)                         +
-                        TYPE(FILE)                           +
-                        PROMPT('Source file')
+                          TYPE(FILE)                         +
+                          PROMPT('Source file')
 
              PARM       KWD(SRCMBR)                          +
-                        TYPE(*NAME)                          +
-                        LEN(10)                              +
-                        DFT(*TSTPGM)                         +
-                        SPCVAL(*TSTPGM)                      +
-                        PROMPT('Source member')
+                          TYPE(*NAME)                        +
+                          LEN(10)                            +
+                          DFT(*TSTPGM)                       +
+                          SPCVAL(*TSTPGM)                    +
+                          PROMPT('Source member')
+
+             PARM       KWD(SRCSTMF)                         +
+                          TYPE(*CHAR)                        +
+                          LEN(4096)                          +
+                          VARY(*YES *INT2)                   +
+                          MIN(0)                             +
+                          CASE(*MIXED)                       +
+                          INLPMTLEN(50)                      +
+                          PROMPT('Source stream file')
 
              PARM       KWD(TEXT)                            +
-                        TYPE(*CHAR)                          +
-                        LEN(50)                              +
-                        VARY(*YES *INT2)                     +
-                        DFT(*SRCMBRTXT)                      +
-                        SPCVAL((*SRCMBRTXT)                  +
-                               (*BLANK    )                  +
-                               (*DEFAULT  ))                 +
-                        PROMPT('Text ''description''')
+                          TYPE(*CHAR)                        +
+                          LEN(50)                            +
+                          VARY(*YES *INT2)                   +
+                          DFT(*SRCMBRTXT)                    +
+                          SPCVAL((*SRCMBRTXT)                +
+                                 (*BLANK    )                +
+                                 (*DEFAULT  ))               +
+                          PROMPT('Text ''description''')
 
              PARM       KWD(COPTION)                         +
                           TYPE(*CHAR)                        +
@@ -109,13 +118,13 @@
                           PROMPT('Binding options')
 
              PARM       KWD(DEFINE)                          +
-                        TYPE(*CHAR)                          +
-                        LEN(50)                              +
-                        MIN(0)                               +
-                        MAX(32)                              +
-                        DFT(*NONE)                           +
-                        SPCVAL((*NONE    *N))                +
-                        PROMPT('Define condition names')
+                          TYPE(*CHAR)                        +
+                          LEN(50)                            +
+                          MIN(0)                             +
+                          MAX(32)                            +
+                          DFT(*NONE)                         +
+                          SPCVAL((*NONE    *N))              +
+                          PROMPT('Define condition names')
 
              PARM       KWD(DLTSPLF)                         +
                           TYPE(*CHAR)                        +
@@ -194,9 +203,30 @@
              PARM       KWD(TGTRLS)                          +
                           TYPE(*NAME)                        +
                           PMTCTL(*PMTRQS)                    +
-                          SPCVAL(*CURRENT *PRV)                   +
+                          SPCVAL(*CURRENT *PRV)              +
                           DFT(*CURRENT)                      +
                           PROMPT('Target release')
+
+             PARM       KWD(INCDIR)                          +
+                          TYPE(*CHAR)                        +
+                          PMTCTL(*PMTRQS)                    +
+                          LEN(4096)                          +
+                          VARY(*YES *INT2)                   +
+                          DFT(*NONE)                         +
+                          SNGVAL(*NONE)                      +
+                          MIN(0)                             +
+                          MAX(32)                            +
+                          CASE(*MIXED)                       +
+                          INLPMTLEN(50)                      +
+                          PROMPT('Include directory')
+
+             PARM       KWD(TGTCCSID)                        +
+                          TYPE(*INT4)                        +
+                          PMTCTL(*PMTRQS)                    +
+                          DFT(*SRC)                          +
+                          SPCVAL((*JOB -1)                   +
+                                 (*SRC -2))                  +
+                          PROMPT('Target CCSID')
 
  PGM:        QUAL       TYPE(*NAME) LEN(10)
              QUAL       TYPE(*NAME) LEN(10) DFT(*CURLIB) SPCVAL(*CURLIB)     +
