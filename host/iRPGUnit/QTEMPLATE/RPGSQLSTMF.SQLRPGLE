@@ -1,6 +1,7 @@
 **free
 //=====================================================================
 //  Empty Unit Test Case. Prints a protocol of the execution flow.
+//  Success. 2 test cases, 4 assertions, 0 failure, 0 error.
 //=====================================================================
 //  Command to create the service program:
 //  cd /home/raddatz

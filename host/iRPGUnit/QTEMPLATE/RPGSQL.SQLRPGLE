@@ -1,6 +1,7 @@
 **free
 //=====================================================================
 //  Empty Unit Test Case. Prints a protocol of the execution flow.
+//  Success. 2 test cases, 4 assertions, 0 failure, 0 error.
 //=====================================================================
 //  Command to create the service program:
 //  RUCRTRPG TSTPGM(RPGUNIT/RPGSQL) SRCFILE(RPGUNIT/QTEMPLATE)
@@ -235,12 +236,12 @@ dcl-proc testWhatever_1 export;
   exec sql
     SELECT COUNT(DAY_NUM) INTO :count
       FROM ( VALUES (1, 'Monday'),
-                           (2, 'Tuesday'),
-                           (3, 'Wednesday'),
-                           (4, 'Thursday'),
-                           (5, 'Friday'),
-                           (6, 'Saturday'),
-                           (7, 'Sunday') )
+                    (2, 'Tuesday'),
+                    (3, 'Wednesday'),
+                    (4, 'Thursday'),
+                    (5, 'Friday'),
+                    (6, 'Saturday'),
+                    (7, 'Sunday') )
       AS week_days (DAY_NUM, DAY_NAME);
 
   // Place your assertions here.
@@ -264,12 +265,12 @@ dcl-proc testWhatever_2 export;
   exec sql
     SELECT COUNT(DAY_NUM) INTO :count
       FROM ( VALUES (1, 'Monday'),
-                           (2, 'Tuesday'),
-                           (3, 'Wednesday'),
-                           (4, 'Thursday'),
-                           (5, 'Friday'),
-                           (6, 'Saturday'),
-                           (7, 'Sunday') )
+                    (2, 'Tuesday'),
+                    (3, 'Wednesday'),
+                    (4, 'Thursday'),
+                    (5, 'Friday'),
+                    (6, 'Saturday'),
+                    (7, 'Sunday') )
       AS week_days (DAY_NUM, DAY_NAME)
       WHERE DAY_NUM < 1 OR DAY_NUM > 7;
 

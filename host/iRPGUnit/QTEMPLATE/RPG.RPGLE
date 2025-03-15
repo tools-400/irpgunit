@@ -1,6 +1,7 @@
 **free
 //=====================================================================
 //  Empty Unit Test Case. Prints a protocol of the execution flow.
+//  FAILURE. 2 test cases, 2 assertions, 1 failure, 0 error.
 //=====================================================================
 //  Command to create the service program:
 //  RUCRTRPG TSTPGM(RPGUNIT/RPG) SRCFILE(RPGUNIT/QTEMPLATE)
