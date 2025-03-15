@@ -1,5 +1,6 @@
       *=====================================================================*
       *  Empty Unit Test Case (Cobol).                                      *
+      *  FAILURE. 4 test cases, 3 assertions, 3 failures, 0 error.          *
       *=====================================================================*
       *  Command to create the service program:                             *
       *  RUCRTCBL TSTPGM(RPGUNIT/CBL) SRCFILE(RPGUNIT/QTEMPLATE)            *
@@ -92,6 +93,7 @@
 
       *=====================================================================*
       *  Using assert() with 1 parameter.
+      *  Finishes successfully.
       *=====================================================================*
        PROCESS  NOMONOPRC.
        IDENTIFICATION DIVISION.
@@ -138,6 +140,7 @@
 
       *=====================================================================*
       *  Using assert() with 2 parameters.
+      *  Produces error: x must be set to '1'.
       *=====================================================================*
        PROCESS  NOMONOPRC.
        IDENTIFICATION DIVISION.
@@ -187,6 +190,7 @@
 
       *=====================================================================*
       *  Using fail() with 0 parameters.
+      *  Produces error: *N (because no error message was given)
       *=====================================================================*
        PROCESS  NOMONOPRC.
        IDENTIFICATION DIVISION.
@@ -216,6 +220,7 @@
 
       *=====================================================================*
       *  Using fail() with 1 parameter.
+      *  Produces error: Let the unit test fail.
       *=====================================================================*
        PROCESS  NOMONOPRC.
        IDENTIFICATION DIVISION.
