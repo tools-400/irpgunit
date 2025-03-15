@@ -856,6 +856,8 @@ dcl-proc getCrtRpgModCmd export;
       cmd += serializeValue( 'RPGPPOPT' : prpgppopt);
     endif;
 
+    cmd += serializeCvtCcsid(tgtCcsid);
+
     if compileopt <> *blank;
       dbgCompileOpt = removequotes(compileopt);
       if (%scan( PARM_DBGVIEW + '(' : uCase( compileopt )) = 0);
@@ -946,11 +948,12 @@ dcl-proc getCrtCblModCmd export;
       cmd += 'SRCFILE(' + serializeObjectName( srcFile ) + ') ';
       cmd += serializeValue( 'SRCMBR' : srcMbr );
     endif;
-    cmd += serializeValue( 'SRCMBR' : srcMbr );
     cmd += serializeOptions( 'OPTION' : pOptions );
     cmd += serializeValue('OBJTYPE': '*MODULE');
     cmd += serializeValue( 'TGTRLS' : targetrls );
     cmd += serializeValue( 'DBGVIEW' : '*NONE');
+
+    cmd += serializeCvtCcsid(tgtCcsid);
 
     if compileopt <> *blank;
       dbgCompileOpt = removequotes(compileopt);
@@ -1135,16 +1138,46 @@ dcl-proc serializeTgtCcsid;
   // Serialized Options.
   dcl-s serialized like(serializedTgtCcsid_t);
 
-  if (tgtCcsid = 0);
-    return '';
-  endif;
-
   serialized = 'TGTCCSID(';
 
   select;
   when (tgtCcsid = -2);
     serialized += '*SRC';
   when (tgtCcsid = -1);
+    serialized += '*JOB';
+  other;
+    serialized += %char(tgtCcsid);
+  endsl;
+
+  serialized += ') ';
+
+  return serialized;
+
+end-proc;
+
+
+///
+// Serializes parameter CVTCCSID depending on the value of
+// parameter TGTCCSID of commands RRUCRTRPG and RUCRTCBL.
+//
+//  @param target ccsid, one of *SRC, *JOB or ccsid
+//
+//  @return CVTCCSID(*NONE|*JOB|ccsid)
+///
+dcl-proc serializeCvtCcsid;
+  dcl-pi *N like(serializedTgtCcsid_t) extproc(*dclcase);
+    tgtCcsid    const like(tgtCcsid_t);
+  end-pi;
+
+  // Serialized Options.
+  dcl-s serialized like(serializedTgtCcsid_t);
+
+  serialized = 'CVTCCSID(';
+
+  select;
+  when (tgtCcsid = -2); // *SRC
+    serialized += '*NONE';
+  when (tgtCcsid = -1); // *JOB
     serialized += '*JOB';
   other;
     serialized += %char(tgtCcsid);
