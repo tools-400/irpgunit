@@ -21,10 +21,10 @@
      /* =================================================================== */
              PGM        PARM(&TARGETLIB)
 
-             DCL        VAR(&TARGETLIB) TYPE(*CHAR) LEN(10) VALUE(RPGUNIT)
+             DCL VAR(&TARGETLIB) TYPE(*CHAR) LEN(10) VALUE(RPGUNIT)
 
-             CHGVAR     VAR(&TARGETLIB) VALUE(&TARGETLIB)
-             MONMSG     MSGID(MCH3601) EXEC(SNDPGMMSG MSGID(CPF9898) +
+             CHGVAR VAR(&TARGETLIB) VALUE(&TARGETLIB)
+             MONMSG MSGID(MCH3601) EXEC(SNDPGMMSG MSGID(CPF9898) +
                           MSGF(QCPFMSG) MSGDTA('Target library +
                           parameter required.') MSGTYPE(*ESCAPE))
 
@@ -395,6 +395,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(STMF) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGunit - Stream File Utilities.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
                           MBR(STRING) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - String Utilities.')
@@ -689,6 +695,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(STMF) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGunit - Stream File Utilities.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
                           MBR(STRING) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - String Utilities.')
@@ -698,24 +710,6 @@
                           MBR(TAGTST) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - Tag Test Service Program.')
-             MONMSG     MSGID(CPF3288)
-
-             CHGPFM     FILE(&TARGETLIB/QSRC) +
-                          MBR(TEMPLATE) +
-                          SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - Empty Unit Test Case.')
-             MONMSG     MSGID(CPF3288)
-
-             CHGPFM     FILE(&TARGETLIB/QSRC) +
-                          MBR(TEMPLCBL) +
-                          SRCTYPE(CBLLE) +
-                          TEXT('iRPGUnit - Empty Unit Test Case (Cobol)')
-             MONMSG     MSGID(CPF3288)
-
-             CHGPFM     FILE(&TARGETLIB/QSRC) +
-                          MBR(TEMPLSQL) +
-                          SRCTYPE(SQLRPGLE) +
-                          TEXT('iRPGUnit - Empty SQL Unit Test Case.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +
@@ -752,6 +746,12 @@
                           MBR(CEEAPI) +
                           SRCTYPE(RPGLE) +
                           TEXT('CEE APIs')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(GETCWD) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('getcwd()--Get Current Directory')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSYSINC) +
@@ -1283,6 +1283,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(MKSTMFT) +
+                          SRCTYPE(REXX) +
+                          TEXT('iRPGUnit SelfTest - Build STMFT.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(MKSTRINGT) +
                           SRCTYPE(REXX) +
                           TEXT('iRPGUnit SelfTest - Build STRINGT.')
@@ -1346,6 +1352,12 @@
                           MBR(SPLF_H) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - ACPTSTT Unit Test Helper.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(STMFT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit SelfTest - Test STMF.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +

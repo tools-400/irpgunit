@@ -69,6 +69,7 @@ dcl-c noText const(*blank);
 dcl-c TEMP_DIR      '/temp/';
 dcl-c STMF_RPGLE    'temp_irpgunit1.rpgle';
 dcl-c STMF_SQLRPGLE 'temp_irpgunit1.sqlrpgle';
+dcl-c STMF_SQLCBLLE 'temp_irpgunit1.sqlcblle';
 
 //----------------------------------------------------------------------
 //   Global Variables
@@ -169,6 +170,7 @@ dcl-proc setup export;
 
   crtStmf(STMF_RPGLE);
   crtStmf(STMF_SQLRPGLE);
+  crtStmf(STMF_SQLCBLLE);
 
 end-proc;
 
@@ -178,6 +180,7 @@ dcl-proc tearDown export;
 
   dltStmf(STMF_RPGLE);
   dltStmf(STMF_SQLRPGLE);
+  dltStmf(STMF_SQLCBLLE);
 
   restoreLibl(liblList);
 
@@ -822,6 +825,108 @@ dcl-proc testSerializeObjectNameWithoutLibrary export;
   // Execute and control.
 
   aEqual('OBJNAME': serializeObjectName(object));
+
+end-proc;
+
+
+dcl-proc testCOptionSqlRpgle export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-ds oneCOption likeds(Options_t);
+
+  oneCOption.size = 1;
+  oneCOption.option(1) = '*SRCSTMT';
+
+  crtRpgModCmd = getCrtRpgModCmd('SYSTYPES  *CURLIB   ':
+                                 noSrcFile:
+                                 noSrcMbr:
+                                 STMF_SQLRPGLE:
+                                 oneCOption:
+                                 noDbgView:
+                                 rpgPpOptLvl2:
+                                 noPOption:
+                                 noCompileOpt:
+                                 noTargetRls:
+                                 noDefine:
+                                 noIncDir:
+                                 -1); // -1 = *JOB
+  aEqual('CRTSQLRPGI OBJ(*CURLIB/SYSTYPES) +
+          SRCSTMF(''' + STMF_SQLRPGLE + ''') +
+          OBJTYPE(*MODULE) RPGPPOPT(*LVL2) +
+          DBGVIEW(*NONE) +
+          COMPILEOPT(''TGTCCSID(*JOB) OPTION(*SRCSTMT )'') +
+          ': crtRpgModCmd);
+
+  crtRpgModCmd = getCrtRpgModCmd('SYSTYPES  *CURLIB   ':
+                                 noSrcFile:
+                                 noSrcMbr:
+                                 STMF_SQLRPGLE:
+                                 oneCOption:
+                                 noDbgView:
+                                 rpgPpOptLvl2:
+                                 noPOption:
+                                 'DBGVIEW(*LIST)':
+                                 noTargetRls:
+                                 noDefine:
+                                 noIncDir:
+                                 -1); // -1 = *JOB
+  aEqual('CRTSQLRPGI OBJ(*CURLIB/SYSTYPES) +
+          SRCSTMF(''' + STMF_SQLRPGLE + ''') +
+          OBJTYPE(*MODULE) RPGPPOPT(*LVL2) +
+          DBGVIEW(*NONE) +
+          COMPILEOPT(''DBGVIEW(*LIST)  TGTCCSID(*JOB)   OPTION(*SRCSTMT )'') +
+          ': crtRpgModCmd);
+
+end-proc;
+
+
+dcl-proc testCOptionSqlCblle export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-ds oneCOption likeds(Options_t);
+
+  oneCOption.size = 1;
+  oneCOption.option(1) = '*NOMONOPRC';
+
+  crtCblModCmd = getCrtCblModCmd('SYSTYPES  *CURLIB   ':
+                                 noSrcFile:
+                                 noSrcMbr:
+                                 STMF_SQLCBLLE:
+                                 oneCOption:
+                                 noDbgView:
+                                 noPOption:
+                                 noCompileOpt:
+                                 noTargetRls:
+                                 noDefine:
+                                 noIncDir:
+                                 -1); // -1 = *JOB
+  aEqual('CRTSQLCBLI OBJ(*CURLIB/SYSTYPES) +
+          SRCSTMF(''' + STMF_SQLCBLLE + ''') +
+          OBJTYPE(*MODULE) +
+          DBGVIEW(*NONE) +
+          COMPILEOPT(''TGTCCSID(*JOB) OPTION(*NOMONOPRC )'') +
+          ': crtCblModCmd);
+
+  crtCblModCmd = getCrtCblModCmd('SYSTYPES  *CURLIB   ':
+                                 noSrcFile:
+                                 noSrcMbr:
+                                 STMF_SQLCBLLE:
+                                 oneCOption:
+                                 noDbgView:
+                                 noPOption:
+                                 'DBGVIEW(*LIST)':
+                                 noTargetRls:
+                                 noDefine:
+                                 noIncDir:
+                                 -1); // -1 = *JOB
+  aEqual('CRTSQLCBLI OBJ(*CURLIB/SYSTYPES) +
+          SRCSTMF(''' + STMF_SQLCBLLE + ''') +
+          OBJTYPE(*MODULE) +
+          DBGVIEW(*NONE) +
+          COMPILEOPT(''DBGVIEW(*LIST)  TGTCCSID(*JOB)   OPTION(*NOMONOPRC )'') +
+          ': crtCblModCmd);
 
 end-proc;
 

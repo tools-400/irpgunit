@@ -83,6 +83,12 @@ b) Optionally run the RPGUnit self tests:
 
 --------------------------
 
+Version 5.1.1 - 02.05.2025
+--------------------------
+ * Use COPTION when creating RPG/Cobol SQL modules.
+
+--------------------------
+
 Version 5.0.1 - 24.09.2024
 --------------------------
  * Add keyword REQPREXP(*REQUIRE) to enforce prototypes of exported
