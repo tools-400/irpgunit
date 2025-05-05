@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - "*.*.*"
+      - "*"
 
 jobs:
   release:
@@ -15,9 +15,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Create Release
+      - name: Create Production Release
+        if: ${{ !contains(github.ref_name, '.b') }}
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
-          files: |
-            docs/update-site/eclipse/rdi8.0/Server/RPGUNIT.SAVF
+          files: docs/update-site/eclipse/rdi8.0/Server/RPGUNIT.SAVF
+
+      - name: Create Beta Release
+        if: ${{ contains(github.ref_name, '.b') }}
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: docs/beta-version/update-site/eclipse/rdi8.0/Server/RPGUNIT.SAVF
