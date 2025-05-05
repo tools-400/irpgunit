@@ -20,11 +20,18 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
-          files: docs/update-site/eclipse/rdi8.0/Server/RPGUNIT.SAVF
+          files: |
+            docs/update-site/eclipse/rdi8.0/Server/RPGUNIT.SAVF
+            docs/files/iRPGUnit for RDi 9.5.1.3+.pdf
+            docs/files/rdi8.0/iRPGUnit*.zip
 
       - name: Create Beta Release
         if: ${{ contains(github.ref_name, '.b') }}
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
-          files: docs/beta-version/update-site/eclipse/rdi8.0/Server/RPGUNIT.SAVF
+          files: |
+            docs/beta-version/update-site/eclipse/rdi8.0/Server/RPGUNIT.SAVF
+            docs/beta-version/files/iRPGUnit for RDi 9.5.1.3+.pdf
+            docs/beta-version/files/rdi8.0/iRPGUnit*.zip
+          prerelease: true
