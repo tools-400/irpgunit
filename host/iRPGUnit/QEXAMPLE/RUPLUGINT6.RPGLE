@@ -81,8 +81,7 @@ end-proc;
 // ============================================================
 dcl-proc onExitProcNoError export;
   dcl-pi *n extproc(*dclcase);
-    io_onExitWasCalled
-    ind;
+    io_onExitWasCalled ind;
   end-pi;
 
   dcl-s isAbnormalEnde ind;
@@ -98,8 +97,7 @@ end-proc;
 // ============================================================
 dcl-proc onExitProcWithError export;
   dcl-pi *n extproc(*dclcase);
-    io_onExitWasCalled
-    ind;
+    io_onExitWasCalled ind;
   end-pi;
 
   dcl-s value1 int(10);
