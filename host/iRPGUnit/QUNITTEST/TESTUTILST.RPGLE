@@ -12,8 +12,15 @@
 //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM) +
 //                        RPGPPOPT(*LVL2);
 //   >>IMPORTANT<<
+//     >>PARM<<  MODULE(&LI/JOBLOG    +
+//                      &LI/STRING    +
+//                      &LI/PGMMSG    +
+//                      );
 //     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
 //   >>END-IMPORTANT<<
+//   >>CMD<<     CMPMOD MODULE(&LI/JOBLOG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/STRING   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/PGMMSG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================

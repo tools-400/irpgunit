@@ -59,6 +59,9 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
     public static final String RUNNER_OUTCOME_FAILED = "F";
     public static final String RUNNER_OUTCOME_ERROR = "E";
 
+    private static final String TYPE_STMF = "*STMF";
+    private static final String TYPE_MEMBER = "*MBR";
+
     UnitTestSuite testResult = null;
 
     /*
@@ -311,9 +314,27 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
     private static final int HEADER_NUM_TEST_CASES_RTN = 4;
 
     /**
+     * String type of source: *MBR | *STMF.<br>
+     * Added: 15.5.2025
+     */
+    private static final int HEADER_TYPE_OF_SOURCE = 10;
+
+    /**
+     * Integer. Offset to the source stream file name.<br>
+     * Added: 15.5.2025
+     */
+    private static final int HEADER_OFFSET_SOURCE_STREAM_FILE = 4;
+
+    /**
+     * Integer. Length of the source stream file name.<br>
+     * Added: 15.5.2025
+     */
+    private static final int HEADER_LENGTH_SOURCE_STREAM_FILE = 4;
+
+    /**
      * String. Reserved.
      */
-    private static final int HEADER_RESERVED = 120;
+    private static final int HEADER_RESERVED = 102;
 
     /*
      * User space: Test case entries.
@@ -448,6 +469,24 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
      * String. Source Member: Member Name
      */
     private static final int CALL_STACK_SOURCE_MEMBER = 10;
+
+    /**
+     * String type of source: *MBR | *STMF.<br>
+     * Added: 15.5.2025
+     */
+    private static final int CALL_STACK_TYPE_OF_SOURCE = 10;
+
+    /**
+     * Integer. Offset to the source stream file name.<br>
+     * Added: 15.5.2025
+     */
+    private static final int CALL_STACK_OFFSET_SOURCE_STREAM_FILE = 4;
+
+    /**
+     * Integer. Length of the source stream file name.<br>
+     * Added: 15.5.2025
+     */
+    private static final int CALL_STACK_LENGTH_SOURCE_STREAM_FILE = 4;
 
     /**
      * Constructor of the test suite driver program.
@@ -598,7 +637,7 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
         userSpace.read(bytes, 0);
 
         int[] offset = new int[] { 0 };
-        offset[0] = offset[0] + HEADER_TOTAL_LENGTH;
+        int headerLength = extractInt(bytes, offset);
         int tVersion = extractInt(bytes, offset);
         if (tVersion != VERSION_3 && tVersion != VERSION_4) {
             throw new InvalidVersionException(tVersion);
@@ -630,12 +669,25 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             numTestCasesRtn = tNumberRuns;
         }
 
+        // Varying length portion of header (extension of V4 header, 15.5.2025)
+        String tSourceStreamFile = "";
+        if ((offset[0] + HEADER_TYPE_OF_SOURCE) < headerLength) {
+            String tTypeOfSource = extractString(bytes, offset, HEADER_TYPE_OF_SOURCE).trim();
+            if (TYPE_STMF.equals(tTypeOfSource)) {
+                int tOffsetSourceStreamFile = extractInt(bytes, offset);
+                int tLengthSourceStreamFile = extractInt(bytes, offset);
+                offset[0] = tOffsetSourceStreamFile;
+                tSourceStreamFile = extractString(bytes, offset, tLengthSourceStreamFile).trim();
+            }
+        }
+
         testResult.setRuns(tNumberRuns);
         testResult.setNumberTestCases(tNumberTestCases);
 
         testResult.getServiceProgram().setSourceFile(tSrcFile);
         testResult.getServiceProgram().setSourceLibrary(tSrcLibrary);
         testResult.getServiceProgram().setSourceMember(tSrcMember);
+        testResult.getServiceProgram().setSourceStreamFIle(tSourceStreamFile);
 
         if (tSplfName != null && tSplfName.trim().length() > 0) {
             UnitTestReportFile tSpooledFile = new UnitTestReportFile(aServiceprogram.getPath());
@@ -652,8 +704,10 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
 
         if (tVersion == VERSION_4) {
             retrieveTestCasesV4(bytes, tTotalSizeUserSpace, tOffsetTestCases, numTestCasesRtn, testResult, tVersion);
-        } else {
+        } else if (tVersion == VERSION_3) {
             retrieveTestCasesV3(bytes, tTotalSizeUserSpace, tOffsetTestCases, numTestCasesRtn, testResult, tVersion);
+        } else {
+            throw new InvalidVersionException(tVersion);
         }
 
         assert tNumberAssertions == testResult.getNumberAssertions() : "Number of assertions does not match"; //$NON-NLS-1$
@@ -943,6 +997,19 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             String tSrcFile = extractString(aUserSpaceBytes, tOffset, CALL_STACK_SOURCE_FILE);
             String tSrcLibrary = extractString(aUserSpaceBytes, tOffset, CALL_STACK_SOURCE_LIBRARY);
             String tSrcMember = extractString(aUserSpaceBytes, tOffset, CALL_STACK_SOURCE_MEMBER);
+
+            // Varying length portion of call stack entry (extension of V4
+            // entry, 15.5.2025)
+            String tSourceStreamFile = "";
+            if (tOffset[0] + tLenProcNm + HEADER_TYPE_OF_SOURCE < aUserSpaceBytes.length) {
+                String tTypeOfSource = extractString(aUserSpaceBytes, tOffset, HEADER_TYPE_OF_SOURCE).trim();
+                if (TYPE_STMF.equals(tTypeOfSource)) {
+                    int tOffsetSourceStreamFile = extractInt(aUserSpaceBytes, tOffset);
+                    int tLengthSourceStreamFile = extractInt(aUserSpaceBytes, tOffset);
+                    tOffset[0] = tOffsetSourceStreamFile;
+                    tSourceStreamFile = extractString(aUserSpaceBytes, tOffset, tLengthSourceStreamFile).trim();
+                }
+            }
 
             tOffset[0] = tOffsProcNm;
             String tProcNm = extractString(aUserSpaceBytes, tOffset, tLenProcNm);

@@ -28,6 +28,8 @@ public class I5Object extends I5AbstractObject implements IActionFilter, Compara
 
     private String sourceMember = null;
 
+    private String sourceStreamFile = null;
+
     private I5LibraryList libraryList = null;
 
     public I5Object(String name, String type, I5Library lib) {
@@ -85,6 +87,14 @@ public class I5Object extends I5AbstractObject implements IActionFilter, Compara
 
     public void setSourceMember(String sourceMember) {
         this.sourceMember = sourceMember.trim();
+    }
+
+    public String getSourceStreamFile() {
+        return sourceStreamFile;
+    }
+
+    public void setSourceStreamFIle(String sourceStreamFile) {
+        this.sourceStreamFile = sourceStreamFile.trim();
     }
 
     public I5LibraryList getExecutionLibraryList() {
