@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2024 iRPGUnit Project Team
+ * Copyright (c) 2013-2025 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 import de.tools400.rpgunit.core.Messages;
 import de.tools400.rpgunit.core.extensions.testcase.IRPGUnitTestCaseItem;
 import de.tools400.rpgunit.core.extensions.view.IRPGUnitSpooledFile;
+import de.tools400.rpgunit.core.helpers.StringHelper;
 import de.tools400.rpgunit.core.model.ibmi.I5ServiceProgram;
 
 public class UnitTestSuite
@@ -57,7 +58,7 @@ public class UnitTestSuite
     private int numberTestCases;
     private int numberSelectedTestCases;
 
-    private EditableSourceMember editableSourceMember;
+    private IEditableSource editableSource;
 
     public UnitTestSuite(I5ServiceProgram input) {
         setServiceProgram(input);
@@ -118,21 +119,33 @@ public class UnitTestSuite
         return serviceprogram;
     }
 
+    private boolean isSourceStreamFile() {
+        if (StringHelper.isNullOrEmpty(serviceprogram.getSourceStreamFile())) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     @Override
-    public boolean isSourceMemberAvailable() {
-        if (getEditableSourceMember() != null) {
+    public boolean isSourceAvailable() {
+        if (getEditableSource() != null) {
             return true;
         }
         return false;
     }
 
-    @Override
-    public EditableSourceMember getEditableSourceMember() {
-        if (editableSourceMember == null) {
-            editableSourceMember = EditableSourceMember.getSourceMember(serviceprogram.getLibrary().getConnection(), serviceprogram.getSourceFile(),
-                serviceprogram.getSourceLibrary(), serviceprogram.getSourceMember());
+    public IEditableSource getEditableSource() {
+        if (editableSource == null) {
+            if (isSourceStreamFile()) {
+                editableSource = EditableSourceStreamFile.getSourceStreamFile(serviceprogram.getLibrary().getConnection(),
+                    serviceprogram.getSourceStreamFile());
+            } else {
+                editableSource = EditableSourceMember.getSourceMember(serviceprogram.getLibrary().getConnection(), serviceprogram.getSourceFile(),
+                    serviceprogram.getSourceLibrary(), serviceprogram.getSourceMember());
+            }
         }
-        return editableSourceMember;
+        return editableSource;
     }
 
     @Override

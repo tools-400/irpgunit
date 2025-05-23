@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2024 iRPGUnit Project Team
+ * Copyright (c) 2013-2025 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 import de.tools400.rpgunit.core.Messages;
+import de.tools400.rpgunit.core.helpers.StringHelper;
 
 public class UnitTestCallStackEntry extends AbstractUnitTestObject implements IUnitTestItemWithSourceMember, IPropertySource {
 
@@ -39,8 +40,9 @@ public class UnitTestCallStackEntry extends AbstractUnitTestObject implements IU
     private String sourceFile;
     private String sourceLibrary;
     private String sourceMember;
+    private String sourceStreamFile;
 
-    private EditableSourceMember editableSourceMember;
+    private IEditableSource editableSource;
 
     public UnitTestCallStackEntry(String aProgram, String aProgramLibrary, String aModule, String aModuleLibrary, String aProcedure,
         String aStatementNumber, String aSourceFile, String aSourceLibrary, String aSourceMember) {
@@ -54,7 +56,24 @@ public class UnitTestCallStackEntry extends AbstractUnitTestObject implements IU
         sourceFile = aSourceFile.trim();
         sourceLibrary = aSourceLibrary.trim();
         sourceMember = aSourceMember.trim();
-        editableSourceMember = null;
+        sourceStreamFile = null;
+        editableSource = null;
+    }
+
+    public UnitTestCallStackEntry(String aProgram, String aProgramLibrary, String aModule, String aModuleLibrary, String aProcedure,
+        String aStatementNumber, String aSourceStreamFile) {
+        unitTestCase = null;
+        program = aProgram.trim();
+        programLibrary = aProgramLibrary.trim();
+        module = aModule.trim();
+        moduleLibrary = aModuleLibrary.trim();
+        procedure = aProcedure.trim();
+        statementNumber = aStatementNumber.trim();
+        sourceFile = null;
+        sourceLibrary = null;
+        sourceMember = null;
+        sourceStreamFile = aSourceStreamFile.trim();
+        editableSource = null;
     }
 
     public void setUnitTestCase(UnitTestCase aUnitTestCase) {
@@ -65,21 +84,34 @@ public class UnitTestCallStackEntry extends AbstractUnitTestObject implements IU
         return unitTestCase;
     }
 
+    private boolean isSourceStreamFile() {
+        if (StringHelper.isNullOrEmpty(sourceStreamFile)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     @Override
-    public boolean isSourceMemberAvailable() {
-        if (getEditableSourceMember() != null) {
+    public boolean isSourceAvailable() {
+        if (getEditableSource() != null) {
             return true;
         }
         return false;
     }
 
     @Override
-    public EditableSourceMember getEditableSourceMember() {
-        if (editableSourceMember == null) {
-            editableSourceMember = EditableSourceMember.getSourceMember(unitTestCase.getServiceprogram().getLibrary().getConnection(), sourceFile,
-                sourceLibrary, sourceMember);
+    public IEditableSource getEditableSource() {
+        if (editableSource == null) {
+            if (isSourceStreamFile()) {
+                editableSource = EditableSourceStreamFile.getSourceStreamFile(unitTestCase.getServiceprogram().getLibrary().getConnection(),
+                    sourceStreamFile);
+            } else {
+                editableSource = EditableSourceMember.getSourceMember(unitTestCase.getServiceprogram().getLibrary().getConnection(), sourceFile,
+                    sourceLibrary, sourceMember);
+            }
         }
-        return editableSourceMember;
+        return editableSource;
     }
 
     @Override

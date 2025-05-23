@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2024 iRPGUnit Project Team
+ * Copyright (c) 2013-2025 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -171,15 +171,15 @@ public class UnitTestCase extends AbstractUnitTestObject
     }
 
     @Override
-    public boolean isSourceMemberAvailable() {
-        if (getEditableSourceMember() != null) {
+    public boolean isSourceAvailable() {
+        if (getEditableSource() != null) {
             return true;
         }
         return false;
     }
 
     @Override
-    public EditableSourceMember getEditableSourceMember() {
+    public IEditableSource getEditableSource() {
 
         if (isError()) {
             /*
@@ -192,14 +192,14 @@ public class UnitTestCase extends AbstractUnitTestObject
             return null;
         }
 
-        EditableSourceMember editableSourceMember;
+        IEditableSource editableSource;
         if (callStackEntries.isEmpty()) {
-            editableSourceMember = null;
+            editableSource = null;
         } else {
-            editableSourceMember = callStackEntries.get(0).getEditableSourceMember();
+            editableSource = callStackEntries.get(0).getEditableSource();
         }
 
-        return editableSourceMember;
+        return editableSource;
     }
 
     public IRPGUnitSpooledFile getSpooledFile() {

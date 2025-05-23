@@ -281,7 +281,7 @@
       </handler>
       
       <handler
-            class="de.tools400.rpgunit.core.handler.EditRemoteSourceMemberHandler"
+            class="de.tools400.rpgunit.core.handler.EditRemoteSourceHandler"
             commandId="de.tools400.rpgunit.core.command.editremotesourcemember">
          <activeWhen>
             <with

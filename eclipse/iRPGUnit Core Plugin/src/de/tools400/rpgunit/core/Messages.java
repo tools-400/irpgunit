@@ -43,6 +43,8 @@ public class Messages extends NLS {
 
     public static String EditableSourceMember_0;
     public static String EditableSourceMember_1;
+    public static String EditableSourceStreamFile_0;
+    public static String EditableSourceStreamFile_1;
     public static String Statement_number;
     public static String Error_message;
     public static String Result;
@@ -215,7 +217,7 @@ public class Messages extends NLS {
     public static String Deleting_object_A_B_of_type_C;
 
     public static String Warning;
-    public static String Cannot_open_source_member_No_source_information_available;
+    public static String Cannot_open_source_No_source_information_available;
     public static String Source_line_number_not_found_Did_you_compile_the_source_member_with_OPTION_SRCSTMT;
     public static String User_defined_attribute_not_retrieved_See_APAR_SE55976_for_details;
     public static String Do_not_ask_me_again;
