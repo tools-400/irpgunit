@@ -41,15 +41,12 @@ end-proc;
 //  Test that on-exit is called and that
 //  isAbnormalEnd is set to *OFF.
 // ============================================================
-dcl-proc testOnExitNoError export;
+dcl-proc testAllOK_2 export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-s onExitWasCalled ind;
-
-  onExitProcNoError(onExitWasCalled);
-
-  nEqual(*on: onExitWasCalled: 'onExitWasCalled');
+  assert(*on: 'OK: 1');
+  assert(*on: 'OK: 2');
 
 end-proc;
 
@@ -57,22 +54,16 @@ end-proc;
 //  Test that on-exit is called and that
 //  isAbnormalEnd is set to *OFF.
 // ============================================================
-dcl-proc testOnExitWithError export;
+dcl-proc testError_1 export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-s onExitWasCalled ind;
-  dcl-s excpWasSeen ind;
+  dcl-s a int(10);
+  dcl-s b int(10);
 
-  monitor;
-    onExitProcWithError(onExitWasCalled);
-    excpWasSeen = *off;
-  on-error;
-    excpWasSeen = *on;
-  endmon;
+  b = a / b;
 
-  nEqual(*on: excpWasSeen: 'excpWasSeen');
-  nEqual(*on: onExitWasCalled: 'onExitWasCalled');
+  assert(*off: 'SHOULD NEVER BE REACHED');
 
 end-proc;
 

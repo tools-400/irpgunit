@@ -92,15 +92,23 @@
  /* -------------------------------------------- */
  "CMPMOD MODULE("prdLib"/EXTPRCT  ) SRCFILE("prdLib"/QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/EXTPRC   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/JOBLOG   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/OBJECT   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/SRCMBR   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/STRING   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/STMF     ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/USRSPC   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
  "CRTSRVPGM  SRVPGM("prdLib"/EXTPRCT) ",
             "MODULE("prdLib"/EXTPRCT ",
                      prdLib"/EXTPRC  ",
+                     prdLib"/JOBLOG  ",
                      prdLib"/OBJECT  ",
+                     prdLib"/PGMMSG  ",
                      prdLib"/SRCMBR  ",
+                     prdLib"/STRING  ",
+                     prdLib"/STMF    ",
                      prdLib"/USRSPC) ",
             "EXPORT(*ALL) ",
             "OPTION(*DUPPROC) ",

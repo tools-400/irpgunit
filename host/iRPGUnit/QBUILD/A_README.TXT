@@ -83,8 +83,10 @@ b) Optionally run the RPGUnit self tests:
 
 --------------------------
 
-Version 5.1.1 - 02.05.2025
+Version 5.1.0 - 23.05.2025
 --------------------------
+ * Added support for compiling test suites from stream files.
+ * Added source stream file to test result user space.
  * Use COPTION when creating RPG/Cobol SQL modules.
 
 --------------------------

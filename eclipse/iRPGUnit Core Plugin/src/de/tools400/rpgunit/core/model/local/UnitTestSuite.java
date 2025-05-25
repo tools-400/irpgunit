@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2024 iRPGUnit Project Team
+ * Copyright (c) 2013-2025 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 import de.tools400.rpgunit.core.Messages;
 import de.tools400.rpgunit.core.extensions.testcase.IRPGUnitTestCaseItem;
 import de.tools400.rpgunit.core.extensions.view.IRPGUnitSpooledFile;
+import de.tools400.rpgunit.core.helpers.StringHelper;
 import de.tools400.rpgunit.core.model.ibmi.I5ServiceProgram;
 
 public class UnitTestSuite
@@ -40,6 +41,8 @@ public class UnitTestSuite
 
     private static final String PROPERTY_ID_SERVICE_PROGRAM = "serviceProgram"; //$NON-NLS-1$
 
+    private static final String PROPERTY_ID_SIZE_TEST_RESULT = "sizeTestResult"; //$NON-NLS-1$
+
     private I5ServiceProgram serviceprogram;
     private boolean isIncompleteProcedureList = false;
     private UnitTestExecutionTimeFormatter executionTimeFormatter;
@@ -57,7 +60,8 @@ public class UnitTestSuite
     private int numberTestCases;
     private int numberSelectedTestCases;
 
-    private EditableSourceMember editableSourceMember;
+    private IEditableSource editableSource;
+    private int userSpaceSize;
 
     public UnitTestSuite(I5ServiceProgram input) {
         setServiceProgram(input);
@@ -118,21 +122,33 @@ public class UnitTestSuite
         return serviceprogram;
     }
 
+    private boolean isSourceStreamFile() {
+        if (StringHelper.isNullOrEmpty(serviceprogram.getSourceStreamFile())) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     @Override
-    public boolean isSourceMemberAvailable() {
-        if (getEditableSourceMember() != null) {
+    public boolean isSourceAvailable() {
+        if (getEditableSource() != null) {
             return true;
         }
         return false;
     }
 
-    @Override
-    public EditableSourceMember getEditableSourceMember() {
-        if (editableSourceMember == null) {
-            editableSourceMember = EditableSourceMember.getSourceMember(serviceprogram.getLibrary().getConnection(), serviceprogram.getSourceFile(),
-                serviceprogram.getSourceLibrary(), serviceprogram.getSourceMember());
+    public IEditableSource getEditableSource() {
+        if (editableSource == null) {
+            if (isSourceStreamFile()) {
+                editableSource = EditableSourceStreamFile.getSourceStreamFile(serviceprogram.getLibrary().getConnection(),
+                    serviceprogram.getSourceStreamFile());
+            } else {
+                editableSource = EditableSourceMember.getSourceMember(serviceprogram.getLibrary().getConnection(), serviceprogram.getSourceFile(),
+                    serviceprogram.getSourceLibrary(), serviceprogram.getSourceMember());
+            }
         }
-        return editableSourceMember;
+        return editableSource;
     }
 
     @Override
@@ -191,6 +207,7 @@ public class UnitTestSuite
 
         setRuns(aUnitTestSuite.getRuns());
         setNumberTestCases(aUnitTestSuite.getNumberTestCases());
+        setUserSpaceSize(aUnitTestSuite.getUserSpaceSize());
         setSpooledFile(aUnitTestSuite.getSpooledFile());
         UnitTestCase[] tNewCases = aUnitTestSuite.getUnitTestCases();
 
@@ -220,6 +237,14 @@ public class UnitTestSuite
 
     public void setNumberTestCases(int numberTestCases) {
         this.numberTestCases = numberTestCases;
+    }
+
+    public int getUserSpaceSize() {
+        return userSpaceSize;
+    }
+
+    public void setUserSpaceSize(int size) {
+        userSpaceSize = size;
     }
 
     public long getTotalExecutionTime() {
@@ -374,6 +399,7 @@ public class UnitTestSuite
         List<IPropertyDescriptor> descriptors = new ArrayList<IPropertyDescriptor>();
 
         descriptors.add(createPropertyDescriptor(PROPERTY_ID_SERVICE_PROGRAM, Messages.Test_suite, false));
+        descriptors.add(createPropertyDescriptor(PROPERTY_ID_SIZE_TEST_RESULT, Messages.Size_test_result, false));
         descriptors.add(createPropertyDescriptor(PROPERTY_ID_NUMBER_ASSERTIONS, Messages.Assertions, false));
         descriptors.add(createPropertyDescriptor(PROPERTY_ID_NUMBER_ERRORS, Messages.Errors, false));
         descriptors.add(createPropertyDescriptor(PROPERTY_ID_NUMBER_FAILURES, Messages.Failures, false));
@@ -400,6 +426,8 @@ public class UnitTestSuite
 
         if (PROPERTY_ID_SERVICE_PROGRAM.equals(id)) {
             return serviceprogram.getLibrary() + "/" + serviceprogram.getName(); //$NON-NLS-1$
+        } else if (PROPERTY_ID_SIZE_TEST_RESULT.equals(id)) {
+            return getUserSpaceSize();
         } else if (PROPERTY_ID_EXECUTION_TIME.equals(id)) {
             return executionTimeFormatter.formatExecutionTime(getTotalExecutionTime()) + " s"; //$NON-NLS-1$
         } else if (PROPERTY_ID_NUMBER_ASSERTIONS.equals(id)) {

@@ -114,9 +114,9 @@ Debugging views (DBGVIEW) - Help
 :p.
 Refer to the DBGVIEW parameter in CRTCBLMOD command help.
 :p.
-:HP2.Note::EHP2.For SQL source members, the debug view parameter is
-automatically added to parameter COMPILEOPT of command CRTSQLCBLI, if DBGVIEW
-is not already specified at COMPILEOPT.
+:HP2.Note::EHP2.For SQL source members, adding the DBGVIEW parameter
+to parameter COMPILEOPT has been discontinued starting with version
+5.1, because IBM allowed debug view *LIST starting with 7.5.
 :ehelp.
 .*
 :help name='RUCRTCBL/BNDSRVPGM' WIDTH=64.

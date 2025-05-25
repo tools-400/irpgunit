@@ -26,6 +26,7 @@ ctl-opt nomain;
 //   IMPORTS
 //----------------------------------------------------------------------
 /include qinclude,SRCMBR
+/include qinclude,STMF
 /include qinclude,TEMPLATES
 /include qinclude,USRSPC
 /include qinclude,SYSTEMAPI
@@ -83,7 +84,7 @@ end-proc;
 //  Returns the source member of a given unit test suite.
 //----------------------------------------------------------------------
 dcl-proc SrcMbr_getTestSuiteSrc export;
-  dcl-pi *N likeds(srcMbr_t);
+  dcl-pi *N likeds(srcInf_t);
     qObj   const likeds(object_t);
   end-pi;
 
@@ -100,22 +101,23 @@ end-proc;
 //  service program.
 //----------------------------------------------------------------------
 dcl-proc SrcMbr_getModSrc export;
-  dcl-pi *N        likeds(srcMbr_t);
+  dcl-pi *N        likeds(srcInf_t);
     qObj   const likeds(object_t );
     qMod   const likeds(object_t );
   end-pi;
 
   // Return Value: Source member.
-  dcl-ds qSrcMbr likeds(srcMbr_t);
+  dcl-ds qSrcInf likeds(srcInf_t) inz;
 
   dcl-s objType char(10);
   dcl-s count int(10);
 
   // QBNLSPGM and QBNLPGMI items (identical formats)
-  dcl-ds module likeds(spgl0100_t) based(pModule);
+  dcl-ds module likeds(spgl0110_t) based(pModule);
+  dcl-s stmfPath char(4096) based(pStmfPath);
   dcl-ds errorCode likeds(errorCode_t) inz(*likeds);
 
-  clear qSrcMbr;
+  clear qSrcInf;
 
   dou '1';
 
@@ -127,14 +129,14 @@ dcl-proc SrcMbr_getModSrc export;
     select;
     when (objType = TYPE_ILE_SRVPGM);
       if (qObj <> g_lastObject.qObj);
-        qbnlspgm(g_usrspc: 'SPGL0100': qObj: errorCode);
+        qbnlspgm(g_usrspc: 'SPGL0110': qObj: errorCode);
       endif;
     when (objType = TYPE_ILE_PGM);
       if (qObj <> g_lastObject.qObj);
-        qbnlpgmi(g_usrspc: 'PGML0100': qObj: errorCode);
+        qbnlpgmi(g_usrspc: 'PGML0110': qObj: errorCode);
       endif;
     when (objType = TYPE_OPM_PGM);
-      getOPMSourceMember(qObj: qSrcMbr);
+      getOPMSourceMember(qObj: qSrcInf.mbr);
       leave;
     other;
       leave;
@@ -148,11 +150,29 @@ dcl-proc SrcMbr_getModSrc export;
       else;
         pModule += g_modList.entSize;
       endif;
+
+      if (module.ofsSrcStmf > 0);
+        pStmfPath = g_pModList + module.ofsSrcStmf;
+      else;
+        pStmfPath = *null;
+      endif;
+
       if (module.mod = qMod.nm and
           (qMod.lib = '*LIBL' or qMod.lib = module.modLib));
-        qSrcMbr.file = module.srcFile;
-        qSrcMbr.lib = module.srcLib;
-        qSrcMbr.mbr = module.srcMbr;
+        if (pStmfPath <> *null);
+          qSrcInf.type = TYPE_STMF;
+          qSrcInf.mbr.file = '';
+          qSrcInf.mbr.lib = '';
+          qSrcInf.mbr.mbr = '';
+          qSrcInf.stmf = %subst(stmfPath: 1: module.lenSrcStmf);
+          qSrcInf.stmf = Stmf_resolvePath(qSrcInf.stmf);
+        else;
+          qSrcInf.type = TYPE_MEMBER;
+          qSrcInf.mbr.file = module.srcFile;
+          qSrcInf.mbr.lib = module.srcLib;
+          qSrcInf.mbr.mbr = module.srcMbr;
+          qSrcInf.stmf = '';
+        endif;
         leave;
       endif;
     enddo;
@@ -162,7 +182,7 @@ dcl-proc SrcMbr_getModSrc export;
   g_lastObject.qObj = qObj;
   g_lastObject.qMod = qMod;
 
-  return qSrcMbr;
+  return qSrcInf;
 
 end-proc;
 

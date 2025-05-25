@@ -97,6 +97,7 @@
  "CMPMOD MODULE("prdLib"/OSVERSION) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/SRCMBR   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/STMF     ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/STRING   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/USRSPC   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/RMTRUNSRV) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
@@ -121,6 +122,7 @@
                  prdLib"/RMTRUNSRV  ",
                  prdLib"/STRING     ",
                  prdLib"/SRCMBR     ",
+                 prdLib"/STMF       ",
                  prdLib"/USRSPC     ",
                  prdLib"/XMLWRITER) ",
         "ENTMOD("prdLib"/PGMRMT) ",

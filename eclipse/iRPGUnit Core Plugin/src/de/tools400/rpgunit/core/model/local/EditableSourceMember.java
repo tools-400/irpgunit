@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2016 iRPGUnit Project Team
+ * Copyright (c) 2013-2025 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ import de.tools400.rpgunit.core.Messages;
 import de.tools400.rpgunit.core.RPGUnitCorePlugin;
 import de.tools400.rpgunit.core.ui.UIUtils;
 
-public class EditableSourceMember {
+public class EditableSourceMember implements IEditableSource {
     private IBMiConnection connection;
 
     private String sourceFile;
@@ -66,6 +66,7 @@ public class EditableSourceMember {
                 UIUtils.displayError(NLS.bind(Messages.EditableSourceMember_0, toString()));
                 return;
             }
+            // Open source in EDIT mode
             tEditableMember.open(UIUtils.getShell(), false, aLineNumber);
         } catch (Exception e) {
             UIUtils.displayError(NLS.bind(Messages.EditableSourceMember_1, toString(), e.getLocalizedMessage()));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2024 iRPGUnit Project Team
+ * Copyright (c) 2013-2025 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,7 @@ import de.tools400.rpgunit.core.RPGUnitCorePlugin;
 import de.tools400.rpgunit.core.RPGUnitFactory;
 import de.tools400.rpgunit.core.extensions.testcase.UpdateTestResultContributionsHandler;
 import de.tools400.rpgunit.core.extensions.view.SelectionChangedContributionsHandler;
-import de.tools400.rpgunit.core.handler.EditRemoteSourceMemberHandler;
+import de.tools400.rpgunit.core.handler.EditRemoteSourceHandler;
 import de.tools400.rpgunit.core.model.ibmi.I5ServiceProgram;
 import de.tools400.rpgunit.core.model.local.IUnitTestItemWithSourceMember;
 import de.tools400.rpgunit.core.model.local.IUnitTestTreeItem;
@@ -509,8 +509,8 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
     private boolean isSourceMemberAvailable(Object tSelectedItem) {
         if (tSelectedItem instanceof IUnitTestItemWithSourceMember) {
             IUnitTestItemWithSourceMember unitTestItemWithSourceMember = (IUnitTestItemWithSourceMember)tSelectedItem;
-            boolean isSourceMemberAvailable = unitTestItemWithSourceMember.isSourceMemberAvailable();
-            return isSourceMemberAvailable;
+            boolean isSourceAvailable = unitTestItemWithSourceMember.isSourceAvailable();
+            return isSourceAvailable;
         }
         return false;
     }
@@ -637,6 +637,11 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
                 if (tUnitTestSuite.hasStatistics()) {
                     tText = tText + formatExecutionTime(tUnitTestSuite.getTotalExecutionTime());
                 }
+                // if (tUnitTestSuite.getUserSpaceSize() > 0) {
+                // tText = tText + " (" +
+                // Messages.bind(Messages.Size_test_result_A_bytes,
+                // tUnitTestSuite.getUserSpaceSize()) + ")";
+                // }
                 return tText;
             } else if (element instanceof UnitTestCallStackEntry) {
                 UnitTestCallStackEntry tCallStackEntry = (UnitTestCallStackEntry)element;
@@ -826,7 +831,7 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
                         MessageDialog.openError(getSite().getShell(), Messages.ERROR, message);
                     }
                 } else {
-                    EditRemoteSourceMemberHandler tHandler = new EditRemoteSourceMemberHandler();
+                    EditRemoteSourceHandler tHandler = new EditRemoteSourceHandler();
                     tHandler.editSourceMember(tSelection);
                 }
             }

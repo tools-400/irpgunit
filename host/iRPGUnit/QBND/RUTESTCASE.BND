@@ -11,7 +11,8 @@
 /*   >>CRTCMD<<  CRTSRVPGM SRVPGM(&LI/&OB);                                   */
 /*   >>IMPORTANT<<                                                            */
 /*     >>PARM<<  MODULE(&LI/ASSERT &LI/ASSERTV2 &LI/JOBLOG &LI/PGMMSG   +     */
-/*                      &LI/VERSION &LI/TESTUTILS &LI/STRING);                */
+/*                      &LI/VERSION &LI/TESTUTILS &LI/STRING +                */
+/*                      &LI/SRCMBR &LI/STMF &LI/USRSPC);                      */
 /*     >>PARM<<  EXPORT(*SRCFILE);                                            */
 /*     >>PARM<<  SRCFILE(&LI/QBND);                                           */
 /*     >>PARM<<  SRCMBR(RUTESTCASE);                                          */
