@@ -1,0 +1,245 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Preferences</title>
+</head>
+
+<body>
+<h1>Preferences</h1>
+As usual the preferences are available from the menu "Window" -> "Preferences".
+<p class="indent">
+<img src="assets/RPGUnitPreferences.png" alt="iRPGUnit Preferences">
+</p>
+
+<h3>Run order</h3>
+Specifies the order for running the test procedures.  Useful to check
+that there is no dependencies between test procedures.<p>
+The possible values are:<p>
+<table width="80%">
+<colgroup>
+ <col width="100">
+</colgroup>
+<tr><td valign="top">*API</td><td>Run test procedures in the order provided by the system API.</td></tr>
+<tr><td valign="top">*REVERSE</td><td>Run test procedures in reverse order.</td></tr>
+</table>
+<p>
+
+<h3>Library list</h3>
+Specifies the library list for executing the specified unit test.<p>
+The possible values are:<p>
+<table width="80%">
+<colgroup>
+ <col width="100">
+</colgroup>
+<tr><td valign="top">*JOBD</td><td>The initial library list part of the specified job description is used to execute the unit test suite.</td></tr>
+<tr><td valign="top">*CURRENT</td><td>The current library list is used to execute the unit test suite.</td></tr> 
+</table>
+<p>
+
+<h3>Job description</h3>
+Specifies the name of the job description that is used to set the library list, when parameter <i>'Library list'</i> is set to <i>'*JOBD'</i>.<p>
+The possible values are:<p>
+<table width="80%">
+<colgroup>
+ <col width="100">
+</colgroup>
+<tr><td valign="top">*DFT</td><td>The library of the unit test suite (service program) is searched for job description <i>'RPGUNIT'</i>.</td></tr>
+<tr><td valign="top">name</td><td>The name of the job description that is used to set the library list of the unit test suite.</td></tr> 
+</table>
+<p>
+
+<h3>Job description library</h3>
+Specifies the library that is searched for the job description.<p>
+The possible values are:<p>
+<table width="80%">
+<colgroup>
+ <col width="100">
+</colgroup>
+<tr><td valign="top">*LIBL</td><td>All libraries in the user and system portions of the job's library list are searched until the first match is found.</td></tr>
+<tr><td valign="top">name</td><td>Specify the name of the library to be searched.</td></tr> 
+</table>
+<p>
+
+<h3>Report detail</h3>
+Specifies how detailed the test run report should be.<p>
+The possible values are:<p>
+<table width="80%">
+<colgroup>
+ <col width="100">
+</colgroup>
+<tr><td valign="top">*BASIC</td><td>Full detail for failures and errors, no detail for successes.</td></tr>
+<tr><td valign="top">*ALL</td><td>Full detail in all cases.</td></tr> 
+</table>
+<p>
+
+<h3>Create report</h3>
+Specifies whether a report is created.<p>
+The possible values are:<p>
+<table width="80%">
+<colgroup>
+ <col width="100">
+</colgroup>
+<tr><td valign="top">*NONE</td><td>Does not create any report.</td></tr>
+<tr><td valign="top">*ERROR</td><td>Creates a report in case of failures and errors, only.</td></tr> 
+<tr><td valign="top">*ALLWAYS</td><td>Creates a report regardless of the test result.</td></tr> 
+</table>
+<p>
+
+<h3>Reclaim resources</h3>
+Specifies when to reclaim resources. Resources, such as open files, can  
+be reclaimed after each test case or at the end of the test suite.<p>
+This option is useful if the test suite calls OPM programs, which do not set the *INLR indicator.<p>
+The possible values are:<p>
+<table width="80%">
+<colgroup>
+ <col width="100">
+</colgroup>
+<tr><td valign="top">*NO</td><td>Resources are not reclaimed.</td></tr>
+<tr><td valign="top">*ALLWAYS</td><td>Resources are reclaimed after each test case and at the end of the test suite.</td></tr> 
+<tr><td valign="top">*ONCE</td><td>Resources are reclaimed at the end of the test suite.</td></tr> 
+</table>
+<p>
+
+<h3>XML stream file</h3>
+Specifies the path of an XML stream file that contains the result of the unit test. The 
+XML file is created with a format, which can be parsed by a Jenkins build server. Existing 
+files are replaced.
+<p>
+You can use the following replacement variables to produce
+the name of the XML stream file on the fly:
+<p>
+<u>Command parameters</u>
+<p>
+<table width="80%">
+<colgroup>
+<col width="100">
+</colgroup>
+<tr><td valign="top">&lt;TESTPGM&gt;</td><td>Name of the test test suite.</td></tr>
+<tr><td valign="top">&lt;TESTLIB&gt;</td><td>Name of the library where the test suite is stored.</td></tr>
+</table>
+<p>
+<u>Function strftime()</u>
+<p>
+<table width="80%">
+<colgroup>
+<col width="100">
+</colgroup>
+<tr><td valign="top">%C</td><td>Century number [00-99], the year divided by 100.</td></tr>
+<tr><td valign="top">%d</td><td>Day of the month [01-31].</td></tr>
+<tr><td valign="top">%F</td><td>ISO Date Format, same as %Y-%m-%d.</td></tr>
+<tr><td valign="top">%g</td><td>2 digit year portion of ISO week date [00,99].</td></tr>
+<tr><td valign="top">%H</td><td>Hour in 24-hour format [00-23].</td></tr>
+<tr><td valign="top">%I</td><td>Hour in 12-hour format [01-12].</td></tr>
+<tr><td valign="top">%j</td><td>Day of the year [001-366].</td></tr>
+<tr><td valign="top">%m</td><td>Month [01-12].</td></tr>
+<tr><td valign="top">%M</td><td>Minute [00-59].</td></tr>
+<tr><td valign="top">%p</td><td>AM or PM string.</td></tr>
+<tr><td valign="top">%R</td><td>24-hour time format without seconds, same as %H.%M.</td></tr>
+<tr><td valign="top">%S</td><td>Second [00-61].</td></tr>
+<tr><td valign="top">%T</td><td>24-hour time format with seconds, same as %H.%M.%S.</td></tr>
+<tr><td valign="top">%u</td><td>Weekday [1,7]. Monday is 1 and Sunday is 7.</td></tr>
+<tr><td valign="top">%U</td><td>Week number of the year [00-53]. Sunday is first day of week.</td></tr>
+<tr><td valign="top">%V</td><td>ISO week number of the year [01-53]. Monday is first day of week.</td></tr>
+<tr><td valign="top">%w</td><td>Weekday [0,6], Sunday is 0.</td></tr>
+<tr><td valign="top">%W</td><td>Week number of the year [00-53]. Monday is first day of week.</td></tr>
+<tr><td valign="top">%y</td><td>2 digit year [00,99].</td></tr>
+</table>
+<p>
+The table above shows some but not all variables of the strftime()
+function. Some replacement variables, which are not listed here, are
+not allowed, because their values may produce an invalid path.
+
+<h3>Disable report</h3>
+Temporary disables the report, provided that <i>'Create report'</i> does not specify <i>'*NONE'</i>. This checkbox
+relates to button <i>'Disable iRPGUnit report'</i> of the <i>'iRPGUnit'</i> view.<p>
+<p>
+
+<h3>Disable XML stream file</h3>
+Temporary disables writing the XML stream file.
+<p>
+
+<h3>Product library</h3>
+Specifies the name of the RPGUnit product library on the host. This value is used to locate program 'RUPGMRMT'
+which is called from the plug-in to execute the unit tests.<p>
+<table width="80%">
+<colgroup>
+ <col width="100">
+</colgroup>
+  <tr>
+	<td valign="top"><img src="assets/UploadButton.png" alt="Upload button"></td>
+	<td>&nbsp;</td>
+    <td>Press the upload button to open a dialog for uploading the RPGUnit library to your host system using 
+        FTP file transfer:<p></td>
+  </tr>
+  <tr>
+  	<td colspan="2">&nbsp;</td>
+  	<td><img src="assets/RPGUnitUploadDialog.png" alt="Upload dialog"></td>
+  </tr>
+  <tr>
+  	<td colspan="2">&nbsp;<p></td>
+  	<td>Press the [Install] button to open a sign-on dialog and to start the upload process.</td>
+  </tr> 
+</table>
+<p>
+
+
+<a id="#check_test_suite_service_program" />
+<h3>Check test suite service program</h3>
+Specifies whether or not to validate the test suite service program.<p>
+The possible values are:<p>
+<table width="80%">
+<colgroup>
+ <col width="100">
+</colgroup>
+<tr><td valign="top">*NONE</td><td>Service programs are not validated when selected for execution.</td></tr>
+<tr><td valign="top">*TEXT</td><td>The object description of the selected service program must start with <i>'RPGUnit'</i> or <i>iRPGUnit</i> (case insensitive).</td></tr> 
+<tr><td valign="top">*ATTRIBUTE</td><td>The user defined attribute of the service program is checked for <i>'RPGUnit'</i> or <i>iRPGUnit</i> (case insensitive). 
+                                        That is the preferred option, but does not work for all RDi versions. 
+                                        See APAR SE55976 for details.</td></tr> 
+</table>
+<p>
+The user defined attribute of the test suite service program is automatically set to <i>'RPGUNIT'</i>, when the service
+program is created by <code>RUCRTRPG</code>.
+<p>
+
+<h3>Enforce new connection</h3>
+Specifies whether or not to use a new connection when running a unit test. Check the checkbox when you want 
+to use service entry points to debug your unit tests. Otherwise the application freezes when the unit test reaches 
+the service entry point.<p>
+<p>
+
+<h3>Position editor to line of assertion</h3>
+Specifies whether or not the LPEX editor positions the source member to the line of the assertion when the source 
+member is loaded into the editor from the iRPGUnit view. In order to make this option work properly, you need to add 
+option <code>*SRCSTMT</code> to the RPG source member.
+<p>
+
+<h3>Capture job log</h3>
+Specifies what messages of the job log are captured and shown in the <i>Command Log</i> view.
+<p>
+<table>
+<tr><td valign="top" nowrap>Do not capture anything</td><td valign="top">-</td><td valign="top">No messages are captured from the job log.</td></tr>
+<tr><td valign="top" nowrap>Capture escape messages on unexpected errors</td><td valign="top">-</td><td valign="top">Escape messages are captured from the job log, when a test case ended with errors.</td></tr>
+<tr><td valign="top" nowrap>Capture all messages on unexpected errors</td><td valign="top">-</td><td valign="top">All messages of the job log are captured, when a test case ended with errors.</td></tr>
+<tr><td valign="top" nowrap>Capture all job log entries</td><td valign="top">-</td><td valign="top">All messages of the job log are captured at any time.</td></tr>
+<tr><td valign="top" nowrap>Format job log entries</td><td valign="top">-</td><td valign="top">Specifies whether or not the job log entries are formatted when appended to the <i>Commands Log</i> view.</td></tr>
+</table>
+<p>
+
+<h3>Format job log entries</h3>
+Specifies whether or not the job log entries are formatted when appended to the <i>Command Log</i> view.<p>
+<p>
+
+<h3>Show result view</h3>
+Specifies whether the iRPGUnit result view is automatically displayed at the end of a unit test.
+<p>
+
+<h3>Reset warning messages</h3>
+Resets all warning messages that have been answered with "Do not ask me again." so that these messages pop up again.
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

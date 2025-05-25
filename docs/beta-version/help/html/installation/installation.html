@@ -1,0 +1,227 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Installation</title>
+</head>
+
+<body>
+<h1>Installation</h1>
+<p>
+Installing the iRPGUnit plug-in requires three steps:
+<p>
+<ul>
+<li><a href="#installing_the_plugin">Installing the iRPGUnit Plug-in</a></li>
+<li><a href="#installing_the_library">Installing the RPGUnit Library</a></li>
+</ul>
+Optional:
+<ul>
+<li><a href="#compiling_the_library">Compiling the RPGUnit Library</a></li>
+<li><a href="#renaming_the_library">Renaming the RPGUnit Library</a></li>
+</ul>
+<p>
+<a id="#installing_the_plugin" />
+<h2>Installing the iRPGUnit Plug-in</h2>
+<p>
+<h3>What Should I Install?</h3>
+<p>
+Everything of category <i>iRPGUnit for IBM i</i> belongs to the base components of
+iRPGUnit and must or at least should be installed:
+<p>
+<ul>
+<li>iRPGUnit Core (required)</li>
+<li>iRPGUnit Help (recommended)</li>
+</ul>
+<p>
+Features of category <i>iRPGUnit for IBM i (optional features)</i> are optional and 
+can be installed depending on your needs:
+<p>
+<ul>
+<li>iRPGUnit Spooled File Viewer Feature (recommended, if iSphere is missing)</li>
+</ul>
+<p>
+Features of category <i>iRPGUnit for IBM i (optional integration features)</i> are optional
+and can be installed depending on your needs:
+<p>
+<ul>
+<li>iRPGUnit iSphere Integration (optional)</li>
+<li>iRPGUnit CMOne Integration (optional)</li>
+</ul>
+<p>
+<h3>Using Eclipse Marketplace</h3>
+<p>
+From the main menu, select "Help > Eclipse Marketplace..." to enter the marketplace.
+Search for 'iRPGUnit' and click the [Install] button:
+<p class="indent">
+<img class="noborder" src="./assets/eclipseMarketplace.png">
+<p>
+Then select the options you want to install, press the [Confirm] button and follow the
+instructions given on the following pages.
+<p>
+<h3>Using the update site</h3>
+<p>
+The URL of the iRPGUnit plug-in update site is:
+<p class="indent"><a href="https://tools-400.github.io/irpgunit/update-site/eclipse/rdi8.0/" target="_blank">
+https://tools-400.github.io/irpgunit/update-site/eclipse/rdi8.0/</a>
+<p>
+Open the Update site with your preferred Internet browser.
+<p>
+From the main menu, select "Help > Install New Software..." to enter the "Install" dialog.
+<p>
+Then Drag-and-Drop the URL of the update site from your browser into the "Work with:" field:
+<p class="indent">
+<img src="./assets/rdi_InstallDragDrop.png" alt="RDi: Install new software">
+<p>
+Then select the options you want to install, press the [Next] button and follow the instructions given on the following pages.
+<p>
+<h3>Using a Local Update Directory</h3>
+<p>
+Go to the iRPGUnit '<a href="https://tools-400.github.io/irpgunit/files/" target="_blank">GitHub Files</a>' page.
+<p>
+Then follow these steps to create your local update site:
+<p>
+<ul>
+<li>Download the zip file to a directory of your choice.</li>
+<li>Unpack the zip file to a directory of your choice. This directory will be your local update site.</li>
+<li>From the main menu, select "Help > Install New Software..." to enter the "Install" dialog.</li>
+<li>Press the [Add...] button to add your directory to the list of <i>Available Software Sites</i>.</li>
+<li>Use the [Local...] button to select your directory.</li>
+</ul>
+<p>
+Select the options you want to install, press the [Next] button and follow the instructions given on the following pages.
+<p>
+<h3>Using a Local Update Archive</h3>
+<p>
+Go to the iRPGUnit '<a href="https://tools-400.github.io/irpgunit/files/" target="_blank">GitHub Files</a>' page.
+<p>
+Then follow these steps to create your local update site:
+<p>
+<ul>
+<li>Download the zip file to a directory of your choice. This zip file will be your local update archive.</li>
+<li>Consider removing the version number from the name of the zip file to keep the name stable for further updates.</li>
+<li>From the main menu, select "Help > Install New Software..." to enter the "Install" dialog.</li>
+<li>Press the [Add...] button to add the zip file to the list of <i>Available Software Sites</i>.</li>
+<li>Use the [Archive...] button to select the zip file.</li>
+</ul>
+<p>
+Select the options you want to install, press the [Next] button and follow the instructions given on the following pages.
+<p>
+<a id="#installing_the_library" />
+<h2>Installing the RPGUnit Library</h2>
+<p>
+There are several options to install the library. Your favourite should be the
+the integrated <a href="#embedded_install_dialog">Installation Wizard</a>.
+<p>
+<a id="#embedded_install_dialog" />
+<h3>Using the Embedded Installation Wizard</h3>
+<p>
+The most easiest way to install the library is to upload it from the preference page of the iRPGUnit 
+plug-in. However that requires that you are allowed to start a FTP connection to your host.
+<p>
+Take these steps to transfer the library:
+<ul>
+<li>Goto 'Window -> Preferences'.</li>
+<li>Filter for 'iRPGUnit'.</li>
+<li>Click the upload button next to option 'Runtime: Product library'.</li>
+<li>Select a connection.</li>
+<li>Check the FTP port number. The default is 21.</li>
+<li>Check the library name. The default is 'RPGUNIT'.</li>
+<li>Check the ASP device name. The default is '*DEFAULT'.</li>
+<li>Click the [Install] button.</li>
+</ul>
+<p>
+<table class="notice">
+<tr><td>You do not necessarily need to compile the library unless you want to run
+        the RPGUnit self-test or in case you did not use the default library name <i>RPGUNIT</i>.</td></tr>
+</table>
+<p>
+<h3>Transfer Save File With 'upload_savf.cmd'</h3>
+<p>
+Download the zipped update site from the iRPGUnit '<a href="https://tools-400.github.io/irpgunit/files/" target="_blank">GitHub Files</a>' page, e.g. <i>iRPGUnit for RDi 9.5.1.3+ (v4.0.0.r Update Site).zip</i>.
+<p>
+Unzip <i>upload_savf.cmd</i> from sub-folder <i>Server</i> to an empty folder on your PC.
+<p>
+Unzip <i>RPGUNIT.SAVF</i> from sub-folder <i>Server</i> to the same folder on your PC.
+<p>
+Run <i>upload_savf.cmd</i> with the following parameters:
+<p>
+<pre class="indent">
+  upload_savf.cmd hostName userName password
+</pre>
+Calling <i>upload_savf.cmd</i> without parameters displays usage instructions.
+<p>
+Go ahead with <a href="#compiling_the_library">Compiling the RPGUnit Library</a>.
+<p>
+<h3>Transfer Save File by Hand</h3>
+<p>
+Please create an empty save file on your server before uploading the file:
+<pre class="indent">
+Create save file:
+  CRTSAVF FILE(QGPL/RPGUNIT)
+</pre>
+Now use FTP to transfer the save file to your server:
+<pre class="indent">
+Open a DOS box:
+  XP, Win7: Start -> Execute -> cmd.exe
+
+Start an FTP session to your server:
+  FTP your.server.com
+
+Transfer save file:
+  binary
+  put RPGUnit_v* QGPL/RPGUNIT
+  
+Terminate FTP session:
+  quit
+</pre> 
+<p>
+Go ahead with <a href="#compiling_the_library">Compiling the RPGUnit Library</a>.
+<p>
+<a id="#compiling_the_library" />
+<h3>Compiling the RPGUnit Library</h3>
+<p>
+Logon to your server, restore library <code>RPGUNIT</code> from the save  
+file and add the library to your library list:
+<pre class="indent">
+  RSTLIB SAVLIB(RPGUNIT) DEV(*SAVF) SAVF(QGPL/RPGUNIT)
+  ADDLIBLE LIB(RPGUNIT)
+</pre>
+Execute the Rexx install script <code>A_INSTALL</code> to create the 
+RPGUnit objects:
+<pre class="indent">
+  STRREXPRC SRCMBR(A_INSTALL) SRCFILE(QBUILD) PARM('install')
+</pre>
+<p>
+Use the following command if you used a different library name, e.g. <i>RPGUNIT3</i>:
+<pre class="indent">
+  STRREXPRC SRCMBR(A_INSTALL) SRCFILE(QBUILD) PARM('install RPGUNIT3')
+</pre>
+<p>
+By default the iRPGUnit objects are compiled without debug data. Add parameter <i>list</i>
+if you want to compile the objects with debug data:
+<pre class="indent">
+  STRREXPRC SRCMBR(A_INSTALL) SRCFILE(QBUILD) PARM('install RPGUNIT list')
+</pre>
+<p>
+Finished.
+<p>
+<table class="notice">
+<tr><td>Do not forget to add library <b>RPGUNIT</b> to the library list of your Remote Connection or 
+        change the product library from *LIBL to the actual library on the iRPGUnit preference page.</td></tr>
+</table>
+<p>
+<a id="#renaming_the_library" />
+<h3>Renaming the RPGUnit Library</h3>
+<p>
+Starting with version 4 you can use the <i>UPDLIB</i> command to update the references between the
+RPGUnit objects after renaming the library.
+<pre class="indent">
+  UPDLIB LIB(libName)
+</pre>
+<p>
+Then the library does not necessarily have to be recompiled.
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

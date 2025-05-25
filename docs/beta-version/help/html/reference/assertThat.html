@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="../stylesheet.css">
+    <title>assertThat (assertThat)</title>
+</head>
+
+<body>
+<h1>assertThat</h1>
+<b>Syntax:</b>
+<p class="indent">
+<code>assertThat( 'pExpected' : 'pActual' : pMatcher [: 'message');</code>
+</p>
+<b>Description:</b>
+<p class="indent">
+Asserts that the data addressed by 'pExpected' and 'pActual' satisfies the condition specified by
+procedure 'pMatcher'. The assertion fails if the matcher returns <code>*off</code>.
+</p>
+<p class="indent">
+This asssertion can be used for comparing very large string values or any other types of complex
+data, such as <b>XML</b> or <b>Json</b>.
+</p>
+<b>Return value:</b>
+<p class="indent">
+void
+</p>
+<b>Example 1 (string):</b>
+<p>
+<code><pre class="indent">
+expected = 'Donald Duck';
+actual = 'Dagobert Duck';
+assertThat( %addr(expected) :
+            %addr(actual) :
+            %paddr(matcherProcedure));
+</pre></code>
+<p class="indent">
+In the example above, the matcher procedure should return <code>*off</code>, because
+obviously 'Donald Duck' does not match 'Dagobert Duck'.
+</p>
+<b>Example 2 (data structure):</b>
+<p>
+<code><pre class="indent">
+dcl-ds data_t qualified template;
+  type    char(10);
+  seqNbr  int(10);
+  itemNbr char(10);
+end-ds;
+
+dcl-ds expected likeds(data_t) inz;
+dcl-ds actual likeds(data_t) inz;
+
+dcl-pr matcher ind;
+  expected   pointer const;
+  actual     pointer const;
+  message    like(msgText_t) options(*nopass);
+end-pr;
+
+expected.type = '*ITEM';
+expected.seqNbr = 1;
+
+actual.type = '*ITEM';
+actual.seqNbr = 2;
+
+assertThat( %addr(expected) :
+            %addr(actual) :
+            %paddr(matcher));
+
+// -------------------------------------------------------
+//  Procedure for comparing 'expected'with 'actual'.
+// -------------------------------------------------------
+dcl-proc matcher export;
+  dcl-pi *n ind;
+    expected   pointer const;
+    actual     pointer const;
+    message    like(msgText_t) options(*nopass);
+  end-pi;
+
+  dcl-ds expectedData likeds(data_t) based(expected);
+  dcl-ds actualData likeds(data_t) based(actual);
+
+  if (expectedData.type = actualData.type and 
+      expectedData.seqNbr = actualData.seqNbr and
+      expectedData.itemNbr = actualData.itemNbr);
+    return *on;
+  else;
+    return *off;
+  endif;
+
+end-proc;
+</pre></code>
+<p class="indent">
+In the example above, the matcher must compare the data structures and return <code>*on</code>
+or <code>*off</code> depending on the result. Most likely it returns <code>*off</code>, because
+neither the 'type' nor the 'seqNbr' do match.
+</p>
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
