@@ -65,6 +65,9 @@ dcl-s stmf_t varchar(1024) template;
 dcl-s stmf_fl_t char(1024) template;
 dcl-s yesno_t char(1) template;
 
+dcl-c TYPE_STMF '*STMF';
+dcl-c TYPE_MEMBER '*MBR';
+
 dcl-c MAX_NUM_LIB 250;
 
 // 'Modul created in' message IDs
@@ -247,6 +250,13 @@ dcl-ds srcMbr_t qualified template;
   file   char(10);
   lib    char(10);
   mbr    char(10);
+end-ds;
+
+// Source information of a module
+dcl-ds srcInf_t qualified template;
+  type   char(10); // one of TYPE_STMF | TYPE_MEMBER
+  mbr    likeds(srcMbr_t);
+  stmf   like(stmf_t);
 end-ds;
 
 dcl-c MAX_CALL_STK_SIZE 64;

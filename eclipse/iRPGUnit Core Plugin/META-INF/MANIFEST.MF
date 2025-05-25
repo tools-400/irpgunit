@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iRPGUnit Core (required)
 Bundle-SymbolicName: de.tools400.rpgunit.core;singleton:=true
-Bundle-Version: 5.1.0.b003
+Bundle-Version: 5.1.0.b004
 Bundle-Activator: de.tools400.rpgunit.core.RPGUnitCorePlugin
 Bundle-Vendor: iRPGUnit Project Team
 Require-Bundle: org.eclipse.ui,
@@ -16,7 +16,11 @@ Require-Bundle: org.eclipse.ui,
  com.ibm.etools.iseries.services.qsys,
  com.ibm.etools.iseries.subsystems.qsys,
  com.ibm.etools.iseries.edit,
- com.ibm.etools.iseries.rse.ui
+ com.ibm.etools.iseries.rse.ui,
+ org.eclipse.rse.files.ui,
+ com.ibm.etools.iseries.subsystems.ifs,
+ org.eclipse.rse.subsystems.files.core,
+ com.ibm.etools.iseries.connectorservice
 Bundle-ActivationPolicy: lazy
 Export-Package: de.tools400.rpgunit.core.extensions.preferences,
  de.tools400.rpgunit.core.extensions.testcase,

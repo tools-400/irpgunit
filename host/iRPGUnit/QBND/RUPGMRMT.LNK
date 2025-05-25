@@ -11,6 +11,7 @@
 /*   >>CRTCMD<<  CRTPGM PGM(&LI/&OB);                                         */
 /*   >>IMPORTANT<<                                                            */
 /*     >>PARM<<  MODULE(&LI/PGMRMT    +                                       */
+/*                      &LI/JOBLOG    +                                       */
 /*                      &LI/CALLPRC   +                                       */
 /*                      &LI/CMDRUN    +                                       */
 /*                      &LI/CMDRUNLOG +                                       */
@@ -19,11 +20,13 @@
 /*                      &LI/CMDRUNV   +                                       */
 /*                      &LI/EXTPRC    +                                       */
 /*                      &LI/EXTTST    +                                       */
+/*                      &LI/OBJECT    +                                       */
 /*                      &LI/LIBL      +                                       */
 /*                      &LI/LLIST     +                                       */
 /*                      &LI/OSVERSION +                                       */
 /*                      &LI/PGMMSG    +                                       */
 /*                      &LI/SRCMBR    +                                       */
+/*                      &LI/STMF      +                                       */
 /*                      &LI/STRING    +                                       */
 /*                      &LI/USRSPC    +                                       */
 /*                      &LI/RMTRUNSRV +                                       */

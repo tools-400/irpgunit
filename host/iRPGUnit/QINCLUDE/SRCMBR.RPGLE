@@ -18,11 +18,11 @@
 dcl-pr SrcMbr_initialize extproc('SRCMBR_SrcMbr_initialize');
 end-pr;
 
-dcl-pr SrcMbr_getTestSuiteSrc likeds(srcMbr_t) extproc('SRCMBR_SrcMbr_getTestSuiteSrc');
+dcl-pr SrcMbr_getTestSuiteSrc likeds(srcInf_t) extproc('SRCMBR_SrcMbr_getTestSuiteSrc');
   object          const  likeds(object_t);
 end-pr;
 
-dcl-pr SrcMbr_getModSrc likeds(srcMbr_t) extproc('SRCMBR_SrcMbr_getModSrc');
+dcl-pr SrcMbr_getModSrc likeds(srcInf_t) extproc('SRCMBR_SrcMbr_getModSrc');
   object          const  likeds(object_t);
   module          const  likeds(object_t);
 end-pr;

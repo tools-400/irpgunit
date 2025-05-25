@@ -11,9 +11,12 @@
 /*   >>CRTCMD<<  CRTPGM PGM(&LI/&OB);                                         */
 /*   >>IMPORTANT<<                                                            */
 /*     >>PARM<<  MODULE(&LI/CRTTST    +                                       */
+/*                      &LI/JOBLOG    +                                       */
+/*                      &LI/LSTSPLF   +                                       */
 /*                      &LI/OBJECT    +                                       */
 /*                      &LI/PGMMSG    +                                       */
 /*                      &LI/SRCMBR    +                                       */
+/*                      &LI/STMF      +                                       */
 /*                      &LI/STRING    +                                       */
 /*                      &LI/TAGTST    +                                       */
 /*                      &LI/USRSPC    +                                       */
