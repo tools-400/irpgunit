@@ -110,7 +110,7 @@ dcl-proc crtTst export;
   dcl-s localSrcStmf like(srcStmf);
   dcl-s localSrcMbr like(srcStmf);
   dcl-ds st_stat likeds(st_stat_t) inz;
-  dcl-s cvtCcsid like(cvtCcsid_t);
+  dcl-s srcCcsid like(cvtCcsid_t);
   dcl-s rc int(10);
 
   dcl-s isError ind;
@@ -132,7 +132,7 @@ dcl-proc crtTst export;
       sndEscapeMsgAboveCtlBdy('Stream file not found: ' + localSrcStmf);
     endif;
 
-    cvtCcsid = st_stat.ccsid;
+    srcCcsid = st_stat.ccsid;
 
     // Validate we have a source member type
     srcType = uCase(getStmfType(localSrcStmf));
@@ -185,7 +185,7 @@ dcl-proc crtTst export;
          'Source member ' + %trim(localSrcMbr) + ' not found.');
     endif;
 
-    cvtCcsid = st_stat.ccsid;
+    srcCcsid = st_stat.ccsid;
 
     // Ensure we have a valid EVFEVENT file member name for RDi
     if (srcMbrRslv = '*TSTPGM');
@@ -247,7 +247,7 @@ dcl-proc crtTst export;
       addModule( modules : testPgm : *on); // Add to position #1.
       // QDEVTOOLS/QLNCMSG RNS9305 - Module &1 placed in library &2.
       crtRpgMod(testPgm: qsrcfile: srcMbrRslv: localSrcStmf: coption: dbgview:
-                 prpgppopt: poption: compileopt: targetRls: define: incDir: tgtCcsid: cvtCcsid);
+                 pRpgPpOpt: poption: compileopt: targetRls: define: incDir: tgtCcsid: srcCcsid);
       modulescreated = getCreatedModulesFromJobLog(
                          MOD_CRT_RPG : startcompiletime );
       addModules( modules : modulescreated );
@@ -255,7 +255,7 @@ dcl-proc crtTst export;
       // There is no test case module to add for Cobol ==> See: *PGMID
       // QDEVTOOLS/QLNCMSG LNC0899 - Module &1 placed in library &2.
       crtCblMod(testPgm: qsrcfile: srcMbrRslv: localSrcStmf: coption: dbgview:
-                 poption: compileopt: targetRls: define: incDir: tgtCcsid: cvtCcsid);
+                 poption: compileopt: targetRls: define: incDir: tgtCcsid: srcCcsid);
       modulescreated = getCreatedModulesFromJobLog(
                          MOD_CRT_CBL : startcompiletime );
       addModules( modules : modulescreated );
@@ -498,7 +498,7 @@ dcl-proc crtRpgMod;
     define          const likeds(defines_t);
     incDir          likeds(incDir_t) const;
     tgtCcsid        like(tgtCcsid_t) const;
-    cvtCcsid        like(cvtCcsid_t) const;
+    srcCcsid        like(cvtCcsid_t) const;
   end-pi;
 
   // A command to be executed.
@@ -506,7 +506,7 @@ dcl-proc crtRpgMod;
 
   cmd = getCrtRpgModCmd(testpgm: srcFile: srcMbr: srcStmf: coption: dbgview:
                          prpgppopt: poption: compileopt: targetrls:
-                         define: incDir: tgtCcsid: cvtCcsid);
+                         define: incDir: tgtCcsid: srcCcsid);
   sndCmdToJobLog(cmd);
   qcmdexc(cmd: %len(cmd));
 
@@ -614,7 +614,7 @@ dcl-proc crtCblMod;
     define          likeds(defines_t) const;
     incDir          likeds(incDir_t) const;
     tgtCcsid        like(tgtCcsid_t) const;
-    cvtCcsid        like(cvtCcsid_t) const;
+    srcCcsid        like(cvtCcsid_t) const;
   end-pi;
 
   // A command to be executed.
@@ -623,7 +623,7 @@ dcl-proc crtCblMod;
 
   cmd = getCrtCblModCmd(testpgm: srcFile: srcMbr: srcStmf: coption: dbgview:
                         poption: compileopt: targetrls:
-                        define: incDir: tgtCcsid: cvtCcsid);
+                        define: incDir: tgtCcsid: srcCcsid);
   sndInfoMsg(cmd);
   qcmdexc(cmd: %len(cmd));
 
@@ -819,14 +819,14 @@ dcl-proc getCrtRpgModCmd export;
     srcStmf         like(ifsStmf_t) const;
     cOption         likeds(options_t)const;
     dbgView         like(dbgView_t)const;
-    prpgppopt       like(rpgPpOpt_t)const;
+    pRpgPpOpt       like(rpgPpOpt_t)const;
     pOptions        likeds(options_t)const;
     compileOpt      like(compileOpt_t)const;
     targetRls       like(targetRelease_t)const;
     define          likeds(defines_t)const;
     incDir          likeds(incDir_t) const;
     tgtCcsid        like(tgtCcsid_t) const;
-    cvtCcsid        like(cvtCcsid_t) const;
+    srcCcsid        like(cvtCcsid_t) const;
   end-pi;
 
   // Command string accumulator.
@@ -872,10 +872,24 @@ dcl-proc getCrtRpgModCmd export;
     cmd += serializeValue('OBJTYPE': '*MODULE');
     cmd += serializeValue( 'TGTRLS' : targetRls );
     cmd += serializeValue( 'DBGVIEW' : dbgView);
-    cmd += serializeCvtCcsid(tgtCcsid: cvtCcsid);
 
-    if (prpgppopt <> '*DEFAULT');
-      cmd += serializeValue( 'RPGPPOPT' : prpgppopt);
+    if (isStmf(srcStmf));
+      // Check, if parameter CVTCCSID is present (release level/PTF status)
+      if (haveCvtCcsidParam());
+        cmd += serializeCvtCcsid(tgtCcsid: srcCcsid);
+      else;
+        if (srcCcsid = 1208);
+          sndEscapeMsgAboveCtlBdy(
+            'Stream file with CCSID 1208 cannot be compiled, +
+             because command CRTSQLRPGI does not support +
+             parameter CVTCCSID. Install missing PTFs and +
+             try again.');
+        endif;
+      endif;
+    endif;
+
+    if (pRpgPpOpt <> '*DEFAULT');
+      cmd += serializeValue( 'RPGPPOPT' : pRpgPpOpt);
     endif;
 
     if compileOpt <> '';
@@ -883,9 +897,9 @@ dcl-proc getCrtRpgModCmd export;
       if (%scan( PARM_DEFINE + '(' : uCase( compileOpt )) = 0);
         dbgCompileOpt += serializeDefines(define);
       endif;
-      if (%scan( PARM_TGTCCSID + '(' : uCase( compileOpt )) = 0);
-        dbgCompileOpt += serializeTgtCcsid(tgtCcsid);
-      endif;
+      // if (%scan( PARM_TGTCCSID + '(' : uCase( compileOpt )) = 0);
+      //   dbgCompileOpt += serializeTgtCcsid(tgtCcsid);
+      // endif;
       if (%scan( PARM_INCDIR + '(' : uCase( compileOpt )) = 0);
         dbgCompileOpt += serializeIncDir(incDir);
       endif;
@@ -894,7 +908,7 @@ dcl-proc getCrtRpgModCmd export;
       endif;
     else;
       dbgCompileOpt = serializeDefines(define);
-      dbgCompileOpt += serializeTgtCcsid(tgtCcsid);
+      // dbgCompileOpt += serializeTgtCcsid(tgtCcsid);
       dbgCompileOpt += serializeIncDir(incDir);
       dbgCompileOpt += serializeOptions( 'OPTION' : cOption );
     endif;
@@ -927,7 +941,7 @@ dcl-proc getCrtCblModCmd export;
     define          const likeds(defines_t);
     incDir          likeds(incDir_t) const;
     tgtCcsid        like(tgtCcsid_t) const;
-    cvtCcsid        like(cvtCcsid_t) const;
+    srcCcsid        like(cvtCcsid_t) const;
   end-pi;
 
   // Command string accumulator.
@@ -973,16 +987,30 @@ dcl-proc getCrtCblModCmd export;
     cmd += serializeValue('OBJTYPE': '*MODULE');
     cmd += serializeValue( 'TGTRLS' : targetRls );
     cmd += serializeValue( 'DBGVIEW' : dbgView);
-    cmd += serializeCvtCcsid(tgtCcsid: cvtCcsid);
+
+    if (isStmf(srcStmf));
+      // Check, if parameter CVTCCSID is present (release level/PTF status)
+      if (haveCvtCcsidParam());
+        cmd += serializeCvtCcsid(tgtCcsid: srcCcsid);
+      else;
+        if (srcCcsid = 1208);
+          sndEscapeMsgAboveCtlBdy(
+            'Stream file with CCSID 1208 cannot be compiled, +
+             because command CRTSQLCBLI does not support +
+             parameter CVTCCSID. Install missing PTFs and +
+             try again.');
+        endif;
+      endif;
+    endif;
 
     if compileOpt <> '';
       dbgCompileOpt = %trim(removequotes(compileOpt)) + ' ';
       if (%scan( PARM_DEFINE + '(' : uCase( compileOpt )) = 0);
         dbgCompileOpt += serializeDefines(define);
       endif;
-      if (%scan( PARM_TGTCCSID + '(' : uCase( compileOpt )) = 0);
-        dbgCompileOpt += serializeTgtCcsid(tgtCcsid);
-      endif;
+      // if (%scan( PARM_TGTCCSID + '(' : uCase( compileOpt )) = 0);
+      //   dbgCompileOpt += serializeTgtCcsid(tgtCcsid);
+      // endif;
       if (%scan( PARM_INCDIR + '(' : uCase( compileOpt )) = 0);
         dbgCompileOpt += serializeIncDir(incDir);
       endif;
@@ -991,7 +1019,7 @@ dcl-proc getCrtCblModCmd export;
       endif;
     else;
       dbgCompileOpt = serializeDefines(define);
-      dbgCompileOpt += serializeTgtCcsid(tgtCcsid);
+      // dbgCompileOpt += serializeTgtCcsid(tgtCcsid);
       dbgCompileOpt += serializeIncDir(incDir);
       dbgCompileOpt += serializeOptions( 'OPTION' : cOption );
     endif;
@@ -1202,11 +1230,6 @@ dcl-proc serializeCvtCcsid;
     return '';
   endif;
 
-  if (not haveParameterCvtCcsid());
-    sndInfoMsg('Warning: Command CRTSQL*I lacks parameter CVTCCSID. Install PTFs.');
-    return '';
-  endif;
-
   serialized = 'CVTCCSID(';
 
   select;
@@ -1313,7 +1336,7 @@ dcl-proc serializeValue;
 end-proc;
 
 
-dcl-proc haveParameterCvtCcsid;
+dcl-proc haveCvtCcsidParam;
   dcl-pi *N ind extproc(*dclcase);
   end-pi;
 

@@ -251,13 +251,13 @@ Target CCSID (TGTCCSID) - Help
 :p.
 Specifies the CCSID that the compiler uses to read the source files.
 :p.
-:HP2.Note::EHP2.For SQL source members, the target ccsid parameter is
-automatically added to parameter COMPILEOPT of command CRTSQLCBLI, if TGTCCSID
-is not already specified at COMPILEOPT. It is also used for setting
-parameter CVTCCSID, if this parameter is available.
+:HP2.Note::EHP2.For SQL source stream files, the target ccsid parameter is
+used for setting parameter CVTCCSID of the CRTSQLCBLI command, if that
+parameter is available. The CVTCCSID parameter is required for compiling
+objects from UTF-8 (ccsid = 1208) source files.
 :p.
-Parameter CVTCCSID requires 7.5 or the following PTFs depending on the
-operating system:
+Parameter CVTCCSID requires version 7.5 or the following PTFs depending on
+the operating system:
 :p.
 :HP2.Version 7.3:EHP2.
 :LINES.

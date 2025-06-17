@@ -344,7 +344,7 @@ dcl-proc testSrcStmfSqlrpgle export;
           OBJTYPE(*MODULE) RPGPPOPT(*LVL2) +
           INCDIR(''/home/dev/dir1'') +
           CVTCCSID(*JOB) +
-          COMPILEOPT(''TGTCCSID(*JOB) INCDIR(''''/home/dev/dir1'''')'') +
+          COMPILEOPT(''INCDIR(''''/home/dev/dir1'''')'') +
           ': crtRpgModCmd);
 
   // Parameter TGTCCSID is taken from COMPILEOPT, because
@@ -869,7 +869,7 @@ dcl-proc testCOptionSqlRpgle export;
           SRCSTMF(''' + STMF_SQLRPGLE + ''') +
           OBJTYPE(*MODULE) RPGPPOPT(*LVL2) +
           CVTCCSID(*JOB) +
-          COMPILEOPT(''TGTCCSID(*JOB) OPTION(*SRCSTMT)'') +
+          COMPILEOPT(''OPTION(*SRCSTMT)'') +
           ': crtRpgModCmd);
 
   crtRpgModCmd = getCrtRpgModCmd('SYSTYPES  *CURLIB   ':
@@ -890,7 +890,7 @@ dcl-proc testCOptionSqlRpgle export;
           SRCSTMF(''' + STMF_SQLRPGLE + ''') +
           OBJTYPE(*MODULE) RPGPPOPT(*LVL2) +
           CVTCCSID(*JOB) +
-          COMPILEOPT(''DBGVIEW(*LIST) TGTCCSID(*JOB) OPTION(*SRCSTMT)'') +
+          COMPILEOPT(''DBGVIEW(*LIST) OPTION(*SRCSTMT)'') +
           ': crtRpgModCmd);
 
 end-proc;
@@ -922,7 +922,7 @@ dcl-proc testCOptionSqlCblle export;
           SRCSTMF(''' + STMF_SQLCBLLE + ''') +
           OBJTYPE(*MODULE) +
           CVTCCSID(*JOB) +
-          COMPILEOPT(''TGTCCSID(*JOB) OPTION(*NOMONOPRC)'') +
+          COMPILEOPT(''OPTION(*NOMONOPRC)'') +
           ': crtCblModCmd);
 
   crtCblModCmd = getCrtCblModCmd('SYSTYPES  *CURLIB   ':
@@ -942,7 +942,7 @@ dcl-proc testCOptionSqlCblle export;
           SRCSTMF(''' + STMF_SQLCBLLE + ''') +
           OBJTYPE(*MODULE) +
           CVTCCSID(*JOB) +
-          COMPILEOPT(''DBGVIEW(*LIST) TGTCCSID(*JOB) OPTION(*NOMONOPRC)'') +
+          COMPILEOPT(''DBGVIEW(*LIST) OPTION(*NOMONOPRC)'') +
           ': crtCblModCmd);
 
 end-proc;
@@ -971,7 +971,6 @@ dcl-proc testDbgViewSqlRpgle export;
           OBJTYPE(*MODULE) RPGPPOPT(*LVL2) +
           DBGVIEW(*LIST) +
           CVTCCSID(*JOB) +
-          COMPILEOPT(''TGTCCSID(*JOB)'') +
           ': crtRpgModCmd);
 
 end-proc;
