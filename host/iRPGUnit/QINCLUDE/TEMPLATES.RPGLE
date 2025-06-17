@@ -154,6 +154,9 @@ end-ds;
 // CRTRPGMOD TGTCCSID parameter
 dcl-s tgtCcsid_t int(10);
 
+// CRTSQL*I CVTCCSID parameter
+dcl-s cvtCcsid_t int(10);
+
 // CRTRPGMOD SRCSTMF parameter
 dcl-s ifsStmf_t varchar(4096);
 

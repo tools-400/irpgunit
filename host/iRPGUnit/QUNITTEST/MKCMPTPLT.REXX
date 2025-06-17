@@ -1,20 +1,26 @@
 /* =================================================================== */
-/*  This Rexx script compiles the RUCRTCBL command.                    */
-/*                                                                     */
+/*  iRPGUnit SelfTest - Build CMPTPLT.                                 */
+/* =================================================================== */
+/* Copyright (c) 2013-2025 iRPGUnit Project Team                       */
+/* All rights reserved. This program and the accompanying materials    */
+/* are made available under the terms of the Common Public License v1.0*/
+/* which accompanies this distribution, and is available at            */
+/* http://www.eclipse.org/legal/cpl-v10.html                           */
+/* =================================================================== */
 /*  Usage:                                                             */
 /*  a) Add the iRPGUnit library to your library list.                  */
 /*  b) Start the Rexx script with the following command:               */
-/*       STRREXPRC SRCMBR(MKCRTCBL) SRCFILE(QSRC) PARM(prdLib)         */
+/*       STRREXPRC SRCMBR(MKCRTTSTT) SRCFILE(QUNITTEST) PARM(prdLib)   */
 /*     where 'prdLib' is the library containing the RPGUnit            */
 /*     source files.                                                   */
 /*                                                                     */
 /*     Script parameters:                                              */
 /*       prdLib   - Name of the iRPGUnit product library.              */
 /*       dbgView  - The possible values are:                           */
-/*                  NONE    : Default. Compiles the obejcts without    */
-/*                            debug views.                             */
-/*                  LIST    : Generates a listing view when compiling  */
-/*                            the objects.                             */
+/*                  ALL     : Default. Generates all debug views when  */
+/*                            compiling the objects.                   */
+/*                  NONE    : Compiles the obejcts without debug       */
+/*                            views.                                   */
 /*       tgtRls   - The possible values are:                           */
 /*                  CURRENT : The objects are compiled with the        */
 /*                            release of the operating system          */
@@ -27,7 +33,7 @@
 /*   >>PRE-COMPILER<<                                                  */
 /*     >>CRTCMD<<  STRREXPRC SRCMBR(&SM) SRCFILE(&SL/&SF);             */
 /*     >>IMPORTANT<<                                                   */
-/*       >>PARM<< PARM('&LI *LIST');                                   */
+/*       >>PARM<< PARM('&LI');                                         */
 /*     >>END-IMPORTANT<<                                               */
 /*     >>EXECUTE<<                                                     */
 /*   >>END-PRE-COMPILER<<                                              */
@@ -41,7 +47,7 @@
  SIGNAL on SYNTAX
 
  /* The utility that is installed */
- UTILITY = 'RUCRTCBL'
+ UTILITY = 'CMPTPLT'
 
  PARSE ARG prdLib dbgView tgtrls
 
@@ -53,19 +59,23 @@
    "SNDPGMMSG ",
      "MSGID(CPF9898) ",
      "MSGF(QCPFMSG) ",
-     "MSGDTA('Usage: STRREXPRC SRCMBR(MKCRTCBL) SRCFILE(QSRC) PARM(prdLib)')",
+     "MSGDTA('Usage: STRREXPRC SRCMBR(MKCMPTPLT) SRCFILE(QUNITTEST) PARM(prdLib)')",
      "TOPGMQ(*PRV (*CTLBDY)) ",
      "MSGTYPE(*ESCAPE)"
  end
 
  select
- when (dbgView = '' | dbgView = 'NONE' | dbgView = '*NONE') then dbgView = '*NONE'
+ when (dbgView = '' | dbgView = 'ALL' | dbgView = '*ALL') then dbgView = '*ALL'
+ when (dbgView = 'STMT' | dbgView = '*STMT') then dbgView = '*STMT'
+ when (dbgView = 'SOURCE' | dbgView = '*SOURCE') then dbgView = '*SOURCE'
  when (dbgView = 'LIST' | dbgView = '*LIST') then dbgView = '*LIST'
+ when (dbgView = 'COPY' | dbgView = '*COPY') then dbgView = '*COPY'
+ when (dbgView = 'NONE' | dbgView = '*NONE') then dbgView = '*NONE'
  otherwise do
      "SNDPGMMSG ",
        "MSGID(CPF9898) ",
        "MSGF(QCPFMSG) ",
-       "MSGDTA('Invalid debug view specfied: ''"dbgView"''. Use NONE or LIST')",
+       "MSGDTA('Invalid debug view specfied: ''"dbgView"''.')",
        "TOPGMQ(*PRV (*CTLBDY)) ",
        "MSGTYPE(*ESCAPE)"
    end
@@ -80,52 +90,14 @@
  /* -------------------------------------------- */
  /*  Let's do it!                                */
  /* -------------------------------------------- */
- "STRREXPRC SRCMBR(MKLLIST) SRCFILE("prdLib"/QLLIST) PARM('"prdLib" "dbgView" "tgtRls"')"
+ "CMPMOD MODULE("prdLib"/CMPTPLT  ) SRCFILE("prdLib"/QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
- "CMPMOD MODULE("prdLib"/CRTCBL   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/CRTTST   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/JOBLOG   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/LSTSPLF  ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/OBJECT   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/OSVERSION) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/SRCMBR   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/STMF     ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/STRING   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/TAGTST   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/USRSPC   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-
- "CRTPGM PGM("prdLib"/RUCRTCBL) ",
-        "MODULE("prdLib"/CRTTST     ",
-                 prdLib"/CRTCBL     ",
-                 prdLib"/JOBLOG     ",
-                 prdLib"/LSTSPLF    ",
-                 prdLib"/OBJECT     ",
-                 prdLib"/OSVERSION  ",
-                 prdLib"/PGMMSG     ",
-                 prdLib"/SRCMBR     ",
-                 prdLib"/STRING     ",
-                 prdLib"/STMF       ",
-                 prdLib"/TAGTST     ",
-                 prdLib"/USRSPC   ) ",
-        "ENTMOD("prdLib"/CRTCBL) ",
-        "BNDSRVPGM("prdLib"/RUTESTCASE) ",
-        "ACTGRP(*NEW) ",
-        "ALWUPD(*YES) ",
-        "ALWLIBUPD(*YES) ",
-        "DETAIL(*NONE) ",
-        "TGTRLS("tgtRls") ",
-        "TEXT('iRPGUnit - Create Test Suite.')"
-
- "CRTPNLGRP  PNLGRP("prdLib"/RUCRTCBL) SRCFILE("prdLib"/QPNLGRP)"
- deleteSpooledFile('RUCRTCBL')
-
- "CRTCMD CMD("prdLib"/RUCRTCBL) ",
-        "PGM("prdLib"/RUCRTCBL) ",
-        "SRCFILE(*LIBL/QCMD) ",
-        "HLPPNLGRP("prdLib"/RUCRTCBL) ",
-        "HLPID(RUCRTCBL)"
- deleteSpooledFile('RUCRTCBL')
+ "CRTSRVPGM  SRVPGM("prdLib"/CMPTPLT) ",
+            "MODULE("prdLib"/CMPTPLT)  ",
+            "OPTION(*DUPPROC) ",
+            "BNDSRVPGM("prdLib"/RUTESTCASE) ",
+            "EXPORT(*ALL) ",
+            "TEXT('RPGUnit SelfTest - Test CMPTPLT.')"
 
  "SNDPGMMSG ",
    "MSGID(CPF9897) ",
@@ -135,18 +107,6 @@
    "MSGTYPE(*INFO)"
 
  EXIT
-
- /* ------------------------------------------------------------- */
- /* Delete specified spooled file.                                */
- /* ------------------------------------------------------------- */
-deleteSpooledFile:
-   PARSE ARG _splf
-
-   Signal off Error
-   'DLTSPLF FILE('_splf') JOB(*) SPLNBR(*LAST)'
-   Signal on Error
-
-   return ''
 
  /* ------------------------------------------------------------- */
  /* Global Error handler                                          */

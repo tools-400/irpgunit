@@ -50,7 +50,7 @@ dcl-proc OS_getPTFLoadedStatus export;
   dcl-pi *n char(1);
     ptfID        char(7) const;
     productID    char(7) const;
-    releaseLvl   char(6) const;
+    releaseLvl   char(6) options(*nopass) const;
   end-pi;
 
   dcl-ds PTF_inf   likeds(PTF_inf_t) inz(*likeds);
@@ -59,7 +59,12 @@ dcl-proc OS_getPTFLoadedStatus export;
 
   PTF_inf.ptfID      = ptfID;
   PTF_inf.productID  = productID;
-  PTF_inf.releaseLvl = OS_getVersion();
+
+  if (%parms() >= %parmnum(releaseLvl));
+    PTF_inf.releaseLvl = releaseLvl;
+  else;
+    PTF_inf.releaseLvl = OS_getVersion();
+  endif;
 
   QPZRTVFX(ptfr0100: %size(ptfr0100): PTF_inf: 'PTFR0100': errCode);
   if (errCode.bytAvl > 0);
@@ -69,6 +74,14 @@ dcl-proc OS_getPTFLoadedStatus export;
       return '*';
     endif;
   endif;
+
+  // 0 The PTF has never been loaded.
+  // 1 The PTF has been loaded.
+  // 2 The PTF has been applied.
+  // 3 The PTF has been applied permanently.
+  // 4 The PTF has been permanently removed.
+  // 5 The PTF is damaged. An error occurred while applying the PTF.
+  // 6 The PTF is superseded.
 
   return ptfr0100.loadStat;
 

@@ -15,6 +15,6 @@ end-pr;
 dcl-pr OS_getPTFLoadedStatus char(1) extproc('OSVERSION_OS_getPTFLoadedStatus');
   ptfID        char(7) const;
   productID    char(7) const;
-  releaseLvl   char(6) const;
+  releaseLvl   char(6) options(*nopass) const;
 end-pr;
 

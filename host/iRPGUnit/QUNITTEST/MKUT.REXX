@@ -94,6 +94,7 @@
  executeUnitTest('MKCALLPRCT', 'CALLPRCT')
  executeUnitTest('MKCMDRUNLT', 'CMDRUNLOGT')
  executeUnitTest('MKCMDRUNT', 'CMDRUNT')
+ executeUnitTest('MKCMPTPLT', 'CMPTPLT')
  executeUnitTest('MKCRTTSTT', 'CRTTSTT')
  executeUnitTest('MKEXTPRCT', 'EXTPRCT')
  executeUnitTest('MKEXTTSTT', 'EXTTSTT')

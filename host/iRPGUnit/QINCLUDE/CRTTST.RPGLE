@@ -52,6 +52,7 @@ dcl-pr getCrtRpgModCmd like(cmd_t) extproc('CRTTST_getCrtRpgModCmd');
   define          likeds(defines_t) const;
   incDir          likeds(incDir_t) const;
   tgtCcsid        like(tgtCcsid_t) const;
+  cvtCcsid        like(cvtCcsid_t) const;
 end-pr;
 
 dcl-pr getCrtCblModCmd like(cmd_t) extproc('CRTTST_getCrtCblModCmd');
@@ -67,6 +68,7 @@ dcl-pr getCrtCblModCmd like(cmd_t) extproc('CRTTST_getCrtCblModCmd');
   define          likeds(defines_t) const;
   incDir          likeds(incDir_t) const;
   tgtCcsid        like(tgtCcsid_t) const;
+  cvtCcsid        like(cvtCcsid_t) const;
 end-pr;
 
 dcl-pr getCrtSrvPgmCmd like(cmd_t) extproc('CRTTST_getCrtSrvPgmCmd');
@@ -122,7 +124,8 @@ dcl-pr crtrpgmod extproc('crtRpgMod');
   targetRls       like(targetRelease_t) const;
   define          likeds(defines_t) const;
   incDir          likeds(incDir_t) const;
-   tgtCcsid        like(tgtCcsid_t) const;
+  tgtCcsid        like(tgtCcsid_t) const;
+  cvtCcsid        like(cvtCcsid_t) const;
 end-pr;
 
 dcl-pr crtCblMod extproc('crtCblMod');
@@ -138,6 +141,7 @@ dcl-pr crtCblMod extproc('crtCblMod');
   define          likeds(defines_t) const;
   incDir          likeds(incDir_t) const;
   tgtCcsid        like(tgtCcsid_t) const;
+  cvtCcsid        like(cvtCcsid_t) const;
 end-pr;
 
 dcl-pr crtSrvPgm likeds(object_t) extproc('crtSrvPgm');

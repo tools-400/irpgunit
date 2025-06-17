@@ -117,6 +117,7 @@
  "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/PGMRMT    *MODULE))"
  "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/RMTRUNSRV *MODULE))"
  "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/SRCMBR    *MODULE))"
+ "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/STMF      *MODULE))"
  "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/STRING    *MODULE))"
  "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/TAGTST    *MODULE))"
  "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/TESTUTILS *MODULE))"
@@ -168,6 +169,7 @@
  createUnitTest(prdLib, bndDir, 'CALLPRCT', dbgView)
  createUnitTest(prdLib, bndDir, 'CMDRUNLOGT', dbgView)
  createUnitTest(prdLib, bndDir, 'CMDRUNT', dbgView)
+ createUnitTest(prdLib, bndDir, 'CMPTPLT', dbgView)
  createUnitTest(prdLib, bndDir, 'CRTTSTT', dbgView)
  createUnitTest(prdLib, bndDir, 'EXTPRCT', dbgView)
  createUnitTest(prdLib, bndDir, 'EXTTSTT', dbgView)
@@ -188,6 +190,7 @@
  runUnitTest(prdLib, 'CALLPRCT')
  runUnitTest(prdLib, 'CMDRUNLOGT')
  runUnitTest(prdLib, 'CMDRUNT')
+ runUnitTest(prdLib, 'CMPTPLT')
  runUnitTest(prdLib, 'CRTTSTT')
  runUnitTest(prdLib, 'EXTPRCT')
  runUnitTest(prdLib, 'EXTTSTT')

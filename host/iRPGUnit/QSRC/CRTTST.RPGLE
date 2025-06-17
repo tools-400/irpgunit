@@ -36,6 +36,8 @@
 /include qinclude,TESTUTILS
 /include qinclude,TAGTST
 /include qinclude,OBJECT
+/include qinclude,OSVERSION
+/include qinclude,PGMMSG
 /include qinclude,ERRORCODE
 
 /include qsysinc,QCAPCMD
@@ -106,7 +108,9 @@ dcl-proc crtTst export;
   dcl-ds modulescreated likeds(objectArray_t) inz;
   dcl-s srcMbrRslv like(srcMbr);
   dcl-s localSrcStmf like(srcStmf);
+  dcl-s localSrcMbr like(srcStmf);
   dcl-ds st_stat likeds(st_stat_t) inz;
+  dcl-s cvtCcsid like(cvtCcsid_t);
   dcl-s rc int(10);
 
   dcl-s isError ind;
@@ -127,6 +131,8 @@ dcl-proc crtTst export;
     if (rc = -1);
       sndEscapeMsgAboveCtlBdy('Stream file not found: ' + localSrcStmf);
     endif;
+
+    cvtCcsid = st_stat.ccsid;
 
     // Validate we have a source member type
     srcType = uCase(getStmfType(localSrcStmf));
@@ -168,6 +174,18 @@ dcl-proc crtTst export;
          'Member ' + %trim(srcMbrRslv) + ' not found in source file ' +
                      %trim(qsrcfile.lib) + '/' + %trim(qsrcfile.nm) + '.' );
     endif;
+
+    localSrcMbr = '/QSYS.LIB/'
+                   + %trim(qsrcfile.lib) + '.LIB/'
+                   + %trim(qsrcfile.nm) + '.FILE/'
+                   + %trim(srcMbrRslv) + '.MBR';
+    rc = stat(localSrcMbr: st_stat); // -1 = error, not found
+    if (rc = -1);
+      sndEscapeMsgAboveCtlBdy(
+         'Source member ' + %trim(localSrcMbr) + ' not found.');
+    endif;
+
+    cvtCcsid = st_stat.ccsid;
 
     // Ensure we have a valid EVFEVENT file member name for RDi
     if (srcMbrRslv = '*TSTPGM');
@@ -229,7 +247,7 @@ dcl-proc crtTst export;
       addModule( modules : testPgm : *on); // Add to position #1.
       // QDEVTOOLS/QLNCMSG RNS9305 - Module &1 placed in library &2.
       crtRpgMod(testPgm: qsrcfile: srcMbrRslv: localSrcStmf: coption: dbgview:
-                 prpgppopt: poption: compileopt: targetRls: define: incDir: tgtCcsid);
+                 prpgppopt: poption: compileopt: targetRls: define: incDir: tgtCcsid: cvtCcsid);
       modulescreated = getCreatedModulesFromJobLog(
                          MOD_CRT_RPG : startcompiletime );
       addModules( modules : modulescreated );
@@ -237,7 +255,7 @@ dcl-proc crtTst export;
       // There is no test case module to add for Cobol ==> See: *PGMID
       // QDEVTOOLS/QLNCMSG LNC0899 - Module &1 placed in library &2.
       crtCblMod(testPgm: qsrcfile: srcMbrRslv: localSrcStmf: coption: dbgview:
-                 poption: compileopt: targetRls: define: incDir: tgtCcsid);
+                 poption: compileopt: targetRls: define: incDir: tgtCcsid: cvtCcsid);
       modulescreated = getCreatedModulesFromJobLog(
                          MOD_CRT_CBL : startcompiletime );
       addModules( modules : modulescreated );
@@ -480,6 +498,7 @@ dcl-proc crtRpgMod;
     define          const likeds(defines_t);
     incDir          likeds(incDir_t) const;
     tgtCcsid        like(tgtCcsid_t) const;
+    cvtCcsid        like(cvtCcsid_t) const;
   end-pi;
 
   // A command to be executed.
@@ -487,7 +506,7 @@ dcl-proc crtRpgMod;
 
   cmd = getCrtRpgModCmd(testpgm: srcFile: srcMbr: srcStmf: coption: dbgview:
                          prpgppopt: poption: compileopt: targetrls:
-                         define: incDir: tgtCcsid);
+                         define: incDir: tgtCcsid: cvtCcsid);
   sndCmdToJobLog(cmd);
   qcmdexc(cmd: %len(cmd));
 
@@ -595,6 +614,7 @@ dcl-proc crtCblMod;
     define          likeds(defines_t) const;
     incDir          likeds(incDir_t) const;
     tgtCcsid        like(tgtCcsid_t) const;
+    cvtCcsid        like(cvtCcsid_t) const;
   end-pi;
 
   // A command to be executed.
@@ -603,7 +623,7 @@ dcl-proc crtCblMod;
 
   cmd = getCrtCblModCmd(testpgm: srcFile: srcMbr: srcStmf: coption: dbgview:
                         poption: compileopt: targetrls:
-                        define: incDir: tgtCcsid);
+                        define: incDir: tgtCcsid: cvtCcsid);
   sndInfoMsg(cmd);
   qcmdexc(cmd: %len(cmd));
 
@@ -806,6 +826,7 @@ dcl-proc getCrtRpgModCmd export;
     define          likeds(defines_t)const;
     incDir          likeds(incDir_t) const;
     tgtCcsid        like(tgtCcsid_t) const;
+    cvtCcsid        like(cvtCcsid_t) const;
   end-pi;
 
   // Command string accumulator.
@@ -851,6 +872,7 @@ dcl-proc getCrtRpgModCmd export;
     cmd += serializeValue('OBJTYPE': '*MODULE');
     cmd += serializeValue( 'TGTRLS' : targetRls );
     cmd += serializeValue( 'DBGVIEW' : dbgView);
+    cmd += serializeCvtCcsid(tgtCcsid: cvtCcsid);
 
     if (prpgppopt <> '*DEFAULT');
       cmd += serializeValue( 'RPGPPOPT' : prpgppopt);
@@ -905,6 +927,7 @@ dcl-proc getCrtCblModCmd export;
     define          const likeds(defines_t);
     incDir          likeds(incDir_t) const;
     tgtCcsid        like(tgtCcsid_t) const;
+    cvtCcsid        like(cvtCcsid_t) const;
   end-pi;
 
   // Command string accumulator.
@@ -950,6 +973,7 @@ dcl-proc getCrtCblModCmd export;
     cmd += serializeValue('OBJTYPE': '*MODULE');
     cmd += serializeValue( 'TGTRLS' : targetRls );
     cmd += serializeValue( 'DBGVIEW' : dbgView);
+    cmd += serializeCvtCcsid(tgtCcsid: cvtCcsid);
 
     if compileOpt <> '';
       dbgCompileOpt = %trim(removequotes(compileOpt)) + ' ';
@@ -1165,6 +1189,42 @@ dcl-proc serializeTgtCcsid;
 end-proc;
 
 
+dcl-proc serializeCvtCcsid;
+  dcl-pi *N like(serializedTgtCcsid_t) extproc(*dclcase);
+    tgtCcsid    like(tgtCcsid_t) const;
+    cvtCcsid    like(cvtCcsid_t) const;
+  end-pi;
+
+  // Serialized Options.
+  dcl-s serialized like(serializedTgtCcsid_t);
+
+  if (tgtCcsid = 0);
+    return '';
+  endif;
+
+  if (not haveParameterCvtCcsid());
+    sndInfoMsg('Warning: Command CRTSQL*I lacks parameter CVTCCSID. Install PTFs.');
+    return '';
+  endif;
+
+  serialized = 'CVTCCSID(';
+
+  select;
+  when (tgtCcsid = -2);
+    serialized += %char(cvtCcsid);
+  when (tgtCcsid = -1);
+    serialized += '*JOB';
+  other;
+    serialized += %char(tgtCcsid);
+  endsl;
+
+  serialized += ') ';
+
+  return serialized;
+
+end-proc;
+
+
 dcl-proc serializeIncDir;
   dcl-pi *N like(serializedIncDir_t) extproc(*dclcase);
     incDir      likeds(incDir_t) const;
@@ -1249,6 +1309,45 @@ dcl-proc serializeValue;
   serialized = %trim(headtoken) + '(' + %trim(value) + ') ';
 
   return serialized;
+
+end-proc;
+
+
+dcl-proc haveParameterCvtCcsid;
+  dcl-pi *N ind extproc(*dclcase);
+  end-pi;
+
+  dcl-s osVersion char(6);
+  dcl-s ptfLoadedStatus char(1);
+
+  osVersion = OS_getVersion();
+
+  // Check PTF loaded status:
+  // 2 = applied
+  // 3 = permanently applied
+  // 6 = superseeded
+  select;
+  when (osVersion = 'V7R3M0');
+    ptfLoadedStatus = OS_getPTFLoadedStatus('SI70935': '5770SS1');
+    if (ptfLoadedStatus = '2' or ptfLoadedStatus = '3' or ptfLoadedStatus = '6');
+      ptfLoadedStatus = OS_getPTFLoadedStatus('SI70937': '5770ST1');
+    endif;
+
+  when (osVersion = 'V7R4M0');
+    ptfLoadedStatus = OS_getPTFLoadedStatus('SI70941': '5770SS1');
+    if (ptfLoadedStatus = '2' or ptfLoadedStatus = '3' or ptfLoadedStatus = '6');
+      ptfLoadedStatus = OS_getPTFLoadedStatus('SI70943': '5770ST1');
+    endif;
+
+  other;
+    ptfLoadedStatus = '3'; // permanently applied, 7.5 and higher
+  endsl;
+
+  if (ptfLoadedStatus = '2' or ptfLoadedStatus = '3' or ptfLoadedStatus = '6');
+    return *on;
+  endif;
+
+  return *off;
 
 end-proc;
 

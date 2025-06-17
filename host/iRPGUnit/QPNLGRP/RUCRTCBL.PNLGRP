@@ -253,7 +253,23 @@ Specifies the CCSID that the compiler uses to read the source files.
 :p.
 :HP2.Note::EHP2.For SQL source members, the target ccsid parameter is
 automatically added to parameter COMPILEOPT of command CRTSQLCBLI, if TGTCCSID
-is not already specified at COMPILEOPT.
+is not already specified at COMPILEOPT. It is also used for setting
+parameter CVTCCSID, if this parameter is available.
+:p.
+Parameter CVTCCSID requires 7.5 or the following PTFs depending on the
+operating system:
+:p.
+:HP2.Version 7.3:EHP2.
+:LINES.
+5770SS1 : SI70935
+5770ST1 : SI70937
+:ELINES.
+:p.
+:HP2.Version 7.4:EHP2.
+:LINES.
+5770SS1 : SI70941
+5770ST1 : SI70943
+:ELINES.
 :p.
 Values:
 :parml.
