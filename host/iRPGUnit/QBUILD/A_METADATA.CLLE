@@ -209,6 +209,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(CBLLINKAGE) +
+                          SRCTYPE(CBLLE) +
+                          TEXT('iRPGUnit - Cobol Linkage Section.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
                           MBR(CMDRUN) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - Command line runner.')
@@ -1151,6 +1157,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(CMPTPLT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit SelfTest - Compile Templates')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(CRTTSTT) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit SelfTest - Test CRTTST.')
@@ -1220,6 +1232,12 @@
                           MBR(MKCMDRUNT) +
                           SRCTYPE(REXX) +
                           TEXT('iRPGUnit SelfTest - Build CMDRUNT.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(MKCMPTPLT) +
+                          SRCTYPE(REXX) +
+                          TEXT('iRPGUnit SelfTest - Build CMPTPLT')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +

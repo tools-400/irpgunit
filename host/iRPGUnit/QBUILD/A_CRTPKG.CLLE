@@ -235,6 +235,9 @@
                           TOFILE(&LIB/&QINCLUDE) FROMMBR(CALLPRC) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
+                          TOFILE(&LIB/&QINCLUDE) FROMMBR(CBLLINKAGE) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
                           TOFILE(&LIB/&QINCLUDE) FROMMBR(CMDRUN) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
@@ -650,6 +653,9 @@
              /* ---------------------------------------------------- */
              CPYF       FROMFILE(&DEVLIB/&QTEMPLATE) +
                           TOFILE(&LIB/&QTEMPLATE) FROMMBR(CBL) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTEMPLATE) +
+                          TOFILE(&LIB/&QTEMPLATE) FROMMBR(CBLSQL) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QTEMPLATE) +
                           TOFILE(&LIB/&QTEMPLATE) FROMMBR(RPG) +
