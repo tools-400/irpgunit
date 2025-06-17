@@ -763,6 +763,7 @@ dcl-proc getCrtSrvPgmCmd export;
 
 end-proc;
 
+
 dcl-proc formatCommand;
   dcl-pi *N like(cmd_t);
     cmd   like(cmd_t) const;
@@ -772,8 +773,7 @@ dcl-proc formatCommand;
 
   dcl-s rtncmd char(32702);
   dcl-s rtncmdlenavl int(10);
-  dcl-ds errcode likeds(percolateErrors_t)
-  inz(*likeds);
+  dcl-ds errcode likeds(percolateErrors_t) inz(*likeds);
 
   clear optCtrlBlk;
   optCtrlBlk.typeCmdPrc = 1;     // QCMDCHK API
@@ -946,7 +946,6 @@ dcl-proc getCrtCblModCmd export;
       cmd += 'SRCFILE(' + serializeObjectName( srcFile ) + ') ';
       cmd += serializeValue( 'SRCMBR' : srcMbr );
     endif;
-    cmd += serializeValue( 'SRCMBR' : srcMbr );
     cmd += serializeOptions( 'OPTION' : pOptions );
     cmd += serializeValue('OBJTYPE': '*MODULE');
     cmd += serializeValue( 'TGTRLS' : targetRls );
