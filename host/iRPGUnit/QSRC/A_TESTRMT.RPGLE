@@ -13,6 +13,26 @@
       //     >>PARM<<  TRUNCNBR(*NO);
       //     >>PARM<<  DBGVIEW(*LIST);
       //   >>END-IMPORTANT<<
+      //   >>CMD<<     CMPMOD MODULE(&LI/CALLPRC  ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUN   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNLOG) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNPRT) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNSRV) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNV  ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/EXTPRC   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/EXTTST   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/JOBLOG   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/LIBL     ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/LLIST    ) SRCFILE(&SL/QLLIST) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/OBJECT   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/OSVERSION) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/PGMMSG   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/SRCMBR   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/STMF     ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/STRING   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/USRSPC   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/RMTRUNSRV) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/XMLWRITER) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
       //   >>EXECUTE<<
       //   >>CMD<<     CRTPGM  PGM(&LI/&OB) +
       //                       BNDSRVPGM(*LIBL/RUTESTCASE) +
@@ -32,6 +52,7 @@
       //                      &LI/OBJECT    +
       //                      &LI/OSVERSION +
       //                      &LI/PGMMSG    +
+      //                      &LI/STMF      +
       //                      &LI/SRCMBR    +
       //                      &LI/STRING    +
       //                      &LI/USRSPC    +
