@@ -42,7 +42,7 @@
  SIGNAL on SYNTAX
 
  /* The utility that is installed */
- UTILITY = 'RUCALLTST'
+ UTILITY = 'PLUG-IN EXAMPLES'
 
  PARSE ARG prdLib dbgView tgtrls
 
