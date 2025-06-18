@@ -13,7 +13,35 @@ Die Unterstüzung für Datenstromdateien wurde mit der Version 5.1 hinzugefügt.
 dieser Version können Test Suite Serviceprogramme aus im <code>/root</code> Dateisystem
 abgelegten Datenstromdateien kompiliert werden.  
 <p>
-<h2>Template File</h2>
+<h2>Prerequisites</h2>
+<p>
+Das Kompilieren von SQL Test Suites aus einer UTF-8 (Ccsid: 1208) kodierten Datenstromdatei
+erfordert den Parameter <code>CVTCCSID</code> der Befehle <code>CRTSQLRPGI</code> und
+<code>CRTSQLCBLI</code>, wenn der Parameter <code>RPGPPOPT</code> auf <code>*LVL1</code> oder
+<code>*LVL2</code> gesetzt ist. Sonst können /copy Dateien nicht von dem SQL Pre-Compiler
+verarbeitet werden.
+<p>
+Der Parameter <code>CVTCCSID</code> wurde mit Version 7.5 eingeführt und kann mit den
+nachfolgenden PTF's für 7.3 und 7.4 nachinstalliert werden:
+<p>
+<h3>Version 7.3</h3>
+<p>
+<ul>
+<li>SI70936: SQL-CMPL SQL PRECOMPILE SUPPORT UTF-8 SOURCE STREAM FILE</li>
+</ul>
+<h3>Version 7.4</h3>
+<p>
+<ul>
+<li>SI70942: SQL-CMPL SQL PRECOMPILE SUPPORT UTF-8 SOURCE STREAM FILE</li>
+</ul>
+Die Umwandlung wird mit folgender Fehlernachricht abgebrochen, wenn eine UTF-8 (Ccsid: 1208)
+kodierte Datenstromdatei kompiliert wird und der Parameter <code>CVTCCSID</code> nicht
+vorhanden ist:
+<p>
+<code>Stream file with CCSID 1208 cannot be compiled, because command CRTSQLRPGI
+does not support parameter CVTCCSID. Install missing PTFs and try again.</code>
+<p>
+<h2>Template Dateien</h2>
 <p>
 Die Datenstromdatei Templates sind in den Quellenteildateien <code>RPGSTMF</code> und
 <code>RPGSQLSTMF</code> der Datei <code>QTEMPLATE</code> gespeichert. Sie können bei

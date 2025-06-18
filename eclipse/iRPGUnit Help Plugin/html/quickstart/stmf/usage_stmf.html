@@ -12,6 +12,33 @@
 Stream file support was added with version 5.1. From that on you can compile test  
 suites from source stream files stored in the IFS <code>/root</code> file system.
 <p>
+<h2>Prerequisites</h2>
+<p>
+Compiling SQL test suites from source stream files with character UTF-8 (Ccsid: 1208)
+requires parameter <code>CVTCCSID</code> of commands <code>CRTSQLRPGI</code> and 
+<code>CRTSQLCBLI</code>, if parameter <code>RPGPPOPT</code> is set to <code>*LVL1</code>
+or <code>*LVL2</code>. Otherwise /copy books cannot be processed by the SQL pre-compiler.
+<p>
+Parameter <code>CVTCCSID</code> was added with version 7.5 and can be added for
+7.3 and 7.4 with the following PTFs:
+<p>
+<h3>Version 7.3</h3>
+<p>
+<ul>
+<li>SI70936: SQL-CMPL SQL PRECOMPILE SUPPORT UTF-8 SOURCE STREAM FILE</li>
+</ul>
+<h3>Version 7.4</h3>
+<p>
+<ul>
+<li>SI70942: SQL-CMPL SQL PRECOMPILE SUPPORT UTF-8 SOURCE STREAM FILE</li>
+</ul>
+Compilation is aborted with the following error message, is a stream file with
+ccsid UTF-8 (Ccsid: 1208) is compiled, if parameter <code>CVTCCSID</code> is
+missing:
+<p>
+<code>Stream file with CCSID 1208 cannot be compiled, because command CRTSQLRPGI
+does not support parameter CVTCCSID. Install missing PTFs and try again.</code>
+<p>
 <h2>Template File</h2>
 <p>
 The stream file source templates are stored in members <code>RPGSTMF</code> and
