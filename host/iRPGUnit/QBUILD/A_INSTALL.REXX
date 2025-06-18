@@ -353,6 +353,8 @@
    "DLTSRVPGM SRVPGM("_prdlib"/CALLPRCT)"
    "DLTSRVPGM SRVPGM("_prdlib"/CMDRUNLOGT)"
    "DLTSRVPGM SRVPGM("_prdlib"/CMDRUNT)"
+   "DLTSRVPGM SRVPGM("_prdlib"/CMPTPLT)"
+   "DLTSRVPGM SRVPGM("_prdlib"/CPLTSTT)"
    "DLTSRVPGM SRVPGM("_prdlib"/CRTTSTT)"
    "DLTSRVPGM SRVPGM("_prdlib"/EXTPRCT)"
    "DLTSRVPGM SRVPGM("_prdlib"/EXTTSTT)"
@@ -363,10 +365,19 @@
    "DLTSRVPGM SRVPGM("_prdlib"/OPDESCT)"
    "DLTSRVPGM SRVPGM("_prdlib"/PGMMSGT)"
    "DLTSRVPGM SRVPGM("_prdlib"/RUNT)"
+   "DLTSRVPGM SRVPGM("_prdlib"/SCRIPTST)"
+   "DLTSRVPGM SRVPGM("_prdlib"/STMFT)"
    "DLTSRVPGM SRVPGM("_prdlib"/STRINGT)"
    "DLTSRVPGM SRVPGM("_prdlib"/TESTUTILST)"
 
    "DLTSRVPGM SRVPGM("_prdlib"/SCRIPTST)"
+
+   "DLTSRVPGM SRVPGM("_prdlib"/CBL)"
+   "DLTSRVPGM SRVPGM("_prdlib"/CBLSQL)"
+   "DLTSRVPGM SRVPGM("_prdlib"/RPG)"
+   "DLTSRVPGM SRVPGM("_prdlib"/RPGSQL)"
+   "DLTSRVPGM SRVPGM("_prdlib"/RPGSQLSTMF)"
+   "DLTSRVPGM SRVPGM("_prdlib"/RPGSTMF)"
 
    Signal on Error
 
@@ -384,17 +395,18 @@
 
    "DLTMOD MODULE("_prdLib"/ACPTSTT)"
    "DLTMOD MODULE("_prdLib"/ASSERT)"
-   "DLTMOD MODULE("_prdLib"/ASSERTV2)"
    "DLTMOD MODULE("_prdLib"/ASSERTT)"
+   "DLTMOD MODULE("_prdLib"/ASSERTV2)"
    "DLTMOD MODULE("_prdLib"/CALLPRC)"
    "DLTMOD MODULE("_prdLib"/CALLPRCT)"
    "DLTMOD MODULE("_prdLib"/CMDRUN)"
-   "DLTMOD MODULE("_prdLib"/CMDRUNT)"
    "DLTMOD MODULE("_prdLib"/CMDRUNLOG)"
    "DLTMOD MODULE("_prdLib"/CMDRUNLOGT)"
    "DLTMOD MODULE("_prdLib"/CMDRUNPRT)"
    "DLTMOD MODULE("_prdLib"/CMDRUNSRV)"
+   "DLTMOD MODULE("_prdLib"/CMDRUNT)"
    "DLTMOD MODULE("_prdLib"/CMDRUNV)"
+   "DLTMOD MODULE("_prdLib"/CMPTPLT)"
    "DLTMOD MODULE("_prdLib"/CRTCBL)"
    "DLTMOD MODULE("_prdLib"/CRTRPG)"
    "DLTMOD MODULE("_prdLib"/CRTTST)"
@@ -413,15 +425,17 @@
    "DLTMOD MODULE("_prdLib"/LSTSPLFT)"
    "DLTMOD MODULE("_prdLib"/MSGQT)"
    "DLTMOD MODULE("_prdLib"/OBJECT)"
+   "DLTMOD MODULE("_prdLib"/OPDESCT)"
    "DLTMOD MODULE("_prdLib"/OSVERSION)"
    "DLTMOD MODULE("_prdLib"/PGMMSG)"
-   "DLTMOD MODULE("_prdLib"/OPDESCT)"
    "DLTMOD MODULE("_prdLib"/PGMMSGT)"
    "DLTMOD MODULE("_prdLib"/PGMRMT)"
    "DLTMOD MODULE("_prdLib"/RMTRUNSRV)"
    "DLTMOD MODULE("_prdLib"/RUNT)"
    "DLTMOD MODULE("_prdLib"/SPLF)"
    "DLTMOD MODULE("_prdLib"/SRCMBR)"
+   "DLTMOD MODULE("_prdLib"/STMF)"
+   "DLTMOD MODULE("_prdLib"/STMFT)"
    "DLTMOD MODULE("_prdLib"/STRING)"
    "DLTMOD MODULE("_prdLib"/STRINGT)"
    "DLTMOD MODULE("_prdLib"/TAGTST)"
@@ -431,12 +445,14 @@
    "DLTMOD MODULE("_prdLib"/VERSION)"
    "DLTMOD MODULE("_prdLib"/XMLWRITER)"
 
-   "DLTMOD MODULE("_prdLib"/LLIST)"
-
-   "DLTMOD MODULE("_prdLib"/LIBLC)"
-   "DLTMOD MODULE("_prdLib"/SPLF)"
-
    "DLTMOD MODULE("_prdlib"/SCRIPTST)"
+
+   "DLTMOD MODULE("_prdlib"/CBL)"
+   "DLTMOD MODULE("_prdlib"/CBLSQL)"
+   "DLTMOD MODULE("_prdlib"/RPG)"
+   "DLTMOD MODULE("_prdlib"/RPGSQL)"
+   "DLTMOD MODULE("_prdlib"/RPGSQLSTMF)"
+   "DLTMOD MODULE("_prdlib"/RPGSTMF)"
 
    Signal on Error
 
