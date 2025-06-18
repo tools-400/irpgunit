@@ -158,6 +158,27 @@ dcl-proc testMKCMDRUNT export;
 end-proc;
 
 
+dcl-proc testMKCMPTPLT export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-c TEST_SUITE 'CMPTPLT';
+
+  // Setup.
+
+  deleteTestSuite(TEST_SUITE);
+
+  // Run.
+
+  executeScript('MKCMPTPLT');
+
+  // Check.
+
+  assert(checkTestSuite(TEST_SUITE): 'Service program ' + TEST_SUITE + ' not found.');
+
+end-proc;
+
+
 dcl-proc testMKCRTTSTT export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
@@ -360,6 +381,27 @@ dcl-proc testMKRUNT export;
   // Run.
 
   executeScript('MKRUNT');
+
+  // Check.
+
+  assert(checkTestSuite(TEST_SUITE): 'Service program ' + TEST_SUITE + ' not found.');
+
+end-proc;
+
+
+dcl-proc testMKSTMFT export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-c TEST_SUITE 'STMFT';
+
+  // Setup.
+
+  deleteTestSuite(TEST_SUITE);
+
+  // Run.
+
+  executeScript('MKSTMFT');
 
   // Check.
 
