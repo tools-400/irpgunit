@@ -20,13 +20,17 @@ iRPGUnit requires OS400 7.5 for the latest features. It can also be installed on
 
 * ILE RPG runtime: SI71537
 * ILE RPG compiler: SI71536
+* SQL Precompile Support UTF-8 stream files: SI70942
 
 **7.3**
 
 * ILE RPG runtime: SI71535
 * ILE RPG compiler: SI71534
+* SQL Precompile Support UTF-8 stream files: SI70936
 
 If the PTFs have not been installed, the library must be recompiled to disable the latest features, such as assertEqual().
+
+PTFs SI70942 and SI70936 are required for compiling test suites from UTF-8 (Ccsid: 1208) source stream files.
 
 ## Features
 
