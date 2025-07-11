@@ -199,7 +199,7 @@ dcl-proc runProc export;
     callProcByPtr( proc );
   on-error;
     if (result.outcome = TEST_CASE_SUCCESS);
-      failureEvt = getassertfailevtlong();
+      failureEvt = getAssertFailEvtLong();
       if (failureEvt = EMPTY_ASSERT_FAIL_EVT_LONG);
         result.outcome = TEST_CASE_ERROR;
         result.error = rcvExcpMsgInfo();
