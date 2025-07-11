@@ -485,7 +485,7 @@ dcl-proc runTests export;
       // Run test case
       testResult = runTest( testSuite : testIdx );
 
-      list_add(testSuite.testresults : %addr(testResult) : %size(testResult));
+      list_add(testSuite.testResults : %addr(testResult) : %size(testResult));
 
       if (rclrsc = RCLRSC_ALWAYS);
         qcmdexc(CMD_RCLRSC: %len(CMD_RCLRSC));
