@@ -3,19 +3,26 @@
       *  FAILURE. 4 test cases, 3 assertions, 3 failures, 0 error.          *
       *=====================================================================*
       *  Command to create the service program:                             *
-      *  RUCRTCBL TSTPGM(RPGUNIT/CBL) SRCFILE(RPGUNIT/QTEMPLATE)            *
+      *   cd /home/raddatz                                                  *
+      *   git clone git@github.com:tools-400/irpgunit.git                   *
+      *   CD DIR('/home/Raddatz/iRpgUnit/host')                             *
+      *   RUCRTCBL TSTPGM(RPGUNIT/CBLSTMF) SRCFILE(RPGUNIT/QSRC)            *
+      *     SRCSTMF('./iRPGUnit/QTEMPLATE/cblstmf.cblle')                   *
+      *     DEFINE('irpgunit_stmf')                                         *
+      *     INCDIR('./iRPGUnit')                                            *
+      *     TGTCCSID(*JOB)                                                  *
       *=====================================================================*
       *  Tools/400 STRPREPRC instructions:                                  *
-      *   >>PRE-COMPILER<<                                                  *
-      *     >>CRTCMD<<  RUCRTCBL    TSTPGM(&LI/&OB) +                       *
-      *                             SRCFILE(&SL/&SF) SRCMBR(&SM);           *
-      *     >>COMPILE<<                                                     *
-      *       >>PARM<< COPTION(*EVENTF);                                    *
-      *       >>PARM<< DBGVIEW(*LIST);                                      *
-      *       >>PARM<< BNDDIR(*N);                                          *
-      *     >>END-COMPILE<<                                                 *
-      *     >>EXECUTE<<                                                     *
-      *   >>END-PRE-COMPILER<<                                              *
+      *    >>PRE-COMPILER<<
+      *      >>CRTCMD<<  RUCRTCBL  TSTPGM(RPGUNIT/CBLSTMF) +
+      *                            SRCSTMF('./iRPGUnit/QTEMPLATE/cblstmf.cblle');
+      *      >>COMPILE<<
+      *        >>PARM<< DEFINE('irpgunit_stmf');
+      *        >>PARM<< INCDIR('./iRPGUnit');
+      *        >>PARM<< TGTCCSID(*JOB);
+      *      >>END-COMPILE<<
+      *      >>EXECUTE<<
+      *    >>END-PRE-COMPILER<<
       *=====================================================================*
       *  Compile options:                                                   *
       *    *SrcStmt       - Assign SEU line numbers when compiling the      *
