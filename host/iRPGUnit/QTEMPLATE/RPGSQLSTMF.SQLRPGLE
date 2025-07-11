@@ -8,7 +8,7 @@
 //  CD DIR('/home/Raddatz/iRpgUnit/host')
 //  RUCRTRPG TSTPGM(RPGUNIT/RPGSTMF) SRCFILE(RPGUNIT/QSRC)
 //    SRCSTMF('./iRPGUnit/QTEMPLATE/rpgsqlstmf.sqlrpgle')
-//    DEFINE('rpgunit_stmf') RPGPPOPT(*LVL2)
+//    DEFINE('irpgunit_stmf') RPGPPOPT(*LVL2)
 //    INCDIR('./iRPGUnit')
 //    TGTCCSID(*JOB)
 //=====================================================================
@@ -17,7 +17,7 @@
 //     >>CRTCMD<<  RUCRTRPG  TSTPGM(RPGUNIT/RPGSTMF) +
 //                           SRCSTMF('./iRPGUnit/QTEMPLATE/rpgsqlstmf.sqlrpgle');
 //     >>COMPILE<<
-//       >>PARM<< DEFINE('rpgunit_stmf');
+//       >>PARM<< DEFINE('irpgunit_stmf');
 //       >>PARM<< RPGPPOPT(*LVL2);
 //       >>PARM<< INCDIR('./iRPGUnit');
 //       >>PARM<< TGTCCSID(*JOB);
