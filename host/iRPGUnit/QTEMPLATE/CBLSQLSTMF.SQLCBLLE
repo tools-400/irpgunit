@@ -1,6 +1,10 @@
       *=====================================================================*
       *  Empty Unit Test Case (Cobol).                                      *
       *  FAILURE. 4 test cases, 3 assertions, 3 failures, 0 error.          *
+      *  Example of a Cobol stream file template.                           *
+      *  Note: The '>>IF IRPGUNIT_STMF' compiler condition does not yet     *
+      *        work. Hence it has been disabled. Any tips are greatly       *
+      *        appreciated.                                                 *
       *=====================================================================*
       *  Command to create the service program:                             *
       *   cd /home/raddatz                                                  *

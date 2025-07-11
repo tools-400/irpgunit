@@ -1,6 +1,7 @@
 **free
 //=====================================================================
 //  Empty Unit Test Case. Prints a protocol of the execution flow.
+//  Example of a RPGLE stream file template.
 //=====================================================================
 //  Command to create the service program:
 //  cd /home/raddatz
