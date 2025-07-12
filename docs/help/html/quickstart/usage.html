@@ -8,8 +8,8 @@
 </head>
 
 <body>
-<h1>Usage</h1>
-Using RPGUnit is splitted into two parts:
+<h1>General Information</h1>
+Using RPGUnit is split into two parts:
 <ol>
 <li>Creating test cases</li>
 <li>Running test cases</li>
@@ -22,8 +22,13 @@ case.
 <p>
 In order to use RPGUnit procedures you need to add copy book <code>TESTCASE</code> 
 to your source member:
+For members:
 <code class="indent"><pre>
  /include qinclude,TESTCASE                  iRPGUnit Test Suite
+</pre></code>
+For stream files:
+<code class="indent"><pre>
+ /include qinclude/TESTCASE.rpgle            iRPGUnit Test Suite
 </pre></code>
 <p>
 <u>Test case examples</u>
@@ -39,7 +44,7 @@ A test suite (service program) is compiled with command <code>RUCRTRPG</code>.
 <p class="indent">
 <code>RUCRTRPG TSTPGM(RPGUNIT/RUPLUGINT1) SRCFILE(RPGUNITT1)</code></p>
 <p>
-Member <a href="../appendix/assets/RPGUnitRPGTestSuite.txt"><code>QSRC.TEMPLATE</code></a> is 
+Member <a href="../appendix/assets/RPGUnitRPGTestSuite.txt"><code>QTEMPLATE.RPG</code></a> is 
 an example of a test suite. It does not do any harm but produces a spooled file with the
 execution flow. 
 <p>
@@ -98,6 +103,12 @@ The following options are available from the context menu:
 <li>Edit LPEX (also: mouse double-click)</li>
 <li>Remove Selected Test Suite</li>
 </ul>
+<table>
+<tr>
+<td class="notice">Known issue: The stream file editor cannot be positioned to the line with the unit test error, as 
+                   it is possible with the LPEX source member editor.</td>
+</tr>
+</table>
 <p>
 Header properties: 
 <p>
