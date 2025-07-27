@@ -394,7 +394,7 @@ dcl-proc setupTestSuite export;
     return TEST_CASE_SUCCESS;
   endif;
 
-  list_add(testSuite.testresults : %addr(testResult) :
+  list_add(testSuite.testResults : %addr(testResult) :
            %size(testResult));
 
   select;
@@ -430,7 +430,7 @@ dcl-proc tearDownTestSuite export;
     return TEST_CASE_SUCCESS;
   endif;
 
-  list_add(testsuite.testresults : %addr(testResult) : %size(testResult));
+  list_add(testsuite.testResults : %addr(testResult) : %size(testResult));
 
   select;
   when testResult.outcome = TEST_CASE_FAILURE;

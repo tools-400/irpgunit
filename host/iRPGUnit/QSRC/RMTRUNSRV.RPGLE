@@ -403,8 +403,8 @@ dcl-proc fillUserSpace;
   header.numTestCasesRtn = 0;
   header.reserved1 = *blank;
 
-  list_abortiteration(testsuite.testresults);
-  ptr = list_getnext(testsuite.testresults);
+  list_abortiteration(testsuite.testResults);
+  ptr = list_getnext(testsuite.testResults);
 
   ePtr = usPtr + header.offsTestCases;
 
@@ -421,7 +421,7 @@ dcl-proc fillUserSpace;
       header.length += createV3TestCase(usPtr: testResult: ePtr);
     endsl;
 
-    ptr = list_getnext(testsuite.testresults);
+    ptr = list_getnext(testsuite.testResults);
     if (ptr <> *null);
       ePtr = ePtr - oldlength + header.length;
     endif;
