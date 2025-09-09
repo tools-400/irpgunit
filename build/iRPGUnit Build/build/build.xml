@@ -30,6 +30,12 @@
  *         - commons-net-3.3-patched.jar
  *         - ant-contrib-1.0b3.jar
  *
+ *   Preparing build:
+ *     1 Copy 'ftp-credentials_template.properties' to 'ftp-credentials.properties'
+ *       and update properties. This file is required for build target 'downloadIBMiLibrary'.
+ *     2 Copy 'localUpdateSite_template.properties' to 'localUpdateSite.properties'
+ *       and update properties. This file is required for build target 'uploadLocalUpdateSite'.
+ *
  *   Here are the steps to create a new version of the plug-in:
  *
  *     1 Preparation
