@@ -68,7 +68,7 @@ dcl-pr gotonext extproc(gotonext_p);
   pointer const;
 end-pr;
 
-dcl-pr istest          ind;
+dcl-pr isTest          ind;
   nm              const like(procNm_t);
 end-pr;
 
@@ -118,7 +118,7 @@ dcl-proc gettestcaseptr;
     testidx         int(10) const;
   end-pi;
 
-  return testsuite.testlist + %size( proc_t ) * ( testidx - 1 );
+  return testsuite.testList + %size( proc_t ) * ( testidx - 1 );
 
 end-proc;
 
@@ -177,38 +177,38 @@ dcl-proc getTestSuite export;
   proccnt = cnt( privatedata );
 
   clear testsuite;
-  testsuite.testlist = %alloc( proccnt * %size( proc_t ) );
-  memset(testsuite.testlist : x'00' : proccnt * %size( proc_t ));
-  testsuite.testresults = list_create();
+  testsuite.testList = %alloc( proccnt * %size( proc_t ) );
+  memset(testsuite.testList : x'00' : proccnt * %size( proc_t ));
+  testsuite.testResults = list_create();
 
   for procidx = 1 to proccnt;
     procnm = getnm( privatedata );
     select;
-    when istest( procnm );
+    when isTest( procnm );
       testsuite.testcasescnt += 1;
       testcase_p = gettestcaseptr( testsuite :
                                    testsuite.testcasescnt );
       clear testcase;
       testcase.procnm = procnm;
     when uCase(procnm) = 'SETUPSUITE';
-      testsuite.setupsuite.procnm = procnm;
+      testsuite.setupSuite.procnm = procnm;
     when uCase(procnm) = 'SETUP';
       testsuite.setup.procnm = procnm;
     when uCase(procnm) = 'TEARDOWN';
       testsuite.teardown.procnm = procnm;
     when uCase(procnm) = 'TEARDOWNSUITE';
-      testsuite.teardownsuite.procnm = procnm;
+      testsuite.teardownSuite.procnm = procnm;
 
     // Cobol procedures
 
     when uCase(procnm) = 'SETUPSTE';
-      testsuite.setupsuite.procnm = procnm;
+      testsuite.setupSuite.procnm = procnm;
     when uCase(procnm) = 'SETUP';
       testsuite.setup.procnm = procnm;
     when uCase(procnm) = 'TEARDWN';
       testsuite.teardown.procnm = procnm;
     when uCase(procnm) = 'TEARDWNSTE';
-      testsuite.teardownsuite.procnm = procnm;
+      testsuite.teardownSuite.procnm = procnm;
     endsl;
     gotonext( privatedata );
   endfor;
@@ -218,15 +218,15 @@ dcl-proc getTestSuite export;
 end-proc;
 
 
-dcl-proc istest;
-  dcl-pi *N              ind;
-    nm              const like(procNm_t);
+dcl-proc isTest;
+  dcl-pi *N ind;
+    nm   const like(procNm_t);
   end-pi;
 
-  dcl-s nmprefix        like(procNm_t);
+  dcl-s nmPrefix like(procNm_t);
 
 
-  return startswith(TEST_PREFIX: nm);
+  return startsWith(TEST_PREFIX: nm);
 
-end-proc istest;
+end-proc isTest;
 

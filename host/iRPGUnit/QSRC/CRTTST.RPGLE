@@ -234,7 +234,7 @@ dcl-proc crtTst export;
       textRslv = '';
     when text = '*DEFAULT';
       textRslv = 'RPGUnit - Test Case';
-    when not startswith('RPGUnit' : text);
+    when not startsWith('RPGUnit' : text);
       textRslv = 'RPGUnit - ' + text;
     other;
       textRslv = text;
@@ -325,7 +325,7 @@ dcl-proc resolveLibraries;
 
   for i = 1 to modules.size;
 
-    if (startswith( '*' : modules.object(i).lib));
+    if (startsWith( '*' : modules.object(i).lib));
       libResolved = Object_resolveLibrary(modules.object(i): '*MODULE');
     else;
       libResolved = modules.object(i).lib;
@@ -1296,7 +1296,7 @@ dcl-proc serializeString;
     return '';
   endif;
 
-  if startswith(QUOTE: %triml(text));
+  if startsWith(QUOTE: %triml(text));
     serialized = %trim(headtoken) + '(' + text + ')';
     return serialized;
   endif;

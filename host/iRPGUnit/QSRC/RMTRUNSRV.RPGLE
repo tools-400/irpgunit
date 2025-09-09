@@ -50,14 +50,14 @@ dcl-pr fillUserSpace extproc('fillUserspace');
 end-pr;
 
 dcl-pr createV3TestCase int(10) extproc('createV3TestCase');
-  usptr           pointer value;
-  testresult      value likeds(testResult_t);
-  eptr            pointer value;
+  usPtr           pointer value;
+  testResult      value likeds(testResult_t);
+  ePtr            pointer value;
 end-pr;
 
 dcl-pr createV4TestCase int(10) extproc('createV4TestCase');
   usPtr           pointer value;
-  testresult      value likeds(testResult_t);
+  testResult      value likeds(testResult_t);
   ePtr            pointer value;
 end-pr;
 
@@ -105,7 +105,7 @@ dcl-ds tmpl_testSuite len(256) qualified template;
   typeOfSrc       char(10);
   offsSrcStmf     int(10);
   lenSrcStmf      int(10);
-  reserved1       char(102);
+  reserved_1       char(102);
 end-ds;
 
 dcl-ds tmpl_testCase_v3 qualified template;
@@ -188,7 +188,7 @@ dcl-ds tmpl_sender_v4 len(58) qualified template;
   specNb           char(10);
   offsProcNm       int(10);
   lenProcNm        int(5);
-  // TODO: add qualified source member
+  // TODO: add qualified source member (information not (yet?) available in callstack)
 end-ds;
 
 dcl-ds tmpl_receiver_v4 likeds(tmpl_sender_v4) template;
@@ -401,10 +401,10 @@ dcl-proc fillUserSpace;
   endif;
 
   header.numTestCasesRtn = 0;
-  header.reserved1 = *blank;
+  header.reserved_1 = *blank;
 
-  list_abortiteration(testsuite.testresults);
-  ptr = list_getnext(testsuite.testresults);
+  list_abortiteration(testsuite.testResults);
+  ptr = list_getnext(testsuite.testResults);
 
   ePtr = usPtr + header.offsTestCases;
 
@@ -421,7 +421,7 @@ dcl-proc fillUserSpace;
       header.length += createV3TestCase(usPtr: testResult: ePtr);
     endsl;
 
-    ptr = list_getnext(testsuite.testresults);
+    ptr = list_getnext(testsuite.testResults);
     if (ptr <> *null);
       ePtr = ePtr - oldlength + header.length;
     endif;
@@ -442,13 +442,13 @@ end-proc;
 // ==========================================================================
 dcl-proc createV3TestCase;
   dcl-pi *N int(10);
-    usptr           pointer value;
-    testresult      value likeds(testResult_t);
-    eptr            pointer value;
+    usPtr           pointer value;
+    testResult      likeds(testResult_t) value;
+    ePtr            pointer value;
   end-pi;
 
-  dcl-ds entry likeds(tmpl_testCase_v3) based(eptr);
-  dcl-s exectime like(tmpl_execTime_v3) based(pexct);
+  dcl-ds entry likeds(tmpl_testCase_v3) based(ePtr);
+  dcl-s execTime like(tmpl_execTime_v3) based(pExecTime);
 
   dcl-s e int(10);
   dcl-ds srcInf likeds(srcInf_t) inz;
@@ -456,74 +456,73 @@ dcl-proc createV3TestCase;
   dcl-ds failure likeds(assertFailEvtLong_t) based(fPtr);
 
   clear entry;
-  entry.lenTestCase = %len(testresult.testname);
-  entry.testCase = testresult.testname;
-  entry.result = testresult.outcome;
-  entry.numberAssertions = testresult.assertCnt;
+  entry.lenTestCase = %len(testResult.testname);
+  entry.testCase = testResult.testname;
+  entry.result = testResult.outcome;
+  entry.numberAssertions = testResult.assertCnt;
 
   select;
-  when (testresult.outcome = TEST_CASE_ERROR);
-    entry.lenExcpMessage = min(%len(testresult.error.txt): %len(entry.excpMessage));
-    entry.excpMessage = testresult.error.txt;
-    if (testresult.error.qsndstmt.specnb <> '');
-      entry.specNb = testresult.error.qsndstmt.specnb;
+  when (testResult.outcome = TEST_CASE_ERROR);
+    entry.lenExcpMessage = min(%len(testResult.error.txt): %len(entry.excpMessage));
+    entry.excpMessage = testResult.error.txt;
+    if (testResult.error.qSndStmt.specnb <> '');
+      entry.specNb = testResult.error.qSndStmt.specnb;
     else;
       entry.specNb = '*N';
     endif;
-    pexct = %addr(entry.excpMessage) + entry.lenExcpMessage;
-    exectime = -1;
-    entry.length = %size(entry) + entry.lenExcpMessage + %size(exectime);
-    entry.offsNext = (%addr(entry) - usptr) + entry.length;
+    pExecTime = %addr(entry.excpMessage) + entry.lenExcpMessage;
+    execTime = -1;
+    entry.length = %size(entry) + entry.lenExcpMessage + %size(execTime);
+    entry.offsNext = (%addr(entry) - usPtr) + entry.length;
     entry.offsCallStkEnt = entry.offsNext;
     entry.numCallStkEnt = 0;
 
     // Add callstack entry of exception message
-    sPtr = usptr + entry.offsNext;
+    sPtr = usPtr + entry.offsNext;
 
-    stackEntry.qPgm = testresult.error.qsndstmt.qpgm;
-    stackEntry.qMod = testresult.error.qsndstmt.qmod;
-    stackEntry.specNb = testresult.error.qsndstmt.specnb;
-    stackEntry.procNm = testresult.error.qsndstmt.procnm;
-    stackEntry.lenProcNm = %len(testresult.error.qsndstmt.procnm);
+    stackEntry.qPgm = testResult.error.qSndStmt.qpgm;
+    stackEntry.qMod = testResult.error.qSndStmt.qmod;
+    stackEntry.specNb = testResult.error.qSndStmt.specnb;
+    stackEntry.procNm = testResult.error.qSndStmt.procnm;
+    stackEntry.lenProcNm = %len(testResult.error.qSndStmt.procnm);
 
     stackEntry.length = %size(stackEntry);
-    stackEntry.offsNext = (sPtr - usptr) + stackEntry.length;
+    stackEntry.offsNext = (sPtr - usPtr) + stackEntry.length;
 
     entry.length += stackEntry.length;
     entry.offsNext += stackEntry.length;
     entry.numCallStkEnt += 1;
 
-  when (testresult.outcome = TEST_CASE_FAILURE);
-    fPtr = %addr(testresult.failure);
-    entry.lenExcpMessage = min(%len(testresult.failure.msg): %len(entry.excpMessage));
-    entry.excpMessage = testresult.failure.msg;
-    entry.specNb =
-          failure.callstk.entry(1).qstmt.specnb;
+  when (testResult.outcome = TEST_CASE_FAILURE);
+    fPtr = %addr(testResult.failure);
+    entry.lenExcpMessage = min(%len(testResult.failure.msg): %len(entry.excpMessage));
+    entry.excpMessage = testResult.failure.msg;
+    entry.specNb = failure.callstk.entry(1).qstmt.specNb;
 
-    pexct = %addr(entry.excpMessage) + entry.lenExcpMessage;
-    exectime = -1;
-    entry.length = %size(entry) + entry.lenExcpMessage + %size(exectime);
-    entry.offsNext = (%addr(entry) - usptr) + entry.length;
+    pExecTime = %addr(entry.excpMessage) + entry.lenExcpMessage;
+    execTime = -1;
+    entry.length = %size(entry) + entry.lenExcpMessage + %size(execTime);
+    entry.offsNext = (%addr(entry) - usPtr) + entry.length;
     entry.offsCallStkEnt = entry.offsNext;
 
     for e = 1 to failure.callstk.nume;
 
       entry.numCallStkEnt += 1;
 
-      sPtr = usptr + entry.offsNext;
+      sPtr = usPtr + entry.offsNext;
 
-      stackEntry.qPgm = failure.callstk.entry(e).qstmt.qpgm;
-      stackEntry.qMod = failure.callstk.entry(e).qstmt.qmod;
-      stackEntry.lenProcNm = %len(failure.callstk.entry(e).qstmt.procnm);
-      stackEntry.procNm = failure.callstk.entry(e).qstmt.procnm;
-      stackEntry.specNb = failure.callstk.entry(e).qstmt.specnb;
+      stackEntry.qPgm = failure.callstk.entry(e).qstmt.qPgm;
+      stackEntry.qMod = failure.callstk.entry(e).qstmt.qMod;
+      stackEntry.lenProcNm = %len(failure.callstk.entry(e).qstmt.procNm);
+      stackEntry.procNm = failure.callstk.entry(e).qstmt.procNm;
+      stackEntry.specNb = failure.callstk.entry(e).qstmt.specNb;
 
       // TODO: add source stream file path to 'stackEntry'
       srcInf = SrcMbr_getModSrc(stackEntry.qPgm: stackEntry.qMod);
       stackEntry.qSrcMbr = srcInf.mbr;
 
       stackEntry.length = %size(stackEntry);
-      stackEntry.offsNext = (sPtr - usptr) + stackEntry.length;
+      stackEntry.offsNext = (sPtr - usPtr) + stackEntry.length;
 
       entry.length += stackEntry.length;
       entry.offsNext += stackEntry.length;
@@ -537,10 +536,10 @@ dcl-proc createV3TestCase;
     entry.lenExcpMessage = 0;
     entry.excpMessage = '';
     entry.specNb = '';
-    pexct = %addr(entry.excpMessage) + entry.lenExcpMessage;
-    exectime = testresult.exectime;
-    entry.length = %size(entry) + entry.lenExcpMessage + %size(exectime);
-    entry.offsNext = (%addr(entry) - usptr) + entry.length;
+    pExecTime = %addr(entry.excpMessage) + entry.lenExcpMessage;
+    execTime = testResult.exectime;
+    entry.length = %size(entry) + entry.lenExcpMessage + %size(execTime);
+    entry.offsNext = (%addr(entry) - usPtr) + entry.length;
     entry.offsCallStkEnt = 0;
     entry.numCallStkEnt = 0;
 
@@ -556,7 +555,7 @@ end-proc;
 dcl-proc createV4TestCase;
   dcl-pi *N int(10);
     usPtr        pointer value;
-    testresult   value likeds(testResult_t);
+    testResult   likeds(testResult_t) value;
     ePtr         pointer value;
   end-pi;
 
@@ -577,14 +576,14 @@ dcl-proc createV4TestCase;
   entry.offsNextEntry = offsEntry + %size(entry);
   entry.lenEntry = %size(entry);
 
-  entry.result = testresult.outcome;
+  entry.result = testResult.outcome;
   entry.reserved_1 = '';
-  entry.numAsserts = testresult.assertCnt;
-  entry.execTime = testresult.exectime;
+  entry.numAsserts = testResult.assertCnt;
+  entry.execTime = testResult.exectime;
 
   // Test case text:
   entry.offsTestCaseText = offsEntry + %size(entry);
-  entry.lenTestCaseText = %len(testresult.testname);
+  entry.lenTestCaseText = %len(testResult.testname);
   memcpy(usPtr + entry.offsTestCaseText
          : %addr(testResult.testName: *data)
          : entry.lenTestCaseText);
@@ -597,10 +596,10 @@ dcl-proc createV4TestCase;
 
 
   select;
-  when (testresult.outcome = TEST_CASE_ERROR);
+  when (testResult.outcome = TEST_CASE_ERROR);
 
     // Exception message:
-    entry.lenExcpMsg = %len(testresult.error.txt);
+    entry.lenExcpMsg = %len(testResult.error.txt);
     memcpy(usPtr + entry.offsExcpMsg
            : %addr(testResult.error.txt: *data)
            : entry.lenExcpMsg);
@@ -618,11 +617,11 @@ dcl-proc createV4TestCase;
     pSender = usPtr + entry.offsSndInf;
     clear sender;
     sender.lenEntry = %size(sender);
-    sender.qPgm = testresult.error.qsndstmt.qpgm;
-    sender.qMod = testresult.error.qsndstmt.qmod;
-    sender.specNb = testresult.error.qsndstmt.specnb;
+    sender.qPgm = testResult.error.qSndStmt.qPgm;
+    sender.qMod = testResult.error.qSndStmt.qMod;
+    sender.specNb = testResult.error.qSndStmt.specNb;
     sender.offsProcNm = entry.offsSndInf + %size(sender);
-    sender.lenProcNm = %len(testresult.error.qsndstmt.procnm);
+    sender.lenProcNm = %len(testResult.error.qSndStmt.procNm);
     memcpy(usPtr + sender.offsProcNm
            : %addr(testResult.error.qSndStmt.procNm: *data)
            : entry.lenExcpMsg);
@@ -640,11 +639,11 @@ dcl-proc createV4TestCase;
     pReceiver = usPtr + entry.offsRcvInf;
     clear receiver;
     receiver.lenEntry = %size(receiver);
-    receiver.qPgm = testresult.error.qrcvstmt.qpgm;
-    receiver.qMod = testresult.error.qrcvstmt.qmod;
-    receiver.specNb = testresult.error.qrcvstmt.specnb;
+    receiver.qPgm = testResult.error.qRcvStmt.qpgm;
+    receiver.qMod = testResult.error.qRcvStmt.qmod;
+    receiver.specNb = testResult.error.qRcvStmt.specnb;
     receiver.offsProcNm = entry.offsRcvInf + %size(receiver);
-    receiver.lenProcNm = %len(testresult.error.qrcvstmt.procnm);
+    receiver.lenProcNm = %len(testResult.error.qRcvStmt.procnm);
     memcpy(usPtr + receiver.offsProcNm
            : %addr(testResult.error.qRcvStmt.procNm: *data)
            : entry.lenExcpMsg);
@@ -659,10 +658,10 @@ dcl-proc createV4TestCase;
     entry.offsCallStkE = 0;
     entry.numCallStkE = 0;
 
-  when (testresult.outcome = TEST_CASE_FAILURE);
+  when (testResult.outcome = TEST_CASE_FAILURE);
 
     // Failure message:
-    entry.lenExcpMsg = %len(testresult.failure.msg);
+    entry.lenExcpMsg = %len(testResult.failure.msg);
     memcpy(usPtr + entry.offsExcpMsg
            : %addr(testResult.failure.msg: *data)
            : entry.lenExcpMsg);
@@ -685,7 +684,7 @@ dcl-proc createV4TestCase;
     entry.offsCallStkE = offsEntry + entry.lenEntry;
     sPtr = usPtr + entry.offsCallStkE;
 
-    for e = 1 to testresult.failure.callstk.nume;
+    for e = 1 to testResult.failure.callstk.nume;
 
       entry.numCallStkE += 1;
 
@@ -694,9 +693,9 @@ dcl-proc createV4TestCase;
       stackEntry.offsNextEntry = (sPtr - usPtr) + %size(stackEntry);
       stackEntry.lenEntry = %size(stackEntry);
 
-      stackEntry.qPgm = testresult.failure.callstk.entry(e).qstmt.qpgm;
-      stackEntry.qMod = testresult.failure.callstk.entry(e).qstmt.qmod;
-      stackEntry.specNb = testresult.failure.callstk.entry(e).qstmt.specnb;
+      stackEntry.qPgm = testResult.failure.callstk.entry(e).qstmt.qpgm;
+      stackEntry.qMod = testResult.failure.callstk.entry(e).qstmt.qmod;
+      stackEntry.specNb = testResult.failure.callstk.entry(e).qstmt.specnb;
 
       // TODO: add source stream file path to 'stackEntry'
       srcInf = SrcMbr_getModSrc(stackEntry.qPgm: stackEntry.qMod);
@@ -718,7 +717,7 @@ dcl-proc createV4TestCase;
       endif;
 
       stackEntry.offsProcNm = (sPtr - usPtr) + stackEntry.lenEntry;
-      stackEntry.lenProcNm = %len(testresult.failure.callstk.entry(e).qstmt.procnm);
+      stackEntry.lenProcNm = %len(testResult.failure.callstk.entry(e).qstmt.procnm);
       memcpy(
         usPtr + stackEntry.offsProcNm
         : %addr(testResult.failure.callStk.entry(e).qStmt.procNm:*data)
@@ -730,7 +729,7 @@ dcl-proc createV4TestCase;
       entry.lenEntry += stackEntry.lenEntry;
       entry.offsNextEntry += stackEntry.lenEntry;
 
-      if (e = testresult.failure.callstk.nume);
+      if (e = testResult.failure.callstk.nume);
         stackEntry.offsNextEntry = 0;
       else;
         sPtr = usPtr + stackEntry.offsNextEntry;
