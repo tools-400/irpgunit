@@ -608,7 +608,7 @@
                 <include name="${files.page}"/>
             </fileset>
         </copy>
-    	
+
         <replace file="${build.upload.dir.home}/${files.page}" token="@VERSION_NUMBER@"  value="${build.version}" />
         <replace file="${build.upload.dir.home}/${files.page}" token="@TODAY_YEAR@"      value="${today.year}" />
         <replace file="${build.upload.dir.home}/${files.page}" token="@TODAY@"           value="${today.timestamp}" />
