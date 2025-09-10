@@ -4,14 +4,40 @@
 // ==========================================================================
 //  iRPGUnit - Create Cobol Unit Test Suite CPP.
 // ==========================================================================
-//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  Copyright (c) 2013-2025 iRPGUnit Project Team
 //  All rights reserved. This program and the accompanying materials
 //  are made available under the terms of the Common Public License v1.0
 //  which accompanies this distribution, and is available at
 //  http://www.eclipse.org/legal/cpl-v10.html
 // ==========================================================================
 
-// The entry point of RUCRTCBL Parameters are provided by RUCRTCBL command.
+///
+// Creates a COBOL test service program from source code.
+//
+// Entry point for the RUCRTCBL command that orchestrates the complete build process
+// including module compilation, service program binding, and cleanup operations
+// for iRPGUnit COBOL test service programs.
+//
+// @param testPgm    - Target test service program object to create
+// @param srcFile    - Source file containing the COBOL test source code
+// @param srcMbr     - Source member name within the source file
+// @param srcStmf    - IFS stream file path as alternative source location
+// @param text       - Descriptive text for the created service program
+// @param cOption    - Compilation options controlling module creation
+// @param dbgView    - Debug view specification for debugging support
+// @param bndSrvPgm  - Array of service programs to bind during creation
+// @param bndDir     - Array of binding directories to search for exports
+// @param bOption    - Binding options controlling service program creation
+// @param define     - Preprocessor definitions for conditional compilation
+// @param dltSplf    - Flag to delete compilation spooled files after creation
+// @param actGrp     - Activation group specification for runtime isolation
+// @param bModules   - Additional modules to include in the service program
+// @param pOption    - Preprocessor options for source processing
+// @param compileOpt - Compiler-specific optimization and control options
+// @param targetRls  - Target release level for compatibility control
+// @param incDir     - Include directories for copy member resolution
+// @param tgtCcsid   - Target CCSID for character data conversion
+///
 dcl-pr crtCbl extpgm('RUCRTCBL');
   testPgm      likeds(Object_t) const;
   srcFile      likeds(Object_t) const;

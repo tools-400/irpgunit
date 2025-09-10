@@ -1,31 +1,23 @@
 **free
 /if not defined (IRPGUNIT_TESTCASE)
 /define IRPGUNIT_TESTCASE
-/// ==========================================================================
-//  iRPGUnit - Public API.
 // ==========================================================================
-//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  iRPGUnit - Public API.
+//  This include contains the prototypes of the public API of the iRPGUnit
+//  utility. Include this source file to your iRPGUnit test suite service
+//  programs to get access to the iRPGUnit services.
+// ==========================================================================
+//  Copyright (c) 2013-2025 iRPGUnit Project Team
 //  All rights reserved. This program and the accompanying materials
 //  All rights reserved. This program and the accompanying materials
 //  are made available under the terms of the Common Public License v1.0
 //  which accompanies this distribution, and is available at
 //  http://www.eclipse.org/legal/cpl-v10.html
-/// ==========================================================================
-
-/if defined(IRPGUNIT_STMF)
-/include qinclude/TEMPLATES.rpgle
-/else
-/include qinclude,TEMPLATES
-/endif
-
-/// ------------------------------------
-//  Assertions of module ASSERT.
-/// ------------------------------------
-
+// ==========================================================================
 
 ///
+// Alphanumeric Equality Assertion
 // Cobol enabled.
-// Aphanumeric Equality Assertion
 //
 // Compares the given String values 'expected' and 'actual'. The assertion
 // fails, if both values are different.
@@ -39,19 +31,19 @@
 // If parameter 'fieldName' is specified, the message is prefixed
 // with 'fieldName:'.
 //
-// @param Expected value
-// @param Actual value
-// @param Field name (optional)
+// @param expected  - Expected value
+// @param actual    - Actual value
+// @param fieldName - Field name (optional)
 //
 // @throws CPF9897 Expected '{expected}', but was '{actual}'.
 ///
 dcl-pr aEqual extproc('aEqual') opdesc;
-  expected    char(32565) const;
-  actual      char(32565) const;
+  expected  char(32565) const;
+  actual    char(32565) const;
  /if defined(RPGUNIT_INTERNAL)
-  fieldName   char(64) options(*nopass: *omit) const;
+  fieldName char(64) options(*nopass: *omit) const;
  /else
-  fieldName   varchar(64) options(*nopass: *omit) const;
+  fieldName varchar(64) options(*nopass: *omit) const;
  /endif
 end-pr;
 
@@ -70,16 +62,16 @@ end-pr;
 // If parameter 'fieldName' is specified, the message is prefixed
 // with 'fieldName:'.
 //
-// @param Expected value
-// @param Actual value
-// @param Field name (optional).
+// @param expected  - Expected value
+// @param actual    - Actual value
+// @param fieldName - Field name (optional)
 //
 // @throws CPF9897 Expected '{expected}', but was '{actual}'.
 ///
 dcl-pr iEqual extproc('iEqual') opdesc;
-  expected   zoned(31: 0) const;
-  actual     zoned(31: 0) const;
-  fieldName  varchar(64) options(*nopass: *omit) const;
+  expected  zoned(31: 0) const;
+  actual    zoned(31: 0) const;
+  fieldName varchar(64) options(*nopass: *omit) const;
 end-pr;
 
 ///
@@ -89,7 +81,7 @@ end-pr;
 // if both values are different.
 //
 // Example:
-//   iEqual( *ON : isFound );
+//   nEqual( *ON : isFound );
 //
 // Message:
 //   Expected 'expected', but was 'actual'.
@@ -97,21 +89,21 @@ end-pr;
 // If parameter 'fieldName' is specified, the message is prefixed
 // with 'fieldName:'.
 //
-// @param Expected value
-// @param Actual value
-// @param Field name (optional)
+// @param expected  - Expected value
+// @param actual    - Actual value
+// @param fieldName - Field name (optional)
 //
 // @throws CPF9897 Expected '{expected}', but was '{actual}'.
 ///
 dcl-pr nEqual extproc('nEqual') opdesc;
-  expected   ind const;
-  actual     ind const;
-  fieldName  varchar(64) options(*nopass: *omit) const;
+  expected  ind const;
+  actual    ind const;
+  fieldName varchar(64) options(*nopass: *omit) const;
 end-pr;
 
 ///
-// Cobol enabled.
 // General Purpose Assertion
+// Cobol enabled.
 //
 // Checks the specified Boolean expression for true. The assertion fails,
 // if the expression evaluates to false. When the assertion fails, the
@@ -129,12 +121,11 @@ end-pr;
 // Message:
 //   Missing record in file XXX
 //
-// @param Condition to test
-// @param Message if false (optional)
+// @param condition  - Condition to test
+// @param msgIfFalse - Message if false (optional)
 //
 // @throws CPF9897 {msgIfFalse}, e.g. 'Missing record in file XXX'
 ///
-
 dcl-pr assert extproc('assert') opdesc;
   condition  ind const;
  /if defined(RPGUNIT_INTERNAL)
@@ -145,8 +136,8 @@ dcl-pr assert extproc('assert') opdesc;
 end-pr;
 
 ///
-// Cobol enabled.
 // Fail test
+// Cobol enabled.
 //
 // Produces an error and appends the specified 'message' to the test
 // report. The test case is terminated.
@@ -159,7 +150,8 @@ end-pr;
 //     // Exception seen. Success.
 //   endmon;
 //
-// @param Message
+// @param msg - Message
+//
 // @throws CPF9897 {msg}, e.g. 'PGM should have thrown an exception'
 ///
 dcl-pr fail extproc('fail') opdesc;
@@ -171,7 +163,7 @@ dcl-pr fail extproc('fail') opdesc;
 end-pr;
 
 ///
-// Get Monitored Message.
+// Get Monitored Message
 //
 // Retrieves the latest *ESCAPE message from the job log. Usually
 // called within the 'on-error' section of a 'monitor' block.
@@ -188,12 +180,12 @@ end-pr;
 //
 //   aEqual( 'MCH1211': msgInfo.Id );
 //
-// @param Whether to remove message from job log
+// @param doRmvMsg - Whether to remove message from job log
 //
 // @return Message information (MsgInfo_t)
 ///
 dcl-pr getMonitoredMessage likeds(MsgInfo_t) extproc('getMonitoredMessage') opdesc;
-  doRmvMsg   ind options(*nopass) const;
+  doRmvMsg ind options(*nopass) const;
 end-pr;
 
 dcl-ds MsgInfo_t qualified template;
@@ -214,14 +206,14 @@ end-ds;
 // Examples:
 //   assertJobLogContains( 'MCH1211' : %timestamp() - %minutes(2) );
 //
-// @param Message id to look for
-// @param Time frame to search within a job log
+// @param msgId     - Message id to look for
+// @param timeLimit - Time frame to search within a job log
 //
 // @throws CPF9897 'Message '{msgId}' not found in the job log.'
 ///
 dcl-pr assertJobLogContains extproc('assertJobLogContains') opdesc;
-  msgId      char(7) const;
-  timeLimit  timestamp const;
+  msgId     char(7) const;
+  timeLimit timestamp const;
 end-pr;
 
 ///
@@ -233,12 +225,12 @@ end-pr;
 // Examples:
 //   assertMessageQueueContains( 'MCH1211' : %timestamp() - %minutes(2) );
 //
-// @param User name or message queue name
-// @param message queue library (optional)
-// @param Message id to look for (optional)
-// @param Text of message to match (optional)
-// @param Help of message to match (optional)
-// @param Time frame to search within a job log
+// @param userOrQueue - User name or message queue name
+// @param library     - message queue library (optional)
+// @param msgId       - Message id to look for (optional)
+// @param msgText     - Text of message to match (optional)
+// @param msgHelp     - Help of message to match (optional)
+// @param timeLimit   - Time frame to search within a job log
 //
 // @throws CPF9897 'Message '{msgId}' not found in the job log.'
 ///
@@ -277,14 +269,12 @@ end-pr;
 // Uses CLRPFM to remove the data from 'member' of file 'file'.
 // The file must be stored in *CURLIB.
 //
-// @param Physical file name clear
-// @param Member name to clear (optional)
+// @param w1fileNm - Physical file name clear
+// @param w1mbrNm  - Member name to clear (optional)
 ///
 dcl-pr clrpfm extproc('CLRPFM') opdesc;
-   // A file name.
-  w1fileNm  char(10) const;
-   // An (optional) member name.
-  w1mbrNm   char(10) options(*NoPass) const;
+  w1fileNm char(10) const;
+  w1mbrNm  char(10) options(*NoPass) const;
 end-pr;
 
 ///
@@ -296,7 +286,7 @@ end-pr;
 // Example:
 //   rclActGrp( '*ELIGIBLE' );
 //
-// @param Activation group name to reclaim
+// @param w1actGrpNm - Activation group name to reclaim
 ///
 dcl-pr rclActGrp extproc('RCLACTGRP') opdesc;
   w1actGrpNm  char(10) const;
@@ -311,10 +301,10 @@ end-pr;
 // Example:
 //   runCmd( 'ALCOBJ OBJ((*CURLIB/FILE *FILE *EXCL))' );
 //
-// @param Command to run
+// @param w1cmd - Command to run
 ///
 dcl-pr runCmd extproc('runCmd') opdesc;
-  w1cmd  varchar(32702) const;
+  w1cmd varchar(32702) const;
 end-pr;
 
 ///
@@ -327,14 +317,12 @@ end-pr;
 // Example:
 //   waitSeconds(3 : 'Waiting 3 seconds ...');
 //
-// @param Number of seconds to wait
-// @param Message to log (optional)
+// @param seconds - Number of seconds to wait
+// @param message - Message to log (optional)
 ///
 dcl-pr waitSeconds extproc('waitSeconds') opdesc;
-   // Wait time in seconds
-  seconds  int(10) const;
-   // Optional. Message sent to *EXT
-  message  varchar(50) options(*nopass: *omit) const;
+  seconds int(10) const;
+  message varchar(50) options(*nopass: *omit) const;
 end-pr;
 
 ///
@@ -346,11 +334,11 @@ end-pr;
 // Example:
 //   displayStatusMessage('Hello World!');
 //
-// @param Message to display
+// @param message - Message to display
 ///
 dcl-pr displayStatusMessage extproc('displayStatusMessage') opdesc;
    // Optional. Message sent to *EXT
-  message  varchar(132) const;
+  message varchar(132) const;
 end-pr;
 
 ///
@@ -391,16 +379,16 @@ end-pr;
 // Example:
 //   srcType = getMemberType('QINCLUDE': 'RPGUNIT': 'ASSERT');
 //
-// @param Source file name
-// @param Source file library
-// @param Source file member name
+// @param srcFile    - Source file name
+// @param srcFileLib - Source file library
+// @param mbr        - Source file member name
 //
 // @return Source member type
 ///
 dcl-pr getMemberType char(10) extproc('getMemberType') opdesc;
-  srcFile     char(10) const;
-  srcFileLib  char(10) const;
-  mbr         char(10) const;
+  srcFile    char(10) const;
+  srcFileLib char(10) const;
+  mbr        char(10) const;
 end-pr;
 
 ///
@@ -411,12 +399,12 @@ end-pr;
  // Example:
  //   srcType = getStmfType('/home/dev/mypgm.rpgle');
 //
-// @param Stream file path
+// @param srcStmf - Stream file path
 //
 // @return Stream file type
 ///
 dcl-pr getStmfType char(10) extproc('getStmfType') opdesc;
-  srcStmf     like(ifsStmf_t) const;
+  srcStmf like(ifsStmf_t) const;
 end-pr;
 
 ///
@@ -431,59 +419,90 @@ end-pr;
 // Example:
 //   setLowMessageKey(msgKey);
 //
-// @param Message key
+// @param msgKey - Message key
 ///
 dcl-pr setLowMessageKey extproc('setLowMessageKey') opdesc;
-  msgKey  char(4) options(*nopass) const;
+  msgKey char(4) options(*nopass) const;
 end-pr;
 
-///
 // ------------------------------------
 //  Self-test procedures.
 // ------------------------------------
+
+///
+// Clear the assertion failure event
+//
+// Clears the assertion failure event data structure
+// that gets captured when an assertion fails during
+// test execution.
 ///
 dcl-pr clrAssertFailEvt extproc('clrAssertFailEvt');
 end-pr;
 
+///
+// Get the number of assertions that have been called
+//
+// @return Number of assertions executed
+///
 dcl-pr getAssertCalled int(10) extproc('getAssertCalled');
 end-pr;
 
-dcl-pr getAssertFailEvt extproc('getAssertFailEvt')
-       likeds(assertfailevt_t);
+///
+// Get the assertion failure event
+//
+// @return Assertion failure event data structure
+///
+dcl-pr getAssertFailEvt extproc('getAssertFailEvt') likeds(assertfailevt_t);
 end-pr;
 
-dcl-pr getAssertFailEvtLong extproc('getAssertFailEvtLong')
-       likeds(assertFailEvtLong_t);
+///
+// Get the extended assertion failure event with long text
+//
+// @return Extended assertion failure event data structure
+///
+dcl-pr getAssertFailEvtLong extproc('getAssertFailEvtLong') likeds(assertFailEvtLong_t);
 end-pr;
 
+///
+// Clear the assertion counter back to zero
+///
 dcl-pr clearAssertCounter extproc('clearAssertCounter');
 end-pr;
 
-///
+
 // ------------------------------------
 //   Prototypes of internal procedures
 // ------------------------------------
-///
-dcl-pr registerStartPgm extproc('ASSERT_registerStartPgm');
-  lib             char(10) const;
-  pgm             char(10) const;
-end-pr;
 
 ///
+// Register the start of a program for testing purposes
+//
+// @param lib - Library name where the program resides
+// @param pgm - Program name to register
+///
+dcl-pr registerStartPgm extproc('ASSERT_registerStartPgm');
+  lib char(10) const;
+  pgm char(10) const;
+end-pr;
+
 // ------------------------------------
 //   Prototypes of module VERSION
 // ------------------------------------
-///
-dcl-pr getversion extproc('VERSION_getVersion');
-  version         char(20);
-  date            char(10);
-end-pr;
 
 ///
+// Retrieve version information for the current system or module
+//
+// @param version - Version string returned by the procedure
+// @param date    - Date string returned by the procedure
+///
+dcl-pr getVersion extproc('VERSION_getVersion');
+  version char(20);
+  date    char(10);
+end-pr;
+
 // ------------------------------------------------------------------
 //  V2 Prototypes
 // ------------------------------------------------------------------
-///
 
 ///
 // Equality assertion
@@ -496,13 +515,13 @@ end-pr;
 // assertEqual_timestamp
 ///
 /if not defined(DISABLE_ASSERT_EQUAL)
-dcl-pr assertEqual   overload(assertEqual_string
-                           : assertEqual_numeric
-                           : assertEqual_float
-                           : assertEqual_date
-                           : assertEqual_time
-                           : assertEqual_timestamp);
-//                           : assertEqual_ind);
+dcl-pr assertEqual overload(assertEqual_string
+                          : assertEqual_numeric
+                          : assertEqual_float
+                          : assertEqual_date
+                          : assertEqual_time
+                          : assertEqual_timestamp);
+//                          : assertEqual_ind);
 /endif
 
 ///
@@ -519,16 +538,16 @@ dcl-pr assertEqual   overload(assertEqual_string
 //
 // If parameter 'message' is specified that is appened to the log.
 //
-// @param Expected value
-// @param Actual value
-// @param Message (optional)
+// @param expected - Expected value
+// @param actual   - Actual value
+// @param message  - Message (optional)
 //
 // @throws CPF9897 Expected '{expected}', but was '{actual}'.
 ///
 dcl-pr assertEqual_string opdesc extproc('assertEqual_string');
-  expected   like(assertString_t) options(*varsize) const;
-  actual     like(assertString_t) options(*varsize) const;
-  message    like(msgText_t) options(*nopass: *omit) const;
+  expected like(assertString_t) options(*varsize) const;
+  actual   like(assertString_t) options(*varsize) const;
+  message  like(msgText_t) options(*nopass: *omit) const;
 end-pr;
 
 ///
@@ -572,16 +591,16 @@ end-pr;
 //
 // If parameter 'message' is specified that is appened to the log.
 //
-// @param Expected value
-// @param Actual value
-// @param Message (optional)
+// @param expected - Expected value
+// @param actual   - Actual value
+// @param message  - Message (optional)
 //
 // @throws CPF9897 Expected '{expected}', but was '{actual}'.
 ///
 dcl-pr assertEqual_numeric opdesc extproc('assertEqual_numeric');
-  expected   zoned(63: 20) options(*exact) const;
-  actual     zoned(63: 20) options(*exact) const;
-  message    like(msgText_t) options(*nopass: *omit) const;
+  expected zoned(63: 20) options(*exact) const;
+  actual   zoned(63: 20) options(*exact) const;
+  message  like(msgText_t) options(*nopass: *omit) const;
 end-pr;
 
 ///
@@ -598,16 +617,16 @@ end-pr;
 //
 // If parameter 'message' is specified that is appened to the log.
 //
-// @param Expected value
-// @param Actual value
-// @param Message (optional)
+// @param expected - Expected value
+// @param actual   - Actual value
+// @param message  - Message (optional)
 //
 // @throws CPF9897 Expected '{expected}', but was '{actual}'.
 ///
 dcl-pr assertEqual_float opdesc extproc('assertEqual_float');
-  expected   float(8) options(*exact) const;
-  actual     float(8) options(*exact) const;
-  message    like(msgText_t) options(*nopass: *omit) const;
+  expected float(8) options(*exact) const;
+  actual   float(8) options(*exact) const;
+  message  like(msgText_t) options(*nopass: *omit) const;
 end-pr;
 
 ///
@@ -624,16 +643,16 @@ end-pr;
 //
 // If parameter 'message' is specified that is appened to the log.
 //
-// @param Expected value
-// @param Actual value
-// @param Message (optional)
+// @param expected - Expected value
+// @param actual   - Actual value
+// @param message  - Message (optional)
 //
 // @throws CPF9897 Expected '{expected}', but was '{actual}'.
 ///
 dcl-pr assertEqual_date opdesc extproc('assertEqual_date');
-  expected   date const;
-  actual     date const;
-  message    like(msgText_t) options(*nopass: *omit) const;
+  expected date const;
+  actual   date const;
+  message  like(msgText_t) options(*nopass: *omit) const;
 end-pr;
 
 ///
@@ -650,16 +669,16 @@ end-pr;
 //
 // If parameter 'message' is specified that is appened to the log.
 //
-// @param Expected value
-// @param Actual value
-// @param Message (optional)
+// @param expected - Expected value
+// @param actual   - Actual value
+// @param message  - Message (optional)
 //
 // @throws CPF9897 Expected '{expected}', but was '{actual}'.
 ///
 dcl-pr assertEqual_time opdesc extproc('assertEqual_time');
-  expected   time const;
-  actual     time const;
-  message    like(msgText_t) options(*nopass: *omit) const;
+  expected time const;
+  actual   time const;
+  message  like(msgText_t) options(*nopass: *omit) const;
 end-pr;
 
 ///
@@ -669,29 +688,49 @@ end-pr;
 // fails, if both values are different.
 //
 // Example:
-//   assertEqual( Z'2024-09-16-11.22.33.123456' : Z'2024-01-11-11.22.33.123456'  );
+//   assertEqual( Z'2024-09-16-11.22.33.123456' : Z'2024-01-11-11.22.33.123456' );
 //
 // Message:
 //   Expected '2024-09-16-11.22.33.123456', but was '2024-01-11-11.22.33.123456'.
 //
 // If parameter 'message' is specified that is appened to the log.
 //
-// @param Expected value
-// @param Actual value
-// @param Message (optional)
+// @param expected - Expected value
+// @param actual   - Actual value
+// @param message  - Message (optional)
 //
 // @throws CPF9897 Expected '{expected}', but was '{actual}'.
 ///
 dcl-pr assertEqual_timestamp opdesc extproc('assertEqual_timestamp');
-  expected   timestamp(12) const;
-  actual     timestamp(12) const;
-  message    like(msgText_t) options(*nopass: *omit) const;
+  expected timestamp(12) const;
+  actual   timestamp(12) const;
+  message  like(msgText_t) options(*nopass: *omit) const;
 end-pr;
 
+///
+// Timestamp Integer Assertion
+//
+// Compares the given integer values 'expected' and 'actual'. The assertion
+// fails, if both values are different.
+//
+// Example:
+//   assertEqual( '100' : '200' );
+//
+// Message:
+//   Expected '100', but was '200'.
+//
+// If parameter 'message' is specified that is appened to the log.
+//
+// @param expected - Expected value
+// @param actual   - Actual value
+// @param message  - Message (optional)
+//
+// @throws CPF9897 Expected '{expected}', but was '{actual}'.
+///
 dcl-pr assertEqual_ind opdesc extproc('assertEqual_ind');
-  expected   ind options(*exact) const;
-  actual     ind options(*exact) const;
-  message    like(msgText_t) options(*nopass: *omit) const;
+  expected ind options(*exact) const;
+  actual   ind options(*exact) const;
+  message  like(msgText_t) options(*nopass: *omit) const;
 end-pr;
 
 ///
@@ -708,25 +747,41 @@ end-pr;
 //
 // If parameter 'message' is specified that is appened to the log.
 //
-// @param Expected value
-// @param Actual value
-// @param Pointer to matcher procedure
-// @param Message (optional)
+// @param expected - Expected value
+// @param actual   - Actual value
+// @param matcher  - Pointer to matcher procedure
+// @param message  - Message (optional)
 //
 // @throws CPF9897 Expected '{expected}', but was '{actual}'.
 ///
 dcl-pr assertThat opdesc extproc('assertThat');
-  expected   pointer const;
-  actual     pointer const;
-  matcher    pointer(*proc) const;
-  message    like(msgText_t) options(*nopass: *omit) const;
+  expected pointer const;
+  actual   pointer const;
+  matcher  pointer(*proc) const;
+  message  like(msgText_t) options(*nopass: *omit) const;
 end-pr;
 
+///
+// Procedure interface of the 'matcher' callback procedure.
+//
+// The matcher procedure is called for comparing the actual result
+// with the expected value.
+//
+// @param expected - Expected value
+// @param actual   - Actual value
+// @param message  - Message (optional)
+///
 dcl-s pMatcher_t pointer(*proc);
 dcl-pr matcher_t ind extproc(pMatcher_t);
   expected   pointer const;
   actual     pointer const;
   message    like(msgText_t) options(*nopass);
 end-pr;
+
+/if defined(IRPGUNIT_STMF)
+/include qinclude/TEMPLATES.rpgle
+/else
+/include qinclude,TEMPLATES
+/endif
 
 /endif
