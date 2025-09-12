@@ -362,8 +362,8 @@
     </target>
 
     <!-- =============================================================
-          Erstellt eine neue Update-Site.
-          Alle alten Dateien werden überschrieben, bzw. gelöscht.
+          Updates various files before the plug-in can be build
+          with option 'Plug-in Tools - Build Site' of 'site.xml'. 
          ============================================================= -->
     <target name="build" depends="checkBuildTarget, checkProjectPaths, clean, updateVersionNumber, updateHelpProject, createTagFile, refreshProjects" description="Step 2">
 
@@ -381,7 +381,7 @@
     </target>
 
     <!-- =============================================================
-          Führt JUnit Test aus.
+          Execute JUnit tests.
          ============================================================= -->
     <target name="junit" >
 
@@ -414,7 +414,7 @@
     </target>
 
     <!-- =============================================================
-          Kopiert alle erforderlichen Assets-Dateien.
+          Updates 'Docs' with the current project documentation.
          ============================================================= -->
     <target name="createGitHubFiles" depends="updatePdfFile, prepareUpdateSite, createZipFile, createUpdateSite, createUpdateSiteHtmlPages, createHelpHtmlPages, createHomePageHtml, createFilesHtml, refreshProjects" description="Step 3">
 
@@ -423,7 +423,7 @@
     </target>
 
     <!-- =============================================================
-          Erzeugt die ZIP Datei.
+          Produces the zip file of the archived update site.
          ============================================================= -->
     <target name="createZipFile">
 
@@ -439,7 +439,7 @@
     </target>
 
     <!-- =============================================================
-          Erzeugt die Update Site.
+          Collects the files of the local update site.
          ============================================================= -->
     <target name="createUpdateSite">
 
@@ -457,14 +457,8 @@
     * =====================================================================
     *   Create the web pages of the update site.
     *   This target is specific to RDi/WDSCi and controlled by build.target.
-    *
-    *   Set the build properties as shown below, if you want to update 
-    *   index.html:
-    * 
-    *     build.help.enabled=false
-    *
     * ===================================================================== -->
-    <target name="createUpdateSiteHtmlPages" unless="ignore.build.help">
+    <target name="createUpdateSiteHtmlPages">
 
         <echo>Creating ${build.public.project.name} update site (html) ...</echo>
 
@@ -531,7 +525,7 @@
     *     build.help.enabled=true
     *
     * ===================================================================== -->
-    <target name="createHelpHtmlPages" depends="updateHelpBuilderProperties">
+    <target name="createHelpHtmlPages" depends="updateHelpBuilderProperties" unless="ignore.build.help">
 
         <echo>Creating ${build.public.project.name} '${build.pages.help}' page (html) ...</echo>
 
@@ -660,9 +654,9 @@
 
     <!--
     * =====================================================================
-    *   Uploads the entire project files to GitHub.
-    *   This target must be run, after the GitHub files have been built.
-    *   This target is specific to RDi/WDSCi and controlled by build.target.
+    *   Cleans the 'Doc' directory.
+    *   Some files are not removed, because they contain release
+    *   versions numbers that must be preserved from build to build.
     * ===================================================================== -->
     <target name="cleanDocsDirectory" depends="cleanHelpPage">
 
@@ -711,9 +705,7 @@
 
     <!--
     * =====================================================================
-    *   Uploads the entire project files to GitHub.
-    *   This target must be run, after the GitHub files have been built.
-    *   This target is specific to RDi/WDSCi and controlled by build.target.
+    *   Cleans the directory of the project help pages in 'Docs'.
     * ===================================================================== -->
     <target name="cleanHelpPage" unless="ignore.build.help">
 
@@ -746,7 +738,7 @@
 
     <!--
     * =====================================================================
-    *   Uploads the entire project files to GitHub.
+    *   Uploads the entire project files from 'Docs' to GitHub.
     *   This target must be run, after the GitHub files have been built.
     *   This target is specific to RDi/WDSCi and controlled by build.target.
     * ===================================================================== -->
@@ -791,11 +783,16 @@
         </copy>
 
         <!-- Homepage Help -->
-        <copy todir="${target.ide.uload.dir}/${beta.dir}/${build.pages.help}" >  
-            <fileset dir="${build.upload.dir.help}">
-                <include name="**"/>
-            </fileset>
-        </copy>
+        <if>
+            <equals arg1="${ignore.build.help}" arg2="false" />
+            <then>
+                <copy todir="${target.ide.uload.dir}/${beta.dir}/${build.pages.help}" >  
+                    <fileset dir="${build.upload.dir.help}">
+                        <include name="**"/>
+                    </fileset>
+                </copy>
+            </then>
+        </if>
 
         <!-- Replace zip file name -->
         <replaceregexp match="${html.files.zip.regex}" replace="${html.files.zip.replace}" flags="g" byline="true">
@@ -833,7 +830,7 @@
 
     <!--
     * =====================================================================
-    *   Uploads the entire project files to GitHub.
+    *   Uploads the project notifier file from 'Docs' to GitHub.
     *   This target must be run, after the GitHub files have been built.
     *   This target is specific to RDi/WDSCi and controlled by build.target.
     * ===================================================================== -->
@@ -881,7 +878,7 @@
     </target>
 
     <!-- =============================================================
-          Bereitet das Erstellen der Update Site vor.
+          Prepares building the archived update site.
          ============================================================= -->
     <target name="prepareUpdateSite">
 
@@ -940,14 +937,14 @@
     </target>
 
     <!-- =============================================================
-          Löscht alle bestehenden Dateien.
+          Cleans all relevant directory.
          ============================================================= -->
     <target name="clean" depends="cleanWorkFolders, cleanUpdateSite">
 
     </target>
 
     <!-- =============================================================
-          Löscht alle bestehenden Dateien: Working Directories
+          Cleans the working directories.
          ============================================================= -->
     <target name="cleanWorkFolders" >
 
@@ -986,7 +983,7 @@
     </target>
 
     <!-- =============================================================
-          Löscht alle bestehenden Dateien: Update Site
+          Cleans the directory of the update site.
          ============================================================= -->
     <target name="cleanUpdateSite" >
 
@@ -1148,6 +1145,12 @@
     * =====================================================================
     *   Updates the help project with the following files:
     *     - upload_savf.cmd
+    *
+    *   Set the build properties as shown below, if you want to update 
+    *   the help pages:
+    * 
+    *     build.help.enabled=true
+    *
     * ===================================================================== -->
     <target name="updateHelpProject" unless="ignore.build.help">
 
