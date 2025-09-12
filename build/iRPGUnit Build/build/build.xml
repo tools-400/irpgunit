@@ -34,18 +34,23 @@
  *     workspace looks like that:
  *
  *     [workspace]
- *      └╌╌ .analysis
- *      └╌╌ .metadata
+ *      ├╌╌ .analysis
+ *      ├╌╌ .metadata
  *      └╌╌ irpgunit
- *          └╌╌ .git
+ *          ├╌╌ .git
+ *          └╌╌ ...
  *      └╌╌ isphere
- *          └╌╌ .git
+ *          ├╌╌ .git
+ *          └╌╌ ...
  *      └╌╌ isphere-plugin
- *          └╌╌ .git
+ *          ├╌╌ .git
+ *          └╌╌ ...
  *      └╌╌ rapid-fire
- *          └╌╌ .git
+ *          ├╌╌ .git
+ *          └╌╌ ...
  *      └╌╌ rapid-fire-plugin
- *          └╌╌ .git
+ *          ├╌╌ .git
+ *          └╌╌ ...
  *
  *   Preparing build:
  *
