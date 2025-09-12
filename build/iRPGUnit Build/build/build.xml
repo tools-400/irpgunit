@@ -1,9 +1,7 @@
 <!--
  * =====================================================================
  *   This Ant script helps you to create an upload the project's 
- *   update site. Before you can run the script, you need to copy
- *   'template_ftp.properties' to 'ftp.properties' and change the
- *   properties to meet your needs.
+ *   update site.
  *
  *   In order to use all features of the script, you need to
  *   have the 'iSphere Ant Plugin' installed and the 'iSphere Help Builder'
