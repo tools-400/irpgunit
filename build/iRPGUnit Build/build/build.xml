@@ -28,7 +28,27 @@
  *         - commons-net-3.3-patched.jar
  *         - ant-contrib-1.0b3.jar
  *
+ *   Workspace structure
+ *
+ *     All Git repositories must be cloned into the same Eclipse workspace. An example
+ *     workspace looks like that:
+ *
+ *     [workspace]
+ *      └╌╌ .analysis
+ *      └╌╌ .metadata
+ *      └╌╌ irpgunit
+ *          └╌╌ .git
+ *      └╌╌ isphere
+ *          └╌╌ .git
+ *      └╌╌ isphere-plugin
+ *          └╌╌ .git
+ *      └╌╌ rapid-fire
+ *          └╌╌ .git
+ *      └╌╌ rapid-fire-plugin
+ *          └╌╌ .git
+ *
  *   Preparing build:
+ *
  *     1 Copy 'ftp-credentials_template.properties' to 'ftp-credentials.properties'
  *       and update properties. This file is required for build target 'downloadIBMiLibrary'.
  *     2 Copy 'localUpdateSite_template.properties' to 'localUpdateSite.properties'
