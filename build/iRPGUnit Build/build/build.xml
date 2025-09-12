@@ -83,9 +83,20 @@
  *     3.1 On the PC run target 'build' of file 'build.xml'.
  *     3.2 Right-click 'site.xml', select 'PDE Tools -> Build Site'.
  *     3.3 On the PC run target 'createGitHubFiles' of file 'build.xml'.
- *     3.4 On the PC run target 'uploadGitHubFiles' of file 'build.xml'.
- *     3.5 Check-in source code.
- *     3.6 Create version tag, e.g.: v002.004.001.r
+ *     3.4 On the PC run target 'uploadLocalUpdateSite' to update the
+ *         local update site of your company.
+ *     3.5 Optionally on the PC run target ''
+ *     3.6 Check-in source code.
+ *     3.7 Create version tag, e.g.: v002.004.001.r
+ *
+ *     4 Eclipse Marketplace
+ *     4.1 Login to Eclipse Marketplace (https://marketplace.eclipse.org)
+ *     4.2 Go to the project (iSphere, Rapid Fire or iRPGUnit)
+ *     4.3 Click the "Edit" button to enter edit mode.
+ *     4.4 Scroll down to "Solution Version(s)" and click the "Edit" button
+ *         next to "Solution".
+ *     4.5 Update the "Version number" field.
+ *     4.6 Scroll down to the bottom and click the large "Update" button.
  *
  * ===================================================================== -->
 <project name="Project Build Script" default="build" basedir=".">
