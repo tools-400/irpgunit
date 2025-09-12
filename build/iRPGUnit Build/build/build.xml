@@ -309,6 +309,7 @@
     <property name="build.upload.dir.home"               location="${build.upload.dir}/sf-home/" />
     <property name="zip.base.directory"                  location="${workspace.home}/${build.updatesite}" />
     <property name="project.doc"                         location="${workspace.home}/${build.project.core}/${build.folder.doc}/${build.project.doc}" />
+    <property name="project.doc.tmp"                     location="${workspace.home}/${build.project.core}/${build.folder.doc}/_${build.project.doc}" />
     <property name="project.pdf"                         location="${workspace.home}/${build.project.core}/${build.folder.doc}/${build.project.pdf}" />
     <property name="project.notifier"                    location="${workspace.home}/${build.project.notifier}/${build.project.notify}" />
     
@@ -1194,18 +1195,30 @@
     * =====================================================================
     *   Updates the PDF file from 'project.doc'.
     * ===================================================================== -->
-    <target name="updatePdfFile" depends="checkPdfFile" unless="pdf.needs.update">
+    <target name="updatePdfFile" depends="checkPdfFile">
 
-        <echo>Updating ${build.public.project.name} PDF file ...</echo>
+        <if>
+            <equals arg1="${pdf.needs.update}" arg2="true" />
+            <then>
+                <echo>Updating ${build.public.project.name} PDF file ...</echo>
 
-        <winword file="${project.doc}" visible="true">
-            <saveAs toFile="${project.pdf}" saveFormat="pdf" />
-        </winword>
+                <!-- Use a temporary file, because for whatever reasons the
+                     Word file is updated as well. Most like this is caused 
+                     by a new version of MS Word. (Raddatz, 12.9.2025) -->
+                <delete file="${project.doc.tmp}"/>
+                <copyfile src="${project.doc}" dest="${project.doc.tmp}"/>
 
-        <eclipse.refreshLocal resource="${build.project.core}" depth="infinite" />
+                <winword file="${project.doc.tmp}" visible="true">
+                    <saveAs toFile="${project.pdf}" saveFormat="pdf" />
+                </winword>
+
+                <delete file="${project.doc.tmp}"/>
+
+                <eclipse.refreshLocal resource="${build.project.core}" depth="infinite" />
+            </then>
+        </if>
 
     </target>
-
 
     <!--
     * =====================================================================
