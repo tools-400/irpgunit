@@ -262,8 +262,8 @@ dcl-proc testTeardownSuite export;
   expTestProc.procNm = 'TEST_1';
   testProcEqual(expTestProc: testSuite: 1);
 
-  aEqual(*blank: testSuite.teardown.procNm);
-  aEqual('TEARDOWNSUITE': testSuite.teardownSuite.procNm);
+  aEqual(*blank: testSuite.tearDown.procNm);
+  aEqual('TEARDOWNSUITE': testSuite.tearDownSuite.procNm);
 
 end-proc;
 

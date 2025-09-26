@@ -260,7 +260,7 @@ dcl-proc rpgunit_runTestSuite export;
                 + fmtObjNm(testSuiteName) + '.' );
   endmon;
 
-  if (testSuite.testcasescnt = 0);
+  if (testSuite.testCasesCnt = 0);
     checkAndRestoreLibl(mustRestoreLibl: savedLibl);
     raiseRUError( 'No test case found in service program '
                 + fmtObjNm(testSuiteName) + '.' );
@@ -375,7 +375,7 @@ dcl-proc fillUserSpace;
   header.numFailures = result.failureCnt;
   header.numErrors = result.errorCnt;
   header.offsTestCases = header.length;
-  header.numTestCases = testsuite.testcasescnt;
+  header.numTestCases = testsuite.testCasesCnt;
 
   header.system = splf.system;
   header.splf_name = splf.nm;

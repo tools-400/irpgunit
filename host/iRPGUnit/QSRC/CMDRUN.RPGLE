@@ -422,7 +422,7 @@ dcl-proc tearDownTestSuite export;
 
   dcl-ds testResult likeds(testResult_t);
 
-  //return callWithLogging( testSuite.teardownSuite );
+  //return callWithLogging( testSuite.tearDownSuite );
   testResult = initTestResult(testsuite.tearDownSuite.procNm);
   testResult = runProc( testsuite.tearDownSuite.procPtr : testResult );
 
@@ -564,7 +564,7 @@ dcl-proc setTestRunOrder;
   dcl-c DECREASING_ORDER -1;
 
   firstTestIdx = 1;
-  lastTestIdx  = testSuite.testcasescnt;
+  lastTestIdx  = testSuite.testCasesCnt;
 
   if (order = ORDER_REVERSE);
     startIdx = lastTestIdx;

@@ -240,15 +240,15 @@ dcl-proc test_runTestProc_withTearDown export;
   testProc.procPtr = %paddr( test_proc);
   testProc.procNm = 'test_proc';
 
-  tearDownProc.procPtr = %paddr( teardown_proc);
-  tearDownProc.procNm = 'teardown_proc';
+  tearDownProc.procPtr = %paddr( tearDown_proc);
+  tearDownProc.procNm = 'tearDown_proc';
 
   result = runTestProc(testProc: noSetUp: tearDownProc);
 
   // Controls.
 
   aEqual('test_proc was called': execTrace(1));
-  aEqual('teardown_proc was called': execTrace(2));
+  aEqual('tearDown_proc was called': execTrace(2));
   aEqual(TEST_CASE_SUCCESS: result.outcome);
 
 end-proc;
@@ -265,8 +265,8 @@ dcl-proc test_runTestProc_errorInTearDown export;
     testProc.procPtr = %paddr( test_proc);
     testProc.procNm = 'test_proc';
 
-    tearDownProc.procPtr = %paddr( teardown_with_error);
-    tearDownProc.procNm = 'teardown_with_error';
+    tearDownProc.procPtr = %paddr( tearDown_with_error);
+    tearDownProc.procNm = 'tearDown_with_error';
 
     result = runTestProc(testProc: noSetUp: tearDownProc);
   on-error;
@@ -276,7 +276,7 @@ dcl-proc test_runTestProc_errorInTearDown export;
   // Controls.
 
   aEqual('test_proc was called': execTrace(1));
-  aEqual('teardown_with_error was called': execTrace(2));
+  aEqual('tearDown_with_error was called': execTrace(2));
   aEqual(TEST_CASE_ERROR: result.outcome);
   aEqual('raiseError': result.error.qSndStmt.procNm);
 
@@ -292,15 +292,15 @@ dcl-proc test_runTestProc_tearDownAfterFailureInTest export;
   testProc.procPtr = %paddr( test_fail);
   testProc.procNm = 'test_fail';
 
-  tearDownProc.procPtr = %paddr( teardown_proc);
-  tearDownProc.procNm = 'teardown_proc';
+  tearDownProc.procPtr = %paddr( tearDown_proc);
+  tearDownProc.procNm = 'tearDown_proc';
 
   result = runTestProc(testProc: noSetUp: tearDownProc);
 
   // Controls.
 
   aEqual('test_fail was called': execTrace(1));
-  aEqual('teardown_proc was called': execTrace(2));
+  aEqual('tearDown_proc was called': execTrace(2));
   aEqual(TEST_CASE_FAILURE: result.outcome);
 
 end-proc;
@@ -319,8 +319,8 @@ dcl-proc test_runTestProc_tearDownAfterErrorInSetup export;
     setupProc.procPtr = %paddr( setup_with_error);
     setupProc.procNm = 'setup_with_error';
 
-    tearDownProc.procPtr = %paddr( teardown_proc);
-    tearDownProc.procNm = 'teardown_proc';
+    tearDownProc.procPtr = %paddr( tearDown_proc);
+    tearDownProc.procNm = 'tearDown_proc';
 
     result = runTestProc(testProc: setupProc: tearDownProc);
   on-error;
@@ -331,7 +331,7 @@ dcl-proc test_runTestProc_tearDownAfterErrorInSetup export;
 
   aEqual('setup_with_error was called': execTrace(1));
   // test_proc not called.
-  aEqual('teardown_proc was called': execTrace(2));
+  aEqual('tearDown_proc was called': execTrace(2));
   aEqual(TEST_CASE_ERROR: result.outcome);
   aEqual('raiseError': result.error.qSndStmt.procNm);
 
@@ -437,8 +437,8 @@ dcl-proc test_runTest_withSetupAndTearDown export;
   testCase(1).procNm  = 'test_proc' ;
   testCase(1).procPtr = %paddr( test_proc);
 
-  testSuite.tearDown.procNm = 'teardown_proc' ;
-  testSuite.tearDown.procPtr = %paddr( teardown_proc);
+  testSuite.tearDown.procNm = 'tearDown_proc' ;
+  testSuite.tearDown.procPtr = %paddr( tearDown_proc);
 
   // Execution.
 
@@ -448,7 +448,7 @@ dcl-proc test_runTest_withSetupAndTearDown export;
 
   aEqual('setup_proc was called': execTrace(1));
   aEqual('test_proc was called': execTrace(2));
-  aEqual('teardown_proc was called': execTrace(3));
+  aEqual('tearDown_proc was called': execTrace(3));
 
 end-proc;
 
@@ -538,20 +538,20 @@ dcl-proc setup_with_error;
 end-proc;
 
 
-dcl-proc teardown_proc;
+dcl-proc tearDown_proc;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  traceCall('teardown_proc');
+  traceCall('tearDown_proc');
 
 end-proc;
 
 
-dcl-proc teardown_with_error;
+dcl-proc tearDown_with_error;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  traceCall('teardown_with_error');
+  traceCall('tearDown_with_error');
   raiseError();
 
 end-proc;

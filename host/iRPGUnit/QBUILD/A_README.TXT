@@ -278,7 +278,7 @@ Version 2.2.1 - 14.06.2017
  * Changed RPGUnit view to display the number of assertions.
  * Fixed problem, that a test procedure had to start with 'test'
    in lower case. Now the case is ignored.
- * Now errors in setup/teardown procedures properly show up in RDi.
+ * Now errors in setup/tearDown procedures properly show up in RDi.
  * Added number of executed assertions to RPGUnit view.
  * Bumped user space version to 3.
 

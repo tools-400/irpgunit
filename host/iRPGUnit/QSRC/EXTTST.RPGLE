@@ -53,17 +53,17 @@ dcl-pr cnt             int(10) extproc(cnt_p);
   pointer const;
 end-pr;
 
-dcl-pr getnm like(procNm_t) extproc(getnm_p);
+dcl-pr getnm like(procNm_t) extproc(getNm_p);
   procnmlisthandle
   pointer const;
 end-pr;
 
-dcl-pr gettestcaseptr  pointer;
-  testsuite       const likeds(testSuite_t);
+dcl-pr getTestCasePtr  pointer;
+  testSuite       const likeds(testSuite_t);
   testidx         int(10) const;
 end-pr;
 
-dcl-pr gotonext extproc(gotonext_p);
+dcl-pr gotonext extproc(gotoNext_p);
   procnmlisthandle
   pointer const;
 end-pr;
@@ -79,8 +79,8 @@ end-pr;
 
 // Procedure pointers for ProcNmList_t.
 dcl-s cnt_p           pointer(*proc);
-dcl-s getnm_p         pointer(*proc);
-dcl-s gotonext_p      pointer(*proc);
+dcl-s getNm_p         pointer(*proc);
+dcl-s gotoNext_p      pointer(*proc);
 
 
 //----------------------------------------------------------------------
@@ -89,7 +89,7 @@ dcl-s gotonext_p      pointer(*proc);
 
 dcl-proc activateTestSuite export;
   dcl-pi *N;
-    testsuite       likeds(testSuite_t);
+    testSuite       likeds(testSuite_t);
     actMark         const like(actMark_t);
   end-pi;
 
@@ -98,41 +98,41 @@ dcl-proc activateTestSuite export;
   dcl-s testidx         int(10);
 
 
-  rslvProc( testsuite.setupsuite : actMark );
-  rslvProc( testsuite.setup      : actMark );
+  rslvProc( testSuite.setupsuite : actMark );
+  rslvProc( testSuite.setup      : actMark );
 
-  for testidx = 1 to testsuite.testcasescnt;
-    testcase_p = gettestcaseptr( testsuite : testidx );
+  for testidx = 1 to testSuite.testCasesCnt;
+    testcase_p = getTestCasePtr( testSuite : testidx );
     rslvProc( testcase : actMark );
   endfor;
 
-  rslvProc( testsuite.teardown      : actMark );
-  rslvProc( testsuite.teardownsuite : actMark );
+  rslvProc( testSuite.tearDown      : actMark );
+  rslvProc( testSuite.tearDownSuite : actMark );
 
 end-proc;
 
 
-dcl-proc gettestcaseptr;
+dcl-proc getTestCasePtr;
   dcl-pi *N              pointer;
-    testsuite       const likeds(testSuite_t);
+    testSuite       const likeds(testSuite_t);
     testidx         int(10) const;
   end-pi;
 
-  return testsuite.testList + %size( proc_t ) * ( testidx - 1 );
+  return testSuite.testList + %size( proc_t ) * ( testidx - 1 );
 
 end-proc;
 
 
 dcl-proc getTestNm export;
   dcl-pi *N like(procNm_t);
-    testsuite       const likeds(testSuite_t);
+    testSuite       const likeds(testSuite_t);
     testidx         int(10) const;
   end-pi;
 
   dcl-ds testproc likeds(proc_t);
 
 
-  testproc = getTestProc( testsuite : testidx );
+  testproc = getTestProc( testSuite : testidx );
   return testproc.procnm;
 
 end-proc;
@@ -140,7 +140,7 @@ end-proc;
 
 dcl-proc getTestProc export;
   dcl-pi *N likeds(proc_t);
-    testsuite       const likeds(testSuite_t);
+    testSuite       const likeds(testSuite_t);
     testidx         int(10) const;
   end-pi;
 
@@ -148,7 +148,7 @@ dcl-proc getTestProc export;
   dcl-s testcase_p      pointer;
 
 
-  testcase_p = gettestcaseptr( testsuite : testidx );
+  testcase_p = getTestCasePtr( testSuite : testidx );
   return testcase;
 
 end-proc;
@@ -156,64 +156,63 @@ end-proc;
 
 dcl-proc getTestSuite export;
   dcl-pi *N likeds(testSuite_t);
-    procnmlist      const likeds(procNmList_t);
+    procNmList      const likeds(procNmList_t);
   end-pi;
 
-  dcl-ds testsuite likeds(testSuite_t);
-  dcl-ds testcase likeds(proc_t)
-  based(testcase_p);
-  dcl-s testcase_p      pointer;
+  dcl-ds testSuite likeds(testSuite_t);
+  dcl-ds testCase likeds(proc_t) based(testCase_p);
+  dcl-s testCase_p      pointer;
 
-  dcl-s privatedata     pointer based(procnmlist.handle);
-  dcl-s proccnt         int(10);
-  dcl-s procidx         int(10);
-  dcl-s procnm          like(procNm_t);
+  dcl-s privateData     pointer based(procNmList.handle);
+  dcl-s procCnt         int(10);
+  dcl-s procIdx         int(10);
+  dcl-s procNm          like(procNm_t);
 
 
-  cnt_p      = procnmlist.cnt;
-  getnm_p    = procnmlist.getnm;
-  gotonext_p = procnmlist.gotonext;
+  cnt_p      = procNmList.cnt;
+  getNm_p    = procNmList.getnm;
+  gotoNext_p = procNmList.gotonext;
 
-  proccnt = cnt( privatedata );
+  procCnt = cnt( privateData );
 
-  clear testsuite;
-  testsuite.testList = %alloc( proccnt * %size( proc_t ) );
-  memset(testsuite.testList : x'00' : proccnt * %size( proc_t ));
-  testsuite.testResults = list_create();
+  clear testSuite;
+  testSuite.testList = %alloc( procCnt * %size( proc_t ) );
+  memset(testSuite.testList : x'00' : procCnt * %size( proc_t ));
+  testSuite.testResults = list_create();
 
-  for procidx = 1 to proccnt;
-    procnm = getnm( privatedata );
+  for procIdx = 1 to procCnt;
+    procNm = getnm( privateData );
     select;
-    when isTest( procnm );
-      testsuite.testcasescnt += 1;
-      testcase_p = gettestcaseptr( testsuite :
-                                   testsuite.testcasescnt );
-      clear testcase;
-      testcase.procnm = procnm;
-    when uCase(procnm) = 'SETUPSUITE';
-      testsuite.setupSuite.procnm = procnm;
-    when uCase(procnm) = 'SETUP';
-      testsuite.setup.procnm = procnm;
-    when uCase(procnm) = 'TEARDOWN';
-      testsuite.teardown.procnm = procnm;
-    when uCase(procnm) = 'TEARDOWNSUITE';
-      testsuite.teardownSuite.procnm = procnm;
+    when isTest( procNm );
+      testSuite.testCasesCnt += 1;
+      testCase_p = getTestCasePtr( testSuite:
+                                   testSuite.testCasesCnt );
+      clear testCase;
+      testCase.procnm = procNm;
+    when uCase(procNm) = 'SETUPSUITE';
+      testSuite.setupSuite.procnm = procNm;
+    when uCase(procNm) = 'SETUP';
+      testSuite.setup.procnm = procNm;
+    when uCase(procNm) = 'TEARDOWN';
+      testSuite.tearDown.procnm = procNm;
+    when uCase(procNm) = 'TEARDOWNSUITE';
+      testSuite.tearDownSuite.procnm = procNm;
 
     // Cobol procedures
 
-    when uCase(procnm) = 'SETUPSTE';
-      testsuite.setupSuite.procnm = procnm;
-    when uCase(procnm) = 'SETUP';
-      testsuite.setup.procnm = procnm;
-    when uCase(procnm) = 'TEARDWN';
-      testsuite.teardown.procnm = procnm;
-    when uCase(procnm) = 'TEARDWNSTE';
-      testsuite.teardownSuite.procnm = procnm;
+    when uCase(procNm) = 'SETUPSTE';
+      testSuite.setupSuite.procnm = procNm;
+    when uCase(procNm) = 'SETUP';
+      testSuite.setup.procnm = procNm;
+    when uCase(procNm) = 'TEARDWN';
+      testSuite.tearDown.procnm = procNm;
+    when uCase(procNm) = 'TEARDWNSTE';
+      testSuite.tearDownSuite.procnm = procNm;
     endsl;
-    gotonext( privatedata );
+    gotonext( privateData );
   endfor;
 
-  return testsuite;
+  return testSuite;
 
 end-proc;
 

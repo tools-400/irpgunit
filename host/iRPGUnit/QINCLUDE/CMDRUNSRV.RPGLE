@@ -17,14 +17,14 @@
 //
 // @param testproc - Test procedure to execute
 // @param setup    - Setup procedure to run before the test (may be null)
-// @param teardown - Teardown procedure to run after the test (may be null)
+// @param tearDown - Teardown procedure to run after the test (may be null)
 //
 // @return Complete test result with execution details and outcome
 ///
 dcl-pr runTestProc extproc('CMDRUNSRV_runTestProc') likeds(testResult_t);
   testproc likeds(proc_t) const;
   setup    likeds(proc_t) const;
-  teardown likeds(proc_t) const;
+  tearDown likeds(proc_t) const;
 end-pr;
 
 ///
