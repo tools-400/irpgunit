@@ -53,19 +53,19 @@ dcl-pr doFail extproc('ASSERT_doFail');
 end-pr;
 
 dcl-pr getCallStk extproc('ASSERT_getCallStk') likeds(callStk_t);
-  startproc      varchar(256) options(*varsize) const;
+  startProc      varchar(256) options(*varsize) const;
 end-pr;
 
 dcl-pr getSentTimeMsgQMsg timestamp extproc('ASSERT_getSentTimeMsgQMsg');
   msg            likeds(dsLstm0100EntHdr_t) const;
 end-pr;
 
-dcl-pr getvaluefromdesc varchar(32565) extproc('ASSERT_getValueFromDescriptor_internal');
-  descinf        likeds(ceedod_inf_t) const;
-  strinf         likeds(ceegsi_inf_t) const;
+dcl-pr getValueFromDesc varchar(32565) extproc('ASSERT_getValueFromDescriptor_internal');
+  descInf        likeds(ceedod_inf_t) const;
+  strInf         likeds(ceegsi_inf_t) const;
   fc             likeds(fc_t) const;
   value          char(32565) options(*varsize) const;
-  dftlen         int(10) const;
+  dftLen         int(10) const;
 end-pr;
 
 dcl-pr getValueFromDescriptor_internal varchar(32565)
@@ -117,7 +117,7 @@ dcl-s assertCalled int(10);
 dcl-ds assertFailEvt likeds(assertFailEvtLong_t);
 
 dcl-ds status qualified;
-  qstartpgm   likeds(object_t);
+  qStartPgm   likeds(object_t);
 end-ds;
 
 //----------------------------------------------------------------------
@@ -181,30 +181,30 @@ dcl-proc aEqual export;
   dcl-s msg          like(msgText_t) inz;
 
   dcl-ds descInf likeds(ceedod_inf_t) inz;
-  dcl-ds strinf likeds(ceegsi_inf_t) inz;
+  dcl-ds strInf likeds(ceegsi_inf_t) inz;
   dcl-ds fc likeds(fc_t) inz;
 
   ceedod(p_expected: descInf.descType: descInf.dataType
          : descInf.descInf1: descInf.descInf2: descInf.dataLen: fc);
-  ceegsi(p_expected: strinf.dataType
-         : strinf.curLen: strinf.maxLen: fc);
-  tExpected = getvaluefromdesc(
-                descInf: strinf: fc: expected: %size(expected));
+  ceegsi(p_expected: strInf.dataType
+         : strInf.curLen: strInf.maxLen: fc);
+  tExpected = getValueFromDesc(
+                descInf: strInf: fc: expected: %size(expected));
 
   ceedod(p_actual: descInf.descType: descInf.dataType
          : descInf.descInf1: descInf.descInf2: descInf.dataLen: fc);
-  ceegsi(p_actual: strinf.dataType
-         : strinf.curLen: strinf.maxLen: fc);
-  tActual = getvaluefromdesc(descInf: strinf: fc: actual: %size(actual));
+  ceegsi(p_actual: strInf.dataType
+         : strInf.curLen: strInf.maxLen: fc);
+  tActual = getValueFromDesc(descInf: strInf: fc: actual: %size(actual));
 
   if (%parms() >= p_fieldName and %addr(fieldname) <> *null);
 
     ceedod(p_fieldName: descInf.descType: descInf.dataType
            : descInf.descInf1: descInf.descInf2: descInf.dataLen: fc);
-    ceegsi(p_fieldName: strinf.dataType
-           : strinf.curLen: strinf.maxLen: fc);
-    tFieldName = getvaluefromdesc(
-                   descInf: strinf: fc: fieldname: %size(fieldname));
+    ceegsi(p_fieldName: strInf.dataType
+           : strInf.curLen: strInf.maxLen: fc);
+    tFieldName = getValueFromDesc(
+                   descInf: strInf: fc: fieldname: %size(fieldname));
 
     msg = %trim(tFieldName) + ': ';
   endif;
@@ -277,21 +277,21 @@ dcl-proc assert export;
     msgIfFalse   like(oldMsg_t) options(*nopass) const;
   end-pi;
 
-  dcl-c p_msgiffalse 2;
+  dcl-c p_msgIfFalse 2;
 
   dcl-s tMsgIfFalse varchar(16384);
   dcl-ds descInf likeds(ceedod_inf_t) inz;
-  dcl-ds strinf likeds(ceegsi_inf_t) inz;
+  dcl-ds strInf likeds(ceegsi_inf_t) inz;
   dcl-ds fc likeds(fc_t) inz;
 
-  if (%parms() >= p_msgiffalse);
+  if (%parms() >= p_msgIfFalse);
 
-    ceedod(p_msgiffalse: descInf.descType: descInf.dataType
+    ceedod(p_msgIfFalse: descInf.descType: descInf.dataType
            : descInf.descInf1: descInf.descInf2: descInf.dataLen: fc);
-    ceegsi(p_msgiffalse: strinf.dataType
-           : strinf.curLen: strinf.maxLen: fc);
-    tMsgIfFalse = getvaluefromdesc(
-                    descInf: strinf: fc: msgIfFalse: %len(msgIfFalse));
+    ceegsi(p_msgIfFalse: strInf.dataType
+           : strInf.curLen: strInf.maxLen: fc);
+    tMsgIfFalse = getValueFromDesc(
+                    descInf: strInf: fc: msgIfFalse: %len(msgIfFalse));
 
     doAssert(condition: tMsgIfFalse: ONE_CALL_STK_LVL_ABOVE: %proc());
   else;
@@ -315,16 +315,16 @@ dcl-proc fail export;
 
   dcl-s tMsg varchar(16384);
   dcl-ds descInf likeds(ceedod_inf_t) inz;
-  dcl-ds strinf likeds(ceegsi_inf_t) inz;
+  dcl-ds strInf likeds(ceegsi_inf_t) inz;
   dcl-ds fc likeds(fc_t) inz;
 
   if (%parms() >= p_msg);
 
     ceedod(p_msg: descInf.descType: descInf.dataType
            : descInf.descInf1: descInf.descInf2: descInf.dataLen: fc);
-    ceegsi(p_msg: strinf.dataType
-           : strinf.curLen: strinf.maxLen: fc);
-    tMsg = getvaluefromdesc(descInf: strinf: fc: msg: %len(msg));
+    ceegsi(p_msg: strInf.dataType
+           : strInf.curLen: strInf.maxLen: fc);
+    tMsg = getValueFromDesc(descInf: strInf: fc: msg: %len(msg));
 
     doFail(tMsg: -1: %proc());
   else;
@@ -686,7 +686,7 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc getCallStk;
   dcl-pi *N likeds(callStk_t);
-    startproc   varchar(256) options(*varsize) const;
+    startProc   varchar(256) options(*varsize) const;
   end-pi;
 
   // Call stack entries.
@@ -776,7 +776,7 @@ dcl-proc getCallStk;
     if (callStkE.qstmt.qpgm.nm = 'RUTESTCASE' and
         (callStkE.qstmt.qmod.nm = 'ASSERT' or
          callStkE.qstmt.qmod.nm = 'ASSERTV2') and
-        callStkE.qstmt.procnm = startproc);
+        callStkE.qstmt.procnm = startProc);
       doReturnStckE = *on;
       ent_p += ent.len;
       iter;
