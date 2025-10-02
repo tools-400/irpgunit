@@ -166,8 +166,8 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc aEqual export;
   dcl-pi *N opdesc;
-    expected    char(32565) const;
-    actual      char(32565) const;
+    expected    char(32565) options(*varsize) const;
+    actual      char(32565) options(*varsize) const;
     fieldname   char(64) options(*nopass: *omit) const;
   end-pi;
 
@@ -179,6 +179,8 @@ dcl-proc aEqual export;
   dcl-s tActual      varchar(32565);
   dcl-s tFieldName   like(fieldname);
   dcl-s msg          like(msgText_t) inz;
+  dcl-ds logExpected likeds(logValue_t) inz;
+  dcl-ds logActual   likeds(logValue_t) inz;
 
   dcl-ds descInf likeds(ceedod_inf_t) inz;
   dcl-ds strInf likeds(ceegsi_inf_t) inz;
@@ -212,7 +214,9 @@ dcl-proc aEqual export;
   msg = msg
         + 'Expected ' + QUOTE + %trimr(tExpected) + QUOTE + ','
         + ' but was ' + QUOTE + %trimr(tActual) + QUOTE + '.';
-  doAssert(tExpected = tActual: msg: ONE_CALL_STK_LVL_ABOVE: %proc());
+  logExpected = getLogValue(tExpected: DT_STRING: %proc());
+  logActual = getLogValue(tActual: DT_STRING: %proc());
+  doAssert(tExpected = tActual: logExpected: logActual: msg: ONE_CALL_STK_LVL_ABOVE: %proc());
 
 end-proc;
 
@@ -228,7 +232,8 @@ dcl-proc iEqual export;
   end-pi;
 
   dcl-s msg like(msgText_t) inz;
-
+  dcl-ds logExpected likeds(logValue_t) inz;
+  dcl-ds logActual   likeds(logValue_t) inz;
 
   if (%parms() >= 3 and %addr(fieldName) <> *null);
     msg = %trim(fieldName) + ': ';
@@ -237,7 +242,9 @@ dcl-proc iEqual export;
   msg = msg
         + 'Expected ' + formatNumeric(expected) + ','
         + ' but was ' + formatNumeric(actual) + '.';
-  doAssert(expected = actual: msg: ONE_CALL_STK_LVL_ABOVE: %proc());
+  logExpected = getLogValue(%char(expected): DT_INT: %proc());
+  logActual = getLogValue(%char(actual): DT_INT: %proc());
+  doAssert(expected = actual: logExpected: logActual: msg: ONE_CALL_STK_LVL_ABOVE: %proc());
 
 end-proc;
 
@@ -252,7 +259,8 @@ dcl-proc nEqual export;
   end-pi;
 
   dcl-s msg like(msgText_t) inz;
-
+  dcl-ds logExpected likeds(logValue_t) inz;
+  dcl-ds logActual   likeds(logValue_t) inz;
 
   if (%parms() >= 3 and %addr(fieldName) <> *null);
     msg = %trim(fieldName) + ': ';
@@ -261,8 +269,9 @@ dcl-proc nEqual export;
   msg = msg
         + 'Expected ' + QUOTE + expected + QUOTE + ','
         + ' but was ' + QUOTE + actual   + QUOTE + '.';
-  doAssert(expected = actual: msg: ONE_CALL_STK_LVL_ABOVE: %proc());
-
+  logExpected = getLogValue(toInd(expected): DT_IND: %proc());
+  logActual = getLogValue(toInd(actual): DT_IND: %proc());
+  doAssert(expected = actual: logExpected: logActual: msg: ONE_CALL_STK_LVL_ABOVE: %proc());
 
 end-proc;
 
@@ -277,26 +286,30 @@ dcl-proc assert export;
     msgIfFalse   like(oldMsg_t) options(*nopass) const;
   end-pi;
 
-  dcl-c p_msgIfFalse 2;
+  dcl-ds logExpected likeds(logValue_t) inz;
+  dcl-ds logActual   likeds(logValue_t) inz;
 
   dcl-s tMsgIfFalse varchar(16384);
   dcl-ds descInf likeds(ceedod_inf_t) inz;
   dcl-ds strInf likeds(ceegsi_inf_t) inz;
   dcl-ds fc likeds(fc_t) inz;
 
-  if (%parms() >= p_msgIfFalse);
+  logExpected = getLogValue(NO_VALUE: DT_UNDEFINED: %proc());
+  logActual = getLogValue(NO_VALUE: DT_UNDEFINED: %proc());
 
-    ceedod(p_msgIfFalse: descInf.descType: descInf.dataType
+  if (%parms() >= %parmnum(msgIfFalse));
+
+    ceedod(%parmnum(msgIfFalse): descInf.descType: descInf.dataType
            : descInf.descInf1: descInf.descInf2: descInf.dataLen: fc);
-    ceegsi(p_msgIfFalse: strInf.dataType
+    ceegsi(%parmnum(msgIfFalse): strInf.dataType
            : strInf.curLen: strInf.maxLen: fc);
     tMsgIfFalse = getValueFromDesc(
                     descInf: strInf: fc: msgIfFalse: %len(msgIfFalse));
 
-    doAssert(condition: tMsgIfFalse: ONE_CALL_STK_LVL_ABOVE: %proc());
+    doAssert(condition: logExpected: logActual: tMsgIfFalse: ONE_CALL_STK_LVL_ABOVE: %proc());
   else;
     // Called by Cobol or new RPG after iRPGUnit v4.
-    doAssert(condition: NO_MSG_TEXT: ONE_CALL_STK_LVL_ABOVE: %proc());
+    doAssert(condition: logExpected: logActual: NO_MSG_TEXT: ONE_CALL_STK_LVL_ABOVE: %proc());
   endif;
 
 end-proc;
@@ -318,6 +331,10 @@ dcl-proc fail export;
   dcl-ds strInf likeds(ceegsi_inf_t) inz;
   dcl-ds fc likeds(fc_t) inz;
 
+  clrAssertFailEvt();
+  assertFailEvt.logExpected = getLogValue(NO_VALUE: DT_UNDEFINED: %proc());
+  assertFailEvt.logActual = getLogValue(NO_VALUE: DT_UNDEFINED: %proc());
+
   if (%parms() >= p_msg);
 
     ceedod(p_msg: descInf.descType: descInf.dataType
@@ -338,6 +355,8 @@ end-proc;
 dcl-proc doAssert export;
   dcl-pi *N;
     condition      ind const;
+    logExpected    likeds(logValue_t) const;
+    logActual      likeds(logValue_t) const;
     msgIfFalse     varchar(16384) options(*varsize) const;
     toCallStackE   int(10) const;
     startProc      varchar(256) options(*varsize) const;
@@ -347,6 +366,8 @@ dcl-proc doAssert export;
 
   assertCalled += 1;
   clrAssertFailEvt();
+  assertFailEvt.logExpected = logExpected;
+  assertFailEvt.logActual = logActual;
 
   if not condition;
     doFail(msgIfFalse:  toCallStackE + 1: startProc);
@@ -397,6 +418,7 @@ dcl-proc getAssertCalled export;
 
 end-proc;
 
+
 //----------------------------------------------------------------------
 // Return information about the latest assertion failure event.
 //----------------------------------------------------------------------
@@ -435,6 +457,79 @@ dcl-proc clearAssertCounter export;
   end-pi;
 
   assertCalled = 0;
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+// Returns the literal of a boolean value (*on/*off).
+//----------------------------------------------------------------------
+dcl-proc toInd export;
+  dcl-pi *N varchar(10);
+    boolean  ind const;
+  end-pi;
+
+  if (boolean);
+    return '*on';
+  else;
+    return '*off';
+  endif;
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+// Returns the 'expected' or 'actual' value shortend for
+// logging in the plug-in, the Jenkins XML output and the
+// printed test result log.
+//----------------------------------------------------------------------
+dcl-proc getLogValue export;
+  dcl-pi *N likeds(logValue_t);
+    value     like(assertString_t) options(*varsize) const;
+    dataType  like(dataType_t) const;
+    assertProc like(assertProcNm_t) const;
+    maxLength int(10) const options(*nopass); // for self-test
+  end-pi;
+
+  dcl-c DELIMITER '....';
+  dcl-s chunkLength int(10);
+  dcl-s maxValueLength int(10);
+
+  dcl-ds logValue likeds(logValue_t) inz;
+
+  if (%parms() >= %parmnum(maxLength));
+    maxValueLength = maxLength;
+  else;
+    maxValueLength = %len(logValue.value: *max);
+  endif;
+
+  chunkLength = (maxValueLength - %len(DELIMITER)) / 2;
+
+  logValue.type = dataType;
+
+  if (value = NO_VALUE);
+    logValue.value = value;
+    logValue.isTruncated = *off;
+    logValue.length = 0;
+    logValue.originalLength = 0;
+    logValue.assertProc = assertProc;
+  elseif (%len(value) > maxValueLength);
+    logValue.value = %subst(value: 1: chunkLength)
+                     + DELIMITER
+                     + %subst(value: %len(value) - chunkLength + 1: chunkLength);
+    logValue.isTruncated = *on;
+    logValue.length = %len(logValue.value);
+    logValue.originalLength = %len(value);
+    logValue.assertProc = assertProc;
+  else;
+    logValue.value = value;
+    logValue.isTruncated = *off;
+    logValue.length = %len(logValue.value);
+    logValue.originalLength = %len(value);
+    logValue.assertProc = assertProc;
+  endif;
+
+  return logValue;
 
 end-proc;
 
@@ -767,7 +862,7 @@ dcl-proc getCallStk;
         sttid_p = ent_p + ent.dspLtoSttid;
         callStkE.qstmt.specnb = %triml(%trim(sttid): '0');
       else;
-        callStkE.qstmt.specnb = '*N';
+        callStkE.qstmt.specnb = NO_VALUE;
       endif;
     endif;
 
@@ -929,7 +1024,7 @@ dcl-proc descTypeToExt;
   when (dataType = DOD_TYPE_GCHARV4);
     return 'typeGCharV4';   // 4-byte varying DBCS characters
   other;
-    return '*N';
+    return NO_VALUE;
   endsl;
 
 end-proc;

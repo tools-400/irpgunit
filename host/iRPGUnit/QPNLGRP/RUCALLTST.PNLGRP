@@ -221,4 +221,31 @@ the unit test.
 :eparml.
 :ehelp.
 .*
+:help name='RUCALLTST/XMLTYPE' WIDTH=64.
+XML output type (XMLTYPE) - Help
+:xh3.XML output type (XMLTYPE)
+:p.
+Specifies the type of the XML output file.
+:parml.
+:pt.:pk def.*TYPE1:epk.
+:pd.Type of the XML output file of iRPGUnit <= v5.1.0.r. This type
+assigns the callstack in text format to XML element :HP2.'<failure>':EHP2..
+:pt.*TYPE2
+:pd.Type of the XML output file of iRPGUnit >= v5.2.0.r. This type
+assigns a Json object to XML element :HP2.'<failue>':EHP2.. The Json object
+contains the information below:
+:lines.
+callStack         : array of the call stack entries
+expected          : expected test value
+actual            : actual value
+diagnosticMessages: Optional, diagnostic messages
+:elines.
+:p.
+The actual and expected values are trucated after 2048 characters. The
+format of the truncated value is: :HP2.<firstBytes>....<lastBytes>:EHP2.
+:p.
+This option was added for VS Code.
+:eparml.
+:ehelp.
+.*
 :epnlgrp.

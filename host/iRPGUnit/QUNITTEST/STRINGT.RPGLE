@@ -122,6 +122,7 @@ dcl-proc testLCase export;
 
 end-proc;
 
+
 dcl-proc testLeftStr export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
@@ -150,6 +151,45 @@ dcl-proc testLeftStr export;
 
   monitor;
     assert(leftStr(HELLO_WORLD: -1) = '':
+           'Expected RNX0100: Length or start position is out of range');
+    fail('Expected to see a RPG runtime exception');
+  on-error;
+    errMsgInfo = getMonitoredMessage(*on);
+    assert(errMsgInfo.id = 'RNX0100':
+           'Expected RNX0100: Length or start position is out of range');
+  endmon;
+
+end-proc;
+
+
+dcl-proc testRightStr export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-c HELLO_WORLD 'Hello World';
+
+  dcl-ds errMsgInfo likeds(MsgInfo_t) inz;
+
+  // Setup.
+
+  // Run.
+
+  // Check.
+
+  assert(rightStr(HELLO_WORLD: %len(HELLO_WORLD) + 1) = HELLO_WORLD:
+         'Expected the complete input string (length > len(input))');
+
+  assert(rightStr(HELLO_WORLD: %len(HELLO_WORLD)) = HELLO_WORLD:
+         'Expected the complete input string (length = len(input))');
+
+  assert(rightStr(HELLO_WORLD: 5) = 'World':
+         'Expected: Hello');
+
+  assert(rightStr(HELLO_WORLD: 0) = '':
+         'Expected: empty string');
+
+  monitor;
+    assert(rightStr(HELLO_WORLD: -1) = '':
            'Expected RNX0100: Length or start position is out of range');
     fail('Expected to see a RPG runtime exception');
   on-error;

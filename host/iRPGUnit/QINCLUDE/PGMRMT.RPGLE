@@ -18,15 +18,15 @@
 // The program can run individual test procedures or complete test suites with
 // detailed reporting and XML output capabilities.
 //
-// @param go_returncode - Return code indicating overall test execution status:
+// @param go_returnCode - Return code indicating overall test execution status:
 //                        0 = All tests passed successfully
 //                        >0 = Number of failed tests or execution error
 //                        <0 = System error or configuration issue
-// @param gi_userspace  - User space object for storing detailed test results and metrics
+// @param gi_userSpace  - User space object for storing detailed test results and metrics
 //                        Structure: library/object format for result storage
-// @param gi_testsuite  - Test suite object containing the tests to execute
+// @param gi_testSuite  - Test suite object containing the tests to execute
 //                        Structure: library/service program containing test procedures
-// @param gi_procnames  - Procedure names structure for selective test execution
+// @param gi_procNames  - Procedure names structure for selective test execution
 //                        Allows running specific test procedures instead of entire suite
 // @param gi_order      - Test execution order specification:
 //                        Controls the sequence in which test procedures are executed
@@ -38,22 +38,29 @@
 //                        Defines the library search order during test execution
 // @param gi_qJobD      - Job description object for test environment setup
 //                        Specifies job attributes and environment for test execution
-// @param gi_rclrsc     - Resource cleanup specification after test execution:
+// @param gi_rclRsc     - Resource cleanup specification after test execution:
 //                        Controls cleanup behavior for temporary objects and resources
-// @param gi_xmlstmf    - XML stream file path for structured output (optional parameter)
+// @param gi_xmlStmf    - XML stream file path for structured output (optional parameter)
 //                        When specified, generates XML-formatted test results
+// @param gi_xmlType    - Specifies the type of the generated XML stream file.
+//                        *TYPE1 = original type created by iRPGUnit <= v5.1.0.r
+//                        *TYPE2 = new type that associates a Json object to XML
+//                                 element '<failure>'. The Json object includes
+//                                 the stack trace as well as the 'expected' and
+//                                 'actual' test values.
 ///
 dcl-pr pgmrmt extpgm('PGMRMT');
-  go_returncode int(10);
-  gi_userspace  likeds(object_t) const;
-  gi_testsuite  likeds(object_t) const;
-  gi_procnames  likeds(procNms_t) const;
+  go_returnCode int(10);
+  gi_userSpace  likeds(object_t) const;
+  gi_testSuite  likeds(object_t) const;
+  gi_procNames  likeds(procNms_t) const;
   gi_order      like(order_t) const;
   gi_detail     like(detail_t) const;
   gi_output     like(output_t) const;
   gi_libl       likeds(libl_t) const;
   gi_qJobD      likeds(object_t) const;
-  gi_rclrsc     like(rclrsc_t) const;
-  gi_xmlstmf    like(stmf_fl_t) options(*nopass) const;
+  gi_rclRsc     like(rclrsc_t) const;
+  gi_xmlStmf    like(stmf_fl_t) options(*nopass) const;
+  gi_xmlType    like(xmlType_fl_t) options(*nopass) const;
 end-pr;
 

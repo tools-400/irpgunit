@@ -125,6 +125,8 @@ public class Messages extends NLS {
     public static String PreferencesPage2_cboReclaimResources_toolTipText;
     public static String PreferencesPage2_lblXmlStmf_text;
     public static String PreferencesPage2_txtXmlStmf_toolTipText;
+    public static String PreferencesPage2_lblXmlType_text;
+    public static String PreferencesPage2_txtXmlType_toolTipText;
     public static String PreferencesPage2_grpOverrideCommandParameters_text;
     public static String PreferencesPage2_chkDisableReport_text;
     public static String PreferencesPage2_chkDisableReport_toolTipText;

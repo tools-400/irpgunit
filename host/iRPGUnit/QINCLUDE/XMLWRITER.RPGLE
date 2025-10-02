@@ -35,11 +35,17 @@
 //                        Includes individual test case results, timing information,
 //                        failure details, error messages, and execution statistics
 //                        Contains both summary and detailed test execution data
+// @param               - Specifies the type of XML to produce. The possible values are:
+//                          *TYPE1 - Legacy type.
+//                          *TYPE2 - Extended type designed for the 'IBM i Testing'
+//                                   VSCode plug-in.
 ///
+
 dcl-pr writeXmlFile extproc('XMLWRITER_writeXmlFile');
-  filepath       char(1024) const;
-  testSuite      likeds(testSuite_t) const;
-  testSuiteName  likeds(Object_t) const;
-  result         likeds(result_t) const;
+  filepath      char(1024) const;
+  testSuite     likeds(testSuite_t) const;
+  testSuiteName likeds(Object_t) const;
+  result        likeds(result_t) const;
+  xmlType       like(xmlType_t) const;
 end-pr;
 

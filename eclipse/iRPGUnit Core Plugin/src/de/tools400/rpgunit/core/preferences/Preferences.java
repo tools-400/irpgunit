@@ -107,6 +107,12 @@ public final class Preferences {
 
     public static final String XML_STMF_NONE = ""; //$NON-NLS-1$
 
+    public static final String XML_TYPE = RMTPGM + ".xmlType"; //$NON-NLS-1$
+
+    public static final String XML_TYPE_TYPE1 = "*TYPE1"; //$NON-NLS-1$
+
+    public static final String XML_TYPE_TYPE2 = "*TYPE2"; //$NON-NLS-1$
+
     /**
      * RPGUnit warning messages:
      */
@@ -306,6 +312,11 @@ public final class Preferences {
         return tXmlStmf;
     }
 
+    public String getXmlType() {
+        String tXmlType = preferenceStore.getString(XML_TYPE);
+        return tXmlType;
+    }
+
     public boolean isReportDisabled() {
         boolean tIsDisabled = preferenceStore.getBoolean(REPORT_DISABLED);
         return tIsDisabled;
@@ -479,6 +490,10 @@ public final class Preferences {
         saveXmlStmf(aXmlStmf);
     }
 
+    public void setXmlType(String aXmlType) {
+        saveXmlType(aXmlType);
+    }
+
     public boolean useJobDescriptionForLibraryList() {
         String[] tLibraryList = Preferences.getInstance().getLibraryList();
         if (tLibraryList.length == 1 && LIBRARY_LIST_JOBD.equalsIgnoreCase(tLibraryList[0])) {
@@ -566,6 +581,7 @@ public final class Preferences {
         preferenceStore.setDefault(XML_STMF_DISABLED, getDefaultXmlStmfDisabledState());
         preferenceStore.setDefault(RECLAIM_RESOURCES, getDefaultReclaimResources());
         preferenceStore.setDefault(XML_STMF, getDefaultXmlStmf());
+        preferenceStore.setDefault(XML_TYPE, getDefaultXmlType());
 
         // Override command parameters
         preferenceStore.setDefault(OUTPUT, getDefaultOutput());
@@ -719,6 +735,10 @@ public final class Preferences {
         return "/tmp/iRPGUnit_<TSTPGM>-%F.%T.log";
     }
 
+    public String getDefaultXmlType() {
+        return XML_TYPE_TYPE1;
+    }
+
     public boolean getDefaultShowWarnMessages() {
         return WARN_MESSAGE_DEFAULT;
     }
@@ -765,6 +785,10 @@ public final class Preferences {
 
     public String[] getReclaimResourcesItems() {
         return new String[] { RECLAIM_RESOURCES_NO, RECLAIM_RESOURCES_ALWAYS, RECLAIM_RESOURCES_ONCE };
+    }
+
+    public String[] getXmlTypeItems() {
+        return new String[] { XML_TYPE_TYPE1, XML_TYPE_TYPE2 };
     }
 
     public String[] getCheckTestSuiteItems() {
@@ -849,6 +873,10 @@ public final class Preferences {
 
     private void saveXmlStmf(String aXmlStmf) {
         preferenceStore.setValue(XML_STMF, aXmlStmf);
+    }
+
+    private void saveXmlType(String aXmlType) {
+        preferenceStore.setValue(XML_TYPE, aXmlType);
     }
 
     private void saveShowWarningMessage(String aWarningKey, boolean showWarning) {

@@ -210,17 +210,18 @@ end-ds;
 //  Execute a given unit test suite.
 // ==========================================================================
 dcl-proc rpgunit_runTestSuite export;
-  dcl-pi *N              int(10);
-    userSpace       likeds(object_t) const;
-    testSuiteName   likeds(object_t) const;
-    testProcs       likeds(procNms_t) const;
-    order           like(order_t) const;
-    detail          like(detail_t) const;
-    output          like(output_t) const;
-    libl            likeds(libl_t) const;
-    qJobD           likeds(object_t) const;
-    rclRsc          like(rclrsc_t) const;
-    xmlStmf         like(stmf_t) const;
+  dcl-pi *N int(10);
+    userSpace     likeds(object_t) const;
+    testSuiteName likeds(object_t) const;
+    testProcs     likeds(procNms_t) const;
+    order         like(order_t) const;
+    detail        like(detail_t) const;
+    output        like(output_t) const;
+    libl          likeds(libl_t) const;
+    qJobD         likeds(object_t) const;
+    rclRsc        like(rclrsc_t) const;
+    xmlStmf       like(stmf_t) const;
+    xmlType       like(xmlType_t) const;
   end-pi;
 
   dcl-s returnValue int(10);
@@ -281,7 +282,7 @@ dcl-proc rpgunit_runTestSuite export;
   if (xmlStmf <> '');
     monitor;
       writexmlfile(resolvePathVariables(xmlStmf: testSuiteName)
-                   : testSuite : testSuiteName : result);
+                   : testSuite : testSuiteName : result: xmlType);
     on-error;
       errMsg = rcvMsgTxt('*ESCAPE');
     endmon;
@@ -468,7 +469,7 @@ dcl-proc createV3TestCase;
     if (testResult.error.qSndStmt.specnb <> '');
       entry.specNb = testResult.error.qSndStmt.specnb;
     else;
-      entry.specNb = '*N';
+      entry.specNb = NO_VALUE;
     endif;
     pExecTime = %addr(entry.excpMessage) + entry.lenExcpMessage;
     execTime = -1;

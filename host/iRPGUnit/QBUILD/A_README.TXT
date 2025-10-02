@@ -83,6 +83,24 @@ b) Optionally run the RPGUnit self tests:
 
 --------------------------
 
+Version 5.2.0 - 02.10.2025
+--------------------------
+ * Added keyword options(*varsize) to procedure aEqual().
+   Recompile your test suites to take advantage from this change.
+   Without recompiling the test suites, the lengths of 'expected'
+   and 'actual' are always assumed as 32565.
+ * Fixed XML encoding of special characters of attribute 'message'
+   of element 'failure'.
+ * Wrapped text of element '<failure>' into a 'CDATA' section.
+ * Add keyword 'XMLTYPE' to command RUCALLTXT. Possible value:
+    - Type of the XML output file of iRPGUnit <= v5.1.0.r. This type
+      assigns the call stack in text format to XML element '<failure>'.
+    - Type of the XML output file of iRPGUnit >= v5.2.0.r. This type
+      assigns a Json object to XML element '<failue>'. The Json object
+      contains the information below:
+
+--------------------------
+
 Version 5.1.0 - 23.05.2025
 --------------------------
  * Added support for compiling test suites from stream files.

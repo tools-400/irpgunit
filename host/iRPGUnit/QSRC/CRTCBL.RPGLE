@@ -68,7 +68,7 @@ dcl-proc crtCbl;
 
   crtTst(testPgm: srcFile: srcMbr: srcStmf: text: cOption: dbgView
          : bndSrvPgm: bndDir: bOption: define: dltSplf: actGrp
-         : bModules: '*N': pOption: compileOpt: targetRls: incDir: tgtCcsid);
+         : bModules: NO_VALUE: pOption: compileOpt: targetRls: incDir: tgtCcsid);
 
   *inlr = *on;
 

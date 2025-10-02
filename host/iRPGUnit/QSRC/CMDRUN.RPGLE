@@ -136,15 +136,16 @@ dcl-ds result likeds(result_t) inz;
 
 dcl-proc cmdrun;
   dcl-pi *n;
-    testSuiteName   const likeds(object_t);
-    testProcs       const likeds(procNms_t);
-    order           const like(order_t);
-    detail          const like(detail_t);
-    output          const like(output_t);
-    libl            const likeds(libl_t);
-    jobD            const likeds(object_t);
-    rclRsc          const like(rclrsc_t);
-    xmlStmf         const like(stmf_t);
+    testSuiteName   likeds(object_t) const;
+    testProcs       likeds(procNms_t) const;
+    order           like(order_t) const;
+    detail          like(detail_t) const;
+    output          like(output_t) const;
+    libl            likeds(libl_t) const;
+    jobD            likeds(object_t) const;
+    rclRsc          like(rclrsc_t) const;
+    xmlStmf         like(stmf_t) const;
+    xmlType         like(xmlType_t) const;
   end-pi;
 
   registerStartPgm(sds.pgmLib: sds.pgmname);
@@ -186,7 +187,7 @@ dcl-proc cmdrun;
   if (xmlStmf <> '');
     monitor;
       writexmlfile(resolvePathVariables(xmlStmf: testSuiteName)
-                   : testSuite : testSuiteName : result);
+                   : testSuite: testSuiteName: result: xmlType);
     on-error;
       errMsg = rcvMsgTxt('*ESCAPE');
     endmon;

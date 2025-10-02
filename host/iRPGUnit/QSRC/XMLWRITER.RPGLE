@@ -25,6 +25,7 @@ ctl-opt DECEDIT('0.') NOMAIN;
 /define COPYRIGHT_DSPEC
 /include qinclude,COPYRIGHT
 /include qinclude,ASSERT
+/include qinclude,JSONWTR
 /include qinclude,PGMMSG
 /include qinclude,CMDRUN
 /include qinclude,OSVERSION
@@ -40,16 +41,30 @@ ctl-opt DECEDIT('0.') NOMAIN;
 dcl-c CRLF x'0d25';
 dcl-c TAB '    ';
 
+dcl-ds g_status qualified inz;
+  xmlType             like(xmlType_t);
+  json                varchar(50000);
+  json_countObject    int(10);
+  json_countArray     int(10);
+  json_indent         int(10);
+  json_isValueAllowed ind inz(*off);
+  json_isPrettyPrint  ind inz(*on);
+end-ds;
+
 dcl-proc writeXmlFile export;
   dcl-pi *n;
-    filepath char(1024) const;
-    testSuite likeds(testSuite_t) const;
+    filepath      char(1024) const;
+    testSuite     likeds(testSuite_t) const;
     testSuiteName likeds(Object_t) const;
-    result likeds(result_t) const;
+    result        likeds(result_t) const;
+    xmlType       like(xmlType_t) const;
   end-pi;
 
   dcl-s fileHandle int(10);
   dcl-s rc int(10);
+
+  clear g_status;
+  g_status.xmlType = xmlType;
 
   fileHandle = getXmlFileHandle(filepath);
   writeHeader(fileHandle : testSuite : testSuiteName : result);
@@ -183,36 +198,171 @@ dcl-proc writeTestCases;
 
     select;
     when (testResult.outcome = TEST_CASE_ERROR);
+
+      // start <error> element
       text += TAB + TAB + '<error message="' + escapeXml(%trimr(testResult.error.txt)) +
           '" type="' + escapeXml(%trimr(testResult.error.id)) + '">' + CRLF;
       text += escapeXml(
           %trimr(testResult.error.qSndStmt.procNm) + ' (' +
           %trim(testResult.error.qSndStmt.qPgm.nm) + '->' +
           %trim(testResult.error.qSndStmt.qMod.nm) + ':');
+
       if (testResult.error.qSndStmt.specNb = *blank);
         text += '*N)' + CRLF;
       else;
         text += escapeXml(%trim(testResult.error.qSndStmt.specNb) + ')') + CRLF;
       endif;
+
+      // close <error> element
       text += TAB + TAB + '</error>' + CRLF;
 
     when (testResult.outcome = TEST_CASE_FAILURE);
+
+      // start <failure> element
       text += TAB + TAB + '<failure message="';
-      text += %trimr(testResult.failure.msg);
-      text += '">' + CRLF;
-      text += escapeXml(buildCallStack(testResult.failure.callStk));
-      text += TAB + TAB + '</failure>' + CRLF;
+      text += escapeXml(%trimr(testResult.failure.msg));
+      text += '">';
+      text += '<![CDATA[' + CRLF;
+
+      // always the first section of the <failure> element
+      if (g_status.xmlType = XML_TYPE_1);
+        text += appendCallStackType1(fileHandle: testResult.failure.callstk);
+      else;
+        text += appendCallStackType2(fileHandle: testResult);
+      endif;
+
+      // close <failure> element
+      text += TAB + TAB + ']]>';
+      text += '</failure>' + CRLF;
 
     other;
-    // test case ran successful
+      // test case ran successful
     endsl;
 
+    // close <testcase> element
     text += TAB + '</testcase>' + CRLF;
-
     rc = write(fileHandle : %addr(text : *data) : %len(text));
 
     ptr = list_getNext(testSuite.testResults);
   enddo;
+end-proc;
+
+
+dcl-proc appendCallStackType1;
+  dcl-pi *n varchar(10000);
+    fileHandle int(10) const;
+    callstack  likeds(CallStk_t) const;
+  end-pi;
+
+  dcl-s text varchar(10000);
+
+  text += escapeXml(buildCallStackType1(callstack));
+
+  return text;
+
+end-proc;
+
+
+dcl-proc appendCallStackType2;
+  dcl-pi *n varchar(10000);
+    fileHandle int(10) const;
+    testResult likeds(testResult_t) const;
+  end-pi;
+
+  dcl-s text varchar(10000);
+
+  // start Json object
+  Json_clear();
+  Json_startObject(); // Json Root Object
+
+  Json_addKey('callStack');
+  Json_startArray(); // 'callstack'
+
+  buildCallStackType2(testResult.failure.callstk);
+
+  Json_endArray(); // 'callstack'
+
+  buildFailureValues(fileHandle: testResult.failure);
+
+  // add diagnostic messages
+  if (testResult.failure.logExpected.value = NO_VALUE or
+      testResult.failure.logActual.value = NO_VALUE);
+
+    Json_addKey('diagnosticMessages');
+    Json_startArray();
+
+    if (testResult.failure.logExpected.value = NO_VALUE);
+      Json_addString(crtNoValueMsg('expected': testResult.failure.logExpected.assertProc));
+    endif;
+
+    if (testResult.failure.logActual.value = NO_VALUE);
+      Json_addString(crtNoValueMsg('actual': testResult.failure.logActual.assertProc));
+    endif;
+
+    Json_endArray(); // 'diagnosticMessages'
+  endif;
+
+  // end Json object
+  Json_endObject(); // Json Root Object
+
+  text = Json_get() + CRLF;
+
+  return text;
+
+end-proc;
+
+
+dcl-proc crtNoValueMsg;
+  dcl-pi *n varchar(256) extproc(*dclcase);
+    name       varchar(20) const;
+    assertProc like(assertProcNm_t) const;
+  end-pi;
+
+  dcl-s message varchar(256) inz;
+
+  message = 'No ''' + name + ''' value. Procedure '
+            + assertProc
+            + '() does not provide this information.';
+
+  return message;
+
+end-proc;
+
+
+dcl-proc buildFailureValues;
+  dcl-pi *n extproc(*dclcase);
+    fileHandle int(10) const;
+    failure    likeds(testResult_t.failure) const;
+  end-pi;
+
+  buildLogValue('expected': failure.logExpected);
+  buildLogValue('actual': failure.logActual);
+
+end-proc;
+
+
+dcl-proc buildLogValue;
+  dcl-pi *n extproc(*dclcase);
+    name     varchar(20) const;
+    logValue likeds(logValue_t) const;
+  end-pi;
+
+  Json_addKey(name);
+  Json_startObject(); // 'expected|accepted'
+
+  if (logValue.value <> NO_VALUE);
+    Json_addKey('value');
+    Json_addString(logValue.value);
+    Json_addKey('type');
+    Json_addString(logValue.type);
+    Json_addKey('length');
+    Json_addInteger(logValue.length);
+    Json_addKey('originalLength');
+    Json_addInteger(logValue.originalLength);
+  endif;
+
+  Json_endObject(); // 'expected|accepted'
+
 end-proc;
 
 
@@ -228,7 +378,7 @@ dcl-proc writeFooter;
 end-proc;
 
 
-dcl-proc buildCallStack;
+dcl-proc buildCallStackType1;
   dcl-pi *n varchar(100000);
     callstack likeds(CallStk_t) const;
   end-pi;
@@ -237,10 +387,6 @@ dcl-proc buildCallStack;
   dcl-s i int(10);
 
   for i = 1 to callstack.nume;
-    if (callstack.entry(i).qStmt.qPgm.nm = 'RUCALLXML');
-      leave;
-    endif;
-
     // example: iEqual (RUTESTCASE->ASSERT:124)
     text += callstack.entry(i).qStmt.procNm + ' (' +
         %trim(callstack.entry(i).qStmt.qPgm.nm) + '->' +
@@ -252,6 +398,27 @@ dcl-proc buildCallStack;
 end-proc;
 
 
+dcl-proc buildCallStackType2;
+  dcl-pi *n;
+    callstack likeds(CallStk_t) const;
+  end-pi;
+
+  dcl-s callStackItem varchar(1024);
+  dcl-s i int(10);
+
+  for i = 1 to callstack.nume;
+    // example: iEqual (RUTESTCASE->ASSERT:124)
+    callStackItem = callstack.entry(i).qStmt.procNm + ' ('
+                      + %trim(callstack.entry(i).qStmt.qPgm.nm) + '->'
+                      + %trim(callstack.entry(i).qStmt.qMod.nm) + ':'
+                      + %trim(callstack.entry(i).qStmt.specNb) + ')';
+
+    Json_addString(callStackItem);
+  endfor;
+
+end-proc;
+
+
 // Using this SO answer for implementing escaping:
 // https://stackoverflow.com/questions/1091945/what-characters-do-i-need-to-escape-in-xml-documents
 dcl-proc escapeXml;
@@ -260,7 +427,6 @@ dcl-proc escapeXml;
   end-pi;
 
   dcl-s escaped varchar(100000);
-  dcl-s x int(10);
 
   escaped = %scanrpl('&' : '&amp;' : escaped);
   escaped = %scanrpl('"' : '&quot;' : xml);
@@ -288,7 +454,7 @@ dcl-proc resolveObjectPath;
   end-pr;
 
   dcl-ds resolvedObject likeds(object_t);
-  dcl-s library char(10) inz('*LIBL');
+
   dcl-ds data qualified;
     bytesReturned int(10);
     bytesAvailable int(10);

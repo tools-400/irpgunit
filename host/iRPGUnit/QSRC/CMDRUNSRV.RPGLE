@@ -204,6 +204,8 @@ dcl-proc runProc export;
       if (failureEvt = EMPTY_ASSERT_FAIL_EVT_LONG);
         result.outcome = TEST_CASE_ERROR;
         result.error = rcvExcpMsgInfo();
+        result.logExpected = failureEvt.logExpected;
+        result.logActual = failureEvt.logActual;
       else;
         // Handle runtime error
         result.outcome = TEST_CASE_FAILURE;

@@ -155,9 +155,14 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
     private static final int PARM_XML_STMF = 10;
 
     /**
+     * Format of the XML output, 12. parameter of the test suite.
+     */
+    private static final int PARM_XML_TYPE = 11;
+
+    /**
      * Number of parameters of the remote test driver program.
      */
-    private static final int PARM_NUM_ENTRIES = 11;
+    private static final int PARM_NUM_ENTRIES = 12;
 
     /*
      * User space: Properties of the user space object.
@@ -562,6 +567,13 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             parameter[PARM_XML_STMF] = produceStringParameter(Preferences.XML_STMF_NONE, 1024);
         } else {
             parameter[PARM_XML_STMF] = produceStringParameter(Preferences.getInstance().getXmlStmf(), 1024);
+        }
+
+        // Parameter 12: XML type
+        if (Preferences.getInstance().isXmlStmfDisabled()) {
+            parameter[PARM_XML_TYPE] = produceStringParameter(Preferences.XML_TYPE, 10);
+        } else {
+            parameter[PARM_XML_TYPE] = produceStringParameter(Preferences.getInstance().getXmlType(), 10);
         }
 
         return parameter;

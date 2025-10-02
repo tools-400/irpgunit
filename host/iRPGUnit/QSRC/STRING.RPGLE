@@ -150,6 +150,33 @@ end-proc;
 
 
 //----------------------------------------------------------------------
+//  Returns the a given number of characters starting at the
+//  right side of a given string.
+//----------------------------------------------------------------------
+dcl-proc rightStr export;
+  dcl-pi *n like(String_t);
+    string  like(String_t) const options(*varsize);
+    length  int(10) const;
+  end-pi;
+
+  dcl-s subString like(string);
+
+  if (length = 0);
+    return '';
+  endif;
+
+  if (length <= %len(string));
+    subString = %subst(string: %len(string) - length + 1: length);
+  else;
+    subString = string;
+  endif;
+
+  return subString;
+
+end-proc;
+
+
+//----------------------------------------------------------------------
 //  Tests if a given string starts with the specified prefix.
 //----------------------------------------------------------------------
 dcl-proc startsWith export;

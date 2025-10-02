@@ -304,6 +304,44 @@ dcl-proc testAssertClear export;
 end-proc;
 
 
+dcl-proc testGetLogValue export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-c MAX_LENGTH 20;
+  dcl-c value_string_short 'The quick brown fox';
+  dcl-c value_string_long 'The quick brown fox jumps over the lazy dog';
+
+  dcl-s logValueExpected like(logValue_t.value);
+
+  dcl-ds logValue likeds(logValue_t);
+
+  // String Short
+  logValueExpected = value_string_short;
+  logValue = getLogValue(value_string_short: DT_STRING: %proc(): MAX_LENGTH);
+  assertEqual(logValueExpected: logValue.value);
+  assertEqual(DT_STRING: logValue.type);
+  assertEqual('0': logValue.isTruncated);
+
+  // String Long: 'value   ...   value'
+  logValueExpected = 'The quic....lazy dog';
+  logValue = getLogValue(value_string_long: DT_STRING: %proc(): MAX_LENGTH);
+  assertEqual(logValueExpected: logValue.value);
+  assertEqual(DT_STRING: logValue.type);
+  assertEqual('1': logValue.isTruncated);
+
+end-proc;
+
+
+dcl-proc testToInd export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  assertEqual('*on': toInd(*on));
+  assertEqual('*off': toInd(*off));
+
+end-proc;
+
 dcl-proc testGetAssertFailEvt export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
@@ -411,6 +449,10 @@ dcl-proc testAssertEqual_string export;
     assertFailEvtLong = getAssertFailEvtLong();
     assert(assertFailEvtLong.msg = 'Expected ''e'', but was ''u''.'
            : 'Error messages does not match expected value.');
+    verifyLogValue('Expected': assertFailEvtLong.logExpected
+                   : 'e': 'string': *off);
+    verifyLogValue('Actual': assertFailEvtLong.logActual
+                   : 'u': 'string': *off);
   endmon;
 
   // Test equality
@@ -458,6 +500,10 @@ dcl-proc testAssertEqual_integer export;
     assertFailEvtLong = getAssertFailEvtLong();
     assert(assertFailEvtLong.msg = 'Expected ''-9223372036854775807'', but was ''-123''.'
            : 'Error messages does not match expected value.');
+    verifyLogValue('Expected': assertFailEvtLong.logExpected
+                   : '-9223372036854775807,00000000000000000000': 'numeric': *off);
+    verifyLogValue('Actual': assertFailEvtLong.logActual
+                   : '-123,00000000000000000000': 'numeric': *off);
   endmon;
 
   // Test unequality with assertion message
@@ -540,6 +586,10 @@ dcl-proc testAssertEqual_numeric export;
     assertFailEvtLong = getAssertFailEvtLong();
     assert(assertFailEvtLong.msg = 'Expected ''-1234567890,123'', but was ''-1234567890,122''.'
            : 'Error messages does not match expected value.');
+    verifyLogValue('Expected': assertFailEvtLong.logExpected
+                   : '-1234567890,12300000000000000000': 'numeric': *off);
+    verifyLogValue('Actual': assertFailEvtLong.logActual
+                   : '-1234567890,12200000000000000000': 'numeric': *off);
   endmon;
 
   // Test unequality with assertion message
@@ -581,6 +631,10 @@ dcl-proc testAssertThat export;
     assertFailEvtLong = getAssertFailEvtLong();
     assert(assertFailEvtLong.msg = 'Matcher: Actual values does not match expected value.'
            : 'Error messages does not match message from matcher.');
+    verifyLogValue('Expected': assertFailEvtLong.logExpected
+                   : 'Donald Duck': 'user-defined': *off);
+    verifyLogValue('Actual': assertFailEvtLong.logActual
+                   : 'Dagobert Duck': 'user-defined': *off);
   endmon;
 
   // Test unequality without any assertion message
@@ -591,7 +645,11 @@ dcl-proc testAssertThat export;
     fail('Expected the asssertion to fail.');
   on-error;
     assertFailEvtLong = getAssertFailEvtLong();
-    assert(assertFailEvtLong.msg = '*N');
+    assert(assertFailEvtLong.msg = NO_VALUE);
+    verifyLogValue('Expected': assertFailEvtLong.logExpected
+                   : 'Donald Duck': 'user-defined': *off);
+    verifyLogValue('Actual': assertFailEvtLong.logActual
+                   : 'Dagobert Duck': 'user-defined': *off);
   endmon;
 
   // Test unequality with error message
@@ -626,6 +684,10 @@ dcl-proc testAssertEqual_date export;
     assertFailEvtLong = getAssertFailEvtLong();
     assert(assertFailEvtLong.msg = 'Expected ''2024-09-16'', but was ''2002-01-02''.'
            : 'Error messages does not match expected value.');
+    verifyLogValue('Expected': assertFailEvtLong.logExpected
+                   : '2024-09-16': 'date': *off);
+    verifyLogValue('Actual': assertFailEvtLong.logActual
+                   : '2002-01-02': 'date': *off);
   endmon;
 
   // Test unequality with assertion message
@@ -659,6 +721,10 @@ dcl-proc testAssertEqual_time export;
     assertFailEvtLong = getAssertFailEvtLong();
     assert(assertFailEvtLong.msg = 'Expected ''11.22.33'', but was ''22.33.44''.'
            : 'Error messages does not match expected value.');
+    verifyLogValue('Expected': assertFailEvtLong.logExpected
+                   : '11.22.33': 'time': *off);
+    verifyLogValue('Actual': assertFailEvtLong.logActual
+                   : '22.33.44': 'time': *off);
   endmon;
 
   // Test unequality with assertion message
@@ -693,6 +759,10 @@ dcl-proc testAssertEqual_timestamp export;
            'Expected ''2024-09-16-11.22.33.123456789012'', but was ' +
            '''2023-01-16-22.33.44.654321789012''.'
            : 'Error messages does not match expected value.');
+    verifyLogValue('Expected': assertFailEvtLong.logExpected
+                   : '2024-09-16-11.22.33.123456789012': 'timestamp': *off);
+    verifyLogValue('Actual': assertFailEvtLong.logActual
+                   : '2023-01-16-22.33.44.654321789012': 'timestamp': *off);
   endmon;
 
   // Test unequality with assertion message
@@ -725,6 +795,10 @@ dcl-proc testAssertEqual_ind export;
     assertFailEvtLong = getAssertFailEvtLong();
     assert(assertFailEvtLong.msg = 'Expected ''1'', but was ''0''.'
            : 'Error messages does not match expected value.');
+    verifyLogValue('Expected': assertFailEvtLong.logExpected
+                   : '*on': 'indicator': *off);
+    verifyLogValue('Actual': assertFailEvtLong.logActual
+                   : '*off': 'indicator': *off);
   endmon;
 
   // Test equality
@@ -761,13 +835,19 @@ end-proc;
 
 dcl-proc assertThatMatcherWithMsg export;
   dcl-pi *n ind extproc(*dclcase);
-    pExpected   pointer const;
-    pActual     pointer const;
-    message     like(msgText_t);
+    pExpected    pointer const;
+    pActual      pointer const;
+    message      like(msgText_t) options(*nopass);
+    logExpected  like(logValue_t.value) options(*nopass);
+    logActual    like(logValue_t.value) options(*nopass);
   end-pi;
 
   dcl-s expected varchar(128) based(pExpected);
   dcl-s actual   varchar(128) based(pActual);
+
+  // Set values displayed in the test log
+  logExpected = expected;
+  logActual = actual;
 
   if (expected = actual);
     message = '';
@@ -782,18 +862,48 @@ end-proc;
 
 dcl-proc assertThatMatcherWithoutMsg export;
   dcl-pi *n ind extproc(*dclcase);
-    pExpected   pointer const;
-    pActual     pointer const;
+    pExpected    pointer const;
+    pActual      pointer const;
+    message      like(msgText_t) options(*nopass);
+    logExpected  like(logValue_t.value) options(*nopass);
+    logActual    like(logValue_t.value) options(*nopass);
   end-pi;
 
   dcl-s expected varchar(128) based(pExpected);
   dcl-s actual   varchar(128) based(pActual);
+
+  // Set values displayed in the test log
+  logExpected = expected;
+  logActual = actual;
 
   if (expected = actual);
     return *on;
   else;
     return *off;
   endif;
+
+end-proc;
+
+
+dcl-proc verifyLogValue export;
+  dcl-pi *n extproc(*dclcase);
+    text        varchar(10) const;
+    logValue    likeds(logValue_t) const;
+    value       like(logValue_t.value) const;
+    type        like(dataType_t) const;
+    isTruncated ind const;
+  end-pi;
+
+  dcl-s varName varchar(30);
+
+  varName = 'log' + text;
+
+  assert(value = logValue.value
+         : varName + '.value does not match expected value');
+  assert(type = logValue.type
+         : varName + '.type does not match expected value');
+  assert(isTruncated = logValue.isTruncated
+         : varName + '.isTruncated does not match expected value');
 
 end-proc;
 

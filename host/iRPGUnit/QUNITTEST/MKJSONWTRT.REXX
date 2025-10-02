@@ -1,7 +1,7 @@
 /* =================================================================== */
-/*  iRPGUnit SelfTest - Build CMDRUNT.                                 */
+/*  iRPGUnit SelfTest - Build JSONWTRT.                                */
 /* =================================================================== */
-/* Copyright (c) 2013-2019 iRPGUnit Project Team                       */
+/* Copyright (c) 2013-2025 iRPGUnit Project Team                       */
 /* All rights reserved. This program and the accompanying materials    */
 /* are made available under the terms of the Common Public License v1.0*/
 /* which accompanies this distribution, and is available at            */
@@ -47,7 +47,7 @@
  SIGNAL on SYNTAX
 
  /* The utility that is installed */
- UTILITY = 'CMDRUNT'
+ UTILITY = 'JSONWTRT'
 
  PARSE ARG prdLib dbgView tgtrls
 
@@ -92,54 +92,22 @@
  /* -------------------------------------------- */
  "STRREXPRC SRCMBR(MKLLIST) SRCFILE("prdLib"/QLLIST) PARM('"prdLib" "dbgView" "tgtRls"')"
 
- "CMPMOD MODULE("prdLib"/CMDRUNT  ) SRCFILE("prdLib"/QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/CMDRUN   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/CALLPRC  ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/CMDRUNLOG) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/CMDRUNPRT) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/CMDRUNSRV) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/CMDRUNV  ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/EXTPRC   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/EXTTST   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/JSONWTRT ) SRCFILE("prdLib"/QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/JOBLOG   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/JSONWTR  ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/LIBL     ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/LLIST    ) SRCFILE("prdLib"/QLLIST   ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/OBJECT   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/OSVERSION) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/STRING   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/SRCMBR   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/STMF     ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/USRSPC   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/XMLWRITER) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
- "CRTSRVPGM  SRVPGM("prdLib"/CMDRUNT) ",
-            "MODULE("prdLib"/CMDRUNT ",
-                     prdLib"/CALLPRC ",
-                     prdLib"/CMDRUN ",
-                     prdLib"/CMDRUNLOG ",
-                     prdLib"/CMDRUNPRT ",
-                     prdLib"/CMDRUNSRV ",
-                     prdLib"/CMDRUNV",
-                     prdLib"/EXTPRC ",
-                     prdLib"/EXTTST ",
+ "CRTSRVPGM  SRVPGM("prdLib"/JSONWTRT)",
+            "MODULE("prdLib"/JSONWTRT",
                      prdLib"/JOBLOG ",
                      prdLib"/JSONWTR",
-                     prdLib"/LIBL   ",
-                     prdLib"/LLIST  ",
-                     prdLib"/OBJECT ",
-                     prdLib"/OSVERSION ",
                      prdLib"/PGMMSG ",
-                     prdLib"/STRING ",
-                     prdLib"/SRCMBR ",
-                     prdLib"/STMF   ",
-                     prdLib"/USRSPC ",
-                     prdLib"/XMLWRITER) ",
+                     prdLib"/STRING   ) ",
             "EXPORT(*ALL) ",
             "OPTION(*DUPPROC) ",
             "BNDSRVPGM("prdLib"/RUTESTCASE) ",
-            "TEXT('RPGUnit SelfTest - Test CMDRUN.')"
+            "TEXT('RPGUnit SelfTest - Test JSONWTR.')"
 
  "SNDPGMMSG ",
    "MSGID(CPF9897) ",

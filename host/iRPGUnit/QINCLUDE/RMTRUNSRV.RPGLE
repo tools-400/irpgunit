@@ -51,6 +51,12 @@
 // @param xmlstmf       - XML stream file path for structured output
 //                        Stream file path for generating XML-formatted test results
 //                        Enables integration with CI/CD tools and reporting systems
+// @param xmlType       - Specifies the type of the generated XML stream file.
+//                        *TYPE1 = original type created by iRPGUnit <= v5.1.0.r
+//                        *TYPE2 = new type that associates a Json object to XML
+//                                 element '<failure>'. The Json object includes
+//                                 the stack trace as well as the 'expected' and
+//                                 'actual' test values.
 //
 // @return Status code indicating overall test execution outcome:
 //         0 = All tests passed successfully
@@ -61,9 +67,9 @@
 //         -99 = Unexpected system error
 ///
 dcl-pr rpgunit_runTestSuite int(10) extproc('RMTRUNSRV_rpgunit_runTestSuite');
-  userspace     likeds(object_t) const;
-  testsuitename likeds(object_t) const;
-  testprocs     likeds(procNms_t) const;
+  userSpace     likeds(object_t) const;
+  testSuiteName likeds(object_t) const;
+  testProcs     likeds(procNms_t) const;
   order         like(order_t) const;
   detail        like(detail_t) const;
   output        like(output_t) const;
@@ -71,5 +77,6 @@ dcl-pr rpgunit_runTestSuite int(10) extproc('RMTRUNSRV_rpgunit_runTestSuite');
   qJobD         likeds(object_t) const;
   rclrsc        like(rclrsc_t) const;
   xmlstmf       like(stmf_t) const;
+  xmlType       like(xmlType_t) const;
 end-pr;
 

@@ -6,7 +6,7 @@
 // ==========================================================================
 //  iRPGUnit - Type Templates.
 // ==========================================================================
-//  Copyright (c) 2013-2020 iRPGUnit Project Team
+//  Copyright (c) 2013-2025 iRPGUnit Project Team
 //  All rights reserved. This program and the accompanying materials
 //  are made available under the terms of the Common Public License v1.0
 //  which accompanies this distribution, and is available at
@@ -94,9 +94,39 @@ dcl-ds EMPTY_ASSERT_FAIL_EVT_LONG likeds(assertFailEvtLong_t) inz;
 
 // Assertion Failure Event.
 dcl-ds assertFailEvtLong_t qualified template;
-  msg       like(msgText_t);
-  callstk   likeds(callStk_t);
+  msg          like(msgText_t);
+  logExpected  likeds(logValue_t);
+  logActual    likeds(logValue_t);
+  callstk      likeds(callStk_t);
 end-ds;
+
+dcl-ds logValue_t qualified template;
+   value          varchar(2048);
+   type           like(dataType_t);
+   isTruncated    ind;
+   length         int(10);
+   originalLength int(10);
+   assertProc     like(assertProcNm_t);
+end-ds;
+
+dcl-s assertProcNm_t varchar(32) template;
+dcl-s dataType_t varchar(20) template;
+dcl-s xmlType_t varchar(10) template;
+dcl-s xmlType_fl_t char(10) template;
+
+dcl-c XML_TYPE_1 '*TYPE1';
+dcl-c XML_TYPE_2 '*TYPE2';
+
+dcl-c DT_DATE 'date';
+dcl-c DT_FLOAT 'float';
+dcl-c DT_INT 'integer';
+dcl-c DT_IND 'indicator';
+dcl-c DT_NUMERIC 'numeric';
+dcl-c DT_TIME 'time';
+dcl-c DT_TIMESTAMP 'timestamp';
+dcl-c DT_STRING 'string';
+dcl-c DT_USER_DEFINED 'user-defined';
+dcl-c DT_UNDEFINED '*N';
 
 // Assertion Failure Event of version 1
 dcl-ds assertFailEvt_t qualified template;
@@ -219,6 +249,15 @@ dcl-ds testResult_t qualified template;
   srcLib      char(10);
   srcMbr      char(10);
   assertCnt   int(10);
+  logExpected likeds(logValue_t);
+  logActual   likeds(logValue_t);
+end-ds;
+
+dcl-ds result_t qualified;
+  assertCnt  int(10);
+  errorCnt   int(10);
+  failureCnt int(10);
+  runsCnt    int(10);
 end-ds;
 
 dcl-ds testSuite_t qualified template;

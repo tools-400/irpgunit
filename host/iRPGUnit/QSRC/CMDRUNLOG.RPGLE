@@ -424,7 +424,7 @@ dcl-proc fmtStackEntry;
   dcl-s specNb varchar(10);
 
   if (%trim(qSndStmt.specnb) = '');
-    specNb = '*N';
+    specNb = NO_VALUE;
   else;
     specNb = %triml(%trim(qSndStmt.specnb): '0');
   endif;

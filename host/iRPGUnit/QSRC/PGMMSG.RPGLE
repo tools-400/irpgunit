@@ -181,16 +181,16 @@ dcl-proc rcvPgmMsg export;
   senderInfo_p = %addr(rawMsgBuf) + bufPos - 1;
   msg.key = rawMsgHdr.msgKey;
   msg.qsndstmt.qpgm.nm = senderInfo.sndPgmNm;
-  msg.qsndstmt.qpgm.lib = '*N';
+  msg.qsndstmt.qpgm.lib = NO_VALUE;
   msg.qsndstmt.qmod.nm = senderInfo.sndModNm;
-  msg.qsndstmt.qmod.lib = '*N';
+  msg.qsndstmt.qmod.lib = NO_VALUE;
   msg.qsndstmt.procnm = %trimr(senderInfo.sndProcNm);
   msg.qsndstmt.specnb = senderInfo.sndPgmSttNb(1);
 
   msg.qrcvstmt.qpgm.nm = senderInfo.rcvPgmNm;
-  msg.qrcvstmt.qpgm.lib = '*N';
+  msg.qrcvstmt.qpgm.lib = NO_VALUE;
   msg.qrcvstmt.qmod.nm = senderInfo.rcvModNm;
-  msg.qrcvstmt.qmod.lib = '*N';
+  msg.qrcvstmt.qmod.lib = NO_VALUE;
   msg.qrcvstmt.procnm = %trimr(senderInfo.rcvProcNm);
   msg.qrcvstmt.specnb = senderInfo.rcvPgmSttNb(1);
 
@@ -583,16 +583,16 @@ dcl-proc getLatestEscMsg export;
                           rcvm0300.msgLenR +
                           rcvm0300.msgHlpLenR;
         msg.qsndstmt.qpgm.nm = senderInfo.sndPgmNm;
-        msg.qsndstmt.qpgm.lib = '*N';
+        msg.qsndstmt.qpgm.lib = NO_VALUE;
         msg.qsndstmt.qmod.nm = senderInfo.sndModNm;
-        msg.qsndstmt.qmod.lib = '*N';
+        msg.qsndstmt.qmod.lib = NO_VALUE;
         msg.qsndstmt.procnm = %trimr(senderInfo.sndProcNm);
         msg.qsndstmt.specnb = senderInfo.sndPgmSttNb(1);
 
         msg.qrcvstmt.qpgm.nm = senderInfo.rcvPgmNm;
-        msg.qrcvstmt.qpgm.lib = '*N';
+        msg.qrcvstmt.qpgm.lib = NO_VALUE;
         msg.qrcvstmt.qmod.nm = senderInfo.rcvModNm;
-        msg.qrcvstmt.qmod.lib = '*N';
+        msg.qrcvstmt.qmod.lib = NO_VALUE;
         msg.qrcvstmt.procnm = %trimr(senderInfo.rcvProcNm);
         msg.qrcvstmt.specnb = senderInfo.rcvPgmSttNb(1);
 
