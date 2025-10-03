@@ -117,6 +117,9 @@ dcl-s xmlType_fl_t char(10) template;
 dcl-c XML_TYPE_1 '*TYPE1';
 dcl-c XML_TYPE_2 '*TYPE2';
 
+dcl-c LABEL_EXPECTED 'expected';
+dcl-c LABEL_ACTUAL 'actual';
+
 dcl-c DT_DATE 'date';
 dcl-c DT_FLOAT 'float';
 dcl-c DT_INT 'integer';

@@ -191,12 +191,20 @@ dcl-proc testFailures export;
 
   splfLineStartsWith('testFalse - FAILURE');
   splfLineStartsWith('Expected 5, but was 4.');
+  splfSkipLine();  // Skip [blank line]
   splfLineStartsWith('testFalse (TESTPGM03->TESTPGM03:20');
+  splfSkipLine();  // Skip [blank line]
+  splfLineStartsWith('Expected:        1 ''5''');
+  splfLineStartsWith('Actual:          1 ''4''');
   splfLineStartsWith('-----------------------');
   splfSkipLine();  // Skip [blank line]
   splfLineStartsWith('testFalse2 - FAILURE');
   splfLineStartsWith('Expected 6, but was 4.');
+  splfSkipLine();  // Skip [blank line]
   splfLineStartsWith('testFalse2 (TESTPGM03->TESTPGM03:28');
+  splfSkipLine();  // Skip [blank line]
+  splfLineStartsWith('Expected:        1 ''6''');
+  splfLineStartsWith('Actual:          1 ''4''');
   splfLineStartsWith('-----------------------');
   splfSkipLine();  // Skip [blank line]
   splfLineStartsWith('FAILURE. 2 test cases, 2 assertions, 2 failures, 0 error.');
@@ -333,8 +341,12 @@ dcl-proc testStackTrace export;
 
   splfLineStartsWith('testStack - FAILURE');
   splfLineStartsWith('Expected 5, but was 4.');
+  splfSkipLine();  // Skip [blank line]
   splfLineStartsWith('failingProc (TESTPGM07->TESTPGM07:20');
   splfLineStartsWith('testStack (TESTPGM07->TESTPGM07:28');
+  splfSkipLine();  // Skip [blank line]
+  splfLineStartsWith('Expected:        1 ''5''');
+  splfLineStartsWith('Actual:          1 ''4''');
   splfLineStartsWith('-----------------------');
   splfSkipLine();  // Skip [blank line]
   splfLineStartsWith('FAILURE. 1 test case, 1 assertion, 1 failure, 0 error.');
@@ -577,7 +589,11 @@ dcl-proc testBigInteger export;
   splfLineStartsWith('test_Different - FAILURE');
   splfLineStartsWith('Expected 1234567890123456789012345678901, but was 12345678901234567890');
   splfLineStartsWith('12345678900.');
+  splfSkipLine();  // Skip [blank line]
   splfLineStartsWith('test_Different (TESTPGM14->TESTPGM14:30');
+  splfSkipLine();  // Skip [blank line]
+  splfLineStartsWith('Expected:        1 ''1234567890123456789012345678901''');
+  splfLineStartsWith('Actual:          1 ''1234567890123456789012345678900''');
   splfLineStartsWith('-----------------------');
   splfSkipLine();  // Skip [blank line]
   splfLineStartsWith('FAILURE. 2 test cases, 2 assertions, 1 failure, 0 error.');
@@ -697,7 +713,11 @@ dcl-proc testChooseTest export;
 
   splfLineStartsWith( 'test2 - FAILURE');
   splfLineStartsWith( 'test2');
-  splfLineStartsWith( 'test2 (TESTPGM05');
+  splfSkipLine();  // Skip [blank line]
+  splfLineStartsWith( 'test2 (TESTPGM05->TESTPGM05:3900)');
+  splfSkipLine();  // Skip [blank line]
+  splfLineStartsWith( 'Expected:          Not available');
+  splfLineStartsWith( 'Actual:            Not available');
   splfLineStartsWith( '-----------------------');
   splfSkipLine();  // Skip [blank line]
   splfLineStartsWith( 'FAILURE. 1 test case, 0 assertion, 1 failure, 0 error.');

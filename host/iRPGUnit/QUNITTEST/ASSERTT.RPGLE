@@ -449,19 +449,19 @@ dcl-proc testAssertEqual_string export;
     assertFailEvtLong = getAssertFailEvtLong();
     assert(assertFailEvtLong.msg = 'Expected ''e'', but was ''u''.'
            : 'Error messages does not match expected value.');
-    verifyLogValue('Expected': assertFailEvtLong.logExpected
+    verifyLogValue(LABEL_EXPECTED: assertFailEvtLong.logExpected
                    : 'e': 'string': *off);
-    verifyLogValue('Actual': assertFailEvtLong.logActual
+    verifyLogValue(LABEL_ACTUAL: assertFailEvtLong.logActual
                    : 'u': 'string': *off);
   endmon;
 
   // Test equality
-  assertEqual('expected': 'expected');
+  assertEqual(LABEL_EXPECTED: LABEL_EXPECTED);
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
 
   // Test unequality without assertion message
   monitor;
-    assertEqual('expected': 'unexpected value');
+    assertEqual(LABEL_EXPECTED: 'unexpected value');
     fail('Expected the asssertion to fail.');
   on-error;
     assertFailEvtLong = getAssertFailEvtLong();
@@ -471,7 +471,7 @@ dcl-proc testAssertEqual_string export;
 
   // Test unequality with assertion message
   monitor;
-    assertEqual('expected': 'unexpected value': 'String values do not match');
+    assertEqual(LABEL_EXPECTED: 'unexpected value': 'String values do not match');
     fail('Expected the asssertion to fail.');
   on-error;
     assertFailEvtLong = getAssertFailEvtLong();
@@ -500,9 +500,9 @@ dcl-proc testAssertEqual_integer export;
     assertFailEvtLong = getAssertFailEvtLong();
     assert(assertFailEvtLong.msg = 'Expected ''-9223372036854775807'', but was ''-123''.'
            : 'Error messages does not match expected value.');
-    verifyLogValue('Expected': assertFailEvtLong.logExpected
+    verifyLogValue(LABEL_EXPECTED: assertFailEvtLong.logExpected
                    : '-9223372036854775807,00000000000000000000': 'numeric': *off);
-    verifyLogValue('Actual': assertFailEvtLong.logActual
+    verifyLogValue(LABEL_ACTUAL: assertFailEvtLong.logActual
                    : '-123,00000000000000000000': 'numeric': *off);
   endmon;
 
@@ -586,9 +586,9 @@ dcl-proc testAssertEqual_numeric export;
     assertFailEvtLong = getAssertFailEvtLong();
     assert(assertFailEvtLong.msg = 'Expected ''-1234567890,123'', but was ''-1234567890,122''.'
            : 'Error messages does not match expected value.');
-    verifyLogValue('Expected': assertFailEvtLong.logExpected
+    verifyLogValue(LABEL_EXPECTED: assertFailEvtLong.logExpected
                    : '-1234567890,12300000000000000000': 'numeric': *off);
-    verifyLogValue('Actual': assertFailEvtLong.logActual
+    verifyLogValue(LABEL_ACTUAL: assertFailEvtLong.logActual
                    : '-1234567890,12200000000000000000': 'numeric': *off);
   endmon;
 
@@ -631,9 +631,9 @@ dcl-proc testAssertThat export;
     assertFailEvtLong = getAssertFailEvtLong();
     assert(assertFailEvtLong.msg = 'Matcher: Actual values does not match expected value.'
            : 'Error messages does not match message from matcher.');
-    verifyLogValue('Expected': assertFailEvtLong.logExpected
+    verifyLogValue(LABEL_EXPECTED: assertFailEvtLong.logExpected
                    : 'Donald Duck': 'user-defined': *off);
-    verifyLogValue('Actual': assertFailEvtLong.logActual
+    verifyLogValue(LABEL_ACTUAL: assertFailEvtLong.logActual
                    : 'Dagobert Duck': 'user-defined': *off);
   endmon;
 
@@ -646,9 +646,9 @@ dcl-proc testAssertThat export;
   on-error;
     assertFailEvtLong = getAssertFailEvtLong();
     assert(assertFailEvtLong.msg = NO_VALUE);
-    verifyLogValue('Expected': assertFailEvtLong.logExpected
+    verifyLogValue(LABEL_EXPECTED: assertFailEvtLong.logExpected
                    : 'Donald Duck': 'user-defined': *off);
-    verifyLogValue('Actual': assertFailEvtLong.logActual
+    verifyLogValue(LABEL_ACTUAL: assertFailEvtLong.logActual
                    : 'Dagobert Duck': 'user-defined': *off);
   endmon;
 
@@ -684,9 +684,9 @@ dcl-proc testAssertEqual_date export;
     assertFailEvtLong = getAssertFailEvtLong();
     assert(assertFailEvtLong.msg = 'Expected ''2024-09-16'', but was ''2002-01-02''.'
            : 'Error messages does not match expected value.');
-    verifyLogValue('Expected': assertFailEvtLong.logExpected
+    verifyLogValue(LABEL_EXPECTED: assertFailEvtLong.logExpected
                    : '2024-09-16': 'date': *off);
-    verifyLogValue('Actual': assertFailEvtLong.logActual
+    verifyLogValue(LABEL_ACTUAL: assertFailEvtLong.logActual
                    : '2002-01-02': 'date': *off);
   endmon;
 
@@ -721,9 +721,9 @@ dcl-proc testAssertEqual_time export;
     assertFailEvtLong = getAssertFailEvtLong();
     assert(assertFailEvtLong.msg = 'Expected ''11.22.33'', but was ''22.33.44''.'
            : 'Error messages does not match expected value.');
-    verifyLogValue('Expected': assertFailEvtLong.logExpected
+    verifyLogValue(LABEL_EXPECTED: assertFailEvtLong.logExpected
                    : '11.22.33': 'time': *off);
-    verifyLogValue('Actual': assertFailEvtLong.logActual
+    verifyLogValue(LABEL_ACTUAL: assertFailEvtLong.logActual
                    : '22.33.44': 'time': *off);
   endmon;
 
@@ -759,9 +759,9 @@ dcl-proc testAssertEqual_timestamp export;
            'Expected ''2024-09-16-11.22.33.123456789012'', but was ' +
            '''2023-01-16-22.33.44.654321789012''.'
            : 'Error messages does not match expected value.');
-    verifyLogValue('Expected': assertFailEvtLong.logExpected
+    verifyLogValue(LABEL_EXPECTED: assertFailEvtLong.logExpected
                    : '2024-09-16-11.22.33.123456789012': 'timestamp': *off);
-    verifyLogValue('Actual': assertFailEvtLong.logActual
+    verifyLogValue(LABEL_ACTUAL: assertFailEvtLong.logActual
                    : '2023-01-16-22.33.44.654321789012': 'timestamp': *off);
   endmon;
 
@@ -795,9 +795,9 @@ dcl-proc testAssertEqual_ind export;
     assertFailEvtLong = getAssertFailEvtLong();
     assert(assertFailEvtLong.msg = 'Expected ''1'', but was ''0''.'
            : 'Error messages does not match expected value.');
-    verifyLogValue('Expected': assertFailEvtLong.logExpected
+    verifyLogValue(LABEL_EXPECTED: assertFailEvtLong.logExpected
                    : '*on': 'indicator': *off);
-    verifyLogValue('Actual': assertFailEvtLong.logActual
+    verifyLogValue(LABEL_ACTUAL: assertFailEvtLong.logActual
                    : '*off': 'indicator': *off);
   endmon;
 

@@ -197,7 +197,9 @@
      "PARM('"prdLib" "dbgView" "tgtRls"')"
 
    deleteSelfTests(prdLib)
-   deleteModules(prdLib)
+   if (prdLib <> 'RPGUNITDVP') then do
+     deleteModules(prdLib)
+   end
    deleteBuildObjects(prdLib)
 
    "SNDPGMMSG ",

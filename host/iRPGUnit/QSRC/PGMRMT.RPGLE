@@ -76,7 +76,11 @@ else;
   xmlStmf = '';
 endif;
 
-xmlType = %trimr(gi_xmlType);
+if (%parms() >= %parmnum(gi_xmlType) and %addr(gi_xmlType) <> *null);
+  xmlType = %trimr(gi_xmlType);
+else;
+  xmlType = XML_TYPE_1;
+endif;
 
 go_returnCode =
      rpgunit_runTestSuite(

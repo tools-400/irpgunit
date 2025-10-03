@@ -83,7 +83,7 @@ b) Optionally run the RPGUnit self tests:
 
 --------------------------
 
-Version 5.2.0 - 02.10.2025
+Version 6.0.0 - 03.10.2025
 --------------------------
  * Added keyword options(*varsize) to procedure aEqual().
    Recompile your test suites to take advantage from this change.

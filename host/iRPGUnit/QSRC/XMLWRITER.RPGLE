@@ -292,11 +292,11 @@ dcl-proc appendCallStackType2;
     Json_startArray();
 
     if (testResult.failure.logExpected.value = NO_VALUE);
-      Json_addString(crtNoValueMsg('expected': testResult.failure.logExpected.assertProc));
+      Json_addString(crtNoValueMsg(LABEL_EXPECTED: testResult.failure.logExpected.assertProc));
     endif;
 
     if (testResult.failure.logActual.value = NO_VALUE);
-      Json_addString(crtNoValueMsg('actual': testResult.failure.logActual.assertProc));
+      Json_addString(crtNoValueMsg(LABEL_ACTUAL: testResult.failure.logActual.assertProc));
     endif;
 
     Json_endArray(); // 'diagnosticMessages'
@@ -335,8 +335,8 @@ dcl-proc buildFailureValues;
     failure    likeds(testResult_t.failure) const;
   end-pi;
 
-  buildLogValue('expected': failure.logExpected);
-  buildLogValue('actual': failure.logActual);
+  buildLogValue(LABEL_EXPECTED: failure.logExpected);
+  buildLogValue(LABEL_ACTUAL: failure.logActual);
 
 end-proc;
 

@@ -92,6 +92,7 @@ dcl-pr logRuntimeError extproc('CMDRUNLOG_logRuntimeError');
   line varchar(2048) options(*varsize) const;
 end-pr;
 
+// TODO: remove prototype
 ///
 // Formats a call stack entry into a standardized readable string format.
 // Converts raw call stack statement information into a human-readable
@@ -101,10 +102,11 @@ end-pr;
 //
 // @return Formatted stack entry string ready for output
 ///
-dcl-pr fmtStackEntry like(line_t) extproc('CMDRUNLOG_fmtStackEntry');
-  qsndstmt likeds(qStatement_t) const;
-end-pr;
+//dcl-pr fmtStackEntry like(line_t) extproc('CMDRUNLOG_fmtStackEntry');
+//  qsndstmt likeds(qStatement_t) const;
+//end-pr;
 
+// TODO: remove prototype
 ///
 // Logs the current library list configuration for debugging purposes.
 // Records the active library list at the time of test execution,
@@ -112,9 +114,9 @@ end-pr;
 //
 // @param librarylist - Complete library list data structure
 ///
-dcl-pr logLibraryList extproc('CMDRUNLOG_logLibraryList');
-  librarylist likeds(liblData_t) const;
-end-pr;
+//dcl-pr logLibraryList extproc('CMDRUNLOG_logLibraryList');
+//  librarylist likeds(liblData_t) const;
+//end-pr;
 
 ///
 // Establishes the logging context and configuration for the test run session.

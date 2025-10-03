@@ -230,11 +230,17 @@ dcl-proc testLogFailureWithoutSpecNb export;
 
   aEqual(MARGIN + 'failure_without_spec_nb - FAIL    ': logLine(r ));
   aEqual(MARGIN + 'URE                               ': logLine(r+1));
-  aEqual(MARGIN + '  failure_without_spec_nb (MY_    ': logLine(r+2));
-  aEqual(MARGIN + 'SRVPGM->MY_SRVPGM:*N)             ': logLine(r+3));
-  aEqual(MARGIN + '-----------------------           ': logLine(r+4));
-  aEqual(MARGIN + '                                  ': logLine(r+5));
-  iEqual(r+5: logIdx);
+  aEqual(MARGIN + '                                  ': logLine(r+2)); // new with *TYPE2 log output
+  aEqual(MARGIN + '  failure_without_spec_nb (MY_    ': logLine(r+3));
+  aEqual(MARGIN + 'SRVPGM->MY_SRVPGM:*N)             ': logLine(r+4));
+  aEqual(MARGIN + '                                  ': logLine(r+5)); // new with *TYPE2 log output
+  aEqual(MARGIN + 'Expected:          Not availab    ': logLine(r+6));
+  aEqual(MARGIN + 'le                                ': logLine(r+7));
+  aEqual(MARGIN + 'Actual:            Not availab    ': logLine(r+8));
+  aEqual(MARGIN + 'le                                ': logLine(r+9));
+  aEqual(MARGIN + '-----------------------           ': logLine(r+10));
+  aEqual(MARGIN + '                                  ': logLine(r+11));
+  iEqual(r+11: logIdx);
 
 end-proc;
 

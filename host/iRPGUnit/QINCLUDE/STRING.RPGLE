@@ -322,5 +322,31 @@ dcl-pr formatNumeric varchar(128) extproc('formatNumeric');
   numericValue like(assertNumeric_t) const;
 end-pr;
 
-/endif
+///
+// Expands the specifed string with spaces up to the position given
+// in 'tabPos'.
+//
+// @param string - string that is expanded with spaces
+// @param tabPos - new length of the string
+//
+// @return String expaned with spaces up to 'tabPos' characters.
+///
+dcl-pr tab like(String_t) extproc('STRING_tab');
+  string like(String_t) const;
+  tabPos int(10) const;
+end-pr;
 
+///
+// Right-aligns a given string value in a space of 'length' characters.
+//
+// @param string - string value that is right-aligned
+// @param length - length of the space
+//
+// @return Right-aligned string
+///
+dcl-pr rAlign like(string_t) extproc('STRING_rAlign');
+  string  like(string_t) const;
+  length int(10) const;
+end-pr;
+
+/endif

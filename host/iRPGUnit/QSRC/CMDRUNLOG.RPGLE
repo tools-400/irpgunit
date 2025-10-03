@@ -39,28 +39,17 @@ ctl-opt nomain;
 /include qinclude,OSVERSION
 
 //----------------------------------------------------------------------
-//   Private Procedures
-//----------------------------------------------------------------------
-
-// Log a header message.
-dcl-pr logHdr extproc('logHdr');
-  // Name of the service program containing the tests.
-  srvPgm          const likeds(object_t);
-end-pr;
-
-dcl-pr getFormattedJob varchar(32) extproc('getFormattedJob');
-end-pr;
-
-dcl-pr getLeftMargin varchar(32) extproc('getLeftMargin');
-end-pr;
-
-//----------------------------------------------------------------------
 //   Constants
 //----------------------------------------------------------------------
 
-dcl-c INDENT         '  ';
-dcl-c SEPARATOR      ' - ';
+dcl-c INDENT '  ';
+dcl-c SEPARATOR ' - ';
 dcl-c LINE_SEPARATOR '-----------------------';
+dcl-c SINGLE_QUOTE '''';
+dcl-c TRUNCATED_INDICATOR '(!)';
+
+dcl-c RIGHT_MARGIN 5;
+dcl-c LEFT_MARGIN 5;
 
 //----------------------------------------------------------------------
 //   Global Variables
@@ -76,6 +65,9 @@ dcl-s g_detail char(10) inz(DETAIL_BASIC);
 dcl-s g_output char(10) inz(OUTPUT_ALLWAYS);
 // Library list, the test suite is executed with.
 dcl-ds g_liblData likeds(liblData_t) inz;
+// Append 'truncated' information message.
+dcl-s g_isLogTruncatedMessage ind inz(*off);
+dcl-s g_truncatedMessageLength int(10);
 
 //---------------------------------------------------------------------
 //   Program Status Data Structure
@@ -116,7 +108,8 @@ dcl-proc logCompMsg export;
     return;
   endif;
 
-  logHdr( g_srvPgm );
+  initPrinter();
+  logHeader( g_srvPgm );
   logRawLine( msg );
   clsPrt();
   clear g_hdrWasPrinted;
@@ -139,7 +132,8 @@ dcl-proc logError export;
     return;
   endif;
 
-  logHdr( g_srvPgm );
+  initPrinter();
+  logHeader( g_srvPgm );
 
   prtLine( getLeftMargin() + %trimr(testNm) + SEPARATOR + 'ERROR' );
 
@@ -179,17 +173,130 @@ dcl-proc logfailure export;
     return;
   endif;
 
-  logHdr( g_srvPgm );
+  initPrinter();
+  logHeader(g_srvPgm);
 
-  logRawLine( %trimr(testNm) + SEPARATOR + 'FAILURE' );
-  logRawLine( failure.msg );
+  logRawLine(%trimr(testNm) + SEPARATOR + 'FAILURE');
 
-  for i = 1 to failure.callStk.numE;
-    logStackEntry( failure.callStk.entry(i).qStmt );
-  endfor;
+  logRawLine(failure.msg);
 
-  prtLine( getLeftMargin() + LINE_SEPARATOR );
+  if (failure.callStk.numE > 0);
+    lineFeed(); // new with *TYPE2 log output of 'expected' and 'actual' values
+    for i = 1 to failure.callStk.numE;
+      logStackEntry(failure.callStk.entry(i).qStmt);
+    endfor;
+    lineFeed(); // new with *TYPE2 log output of 'expected' and 'actual' values
+  endif;
+
+  // new with *TYPE2 log output of 'expected' and 'actual' values
+  logValue(LABEL_EXPECTED: failure.logExpected);
+  logValue(LABEL_ACTUAL: failure.logActual);
+  logTruncated(failure.logExpected: failure.logActual);
+
+  prtLine(getLeftMargin() + LINE_SEPARATOR);
   lineFeed();
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+// Prints the 'expexted' or 'actual' value in format:
+// *...+....1....+....2....+....3....+....4....+....5....+....6....+....7....+....8
+// Expected(!): 0001 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed'
+//              0061 ' diam nonumy eirmod tempor invidunt ut labore et dolore magn'
+//              0211 'a aliquyam erat, sed diam voluptua. At vero eos et accusam e'
+//              0181 't justo duo dolores et ea rebum. Stet clita kasd'
+// (!): Value trunacted to nnnn bytes.
+//----------------------------------------------------------------------
+dcl-proc logValue;
+  dcl-pi *N extproc(*dclcase);
+    name     varchar(20) const;
+    logValue likeds(logValue_t) const;
+  end-pi;
+
+  dcl-c TAB_START_POS 14;
+  dcl-c TAB_VALUE 19;
+
+  dcl-s line varchar(132);
+  dcl-s chunk varchar(132);
+  dcl-s chunkSize int(10);
+  dcl-s varName like(name);
+  dcl-s startPos zoned(4:0);
+
+  if (logValue.isTruncated);
+      g_isLogTruncatedMessage = *on;
+      g_truncatedMessageLength = logValue.length;
+  endif;
+
+  varName = name;
+  %subst(varName: 1: 1) = uCase(%subst(varName: 1 :1));
+
+  startPos = 1;
+
+  // Print first line
+  line = varName;
+  if (logValue.isTruncated);
+    line += ' ' + TRUNCATED_INDICATOR;
+  endif;
+
+  line += ':';
+
+  if (logValue.length = 0);
+    line = tab(line: TAB_VALUE);
+    line += 'Not available';
+    logRawLine(line);
+    return;
+  endif;
+
+  chunkSize = (getPrtWidth() - LEFT_MARGIN - RIGHT_MARGIN) - TAB_VALUE - 2;
+  chunkSize = %int(chunkSize / 10) * 10;
+
+  dow (startPos <= logValue.length);
+    if (startPos + chunkSize > logValue.length);
+      chunkSize = logValue.length - startPos + 1;
+    endif;
+
+    chunk = %subst(logValue.value: startPos: chunkSize);
+
+    line = tab(line: TAB_START_POS);
+    line += rAlign(%char(startPos): %len(startPos));
+    line = tab(line: TAB_VALUE);
+    line += SINGLE_QUOTE + chunk + SINGLE_QUOTE;
+    logRawLine(line);
+
+    startPos += chunkSize;
+    line = '';
+  enddo;
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Prints an information message, if test values have been truncated.
+// Message: '(!): Value trunacted to nnnn bytes.'
+//----------------------------------------------------------------------
+dcl-proc logTruncated;
+  dcl-pi *N extproc(*dclcase);
+    name  varchar(20) const;
+    value likeds(logValue_t) const;
+  end-pi;
+
+  if (g_isLogTruncatedMessage);
+    logRawLine(TRUNCATED_INDICATOR + ': Value trunacted to '
+              + %char(g_truncatedMessageLength) + ' bytes.');
+  endif;
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+// Initializes the printer.
+//----------------------------------------------------------------------
+dcl-proc initPrinter;
+  dcl-pi *N extproc(*dclcase);
+  end-pi;
+
+  g_isLogTruncatedMessage = *off;
+  g_truncatedMessageLength = 0;
 
 end-proc;
 
@@ -197,9 +304,9 @@ end-proc;
 //----------------------------------------------------------------------
 // Print the report header.
 //----------------------------------------------------------------------
-dcl-proc logHdr;
-  dcl-pi *N;
-    srvPgm          const likeds(object_t);
+dcl-proc logHeader;
+  dcl-pi *N extproc(*dclcase);
+    srvPgm likeds(object_t) const;
   end-pi;
 
   dcl-s version         char(20);
@@ -216,7 +323,9 @@ dcl-proc logHdr;
     logRawLine('iRPGUnit    : ' + 'v' + %trim(version));
     logRawLine('IBM i       : ' + OS_getVersion());
     lineFeed();
+
     logLibraryList(g_liblData);
+
     g_hdrWasPrinted = *on;
   endif;
 
@@ -236,8 +345,6 @@ dcl-proc logRawLine export;
   dcl-s prtWidth int(10);
   dcl-s leftMargin varchar(32);
 
-  dcl-c right_margin 5;
-
   if (line = '');    // Do not log blank lines.
     return;
   endif;
@@ -245,7 +352,7 @@ dcl-proc logRawLine export;
   line = %trimr(line);
   leftMargin = getLeftMargin();
 
-  prtWidth = getPrtWidth() - %len(leftMargin) - right_margin;
+  prtWidth = getPrtWidth() - %len(leftMargin) - RIGHT_MARGIN;
 
   dow (%len(line) > prtWidth);
     prtLine( leftMargin + %subst( line : 1 : prtWidth ) );
@@ -276,7 +383,8 @@ dcl-proc logSuccess export;
     return;
   endif;
 
-  logHdr( g_srvPgm );
+  initPrinter();
+  logHeader( g_srvPgm );
 
   logRawLine( %trimr(testNm) + ' - Success' );
   logRawLine( INDENT + %char(assertionCnt) + ' assertions' );
@@ -314,7 +422,8 @@ dcl-proc logRuntimeError export;
     return;
   endif;
 
-  logHdr( g_srvPgm );
+  initPrinter();
+  logHeader( g_srvPgm );
 
   logRawLine( line );
 
@@ -339,8 +448,8 @@ end-proc;
 //                 nnnn LLLLLLLLLL   nnnn LLLLLLLLLL   nnnn LLLLLLLLLL
 //----------------------------------------------------------------------
 dcl-proc logLibraryList;
-  dcl-pi *N;
-    libraryList     const likeds(liblData_t);
+  dcl-pi *N extproc(*dclcase);
+    libraryList likeds(liblData_t) const;
   end-pi;
 
   dcl-c min_num_rows 5;
@@ -415,8 +524,8 @@ end-proc;
 // Formats a call stack entry.
 //----------------------------------------------------------------------
 dcl-proc fmtStackEntry;
-  dcl-pi *N like(line_t);
-    qSndStmt        const likeds(qStatement_t);
+  dcl-pi *N like(line_t) extproc(*dclcase);
+    qSndStmt likeds(qStatement_t) const;
   end-pi;
 
   dcl-s line like(line_t);
@@ -485,7 +594,7 @@ end-proc;
 
 
 dcl-proc getFormattedJob;
-  dcl-pi *N              varchar(32);
+  dcl-pi *N varchar(32) extproc(*dclcase);
   end-pi;
 
   return %editc(sds.nbr: 'X') + '/' +
@@ -496,12 +605,10 @@ end-proc;
 
 
 dcl-proc getLeftMargin;
-  dcl-pi *N              varchar(32);
+  dcl-pi *N varchar(32) extproc(*dclcase);
   end-pi;
 
   dcl-s leftMargin varchar(32) static;
-
-  dcl-c LEFT_MARGIN 5;
 
   if (%len(leftMargin) <> LEFT_MARGIN);
     leftMargin = spaces(LEFT_MARGIN);
