@@ -55,25 +55,15 @@ dcl-proc testAllOK_4 export;
 
 end-proc;
 
-dcl-proc testAllFailure_4 export;
+dcl-proc testRuntimeError export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
   dcl-s a1 int(10);
   dcl-s a2 int(10);
 
+  // Produce a runtime error: division by zero
   a1 = a1 / a2;
-
-  callp(E) assert(*off : 'FAILURE: 1'); // continue on error
-
-  callp(E) assert(*off : 'FAILURE: 2'); // continue on error
-
-  a1 = getAssertCalled(); // Number of failed assertions
-  callp(E) aEqual( 'HelloWorld' : 'Hello' );
-  a2 = getAssertCalled(); // Number of failed assertions
-
-  // Fehler aufgetreten => OK.
-  assert(a2 = (a1+1): 'There must be one more assertion!');
 
 end-proc;
 
