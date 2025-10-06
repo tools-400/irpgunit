@@ -96,8 +96,7 @@ Version 6.0.0 - 03.10.2025
     - Type of the XML output file of iRPGUnit <= v5.1.0.r. This type
       assigns the call stack in text format to XML element '<failure>'.
     - Type of the XML output file of iRPGUnit >= v6.0.0.r. This type
-      assigns a Json object to XML element '<failue>'. The Json object
-      contains the information below:
+      assigns a Json object to XML element '<failue>'.
  * Add 'expected' and 'actual' values.
 
 --------------------------
