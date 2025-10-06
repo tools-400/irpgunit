@@ -88,25 +88,25 @@ end-ds;
 dcl-s actMark_t int(10) template;
 
 // Empty Assertion Failure Event of version 1.
-dcl-ds EMPTY_ASSERT_FAIL_EVT likeds(assertFailEvt_t) inz;
+dcl-ds EMPTY_ASSERT_FAIL_EVT likeds(assertFailEvt_t) inz(*likeds);
 
-dcl-ds EMPTY_ASSERT_FAIL_EVT_LONG likeds(assertFailEvtLong_t) inz;
+dcl-ds EMPTY_ASSERT_FAIL_EVT_LONG likeds(assertFailEvtLong_t) inz(*likeds);
 
 // Assertion Failure Event.
 dcl-ds assertFailEvtLong_t qualified template;
-  msg          like(msgText_t);
-  logExpected  likeds(logValue_t);
-  logActual    likeds(logValue_t);
-  callstk      likeds(callStk_t);
+  msg          like(msgText_t) inz;
+  logExpected  likeds(logValue_t) inz(*likeds);
+  logActual    likeds(logValue_t) inz(*likeds);
+  callstk      likeds(callStk_t) inz(*likeds);
 end-ds;
 
 dcl-ds logValue_t qualified template;
-   value          varchar(2048);
-   type           like(dataType_t);
-   isTruncated    ind;
-   length         int(10);
-   originalLength int(10);
-   assertProc     like(assertProcNm_t);
+   value          varchar(2048) inz;
+   type           like(dataType_t) inz;
+   isTruncated    ind inz(*off);
+   length         int(10) inz;
+   originalLength int(10) inz;
+   assertProc     like(assertProcNm_t) inz;
 end-ds;
 
 dcl-s assertProcNm_t varchar(32) template;
@@ -120,6 +120,7 @@ dcl-c XML_TYPE_2 '*TYPE2';
 dcl-c LABEL_EXPECTED 'expected';
 dcl-c LABEL_ACTUAL 'actual';
 
+// Data type in user space, XML and printer output
 dcl-c DT_DATE 'date';
 dcl-c DT_FLOAT 'float';
 dcl-c DT_INT 'integer';
@@ -134,19 +135,19 @@ dcl-c DT_UNDEFINED '*N';
 // Assertion Failure Event of version 1
 dcl-ds assertFailEvt_t qualified template;
   msg       varchar(256);
-  callstk   likeds(callStk_t);
+  callstk   likeds(callStk_t) inz(*likeds);
 end-ds;
 
 // Call Stack.
 dcl-ds callStk_t qualified template;
-  nume    int(10);
-  entry   likeds(callStkEnt_t) dim(MAX_CALL_STK_SIZE);
+  numE    int(10) inz;
+  entry   likeds(callStkEnt_t) dim(MAX_CALL_STK_SIZE) inz(*likeds);
 end-ds;
 
 // Call Stack Entry.
 dcl-ds callStkEnt_t qualified template;
-  level   int(10);
-  qstmt   likeds(qStatement_t);
+  level   int(10) inz;
+  qstmt   likeds(qStatement_t) inz(*likeds);
 end-ds;
 
 // Program Message.
@@ -161,10 +162,10 @@ end-ds;
 
 // Qualified program statement
 dcl-ds qStatement_t qualified template;
-  qpgm     likeds(object_t);
-  qmod     likeds(object_t);
-  procnm   like(procNm_t);
-  specnb   char(10);
+  qpgm     likeds(object_t) inz(*likeds);
+  qmod     likeds(object_t) inz(*likeds);
+  procnm   like(procNm_t) inz;
+  specnb   char(10) inz;
 end-ds;
 
 // Old style error message prior to version 2.0.0.
@@ -195,8 +196,8 @@ dcl-s ifsStmf_t varchar(4096);
 
 // Object qualified Name.
 dcl-ds object_t qualified template;
-  nm    char(10);
-  lib   char(10);
+  nm    char(10) inz;
+  lib   char(10) inz;
 end-ds;
 
 // Spooled file qualified Name.
@@ -252,8 +253,6 @@ dcl-ds testResult_t qualified template;
   srcLib      char(10);
   srcMbr      char(10);
   assertCnt   int(10);
-  logExpected likeds(logValue_t);
-  logActual   likeds(logValue_t);
 end-ds;
 
 dcl-ds result_t qualified;
