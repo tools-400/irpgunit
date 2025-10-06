@@ -559,9 +559,6 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
 
         // Parameter 8: Library list
         parameter[PARM_LIBRARY_LIST] = produceStringArrayParameter(aLibraryList, 10);
-        // TODO: remove debug code
-        // System.out.println("Using library list: " + new
-        // I5LibraryList(aLibraryList).toString());
 
         // Parameter 9: Qualified job description name
         parameter[PARM_JOB_DESCRIPTION] = producesQualifiedObjectName(Preferences.getInstance().getJobDescription());

@@ -35,8 +35,6 @@ public abstract class AbstractUnitTestObject {
 
     protected IPropertyDescriptor createPropertyDescriptor(String id, String displayName, boolean advanced, String category) {
 
-        System.out.println("createPropertyDescriptor(1)");
-
         IPropertyDescriptor descriptor = createPropertyDescriptor(id, displayName, advanced);
         if (category != null) {
             ((PropertyDescriptor)descriptor).setCategory(category);
@@ -45,8 +43,6 @@ public abstract class AbstractUnitTestObject {
     }
 
     protected IPropertyDescriptor createPropertyDescriptor(String id, String displayName, boolean advanced) {
-
-        System.out.println("createPropertyDescriptor(1)");
 
         PropertyDescriptor descriptor = new PropertyDescriptor(id, displayName);
         if (advanced) {
