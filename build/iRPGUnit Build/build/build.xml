@@ -427,7 +427,7 @@
          ============================================================= -->
     <target name="createGitHubFiles" depends="updatePdfFile, prepareUpdateSite, createZipFile, createUpdateSite, createUpdateSiteHtmlPages, createHelpHtmlPages, createHomePageHtml, createFilesHtml, refreshProjects" description="Step 3">
 
-        <echo>GitHub files have been created in: </echo>
+        <echo>GitHub files have been created in: ${build.upload.dir}</echo>
         
     </target>
 
