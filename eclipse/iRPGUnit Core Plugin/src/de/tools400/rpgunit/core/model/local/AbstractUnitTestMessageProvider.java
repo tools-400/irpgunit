@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2024 iSphere Project Owners
+ * Copyright (c) 2012-2025 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,6 @@
 
 package de.tools400.rpgunit.core.model.local;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 import de.tools400.rpgunit.core.Messages;
@@ -84,19 +80,15 @@ public abstract class AbstractUnitTestMessageProvider extends AbstractUnitTestOb
     }
 
     @Override
-    public IPropertyDescriptor[] getPropertyDescriptors() {
+    public void createPropertyDescriptors() {
 
-        List<IPropertyDescriptor> descriptors = new ArrayList<IPropertyDescriptor>();
-
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_TYPE, Messages.Type, false, Messages.Other));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_PROGRAM_NAME, Messages.Program, false, Messages.Program));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_PROGRAM_LIBRARY_NAME, Messages.Library, false, Messages.Program));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_MODULE_NAME, Messages.Module, false, Messages.Module));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_MODULE_LIBRARY_NAME, Messages.Library, false, Messages.Module));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_PROCEDURE_NAME, Messages.Procedure, false, Messages.Statement_number));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_STATEMENT_NUMBER, Messages.Statement_number, false, Messages.Statement_number));
-
-        return descriptors.toArray(new IPropertyDescriptor[descriptors.size()]);
+        createPropertyDescriptor(PROPERTY_ID_TYPE, Messages.Type, false, Messages.Other);
+        createPropertyDescriptor(PROPERTY_ID_PROGRAM_NAME, Messages.Program, false, Messages.Program);
+        createPropertyDescriptor(PROPERTY_ID_PROGRAM_LIBRARY_NAME, Messages.Library, false, Messages.Program);
+        createPropertyDescriptor(PROPERTY_ID_MODULE_NAME, Messages.Module, false, Messages.Module);
+        createPropertyDescriptor(PROPERTY_ID_MODULE_LIBRARY_NAME, Messages.Library, false, Messages.Module);
+        createPropertyDescriptor(PROPERTY_ID_PROCEDURE_NAME, Messages.Procedure, false, Messages.Statement_number);
+        createPropertyDescriptor(PROPERTY_ID_STATEMENT_NUMBER, Messages.Statement_number, false, Messages.Statement_number);
     }
 
     @Override
