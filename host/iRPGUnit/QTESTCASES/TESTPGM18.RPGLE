@@ -31,12 +31,12 @@ dcl-proc test1 export;
 
 end-proc;
 
-dcl-proc teardownSuite export;
+dcl-proc tearDownSuite export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
   dcl-s x int(10) inz(0);
 
-  sndInfoMsg( 'teardownSuite' );
+  sndInfoMsg( 'tearDownSuite' );
 
   x = 1 / x;    // Generate error.
 

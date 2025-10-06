@@ -20,6 +20,7 @@
 /*                      &LI/STRING    +                                       */
 /*                      &LI/TAGTST    +                                       */
 /*                      &LI/USRSPC    +                                       */
+/*                      &LI/OSVERSION +                                       */
 /*                      );                                                    */
 /*     >>PARM<<  ENTMOD(&LI/CRTTST);                                          */
 /*     >>PARM<<  BNDSRVPGM(&LI/RUTESTCASE);                                   */

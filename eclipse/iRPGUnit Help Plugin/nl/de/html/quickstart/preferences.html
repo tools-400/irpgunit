@@ -158,7 +158,18 @@ Die Tabelle entält einige aber nicht alle Variablen der Funktion strftime(). Ei
 Variablen, die hier nicht gelistet sind, sind nicht erlaubt, weil deren Werte zu 
 einem ungültige Pfadnamen führen würden.
 
-<h3>Ausschalten Protokoll</h3>
+<h3>XML Ausgabeformat</h3>
+Gibt das Format der XML Ausgabedatei an:<p>
+<table width="80%">
+<colgroup>
+ <col width="100">
+</colgroup>
+<tr><td valign="top">*TYPE1</td><td>Format von iRPGUnit <= v5.1.0.r. Element <code>&lt;failure&gt;</code> (Aufrufstapel) wird als Text ausgegeben.</td></tr> 
+<tr><td valign="top">*TYPE2</td><td>Format von iRPGUnit >= v6.0.0.r. Element <code>&lt;failure&gt;</code> (Aufrufstapel) wird als Json ausgegeben.</td></tr> 
+</table>
+<p>
+
+<h3>Deaktivieren Protokoll</h3>
 Unabhängig von der Einstellung des Parameters <i>'Erstellen Protokoll'</i> kann hiermit die Druckausgabe temporär 
 ausgeschaltet werden, sofern <i>'Erstellen Protokoll'</i> nicht auf <i>'*NONE'</i> gesetzt ist. Dieser Schalter
 korrespondiert mit der Schaltfläche <i>'Testprotokoll aus-/einschalten'</i> der <i>'RPGUnit'</i> View.<p>

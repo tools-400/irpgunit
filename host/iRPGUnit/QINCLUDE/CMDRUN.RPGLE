@@ -11,18 +11,28 @@
 //  http://www.eclipse.org/legal/cpl-v10.html
 // ==========================================================================
 
-///
-// Executes a procedure with comprehensive error handling and logging.
-// Provides a safe execution environment that captures and logs any
-// exceptions or errors that occur during procedure execution, ensuring
-// test framework stability and detailed error reporting.
-//
-// @param proc - Procedure structure containing the procedure to execute
-//
-// @return Success indicator (1=success, 0=failure)
-///
-dcl-pr callWithLogging int(10) extproc('CMDRUN_callWithLogging');
-  proc likeds(proc_t) const;
+// ---------------------------------------
+//  Exported for self-tests
+// ---------------------------------------
+
+// Handle a test case error.
+dcl-pr handleError extproc('handleError');
+  testProcNm      const like(procNm_t);
+  excpMsgInfo     const likeds(msg_t);
+  result          likeds(result_t);
+end-pr;
+
+// Handle a test case failure.
+dcl-pr handleFailure extproc('handleFailure');
+  testProcNm      const like(procNm_t);
+  failure         const likeds(assertFailEvtLong_t);
+  result          likeds(result_t);
+end-pr;
+
+// Handle a test case success.
+dcl-pr handleSuccess extproc('handleSuccess');
+  testProcNm      const like(procNm_t);
+  assertionCnt    int(10) const;
 end-pr;
 
 ///
@@ -31,26 +41,33 @@ end-pr;
 // loading, environment setup, test execution, and result reporting.
 // Handles all command parameters and orchestrates the testing process.
 //
-// @param testsuitename - Test suite service program object to execute
-// @param testprocs     - Specific test procedures to run (or *ALL for all tests)
+// @param testSuiteName - Test suite service program object to execute
+// @param testProcs     - Specific test procedures to run (or *ALL for all tests)
 // @param order         - Test execution order (*API or *REVERSE)
 // @param detail        - Logging detail level (*BASIC, *ALL, *FAILURE)
 // @param output        - Output destination format (*SPOOLFILE, *STDOUT)
 // @param libl          - Library list configuration for test execution
 // @param jobD          - Job description for environment setup
-// @param rclrsc        - Resource reclamation option (*YES, *NO, *ALWAYS)
-// @param xmlstmf       - XML output stream file path for test results
+// @param rclRsc        - Resource reclamation option (*YES, *NO, *ALWAYS)
+// @param xmlStmf       - XML output stream file path for test results
+// @param xmlType       - Specifies the type of the generated XML stream file.
+//                        *TYPE1 = original type created by iRPGUnit <= v5.1.0.r
+//                        *TYPE2 = new type that associates a Json object to XML
+//                                 element '<failure>'. The Json object includes
+//                                 the stack trace as well as the 'expected' and
+//                                 'actual' test values.
 ///
 dcl-pr cmdrun extpgm('RUCALLTST');
-  testsuitename likeds(object_t) const;
-  testprocs     likeds(procNms_t) const;
+  testSuiteName likeds(object_t) const;
+  testProcs     likeds(procNms_t) const;
   order         like(order_t) const;
   detail        like(detail_t) const;
   output        like(output_t) const;
   libl          likeds(libl_t) const;
   jobD          likeds(object_t) const;
-  rclrsc        like(rclrsc_t) const;
-  xmlstmf       like(stmf_t) const;
+  rclRsc        like(rclrsc_t) const;
+  xmlStmf       like(stmf_t) const;
+  xmlType       like(xmlType_t) const;
 end-pr;
 
 ///
@@ -151,13 +168,6 @@ dcl-pr checkAndRestoreLibl extproc('CMDRUN_checkAndRestoreLibl');
   mustRestoreLibl ind const;
   savedLibl       likeds(libLData_t) const;
 end-pr;
-
-dcl-ds result_t qualified;
-  assertCnt  int(10);
-  errorCnt   int(10);
-  failureCnt int(10);
-  runsCnt    int(10);
-end-ds;
 
 /include qinclude,TEMPLATES
 

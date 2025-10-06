@@ -1033,7 +1033,7 @@
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(TESTPGM05) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit Fixture - Setup and teardown.')
+                          TEXT('iRPGUnit Fixture - Setup and tearDown.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
@@ -1063,7 +1063,7 @@
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(TESTPGM10) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit Fixture - Error in teardown.')
+                          TEXT('iRPGUnit Fixture - Error in tearDown.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
@@ -1099,7 +1099,7 @@
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(TESTPGM16) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit Fixture - Setup and teardown.')
+                          TEXT('iRPGUnit Fixture - Setup and tearDown.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +

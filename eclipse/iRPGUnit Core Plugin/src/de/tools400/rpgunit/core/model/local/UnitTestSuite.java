@@ -9,14 +9,10 @@
 package de.tools400.rpgunit.core.model.local;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.IPropertySheetEntry;
 import org.eclipse.ui.views.properties.IPropertySource;
-import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import de.tools400.rpgunit.core.Messages;
 import de.tools400.rpgunit.core.extensions.testcase.IRPGUnitTestCaseItem;
@@ -24,7 +20,7 @@ import de.tools400.rpgunit.core.extensions.view.IRPGUnitSpooledFile;
 import de.tools400.rpgunit.core.helpers.StringHelper;
 import de.tools400.rpgunit.core.model.ibmi.I5ServiceProgram;
 
-public class UnitTestSuite
+public class UnitTestSuite extends AbstractUnitTestObject
     implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IUnitTestItemWithSourceMember, Comparable<UnitTestSuite>, IPropertySource {
 
     private static final String PROPERTY_ID_EXECUTION_TIME = "executionTime"; //$NON-NLS-1$
@@ -394,32 +390,30 @@ public class UnitTestSuite
     }
 
     @Override
-    public IPropertyDescriptor[] getPropertyDescriptors() {
+    public void createPropertyDescriptors() {
 
-        List<IPropertyDescriptor> descriptors = new ArrayList<IPropertyDescriptor>();
+        createPropertyDescriptor(PROPERTY_ID_SERVICE_PROGRAM, Messages.Test_suite, false);
+        createPropertyDescriptor(PROPERTY_ID_NUMBER_ASSERTIONS, Messages.Assertions, false);
+        createPropertyDescriptor(PROPERTY_ID_NUMBER_ERRORS, Messages.Errors, false);
+        createPropertyDescriptor(PROPERTY_ID_NUMBER_FAILURES, Messages.Failures, false);
+        createPropertyDescriptor(PROPERTY_ID_RUNS, Messages.Runs, false);
+        createPropertyDescriptor(PROPERTY_ID_OUTCOME, Messages.Result, false);
 
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_SERVICE_PROGRAM, Messages.Test_suite, false));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_SIZE_TEST_RESULT, Messages.Size_test_result, false));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_NUMBER_ASSERTIONS, Messages.Assertions, false));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_NUMBER_ERRORS, Messages.Errors, false));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_NUMBER_FAILURES, Messages.Failures, false));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_RUNS, Messages.Runs, false));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_OUTCOME, Messages.Result, false));
-
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_EXECUTION_TIME, Messages.Execution_time, true));
-
-        return descriptors.toArray(new IPropertyDescriptor[descriptors.size()]);
+        createPropertyDescriptor(PROPERTY_ID_EXECUTION_TIME, Messages.Execution_time, true);
+        createPropertyDescriptor(PROPERTY_ID_SIZE_TEST_RESULT, Messages.Size_test_result, true);
     }
 
-    private IPropertyDescriptor createPropertyDescriptor(String id, String displayName, boolean advanced) {
-
-        PropertyDescriptor descriptor = new PropertyDescriptor(id, displayName);
-        if (advanced) {
-            descriptor.setFilterFlags(new String[] { IPropertySheetEntry.FILTER_ID_EXPERT });
-        }
-
-        return descriptor;
-    }
+    // private IPropertyDescriptor createPropertyDescriptor(String id, String
+    // displayName, boolean advanced) {
+    //
+    // PropertyDescriptor descriptor = new PropertyDescriptor(id, displayName);
+    // if (advanced) {
+    // descriptor.setFilterFlags(new String[] {
+    // IPropertySheetEntry.FILTER_ID_EXPERT });
+    // }
+    //
+    // return descriptor;
+    // }
 
     @Override
     public Object getPropertyValue(Object id) {

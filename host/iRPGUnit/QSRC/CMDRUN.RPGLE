@@ -56,7 +56,7 @@ ctl-opt main(cmdRun);
 //   Private Prototypes
 //----------------------------------------------------------------------
 
-dcl-pr isinTestProcToRun ind;
+dcl-pr isInTestProcToRun ind;
   testProcNm      const like(procNm_t);
   testProcsToRun  const likeds(procNms_t);
 end-pr;
@@ -72,26 +72,6 @@ end-pr;
 dcl-pr fmtWordWithCnt  varchar(256);
   cnt             int(10) const;
   word            varchar(256) const;
-end-pr;
-
-// Handle a test case error.
-dcl-pr handleError;
-  testProcNm      const like(procNm_t);
-  excpMsgInfo     const likeds(msg_t);
-  result          likeds(result_t);
-end-pr;
-
-// Handle a test case failure.
-dcl-pr handleFailure;
-  testProcNm      const like(procNm_t);
-  failure         const likeds(assertFailEvtLong_t);
-  result          likeds(result_t);
-end-pr;
-
-// Handle a test case success.
-dcl-pr handleSuccess;
-  testProcNm      const like(procNm_t);
-  assertionCnt    int(10) const;
 end-pr;
 
 // Set the starting index and the index step to run the test cases.
@@ -136,15 +116,16 @@ dcl-ds result likeds(result_t) inz;
 
 dcl-proc cmdrun;
   dcl-pi *n;
-    testSuiteName   const likeds(object_t);
-    testProcs       const likeds(procNms_t);
-    order           const like(order_t);
-    detail          const like(detail_t);
-    output          const like(output_t);
-    libl            const likeds(libl_t);
-    jobD            const likeds(object_t);
-    rclRsc          const like(rclrsc_t);
-    xmlStmf         const like(stmf_t);
+    testSuiteName   likeds(object_t) const;
+    testProcs       likeds(procNms_t) const;
+    order           like(order_t) const;
+    detail          like(detail_t) const;
+    output          like(output_t) const;
+    libl            likeds(libl_t) const;
+    jobD            likeds(object_t) const;
+    rclRsc          like(rclrsc_t) const;
+    xmlStmf         like(stmf_t) const;
+    xmlType         like(xmlType_t) const;
   end-pi;
 
   registerStartPgm(sds.pgmLib: sds.pgmname);
@@ -186,7 +167,7 @@ dcl-proc cmdrun;
   if (xmlStmf <> '');
     monitor;
       writexmlfile(resolvePathVariables(xmlStmf: testSuiteName)
-                   : testSuite : testSuiteName : result);
+                   : testSuite: testSuiteName: result: xmlType);
     on-error;
       errMsg = rcvMsgTxt('*ESCAPE');
     endmon;
@@ -254,22 +235,6 @@ dcl-proc assertHasRunAtLeastOneTestCase;
 end-proc;
 
 
-dcl-proc callWithLogging export;
-  dcl-pi *N int(10);
-    proc            const likeds(proc_t);
-  end-pi;
-
-  monitor;
-    callProcByPtr( proc.procPtr );
-    return 0;
-  on-error;
-    handleError( proc.procNm : rcvExcpMsgInfo() : result );
-    return -1;
-  endmon;
-
-end-proc;
-
-
 //----------------------------------------------------------------------
 // Format a test run completion message. See prototype.
 //----------------------------------------------------------------------
@@ -332,7 +297,7 @@ end-proc;
 //----------------------------------------------------------------------
 // Handle a test error event. See prototype.
 //----------------------------------------------------------------------
-dcl-proc handleError;
+dcl-proc handleError export;
   dcl-pi *N;
     testProcNm      const like(procNm_t);
     excpMsgInfo     const likeds(msg_t);
@@ -348,7 +313,7 @@ end-proc;
 //----------------------------------------------------------------------
 // Handle a test failure event. See prototype.
 //----------------------------------------------------------------------
-dcl-proc handleFailure;
+dcl-proc handleFailure export;
   dcl-pi *N;
     testProcNm      const like(procNm_t);
     failure         const likeds(assertFailEvtLong_t);
@@ -364,7 +329,7 @@ end-proc;
 //----------------------------------------------------------------------
 // Handle a test success event. See prototype.
 //----------------------------------------------------------------------
-dcl-proc handleSuccess;
+dcl-proc handleSuccess export;
   dcl-pi *N;
     testProcNm      const like(procNm_t);
     assertionCnt    int(10) const;
@@ -386,7 +351,6 @@ dcl-proc setupTestSuite export;
 
   dcl-ds testResult likeds(testResult_t);
 
-  // return callWithLogging( testSuite.setUpSuite );
   testResult = initTestResult(testSuite.setupSuite.procNm);
   testResult = runProc( testSuite.setupSuite.procptr : testResult );
 
@@ -422,7 +386,6 @@ dcl-proc tearDownTestSuite export;
 
   dcl-ds testResult likeds(testResult_t);
 
-  //return callWithLogging( testSuite.teardownSuite );
   testResult = initTestResult(testsuite.tearDownSuite.procNm);
   testResult = runProc( testsuite.tearDownSuite.procPtr : testResult );
 
@@ -477,7 +440,7 @@ dcl-proc runTests export;
       iter;
     endif;
 
-    if isinTestProcToRun(testProcNm: testProcsToRun);
+    if isInTestProcToRun(testProcNm: testProcsToRun);
 
       assertionCntBeforeRun = getAssertCalled();
       status( testSuite.qName.nm : testProcNm );
@@ -523,7 +486,7 @@ end-proc;
 // Returns *ON when the array of selected test procedures
 // contains a given name.
 //----------------------------------------------------------------------
-dcl-proc isinTestProcToRun;
+dcl-proc isInTestProcToRun;
   dcl-pi *N ind;
     testProcNm      const like(procNm_t);
     testProcsToRun  const likeds(procNms_t);
@@ -564,7 +527,7 @@ dcl-proc setTestRunOrder;
   dcl-c DECREASING_ORDER -1;
 
   firstTestIdx = 1;
-  lastTestIdx  = testSuite.testcasescnt;
+  lastTestIdx  = testSuite.testCasesCnt;
 
   if (order = ORDER_REVERSE);
     startIdx = lastTestIdx;

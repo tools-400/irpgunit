@@ -83,6 +83,25 @@ b) Optionally run the RPGUnit self tests:
 
 --------------------------
 
+Version 6.0.0 - 03.10.2025
+--------------------------
+ * Added keyword options(*varsize) to procedure aEqual().
+   Recompile your test suites to take advantage from this change.
+   Without recompiling the test suites, the lengths of 'expected'
+   and 'actual' are always assumed as 32565.
+ * Fixed XML encoding of special characters of attribute 'message'
+   of element 'failure'.
+ * Wrapped text of element '<failure>' into a 'CDATA' section.
+ * Add keyword 'XMLTYPE' to command RUCALLTXT. Possible value:
+    - Type of the XML output file of iRPGUnit <= v5.1.0.r. This type
+      assigns the call stack in text format to XML element '<failure>'.
+    - Type of the XML output file of iRPGUnit >= v6.0.0.r. This type
+      assigns a Json object to XML element '<failue>'. The Json object
+      contains the information below:
+ * Add 'expected' and 'actual' values.
+
+--------------------------
+
 Version 5.1.0 - 23.05.2025
 --------------------------
  * Added support for compiling test suites from stream files.
@@ -278,7 +297,7 @@ Version 2.2.1 - 14.06.2017
  * Changed RPGUnit view to display the number of assertions.
  * Fixed problem, that a test procedure had to start with 'test'
    in lower case. Now the case is ignored.
- * Now errors in setup/teardown procedures properly show up in RDi.
+ * Now errors in setup/tearDown procedures properly show up in RDi.
  * Added number of executed assertions to RPGUnit view.
  * Bumped user space version to 3.
 

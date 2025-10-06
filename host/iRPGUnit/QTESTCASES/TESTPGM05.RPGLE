@@ -40,11 +40,11 @@ dcl-proc test2 export;
 
 end-proc;
 
-dcl-proc teardown export;
+dcl-proc tearDown export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  sndInfoMsg( 'teardown' );
+  sndInfoMsg( 'tearDown' );
 
 end-proc;
 

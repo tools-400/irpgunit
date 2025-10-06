@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -49,6 +50,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
 
 import com.ibm.etools.iseries.rse.ui.actions.popupmenu.ISeriesAbstractQSYSPopupMenuAction;
 
@@ -68,12 +70,13 @@ import de.tools400.rpgunit.core.model.local.UnitTestExecutionTimeFormatter;
 import de.tools400.rpgunit.core.model.local.UnitTestMessageReceiver;
 import de.tools400.rpgunit.core.model.local.UnitTestMessageSender;
 import de.tools400.rpgunit.core.model.local.UnitTestSuite;
+import de.tools400.rpgunit.core.model.local.properties.UnitTestPropertyPage;
 import de.tools400.rpgunit.core.preferences.Preferences;
 import de.tools400.rpgunit.core.ui.warning.WarningMessage;
 import de.tools400.rpgunit.core.utils.ExceptionHelper;
 import de.tools400.rpgunit.core.versioncheck.PluginCheck;
 
-public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProvider {
+public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProvider, IAdaptable {
 
     public static final String ID = "de.tools400.rpgunit.core"; //$NON-NLS-1$
 
@@ -830,7 +833,7 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
                     if (message != null) {
                         MessageDialog.openError(getSite().getShell(), Messages.ERROR, message);
                     }
-                } else {
+                } else if (tElement instanceof UnitTestCase) {
                     EditRemoteSourceHandler tHandler = new EditRemoteSourceHandler();
                     tHandler.editSourceMember(tSelection);
                 }
@@ -1185,5 +1188,13 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
         private void updateSelectedState(String option) {
             setChecked(this.option.equals(option));
         }
+    }
+
+    @Override
+    public <T> T getAdapter(Class<T> adapter) {
+        if (adapter.equals(IPropertySheetPage.class)) {
+            return adapter.cast(new UnitTestPropertyPage());
+        }
+        return super.getAdapter(adapter);
     }
 }

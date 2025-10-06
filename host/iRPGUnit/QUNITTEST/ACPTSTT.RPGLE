@@ -191,12 +191,20 @@ dcl-proc testFailures export;
 
   splfLineStartsWith('testFalse - FAILURE');
   splfLineStartsWith('Expected 5, but was 4.');
+  splfSkipLine();  // Skip [blank line]
   splfLineStartsWith('testFalse (TESTPGM03->TESTPGM03:20');
+  splfSkipLine();  // Skip [blank line]
+  splfLineStartsWith('Expected:        1 ''5''');
+  splfLineStartsWith('Actual:          1 ''4''');
   splfLineStartsWith('-----------------------');
   splfSkipLine();  // Skip [blank line]
   splfLineStartsWith('testFalse2 - FAILURE');
   splfLineStartsWith('Expected 6, but was 4.');
+  splfSkipLine();  // Skip [blank line]
   splfLineStartsWith('testFalse2 (TESTPGM03->TESTPGM03:28');
+  splfSkipLine();  // Skip [blank line]
+  splfLineStartsWith('Expected:        1 ''6''');
+  splfLineStartsWith('Actual:          1 ''4''');
   splfLineStartsWith('-----------------------');
   splfSkipLine();  // Skip [blank line]
   splfLineStartsWith('FAILURE. 2 test cases, 2 assertions, 2 failures, 0 error.');
@@ -242,10 +250,10 @@ dcl-proc testSetupAndTearDown export;
 
   aEqual('setup'   : rcvMsgData('*INFO'));
   aEqual('test1'   : rcvMsgData('*INFO'));
-  aEqual('teardown': rcvMsgData('*INFO'));
+  aEqual('tearDown': rcvMsgData('*INFO'));
   aEqual('setup'   : rcvMsgData('*INFO'));
   aEqual('test2'   : rcvMsgData('*INFO')); // Raises a failure.
-  aEqual('teardown': rcvMsgData('*INFO')); // Call 'teardown' anyway.
+  aEqual('tearDown': rcvMsgData('*INFO')); // Call 'tearDown' anyway.
 
   cloSplf();
 
@@ -333,8 +341,12 @@ dcl-proc testStackTrace export;
 
   splfLineStartsWith('testStack - FAILURE');
   splfLineStartsWith('Expected 5, but was 4.');
+  splfSkipLine();  // Skip [blank line]
   splfLineStartsWith('failingProc (TESTPGM07->TESTPGM07:20');
   splfLineStartsWith('testStack (TESTPGM07->TESTPGM07:28');
+  splfSkipLine();  // Skip [blank line]
+  splfLineStartsWith('Expected:        1 ''5''');
+  splfLineStartsWith('Actual:          1 ''4''');
   splfLineStartsWith('-----------------------');
   splfSkipLine();  // Skip [blank line]
   splfLineStartsWith('FAILURE. 1 test case, 1 assertion, 1 failure, 0 error.');
@@ -400,7 +412,7 @@ dcl-proc testErrorDuringSetup export;
 
   aEqual('setup'   : rcvMsgData('*INFO')); // Error during setup.
   // Test should not be called.
-  aEqual('teardown': rcvMsgData('*INFO')); // Teardown should be called anyway
+  aEqual('tearDown': rcvMsgData('*INFO')); // Teardown should be called anyway
 
   opnSplf('RPGUNIT': 'TESTPGM09');
   splfLineStartsWith('*** Tests of TESTPGM09 ***');
@@ -511,11 +523,11 @@ dcl-proc testSetupSuiteAndTearDownSuite export;
   aEqual('setupSuite'   : rcvMsgData('*INFO'));
   aEqual('setup'        : rcvMsgData('*INFO'));
   aEqual('test1'        : rcvMsgData('*INFO'));
-  aEqual('teardown'     : rcvMsgData('*INFO'));
+  aEqual('tearDown'     : rcvMsgData('*INFO'));
   aEqual('setup'        : rcvMsgData('*INFO'));
   aEqual('test2'        : rcvMsgData('*INFO')); // Raises a failure.
-  aEqual('teardown'     : rcvMsgData('*INFO')); // Call 'teardown' anyway.
-  aEqual('teardownSuite': rcvMsgData('*INFO')); // Call 'teardownsuite' anyway.
+  aEqual('tearDown'     : rcvMsgData('*INFO')); // Call 'tearDown' anyway.
+  aEqual('tearDownSuite': rcvMsgData('*INFO')); // Call 'tearDownSuite' anyway.
 
   cloSplf();
 
@@ -577,7 +589,11 @@ dcl-proc testBigInteger export;
   splfLineStartsWith('test_Different - FAILURE');
   splfLineStartsWith('Expected 1234567890123456789012345678901, but was 12345678901234567890');
   splfLineStartsWith('12345678900.');
+  splfSkipLine();  // Skip [blank line]
   splfLineStartsWith('test_Different (TESTPGM14->TESTPGM14:30');
+  splfSkipLine();  // Skip [blank line]
+  splfLineStartsWith('Expected:        1 ''1234567890123456789012345678901''');
+  splfLineStartsWith('Actual:          1 ''1234567890123456789012345678900''');
   splfLineStartsWith('-----------------------');
   splfSkipLine();  // Skip [blank line]
   splfLineStartsWith('FAILURE. 2 test cases, 2 assertions, 1 failure, 0 error.');
@@ -649,10 +665,10 @@ dcl-proc testReverseOrder export;
 
   aEqual('setup'   : rcvMsgData('*INFO') );
   aEqual('test2'   : rcvMsgData('*INFO') );
-  aEqual('teardown': rcvMsgData('*INFO') );
+  aEqual('tearDown': rcvMsgData('*INFO') );
   aEqual('setup'   : rcvMsgData('*INFO') );
   aEqual('test1'   : rcvMsgData('*INFO') );
-  aEqual('teardown': rcvMsgData('*INFO') );
+  aEqual('tearDown': rcvMsgData('*INFO') );
 
   cloSplf();
 
@@ -676,7 +692,7 @@ dcl-proc testChooseTest export;
 
   aEqual('setup'   : rcvMsgData('*INFO') );
   aEqual('test2'   : rcvMsgData('*INFO') );
-  aEqual('teardown': rcvMsgData('*INFO') );
+  aEqual('tearDown': rcvMsgData('*INFO') );
 
   opnSplf('RPGUNIT': 'TESTPGM05');
   splfLineStartsWith( '*** Tests of TESTPGM05 ***');
@@ -697,7 +713,11 @@ dcl-proc testChooseTest export;
 
   splfLineStartsWith( 'test2 - FAILURE');
   splfLineStartsWith( 'test2');
-  splfLineStartsWith( 'test2 (TESTPGM05');
+  splfSkipLine();  // Skip [blank line]
+  splfLineStartsWith( 'test2 (TESTPGM05->TESTPGM05:3900)');
+  splfSkipLine();  // Skip [blank line]
+  splfLineStartsWith( 'Expected:          Not available');
+  splfLineStartsWith( 'Actual:            Not available');
   splfLineStartsWith( '-----------------------');
   splfSkipLine();  // Skip [blank line]
   splfLineStartsWith( 'FAILURE. 1 test case, 0 assertion, 1 failure, 0 error.');
@@ -764,7 +784,7 @@ dcl-proc testErrorInSetUpSuite export;
   aEqual('ERROR. 0 test case, 0 assertion, 0 failure, 1 error.': msgTxt);
 
   aEqual('setupSuite'   : rcvMsgData('*INFO') );    // Error.
-  aEqual('teardownSuite': rcvMsgData('*INFO') );    // Call 'teardownSuite' anyway.
+  aEqual('tearDownSuite': rcvMsgData('*INFO') );    // Call 'tearDownSuite' anyway.
 
   opnSplf('RPGUNIT': 'TESTPGM17');
   splfLineStartsWith( '*** Tests of TESTPGM17 ***');
@@ -811,7 +831,7 @@ dcl-proc testErrorInTearDownSuite export;
 
   aEqual('setupSuite'   : rcvMsgData('*INFO') );
   aEqual('test1'        : rcvMsgData('*INFO') );
-  aEqual('teardownSuite': rcvMsgData('*INFO') );    // Error.
+  aEqual('tearDownSuite': rcvMsgData('*INFO') );    // Error.
 
   opnSplf('RPGUNIT': 'TESTPGM18');
   splfLineStartsWith( '*** Tests of TESTPGM18 ***');
@@ -830,9 +850,9 @@ dcl-proc testErrorInTearDownSuite export;
   enddo;
   splfSkipLine();  // Skip [blank line]
 
-  splfLineStartsWith( 'teardownSuite - ERROR');
+  splfLineStartsWith( 'tearDownSuite - ERROR');
   splfLineStartsWith( 'MCH1211 - ');
-  splfLineStartsWith( 'teardownSuite (TESTPGM18->TESTPGM18:41');
+  splfLineStartsWith( 'tearDownSuite (TESTPGM18->TESTPGM18:41');
   splfLineStartsWith( '-----------------------');
   splfSkipLine();  // Skip [blank line]
   splfLineStartsWith( 'ERROR. 1 test case, 0 assertion, 0 failure, 1 error.');
@@ -856,7 +876,7 @@ dcl-proc testErrorsInBothSetUpSuiteAndTearDownSuite export;
   aEqual('ERROR. 0 test case, 0 assertion, 0 failure, 2 errors.': msgTxt);
 
   aEqual('setupSuite'   : rcvMsgData('*INFO') );    // Error.
-  aEqual('teardownSuite': rcvMsgData('*INFO') );    // Another error.
+  aEqual('tearDownSuite': rcvMsgData('*INFO') );    // Another error.
 
   opnSplf('RPGUNIT': 'TESTPGM19');
   splfLineStartsWith( '*** Tests of TESTPGM19 ***');
@@ -880,9 +900,9 @@ dcl-proc testErrorsInBothSetUpSuiteAndTearDownSuite export;
   splfLineStartsWith( 'setupSuite (TESTPGM19->TESTPGM19:25');
   splfLineStartsWith( '-----------------------');
   splfSkipLine();  // Skip [blank line]
-  splfLineStartsWith( 'teardownSuite - ERROR');
+  splfLineStartsWith( 'tearDownSuite - ERROR');
   splfLineStartsWith( 'MCH1211 - ');
-  splfLineStartsWith( 'teardownSuite (TESTPGM19->TESTPGM19:44');
+  splfLineStartsWith( 'tearDownSuite (TESTPGM19->TESTPGM19:44');
   splfLineStartsWith( '-----------------------');
   splfSkipLine();  // Skip [blank line]
   splfLineStartsWith( 'ERROR. 0 test case, 0 assertion, 0 failure, 2 errors.');

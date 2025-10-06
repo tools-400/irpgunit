@@ -64,6 +64,8 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
 
     private Text txtXmlStmf;
 
+    private Combo cboXmlType;
+
     private Button chkDisableReport;
 
     private Button chkDisableXmlStmf;
@@ -251,7 +253,21 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         txtXmlStmf = new Text(grpCommandParameters, SWT.BORDER);
         txtXmlStmf.setToolTipText(Messages.PreferencesPage2_txtXmlStmf_toolTipText);
         txtXmlStmf.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+
+        Label lblXmlType = new Label(grpCommandParameters, SWT.NONE);
+        GridData gd_lblXmlType = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+        gd_lblXmlType.widthHint = COLUMN_1_WIDTH;
+        lblXmlType.setLayoutData(gd_lblXmlType);
+        lblXmlType.setText(Messages.PreferencesPage2_lblXmlType_text);
+
+        cboXmlType = new Combo(grpCommandParameters, SWT.DROP_DOWN | SWT.READ_ONLY);
+        cboXmlType.setItems(getPreferences().getXmlTypeItems());
+        cboXmlType.setToolTipText(Messages.PreferencesPage2_txtXmlType_toolTipText);
+        cboXmlType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         new Label(grpCommandParameters, SWT.NONE);
+
+        new Label(grpCommandParameters, SWT.NONE); // fill third column after
+                                                   // XML-Type
     }
 
     private void createGroupOverrideCommandParameters(Composite mainPanel) {
@@ -428,6 +444,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         cboCreateReport.setText(getPreferences().getOutput());
         cboReclaimResources.setText(getPreferences().getReclaimResources());
         txtXmlStmf.setText(getPreferences().getXmlStmf());
+        cboXmlType.setText(getPreferences().getXmlType());
         txtProductLibrary.setText(getPreferences().getProductLibrary());
         cboCheckTestSuite.setText(getPreferences().getCheckTestSuite());
         chkNewConnection.setSelection(getPreferences().mustCreateNewConnection());
@@ -451,6 +468,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         cboCreateReport.setText(getPreferences().getDefaultOutput());
         cboReclaimResources.setText(getPreferences().getDefaultReclaimResources());
         txtXmlStmf.setText(getPreferences().getDefaultXmlStmf());
+        cboXmlType.setText(getPreferences().getDefaultXmlType());
         txtProductLibrary.setText(getPreferences().getDefaultProductLibrary());
         cboCheckTestSuite.setText(getPreferences().getDefaultCheckTestSuite());
         chkNewConnection.setSelection(getPreferences().getDefaultConnectionState());
@@ -480,6 +498,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         tPreferences.setOutput(cboCreateReport.getText());
         tPreferences.setReclaimResources(cboReclaimResources.getText());
         tPreferences.setXmlStmf(txtXmlStmf.getText());
+        tPreferences.setXmlType(cboXmlType.getText());
 
         tPreferences.setReportDisabled(chkDisableReport.getSelection());
         tPreferences.setXmlStmfDisabled(chkDisableXmlStmf.getSelection());
@@ -560,6 +579,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
     private void updateXmlStmfControlsEnablement() {
         boolean tEnabled = !chkDisableXmlStmf.getSelection();
         txtXmlStmf.setEnabled(tEnabled);
+        cboXmlType.setEnabled(tEnabled);
     }
 
     private void updateJobDescriptionControlsEnablement(String aFirstLibraryListEntry) {

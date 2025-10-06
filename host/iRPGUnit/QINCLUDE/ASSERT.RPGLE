@@ -24,11 +24,14 @@
 ///
 dcl-pr doAssert extproc('ASSERT_doAssert');
   condition    ind const;
+  logExpected  likeds(logValue_t) const;
+  logActual    likeds(logValue_t) const;
   msgIfFalse   varchar(16384) options(*varsize) const;
   toCallStackE int(10) const;
   startProc    varchar(256) options(*varsize) const;
 end-pr;
 
 /include qinclude,TESTCASE
+/include qinclude,TEMPLATES
 
 /endif

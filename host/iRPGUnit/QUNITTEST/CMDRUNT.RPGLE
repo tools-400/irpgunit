@@ -20,6 +20,7 @@
 //                      &LI/EXTTST    +
 //                      &LI/EXTPRC    +
 //                      &LI/JOBLOG    +
+//                      &LI/JSONWTR   +
 //                      &LI/LIBL      +
 //                      &LI/LLIST     +
 //                      &LI/OBJECT    +
@@ -43,6 +44,7 @@
 //   >>CMD<<     CMPMOD MODULE(&LI/EXTTST   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/EXTPRC   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/JOBLOG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/JSONWTR  ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/LIBL     ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/LLIST    ) SRCFILE(&SL/QLLIST) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/OBJECT   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
@@ -67,6 +69,7 @@ ctl-opt NoMain Option(*SrcStmt);
 /copy qinclude,CMDRUNLOG
 
 /copy qinclude,ASSERT
+/copy qinclude,CALLPRC
 /copy qinclude,CMDRUN
 /copy qinclude,PGMMSG
 /copy qinclude,TEMPLATES
@@ -341,7 +344,7 @@ dcl-proc test_callWithLogging_withSuccess export;
   procWithNoError.procNm = 'proc_with_no_error';
   procWithNoError.procPtr = %paddr( proc_with_no_error );
 
-  callWithLogging(procWithNoError);
+  callProcWithErrorHandler(procWithNoError);
 
   assert(procWithNoErrorWasCalled: 'proc_with_no_error not called');
   iEqual(0: logIdx);    // No logging if success.
@@ -359,7 +362,7 @@ dcl-proc test_callWithLogging_withError export;
   procWithError.procPtr = %paddr(proc_with_error);
 
   monitor;
-    callWithLogging(procWithError);
+    callProcWithErrorHandler(procWithError);
   on-error;
      fail('callWithLogging should never raise an error');
   endmon;
@@ -388,6 +391,22 @@ dcl-proc test_fmtCompMsg export;
 
   // Errors have priority over failures.
   aEqual('ERROR. 0 test case, 0 assertion, 2 failures, 1 error.': fmtCompMsg(0: 0: 2: 1));
+
+end-proc;
+
+
+dcl-proc callProcWithErrorHandler;
+  dcl-pi *N int(10) extproc(*dclcase);
+    proc likeds(proc_t) const;
+  end-pi;
+
+  monitor;
+    callProcByPtr( proc.procPtr );
+    return 0;
+  on-error;
+    handleError( proc.procNm : rcvExcpMsgInfo() : result );
+    return -1;
+  endmon;
 
 end-proc;
 

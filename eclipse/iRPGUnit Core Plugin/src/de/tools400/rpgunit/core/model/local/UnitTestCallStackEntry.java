@@ -8,10 +8,6 @@
 
 package de.tools400.rpgunit.core.model.local;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 import de.tools400.rpgunit.core.Messages;
@@ -165,24 +161,20 @@ public class UnitTestCallStackEntry extends AbstractUnitTestObject implements IU
     }
 
     @Override
-    public IPropertyDescriptor[] getPropertyDescriptors() {
+    public void createPropertyDescriptors() {
 
-        List<IPropertyDescriptor> descriptors = new ArrayList<IPropertyDescriptor>();
+        createPropertyDescriptor(PROPERTY_ID_PROGRAM, Messages.Program, false, Messages.Category_Program);
+        createPropertyDescriptor(PROPERTY_ID_PROGRAM_LIBRARY, Messages.Library, false, Messages.Category_Program);
 
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_PROGRAM, Messages.Program, false, Messages.Category_Program));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_PROGRAM_LIBRARY, Messages.Library, false, Messages.Category_Program));
+        createPropertyDescriptor(PROPERTY_ID_MODULE, Messages.Module, false, Messages.Category_Module);
+        createPropertyDescriptor(PROPERTY_ID_MODULE_LIBRARY, Messages.Library, false, Messages.Category_Module);
 
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_MODULE, Messages.Module, false, Messages.Category_Module));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_MODULE_LIBRARY, Messages.Library, false, Messages.Category_Module));
+        createPropertyDescriptor(PROPERTY_ID_PROCEDURE, Messages.Procedure, false, Messages.Category_Statement);
+        createPropertyDescriptor(PROPERTY_ID_STATEMENT_NUMBER, Messages.Statement_number, false, Messages.Category_Statement);
 
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_PROCEDURE, Messages.Procedure, false, Messages.Category_Statement));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_STATEMENT_NUMBER, Messages.Statement_number, false, Messages.Category_Statement));
-
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_SOURCE_FILE, Messages.Source_file, false, Messages.Category_Source_member));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_SOURCE_LIBRARY, Messages.Source_library, false, Messages.Category_Source_member));
-        descriptors.add(createPropertyDescriptor(PROPERTY_ID_SOURCE_MEMBER, Messages.Source_member, false, Messages.Category_Source_member));
-
-        return descriptors.toArray(new IPropertyDescriptor[descriptors.size()]);
+        createPropertyDescriptor(PROPERTY_ID_SOURCE_FILE, Messages.Source_file, false, Messages.Category_Source_member);
+        createPropertyDescriptor(PROPERTY_ID_SOURCE_LIBRARY, Messages.Source_library, false, Messages.Category_Source_member);
+        createPropertyDescriptor(PROPERTY_ID_SOURCE_MEMBER, Messages.Source_member, false, Messages.Category_Source_member);
     }
 
     @Override

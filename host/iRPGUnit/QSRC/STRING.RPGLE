@@ -150,6 +150,33 @@ end-proc;
 
 
 //----------------------------------------------------------------------
+//  Returns the a given number of characters starting at the
+//  right side of a given string.
+//----------------------------------------------------------------------
+dcl-proc rightStr export;
+  dcl-pi *n like(String_t);
+    string  like(String_t) const options(*varsize);
+    length  int(10) const;
+  end-pi;
+
+  dcl-s subString like(string);
+
+  if (length = 0);
+    return '';
+  endif;
+
+  if (length <= %len(string));
+    subString = %subst(string: %len(string) - length + 1: length);
+  else;
+    subString = string;
+  endif;
+
+  return subString;
+
+end-proc;
+
+
+//----------------------------------------------------------------------
 //  Tests if a given string starts with the specified prefix.
 //----------------------------------------------------------------------
 dcl-proc startsWith export;
@@ -639,3 +666,57 @@ dcl-proc formatNumeric export;
   return result;
 
 end-proc;
+
+
+//----------------------------------------------------------------------
+// Expand a value to the specifies tab position.
+//----------------------------------------------------------------------
+dcl-proc tab export;
+  dcl-pi *n like(String_t);
+    string  like(String_t) const;
+    tabPos int(10) const;
+  end-pi;
+
+  dcl-s result like(string);
+  dcl-s currLength int(10);
+  dcl-s maxLength int(10);
+
+  currLength = %len(string);
+  if (tabPos < currLength);
+    sndEscapeMsgAboveCtlBdy('Next tab position (' + %char(tabPos) + ') is before current length:'
+                             + %char(currLength));
+  endif;
+
+  maxLength = %len(result:*max);
+  if (tabPos > maxLength);
+    sndEscapeMsgAboveCtlBdy('Next tab position (' + %char(tabPos) + ') exceeds maximum length:'
+                             + %char(maxLength));
+  endif;
+
+  result = string;
+
+  dow (%len(result) < tabPos);
+    result += ' ';
+  enddo;
+
+  return result;
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Right aligns a given string in a given field length.
+//----------------------------------------------------------------------
+dcl-proc rAlign export;
+  dcl-pi *n like(string_t);
+    string  like(string_t) const;
+    length int(10) const;
+  end-pi;
+
+  dcl-s result like(string_t);
+
+  result = rightStr(spaces(length) + string: length);
+
+  return result;
+
+end-proc;
+

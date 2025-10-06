@@ -38,8 +38,8 @@
 // @throws CPF9897 Expected '{expected}', but was '{actual}'.
 ///
 dcl-pr aEqual extproc('aEqual') opdesc;
-  expected  char(32565) const;
-  actual    char(32565) const;
+  expected  char(32565) options(*varsize) const;
+  actual    char(32565) options(*varsize) const;
  /if defined(RPGUNIT_INTERNAL)
   fieldName char(64) options(*nopass: *omit) const;
  /else
@@ -485,6 +485,36 @@ dcl-pr registerStartPgm extproc('ASSERT_registerStartPgm');
   pgm char(10) const;
 end-pr;
 
+///
+// Returns the 'expected' or 'actual' value shortend for
+// logging in the plug-in, the Jenkins XML output and the
+// printed test result log.
+//
+// @param value    - the 'expected' or 'actukl' value that is formatted for logging
+// @param dataType - the data type of 'value'. The possible value are:
+//                   DT_DATE, DT_FLOAT, DT_INT, DT_NUMERIC, DT_STRING,
+//                   DT_TIME, DT_TIMESTAMP, DT_STRING, DT_USER_DEFINED
+//
+// @return the value formatted for logging
+///
+dcl-pr getLogValue likeds(logValue_t) extproc('getLogValue');
+  value    like(assertString_t) options(*varsize) const;
+  dataType like(dataType_t) const;
+  assertProc like(assertProcNm_t) const;
+  maxLength int(10) const options(*nopass); // for self-test
+end-pr;
+
+///
+// Returns the literal of a boolean value (*on/*off).
+//
+// @param boolean - indicator value
+//
+// @return '*on' if 'boolean' is True, otherwise '*off'
+///
+dcl-pr toInd varchar(10) extproc('toInd');
+  boolean  ind const;
+end-pr;
+
 // ------------------------------------
 //   Prototypes of module VERSION
 // ------------------------------------
@@ -767,15 +797,19 @@ end-pr;
 // The matcher procedure is called for comparing the actual result
 // with the expected value.
 //
-// @param expected - Expected value
-// @param actual   - Actual value
-// @param message  - Message (optional)
+// @param pExpected   - Expected value
+// @param pActual     - Actual value
+// @param message     - Message (optional)
+// @param logExpected - Value that is displayed in the unit test log
+// @param logActual   - Value that is displayed in the unit test log
 ///
 dcl-s pMatcher_t pointer(*proc);
 dcl-pr matcher_t ind extproc(pMatcher_t);
-  expected   pointer const;
-  actual     pointer const;
-  message    like(msgText_t) options(*nopass);
+  pExpected    pointer const;
+  pActual      pointer const;
+  message      like(msgText_t) options(*nopass);
+  logExpected  like(logValue_t.value) options(*nopass);
+  logActual    like(logValue_t.value) options(*nopass);
 end-pr;
 
 /if defined(IRPGUNIT_STMF)

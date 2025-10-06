@@ -91,6 +91,7 @@
  "CMPMOD MODULE("prdLib"/EXTPRC   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/EXTTST   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/JOBLOG   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/JSONWTR  ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/LIBL     ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/OBJECT   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/OSVERSION) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
@@ -111,6 +112,7 @@
                  prdLib"/EXTPRC     ",
                  prdLib"/EXTTST     ",
                  prdLib"/JOBLOG     ",
+                 prdLib"/JSONWTR    ",
                  prdLib"/LIBL       ",
                  prdLib"/LLIST      ",
                  prdLib"/OBJECT     ",

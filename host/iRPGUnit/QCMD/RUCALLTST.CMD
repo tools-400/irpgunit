@@ -72,7 +72,7 @@
                         MAX(250)                             +
                         DFT(*CURRENT)                        +
                         SNGVAL((*CURRENT)                    +
-                               ( *JOBD  ))                   +
+                               (*JOBD   ))                   +
                         PROMPT('Libraries for unit test')
 
              PARM       KWD(JOBD)                            +
@@ -101,6 +101,16 @@
                         DFT(*NONE)                           +
                         SPCVAL((*NONE ''))                   +
                         PROMPT('XML stream file')
+
+             PARM       KWD(XMLTYPE)                         +
+                        TYPE(*CHAR)                          +
+                        LEN(10)                              +
+                        VARY(*YES *INT2)                     +
+                        RSTD(*YES)                           +
+                        DFT(*TYPE1)                          +
+                        VALUES(*TYPE1                        +
+                               *TYPE2  )                     +
+                        PROMPT('XML output type')
 
  OBJ:        QUAL       TYPE(*NAME) LEN(10)
              QUAL       TYPE(*NAME) LEN(10) DFT(*LIBL)       +

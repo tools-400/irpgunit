@@ -465,7 +465,7 @@ dcl-proc getExtMsgType;
   when (i_typeIntern = '26');
     msgType = '*REPLY';
   other;
-    msgType = '*N';
+    msgType = NO_VALUE;
   endsl;
 
   return msgType;

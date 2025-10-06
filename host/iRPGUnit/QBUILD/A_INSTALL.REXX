@@ -197,7 +197,9 @@
      "PARM('"prdLib" "dbgView" "tgtRls"')"
 
    deleteSelfTests(prdLib)
-   deleteModules(prdLib)
+   if (prdLib <> 'RPGUNITDVP') then do
+     deleteModules(prdLib)
+   end
    deleteBuildObjects(prdLib)
 
    "SNDPGMMSG ",
@@ -359,6 +361,7 @@
    "DLTSRVPGM SRVPGM("_prdlib"/EXTPRCT)"
    "DLTSRVPGM SRVPGM("_prdlib"/EXTTSTT)"
    "DLTSRVPGM SRVPGM("_prdlib"/JOBLOGT)"
+   "DLTSRVPGM SRVPGM("_prdlib"/JSONWTRT)"
    "DLTSRVPGM SRVPGM("_prdlib"/LIBLT)"
    "DLTSRVPGM SRVPGM("_prdlib"/LSTSPLFT)"
    "DLTSRVPGM SRVPGM("_prdlib"/MSGQT)"
@@ -417,6 +420,8 @@
    "DLTMOD MODULE("_prdLib"/EXTTSTT)"
    "DLTMOD MODULE("_prdLib"/JOBLOG)"
    "DLTMOD MODULE("_prdLib"/JOBLOGT)"
+   "DLTMOD MODULE("_prdLib"/JSONWTR)"
+   "DLTMOD MODULE("_prdLib"/JSONWTRT)"
    "DLTMOD MODULE("_prdLib"/LIBL)"
    "DLTMOD MODULE("_prdLib"/LIBLC)"
    "DLTMOD MODULE("_prdLib"/LIBLT)"
