@@ -152,6 +152,17 @@ The table above shows some but not all variables of the strftime()
 function. Some replacement variables, which are not listed here, are
 not allowed, because their values may produce an invalid path.
 
+<h3>XML output format</h3>
+Specifies the format of the XML output stream file:<p>
+<table width="80%">
+<colgroup>
+ <col width="100">
+</colgroup>
+<tr><td valign="top">*TYPE1</td><td>Legacy type that is used by iRPGUnit <= v5.1.0.r. Element <code>&lt;failure&gt;</code> (call stack) is append as text.</td></tr> 
+<tr><td valign="top">*TYPE2</td><td>This type was introduced with iRPGUnit >= v6.0.0.r. Element <code>&lt;failure&gt;</code> (call stack) is append in Json format.</td></tr> 
+</table>
+<p>
+
 <h3>Disable report</h3>
 Temporary disables the report, provided that <i>'Create report'</i> does not specify <i>'*NONE'</i>. This checkbox
 relates to button <i>'Disable iRPGUnit report'</i> of the <i>'iRPGUnit'</i> view.<p>
