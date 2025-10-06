@@ -56,7 +56,7 @@ ctl-opt main(cmdRun);
 //   Private Prototypes
 //----------------------------------------------------------------------
 
-dcl-pr isinTestProcToRun ind;
+dcl-pr isInTestProcToRun ind;
   testProcNm      const like(procNm_t);
   testProcsToRun  const likeds(procNms_t);
 end-pr;
@@ -478,7 +478,7 @@ dcl-proc runTests export;
       iter;
     endif;
 
-    if isinTestProcToRun(testProcNm: testProcsToRun);
+    if isInTestProcToRun(testProcNm: testProcsToRun);
 
       assertionCntBeforeRun = getAssertCalled();
       status( testSuite.qName.nm : testProcNm );
@@ -524,7 +524,7 @@ end-proc;
 // Returns *ON when the array of selected test procedures
 // contains a given name.
 //----------------------------------------------------------------------
-dcl-proc isinTestProcToRun;
+dcl-proc isInTestProcToRun;
   dcl-pi *N ind;
     testProcNm      const like(procNm_t);
     testProcsToRun  const likeds(procNms_t);
