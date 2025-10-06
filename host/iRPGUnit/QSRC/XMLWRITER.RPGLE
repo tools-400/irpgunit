@@ -263,6 +263,31 @@ dcl-proc appendCallStackType1;
 end-proc;
 
 
+// --------------------------------------------------------
+// Produces a Json object with the following format:
+//
+// {
+//     "callstack": [
+//         "callstack-items"
+//     ],
+//     "expected": {
+//         "value": "theValue",
+//         "type": "theType",
+//         "length": 0,
+//         "originalLength": 0
+//     },
+//     "actual": {
+//         "value": "theValue",
+//         "type": "theType",
+//         "length": 0,
+//         "originalLength": 0
+//     },
+//     "diagnosticMessages": [
+//         "diagnostic-messages"
+//     ]
+// }
+// --------------------------------------------------------
+//
 dcl-proc appendCallStackType2;
   dcl-pi *n varchar(10000);
     fileHandle int(10) const;
