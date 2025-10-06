@@ -43,10 +43,16 @@ dcl-proc testClearAssertFailEvent export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
+  dcl-ds assertFailEvt likeds(assertFailEvt_t) inz;
+  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t) inz;
+
   clrAssertFailEvt();
 
-  aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
-  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
+  assertFailEvt = getAssertFailEvt();
+  assertFailEvtLong = getAssertFailEvtLong();
+
+  aEqual(EMPTY_ASSERT_FAIL_EVT: assertFailEvt);
+  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG: assertFailEvtLong);
 
 end-proc;
 
@@ -89,7 +95,6 @@ dcl-proc testTwoAndTwoEqualsFour export;
   // No exception message => OK.
 
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
-  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
 end-proc;
 
@@ -124,9 +129,9 @@ dcl-proc testTwoAndTwoIsNotEqualToFive export;
   aEqual('testTwoAndTwoIsNotEqualToFive': assertFailEvt.callStk.Entry(1).qStmt.procNm);
 
   monitor;
-    aEqual('95'  : assertFailEvt.callStk.Entry(1).qStmt.specNb);  // IFS Compile
+    aEqual('113': assertFailEvt.callStk.Entry(1).qStmt.specNb);  // IFS Compile
   on-error;
-    aEqual('9500': assertFailEvt.callStk.Entry(1).qStmt.specNb);  // QSYS Compile
+    aEqual('11300': assertFailEvt.callStk.Entry(1).qStmt.specNb);  // QSYS Compile
   endmon;
 
 end-proc;
@@ -145,7 +150,6 @@ dcl-proc testHelloEqualsHello export;
   // No exception message => OK.
 
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
-  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
 end-proc;
 
@@ -179,9 +183,9 @@ dcl-proc testGoodByeIsNotHello export;
   aEqual('testGoodByeIsNotHello': assertFailEvt.callStk.Entry(1).qStmt.procNm);
 
   monitor;
-    aEqual('150'  : assertFailEvt.callStk.Entry(1).qStmt.specNb); // IFS Compile
+    aEqual('168'  : assertFailEvt.callStk.Entry(1).qStmt.specNb); // IFS Compile
   on-error;
-    aEqual('15000': assertFailEvt.callStk.Entry(1).qStmt.specNb); // QSYS Compile
+    aEqual('16800': assertFailEvt.callStk.Entry(1).qStmt.specNb); // QSYS Compile
   endmon;
 
 end-proc;
@@ -235,7 +239,6 @@ dcl-proc testAssertWithSuccess export;
   // No exception message => OK.
 
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
-  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
 end-proc;
 
@@ -267,9 +270,9 @@ dcl-proc testAssertWithFailure export;
   aEqual('testAssertWithFailure': assertFailEvt.callStk.Entry(1).qStmt.procNm);
 
   monitor;
-    aEqual('238'  : assertFailEvt.callStk.Entry(1).qStmt.specNb); // IFS Compile
+    aEqual('256'  : assertFailEvt.callStk.Entry(1).qStmt.specNb); // IFS Compile
   on-error;
-    aEqual('23800': assertFailEvt.callStk.Entry(1).qStmt.specNb); // QSYS Compile
+    aEqual('25600': assertFailEvt.callStk.Entry(1).qStmt.specNb); // QSYS Compile
   endmon;
 
 end-proc;
@@ -289,7 +292,6 @@ dcl-proc testBigIntegerEquality export;
   // No exception message => OK.
 
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
-  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
 end-proc;
 
@@ -457,14 +459,12 @@ dcl-proc testAssertEqual_string export;
   // No exception message => OK.
 
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
-  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
   assertEqual('e': 'e');
 
   // No exception message => OK.
 
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
-  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
   monitor;
     assertEqual('e': 'u');
@@ -485,7 +485,6 @@ dcl-proc testAssertEqual_string export;
   // No exception message => OK.
 
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
-  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
   // Test unequality without assertion message
   monitor;
@@ -522,7 +521,6 @@ dcl-proc testAssertEqual_integer export;
   // No exception message => OK.
 
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
-  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
   // Test unequality without assertion message
   monitor;
@@ -612,7 +610,6 @@ dcl-proc testAssertEqual_numeric export;
   // No exception message => OK.
 
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
-  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
   // Test unequality without assertion message
   monitor;
@@ -658,7 +655,6 @@ dcl-proc testAssertThat export;
   // No exception message => OK.
 
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
-  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
   // Test unequality without assertion message but
   // with a message returned by the matcher
@@ -718,7 +714,6 @@ dcl-proc testAssertEqual_date export;
   // No exception message => OK.
 
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
-  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
   // Test unequality without assertion message
   monitor;
@@ -759,7 +754,6 @@ dcl-proc testAssertEqual_time export;
   // No exception message => OK.
 
   aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
-  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
   // Test unequality without assertion message
   monitor;
@@ -799,7 +793,6 @@ dcl-proc testAssertEqual_timestamp export;
   // No exception message => OK.
 
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
-  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
   // Test unequality without assertion message
   monitor;
@@ -861,7 +854,6 @@ dcl-proc testAssertEqual_ind export;
   // No exception message => OK.
 
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
-  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
   // Test unequality without assertion message
   monitor;
