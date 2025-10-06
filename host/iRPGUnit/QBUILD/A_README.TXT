@@ -95,7 +95,7 @@ Version 6.0.0 - 03.10.2025
  * Add keyword 'XMLTYPE' to command RUCALLTXT. Possible value:
     - Type of the XML output file of iRPGUnit <= v5.1.0.r. This type
       assigns the call stack in text format to XML element '<failure>'.
-    - Type of the XML output file of iRPGUnit >= v5.2.0.r. This type
+    - Type of the XML output file of iRPGUnit >= v6.0.0.r. This type
       assigns a Json object to XML element '<failue>'. The Json object
       contains the information below:
  * Add 'expected' and 'actual' values.
