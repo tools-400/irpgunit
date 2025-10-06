@@ -11,18 +11,28 @@
 //  http://www.eclipse.org/legal/cpl-v10.html
 // ==========================================================================
 
-///
-// Executes a procedure with comprehensive error handling and logging.
-// Provides a safe execution environment that captures and logs any
-// exceptions or errors that occur during procedure execution, ensuring
-// test framework stability and detailed error reporting.
-//
-// @param proc - Procedure structure containing the procedure to execute
-//
-// @return Success indicator (1=success, 0=failure)
-///
-dcl-pr callWithLogging int(10) extproc('CMDRUN_callWithLogging');
-  proc likeds(proc_t) const;
+// ---------------------------------------
+//  Exported for self-tests
+// ---------------------------------------
+
+// Handle a test case error.
+dcl-pr handleError extproc('handleError');
+  testProcNm      const like(procNm_t);
+  excpMsgInfo     const likeds(msg_t);
+  result          likeds(result_t);
+end-pr;
+
+// Handle a test case failure.
+dcl-pr handleFailure extproc('handleFailure');
+  testProcNm      const like(procNm_t);
+  failure         const likeds(assertFailEvtLong_t);
+  result          likeds(result_t);
+end-pr;
+
+// Handle a test case success.
+dcl-pr handleSuccess extproc('handleSuccess');
+  testProcNm      const like(procNm_t);
+  assertionCnt    int(10) const;
 end-pr;
 
 ///

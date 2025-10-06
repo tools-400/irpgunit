@@ -39,6 +39,18 @@ dcl-c FAILURE_MESSAGE 'Failure message';
 //   Test Procedures
 //----------------------------------------------------------------------
 
+dcl-proc testClearAssertFailEvent export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  clrAssertFailEvt();
+
+  aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
+  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
+
+end-proc;
+
+
 dcl-proc testFailInsideMonitorBlock export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
@@ -77,6 +89,7 @@ dcl-proc testTwoAndTwoEqualsFour export;
   // No exception message => OK.
 
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
+  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
 end-proc;
 
@@ -132,6 +145,7 @@ dcl-proc testHelloEqualsHello export;
   // No exception message => OK.
 
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
+  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
 end-proc;
 
@@ -221,6 +235,7 @@ dcl-proc testAssertWithSuccess export;
   // No exception message => OK.
 
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
+  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
 end-proc;
 
@@ -274,6 +289,7 @@ dcl-proc testBigIntegerEquality export;
   // No exception message => OK.
 
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
+  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
 end-proc;
 
@@ -437,10 +453,18 @@ dcl-proc testAssertEqual_string export;
 
   // Test 1-char string
   assertEqual('1': '1');
+
+  // No exception message => OK.
+
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
+  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
   assertEqual('e': 'e');
+
+  // No exception message => OK.
+
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
+  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
   monitor;
     assertEqual('e': 'u');
@@ -457,7 +481,11 @@ dcl-proc testAssertEqual_string export;
 
   // Test equality
   assertEqual(LABEL_EXPECTED: LABEL_EXPECTED);
+
+  // No exception message => OK.
+
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
+  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
   // Test unequality without assertion message
   monitor;
@@ -490,7 +518,11 @@ dcl-proc testAssertEqual_integer export;
 
   // Test equality
   assertEqual(9223372036854775807: 9223372036854775807);
+
+  // No exception message => OK.
+
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
+  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
   // Test unequality without assertion message
   monitor;
@@ -576,7 +608,11 @@ dcl-proc testAssertEqual_numeric export;
 
   // Test equality
   assertEqual(1234567890,1234: 1234567890,1234);
+
+  // No exception message => OK.
+
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
+  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
   // Test unequality without assertion message
   monitor;
@@ -618,7 +654,11 @@ dcl-proc testAssertThat export;
   expected = 'Donald Duck';
   actual = expected;
   assertThat(%addr(expected): %addr(actual): %paddr(assertThatMatcherWithMsg));
+
+  // No exception message => OK.
+
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
+  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
   // Test unequality without assertion message but
   // with a message returned by the matcher
@@ -674,7 +714,11 @@ dcl-proc testAssertEqual_date export;
 
   // Test equality
   assertEqual(D'2024-09-16': D'2024-09-16');
+
+  // No exception message => OK.
+
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
+  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
   // Test unequality without assertion message
   monitor;
@@ -711,7 +755,11 @@ dcl-proc testAssertEqual_time export;
 
   // Test equality
   assertEqual( T'11.22.33' : T'11.22.33' );
+
+  // No exception message => OK.
+
   aEqual( EMPTY_ASSERT_FAIL_EVT : getAssertFailEvt() );
+  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
   // Test unequality without assertion message
   monitor;
@@ -747,7 +795,11 @@ dcl-proc testAssertEqual_timestamp export;
 
   // Test equality
   assertEqual(Z'2024-09-16-11.22.33.123456789012': Z'2024-09-16-11.22.33.123456789012');
+
+  // No exception message => OK.
+
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
+  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
   // Test unequality without assertion message
   monitor;
@@ -805,7 +857,11 @@ dcl-proc testAssertEqual_ind export;
   ind2 = *on;
   ind2 = *on;
   assertEqual(ind1: ind2);
+
+  // No exception message => OK.
+
   aEqual(EMPTY_ASSERT_FAIL_EVT: getAssertFailEvt());
+  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: getAssertFailEvtLong());
 
   // Test unequality without assertion message
   monitor;

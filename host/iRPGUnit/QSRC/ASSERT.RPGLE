@@ -114,7 +114,7 @@ dcl-s assertCalled int(10);
 
 // Latest assertion failure event information. Can be blank if no
 //  assertion failure event since last assertion.
-dcl-ds assertFailEvt likeds(assertFailEvtLong_t);
+dcl-ds assertFailEvt likeds(assertFailEvtLong_t) inz;
 
 dcl-ds status qualified;
   qStartPgm   likeds(object_t);

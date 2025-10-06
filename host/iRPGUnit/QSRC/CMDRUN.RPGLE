@@ -74,26 +74,6 @@ dcl-pr fmtWordWithCnt  varchar(256);
   word            varchar(256) const;
 end-pr;
 
-// Handle a test case error.
-dcl-pr handleError;
-  testProcNm      const like(procNm_t);
-  excpMsgInfo     const likeds(msg_t);
-  result          likeds(result_t);
-end-pr;
-
-// Handle a test case failure.
-dcl-pr handleFailure;
-  testProcNm      const like(procNm_t);
-  failure         const likeds(assertFailEvtLong_t);
-  result          likeds(result_t);
-end-pr;
-
-// Handle a test case success.
-dcl-pr handleSuccess;
-  testProcNm      const like(procNm_t);
-  assertionCnt    int(10) const;
-end-pr;
-
 // Set the starting index and the index step to run the test cases.
 dcl-pr setTestRunOrder;
   testSuite       const likeds(testSuite_t);
@@ -255,22 +235,6 @@ dcl-proc assertHasRunAtLeastOneTestCase;
 end-proc;
 
 
-dcl-proc callWithLogging export;
-  dcl-pi *N int(10);
-    proc            const likeds(proc_t);
-  end-pi;
-
-  monitor;
-    callProcByPtr( proc.procPtr );
-    return 0;
-  on-error;
-    handleError( proc.procNm : rcvExcpMsgInfo() : result );
-    return -1;
-  endmon;
-
-end-proc;
-
-
 //----------------------------------------------------------------------
 // Format a test run completion message. See prototype.
 //----------------------------------------------------------------------
@@ -333,7 +297,7 @@ end-proc;
 //----------------------------------------------------------------------
 // Handle a test error event. See prototype.
 //----------------------------------------------------------------------
-dcl-proc handleError;
+dcl-proc handleError export;
   dcl-pi *N;
     testProcNm      const like(procNm_t);
     excpMsgInfo     const likeds(msg_t);
@@ -349,7 +313,7 @@ end-proc;
 //----------------------------------------------------------------------
 // Handle a test failure event. See prototype.
 //----------------------------------------------------------------------
-dcl-proc handleFailure;
+dcl-proc handleFailure export;
   dcl-pi *N;
     testProcNm      const like(procNm_t);
     failure         const likeds(assertFailEvtLong_t);
@@ -365,7 +329,7 @@ end-proc;
 //----------------------------------------------------------------------
 // Handle a test success event. See prototype.
 //----------------------------------------------------------------------
-dcl-proc handleSuccess;
+dcl-proc handleSuccess export;
   dcl-pi *N;
     testProcNm      const like(procNm_t);
     assertionCnt    int(10) const;
@@ -387,7 +351,6 @@ dcl-proc setupTestSuite export;
 
   dcl-ds testResult likeds(testResult_t);
 
-  // return callWithLogging( testSuite.setUpSuite );
   testResult = initTestResult(testSuite.setupSuite.procNm);
   testResult = runProc( testSuite.setupSuite.procptr : testResult );
 
@@ -423,7 +386,6 @@ dcl-proc tearDownTestSuite export;
 
   dcl-ds testResult likeds(testResult_t);
 
-  //return callWithLogging( testSuite.tearDownSuite );
   testResult = initTestResult(testsuite.tearDownSuite.procNm);
   testResult = runProc( testsuite.tearDownSuite.procPtr : testResult );
 

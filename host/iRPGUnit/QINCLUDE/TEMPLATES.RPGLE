@@ -134,7 +134,7 @@ dcl-c DT_UNDEFINED '*N';
 
 // Assertion Failure Event of version 1
 dcl-ds assertFailEvt_t qualified template;
-  msg       varchar(256);
+  msg       varchar(256) inz;
   callstk   likeds(callStk_t) inz(*likeds);
 end-ds;
 
