@@ -9,11 +9,11 @@
 //  http://www.eclipse.org/legal/cpl-v10.html
 // ==========================================================================
 ctl-opt
-copyright('v6.0.0.b001 - xx.xx.xxxx - +
+copyright('v6.0.0.b002 - xx.xx.xxxx - +
            Copyright (c) 2013-xxxx iRPGUnit Project Team');
 /if not defined(COPYRIGHT_DSPEC)
 /eof
 /endif
-dcl-c RPGUNIT_VERSION 'v6.0.0.b001';
+dcl-c RPGUNIT_VERSION 'v6.0.0.b002';
 dcl-c RPGUNIT_DATE    'xx.xx.xxxx';
 

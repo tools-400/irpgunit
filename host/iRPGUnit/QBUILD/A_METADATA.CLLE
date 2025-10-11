@@ -335,6 +335,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(JSONWTR) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Json Memory Writer')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
                           MBR(LIBC_H) +
                           SRCTYPE(RPGLE) +
                           TEXT('C Library Function Prototypes.')
@@ -614,6 +620,12 @@
                           MBR(JOBLOG) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - Job Log Reader.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(JSONWTR) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Json Memory Writer')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +
@@ -1187,6 +1199,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(JSONWTRT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit SelfTest - Test XMLWRITER')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(LIBLC) +
                           SRCTYPE(CLLE) +
                           TEXT('iRPGUnit - LIBL Unit Test Helper.')
@@ -1262,6 +1280,12 @@
                           MBR(MKJOBLOGT) +
                           SRCTYPE(REXX) +
                           TEXT('iRPGUnit SelfTest - Build JOBLOGT.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(MKJSONWTRT) +
+                          SRCTYPE(REXX) +
+                          TEXT('iRPGUnit SelfTest - Build JSONWTRT.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
