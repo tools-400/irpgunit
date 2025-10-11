@@ -508,7 +508,7 @@ dcl-proc getLogValue export;
   logValue.type = dataType;
 
   if (value = NO_VALUE);
-    logValue.value = value;
+    logValue.value = '';
     logValue.isTruncated = *off;
     logValue.length = 0;
     logValue.originalLength = 0;

@@ -310,17 +310,17 @@ dcl-proc appendCallStackType2;
   buildFailureValues(fileHandle: testResult.failure);
 
   // add diagnostic messages
-  if (testResult.failure.logExpected.value = NO_VALUE or
-      testResult.failure.logActual.value = NO_VALUE);
+  if (testResult.failure.logExpected.type = DT_UNDEFINED or
+      testResult.failure.logActual.type = DT_UNDEFINED);
 
     Json_addKey('diagnosticMessages');
     Json_startArray();
 
-    if (testResult.failure.logExpected.value = NO_VALUE);
+    if (testResult.failure.logExpected.type = DT_UNDEFINED);
       Json_addString(crtNoValueMsg(LABEL_EXPECTED: testResult.failure.logExpected.assertProc));
     endif;
 
-    if (testResult.failure.logActual.value = NO_VALUE);
+    if (testResult.failure.logActual.type = DT_UNDEFINED);
       Json_addString(crtNoValueMsg(LABEL_ACTUAL: testResult.failure.logActual.assertProc));
     endif;
 
