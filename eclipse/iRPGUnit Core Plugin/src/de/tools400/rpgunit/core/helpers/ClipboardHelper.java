@@ -43,6 +43,11 @@ public final class ClipboardHelper {
 
     public static void setText(String text) {
 
+        if (StringHelper.isNullOrEmpty(text)) {
+            clipboard.clearContents();
+            return;
+        }
+
         TextTransfer textTransfer = TextTransfer.getInstance();
         clipboard.setContents(new Object[] { text }, new Transfer[] { textTransfer });
     }
