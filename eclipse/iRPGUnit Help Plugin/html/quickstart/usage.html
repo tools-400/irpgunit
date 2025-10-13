@@ -164,9 +164,36 @@ In case that a unit test ended with errors, it may be helpful to see the message
 <tr><td valign="top" nowrap>Capture all messages on unexpected errors</td><td valign="top">-</td><td valign="top">All messages of the job log are captured, when a test case ended with errors.</td></tr>
 <tr><td valign="top" nowrap>Capture all job log entries</td><td valign="top">-</td><td valign="top">All messages of the job log are captured at any time.</td></tr>
 <tr><td valign="top" nowrap>Format job log entries</td><td valign="top">-</td><td valign="top">Specifies whether or not the job log entries are formatted when appended to the <i>Commands Log</i> view.</td></tr>
+<tr><td valign="top" nowrap>Show compare viewer</td><td valign="top">-</td><td valign="top">Shows/hides the viewer for comparing the <i>expected</i> and <i>actual</i> values.</td></tr>
+<tr><td valign="top" nowrap>Show properties</td><td valign="top">-</td><td valign="top">Opens the properties with for displaying the properties of an entries of the <i>RPGUnit</i> view.</td></tr>
 </table>
 <p>
 Captured messages are displayed in the <i>Commands Log</i> view.
+<p>
+<h3>Compare Viewer</h3>
+The compare viewer displays the <i>expected</i> and <i>actual</i> values of a failed test case:
+<p class="indent">
+<img src="assets/RPGUnitView_Compare_Viewer.png" alt="Display RPGUnit Test Result">
+</p>
+<p>
+The content of the compare viewer can be horizontally scrolled with:
+<ul>
+<li>Left/Right keys (step width: 1)</li>
+<li>Ctrl+Left/Right keys (step width: word)</li>
+<li>Mouse wheel (step width: 1)</li>
+<li>Shift+Mouse wheel (step width: 10)</li>
+<li>Ctrl+Mouse wheel (step width: 100)</li>
+<li>Pos1 (start of text)</li>
+<li>End (end of text)</li>
+</ul>
+<p>
+The differences are displayed with the <i>Conflicting change color</i> defined at <i>Preferences - Colors and Fonts</i>.
+<p>
+The copy button next to the <i>Expected</i> and <i>Actual</i> labels copies the value to the clipboard. Its behavior can be modified like this:
+<ul>
+<li>Ctrl: Copies both values</li>
+<li>Shift: Copies both values prefixed with the label</li>
+</ul>
 <p>
 <h3>Error Messages</h3>
 The following error dialog is displayed, when a service program is not recognized as a RPGUnit test suite or when

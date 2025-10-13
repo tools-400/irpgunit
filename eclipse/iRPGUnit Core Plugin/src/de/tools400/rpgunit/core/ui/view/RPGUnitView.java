@@ -49,6 +49,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 
@@ -59,6 +62,7 @@ import de.tools400.rpgunit.core.RPGUnitCorePlugin;
 import de.tools400.rpgunit.core.RPGUnitFactory;
 import de.tools400.rpgunit.core.extensions.testcase.UpdateTestResultContributionsHandler;
 import de.tools400.rpgunit.core.extensions.view.SelectionChangedContributionsHandler;
+import de.tools400.rpgunit.core.handler.Command;
 import de.tools400.rpgunit.core.handler.EditRemoteSourceHandler;
 import de.tools400.rpgunit.core.model.ibmi.I5ServiceProgram;
 import de.tools400.rpgunit.core.model.local.IUnitTestItemWithSourceMember;
@@ -80,22 +84,19 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
 
     public static final String ID = "de.tools400.rpgunit.core"; //$NON-NLS-1$
 
+    private static final String COMPARE_VIEWER_PANEL_IS_VISIBLE = "compare.viewer.panel.isVisible";
+
+    private DialogSettingsManager dialogSettingsManager;
+
     private Color red = null;
-
     private Color green = null;
-
     private Color grey = null;
-
     private Composite errorPanel = null;
-
     private boolean showFailuresOnly = false;
-
     private Composite mainPanel = null;
-
+    private CompareViewerPanel compareViewerPanel = null;
     private HeaderControl header;
-
     private TreeViewer viewer;
-
     private int numItems = 0;
 
     private IRPGUnitViewDelegate viewDelegate = null;
@@ -105,6 +106,12 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
     private CaptureJoblogAction captureJobLogErrorsOnErrorAction;
     private CaptureJoblogAction captureJobLogAllOnErrorAction;
     private CaptureJoblogAction captureJobLogAllAction;
+    private ToggleComparePanelAction toggleComparePanelAction;
+    private ShowPropertiesSheetAction showPropertiesSheetAction;
+
+    public RPGUnitView() {
+        this.dialogSettingsManager = new DialogSettingsManager(RPGUnitCorePlugin.getDefault().getDialogSettings(), this.getClass());
+    }
 
     @Override
     public void createPartControl(Composite parent) {
@@ -148,7 +155,21 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
 
         getSite().setSelectionProvider(viewer);
 
+        compareViewerPanel = new CompareViewerPanel(mainPanel);
+        viewer.addSelectionChangedListener(compareViewerPanel);
+
+        if (isComparePanelVisible()) {
+            compareViewerPanel.createPanel();
+        }
+
         initializeMenu();
+    }
+
+    private boolean isComparePanelVisible() {
+
+        boolean isVisible = dialogSettingsManager.loadBooleanValue(COMPARE_VIEWER_PANEL_IS_VISIBLE, true);
+
+        return isVisible;
     }
 
     private void initializeMenu() {
@@ -191,12 +212,19 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
             }
         };
 
+        toggleComparePanelAction = new ToggleComparePanelAction(this);
+
+        showPropertiesSheetAction = new ShowPropertiesSheetAction();
+
         viewMenu.add(captureJobLogOffAction);
         viewMenu.add(captureJobLogErrorsOnErrorAction);
         viewMenu.add(captureJobLogAllOnErrorAction);
         viewMenu.add(captureJobLogAllAction);
         viewMenu.add(new Separator());
         viewMenu.add(formatJobLogOffAction);
+        viewMenu.add(new Separator());
+        viewMenu.add(toggleComparePanelAction);
+        viewMenu.add(showPropertiesSheetAction);
 
         Preferences preferences = Preferences.getInstance();
         preferences.addPropertyChangeListener(captureJobLogOffAction);
@@ -229,6 +257,23 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
 
         IRPGUnitViewDelegate tDelegate = getViewDelegate();
         tDelegate.enableRerunAllUnitTestsButton(numItems);
+    }
+
+    /**
+     * Handler procedure: Button "Toggle Compare Viewer"
+     */
+    public void toggleCompareViewerVisible() {
+        compareViewerPanel.setVisible(!compareViewerPanel.isVisible());
+        mainPanel.layout(true, true);
+
+        ICommandService tService = (ICommandService)PlatformUI.getWorkbench().getService(ICommandService.class);
+        tService.refreshElements(Command.TOGGLE_COMPARE_VIEWER, null);
+
+        dialogSettingsManager.storeValue(COMPARE_VIEWER_PANEL_IS_VISIBLE, compareViewerPanel.isVisible());
+    }
+
+    public boolean isCompareViewerVisible() {
+        return compareViewerPanel.isVisible();
     }
 
     /**
@@ -1111,6 +1156,10 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
         preferences.removePropertyChangeListener(captureJobLogAllAction);
         preferences.removePropertyChangeListener(formatJobLogOffAction);
 
+        viewer.removeSelectionChangedListener(compareViewerPanel);
+
+        compareViewerPanel.dispose();
+
         super.dispose();
     }
 
@@ -1190,11 +1239,67 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
         }
     }
 
+    private class ToggleComparePanelAction extends Action {
+
+        RPGUnitView view;
+
+        public ToggleComparePanelAction(RPGUnitView view) {
+            super("", Action.AS_CHECK_BOX);
+            this.view = view;
+
+            setChecked(isComparePanelVisible());
+        }
+
+        @Override
+        public boolean isChecked() {
+            return compareViewerPanel.isVisible();
+        }
+
+        @Override
+        public String getText() {
+            if (isChecked()) {
+                return Messages.Hide_Compare_Viewer;
+            } else {
+                return Messages.Show_Compare_Viewer;
+            }
+        }
+
+        @Override
+        public void run() {
+            view.toggleCompareViewerVisible();
+        }
+
+        // @Override
+        // public void setChecked(boolean checked) {
+        // super.setChecked(checked);
+        // }
+    }
+
     @Override
     public <T> T getAdapter(Class<T> adapter) {
         if (adapter.equals(IPropertySheetPage.class)) {
             return adapter.cast(new UnitTestPropertyPage());
         }
         return super.getAdapter(adapter);
+    }
+
+    private class ShowPropertiesSheetAction extends Action {
+
+        public ShowPropertiesSheetAction() {
+            super("", Action.AS_PUSH_BUTTON);
+        }
+
+        @Override
+        public String getText() {
+            return Messages.Show_property_sheet;
+        }
+
+        @Override
+        public void run() {
+            try {
+                RPGUnitView.this.getSite().getWorkbenchWindow().getActivePage().showView("org.eclipse.ui.views.PropertySheet");
+            } catch (PartInitException e) {
+            }
+        }
     }
 }

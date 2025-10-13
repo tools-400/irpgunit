@@ -93,6 +93,13 @@
                tooltip="%Enable_Debug_Mode"
                style="toggle">
          </command>
+
+         <command
+               commandId="de.tools400.rpgunit.core.command.togglecompareviewervisible"
+               icon="icons/toggle_compare_viewer.png"
+               tooltip="%Toggle_Compare_Viewer"
+               style="toggle">
+         </command>
       </menuContribution>
    
    <!-- ======================================= -->
@@ -231,6 +238,13 @@
       
       <command
             categoryId="de.tools400.rpgunit.core.category"
+            description="Toggle Compare Viewer"
+            id="de.tools400.rpgunit.core.command.togglecompareviewervisible"
+            name="Toggle Compare Viewer">
+      </command>
+      
+      <command
+            categoryId="de.tools400.rpgunit.core.category"
             description="Collapse All RPGUnit Test Cases"
             id="de.tools400.rpgunit.core.command.collapseallunittests"
             name="Collapse All RPGUnit Test Cases">
@@ -353,6 +367,11 @@
       <handler
             class="de.tools400.rpgunit.core.handler.ToggleEnableDebugMode"
             commandId="de.tools400.rpgunit.core.command.toggleenabledebugmode">
+      </handler>
+      
+      <handler
+            class="de.tools400.rpgunit.core.handler.ToggleCompareViewerVisibleHandler"
+            commandId="de.tools400.rpgunit.core.command.togglecompareviewervisible">
       </handler>
    </extension>
    

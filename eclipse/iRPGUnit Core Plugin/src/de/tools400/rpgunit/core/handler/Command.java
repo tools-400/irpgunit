@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2016 iRPGUnit Project Team
+ * Copyright (c) 2013-2025 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,4 +26,6 @@ public interface Command {
     public String TOGGLE_DISABLE_REPORT = "de.tools400.rpgunit.core.command.toggledisablereport"; //$NON-NLS-1$
 
     public String TOGGLE_ENABLE_DEBUG_MODE = "de.tools400.rpgunit.core.command.toggleenabledebugmode"; //$NON-NLS-1$
+
+    public String TOGGLE_COMPARE_VIEWER = "de.tools400.rpgunit.core.command.togglecompareviewervisible"; //$NON-NLS-1$
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2019 iRPGUnit Project Team
+ * Copyright (c) 2013-2025 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,9 @@ public class RPGUnitCorePlugin extends AbstractUIPlugin {
     public static final String IMAGE_TEST_SUCCESS = "test_success16.gif"; //$NON-NLS-1$
     public static final String IMAGE_TEST_FAILED = "test_failed16.gif"; //$NON-NLS-1$
     public static final String IMAGE_TEST_ERROR = "test_error16.gif"; //$NON-NLS-1$
+
+    public static final String IMAGE_COPY = "copy_not_hoovered.png"; //$NON-NLS-1$
+    public static final String IMAGE_COPY_HOOVERED = "copy_hoovered.png"; //$NON-NLS-1$
 
     public static final String IMAGE_SRVPGM = "srvpgm.gif"; //$NON-NLS-1$
     public static final String IMAGE_PROCEDURE = "procedure.gif"; //$NON-NLS-1$
@@ -210,6 +213,9 @@ public class RPGUnitCorePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_TEST_SUCCESS, getImageDescriptor(IMAGE_TEST_SUCCESS));
         reg.put(IMAGE_TEST_FAILED, getImageDescriptor(IMAGE_TEST_FAILED));
         reg.put(IMAGE_TEST_ERROR, getImageDescriptor(IMAGE_TEST_ERROR));
+
+        reg.put(IMAGE_COPY, getImageDescriptor(IMAGE_COPY));
+        reg.put(IMAGE_COPY_HOOVERED, getImageDescriptor(IMAGE_COPY_HOOVERED));
 
         reg.put(IMAGE_ASSERTION, getImageDescriptor(IMAGE_ASSERTION));
         reg.put(IMAGE_FAILURE, getImageDescriptor(IMAGE_FAILURE));

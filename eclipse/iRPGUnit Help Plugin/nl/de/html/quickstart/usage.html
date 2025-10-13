@@ -166,9 +166,36 @@ Im Fall eines unerwarteten Programmabbruchs kann es hilfreich sein die Nachricht
 <tr><td valign="top" nowrap>Alle Nachrichten bei einem Programmabbruch</td><td valign="top">-</td><td valign="top">Bei einem unerwarteten Programmabbruch werden alle Nachrichten des Jobprotokolls aufgezeichnet.</td></tr>
 <tr><td valign="top" nowrap>Alle Einträge</td><td valign="top">-</td><td valign="top">Alle Nachrichten des Jobprotokolls werden aufgezeichnet.</td></tr>
 <tr><td valign="top" nowrap>Formatieren Joblogeinträge</td><td valign="top">-</td><td valign="top">Gibt an, ob Joblogeinträge formatiert in der <i>Befehlsprotokoll</i> Ansicht dargestellt werden.</td></tr>
+<tr><td valign="top" nowrap>Einblenden Vergleichsanzeige</td><td valign="top">-</td><td valign="top">Öffnet/verbirgt die Vergleichsanzeige des <i>erwarteten</i> und <i>tatsächlichen</i> Werts.</td></tr>
+<tr><td valign="top" nowrap>Anzeigen Eigenschaften</td><td valign="top">-</td><td valign="top">Öffnet die Ansicht zur Anzeige der Eigenschaften eines Eintrags der <i>RPGUnit</i> Ansicht.</td></tr>
 </table>
 <p>
 Die aufgezeichneten Nachrichten des Jobprotokolls werden in der <i>Befehlsprotokoll</i> Ansicht angezeigt.
+<p>
+<h3>Vergleichsanzeige</h3>
+Die Vergleichsanzeige zeigt die <i>erwarteten</i> und <i>tatsächlichen</i> Werte eines fehlgeschlagenen Testfalls:
+<p class="indent">
+<img src="assets/RPGUnitView_Compare_Viewer.png" alt="Display RPGUnit Test Result">
+</p>
+<p>
+Der Inhalt der Vergleichsanzeige kann wie folgt horizontal verschoben werden:
+<ul>
+<li>Links/Rechts Tasten (Schrittweite: 1)</li>
+<li>Ctrl+Links/Rechts Tasten (Schrittweite: Wort)</li>
+<li>Mausrad (Schrittweite: 1)</li>
+<li>Shift+Mausrad (Schrittweite: 10)</li>
+<li>Ctrl+Mausrad (Schrittweite: 100)</li>
+<li>Pos1 (Anfang des Werts)</li>
+<li>End (Ende des Werts)</li>
+</ul>
+<p>
+Die Unterschiede werden in der Farbe <i>Farbe für Konflikt verursachende Änderung</i>, konfiguriert unter <i>Preferences - Colors and Fonts</i>, angezeigt.
+<p>
+Die Schaltfläche neben den <i>Erwartet</i> und <i>Tatsächlich</i> Beschriftungen kopiert den Wert in die Zwischenablage. Das Verhalten kann wie folgt beeinflusst werden:
+<ul>
+<li>Ctrl: Kopiert beide Werte</li>
+<li>Shift: Kopiert beide Werte mit Beschriftung</li>
+</ul>
 <p>
 <h3>Fehlernachrichten</h3>
 Der folgende Dialog wird angezeigt, wenn ein Serviceprogramm nicht als Test Suite oder eine Prozedur nicht als Test Case

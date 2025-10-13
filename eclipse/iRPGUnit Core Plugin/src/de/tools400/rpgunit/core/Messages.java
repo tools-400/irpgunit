@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2024 iRPGUnit Project Team
+ * Copyright (c) 2013-2025 iRPGUnit Project Team
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,6 +60,8 @@ public class Messages extends NLS {
     public static String Expected_original_length;
     public static String Expected_data_type;
     public static String Expected_assertion_procedure;
+    public static String Label_Expected;
+    public static String Label_Actual;
     public static String Category_Expected_Test_Value;
     public static String Category_Actual_Test_Value;
     public static String Category_Result;
@@ -118,6 +120,9 @@ public class Messages extends NLS {
     public static String Capture_Joblog_ERRORS_ON_ERROR;
     public static String Capture_Joblog_ALL_ON_ERROR;
     public static String Capture_Joblog_ALL;
+    public static String Hide_Compare_Viewer;
+    public static String Show_Compare_Viewer;
+    public static String Show_property_sheet;
 
     public static String PreferencesPage2_grpCommandParameters_text;
     public static String PreferencesPage2_lblRunOrder_text;
