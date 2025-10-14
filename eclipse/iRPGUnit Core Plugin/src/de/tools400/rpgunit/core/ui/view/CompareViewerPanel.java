@@ -16,7 +16,9 @@ import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CaretEvent;
@@ -296,14 +298,20 @@ public class CompareViewerPanel implements ISelectionChangedListener, IPropertyC
     @Override
     public void selectionChanged(SelectionChangedEvent event) {
 
-        Object item = event.getStructuredSelection().getFirstElement();
-        if (!(item instanceof UnitTestCase)) {
-            clearCompareResult();
-            return;
-        }
+        ISelection selection = event.getSelection();
+        if (selection instanceof IStructuredSelection) {
+            IStructuredSelection structuredSelection = (IStructuredSelection)selection;
+            Object item = structuredSelection.getFirstElement();
+            if (!(item instanceof UnitTestCase)) {
+                clearCompareResult();
+                return;
+            }
 
-        UnitTestCase testCase = (UnitTestCase)item;
-        setInput(testCase);
+            UnitTestCase testCase = (UnitTestCase)item;
+            setInput(testCase);
+        }
+        
+        
     }
 
     private void compareValue(String expected, String actual) {
@@ -384,12 +392,14 @@ public class CompareViewerPanel implements ISelectionChangedListener, IPropertyC
         ColorRegistry registry = getColorRegistry();
         if (registry.get(COMPARE_CONFLICT_COLOR_ID) == null) {
 
+            // Get conflict color from preferences of WorkbenchPlugin
             String conflictingColor = getWorkbenchPluginPreferenceStore().getString(WORKBENCH_PLUGIN_CONFLICTING_COLOR_ID);
             if (StringHelper.isNullOrEmpty(conflictingColor)) {
                 conflictingColor = getWorkbenchPluginPreferenceStore().getDefaultString(WORKBENCH_PLUGIN_CONFLICTING_COLOR_ID);
             }
 
             if (StringHelper.isNullOrEmpty(conflictingColor)) {
+                // Fallback to default color: RED
                 int r = DEFAULT_COMPARE_CONFLICT_COLOR_RGB_VALUES[0];
                 int g = DEFAULT_COMPARE_CONFLICT_COLOR_RGB_VALUES[1];
                 int b = DEFAULT_COMPARE_CONFLICT_COLOR_RGB_VALUES[2];
