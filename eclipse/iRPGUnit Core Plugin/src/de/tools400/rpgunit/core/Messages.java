@@ -62,6 +62,8 @@ public class Messages extends NLS {
     public static String Expected_assertion_procedure;
     public static String Label_Expected;
     public static String Label_Actual;
+    public static String Tooltip_copy_button;
+    public static String Tooltip_test_value;
     public static String Category_Expected_Test_Value;
     public static String Category_Actual_Test_Value;
     public static String Category_Result;

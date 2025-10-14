@@ -22,8 +22,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CaretEvent;
-import org.eclipse.swt.custom.CaretListener;
-import org.eclipse.swt.custom.StyleRange;
+ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -50,6 +49,10 @@ public class CompareViewerPanel implements ISelectionChangedListener, IPropertyC
     private static final String WORKBENCH_PLUGIN_CONFLICTING_COLOR_ID = "CONFLICTING_COLOR";
     private static final String END_OF_TEXT_MARKER = "«";
     private static final String RGB_VALUE_DELIMITER = ",";
+    
+    private static final int SCROLLING_MULTIPLIER_0 = 1;
+    private static final int SCROLLING_MULTIPLIER_1 = 10;
+    private static final int SCROLLING_MULTIPLIER_2 = 50;
 
     private final String COMPARE_CONFLICT_COLOR_ID = "de.tools400.rpgunit.core.ui.colors.compare.conflict";
     private final int[] DEFAULT_COMPARE_CONFLICT_COLOR_RGB_VALUES = new int[] { 255, 0, 0 };
@@ -100,58 +103,20 @@ public class CompareViewerPanel implements ISelectionChangedListener, IPropertyC
 
         Label btnCopy = new Label(panel, SWT.NONE);
         btnCopy.setImage(RPGUnitCorePlugin.getDefault().getImageRegistry().get(RPGUnitCorePlugin.IMAGE_COPY));
+        btnCopy.setToolTipText(Messages.Tooltip_copy_button);
 
         StyledText txtValue = new StyledText(panel, SWT.BORDER);
+        txtValue.setToolTipText(Messages.bind(Messages.Tooltip_test_value, SCROLLING_MULTIPLIER_1 , SCROLLING_MULTIPLIER_2));
         txtValue.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         txtValue.setEditable(false);
         txtValue.setFont(courier);
-        txtValue.addMouseWheelListener(new org.eclipse.swt.events.MouseWheelListener() {
-
-            @Override
-            public void mouseScrolled(MouseEvent event) {
-                StyledText textWidget = (StyledText)event.widget;
-                int length = textWidget.getText().length();
-                int offset = textWidget.getCaretOffset();
-                int stepWidth;
-                if (event.stateMask == SWT.SHIFT) {
-                    stepWidth = 10;
-                } else if (event.stateMask == SWT.CTRL) {
-                    stepWidth = 100;
-                } else {
-                    stepWidth = 1;
-                }
-                if (event.count > 0) {
-                    textWidget.setCaretOffset(Math.min(offset - stepWidth, length));
-                } else if (event.count < 0) {
-                    textWidget.setCaretOffset(Math.max(offset + stepWidth, 0));
-                }
-            }
-        });
+        txtValue.addMouseWheelListener(new MouseWheelListener());
 
         btnCopy.addMouseListener(new CopyToClipboardListener(txtValue));
         btnCopy.addMouseTrackListener(new ChangeImageListener(btnCopy));
 
         // synchronize scrolling of expected and actual values
-        txtValue.addCaretListener(new CaretListener() {
-
-            @Override
-            public void caretMoved(CaretEvent event) {
-                Object widget = event.getSource();
-                int newTopIndex = -1;
-                StyledText newObject = null;
-                if (widget == txtExpected) {
-                    newTopIndex = txtExpected.getCaretOffset();
-                    newObject = txtActual;
-                } else if (widget == txtActual) {
-                    newTopIndex = txtActual.getCaretOffset();
-                    newObject = txtExpected;
-                }
-                if (newTopIndex <= Math.min(txtExpected.getText().length(), txtActual.getText().length())) {
-                    newObject.setCaretOffset(newTopIndex);
-                    newObject.setHorizontalIndex(newTopIndex);
-                }
-            }
-        });
+        txtValue.addCaretListener(new CaretListener());
 
         return txtValue;
     }
@@ -218,7 +183,51 @@ public class CompareViewerPanel implements ISelectionChangedListener, IPropertyC
             return text;
         }
     }
+    
+    private class CaretListener implements org.eclipse.swt.custom.CaretListener {
 
+        @Override
+        public void caretMoved(CaretEvent event) {
+            Object widget = event.getSource();
+            int newTopIndex = -1;
+            StyledText newObject = null;
+            if (widget == txtExpected) {  
+                newTopIndex = txtExpected.getCaretOffset();
+                newObject = txtActual;
+            } else if (widget == txtActual) {
+                newTopIndex = txtActual.getCaretOffset();
+                newObject = txtExpected;
+            }
+            if (newTopIndex <= Math.min(txtExpected.getText().length(), txtActual.getText().length())) {
+                newObject.setCaretOffset(newTopIndex);
+                newObject.setHorizontalIndex(newTopIndex);
+            }
+        }
+    }
+    
+    private class MouseWheelListener implements org.eclipse.swt.events.MouseWheelListener {
+
+        @Override
+        public void mouseScrolled(MouseEvent event) {
+            StyledText textWidget = (StyledText)event.widget;
+            int length = textWidget.getText().length();
+            int offset = textWidget.getCaretOffset();
+            int stepWidth;
+            if (event.stateMask == SWT.SHIFT) {
+                stepWidth = SCROLLING_MULTIPLIER_2;
+            } else if (event.stateMask == SWT.CTRL) {
+                stepWidth = SCROLLING_MULTIPLIER_1;
+            } else {
+                stepWidth = SCROLLING_MULTIPLIER_0;
+            }
+            if (event.count > 0) {
+                textWidget.setCaretOffset(Math.min(offset - stepWidth, length));
+            } else if (event.count < 0) {
+                textWidget.setCaretOffset(Math.max(offset + stepWidth, 0));
+            }
+        }
+    }
+    
     public boolean isVisible() {
         if (mainPanel != null) {
             return true;
