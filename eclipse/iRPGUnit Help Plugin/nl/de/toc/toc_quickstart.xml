@@ -3,8 +3,7 @@
 
 <toc label="Schnellstart" link_to="toc/toc.xml#quickstart">
     <topic href="html/quickstart/preferences.html"           label="Voreinstellungen" />
-	<topic label="Anwendung" />
-    	<topic href="html/quickstart/usage.html"             label="Allgemein" >
+    	<topic href="html/quickstart/usage.html"             label="Anwendung" >
 	    <topic href="html/quickstart/cobol/usage_cobol.html" label="Cobol" />
 	    <topic href="html/quickstart/stmf/usage_stmf.html"   label="Datenstromdateien" />
     </topic>
