@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CaretEvent;
- import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -33,6 +33,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -49,7 +50,7 @@ public class CompareViewerPanel implements ISelectionChangedListener, IPropertyC
     private static final String WORKBENCH_PLUGIN_CONFLICTING_COLOR_ID = "CONFLICTING_COLOR";
     private static final String END_OF_TEXT_MARKER = "«";
     private static final String RGB_VALUE_DELIMITER = ",";
-    
+
     private static final int SCROLLING_MULTIPLIER_0 = 1;
     private static final int SCROLLING_MULTIPLIER_1 = 10;
     private static final int SCROLLING_MULTIPLIER_2 = 50;
@@ -93,6 +94,8 @@ public class CompareViewerPanel implements ISelectionChangedListener, IPropertyC
         txtExpected = createLogValueText(mainPanel, Messages.Label_Expected);
         txtActual = createLogValueText(mainPanel, Messages.Label_Actual);
 
+        setInput(null);
+
         return mainPanel;
     }
 
@@ -106,7 +109,7 @@ public class CompareViewerPanel implements ISelectionChangedListener, IPropertyC
         btnCopy.setToolTipText(Messages.Tooltip_copy_button);
 
         StyledText txtValue = new StyledText(panel, SWT.BORDER);
-        txtValue.setToolTipText(Messages.bind(Messages.Tooltip_test_value, SCROLLING_MULTIPLIER_1 , SCROLLING_MULTIPLIER_2));
+        txtValue.setToolTipText(Messages.bind(Messages.Tooltip_test_value, SCROLLING_MULTIPLIER_1, SCROLLING_MULTIPLIER_2));
         txtValue.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         txtValue.setEditable(false);
         txtValue.setFont(courier);
@@ -183,7 +186,7 @@ public class CompareViewerPanel implements ISelectionChangedListener, IPropertyC
             return text;
         }
     }
-    
+
     private class CaretListener implements org.eclipse.swt.custom.CaretListener {
 
         @Override
@@ -191,7 +194,7 @@ public class CompareViewerPanel implements ISelectionChangedListener, IPropertyC
             Object widget = event.getSource();
             int newTopIndex = -1;
             StyledText newObject = null;
-            if (widget == txtExpected) {  
+            if (widget == txtExpected) {
                 newTopIndex = txtExpected.getCaretOffset();
                 newObject = txtActual;
             } else if (widget == txtActual) {
@@ -204,7 +207,7 @@ public class CompareViewerPanel implements ISelectionChangedListener, IPropertyC
             }
         }
     }
-    
+
     private class MouseWheelListener implements org.eclipse.swt.events.MouseWheelListener {
 
         @Override
@@ -227,7 +230,7 @@ public class CompareViewerPanel implements ISelectionChangedListener, IPropertyC
             }
         }
     }
-    
+
     public boolean isVisible() {
         if (mainPanel != null) {
             return true;
@@ -247,15 +250,6 @@ public class CompareViewerPanel implements ISelectionChangedListener, IPropertyC
         }
     }
 
-    public void clear() {
-
-        if (!isVisible()) {
-            return;
-        }
-
-        clearCompareResult();
-    }
-
     public void setInput(UnitTestCase testCase) {
 
         this.testCase = testCase;
@@ -272,6 +266,7 @@ public class CompareViewerPanel implements ISelectionChangedListener, IPropertyC
         clearCompareResult();
 
         if (this.testCase == null) {
+            setWidgetEnablements();
             return;
         }
 
@@ -282,15 +277,8 @@ public class CompareViewerPanel implements ISelectionChangedListener, IPropertyC
             return;
         }
 
-        String expectedText = expectedValue.getValue();
-        if (expectedText.length() > 0) {
-            expectedText += END_OF_TEXT_MARKER;
-        }
-
-        String actualText = actualValue.getValue();
-        if (actualText.length() > 0) {
-            actualText += END_OF_TEXT_MARKER;
-        }
+        String expectedText = getTestValue(expectedValue);
+        String actualText = getTestValue(actualValue);
 
         if (expectedText.length() < actualText.length()) {
             expectedText = StringHelper.getFixLength(expectedText, actualText.length());
@@ -302,6 +290,54 @@ public class CompareViewerPanel implements ISelectionChangedListener, IPropertyC
         txtActual.setText(actualText);
 
         compareValue(expectedText, actualText);
+
+        setWidgetEnablements();
+    }
+
+    private void setWidgetEnablements() {
+
+        boolean isEnabled = false;
+
+        if (testCase != null) {
+            if (hasTestValue(testCase.getExpected()) || hasTestValue(testCase.getActual())) {
+                isEnabled = true;
+            }
+        }
+
+        mainPanel.setEnabled(isEnabled);
+
+        setLogValueEnabledment(txtExpected, isEnabled);
+        setLogValueEnabledment(txtActual, isEnabled);
+    }
+
+    private void setLogValueEnabledment(StyledText widget, boolean isEnabled) {
+
+        widget.setEnabled(isEnabled);
+
+        if (isEnabled) {
+            widget.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+        } else {
+            widget.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_TEXT_DISABLED_BACKGROUND));
+        }
+    }
+
+    private boolean hasTestValue(UnitTestLogValue value) {
+
+        if (value != null && value.getLength() > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private String getTestValue(UnitTestLogValue logValue) {
+
+        String text = "";
+        if (hasTestValue(logValue)) {
+            text = logValue.getValue() + END_OF_TEXT_MARKER;
+        }
+
+        return text;
     }
 
     @Override
@@ -312,15 +348,16 @@ public class CompareViewerPanel implements ISelectionChangedListener, IPropertyC
             IStructuredSelection structuredSelection = (IStructuredSelection)selection;
             Object item = structuredSelection.getFirstElement();
             if (!(item instanceof UnitTestCase)) {
-                clearCompareResult();
+                // clearCompareResult();
+                setInput(null);
                 return;
             }
 
             UnitTestCase testCase = (UnitTestCase)item;
             setInput(testCase);
+        } else {
+            setInput(null);
         }
-        
-        
     }
 
     private void compareValue(String expected, String actual) {
