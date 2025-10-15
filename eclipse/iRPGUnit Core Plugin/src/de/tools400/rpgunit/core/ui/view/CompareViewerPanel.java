@@ -317,7 +317,7 @@ public class CompareViewerPanel implements ISelectionChangedListener, IPropertyC
         if (isEnabled) {
             widget.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
         } else {
-            widget.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_TEXT_DISABLED_BACKGROUND));
+            widget.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
         }
     }
 
