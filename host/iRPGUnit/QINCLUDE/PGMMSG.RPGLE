@@ -53,7 +53,7 @@ end-pr;
 //
 // @return Formatted message text as a 256-character string, blanks if no message found
 ///
-dcl-pr rcvMsgTxt char(256) extproc('PGMMSG_rcvMsgTxt');
+dcl-pr rcvMsgTxt like(msgText_t) extproc('PGMMSG_rcvMsgTxt');
   msgType char(10) const;
 end-pr;
 
@@ -103,7 +103,7 @@ end-pr;
 //                     0 = current level, 1 = caller, 2 = caller's caller, etc.
 ///
 dcl-pr sndVldChkMsg extproc('PGMMSG_sndVldChkMsg');
-  msg        varchar(256) const;
+  msg        like(msgText_t) const;
   callStkCnt int(10) const;
 end-pr;
 
@@ -117,7 +117,7 @@ end-pr;
 // @param msg - Message text to send (up to 256 characters)
 ///
 dcl-pr sndCompMsg extproc('PGMMSG_sndCompMsg');
-  msg char(256) const;
+  msg like(msgText_t) const;
 end-pr;
 
 ///
@@ -132,7 +132,7 @@ end-pr;
 //                     0 = current level, 1 = caller, 2 = caller's caller, etc.
 ///
 dcl-pr sndEscapeMsg extproc('PGMMSG_sndEscapeMsg');
-  msg        char(256) const;
+  msg        like(msgText_t) const;
   callStkCnt int(10) const;
 end-pr;
 
@@ -148,7 +148,7 @@ end-pr;
 //                    Can be *OMIT to use default targeting
 ///
 dcl-pr sndEscapeMsgToProcedure extproc('PGMMSG_sndEscapeMsgToProcedure');
-  msg       char(256) const;
+  msg       like(msgText_t) const;
   procedure varchar(256) options(*omit) const;
 end-pr;
 
@@ -161,7 +161,7 @@ end-pr;
 // @param msg - Message text to send (up to 256 characters)
 ///
 dcl-pr sndEscapeMsgToCaller extproc('PGMMSG_sndEscapeMsgToCaller');
-  msg char(256) const;
+  msg like(msgText_t) const;
 end-pr;
 
 ///
@@ -174,7 +174,7 @@ end-pr;
 // @param msg - Message text to send (up to 256 characters)
 ///
 dcl-pr sndEscapeMsgAboveCtlBdy extproc('PGMMSG_sndEscapeMsgAboveCtlBdy');
-  msg char(256) const;
+  msg like(msgText_t) const;
 end-pr;
 
 ///
@@ -187,7 +187,7 @@ end-pr;
 // @param msg - Message text to send (up to 256 characters)
 ///
 dcl-pr sndInfoMsg extproc('PGMMSG_sndInfoMsg');
-  msg char(256) const;
+  msg like(msgText_t) const;
 end-pr;
 
 ///
@@ -200,7 +200,7 @@ end-pr;
 // @param msg - Message text to display (up to 256 characters)
 ///
 dcl-pr sndStsMsg extproc('PGMMSG_sndStsMsg');
-  msg char(256) const;
+  msg like(msgText_t) const;
 end-pr;
 
 ///

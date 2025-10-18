@@ -55,7 +55,7 @@ end-pr;
 //----------------------------------------------------------------------
 
 dcl-ds g_status qualified;
-  lastStsMsg   char(256) inz;
+  lastStsMsg   like(msgText_t) inz;
 end-ds;
 
 
@@ -100,7 +100,7 @@ end-proc;
 // Receives the message text of a program message.
 //----------------------------------------------------------------------
 dcl-proc rcvMsgTxt export;
-  dcl-pi *N char(256);
+  dcl-pi *N like(msgText_t);
     msgType   char(10) const;
   end-pi;
 
@@ -248,7 +248,7 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc sndVldChkMsg export;
   dcl-pi *N;
-    msg          varchar(256) const;
+    msg          like(msgText_t) const;
     callStkCnt   int(10) const;
   end-pi;
 
@@ -287,7 +287,7 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc sndCompMsg export;
   dcl-pi *N;
-    msg   char(256) const;
+    msg   like(msgText_t) const;
   end-pi;
 
   // The message reference key.
@@ -313,7 +313,7 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc sndEscapeMsg export;
   dcl-pi *N;
-    msg          char(256) const;
+    msg          like(msgText_t) const;
     callStkCnt   int(10) const;
   end-pi;
 
@@ -339,7 +339,7 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc sndEscapeMsgToProcedure export;
   dcl-pi *N;
-    msg         char(256) const;
+    msg         like(msgText_t) const;
     procedure   varchar(256) const  options(*omit);
   end-pi;
 
@@ -368,7 +368,7 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc sndEscapeMsgToCaller export;
   dcl-pi *N;
-    msg   char(256) const;
+    msg   like(msgText_t) const;
   end-pi;
 
   sndEscapeMsg( msg : two_call_stk_lvl_above );
@@ -381,7 +381,7 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc sndEscapeMsgAboveCtlBdy export;
   dcl-pi *N;
-    msg char(256) const;
+    msg like(msgText_t) const;
   end-pi;
 
   dcl-s msgKey char(4);
@@ -406,7 +406,7 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc sndInfoMsg export;
   dcl-pi *N;
-    msg char(256) const;
+    msg like(msgText_t) const;
   end-pi;
 
   // The message reference key.
@@ -432,7 +432,7 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc sndStsMsg export;
   dcl-pi *N;
-    msg   char(256) const;
+    msg   like(msgText_t) const;
   end-pi;
 
   // The message reference key.
