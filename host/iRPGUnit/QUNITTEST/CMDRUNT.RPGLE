@@ -468,9 +468,10 @@ end-proc;
 
 dcl-proc setLogContext export;
   dcl-pi *n;
-    testPgm         const likeds(Object_t);
+    testPgm         likeds(Object_t) const;
     detail          char(10) const;
     output          char(10) const;
+    xmlStmfInfo     likeds(xmlStmfInfo_t) const;
   end-pi;
 
   fail('Mock setLogContext not implemented');

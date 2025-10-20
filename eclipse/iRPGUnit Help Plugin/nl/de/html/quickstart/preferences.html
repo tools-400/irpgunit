@@ -125,6 +125,7 @@ Folgende Ersatzvariablen können im Dateinamen verwendet werden:
 </colgroup>
 <tr><td valign="top">&lt;TESTPGM&gt;</td><td>Name der Test Suite.</td></tr>
 <tr><td valign="top">&lt;TESTLIB&gt;</td><td>Name der Bibliothek, welche die Test Suite enthält.</td></tr>
+<tr><td valign="top">&lt;MSECONDS&gt;</td><td>Mikrosekunden der aktuellen Zeit.</td></tr>
 </table>
 <p>
 <u>Funktion strftime()</u>
@@ -164,8 +165,14 @@ Gibt das Format der XML Ausgabedatei an:<p>
 <colgroup>
  <col width="100">
 </colgroup>
-<tr><td valign="top">*TYPE1</td><td>Format von iRPGUnit <= v5.1.0.r. Element <code>&lt;failure&gt;</code> (Aufrufstapel) wird als Text ausgegeben.</td></tr> 
-<tr><td valign="top">*TYPE2</td><td>Format von iRPGUnit >= v6.0.0.r. Element <code>&lt;failure&gt;</code> (Aufrufstapel) wird als Json ausgegeben.</td></tr> 
+<tr><td valign="top">*TYPE1</td><td>Format von iRPGUnit <= v5.1.0.r.<br>
+                     Element <code>&lt;failure&gt;</code> (Aufrufstapel) wird als Text ausgegeben.<br>
+                     Dieses Format wurde für das Jenkins<a href="https://plugins.jenkins.io/junit/">JUnit</a> Plugin entwickelt.
+</td></tr> 
+<tr><td valign="top">*TYPE2</td><td>Neues Format von iRPGUnit >= v6.0.0.r.<br>
+                     Element <code>&lt;failure&gt;</code> (Aufrufstapel) wird als Json ausgegeben.<br>
+                     Dieses Format dient sowohl dem Jenkins <a href="https://plugins.jenkins.io/junit/">JUnit</a> Plugin, als auch der VS Code <a href="https://github.com/IBM/vscode-ibmi-testing">IBM I Testing</a> Erweiterung.
+</td></tr>
 </table>
 <p>
 

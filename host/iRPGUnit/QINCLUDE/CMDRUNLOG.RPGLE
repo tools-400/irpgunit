@@ -53,8 +53,8 @@ end-pr;
 // @param failure - Detailed failure information including assertion details
 ///
 dcl-pr logfailure extproc('CMDRUNLOG_logFailure');
-  testnm  like(procNm_t) const;
-  failure likeds(assertFailEvtLong_t) const;
+  testnm      like(procNm_t) const;
+  failure     likeds(assertFailEvtLong_t) const;
 end-pr;
 
 ///
@@ -97,14 +97,16 @@ end-pr;
 // Initializes logging parameters including target program, detail level,
 // and output format that will be used throughout the test execution.
 //
-// @param testpgm - Object information for the test service program being executed
-// @param detail  - Logging detail level (e.g., 'BASIC', 'ALL', 'FAILURE')
-// @param output  - Output format specification (e.g., 'SPOOLFILE', 'STDOUT')
+// @param testpgm     - Object information for the test service program being executed
+// @param detail      - Logging detail level (e.g., 'BASIC', 'ALL', 'FAILURE')
+// @param output      - Output format specification (e.g., 'SPOOLFILE', 'STDOUT')
+// @param xmlStmfInfo - Path and type of the XML stream file
 ///
 dcl-pr setLogContext extproc('CMDRUNLOG_setLogContext');
-  testpgm likeds(object_t) const;
-  detail  char(10) const;
-  output  char(10) const;
+  testpgm     likeds(object_t) const;
+  detail      char(10) const;
+  output      char(10) const;
+  xmlStmfInfo likeds(xmlStmfInfo_t) const;
 end-pr;
 
 ///
@@ -116,6 +118,19 @@ end-pr;
 ///
 dcl-pr updateLogContext extproc('updateLogContext');
   libldata likeds(liblData_t) const;
+end-pr;
+
+///
+// Outputs the path and type of the XML stream file produced:
+//
+// @param label - Label that is printed on the first line before the path
+// @param path  - Path of the stream file
+//
+// The path is printed in quotes and continued on additional lines if required.
+///
+dcl-pr logStmfPath extproc('CMDRUNLOG_logStmfPath');
+    label varchar(80) value;
+    path  like(stmf_t) value;
 end-pr;
 
 ///

@@ -210,15 +210,18 @@ dcl-proc resolvePathVariables export;
 
   dcl-s resolvedPath like(stmf_t);
 
+  dcl-s microSeconds zoned(6);
   dcl-ds tm likeds(tm_t) based(ptm);
   dcl-s tmpPathBuf char(1024) inz;
   dcl-s size int(10);
 
   ptm = localtime(time(*null));
+  microSeconds = %subdt(%timestamp(*sys: 6): *MSECONDS);
   size = strftime(%addr(tmpPathBuf): %size(tmpPathBuf): i_path: tm);
   resolvedPath = %subst(tmpPathBuf: 1: size);
   resolvedPath = replace(resolvedPath: '<TSTPGM>': i_testSuite.nm);
   resolvedPath = replace(resolvedPath: '<TSTLIB>': i_testSuite.lib);
+  resolvedPath = replace(resolvedPath: '<MSECONDS>': %editc(microSeconds: 'X'));
   resolvedPath = replace(resolvedPath: ':': '.');
   resolvedPath = replace(resolvedPath: %char(BACK_SLASH): '/');
 

@@ -150,6 +150,12 @@ dcl-ds callStkEnt_t qualified template;
   qstmt   likeds(qStatement_t) inz(*likeds);
 end-ds;
 
+// XML stream file information
+dcl-ds xmlStmfInfo_t qualified template;
+  path like(stmf_t);
+  type like(xmlType_t);
+end-ds;
+
 // Program Message.
 dcl-ds msg_t qualified template;
   id         char(7);

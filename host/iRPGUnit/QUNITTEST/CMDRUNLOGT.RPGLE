@@ -70,6 +70,10 @@ dcl-s logWasClosed    ind;
 dcl-ds testSrvPgm likeds(Object_t);
 // The (dummy) test case name.
 dcl-s testNm          like(ProcNm_t);
+// Path and type of the XML stream file that is created
+dcl-ds xmlStmfInfo    likeds(xmlStmfInfo_t) inz;
+
+dcl-s prtWidth int(10) inz(40);
 
 //----------------------------------------------------------------------
 //   Test Definitions
@@ -85,12 +89,14 @@ dcl-proc setUp export;
   clear logWasClosed;
   clear testSrvPgm;
   clear testNm;
+  clear xmlStmfInfo;
 
   testSrvPgm.nm = 'MY_SRVPGM';
-  setLogContext(testSrvPgm: DETAIL_ALL: OUTPUT_ALLWAYS);
+  setLogContext(testSrvPgm: DETAIL_ALL: OUTPUT_ALLWAYS: xmlStmfInfo);
+
+  reset prtWidth;
 
 end-proc;
-
 
 dcl-proc tearDown export;
   dcl-pi *n extproc(*dclcase);
@@ -343,6 +349,64 @@ dcl-proc testLogCompMsg export;
 end-proc;
 
 
+//----------------------------------------------------------------------
+// The below layout must be ensured over the time, because the spooled
+// file is parsed by the VS Code 'IBM i Testing' extension.
+// See:
+//    https://github.com/tools-400/irpgunit/issues/22
+//    https://github.com/IBM/vscode-ibmi-testing
+//----------------------------------------------------------------------
+// ....+....1....+....2....+....3....+....4....+....5....+....8....+....7....+....8
+//      XML file    : '/home/RADDATZ/this_is_an-extra_ordinary_very_long_path'
+//                    '_name_that_requires_more_than_two_lines_for_beeing_pri'
+//                    'nted_on_the_iRPGUnit_spooled_file/irpgunit-ruplugint1.'
+//                    'xml'
+//      XML type    : *TYPE1
+//----------------------------------------------------------------------
+dcl-proc testLogStmfPath export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  clear logIdx;
+  clear logLine;
+  clear logWasOpened;
+  clear logWasClosed;
+  clear testSrvPgm;
+  clear testNm;
+  clear xmlStmfInfo;
+
+  xmlStmfInfo.path = '/home/RADDATZ/this_is_an-extra_ordinary_very_long_path_name_+
+                      that_requires_more_than_two_lines_for_beeing_printed_on_the_+
+                      iRPGUnit_spooled_file/irpgunit-ruplugint1.xml';
+  xmlStmfInfo.type = '*TYPE2';
+
+  prtWidth = 80;
+
+  testSrvPgm.nm = 'MY_SRVPGM';
+  setLogContext(testSrvPgm: DETAIL_ALL: OUTPUT_ALLWAYS: xmlStmfInfo);
+
+  // Execution.
+
+  logStmfPath('XML file    : ': xmlStmfInfo.path);
+  logRawLine('XML type    : ' + xmlStmfInfo.type);
+
+  // Controls.
+
+  aEqual(MARGIN + 'XML file    : ''/home/RADDATZ/this_is_an-extra_ordinary_very_long_path'''
+        : logLine(1));
+  aEqual(MARGIN + '              ''_name_that_requires_more_than_two_lines_for_beeing_pri'''
+        : logLine(2));
+  aEqual(MARGIN + '              ''nted_on_the_iRPGUnit_spooled_file/irpgunit-ruplugint1.'''
+        : logLine(3));
+  aEqual(MARGIN + '              ''xml'''
+        : logLine(4));
+  aEqual(MARGIN + 'XML type    : *TYPE2'
+        : logLine(5));
+  iEqual(5: logIdx);
+
+end-proc;
+
+
 dcl-proc testLogRawLine export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
@@ -406,7 +470,7 @@ dcl-proc getPrtWidth export;
   dcl-pi *n int(10);
   end-pi;
 
-  return 40;
+  return prtWidth;
 
 end-proc;
 

@@ -2,7 +2,7 @@
 // ==========================================================================
 //  iRPGUnit - Logging Facilities for CMDRUN.
 // ==========================================================================
-//  Copyright (c) 2013-2019 iRPGUnit Project Team
+//  Copyright (c) 2013-2025 iRPGUnit Project Team
 //  All rights reserved. This program and the accompanying materials
 //  are made available under the terms of the Common Public License v1.0
 //  which accompanies this distribution, and is available at
@@ -63,6 +63,8 @@ dcl-ds g_srvPgm likeds(object_t);
 dcl-s g_detail char(10) inz(DETAIL_BASIC);
 // Specifies whether a report is created.
 dcl-s g_output char(10) inz(OUTPUT_ALLWAYS);
+// Path and type of the XML stream file
+dcl-ds g_xmlStmfInfo likeds(xmlStmfInfo_t) inz;
 // Library list, the test suite is executed with.
 dcl-ds g_liblData likeds(liblData_t) inz;
 // Append 'truncated' information message.
@@ -122,8 +124,8 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc logError export;
   dcl-pi *N;
-    testNm          const like(procNm_t);
-    excpMsgInfo     const likeds(msg_t);
+    testNm       like(procNm_t) const;
+    excpMsgInfo  likeds(msg_t) const;
   end-pi;
 
   dcl-s line varchar(2048);
@@ -133,7 +135,7 @@ dcl-proc logError export;
   endif;
 
   initPrinter();
-  logHeader( g_srvPgm );
+  logHeader(g_srvPgm);
 
   prtLine( getLeftMargin() + %trimr(testNm) + SEPARATOR + 'ERROR' );
 
@@ -162,8 +164,8 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc logfailure export;
   dcl-pi *N;
-    testNm          const like(procNm_t);
-    failure         const likeds(assertFailEvtLong_t);
+    testNm      like(procNm_t) const;
+    failure     likeds(assertFailEvtLong_t) const;
   end-pi;
 
   // Index.
@@ -306,7 +308,7 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc logHeader;
   dcl-pi *N extproc(*dclcase);
-    srvPgm likeds(object_t) const;
+    srvPgm      likeds(object_t) const;
   end-pi;
 
   dcl-s version         char(20);
@@ -322,15 +324,69 @@ dcl-proc logHeader;
     logRawLine('User        : ' + %trimr(sds.curruser));
     logRawLine('iRPGUnit    : ' + 'v' + %trim(version));
     logRawLine('IBM i       : ' + OS_getVersion());
+
     lineFeed();
 
     logLibraryList(g_liblData);
+
+    lineFeed();
+
+    if (g_xmlStmfInfo.path <> '');
+      logStmfPath('XML file    : ': g_xmlStmfInfo.path);
+      logRawLine('XML type    : ' + g_xmlStmfInfo.type);
+      lineFeed();
+    endif;
 
     g_hdrWasPrinted = *on;
   endif;
 
 end-proc;
 
+
+//----------------------------------------------------------------------
+// Outputs the path and type of the XML stream file produced:
+//     XML file     : '/home/raddatz/very_long_stream_file_path_exceeding_56'
+//                    '_charcaters/iRPGUnit_<TSTPGM>-2025-10-16.04.13.29.log'
+//     XML type     : *TYPE2
+//----------------------------------------------------------------------
+dcl-proc logStmfPath export;
+  dcl-pi *N;
+    label varchar(80) value;
+    path  like(stmf_t) value;
+  end-pi;
+
+  // Printing area width (in characters).
+  dcl-s prtWidth int(10);
+  dcl-s leftMargin varchar(32);
+  dcl-s line varchar(2048);
+  dcl-s isFirstLine ind;
+
+  if (path = '');    // Do not log blank lines.
+    return;
+  endif;
+
+  leftMargin = getLeftMargin();
+
+  prtWidth = getPrtWidth() - %len(leftMargin) - RIGHT_MARGIN - %len(label) - (%len(QUOTE) * 2);
+
+  line = path;
+
+  isFirstLine = *on;
+  dow (%len(line) > prtWidth);
+    prtLine( leftMargin + label + QUOTE + %subst( line : 1 : prtWidth ) + QUOTE );
+    line = %subst( line : prtWidth+1 );
+    if (isFirstLine);
+      leftMargin += spaces(%len(label));
+      label = '';
+      isFirstLine = *off;
+    endif;
+  enddo;
+
+  if (%len(%trimr(line)) > 0);
+    prtLine( leftMargin + QUOTE + line + QUOTE );
+  endif;
+
+end-proc;
 
 //----------------------------------------------------------------------
 // Append a line to the report. Splitt long lines.
@@ -371,8 +427,8 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc logSuccess export;
   dcl-pi *N;
-    testNm          const like(procNm_t);
-    assertionCnt    int(10) const;
+    testNm       like(procNm_t) const;
+    assertionCnt int(10) const;
   end-pi;
 
   if (g_detail <> DETAIL_ALL);
@@ -384,7 +440,7 @@ dcl-proc logSuccess export;
   endif;
 
   initPrinter();
-  logHeader( g_srvPgm );
+  logHeader(g_srvPgm);
 
   logRawLine( %trimr(testNm) + ' - Success' );
   logRawLine( INDENT + %char(assertionCnt) + ' assertions' );
@@ -423,7 +479,7 @@ dcl-proc logRuntimeError export;
   endif;
 
   initPrinter();
-  logHeader( g_srvPgm );
+  logHeader(g_srvPgm);
 
   logRawLine( line );
 
@@ -478,7 +534,6 @@ dcl-proc logLibraryList;
   if (libraryList.libl.numE = 0);
     line = 'Library list: *NONE';
     logRawLine( line );
-    lineFeed();
     return;
   endif;
 
@@ -514,8 +569,6 @@ dcl-proc logLibraryList;
     line = '              ';
 
   endfor;
-
-  lineFeed();
 
 end-proc;
 
@@ -557,11 +610,13 @@ dcl-proc setLogContext export;
     testPgm         const likeds(object_t);
     detail          char(10) const;
     output          char(10) const;
+    xmlStmfInfo     likeds(xmlStmfInfo_t) const;
   end-pi;
 
   g_srvPgm = testPgm;
   g_detail = detail;
   g_output = output;
+  g_xmlStmfInfo = xmlStmfInfo;
 
 end-proc;
 

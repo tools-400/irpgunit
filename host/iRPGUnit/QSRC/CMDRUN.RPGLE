@@ -2,7 +2,7 @@
 // ==========================================================================
 //  iRPGUnit - Command line runner.
 // ==========================================================================
-//  Copyright (c) 2013-2020 iRPGUnit Project Team
+//  Copyright (c) 2013-2025 iRPGUnit Project Team
 //  All rights reserved. This program and the accompanying materials
 //  are made available under the terms of the Common Public License v1.0
 //  which accompanies this distribution, and is available at
@@ -98,10 +98,10 @@ end-pr;
 dcl-ds testSuite likeds(testSuite_t);
 
 // Completion message.
-dcl-s msg varchar(256);
+dcl-s msg like(msgText_t);
 
 // Error message when writing the XML file.
-dcl-s errMsg varchar(256);
+dcl-s errMsg like(msgText_t);
 
 // Save/set/restore library list
 dcl-ds savedLibl likeds(liblData_t);
@@ -128,10 +128,16 @@ dcl-proc cmdrun;
     xmlType         like(xmlType_t) const;
   end-pi;
 
+  dcl-ds xmlStmfInfo likeds(xmlStmfInfo_t) inz;
+
   registerStartPgm(sds.pgmLib: sds.pgmname);
 
+  clear xmlStmfInfo;
+  xmlStmfInfo.path = resolvePathVariables(xmlStmf: testSuiteName);
+  xmlStmfInfo.type = xmlType;
+
   clear result;
-  setLogContext( testSuiteName : detail : output );
+  setLogContext( testSuiteName : detail : output : xmlStmfInfo);
   clearAssertCounter();
 
   // Set library list and load test suite
@@ -164,10 +170,12 @@ dcl-proc cmdrun;
   result.assertCnt = getAssertCalled();
 
   // Return result to xml file
-  if (xmlStmf <> '');
+  if (xmlStmfInfo.path <> '');
     monitor;
-      writexmlfile(resolvePathVariables(xmlStmf: testSuiteName)
-                   : testSuite: testSuiteName: result: xmlType);
+      writeXmlFile(xmlStmfInfo.path
+                   : testSuite: testSuiteName: result: xmlStmfInfo.type);
+      msg = 'Created XML file (' + xmlStmfInfo.type + '): ' + xmlStmfInfo.path;
+      sndInfoMsg( msg );
     on-error;
       errMsg = rcvMsgTxt('*ESCAPE');
     endmon;
@@ -305,7 +313,7 @@ dcl-proc handleError export;
   end-pi;
 
   result.errorCnt += 1;
-  logError( testProcNm : excpMsgInfo );
+  logError(testProcNm: excpMsgInfo);
 
 end-proc;
 
@@ -321,7 +329,7 @@ dcl-proc handleFailure export;
   end-pi;
 
   result.failureCnt += 1;
-  logfailure( testProcNm : failure );
+  logfailure(testProcNm: failure);
 
 end-proc;
 
@@ -335,7 +343,7 @@ dcl-proc handleSuccess export;
     assertionCnt    int(10) const;
   end-pi;
 
-  logSuccess( testProcNm : assertionCnt );
+  logSuccess(testProcNm: assertionCnt);
 
 end-proc;
 
@@ -345,8 +353,8 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc setupTestSuite export;
   dcl-pi *N char(1);
-    testSuite       const likeds(testSuite_t);
-    result          likeds(result_t);
+    testSuite likeds(testSuite_t) const;
+    result    likeds(result_t);
   end-pi;
 
   dcl-ds testResult likeds(testResult_t);

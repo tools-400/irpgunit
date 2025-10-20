@@ -736,7 +736,7 @@ public final class Preferences {
     }
 
     public String getDefaultXmlType() {
-        return XML_TYPE_TYPE1;
+        return XML_TYPE_TYPE2;
     }
 
     public boolean getDefaultShowWarnMessages() {

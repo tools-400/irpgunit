@@ -107,7 +107,7 @@
                         LEN(10)                              +
                         VARY(*YES *INT2)                     +
                         RSTD(*YES)                           +
-                        DFT(*TYPE1)                          +
+                        DFT(*TYPE2)                          +
                         VALUES(*TYPE1                        +
                                *TYPE2  )                     +
                         PROMPT('XML output type')

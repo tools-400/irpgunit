@@ -119,6 +119,7 @@ the name of the XML stream file on the fly:
 </colgroup>
 <tr><td valign="top">&lt;TESTPGM&gt;</td><td>Name of the test test suite.</td></tr>
 <tr><td valign="top">&lt;TESTLIB&gt;</td><td>Name of the library where the test suite is stored.</td></tr>
+<tr><td valign="top">&lt;MSECONDS&gt;</td><td>Microseconds of current time.</td></tr>
 </table>
 <p>
 <u>Function strftime()</u>
@@ -158,8 +159,14 @@ Specifies the format of the XML output stream file:<p>
 <colgroup>
  <col width="100">
 </colgroup>
-<tr><td valign="top">*TYPE1</td><td>Legacy type that is used by iRPGUnit <= v5.1.0.r. Element <code>&lt;failure&gt;</code> (call stack) is append as text.</td></tr> 
-<tr><td valign="top">*TYPE2</td><td>This type was introduced with iRPGUnit >= v6.0.0.r. Element <code>&lt;failure&gt;</code> (call stack) is append in Json format.</td></tr> 
+<tr><td valign="top">*TYPE1</td><td>Legacy format of iRPGUnit <= v5.1.0.r.<br>
+                     Element <code>&lt;failure&gt;</code> (call stack) is append as text.<br>
+                     This format only supports the Jenkins <a href="https://plugins.jenkins.io/junit/">JUnit</a> plug-in.
+</td></tr> 
+<tr><td valign="top">*TYPE2</td><td>New format of iRPGUnit >= v6.0.0.r.<br>
+                     Element <code>&lt;failure&gt;</code> (call stack) is append in Json format.<br>
+                     This format supports both, the Jenkins <a href="https://plugins.jenkins.io/junit/">JUnit</a> plug-in and the VS Code <a href="https://github.com/IBM/vscode-ibmi-testing">IBM I Testing</a> extension.
+</td></tr> 
 </table>
 <p>
 

@@ -2,7 +2,7 @@
 // ==========================================================================
 //  iRPGUnit - Plug-in Adapter.
 // ==========================================================================
-//  Copyright (c) 2013-2020 iRPGUnit Project Team
+//  Copyright (c) 2013-2025 iRPGUnit Project Team
 //  All rights reserved. This program and the accompanying materials
 //  are made available under the terms of the Common Public License v1.0
 //  which accompanies this distribution, and is available at
@@ -318,8 +318,14 @@ dcl-proc rpgunit_runTestSuite export;
   dcl-c SUCCESS 0;
   dcl-c FAILURE -1;
 
+  dcl-ds xmlStmfInfo likeds(xmlStmfInfo_t) inz;
+
+  clear xmlStmfInfo;
+  xmlStmfInfo.path = resolvePathVariables(xmlStmf: testSuiteName);
+  xmlStmfInfo.type = xmlType;
+
   clear result;
-  setLogContext( testSuiteName : detail : output );
+  setLogContext( testSuiteName : detail : output : xmlStmfInfo);
   clearAssertCounter();
 
   // Set library list and load test suite
@@ -352,10 +358,12 @@ dcl-proc rpgunit_runTestSuite export;
   result.assertCnt = getAssertCalled();
 
   // Return result to xml file
-  if (xmlStmf <> '');
+  if (xmlStmfInfo.path <> '');
     monitor;
-      writexmlfile(resolvePathVariables(xmlStmf: testSuiteName)
-                   : testSuite : testSuiteName : result: xmlType);
+      writexmlfile(xmlStmfInfo.path
+                   : testSuite : testSuiteName : result: xmlStmfInfo.type);
+      msg = 'Created XML file (' + xmlStmfInfo.type + '): ' + xmlStmfInfo.path;
+      sndInfoMsg( msg );
     on-error;
       errMsg = rcvMsgTxt('*ESCAPE');
     endmon;
