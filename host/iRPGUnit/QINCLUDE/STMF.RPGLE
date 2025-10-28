@@ -1,8 +1,8 @@
 **FREE
-/if defined(IRPGUNIT_STMF)
+/if defined(IRPGUNIT_STMF_INCLUDE)
 /eof
 /endif
-/define IRPGUNIT_STMF
+/define IRPGUNIT_STMF_INCLUDE
 // ==========================================================================
 //  iRPGunit - Stream File Utilities.
 // ==========================================================================
