@@ -32,6 +32,7 @@
 /include qinclude,PGMMSG
 /include qinclude,TEMPLATES
 /include qinclude,SRCMBR
+/include qinclude,STMF
 /include qinclude,SYSTEMAPI
 /include qinclude,TESTUTILS
 /include qinclude,TAGTST
@@ -135,7 +136,7 @@ dcl-proc crtTst export;
     srcCcsid = st_stat.ccsid;
 
     // Validate we have a source member type
-    srcType = uCase(getStmfType(localSrcStmf));
+    srcType = uCase(Stmf_getType(localSrcStmf));
     if (srcType = '');
       sndEscapeMsgAboveCtlBdy( 'Could not retrieve source type of stream file '
                              + localSrcStmf
