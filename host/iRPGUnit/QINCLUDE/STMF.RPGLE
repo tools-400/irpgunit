@@ -73,11 +73,6 @@ end-pr;
 ///
 // Returns the last modification timestamp of a stream file
 //
-// Retrieves the last modification timestamp of a stream file in the Integrated
-// File System. This information is crucial for determining file freshness,
-// implementing caching strategies, and build dependency management in test scenarios.
-// The timestamp reflects when the file's data was last changed, not when it was accessed.
-//
 // @param stmf - Stream file path to get modification timestamp for
 //               Can be relative or absolute path
 //               Path is automatically resolved before timestamp retrieval
@@ -88,6 +83,18 @@ end-pr;
 //         Reflects actual data modification time, not access time
 ///
 dcl-pr Stmf_getLastChgDate timestamp extproc('STMF_Stmf_getLastChgDate');
+  stmf like(ifsStmf_t) const;
+end-pr;
+
+///
+// Returns the ccsid of a given stream file
+//
+// @param stmf - Stream file path to get the ccsid for
+//               Can be relative or absolute path
+//
+// @return ccsid of the stream file
+///
+dcl-pr Stmf_getCcsid like(ccsid_t) extproc('STMF_Stmf_getCcsid');
   stmf like(ifsStmf_t) const;
 end-pr;
 

@@ -192,18 +192,28 @@ dcl-ds incdir_t qualified template;
 end-ds;
 
 // CRTRPGMOD TGTCCSID parameter
-dcl-s tgtCcsid_t int(10);
+dcl-s tgtCcsid_t like(ccsid_t);
 
 // CRTSQL*I CVTCCSID parameter
-dcl-s cvtCcsid_t int(10);
+dcl-s cvtCcsid_t like(ccsid_t);
 
 // CRTRPGMOD SRCSTMF parameter
 dcl-s ifsStmf_t varchar(4096);
+
+// ccsid of a source member or stream file
+dcl-s ccsid_t int(10);
 
 // Object qualified Name.
 dcl-ds object_t qualified template;
   nm    char(10) inz;
   lib   char(10) inz;
+end-ds;
+
+// Job qualified Name.
+dcl-ds qJob_t qualified template;
+  name            char(10);
+  user            char(10);
+  nbr             char(6);
 end-ds;
 
 // Spooled file qualified Name.

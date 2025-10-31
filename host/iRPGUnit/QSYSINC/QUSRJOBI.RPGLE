@@ -1,27 +1,17 @@
-**FREE
-/IF NOT DEFINED(QUSRJOBI)
-/DEFINE QUSRJOBI
+**free
+/if not defined(QUSRJOBI)
+/define QUSRJOBI
 
-/IF NOT DEFINED(qJob_t    )
-/DEFINE qJob_t
-//   Qualified job name
-dcl-ds qjob_t qualified template;
-  name            char(10);
-  user            char(10);
-  nbr             char(6);
-end-ds;
-/ENDIF
-
-  //  Retrieve Job Information (QUSRJOBI) API
-  dcl-pr qusrjobi extpgm('QUSRJOBI');
-    o_rcvVar        char(65535) options(*varsize);
-    i_rcvVarLen     int(10) const;
-    i_format        char(8) const;
-    i_qJob          char(26) const;
-    i_intJobID      char(16) const;
-    io_errCode      char(65535) options(*nopass: *varsize); // OptGrp 1
-    i_resPrfStat    char(1) const  options(*nopass);        // OptGrp 2
-  end-pr;
+//  Retrieve Job Information (QUSRJOBI) API
+dcl-pr QUSRJOBI extpgm('QUSRJOBI');
+  o_rcvVar     char(65535) options(*varsize);
+  i_rcvVarLen  int(10) const;
+  i_format     char(8) const;
+  i_qJob       char(26) const;
+  i_intJobID   char(16) const;
+  io_errCode   char(65535) options(*nopass: *varsize); // OptGrp 1
+  i_resPrfStat char(1) const  options(*nopass);        // OptGrp 2
+end-pr;
 
 //  This format returns basic performance information about a job.
 dcl-ds jobi0100_t qualified template;
@@ -53,7 +43,7 @@ dcl-ds jobi0200_t qualified template;
   status          char(10);
   type            char(1);
   subType         char(1);
-  sbsdName        char(10);
+  sbsDName        char(10);
   runPty          int(10);
   sysPoolID       int(10);
   prcTimeUsd      int(10);
@@ -168,12 +158,15 @@ dcl-ds jobi0400_t qualified template;
   jobTypeEnhncd   int(10);
   dateTimeEnd     char(13);
   reserved_03     char(1);
-  splfActn        char(10);
-  ofsAspGrpInf    int(10);
+  splFActn        char(10);
+  offsAspGrpInf   int(10);
   numEAspGrpInf   int(10);
   lenAspGrpInfE   int(10);
   timeZoneDscNm   char(10);
   jobLogOutput    char(10);
+  jobDLibASPGrp   char(10);
+  //   ASP group information entry
+  //   System library list                   Array (*) of char(10)
 end-ds;
 
 //  This format returns information about active jobs only.
@@ -198,7 +191,7 @@ dcl-ds jobi0600_t qualified template;
   cancelKey       char(1);
   prdRetCode      int(10);
   userRetCode     int(10);
-  pgmRetCode      int(10);
+  pgmretCode      int(10);
   spcEnv          char(10);
   device          char(10);
   grpPrf          char(10);
@@ -223,10 +216,10 @@ dcl-ds jobi0700_t qualified template;
   numPrdLibE      int(10);
   numCurLibE      int(10);
   numUsrLibE      int(10);
-  //   System library list                   Array (*) of CHAR(11)
-  //   Product libraries                     Array (*) of CHAR(11)
-  //   Current library                       Array (*) of CHAR(11)
-  //   User library list                     Array (*) of CHAR(11)
+  //   System library list                   Array (*) of char(11)
+  //   Product libraries                     Array (*) of char(11)
+  //   Current library                       Array (*) of char(11)
+  //   User library list                     Array (*) of char(11)
 end-ds;
 
-/ENDIF
+/endif

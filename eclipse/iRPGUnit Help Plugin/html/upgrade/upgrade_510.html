@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="../stylesheet.css">
+    <title>Upgrading From v5.1.0 to v6.0.0</title>
+</head>
+
+<body>
+<h1>Upgrading From v5.1.0 to v6.0.0</h1>
+Starting with v6.0.0, RPGUNIT generally uses the SRCSTMF parameter of the <code>CRTRPGMOD</code> and
+<code>CRTRPGCBL</code> commands to specify the source member to be compiled. This change was
+required to be able to compile source files stored in a custom ASP. The syntax for compiling a source
+file from an ASP looks like this:
+<p class="indent">
+<code class="code">SRCSTMF('/MYASP/QSYS.LIB/RPGUNITDVP.LIB/QTEMPLATE.FILE/RPG.MBR')</code></p>
+<p>
+RPG developers are not affected by this change.
+<p>
+Cobol users, on the other hand, must copy the source member <code>QINCLUDE/CBLLINKAGE</code> to a
+directory in the IFS before compiling a test suite service program so that Cobol can include the
+ member. In addition, the IFS directory must be specified at the <code>INCDIR</code> parameter:
+<p class="indent">
+<code class="code">CPYTOSTMF</code><br>
+<code class="code">&nbsp;&nbsp;FROMMBR('/QSYS.LIB/RPGUNITDVP.LIB/QINCLUDE.FILE/CBLLINKAGE.MBR')</code><br>
+<code class="code">&nbsp;&nbsp;TOSTMF('/folder_in_the_ifs/cbllinkage')</code>
+</p>
+Then the Cobol source member can be compiled as shown below:
+<p class="indent">
+<code class="code">RUCRTCBL</code><br>
+<code class="code">&nbsp;&nbsp;TSTPGM(QTEMP/CBL) SRCFILE(RPGUNITDVP/QTEMPLATE)</code><br>
+<code class="code">&nbsp;&nbsp;INCDIR('/folder_in_the_ifs')</code>
+</p>
+Another option is to set the <code>SYSLIB</code> environment variable. This eliminates the need to specify
+the <code>INCDIR</code> parameter.
+<p class="indent">
+<code class="code">ADDENVVAR ENVVAR(SYSLIB) VALUE('/folder_in_the_ifs') REPLACE(*YES)</code>
+</p>
+Multiple paths are separated with a colon.
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

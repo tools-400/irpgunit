@@ -103,7 +103,7 @@ dcl-proc crtTst export;
   dcl-s i int(10);
   dcl-s mbrtype char(10);
   dcl-ds tmpopts likeds(options_t) inz;
-  dcl-ds qsrcfile likeds(object_t) inz;
+  dcl-ds qSrcfile likeds(object_t) inz;
   dcl-s librslv char(10);
   dcl-s startcompiletime timestamp;
   dcl-ds modulescreated likeds(objectArray_t) inz;
@@ -111,12 +111,12 @@ dcl-proc crtTst export;
   dcl-s localSrcStmf like(srcStmf);
   dcl-s localSrcMbr like(srcStmf);
   dcl-ds st_stat likeds(st_stat_t) inz;
-  dcl-s srcCcsid like(cvtCcsid_t);
+  dcl-s srcCcsid like(ccsid_t);
   dcl-s rc int(10);
 
   dcl-s isError ind;
 
-  qsrcfile = srcFile;
+  qSrcfile = srcFile;
 
   if (srcMbr = '*TSTPGM');
     srcMbrRslv = testPgm.nm;
@@ -133,7 +133,7 @@ dcl-proc crtTst export;
       sndEscapeMsgAboveCtlBdy('Stream file not found: ' + localSrcStmf);
     endif;
 
-    srcCcsid = st_stat.ccsid;
+    srcCcsid = Stmf_getCcsid(localSrcStmf);
 
     // Validate we have a source member type
     srcType = uCase(Stmf_getType(localSrcStmf));
@@ -145,40 +145,40 @@ dcl-proc crtTst export;
   else;
 
     // Verify that the source file exists
-    if (not Object_exists(qsrcfile: '*FILE'));
+    if (not Object_exists(qSrcfile: '*FILE'));
       sndEscapeMsgAboveCtlBdy(
-         'Source file ' + %trim(qsrcfile.nm) + ' not found in library ' +
-                          %trim(qsrcfile.lib) + '.' );
+         'Source file ' + %trim(qSrcfile.nm) + ' not found in library '+
+                          %trim(qSrcfile.lib) + '.' );
     endif;
 
     // Resolve source file library special values
-    if (%subst(qsrcfile.lib: 1: 1) = '*');
-      librslv = Object_resolveLibrary(qsrcfile: '*FILE');
+    if (%subst(qSrcfile.lib: 1: 1) = '*');
+      librslv = Object_resolveLibrary(qSrcfile: '*FILE');
     else;
-      if (not Object_exists(qsrcfile: '*FILE'));
+      if (not Object_exists(qSrcfile: '*FILE'));
         librslv = '';
       else;
-        librslv = qsrcfile.lib;
+        librslv = qSrcfile.lib;
       endif;
     endif;
 
     if (librslv = '');
       sndEscapeMsgAboveCtlBdy(
-        'Library ' + %trim(qsrcfile.lib) + ' not found.' );
+        'Library ' + %trim(qSrcfile.lib) + ' not found.' );
     endif;
 
-    qsrcfile.lib = librslv;
+    qSrcfile.lib = librslv;
 
     // Verify that the source member exists
-    if (not Object_exists(qsrcfile: '*FILE': srcMbrRslv));
+    if (not Object_exists(qSrcfile: '*FILE': srcMbrRslv));
       sndEscapeMsgAboveCtlBdy(
          'Member ' + %trim(srcMbrRslv) + ' not found in source file ' +
-                     %trim(qsrcfile.lib) + '/' + %trim(qsrcfile.nm) + '.' );
+                     %trim(qSrcfile.lib) + '/' + %trim(qSrcfile.nm) + '.' );
     endif;
 
     localSrcMbr = '/QSYS.LIB/'
-                   + %trim(qsrcfile.lib) + '.LIB/'
-                   + %trim(qsrcfile.nm) + '.FILE/'
+                   + %trim(qSrcfile.lib) + '.LIB/'
+                   + %trim(qSrcfile.nm) + '.FILE/'
                    + %trim(srcMbrRslv) + '.MBR';
     rc = stat(localSrcMbr: st_stat); // -1 = error, not found
     if (rc = -1);
@@ -186,11 +186,11 @@ dcl-proc crtTst export;
          'Source member ' + %trim(localSrcMbr) + ' not found.');
     endif;
 
-    srcCcsid = st_stat.ccsid;
+    srcCcsid = SrcMbr_getCcsid(qSrcfile);
 
     // Ensure we have a valid EVFEVENT file member name for RDi
     if (srcMbrRslv = '*TSTPGM');
-      mbrtype = getMemberType(qsrcfile.nm: qsrcfile.lib: testPgm);
+      mbrtype = getMemberType(qSrcfile.nm: qSrcfile.lib: testPgm);
       if (mbrtype = MBR_RPGLE);
         tmpopts = coption;
       else;
@@ -229,7 +229,7 @@ dcl-proc crtTst export;
       if (isStmf(localSrcStmf));
         textRslv = '';
       else;
-        textRslv = SrcMbr_getDescription(qsrcfile: srcMbrRslv);
+        textRslv = SrcMbr_getDescription(qSrcfile: srcMbrRslv);
       endif;
     when text = '*BLANK';
       textRslv = '';
@@ -247,7 +247,7 @@ dcl-proc crtTst export;
     when (srcType = MBR_RPGLE or srcType = MBR_SQLRPGLE);
       addModule( modules : testPgm : *on); // Add to position #1.
       // QDEVTOOLS/QLNCMSG RNS9305 - Module &1 placed in library &2.
-      crtRpgMod(testPgm: qsrcfile: srcMbrRslv: localSrcStmf: coption: dbgview:
+      crtRpgMod(testPgm: qSrcfile: srcMbrRslv: localSrcStmf: coption: dbgview:
                  pRpgPpOpt: poption: compileopt: targetRls: define: incDir: tgtCcsid: srcCcsid);
       modulescreated = getCreatedModulesFromJobLog(
                          MOD_CRT_RPG : startcompiletime );
@@ -255,7 +255,7 @@ dcl-proc crtTst export;
     when (srcType = MBR_CBLLE or srcType = MBR_SQLCBLLE);
       // There is no test case module to add for Cobol ==> See: *PGMID
       // QDEVTOOLS/QLNCMSG LNC0899 - Module &1 placed in library &2.
-      crtCblMod(testPgm: qsrcfile: srcMbrRslv: localSrcStmf: coption: dbgview:
+      crtCblMod(testPgm: qSrcfile: srcMbrRslv: localSrcStmf: coption: dbgview:
                  poption: compileopt: targetRls: define: incDir: tgtCcsid: srcCcsid);
       modulescreated = getCreatedModulesFromJobLog(
                          MOD_CRT_CBL : startcompiletime );
@@ -269,7 +269,7 @@ dcl-proc crtTst export;
                 testPgm : bndSrvPgm : bndDir : modules : bOption :
                 actGrp : textRslv : targetRls);
 
-      tagTstSrvPgm(srvPgm : qsrcfile : srcMbrRslv: localSrcStmf);
+      tagTstSrvPgm(srvPgm : qSrcfile : srcMbrRslv: localSrcStmf);
       // sndCompMsg( 'Updated (tagged) test suite ' + %trim(srvPgm.nm) + '.' );
 
     sndCompMsg( 'Test program ' + %trim(srvPgm.nm)

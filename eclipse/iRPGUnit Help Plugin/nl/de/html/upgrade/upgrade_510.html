@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="../stylesheet.css">
+    <title>Upgrading From v5.1.0 to v6.0.0</title>
+</head>
+
+<body>
+<h1>Aktualisieren von v5.1.0 nach v6.0.0</h1>
+Beginnend mit v6.0.0 verwendet RPGUNIT zur Angabe der zu kompilierenden Quellenteildatei grundsätzlich
+den Parameter <code>SRCSTMF</code> der Befehle <code>CRTRPGMOD</code> und <code>CRTRPGCBL</code>. Diese
+Änderung war erforderlich, um Quellendateien, welche in einem benutzerdefinierten ASP gespeichert sind,
+kompilieren zu können. Die Syntax zur Kompilierung einen Quellendatei aus einem ASP sieht wie folgt aus:
+<p class="indent">
+<code class="code">SRCSTMF('/MYASP/QSYS.LIB/RPGUNITDVP.LIB/QTEMPLATE.FILE/RPG.MBR')</code></p>
+<p>
+RPG Entwickler sind von dieser Änderung nicht betroffen.
+<p>
+Cobol Benutzer hingegen müssen die Quellenteildatei <code>QINCLUDE/CBLLINKAGE</code> vor der Kompilierung
+eines Test Serviceprogramms in ein Verzeichnis im IFS kopieren, damit Cobol die Teildatei einbinden kann.
+Zudem muss das IFS Verzeichnis am Parameter <code>INCDIR</code> angegeben werden:
+<p class="indent">
+<code class="code">CPYTOSTMF</code><br>
+<code class="code">&nbsp;&nbsp;FROMMBR('/QSYS.LIB/RPGUNITDVP.LIB/QINCLUDE.FILE/CBLLINKAGE.MBR')</code><br>
+<code class="code">&nbsp;&nbsp;TOSTMF('/folder_in_the_ifs/cbllinkage')</code>
+</p>
+Die Cobol Quellenteildatei kann dann wie folgt kompiliert werden:
+<p class="indent">
+<code class="code">RUCRTCBL</code><br>
+<code class="code">&nbsp;&nbsp;TSTPGM(QTEMP/CBL) SRCFILE(RPGUNITDVP/QTEMPLATE)</code><br>
+<code class="code">&nbsp;&nbsp;INCDIR('/folder_in_the_ifs')</code>
+</p>
+Eine weitere Möglichkeit ist das Setzen der Umgebungsvariablen <code>SYSLIB</code>. Damit muss der Parameter
+<code>INCDIR</code> nicht mehr angegeben werden:
+<p class="indent">
+<code class="code">ADDENVVAR ENVVAR(SYSLIB) VALUE('/folder_in_the_ifs') REPLACE(*YES)</code>
+</p>
+Mehrere Pfade werden durch einen Doppelpunkt getrennt.
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
