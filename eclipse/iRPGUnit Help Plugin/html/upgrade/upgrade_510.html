@@ -9,35 +9,19 @@
 
 <body>
 <h1>Upgrading From v5.1.0 to v6.0.0</h1>
-Starting with v6.0.0, RPGUNIT generally uses the SRCSTMF parameter of the <code>CRTRPGMOD</code> and
-<code>CRTRPGCBL</code> commands to specify the source member to be compiled. This change was
-required to be able to compile source files stored in a custom ASP. The syntax for compiling a source
-file from an ASP looks like this:
-<p class="indent">
-<code class="code">SRCSTMF('/MYASP/QSYS.LIB/RPGUNITDVP.LIB/QTEMPLATE.FILE/RPG.MBR')</code></p>
+Starting with v6.0.0, the XML output type defaults to <code>*TYPE2</code>. The old format
+is produced, if parameter <code>XMLTYPE</code> is set to <code>*TYPE1</code>.
 <p>
-RPG developers are not affected by this change.
+This change was required, because RPGUNIT shows the <b>expected</b> and <b>actual</b> values
+of a failed test case, now.
 <p>
-Cobol users, on the other hand, must copy the source member <code>QINCLUDE/CBLLINKAGE</code> to a
-directory in the IFS before compiling a test suite service program so that Cobol can include the
- member. In addition, the IFS directory must be specified at the <code>INCDIR</code> parameter:
-<p class="indent">
-<code class="code">CPYTOSTMF</code><br>
-<code class="code">&nbsp;&nbsp;FROMMBR('/QSYS.LIB/RPGUNITDVP.LIB/QINCLUDE.FILE/CBLLINKAGE.MBR')</code><br>
-<code class="code">&nbsp;&nbsp;TOSTMF('/folder_in_the_ifs/cbllinkage')</code>
-</p>
-Then the Cobol source member can be compiled as shown below:
-<p class="indent">
-<code class="code">RUCRTCBL</code><br>
-<code class="code">&nbsp;&nbsp;TSTPGM(QTEMP/CBL) SRCFILE(RPGUNITDVP/QTEMPLATE)</code><br>
-<code class="code">&nbsp;&nbsp;INCDIR('/folder_in_the_ifs')</code>
-</p>
-Another option is to set the <code>SYSLIB</code> environment variable. This eliminates the need to specify
-the <code>INCDIR</code> parameter.
-<p class="indent">
-<code class="code">ADDENVVAR ENVVAR(SYSLIB) VALUE('/folder_in_the_ifs') REPLACE(*YES)</code>
-</p>
-Multiple paths are separated with a colon.
+<h2>XML Output Type 1<h2>
+<p>
+<iframe class="indent" src="../appendix/assets/output_type1.txt" width="90%" height="30%" name="iRPGUnit-Popup" ></iframe>
+<p>
+<h2>XML Output Type 2<h2>
+<p>
+<iframe class="indent" src="../appendix/assets/output_type2.txt" width="90%" height="30%" name="iRPGUnit-Popup" ></iframe>
 <p>
 <iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
 </body>

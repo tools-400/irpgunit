@@ -242,4 +242,4 @@ dcl-proc testOK export;
 assertEqual('': sds.excData: 'There should be no exception data in SDS');
 
 end-proc;
- 
+

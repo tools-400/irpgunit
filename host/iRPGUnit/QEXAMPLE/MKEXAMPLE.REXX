@@ -85,14 +85,17 @@
  /* -------------------------------------------- */
  /*  Let's do it!                                */
  /* -------------------------------------------- */
- compileTestSuite(prdLib, 'RUPLUGINT1', dbgView)
- compileTestSuite(prdLib, 'RUPLUGINT2', dbgView)
- compileTestSuite(prdLib, 'RUPLUGINT3', dbgView)
- compileTestSuite(prdLib, 'RUPLUGINT4', dbgView)
- compileTestSuite(prdLib, 'RUPLUGINT5', dbgView)
- compileTestSuite(prdLib, 'RUPLUGINT6', dbgView)
- compileTestSuite(prdLib, 'RUPLUGINT7', dbgView)
- compileTestSuite(prdLib, 'RUPLUGINT8', dbgView)
+ compileCblTestSuite(prdLib, 'CBLEXAMPLE', dbgView)
+ compileRpgTestSuite(prdLib, 'RPGEXAMPLE', dbgView)
+ compileRpgTestSuite(prdLib, 'RUPLUGINT1', dbgView)
+ compileRpgTestSuite(prdLib, 'RUPLUGINT2', dbgView)
+ compileRpgTestSuite(prdLib, 'RUPLUGINT3', dbgView)
+ compileRpgTestSuite(prdLib, 'RUPLUGINT4', dbgView)
+ compileRpgTestSuite(prdLib, 'RUPLUGINT5', dbgView)
+ compileRpgTestSuite(prdLib, 'RUPLUGINT6', dbgView)
+ compileRpgTestSuite(prdLib, 'RUPLUGINT7', dbgView)
+ compileRpgTestSuite(prdLib, 'RUPLUGINT8', dbgView)
+ compileRpgTestSuite(prdLib, 'RUPLUGINT9', dbgView)
 
  "SNDPGMMSG ",
    "MSGID(CPF9897) ",
@@ -104,14 +107,26 @@
  EXIT
 
  /* ------------------------------------------------------------- */
- /* Compile iRPGUnit test suite.                                  */
+ /* Compile iRPGUnit RPG test suite.                              */
  /* ------------------------------------------------------------- */
- compileTestSuite:
+ compileRpgTestSuite:
    PARSE ARG _prdLib, _tstPgm, _dbgView
 
    "RUCRTRPG TSTPGM("_prdLib"/"_tstPgm") ",
      "SRCFILE("prdLib"/QEXAMPLE) SRCMBR("_tstPgm") ",
      "COPTION(*SRCSTMT *EVENTF) DBGVIEW("_dbgView")"
+
+   return ''
+
+ /* ------------------------------------------------------------- */
+ /* Compile iRPGUnit Cobol test suite.                            */
+ /* ------------------------------------------------------------- */
+ compileCblTestSuite:
+   PARSE ARG _prdLib, _tstPgm, _dbgView
+
+   "RUCRTCBL TSTPGM("_prdLib"/"_tstPgm") ",
+     "SRCFILE("prdLib"/QEXAMPLE) SRCMBR("_tstPgm") ",
+     "COPTION(*NOMONOPRC *EVENTF) DBGVIEW("_dbgView")"
 
    return ''
 
