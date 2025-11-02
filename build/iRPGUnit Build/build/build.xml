@@ -67,7 +67,7 @@
  *     1.3 On the PC change version number in COPYRIGHT.RPGLE.
  *     1.4 On the PC push changes of project's i Project to the AS/400.
  *     1.5 On the PC update the project history document, e.g. 'iSphere.doc'
- *         and also save it as a PDF file, e.g. 'iShere for RDi 9.5.1.3+.pdf'.
+ *         and also save it as a PDF file, e.g. 'iShere for RDi 9.6.0.13+.pdf'.
  *     1.6 Refresh the project with the history document, e.g. 'iSphere Core Plugin'.
  *     1.7 On the PC increment version number of property 'build.version'
  *         in file 'build.properties'.
@@ -261,7 +261,7 @@
     </if>
 
     <!-- Set build target dependant parameters -->
-    <property name="target.ide.product.name.short.rdi" value="RDi 9.5.1.3+" />
+    <property name="target.ide.product.name.short.rdi" value="RDi 9.6.0.13+" />
     <property name="target.ide.product.name.short.wdsci" value="WDSCi 7.0" />
     <property name="target.ide.product.name.long.rdi" value="IBM Rational Developer for i" />
     <property name="target.ide.product.name.long.wdsci" value="Websphere Development Studio Client for iSeries" />
@@ -428,7 +428,7 @@
     <target name="createGitHubFiles" depends="updatePdfFile, prepareUpdateSite, createZipFile, createUpdateSite, createUpdateSiteHtmlPages, createHelpHtmlPages, createHomePageHtml, createFilesHtml, refreshProjects" description="Step 3">
 
         <echo>GitHub files have been created in: ${build.upload.dir}</echo>
-        
+
     </target>
 
     <!-- =============================================================
@@ -1184,18 +1184,36 @@
 
         <eclipse.refreshLocal resource="${build.project.core}" depth="infinite" />
 
-        <uptodate property="pdf.isUpToDate" srcfile="${project.doc}" targetfile="${project.pdf}" />
+        <condition property="is.project.doc">
+            <and>
+                <isset property="build.project.doc"/>
+                <not>
+                    <equals arg1="${build.project.doc}" arg2=""/>
+                </not>
+            </and>
+        </condition>
+
         <if>
-            <equals arg1="${pdf.isUpToDate}" arg2="true" />
+            <equals arg1="${is.project.doc}" arg2="true" />
             <then>
-                <property name="pdf.needs.update" value="false"/>
+                <uptodate property="pdf.isUpToDate" srcfile="${project.doc}" targetfile="${project.pdf}" />
+                <if>
+                    <equals arg1="${pdf.isUpToDate}" arg2="true" />
+                    <then>
+                        <property name="pdf.needs.update" value="false"/>
+                        <echo>PDF is up to date. No update required.</echo>
+                    </then>
+                    <else>
+                        <property name="pdf.needs.update" value="true"/>
+                        <echo>PDF must be updated.</echo>
+                    </else>
+                </if>
             </then>
             <else>
-                <property name="pdf.needs.update" value="true"/>
+                <property name="pdf.needs.update" value="false"/>
+                <echo>No project documentation file specified. Updating the PDF file is skipped.</echo>
             </else>
         </if>
-
-        <echo>PDF must be updated: ${pdf.needs.update}</echo>
 
     </target>
 

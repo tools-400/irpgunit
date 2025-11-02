@@ -17,7 +17,7 @@ Building the Project
 1.3 Change the version number in COPYRIGHT.RPGLE.
 1.4 Push all changes of the i Project to your IBM i.
 1.5 Update document 'iRPGUnit.doc' and also save it as
-    'iRPGUnit for RDi 9.5.1.3+.pdf'.
+    'iRPGUnit for RDi 9.6.0.13+.pdf'.
 1.6 Refresh project 'iRPGUnit Core Plugin'.
 1.7 Increment version number of property 'build.version' in
     file 'build.properties'.

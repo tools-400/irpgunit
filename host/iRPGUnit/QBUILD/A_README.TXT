@@ -85,6 +85,7 @@ b) Optionally run the RPGUnit self tests:
 
 Version 6.0.0 - 03.10.2025
 --------------------------
+ * Compiled plug-in for RDi 9.6.0.13.
  * Added keyword options(*varsize) to procedure aEqual().
    Recompile your test suites to take advantage from this change.
    Without recompiling the test suites, the lengths of 'expected'
