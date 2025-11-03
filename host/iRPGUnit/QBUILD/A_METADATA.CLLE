@@ -821,6 +821,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QDBRTVFD) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Retrieve Database File Description (QDBRTVFD) API.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
                           MBR(QGYCLST) +
                           SRCTYPE(RPGLE) +
                           TEXT('Close list.')
@@ -949,7 +955,7 @@
              CHGPFM     FILE(&TARGETLIB/QSYSINC) +
                           MBR(QUSRJOBI) +
                           SRCTYPE(RPGLE) +
-                          TEXT('Retrieve Job Information (QUSRJOBI) API.')
+                          TEXT('Retrieve Job Information (QUSRJOBI) API')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSYSINC) +

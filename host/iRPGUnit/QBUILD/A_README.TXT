@@ -85,6 +85,7 @@ b) Optionally run the RPGUnit self tests:
 
 Version 6.0.0 - 03.10.2025
 --------------------------
+ * Compiled plug-in for RDi 9.6.0.13.
  * Added keyword options(*varsize) to procedure aEqual().
    Recompile your test suites to take advantage from this change.
    Without recompiling the test suites, the lengths of 'expected'
@@ -98,6 +99,8 @@ Version 6.0.0 - 03.10.2025
     - Type of the XML output file of iRPGUnit >= v6.0.0.r. This type
       assigns a Json object to XML element '<failue>'.
  * Add 'expected' and 'actual' values.
+ * Fixed compiling objects from a source file stored in an ASP group.
+ * Dropped source physical file RPGUNIT1 with member TESTCASE.
 
 --------------------------
 

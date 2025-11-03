@@ -144,6 +144,33 @@ dcl-proc Stmf_getLastChgDate export;
 end-proc;
 
 //----------------------------------------------------------------------
+//  Returns the ccsid of a given stream file.
+//----------------------------------------------------------------------
+dcl-proc Stmf_getCcsid export;
+  dcl-pi *n like(ccsid_t);
+    stmf   like(ifsStmf_t) const;
+  end-pi;
+
+  dcl-s ccsid like(ccsid_t);
+
+  dcl-s localSrcStmf like(ifsStmf_t);
+  dcl-ds st_stat likeds(st_stat_t) inz;
+  dcl-s rc int(10);
+
+  localSrcStmf = Stmf_resolvePath(stmf);
+
+  rc = stat(Stmf_resolvePath(localSrcStmf): st_stat);
+  if (rc = -1);
+    sndEscapeMsgAboveCtlBdy('Stream file not found: ' + stmf);
+  else;
+    ccsid = st_stat.ccsid;
+  endif;
+
+  return ccsid;
+
+end-proc;
+
+//----------------------------------------------------------------------
 //  Returns the type (file extension) of the stream file.
 //----------------------------------------------------------------------
 dcl-proc Stmf_getType export;

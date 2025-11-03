@@ -47,23 +47,19 @@ dcl-proc getLibl export;
   dcl-s i               int(10);
   dcl-ds libldata likeds(liblData_t);
   dcl-ds apiinfo qualified;
-    bytRet          int(10);
-    bytAvl          int(10);
+    bytRet  int(10);
+    bytAvl  int(10);
   end-ds;
   dcl-ds jobi0700 likeds(jobi0700_t) based(pjobi0700);
-  dcl-s lible           char(11) based(plible);
-  dcl-ds percolateErrors
-         likeds(percolateErrors_t)
-  inz(*likeds);
+  dcl-s liblE char(11) based(plible);
+  dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
 
-  qusrjobi(
-        apiinfo: %size(apiinfo): 'JOBI0700': '*': '': percolateErrors);
+  qusrjobi(apiinfo: %size(apiinfo): 'JOBI0700': '*': '': percolateErrors);
 
 
   pjobi0700 = %alloc(apiinfo.bytAvl);
 
-  qusrjobi(
-        jobi0700: apiinfo.bytAvl: 'JOBI0700': '*': '': percolateErrors);
+  qusrjobi(jobi0700: apiinfo.bytAvl: 'JOBI0700': '*': '': percolateErrors);
 
   clear libldata;
   libldata.libl.nume = jobi0700.numUsrLibE;
@@ -73,7 +69,7 @@ dcl-proc getLibl export;
                            + jobi0700.numPrdLibE * 11
                            + jobi0700.numCurLibE * 11;
   for i = 1 to libldata.libl.nume;
-    libldata.libl.lib(i) = lible;
+    libldata.libl.lib(i) = liblE;
     plible = plible + 11;
   endfor;
 
@@ -81,7 +77,7 @@ dcl-proc getLibl export;
     plible = %addr(jobi0700) + %size(jobi0700)
                              + jobi0700.numSysLibE * 11
                              + jobi0700.numPrdLibE * 11;
-    libldata.curlib = lible;
+    libldata.curlib = liblE;
   else;
     libldata.curlib = '*CRTDFT';
   endif;

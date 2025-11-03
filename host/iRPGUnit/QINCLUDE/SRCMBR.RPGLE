@@ -93,6 +93,19 @@ dcl-pr SrcMbr_getLastChgDate timestamp extproc('SRCMBR_SrcMbr_getLastChgDate');
 end-pr;
 
 ///
+// Get the ccsid of a given source file
+//
+// @param qsrcfile - The source file containing the member
+//                   Structure: library/file format identifying the source file
+//                   Must be a valid source physical file
+//
+// @return ccsid of source file
+///
+dcl-pr SrcMbr_getCcsid like(ccsid_t) extproc('SRCMBR_SrcMbr_getCcsid');
+  qsrcfile likeds(object_t) const;
+end-pr;
+
+///
 // Get the description text of a source member
 //
 // Retrieves the descriptive text associated with a source member.

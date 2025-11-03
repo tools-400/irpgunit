@@ -102,6 +102,9 @@
  "CMPMOD MODULE("prdLib"/JOBLOG   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") ",
    "TGTRLS("tgtRls") DEFINE("define")"
 
+ "CMPMOD MODULE("prdLib"/OBJECT   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") ",
+   "TGTRLS("tgtRls") DEFINE("define")"
+
  "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") ",
    "TGTRLS("tgtRls") DEFINE("define")"
 
@@ -127,6 +130,7 @@
               "MODULE("prdLib"/ASSERT     ",
                        prdLib"/ASSERTV2   ",
                        prdLib"/JOBLOG     ",
+                       prdLib"/OBJECT     ",
                        prdLib"/PGMMSG     ",
                        prdLib"/VERSION    ",
                        prdLib"/TESTUTILS  ",

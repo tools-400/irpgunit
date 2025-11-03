@@ -1,5 +1,6 @@
       *=====================================================================*
-      *  Empty Unit Test Case (Cobol).                                      *
+      *  iRPGUnit Help Text Cobol Example.                                  *
+      *  FAILURE. 4 test cases, 3 assertions, 3 failures, 0 error.          *
       *=====================================================================*
       *  Command to create the service program:                             *
       *  RUCRTCBL TSTPGM(RPGUNIT/CBL) SRCFILE(RPGUNIT/QTEMPLATE)            *

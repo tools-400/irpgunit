@@ -561,6 +561,9 @@
                           TOFILE(&LIB/&QSYSINC) FROMMBR(QCMDEXC) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QDBRTVFD) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
                           TOFILE(&LIB/&QSYSINC) FROMMBR(QGYCLST) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
@@ -886,11 +889,6 @@
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(TESTUTILST) +
-                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
-
-             /* TODO: Remove this line at 31.12.2019 */
-             CPYF       FROMFILE(&DEVLIB/&RPGUNIT1) +
-                          TOFILE(&LIB/&RPGUNIT1) FROMMBR(TESTCASE) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
 
              /* ---------------------------------------------------- */

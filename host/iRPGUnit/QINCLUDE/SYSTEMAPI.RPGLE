@@ -20,6 +20,7 @@
 /include qsysinc,QCAPCMD
 /include qsysinc,QCLRPGMI
 /include qsysinc,QCMDEXC
+/include qsysinc,QDBRTVFD
 /include qsysinc,QGYCLST
 /include qsysinc,QGYGTLE
 /include qsysinc,QGYOLJBL

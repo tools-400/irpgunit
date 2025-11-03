@@ -26,6 +26,8 @@ ctl-opt nomain;
 //   IMPORTS
 //----------------------------------------------------------------------
 /include qinclude,SRCMBR
+/include qinclude,OBJECT
+/include qinclude,PGMMSG
 /include qinclude,STMF
 /include qinclude,TEMPLATES
 /include qinclude,USRSPC
@@ -210,6 +212,52 @@ dcl-proc SrcMbr_getLastChgDate export;
                 %time(apiDateTime.time: *hms0);
 
   return lastChgDate;
+
+end-proc;
+
+//----------------------------------------------------------------------
+//  Returns the ccsid of a given source file.
+//----------------------------------------------------------------------
+dcl-proc SrcMbr_getCcsid export;
+  dcl-pi *N like(ccsid_t);
+    qSrcFile   likeds(object_t ) const;
+  end-pi;
+
+  dcl-ds Qdb_Qddfmt likeds(Qdb_Qddfmt_t) inz;
+  dcl-ds Qdb_Qdbfh likeds(Qdb_Qdbfh_t) inz;
+  dcl-ds qFileRet likeds(object_t) inz;
+  dcl-ds errcode likeds(percolateErrors_t) inz(*likeds);
+  dcl-s ccsid like(ccsid_t);
+
+  dcl-s isSrcFile ind;
+  dcl-s isCommonCcsid ind;
+
+  dcl-c RCDFMT_FIRST '*FIRST';
+  dcl-c IGNORE_OVERRIDE '0';
+  dcl-c LOCAL_FILE '*LCL';
+  dcl-c EXTERNAL_FORMAT '*EXT';
+
+  qdbrtvfd(Qdb_Qdbfh: %size(Qdb_Qdbfh): qFileRet: 'FILD0100': qSrcFile: RCDFMT_FIRST
+           : IGNORE_OVERRIDE: LOCAL_FILE: EXTERNAL_FORMAT: errCode);
+
+  isSrcFile =  %bitand(Qdb_Qdbfh.Qdbfhflg: QDBFHFSU) = QDBFHFSU;
+  if (not isSrcFile);
+    sndEscapeMsgToCaller('QDBRTVFD: File is not a source file: ' + Object_qName(qFileRet));
+  endif;
+
+  qdbrtvfd(Qdb_Qddfmt: %size(Qdb_Qddfmt): qFileRet: 'FILD0200': qSrcFile: RCDFMT_FIRST
+           : IGNORE_OVERRIDE: LOCAL_FILE: EXTERNAL_FORMAT: errCode);
+
+  // Actually the following condition must always be met, because 'SRCDTA'
+  // is the only TEXT field of source files.
+  isCommonCcsid = %bitand(Qdb_Qddfmt.Qddflgs: QDDFRSID) = QDDFRSID;
+  if (not isCommonCcsid);
+    sndEscapeMsgToCaller('QDBRTVFD: File has different CCSIDs: ' + Object_qName(qSrcFile));
+  endif;
+
+  ccsid = Qdb_Qddfmt.Qddfrcid;
+
+  return ccsid;
 
 end-proc;
 

@@ -1,6 +1,7 @@
 **free
 //=====================================================================
-//  Empty Unit Test Case. Prints a protocol of the execution flow.
+//  iRPGUnit Help Text RPG Example.
+//  FAILURE. 2 test cases, 2 assertions, 1 failure, 0 error.
 //=====================================================================
 //  Command to create the service program:
 //  RUCRTRPG TSTPGM(RPGUNIT/RPG) SRCFILE(RPGUNIT/QTEMPLATE)
@@ -215,13 +216,13 @@ end-proc;
 // ============================================================
 //  RPGUnit test case.
 // ============================================================
-dcl-proc testWhatever_1 export;
+dcl-proc testFail export;
   dcl-pi *n extproc(*dclcase) end-pi;
 
-  print('Executing:       * testWhatever_1()');
+  print('Executing:       * testFail()');
 
 // Run
-assert(sds.pgmName = 'TEMPLATE': 'Name of the test suite should be ''TEMPLATE''');
+assertEqual('TEMPLATE': sds.pgmName: 'Name of the test suite should be ''TEMPLATE''');
 
 // Place your assertions here.
 
@@ -230,15 +231,15 @@ end-proc;
 // ============================================================
 //  RPGUnit test case.
 // ============================================================
-dcl-proc testWhatever_2 export;
+dcl-proc testOK export;
   dcl-pi *n extproc(*dclcase) end-pi;
 
-  print('Executing:       * testWhatever_2()');
+  print('Executing:       * testOK()');
 
 // Run
 
 // Place your assertions here.
-assert(sds.excData = '': 'There should be no exception data in SDS');
+assertEqual('': sds.excData: 'There should be no exception data in SDS');
 
 end-proc;
  
