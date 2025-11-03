@@ -891,11 +891,6 @@
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(TESTUTILST) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
 
-             /* TODO: Remove this line at 31.12.2019 */
-             CPYF       FROMFILE(&DEVLIB/&RPGUNIT1) +
-                          TOFILE(&LIB/&RPGUNIT1) FROMMBR(TESTCASE) +
-                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
-
              /* ---------------------------------------------------- */
              /*  Copy source members: RPGUNIT1 (backward compatib.)  */
              /* ---------------------------------------------------- */

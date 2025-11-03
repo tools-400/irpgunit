@@ -100,6 +100,7 @@ Version 6.0.0 - 03.10.2025
       assigns a Json object to XML element '<failue>'.
  * Add 'expected' and 'actual' values.
  * Fixed compiling objects from a source file stored in an ASP group.
+ * Dropped source physical file RPGUNIT1 with member TESTCASE.
 
 --------------------------
 
