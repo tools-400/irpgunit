@@ -65,7 +65,7 @@ Useful to check that there is no dependencies between test procedures.
 Report detail (DETAIL) - Help
 :xh3.Report detail (DETAIL)
 :p.
-Specifies how detailed the test run report should be.
+Specifies how detailed the printed test run report should be.
 :parml.
 :pt.:pk def.*BASIC:epk.
 :pd.Full detail for failures and errors, no detail for successes.
