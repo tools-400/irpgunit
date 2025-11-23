@@ -37,7 +37,6 @@ ctl-opt main(cmdRun);
 /include qinclude,CALLPRC
 /include qinclude,CMDRUNLOG
 /include qinclude,CMDRUNSRV
-/include qinclude,CMDRUNV
 /include qinclude,EXTTST
 /include qinclude,TEMPLATES
 /include qinclude,OBJECT
@@ -90,132 +89,40 @@ dcl-pr status;
   testProcNm      const like(procNm_t);
 end-pr;
 
-//----------------------------------------------------------------------
-//   Global Variables
-//----------------------------------------------------------------------
-
-// Test case suite.
-dcl-ds testSuite likeds(testSuite_t);
-
-// Completion message.
-dcl-s msg like(msgText_t);
-
-// Error message when writing the XML file.
-dcl-s errMsg like(msgText_t);
-
-// Save/set/restore library list
-dcl-ds savedLibl likeds(liblData_t);
-dcl-s mustRestoreLibl ind inz(*off);
-
-// Over all test result.
-dcl-ds result likeds(result_t) inz;
-
 //---------------------------------------------------------------------
 //   Main Procedure
 //---------------------------------------------------------------------
 
 dcl-proc cmdrun;
   dcl-pi *n;
-    testSuiteName   likeds(object_t) const;
-    testProcs       likeds(procNms_t) const;
-    order           like(order_t) const;
-    detail          like(detail_t) const;
-    output          like(output_t) const;
-    libl            likeds(libl_t) const;
-    jobD            likeds(object_t) const;
-    rclRsc          like(rclrsc_t) const;
-    xmlStmf         like(stmf_t) const;
-    xmlType         like(xmlType_t) const;
+    gi_qTestSuite likeds(object_t) const;
+    gi_testProcs  likeds(procNms_t) const;
+    gi_order      like(order_t) const;
+    gi_detail     like(detail_t) const;
+    gi_output     like(output_t) const;
+    gi_libL       likeds(libl_t) const;
+    gi_qJobD      likeds(object_t) const;
+    gi_rclRsc     like(rclrsc_t) const;
+    gi_xmlStmf    like(stmf_t) const;
+    gi_xmlType    like(xmlType_t) const;
   end-pi;
 
-  dcl-ds xmlStmfInfo likeds(xmlStmfInfo_t) inz;
+  dcl-s isSuccess ind;
+  dcl-s msg varchar(256);
 
   registerStartPgm(sds.pgmLib: sds.pgmname);
 
-  clear xmlStmfInfo;
-  xmlStmfInfo.path = resolvePathVariables(xmlStmf: testSuiteName);
-  xmlStmfInfo.type = xmlType;
+  isSuccess = runTestSuite(*omit: gi_qTestSuite: gi_testProcs:
+                           gi_order: gi_detail: gi_output: gi_libL:
+                           gi_qJobD: gi_rclRsc: gi_xmlStmf: gi_xmlType: msg);
 
-  clear result;
-  setLogContext( testSuiteName : detail : output : xmlStmfInfo);
-  clearAssertCounter();
-
-  // Set library list and load test suite
-  monitor;
-    savedLibl = getLibl();
-    mustRestoreLibl = setTestSuiteLibl(libl: jobD: testSuiteName.lib);
-    updateLogContext(getLibl());
-    testSuite = loadTestSuite( testSuiteName );
-  on-error;
-    checkAndRestoreLibl(mustRestoreLibl: savedLibl);
-    raiseRUError( 'Error while loading test suite '
-                + fmtObjNm(testSuiteName) + '.' );
-  endmon;
-
-  if testSuite.testCasesCnt = 0;
-    checkAndRestoreLibl(mustRestoreLibl: savedLibl);
-    raiseRUError( 'No test case found in service program '
-                + fmtObjNm(testSuiteName) + '.' );
-  endif;
-
-  setupTestSuite( testSuite : result );
-
-  if (result.errorCnt = 0 and result.failureCnt = 0);
-    runTests(result: testSuite : testProcs
-             : order : detail: rclRsc);
-  endif;
-
-  tearDownTestSuite( testSuite : result );
-
-  result.assertCnt = getAssertCalled();
-
-  // Return result to xml file
-  if (xmlStmfInfo.path <> '');
-    monitor;
-      writeXmlFile(xmlStmfInfo.path
-                   : testSuite: testSuiteName: result: xmlStmfInfo.type);
-      msg = 'Created XML file (' + xmlStmfInfo.type + '): ' + xmlStmfInfo.path;
-      sndInfoMsg( msg );
-    on-error;
-      errMsg = rcvMsgTxt('*ESCAPE');
-    endmon;
-  endif;
-
-  // Restore library list
-  checkAndRestoreLibl(mustRestoreLibl: savedLibl);
-
-  monitor;
-    rclTestSuite( testSuite );
-  on-error;
-    raiseRUError( 'Failed to reclaim the test suite''s resources.' );
-  endmon;
-
-  msg = fmtCompMsg( result.runsCnt:
-                    result.assertCnt:
-                    result.failureCnt:
-                    result.errorCnt );
-
-  // ignore any messages here
-  monitor;
-    logCompMsg(msg : result.failureCnt : result.errorCnt );
-  on-error;
-  // nothing
-  endmon;
-
-  if (result.failureCnt = 0 and result.errorCnt = 0);
+  if (isSuccess);
     sndCompMsg( msg );
   else;
-    if (errMsg <> '');
-      sndCompMsg( msg );
-      sndEscapeMsgAboveCtlBdy( errMsg );
-    else;
-      sndEscapeMsgAboveCtlBdy( msg );
-    endif;
+    sndEscapeMsgAboveCtlBdy( msg );
   endif;
 
   *inlr = *on;
-
-  return;
 
 end-proc;
 

@@ -36,12 +36,17 @@ ctl-opt nomain;
 /include qinclude,ASSERT
 /include qinclude,CALLPRC
 /include qinclude,CMDRUNLOG
+/include qinclude,CMDRUNSRV
+/include qinclude,CMDRUNV
 /include qinclude,EXTPRC
 /include qinclude,EXTTST
+/include qinclude,LIBL
 /include qinclude,OBJECT
 /include qinclude,PGMMSG
+/include qinclude,RMTRUNSRV
 /include qinclude,TEMPLATES
 /include qinclude,TESTUTILS
+/include qinclude,XMLWRITER
 /include qllist,llist_h
 
 
@@ -83,6 +88,135 @@ dcl-proc loadTestSuite export;
 
 end-proc;
 
+//----------------------------------------------------------------------
+//  Execute a given unit test suite.
+//  Return *ON on success, otherwise *OFF.
+//----------------------------------------------------------------------
+dcl-proc runTestSuite export;
+  dcl-pi *N ind;
+    userSpace     likeds(object_t) options(*omit) const;
+    qTestSuite    likeds(object_t) const;
+    testProcs     likeds(procNms_t) const;
+    order         like(order_t) const;
+    detail        like(detail_t) const;
+    output        like(output_t) const;
+    libl          likeds(libl_t) const;
+    qJobD         likeds(object_t) const;
+    rclRsc        like(rclrsc_t) const;
+    xmlStmf       like(stmf_t) const;
+    xmlType       like(xmlType_t) const;
+    msg           varchar(256); // Completion message.
+  end-pi;
+
+  dcl-ds testSuite likeds(testSuite_t);
+
+  dcl-s xmlStmfMsg char(256);
+
+  // Test event counters.
+  dcl-ds result likeds(result_t);
+
+  // Save/set/restore library list
+  dcl-ds savedLibl likeds(liblData_t);
+  dcl-s mustRestoreLibl ind inz(*off);
+
+  dcl-ds xmlStmfInfo likeds(xmlStmfInfo_t) inz;
+
+  if (xmlStmf <> '');
+    msg = validateXmlStmf(xmlStmf: qTestSuite);
+    if (msg <> '');
+      sndEscapeMsgAboveCtlBdy( msg );
+    endif;
+  endif;
+
+  clear xmlStmfInfo;
+  xmlStmfInfo.path = resolvePathVariables(xmlStmf: qTestSuite);
+  xmlStmfInfo.type = xmlType;
+
+  clear result;
+  setLogContext( qTestSuite : detail : output : xmlStmfInfo);
+  clearAssertCounter();
+
+  // Set library list and load test suite
+  monitor;
+    savedLibl = getLibl();
+    mustRestoreLibl = setTestSuiteLibl(libl: qJobD: qTestSuite.lib);
+    updateLogContext(getLibl());
+    testSuite = loadTestSuite( qTestSuite );
+  on-error;
+    checkAndRestoreLibl(mustRestoreLibl: savedLibl);
+    raiseRUError( 'Error while loading test suite '
+                + fmtObjNm(qTestSuite) + '.' );
+  endmon;
+
+  if (testSuite.testCasesCnt = 0);
+    checkAndRestoreLibl(mustRestoreLibl: savedLibl);
+    raiseRUError( 'No test case found in service program '
+                + fmtObjNm(qTestSuite) + '.' );
+  endif;
+
+  setupTestSuite( testSuite : result );
+
+  if (result.errorCnt = 0 and result.failureCnt = 0);
+    runTests(result: testSuite: testProcs:
+             order: detail: rclRsc);
+  endif;
+
+  tearDownTestSuite( testSuite : result );
+
+  result.assertCnt = getAssertCalled();
+
+  // Return result to xml file
+  if (xmlStmfInfo.path <> '');
+    monitor;
+      writeXmlFile(xmlStmfInfo.path:
+                   testSuite: qTestSuite: result: xmlStmfInfo.type);
+      xmlStmfMsg = 'Created XML file (' + xmlStmfInfo.type + '): ' + xmlStmfInfo.path;
+      sndInfoMsg(xmlStmfMsg);
+      xmlStmfMsg = '';
+    on-error;
+      xmlStmfMsg = rcvMsgTxt('*ESCAPE');
+    endmon;
+  endif;
+
+  // Return result to plug-in
+  if (%parms() >= %parmnum(userSpace) and %addr(userSpace) <> *null);
+    fillUserSpace(userSpace : testSuite : qTestSuite : result);
+  endif;
+
+  // Restore library list
+  checkAndRestoreLibl(mustRestoreLibl: savedLibl);
+
+  monitor;
+    rclTestSuite( testSuite );
+  on-error;
+    raiseRUError( 'Failed to reclaim the test suite''s resources.' );
+  endmon;
+
+  msg = fmtCompMsg( result.runsCnt:
+                    result.assertCnt:
+                    result.failureCnt:
+                    result.errorCnt );
+
+  // ignore any messages here
+  monitor;
+    // Log completion message to spooled file
+    logCompMsg(msg : result.failureCnt : result.errorCnt );
+  on-error;
+    // nothing
+  endmon;
+
+  if (xmlStmfMsg <> '');
+    msg = xmlStmfMsg;
+    return *off; // FAILURE
+  else;
+    if (result.failureCnt = 0 and result.errorCnt = 0);
+      return *on; // SUCCESS
+    else;
+      return *off; // FAILURE
+    endif;
+  endif;
+
+end-proc;
 
 //----------------------------------------------------------------------
 // Raise an RPGUnit error. See prototype.

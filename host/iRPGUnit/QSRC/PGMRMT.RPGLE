@@ -33,9 +33,8 @@
 
 /include qinclude,TEMPLATES
 /include qinclude,ASSERT
-/include qinclude,CMDRUNV
 /include qinclude,PGMMSG
-/include qinclude,RMTRUNSRV
+/include qinclude,CMDRUNSRV
 
 /include qinclude,SDS
 
@@ -45,33 +44,29 @@
 
 dcl-pi pgmrmt;
   go_returnCode int(10);
-  gi_userSpace  likeds(object_t) const;
-  gi_testSuite  likeds(object_t) const;
-  gi_procNames  likeds(procNms_t) const;
+  gi_qUserSpace likeds(object_t) const;
+  gi_qTestSuite likeds(object_t) const;
+  gi_testProcs  likeds(procNms_t) const;
   gi_order      like(order_t) const;
   gi_detail     like(detail_t) const;
   gi_output     like(output_t) const;
-  gi_libl       likeds(libl_t) const;
+  gi_libL       likeds(libl_t) const;
   gi_qJobD      likeds(object_t) const;
   gi_rclRsc     like(rclrsc_t) const;
   gi_xmlStmf    like(stmf_fl_t) options(*nopass) const;
   gi_xmlType    like(xmlType_fl_t) options(*nopass) const;
 end-pi;
 
+dcl-c SUCCESS 0;
+dcl-c FAILURE -1;
+
 dcl-s xmlStmf like(stmf_t);
 dcl-s xmlType like(xmlType_t);
-dcl-s errMsg varchar(256);
-
-registerStartPgm(sds.pgmLib: sds.pgmname);
+dcl-s isSuccess ind;
+dcl-s msg varchar(256);
 
 if (%parms() >= %parmnum(gi_xmlStmf) and %addr(gi_xmlStmf) <> *null);
   xmlStmf = %trimr(gi_xmlStmf);
-  if (xmlStmf <> '');
-    errMsg = validateXmlStmf(xmlStmf: gi_testSuite);
-    if (errMsg <> '');
-      sndEscapeMsgAboveCtlBdy( errMsg  );
-    endif;
-  endif;
 else;
   xmlStmf = '';
 endif;
@@ -82,10 +77,20 @@ else;
   xmlType = XML_TYPE_1;
 endif;
 
-go_returnCode =
-     rpgunit_runTestSuite(
-        gi_userSpace: gi_testSuite: gi_procNames: gi_order
-        : gi_detail: gi_output: gi_libl: gi_qJobD: gi_rclRsc: xmlStmf: xmlType);
+registerStartPgm(sds.pgmLib: sds.pgmname);
+
+isSuccess = runTestSuite(gi_qUserSpace: gi_qTestSuite: gi_testProcs:
+                         gi_order: gi_detail: gi_output: gi_libL:
+                         gi_qJobD: gi_rclRsc: gi_xmlStmf: gi_xmlType: msg);
+
+if (isSuccess);
+  go_returnCode = SUCCESS;
+  sndCompMsg( msg );
+else;
+  go_returnCode = FAILURE;
+  sndCompMsg( msg );
+endif;
+
 
 *inlr = *on;
 

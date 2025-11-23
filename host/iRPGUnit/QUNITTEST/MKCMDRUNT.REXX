@@ -108,33 +108,35 @@
  "CMPMOD MODULE("prdLib"/OBJECT   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/OSVERSION) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/RMTRUNSRV) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/STRING   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/SRCMBR   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/STMF     ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/USRSPC   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/XMLWRITER) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
- "CRTSRVPGM  SRVPGM("prdLib"/CMDRUNT) ",
-            "MODULE("prdLib"/CMDRUNT ",
-                     prdLib"/CALLPRC ",
-                     prdLib"/CMDRUN ",
+ "CRTSRVPGM  SRVPGM("prdLib"/CMDRUNT)  ",
+            "MODULE("prdLib"/CMDRUNT   ",
+                     prdLib"/CALLPRC   ",
+                     prdLib"/CMDRUN    ",
                      prdLib"/CMDRUNLOG ",
                      prdLib"/CMDRUNPRT ",
                      prdLib"/CMDRUNSRV ",
-                     prdLib"/CMDRUNV",
-                     prdLib"/EXTPRC ",
-                     prdLib"/EXTTST ",
-                     prdLib"/JOBLOG ",
-                     prdLib"/JSONWTR",
-                     prdLib"/LIBL   ",
-                     prdLib"/LLIST  ",
-                     prdLib"/OBJECT ",
+                     prdLib"/CMDRUNV   ",
+                     prdLib"/EXTPRC    ",
+                     prdLib"/EXTTST    ",
+                     prdLib"/JOBLOG    ",
+                     prdLib"/JSONWTR   ",
+                     prdLib"/LIBL      ",
+                     prdLib"/LLIST     ",
+                     prdLib"/OBJECT    ",
                      prdLib"/OSVERSION ",
-                     prdLib"/PGMMSG ",
-                     prdLib"/STRING ",
-                     prdLib"/SRCMBR ",
-                     prdLib"/STMF   ",
-                     prdLib"/USRSPC ",
+                     prdLib"/PGMMSG    ",
+                     prdLib"/RMTRUNSRV ",
+                     prdLib"/STRING    ",
+                     prdLib"/SRCMBR    ",
+                     prdLib"/STMF      ",
+                     prdLib"/USRSPC    ",
                      prdLib"/XMLWRITER) ",
             "EXPORT(*ALL) ",
             "OPTION(*DUPPROC) ",

@@ -109,15 +109,13 @@ end-ds;
 //   GLOBAL VARIABLES
 //----------------------------------------------------------------------
 
-// Number of assertions called.
-dcl-s assertCalled int(10);
-
 // Latest assertion failure event information. Can be blank if no
 //  assertion failure event since last assertion.
 dcl-ds assertFailEvt likeds(assertFailEvtLong_t) inz;
 
-dcl-ds status qualified;
-  qStartPgm   likeds(object_t);
+dcl-ds g_status qualified;
+  qStartPgm        likeds(object_t);
+  numAssertsCalled int(10);
 end-ds;
 
 //----------------------------------------------------------------------
@@ -131,8 +129,8 @@ dcl-proc registerStartPgm export;
   end-pi;
 
 
-  status.qStartPgm.nm = pgm;
-  status.qStartPgm.lib = lib;
+  g_status.qStartPgm.nm = pgm;
+  g_status.qStartPgm.lib = lib;
 
 end-proc;
 
@@ -147,7 +145,7 @@ dcl-proc checkStartPgm export;
 
   dcl-s msg varchar(256);
 
-  if (status.qStartPgm.lib <> sds.pgmLib);
+  if (g_status.qStartPgm.lib <> sds.pgmLib);
     msg = 'Start program RUCALLTST or RUPGMRMT was not +
            registered with service program ' +
            %trim(sds.pgmLib) + '/RUTESTCASE. +
@@ -364,7 +362,7 @@ dcl-proc doAssert export;
 
   checkStartPgm();
 
-  assertCalled += 1;
+  g_status.numAssertsCalled += 1;
   clrAssertFailEvt();
   assertFailEvt.logExpected = logExpected;
   assertFailEvt.logActual = logActual;
@@ -414,7 +412,7 @@ dcl-proc getAssertCalled export;
   dcl-pi *N int(10);
   end-pi;
 
-  return assertCalled;
+  return g_status.numAssertsCalled;
 
 end-proc;
 
@@ -456,7 +454,7 @@ dcl-proc clearAssertCounter export;
   dcl-pi *N;
   end-pi;
 
-  assertCalled = 0;
+  g_status.numAssertsCalled = 0;
 
 end-proc;
 
