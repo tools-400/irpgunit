@@ -132,6 +132,17 @@ dcl-pr raiseRUError extproc('CMDRUNSRV_raiseRUError');
 end-pr;
 
 ///
+// Create a test suite and allocate resources.
+//
+// @param srvPgm - Qualified service programm
+//
+// @return test suite
+///
+dcl-pr crtTestSuite likeds(testSuite_t) extproc('CMDRUNSRV_crtTestSuite');
+  srvPgm const likeds(object_t);
+end-pr;
+
+///
 // Reclaim allocated resources for a test suite.
 // Performs cleanup operations on a test suite by releasing any allocated
 // memory, closing resources, and properly deactivating the associated

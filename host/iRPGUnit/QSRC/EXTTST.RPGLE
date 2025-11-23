@@ -178,7 +178,7 @@ dcl-proc getTestSuite export;
   clear testSuite;
   testSuite.testList = %alloc( procCnt * %size( proc_t ) );
   memset(testSuite.testList : x'00' : procCnt * %size( proc_t ));
-  testSuite.testResults = list_create();
+  testSuite.testResults = *null;
 
   for procIdx = 1 to procCnt;
     procNm = getnm( privateData );

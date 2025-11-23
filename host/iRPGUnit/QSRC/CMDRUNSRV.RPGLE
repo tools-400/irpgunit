@@ -59,20 +59,14 @@ ctl-opt nomain;
 //----------------------------------------------------------------------
 dcl-proc loadTestSuite export;
   dcl-pi *N likeds(testSuite_t);
-    srvPgm          const likeds(object_t);
+    srvPgm const likeds(object_t);
   end-pi;
 
-  dcl-ds procList likeds(procList_t);
-  dcl-ds procNmList likeds(procNmList_t);
   dcl-ds testSuite likeds(testSuite_t);
   dcl-s actMark like(actMark_t);
-
   dcl-s extObjAttr char(10);
 
-  procList   = loadProcList( srvPgm );
-  procNmList = getProcNmList( procList );
-  testSuite  = getTestSuite( procNmList );
-  testSuite.qName = srvPgm;
+  testSuite = crtTestSuite(srvPgm);
 
   extObjAttr = Object_getAttribute( srvPgm : '*SRVPGM' );
   if (extObjAttr = 'CBLLE' or extObjAttr = 'SQLCBLLE');
@@ -233,6 +227,29 @@ dcl-proc raiseRUError export;
   endmon;
 
   sndEscapeMsgAboveCtlBdy( 'RPGUnit Error. ' + msg );
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+// Create a test suite and allocate resources. See prototype.
+//----------------------------------------------------------------------
+dcl-proc crtTestSuite export;
+  dcl-pi *N likeds(testSuite_t);
+    srvPgm const likeds(object_t);
+  end-pi;
+
+  dcl-ds procList likeds(procList_t);
+  dcl-ds procNmList likeds(procNmList_t);
+  dcl-ds testSuite likeds(testSuite_t);
+
+  procList   = loadProcList( srvPgm );
+  procNmList = getProcNmList( procList );
+  testSuite  = getTestSuite( procNmList );
+  testSuite.qName = srvPgm;
+  testSuite.testResults = list_create();
+
+  return testSuite;
 
 end-proc;
 
