@@ -48,7 +48,7 @@ end-pr;
 
 dcl-pr doFail extproc('ASSERT_doFail');
   msg            varchar(16384) options(*varsize) const;
-  toCallStackE   int(10) const;
+  toCallStackE   int(10) options(*omit) const;
   startProc      varchar(256) options(*varsize) const;
 end-pr;
 
@@ -89,11 +89,6 @@ dcl-pr jobLogCallback ind extproc('ASSERT_jobLogCallback');
   i_msgSentTime  timestamp const;
 end-pr;
 
-
-//----------------------------------------------------------------------
-//   GLOBAL CONSTANTS
-//----------------------------------------------------------------------
-
 //----------------------------------------------------------------------
 //   TYPE TEMPLATE
 //----------------------------------------------------------------------
@@ -103,7 +98,6 @@ dcl-ds jobLogUserData_t qualified template;
   msgID       char(7);
   isFound     ind;
 end-ds;
-
 
 //----------------------------------------------------------------------
 //   GLOBAL VARIABLES
@@ -341,10 +335,10 @@ dcl-proc fail export;
            : strInf.curLen: strInf.maxLen: fc);
     tMsg = getValueFromDesc(descInf: strInf: fc: msg: %len(msg));
 
-    doFail(tMsg: -1: %proc());
+    doFail(tMsg: *omit: %proc());
   else;
     // Called by Cobol or new RPG after iRPGUnit v4.
-    doFail(NO_MSG_TEXT: -1: %proc());
+    doFail(NO_MSG_TEXT: *omit: %proc());
   endif;
 
 end-proc;
@@ -377,14 +371,14 @@ end-proc;
 dcl-proc doFail export;
   dcl-pi *N;
     msg            varchar(16384) options(*varsize) const;
-    toCallStackE   int(10) const;
+    toCallStackE   int(10) options(*omit) const;
     startProc      varchar(256) options(*varsize) const;
   end-pi;
 
   assertFailEvt.msg = %trimr(msg);
   assertFailEvt.callstk = getCallStk(startProc);
 
-  if (toCallStackE = -1);
+  if (%addr(toCallStackE) = *null);
     sndEscapeMsgToProcedure(msg: TEST_CASE_EXECUTOR);
   else;
     sndEscapeMsg(msg: toCallStackE + 1);
