@@ -116,7 +116,7 @@ end-pr;
 //
 // @param libldata - Updated library list data structure
 ///
-dcl-pr updateLogContext extproc('updateLogContext');
+dcl-pr updateLogContext extproc('CMDRUNLOG_updateLogContext');
   libldata likeds(liblData_t) const;
 end-pr;
 

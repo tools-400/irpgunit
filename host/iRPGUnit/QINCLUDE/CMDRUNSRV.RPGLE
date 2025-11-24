@@ -196,3 +196,66 @@ end-pr;
 dcl-pr initTestResult likeds(testResult_t) extproc('CMDRUNSRV_initTestResult');
   testName like(procNm_t) const;
 end-pr;
+
+///
+// Orchestrates the execution of all test cases within a test suite.
+// Manages the test execution flow including individual test setup,
+// execution, teardown, and result collection based on specified
+// execution parameters and filtering criteria.
+//
+// @param result         - Test result accumulator for collecting execution statistics
+// @param testSuite      - Test suite containing test procedures to execute
+// @param testProcsToRun - Filter specifying which test procedures to execute
+// @param order          - Execution order specification (*API or *REVERSE)
+// @param detail         - Detail level for logging and output
+// @param rclRsc         - Resource reclamation strategy between tests
+///
+dcl-pr runTests extproc('CMDRUNSRV_runTests');
+  result         likeds(result_t);
+  testSuite      likeds(testSuite_t) const;
+  testProcsToRun likeds(procNms_t) const;
+  order          char(8) const;
+  detail         char(6) const;
+  rclRsc         char(10) const;
+end-pr;
+
+///
+// Generates a standardized test completion summary message.
+// Formats test execution statistics into a user-friendly message
+// that summarizes the overall test run results including counts
+// of test cases, assertions, failures, and errors.
+//
+// @param testcasecnt - Total number of test cases executed
+// @param assertCnt   - Total number of assertions performed
+// @param failureCnt  - Total number of test failures encountered
+// @param errorCnt    - Total number of test errors encountered
+//
+// @return Formatted completion message string ready for display
+///
+dcl-pr fmtCompMsg varchar(256) extproc('CMDRUNSRV_fmtCompMsg');
+  testcasecnt int(10) const;
+  assertCnt   int(10) const;
+  failureCnt  int(10) const;
+  errorCnt    int(10) const;
+end-pr;
+
+// Handle a test case error.
+dcl-pr handleError extproc('CMDRUNSRV_handleError');
+  testProcNm      const like(procNm_t);
+  excpMsgInfo     const likeds(msg_t);
+  result          likeds(result_t);
+end-pr;
+
+// Handle a test case failure.
+dcl-pr handleFailure extproc('CMDRUNSRV_handleFailure');
+  testProcNm      const like(procNm_t);
+  failure         const likeds(assertFailEvtLong_t);
+  result          likeds(result_t);
+end-pr;
+
+// Handle a test case success.
+dcl-pr handleSuccess extproc('CMDRUNSRV_handleSuccess');
+  testProcNm      const like(procNm_t);
+  assertionCnt    int(10) const;
+end-pr;
+

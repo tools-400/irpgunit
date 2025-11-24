@@ -430,7 +430,14 @@ end-pr;
 // ------------------------------------
 
 ///
-// Clear the assertion failure event
+// Returns *on if the exection is due to an runtime
+// error, otherwise *off for a failed assertion.
+///
+dcl-pr isRuntimeError ind extproc('isRuntimeError');
+end-pr;
+
+///
+// Clears the assertion failure event.
 //
 // Clears the assertion failure event data structure
 // that gets captured when an assertion fails during
@@ -464,7 +471,11 @@ dcl-pr getAssertFailEvtLong extproc('getAssertFailEvtLong') likeds(assertFailEvt
 end-pr;
 
 ///
-// Clear the assertion counter back to zero
+// Resets the assert module for a new test case.
+//
+// Sets the total number of assertions of the
+// test case to zero and the runtime error flag
+// to *on.
 ///
 dcl-pr clearAssertCounter extproc('clearAssertCounter');
 end-pr;

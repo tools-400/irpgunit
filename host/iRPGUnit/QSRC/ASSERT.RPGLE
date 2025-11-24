@@ -99,6 +99,7 @@ dcl-ds jobLogUserData_t qualified template;
   isFound     ind;
 end-ds;
 
+
 //----------------------------------------------------------------------
 //   GLOBAL VARIABLES
 //----------------------------------------------------------------------
@@ -108,8 +109,9 @@ end-ds;
 dcl-ds assertFailEvt likeds(assertFailEvtLong_t) inz;
 
 dcl-ds g_status qualified;
-  qStartPgm        likeds(object_t);
-  numAssertsCalled int(10);
+  qStartPgm           likeds(object_t) inz;
+  numAssertsCalled    int(10) inz;
+  isRuntimeError      ind inz(*on);
 end-ds;
 
 //----------------------------------------------------------------------
@@ -121,7 +123,6 @@ dcl-proc registerStartPgm export;
     lib   char(10) const;
     pgm   char(10) const;
   end-pi;
-
 
   g_status.qStartPgm.nm = pgm;
   g_status.qStartPgm.lib = lib;
@@ -323,7 +324,9 @@ dcl-proc fail export;
   dcl-ds strInf likeds(ceegsi_inf_t) inz;
   dcl-ds fc likeds(fc_t) inz;
 
-  clrAssertFailEvt();
+  g_status.isRuntimeError = *off;
+
+  clear assertFailEvt; // Do not call clrAssertFailEvt() because of g_status.isRuntimeError!
   assertFailEvt.logExpected = getLogValue(NO_VALUE: DT_UNDEFINED: %proc());
   assertFailEvt.logActual = getLogValue(NO_VALUE: DT_UNDEFINED: %proc());
 
@@ -356,8 +359,10 @@ dcl-proc doAssert export;
 
   checkStartPgm();
 
+  g_status.isRuntimeError = *off;
   g_status.numAssertsCalled += 1;
-  clrAssertFailEvt();
+
+  clear assertFailEvt; // Do not call clrAssertFailEvt() because of g_status.isRuntimeError!
   assertFailEvt.logExpected = logExpected;
   assertFailEvt.logActual = logActual;
 
@@ -388,11 +393,31 @@ end-proc;
 
 
 //----------------------------------------------------------------------
-// Clear the latest assertion failure event.
+// Returns *on if the exection is due to an runtime
+// error, otherwise *off for a failed assertion.
+//----------------------------------------------------------------------
+dcl-proc isRuntimeError export;
+  dcl-pi *N ind;
+  end-pi;
+
+  return g_status.isRuntimeError;
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+// Clears the assertion failure event.
+//
+// This procedure is called before calling one of:
+//   setup(), testProc(), teardown()
+//
+// Actually that procedure should be renamed, e.g: resetTestProc()
 //----------------------------------------------------------------------
 dcl-proc clrAssertFailEvt export;
   dcl-pi *N;
   end-pi;
+
+  g_status.isRuntimeError = *on;
 
   clear assertFailEvt;
 
@@ -418,11 +443,15 @@ dcl-proc getAssertFailEvt export;
   dcl-pi *N likeds(assertfailevt_t);
   end-pi;
 
+  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t) inz;
+
   // Assert Failure Event of version 1
   dcl-ds assertFailEvt_v1 likeds(assertfailevt_t) inz;
 
-  assertFailEvt_v1.msg = assertFailEvt.msg;
-  assertFailEvt_v1.callstk = assertFailEvt.callstk;
+  assertFailEvtLong = getAssertFailEvtLong();
+
+  assertFailEvt_v1.msg = assertFailEvtLong.msg;
+  assertFailEvt_v1.callstk = assertFailEvtLong.callstk;
 
   return assertFailEvt_v1;
 
@@ -442,13 +471,20 @@ end-proc;
 
 
 //----------------------------------------------------------------------
-// Resets the counter of the failed assertions.
+// Resets the assert module for a new test case.
+//
+// This procedure is called before executing a complete test case
+// cicle:
+//   setup(), testProc(), teardown()
+//
+// Actually that procedure should be renamed, e.g: resetTestCase()
 //----------------------------------------------------------------------
 dcl-proc clearAssertCounter export;
   dcl-pi *N;
   end-pi;
 
   g_status.numAssertsCalled = 0;
+  g_status.isRuntimeError = *on;
 
 end-proc;
 
