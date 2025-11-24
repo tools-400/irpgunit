@@ -311,15 +311,15 @@ dcl-proc runTestProc export;
   startTime = %timestamp();
 
   if (setup.procptr <> *null);
-    runProc(setup.procptr: testResult);
+    testResult = runProc(setup.procptr: testResult);
   endif;
 
   if testResult.outcome = TEST_CASE_SUCCESS;
-    runProc(testCase.procPtr: testResult);
+    testResult = runProc(testCase.procPtr: testResult);
   endif;
 
   if tearDown.procPtr <> *null;
-    runProc(tearDown.procPtr: testResult);
+    testResult = runProc(tearDown.procPtr: testResult);
   endif;
 
   endTime = %timestamp();
@@ -339,7 +339,7 @@ end-proc;
 dcl-proc runProc export;
   dcl-pi *N likeds(testResult_t);
     proc            pointer(*proc) const;
-    result          likeds(testResult_t);
+    result          likeds(testResult_t) value;
   end-pi;
 
   dcl-ds failureEvt likeds(assertFailEvtLong_t);

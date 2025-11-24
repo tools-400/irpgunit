@@ -181,7 +181,7 @@ end-pr;
 ///
 dcl-pr runProc likeds(testResult_t) extproc('CMDRUNSRV_runProc');
   proc   pointer(*proc) const;
-  result likeds(testResult_t);
+  result likeds(testResult_t) value;
 end-pr;
 
 ///
