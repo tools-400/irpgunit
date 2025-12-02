@@ -48,7 +48,7 @@ end-pr;
 
 dcl-pr doFail extproc('ASSERT_doFail');
   msg            varchar(16384) options(*varsize) const;
-  toCallStackE   int(10) const;
+  toCallStackE   int(10) options(*omit) const;
   startProc      varchar(256) options(*varsize) const;
 end-pr;
 
@@ -89,11 +89,6 @@ dcl-pr jobLogCallback ind extproc('ASSERT_jobLogCallback');
   i_msgSentTime  timestamp const;
 end-pr;
 
-
-//----------------------------------------------------------------------
-//   GLOBAL CONSTANTS
-//----------------------------------------------------------------------
-
 //----------------------------------------------------------------------
 //   TYPE TEMPLATE
 //----------------------------------------------------------------------
@@ -109,15 +104,14 @@ end-ds;
 //   GLOBAL VARIABLES
 //----------------------------------------------------------------------
 
-// Number of assertions called.
-dcl-s assertCalled int(10);
-
 // Latest assertion failure event information. Can be blank if no
 //  assertion failure event since last assertion.
 dcl-ds assertFailEvt likeds(assertFailEvtLong_t) inz;
 
-dcl-ds status qualified;
-  qStartPgm   likeds(object_t);
+dcl-ds g_status qualified;
+  qStartPgm           likeds(object_t) inz;
+  numAssertsCalled    int(10) inz;
+  isRuntimeError      ind inz(*on);
 end-ds;
 
 //----------------------------------------------------------------------
@@ -130,9 +124,8 @@ dcl-proc registerStartPgm export;
     pgm   char(10) const;
   end-pi;
 
-
-  status.qStartPgm.nm = pgm;
-  status.qStartPgm.lib = lib;
+  g_status.qStartPgm.nm = pgm;
+  g_status.qStartPgm.lib = lib;
 
 end-proc;
 
@@ -147,7 +140,7 @@ dcl-proc checkStartPgm export;
 
   dcl-s msg varchar(256);
 
-  if (status.qStartPgm.lib <> sds.pgmLib);
+  if (g_status.qStartPgm.lib <> sds.pgmLib);
     msg = 'Start program RUCALLTST or RUPGMRMT was not +
            registered with service program ' +
            %trim(sds.pgmLib) + '/RUTESTCASE. +
@@ -331,7 +324,9 @@ dcl-proc fail export;
   dcl-ds strInf likeds(ceegsi_inf_t) inz;
   dcl-ds fc likeds(fc_t) inz;
 
-  clrAssertFailEvt();
+  g_status.isRuntimeError = *off;
+
+  clear assertFailEvt; // Do not call clrAssertFailEvt() because of g_status.isRuntimeError!
   assertFailEvt.logExpected = getLogValue(NO_VALUE: DT_UNDEFINED: %proc());
   assertFailEvt.logActual = getLogValue(NO_VALUE: DT_UNDEFINED: %proc());
 
@@ -343,10 +338,10 @@ dcl-proc fail export;
            : strInf.curLen: strInf.maxLen: fc);
     tMsg = getValueFromDesc(descInf: strInf: fc: msg: %len(msg));
 
-    doFail(tMsg: -1: %proc());
+    doFail(tMsg: *omit: %proc());
   else;
     // Called by Cobol or new RPG after iRPGUnit v4.
-    doFail(NO_MSG_TEXT: -1: %proc());
+    doFail(NO_MSG_TEXT: *omit: %proc());
   endif;
 
 end-proc;
@@ -364,8 +359,10 @@ dcl-proc doAssert export;
 
   checkStartPgm();
 
-  assertCalled += 1;
-  clrAssertFailEvt();
+  g_status.isRuntimeError = *off;
+  g_status.numAssertsCalled += 1;
+
+  clear assertFailEvt; // Do not call clrAssertFailEvt() because of g_status.isRuntimeError!
   assertFailEvt.logExpected = logExpected;
   assertFailEvt.logActual = logActual;
 
@@ -379,14 +376,14 @@ end-proc;
 dcl-proc doFail export;
   dcl-pi *N;
     msg            varchar(16384) options(*varsize) const;
-    toCallStackE   int(10) const;
+    toCallStackE   int(10) options(*omit) const;
     startProc      varchar(256) options(*varsize) const;
   end-pi;
 
   assertFailEvt.msg = %trimr(msg);
   assertFailEvt.callstk = getCallStk(startProc);
 
-  if (toCallStackE = -1);
+  if (%addr(toCallStackE) = *null);
     sndEscapeMsgToProcedure(msg: TEST_CASE_EXECUTOR);
   else;
     sndEscapeMsg(msg: toCallStackE + 1);
@@ -396,11 +393,31 @@ end-proc;
 
 
 //----------------------------------------------------------------------
-// Clear the latest assertion failure event.
+// Returns *on if the exection is due to an runtime
+// error, otherwise *off for a failed assertion.
+//----------------------------------------------------------------------
+dcl-proc isRuntimeError export;
+  dcl-pi *N ind;
+  end-pi;
+
+  return g_status.isRuntimeError;
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+// Clears the assertion failure event.
+//
+// This procedure is called before calling one of:
+//   setup(), testProc(), teardown()
+//
+// Actually that procedure should be renamed, e.g: resetTestProc()
 //----------------------------------------------------------------------
 dcl-proc clrAssertFailEvt export;
   dcl-pi *N;
   end-pi;
+
+  g_status.isRuntimeError = *on;
 
   clear assertFailEvt;
 
@@ -414,7 +431,7 @@ dcl-proc getAssertCalled export;
   dcl-pi *N int(10);
   end-pi;
 
-  return assertCalled;
+  return g_status.numAssertsCalled;
 
 end-proc;
 
@@ -426,11 +443,15 @@ dcl-proc getAssertFailEvt export;
   dcl-pi *N likeds(assertfailevt_t);
   end-pi;
 
+  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t) inz;
+
   // Assert Failure Event of version 1
   dcl-ds assertFailEvt_v1 likeds(assertfailevt_t) inz;
 
-  assertFailEvt_v1.msg = assertFailEvt.msg;
-  assertFailEvt_v1.callstk = assertFailEvt.callstk;
+  assertFailEvtLong = getAssertFailEvtLong();
+
+  assertFailEvt_v1.msg = assertFailEvtLong.msg;
+  assertFailEvt_v1.callstk = assertFailEvtLong.callstk;
 
   return assertFailEvt_v1;
 
@@ -450,13 +471,20 @@ end-proc;
 
 
 //----------------------------------------------------------------------
-// Resets the counter of the failed assertions.
+// Resets the assert module for a new test case.
+//
+// This procedure is called before executing a complete test case
+// cicle:
+//   setup(), testProc(), teardown()
+//
+// Actually that procedure should be renamed, e.g: resetTestCase()
 //----------------------------------------------------------------------
 dcl-proc clearAssertCounter export;
   dcl-pi *N;
   end-pi;
 
-  assertCalled = 0;
+  g_status.numAssertsCalled = 0;
+  g_status.isRuntimeError = *on;
 
 end-proc;
 

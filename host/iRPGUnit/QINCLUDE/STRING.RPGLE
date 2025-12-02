@@ -318,7 +318,7 @@ end-pr;
 //         Uses standard formatting rules for the numeric type
 //         Includes decimal places only when necessary
 ///
-dcl-pr formatNumeric varchar(128) extproc('formatNumeric');
+dcl-pr formatNumeric varchar(128) extproc('STRING_formatNumeric');
   numericValue like(assertNumeric_t) const;
 end-pr;
 

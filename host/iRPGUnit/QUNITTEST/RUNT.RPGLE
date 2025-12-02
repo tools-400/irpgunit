@@ -12,38 +12,50 @@
 //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
 //   >>IMPORTANT<<
 //     >>PARM<<  MODULE(&LI/CALLPRC   +
+//                      &LI/CMDRUN    +
 //                      &LI/CMDRUNLOG +
 //                      &LI/CMDRUNPRT +
 //                      &LI/CMDRUNSRV +
+//                      &LI/CMDRUNV   +
 //                      &LI/EXTPRC    +
 //                      &LI/EXTTST    +
 //                      &LI/JOBLOG    +
+//                      &LI/JSONWTR   +
+//                      &LI/LIBL      +
 //                      &LI/LLIST     +
 //                      &LI/OBJECT    +
 //                      &LI/OSVERSION +
 //                      &LI/PGMMSG    +
+//                      &LI/RMTRUNSRV +
 //                      &LI/SRCMBR    +
 //                      &LI/STMF      +
 //                      &LI/STRING    +
 //                      &LI/USRSPC    +
+//                      &LI/XMLWRITER +
 //                     );
 //     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
 //   >>END-IMPORTANT<<
 //   >>CMD<<     CMPMOD MODULE(&LI/CALLPRC  ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/CMDRUN   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNLOG) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNPRT) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNSRV) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNV  ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/EXTPRC   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/EXTTST   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/JOBLOG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/JSONWTR  ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/LIBL     ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/LLIST    ) SRCFILE(&SL/QLLIST) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/OBJECT   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/OSVERSION) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/PGMMSG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/RMTRUNSRV) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/SRCMBR   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/STMF     ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/STRING   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/USRSPC   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/XMLWRITER) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================
@@ -56,8 +68,10 @@ ctl-opt NoMain Option(*SrcStmt);
 
 /copy qinclude,PGMMSG
 /copy qinclude,CMDRUNSRV
+/copy qinclude,OBJECT
 /copy qinclude,TEMPLATES
-/copy qinclude,ASSERT
+/copy qinclude,TESTCASE
+/copy qllist,LLIST_H
 
 //----------------------------------------------------------------------
 //   Constants
@@ -453,12 +467,43 @@ dcl-proc test_runTest_withSetupAndTearDown export;
 end-proc;
 
 
+dcl-proc test_crtTestSuite export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-ds srvPgm likeds(object_t) inz;
+  dcl-ds testSuite likeds(TestSuite_t) inz;
+
+  if (TestSuite_isDirty('TESTPGM02': 'QTEMP'));
+    runCmd('RUCRTRPG TSTPGM(QTEMP/TESTPGM02) +
+            SRCFILE(QTESTCASES) DLTSPLF(*YES)');
+  endif;
+
+  srvPgm.nm = 'TESTPGM02';
+  srvPgm.lib = 'QTEMP';
+
+  testSuite = crtTestSuite(srvPgm);
+
+  assertEqual('TESTPGM02': testSuite.qName.nm);
+  assertEqual('QTEMP': testSuite.qName.lib);
+
+  assert(testSuite.setupSuite.procPtr = *null);
+  assert(testSuite.setup.procPtr = *null);
+  assert(testSuite.tearDownSuite.procPtr = *null);
+  assert(testSuite.tearDown.procPtr = *null);
+
+  assertEqual(0: list_size(testSuite.testResults));
+
+on-exit;
+    rclTestSuite( testSuite);
+
+end-proc;
+
 dcl-proc test_rclTestSuite_blankTestSuite export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
   dcl-ds testSuite likeds(TestSuite_t);
-
 
   clear testSuite;
 

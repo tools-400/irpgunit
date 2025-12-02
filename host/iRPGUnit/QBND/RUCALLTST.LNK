@@ -25,6 +25,7 @@
 /*                      &LI/OBJECT    +                                       */
 /*                      &LI/OSVERSION +                                       */
 /*                      &LI/PGMMSG    +                                       */
+/*                      &LI/RMTRUNSRV +                                       */
 /*                      &LI/SRCMBR    +                                       */
 /*                      &LI/STMF      +                                       */
 /*                      &LI/STRING    +                                       */

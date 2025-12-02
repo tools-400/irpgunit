@@ -18,6 +18,7 @@
 // >>END-PRE-COMPILER<<
 // ==========================================================================
 
+ctl-opt main(cmdRunV);
 /include qinclude,H_SPEC
 /include qinclude,COPYRIGHT
 
@@ -60,33 +61,33 @@ end-pr;
 //   Main Procedure
 //----------------------------------------------------------------------
 
-dcl-pi cmdrunv;
-  gi_testSuite    const likeds(object_t);
-  gi_testProcs    const likeds(procNms_t);
-  gi_order        const like(order_t);
-  gi_detail       const like(detail_t);
-  gi_output       const like(output_t);
-  gi_libl         const likeds(libl_t);
-  gi_jobD         const likeds(object_t);
-  gi_rclRsc       const like(rclrsc_t);
-  gi_xmlStmf      const like(stmf_t);
-end-pi;
+dcl-proc cmdrunv;
+  dcl-pi cmdrunv;
+    gi_testSuite    const likeds(object_t);
+    gi_testProcs    const likeds(procNms_t);
+    gi_order        const like(order_t);
+    gi_detail       const like(detail_t);
+    gi_output       const like(output_t);
+    gi_libl         const likeds(libl_t);
+    gi_jobD         const likeds(object_t);
+    gi_rclRsc       const like(rclrsc_t);
+    gi_xmlStmf      const like(stmf_t);
+  end-pi;
 
-dcl-s errMsg varchar(256);
+  dcl-s errMsg varchar(256);
 
-if (gi_xmlStmf <> '');
+  if (gi_xmlStmf <> '');
 
-  errMsg = validateXmlStmf(gi_xmlStmf: gi_testSuite);
-  if (errMsg <> '');
-    sndVldChkMsg( errMsg : 2 );
+    errMsg = validateXmlStmf(gi_xmlStmf: gi_testSuite);
+    if (errMsg <> '');
+      sndVldChkMsg( errMsg : 2 );
+    endif;
+
   endif;
 
-endif;
+  *inlr = *on;
 
-*inlr = *on;
-
-return;
-
+end-proc;
 
 
 //----------------------------------------------------------------------

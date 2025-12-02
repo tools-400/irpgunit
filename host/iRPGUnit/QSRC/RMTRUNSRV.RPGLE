@@ -45,13 +45,6 @@ dcl-c version_5 5;
 /include qinclude,RMTRUNSRV
 /include qinclude,ERRORCODE
 
-dcl-pr fillUserSpace extproc('fillUserspace');
-  userSpace       likeds(object_t ) const;
-  testsuite       likeds(testSuite_t) const;
-  testSuiteName   likeds(object_t) const;
-  result          likeds(result_t) const;
-end-pr;
-
 dcl-pr createV3TestCase int(10) extproc('createV3TestCase');
   usPtr           pointer value;
   testResult      value likeds(testResult_t);
@@ -85,7 +78,6 @@ end-pr;
 /include qinclude,CMDRUN
 /include qinclude,LIBL
 /include qinclude,SRCMBR
-/include qinclude,XMLWRITER
 /include qsysinc,MEMCPY
 /include qllist,llist_h
 
@@ -280,138 +272,12 @@ end-ds;
 //-------------------------------------------------------------------------
 
 // ==========================================================================
-//  Execute a given unit test suite.
-// ==========================================================================
-dcl-proc rpgunit_runTestSuite export;
-  dcl-pi *N int(10);
-    userSpace     likeds(object_t) const;
-    testSuiteName likeds(object_t) const;
-    testProcs     likeds(procNms_t) const;
-    order         like(order_t) const;
-    detail        like(detail_t) const;
-    output        like(output_t) const;
-    libl          likeds(libl_t) const;
-    qJobD         likeds(object_t) const;
-    rclRsc        like(rclrsc_t) const;
-    xmlStmf       like(stmf_t) const;
-    xmlType       like(xmlType_t) const;
-  end-pi;
-
-  dcl-s returnValue int(10);
-
-  dcl-ds testSuite likeds(testSuite_t);
-
-  // Completion message.
-  dcl-s msg char(256);
-
-  // Error message when writing the XML file.
-  dcl-s errMsg char(256);
-
-  // Test event counters.
-  dcl-ds result likeds(result_t);
-
-  // Save/set/restore library list
-  dcl-ds savedLibl likeds(liblData_t);
-  dcl-s mustRestoreLibl ind inz(*off);
-
-  // Return values
-  dcl-c SUCCESS 0;
-  dcl-c FAILURE -1;
-
-  dcl-ds xmlStmfInfo likeds(xmlStmfInfo_t) inz;
-
-  clear xmlStmfInfo;
-  xmlStmfInfo.path = resolvePathVariables(xmlStmf: testSuiteName);
-  xmlStmfInfo.type = xmlType;
-
-  clear result;
-  setLogContext( testSuiteName : detail : output : xmlStmfInfo);
-  clearAssertCounter();
-
-  // Set library list and load test suite
-  monitor;
-    savedLibl = getLibl();
-    mustRestoreLibl = setTestSuiteLibl(libl: qJobD: testSuiteName.lib);
-    updateLogContext(getLibl());
-    testSuite = loadTestSuite( testSuiteName );
-  on-error;
-    checkAndRestoreLibl(mustRestoreLibl: savedLibl);
-    raiseRUError( 'Error while loading test suite '
-                + fmtObjNm(testSuiteName) + '.' );
-  endmon;
-
-  if (testSuite.testCasesCnt = 0);
-    checkAndRestoreLibl(mustRestoreLibl: savedLibl);
-    raiseRUError( 'No test case found in service program '
-                + fmtObjNm(testSuiteName) + '.' );
-  endif;
-
-  setupTestSuite( testSuite : result );
-
-  if (result.errorCnt = 0 and result.failureCnt = 0);
-    runTests(result: testSuite: testProcs
-             : order :detail: rclRsc);
-  endif;
-
-  tearDownTestSuite( testSuite : result );
-
-  result.assertCnt = getAssertCalled();
-
-  // Return result to xml file
-  if (xmlStmfInfo.path <> '');
-    monitor;
-      writexmlfile(xmlStmfInfo.path
-                   : testSuite : testSuiteName : result: xmlStmfInfo.type);
-      msg = 'Created XML file (' + xmlStmfInfo.type + '): ' + xmlStmfInfo.path;
-      sndInfoMsg( msg );
-    on-error;
-      errMsg = rcvMsgTxt('*ESCAPE');
-    endmon;
-  endif;
-
-  // Return result to plug-in
-  fillUserSpace(userSpace : testSuite : testSuiteName : result);
-
-  // Restore library list
-  checkAndRestoreLibl(mustRestoreLibl: savedLibl);
-
-  monitor;
-    rclTestSuite( testSuite );
-  on-error;
-    raiseRUError( 'Failed to reclaim the test suite''s resources.' );
-  endmon;
-
-  msg = fmtCompMsg( result.runsCnt:
-                    result.assertCnt:
-                    result.failureCnt:
-                    result.errorCnt );
-
-  // ignore any messages here
-  monitor;
-    logCompMsg(msg : result.failureCnt : result.errorCnt );
-  on-error;
-  // nothing
-  endmon;
-
-  if result.failureCnt = 0 and result.errorCnt = 0;
-    returnValue = SUCCESS;
-    sndCompMsg( msg );
-  else;
-    returnValue = FAILURE;
-    sndCompMsg( msg );
-  endif;
-
-  return returnValue;
-
-end-proc;
-
-// ==========================================================================
 //  Fill user space, all versions.
 // ==========================================================================
-dcl-proc fillUserSpace;
+dcl-proc fillUserSpace export;
   dcl-pi *N;
     userSpace       likeds(object_t ) const;
-    testsuite       likeds(testSuite_t) const;
+    testSuite       likeds(testSuite_t) const;
     testSuiteName   likeds(object_t) const;
     result          likeds(result_t) const;
   end-pi;
@@ -457,7 +323,7 @@ dcl-proc fillUserSpace;
   header.numFailures = result.failureCnt;
   header.numErrors = result.errorCnt;
   header.offsTestCases = header.length;
-  header.numTestCases = testsuite.testCasesCnt;
+  header.numTestCases = testSuite.testCasesCnt;
 
   header.system = splf.system;
   header.splf_name = splf.nm;
@@ -485,8 +351,8 @@ dcl-proc fillUserSpace;
   header.numTestCasesRtn = 0;
   header.reserved_1 = *blank;
 
-  list_abortiteration(testsuite.testResults);
-  ptr = list_getnext(testsuite.testResults);
+  list_abortiteration(testSuite.testResults);
+  ptr = list_getnext(testSuite.testResults);
 
   ePtr = usPtr + header.offsTestCases;
 
@@ -505,7 +371,7 @@ dcl-proc fillUserSpace;
       header.length += createV3TestCase(usPtr: testResult: ePtr);
     endsl;
 
-    ptr = list_getnext(testsuite.testResults);
+    ptr = list_getnext(testSuite.testResults);
     if (ptr <> *null);
       ePtr = ePtr - oldlength + header.length;
     endif;

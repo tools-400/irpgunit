@@ -26,6 +26,7 @@
 //                      &LI/OBJECT    +
 //                      &LI/OSVERSION +
 //                      &LI/PGMMSG    +
+//                      &LI/RMTRUNSRV +
 //                      &LI/SRCMBR    +
 //                      &LI/STMF      +
 //                      &LI/STRING    +
@@ -50,6 +51,7 @@
 //   >>CMD<<     CMPMOD MODULE(&LI/OBJECT   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/OSVERSION) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/PGMMSG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/RMTRUNSRV) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/SRCMBR   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/STMF     ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/STRING   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
@@ -70,7 +72,8 @@ ctl-opt NoMain Option(*SrcStmt);
 
 /copy qinclude,ASSERT
 /copy qinclude,CALLPRC
-/copy qinclude,CMDRUN
+/copy qinclude,CMDRUNSRV
+/copy qinclude,OBJECT
 /copy qinclude,PGMMSG
 /copy qinclude,TEMPLATES
 /copy qllist,llist_h
@@ -319,7 +322,7 @@ dcl-proc test_runTests_ChooseNonExistingTestProc export;
 end-proc;
 
 
-dcl-proc test_fmtObjNm export;
+dcl-proc test_Object_qName export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
@@ -329,8 +332,8 @@ dcl-proc test_fmtObjNm export;
   object.nm  = 'MYOBJ';
   object.lib = 'MYLIB';
 
-  aEqual('MYLIB/MYOBJ': fmtObjNm(object));
-  iEqual(%len('MYLIB/MYOBJ'): %len(fmtObjNm(object)));
+  aEqual('MYLIB/MYOBJ': Object_qName(object));
+  iEqual(%len('MYLIB/MYOBJ'): %len(Object_qName(object)));
 
 end-proc;
 
