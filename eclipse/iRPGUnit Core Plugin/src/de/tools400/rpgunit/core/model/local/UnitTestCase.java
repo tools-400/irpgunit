@@ -277,7 +277,15 @@ public class UnitTestCase extends AbstractUnitTestObject
 
         if (getOutcome() == Outcome.ERROR) {
             UnitTestMessageReceiver messageReceiver = getMessageReceiver();
-            statementNumber = messageReceiver.getStatementNumberText();
+            if (messageReceiver != null) {
+                // for v4 and v5 test cases
+                statementNumber = messageReceiver.getStatementNumberText();
+            } else {
+                // for old v3 test cases
+                if (callStackEntries != null && callStackEntries.size() > 0) {
+                    statementNumber = Integer.toString(callStackEntries.get(0).getStatementNumber());
+                }
+            }
         } else if (getOutcome() == Outcome.FAILURE) {
             if (!callStackEntries.isEmpty()) {
                 statementNumber = callStackEntries.get(0).getStatementNumberText();
