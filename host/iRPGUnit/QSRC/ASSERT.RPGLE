@@ -85,7 +85,7 @@ end-ds;
 
 // Latest assertion failure event information. Can be blank if no
 // assertion failure event since last assertion.
-dcl-ds g_assertEvent likeds(assertEvent_t) inz(*likeds);
+dcl-ds g_abstractTestEvent likeds(abstractTestEvent_t) inz(*likeds);
 
 dcl-ds g_status qualified export;
   qStartPgm           likeds(object_t) inz;
@@ -306,10 +306,10 @@ dcl-proc fail export;
   dcl-ds fc likeds(fc_t) inz;
 
   // Do not call clrAssertFailEvt() because of g_status.isRuntimeError!
-  clear g_assertEvent;
-  g_assertEvent.failure.outcome = TEST_CASE_FAILURE;
-  g_assertEvent.failure.logExpected = getLogValue(NO_VALUE: DT_UNDEFINED: %proc());
-  g_assertEvent.failure.logActual = getLogValue(NO_VALUE: DT_UNDEFINED: %proc());
+  clear g_abstractTestEvent;
+  g_abstractTestEvent.failure.outcome = TEST_CASE_FAILURE;
+  g_abstractTestEvent.failure.logExpected = getLogValue(NO_VALUE: DT_UNDEFINED: %proc());
+  g_abstractTestEvent.failure.logActual = getLogValue(NO_VALUE: DT_UNDEFINED: %proc());
 
   if (%parms() >= p_msg);
 
@@ -343,27 +343,27 @@ dcl-proc doAssert export;
   g_status.numAssertsCalled += 1;
 
   // Do not call clrAssertFailEvt() because of g_status.isRuntimeError!
-  clear g_assertEvent;
-  g_assertEvent.failure.logExpected = logExpected;
-  g_assertEvent.failure.logActual = logActual;
-  g_assertEvent.failure.assertProc = getAssertProcName(g_status.procNamePrefix: startProc);
+  clear g_abstractTestEvent;
+  g_abstractTestEvent.failure.logExpected = logExpected;
+  g_abstractTestEvent.failure.logActual = logActual;
+  g_abstractTestEvent.failure.assertProc = getAssertProcName(g_status.procNamePrefix: startProc);
 
   if not condition;
-    g_assertEvent.failure.outcome = TEST_CASE_FAILURE;
+    g_abstractTestEvent.failure.outcome = TEST_CASE_FAILURE;
     doFail(msgIfFalse:  toCallStackE + 1: startProc);
   else;
     // Add SUCCESS event with empty callstack
-    g_assertEvent.success.outcome = TEST_CASE_SUCCESS;
+    g_abstractTestEvent.success.outcome = TEST_CASE_SUCCESS;
 
     // TODO: remove callstack
 //    sizeCallstk = %size(empty_callStk.numE) + (0 * %size(callStkEnt_t));
 //    g_assertEvent.failure.pCallstk = MemMgr_alloc(sizeCallstk: 'g_assertEvent.failure.pCallstk');
 //    memcpy(g_assertEvent.failure.pCallstk: %addr(empty_callStk): sizeCallstk);
 
-    g_assertEvent.failure.pCallstk = Callstack_alloc(0: 'g_assertEvent.failure.pCallstk');
+    g_abstractTestEvent.failure.pCallstk = Callstack_alloc(0: 'g_assertEvent.failure.pCallstk');
 
     // TODO: fix creating SUCCESS event
-    list_add(g_status.pFailureEvents: %addr(g_assertEvent): %size(g_assertEvent));
+    list_add(g_status.pFailureEvents: %addr(g_abstractTestEvent): %size(g_abstractTestEvent));
   endif;
 
 end-proc;
@@ -378,15 +378,15 @@ dcl-proc doFail;
 
   dcl-s pCallstk pointer;
 
-  g_assertEvent.failure.msg = %trimr(msg);
+  g_abstractTestEvent.failure.msg = %trimr(msg);
 
   pCallStk = getCallStk(startProc);
 
-  g_assertEvent.failure.pCallstk = pCallstk;
+  g_abstractTestEvent.failure.pCallstk = pCallstk;
 
   // Add FAILURE event with callstack
-  g_assertEvent.index = list_size(g_status.pFailureEvents) + 1;
-  list_add(g_status.pFailureEvents: %addr(g_assertEvent): %size(g_assertEvent));
+  g_abstractTestEvent.index = list_size(g_status.pFailureEvents) + 1;
+  list_add(g_status.pFailureEvents: %addr(g_abstractTestEvent): %size(g_abstractTestEvent));
 
   g_status.isAssertionError = *on;
 
@@ -462,7 +462,7 @@ dcl-proc clrAssertFailEvt export;
   g_status.pFailureEvents = pFailureEvents;
   g_status.procNamePrefix = procNamePrefix;
 
-  clear g_assertEvent;
+  clear g_abstractTestEvent;
 
 end-proc;
 
@@ -523,7 +523,7 @@ dcl-proc getAssertFailEvtLong export;
   dcl-pi *N likeds(assertFailEvtExt_t);
   end-pi;
 
-  dcl-ds assertEvent likeds(assertEvent_t) inz;
+  dcl-ds abstractTestEvent likeds(abstractTestEvent_t) inz;
   dcl-ds assertFailEvtExt likeds(assertFailEvtExt_t) inz;
   dcl-ds callstkEnt likeds(callStkEnt_t) inz;
   dcl-ds callstk_v2 likeds(assertFailEvtExt_t.callstk);
@@ -541,18 +541,18 @@ dcl-proc getAssertFailEvtLong export;
   callstk_v2.entry(64).qStmt.procNm = '';
   callstk_v2.entry(64).qStmt.specNb = '';
 
-  assertEvent = getAssertEventInternal();
+  abstractTestEvent = getAssertEventInternal();
 
   clear assertFailEvtExt;
-  assertFailEvtExt.msg = assertEvent.failure.msg;
-  assertFailEvtExt.logExpected = assertEvent.failure.logExpected;
-  assertFailEvtExt.logActual = assertEvent.failure.logActual;
+  assertFailEvtExt.msg = abstractTestEvent.failure.msg;
+  assertFailEvtExt.logExpected = abstractTestEvent.failure.logExpected;
+  assertFailEvtExt.logActual = abstractTestEvent.failure.logActual;
 
   clear assertFailEvtExt.callstk;
 
-  if (assertEvent.failure.pCallstk <> *null);
-    Callstack_resetIteration(assertEvent.failure.pCallstk);
-    dow (Callstack_getNext(assertEvent.failure.pCallstk: callstkEnt));
+  if (abstractTestEvent.failure.pCallstk <> *null);
+    Callstack_resetIteration(abstractTestEvent.failure.pCallstk);
+    dow (Callstack_getNext(abstractTestEvent.failure.pCallstk: callstkEnt));
       assertFailEvtExt.callstk.numE += 1;
       assertFailEvtExt.callstk.entry(assertFailEvtExt.callstk.numE).level = callstkEnt.level;
       assertFailEvtExt.callstk.entry(assertFailEvtExt.callstk.numE).qStmt = callstkEnt.qStmt;
@@ -568,10 +568,10 @@ end-proc;
 // Return information about the latest assertion failure event.
 //----------------------------------------------------------------------
 dcl-proc getAssertEventInternal export;
-  dcl-pi *N likeds(assertEvent_t);
+  dcl-pi *N likeds(abstractTestEvent_t);
   end-pi;
 
-  return g_assertEvent;
+  return g_abstractTestEvent;
 
 end-proc;
 

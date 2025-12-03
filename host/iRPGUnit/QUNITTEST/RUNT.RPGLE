@@ -203,7 +203,7 @@ dcl-proc test_runTestProc_failureInTest export;
   end-pi;
 
   dcl-ds testResult likeds(TestResult_t);
-  dcl-ds failureEvent likeds(assertFailureEvent_t);
+  dcl-ds testFailureEvent likeds(testFailureEvent_t);
 
   dcl-ds callstkEnt likeds(callstkEnt_t) inz;
 
@@ -220,7 +220,7 @@ dcl-proc test_runTestProc_failureInTest export;
 
   testResult = runTestProc(g_testProc: noSetUp: noTearDown);
 
-  failureEvent = getLastFailureEvent(testResult);
+  testFailureEvent = getLastFailureEvent(testResult);
 
   // save test result before destroying it
   testResultControl = testResult;
@@ -233,12 +233,12 @@ dcl-proc test_runTestProc_failureInTest export;
 
   // Controls.
 
-  Callstack_resetIteration(failureEvent.pCallstk);
-  Callstack_getNext(failureEvent.pCallstk: callstkEnt);
+  Callstack_resetIteration(testFailureEvent.pCallstk);
+  Callstack_getNext(testFailureEvent.pCallstk: callstkEnt);
 
   aEqual('test_fail was called': g_execTrace(1));
   aEqual(TEST_CASE_FAILURE: testResultControl.outcome);
-  aEqual('My Failure Message': failureEvent.msg);
+  aEqual('My Failure Message': testFailureEvent.msg);
   iEqual(1: callstkEnt.level);
   aEqual('test_fail': callstkEnt.qStmt.procNm);
 
@@ -263,7 +263,7 @@ dcl-proc test_runTestProc_errorInTest export;
   aEqual('test_error was called': g_execTrace(1));
   aEqual(TEST_CASE_ERROR: testResult.outcome);
 
-  errorEvent = getErrorEvent(testResult.hAssertEvents);
+  errorEvent = getErrorEvent(testResult.hTestEvents);
   aEqual('raiseError': errorEvent.msg.qSndStmt.procNm);
 
 on-exit;
@@ -328,7 +328,7 @@ dcl-proc test_runTestProc_errorInSetup export;
   aEqual(*blank: g_execTrace(2)); // test_proc not called.
   aEqual(TEST_CASE_ERROR: testResult.outcome);
 
-  errorEvent = getErrorEvent(testResult.hAssertEvents);
+  errorEvent = getErrorEvent(testResult.hTestEvents);
   aEqual('raiseError': errorEvent.msg.qSndStmt.procNm);
 
 on-exit;
@@ -393,7 +393,7 @@ dcl-proc test_runTestProc_errorInTearDown export;
   aEqual('tearDown_with_error was called': g_execTrace(2));
   aEqual(TEST_CASE_ERROR: testResult.outcome);
 
-  errorEvent = getErrorEvent(testResult.hAssertEvents);
+  errorEvent = getErrorEvent(testResult.hTestEvents);
   aEqual('raiseError': errorEvent.msg.qSndStmt.procNm);
 
 on-exit;
@@ -473,7 +473,7 @@ dcl-proc test_runTestProc_tearDownAfterErrorInSetup export;
   aEqual('tearDown_proc was called': g_execTrace(2));
   aEqual(TEST_CASE_ERROR: testResult.outcome);
 
-  errorEvent = getErrorEvent(testResult.hAssertEvents);
+  errorEvent = getErrorEvent(testResult.hTestEvents);
   aEqual('raiseError': errorEvent.msg.qSndStmt.procNm);
 
 on-exit;
@@ -897,16 +897,14 @@ end-proc;
 
 dcl-proc getErrorEvent;
   dcl-pi *n likeds(runtimeErrorEvent_t) extproc('*dclcase');
-    hAssertEvents pointer const;
+    hTestEvents pointer const;
   end-pi;
 
-  dcl-ds runtimeErrorEvent_rtn likeds(runtimeErrorEvent_t) based(pRuntimeErrorEvent);
   dcl-ds runtimeErrorEvent likeds(runtimeErrorEvent_t) based(pRuntimeErrorEvent);
 
-  list_abortIteration(hAssertEvents);
-  pRuntimeErrorEvent = list_getNext(hAssertEvents);
-  runtimeErrorEvent_rtn = runtimeErrorEvent;
+  list_abortIteration(hTestEvents);
+  pRuntimeErrorEvent = list_getNext(hTestEvents);
 
-  return runtimeErrorEvent_rtn;
+  return runtimeErrorEvent;
 
 end-proc;

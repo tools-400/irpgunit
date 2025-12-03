@@ -495,11 +495,14 @@ end-pr;
 // ------------------------------------
 
 ///
-// Get the internal assertion event
+// Get the internal assertion event. The actual instance can be one of:
+//   - testSuccessEvent_t
+//   - testFailureEvent_t
+//   - runtimeErrorEvent_t
 //
 // @return internal assertion event
 ///
-dcl-pr getAssertEventInternal likeds(assertEvent_t) extproc('getAssertEventInternal');
+dcl-pr getAssertEventInternal likeds(abstractTestEvent_t) extproc('getAssertEventInternal');
 end-pr;
 
 ///

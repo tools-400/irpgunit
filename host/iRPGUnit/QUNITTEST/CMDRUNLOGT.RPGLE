@@ -220,7 +220,7 @@ dcl-proc testLogFailureWithoutSpecNb export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds assertFailureEvent likeds(assertFailureEvent_t) inz;
+  dcl-ds testFailureEvent likeds(testFailureEvent_t) inz;
   dcl-s r int(10);
 
   dcl-s pCallstk pointer;
@@ -240,11 +240,11 @@ dcl-proc testLogFailureWithoutSpecNb export;
 
   Callstack_addEntry(pCallstk: callstkEnt);
 
-  assertFailureEvent.pCallstk = pCallstk;
+  testFailureEvent.pCallstk = pCallstk;
 
   // Execution.
 
-  logFailure(g_testNm: assertFailureEvent);
+  logFailure(g_testNm: testFailureEvent);
 
   // Controls.
 

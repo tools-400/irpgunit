@@ -556,8 +556,8 @@ end-proc;
 
 dcl-proc logFailure export;
   dcl-pi *n;
-    testNm          const like(ProcNm_t);
-    failure         const likeds(assertFailureEvent_t);
+    testNm           const like(ProcNm_t);
+    testFailureEvent const likeds(testFailureEvent_t);
   end-pi;
 
   fail('Mock logFailure not implemented');

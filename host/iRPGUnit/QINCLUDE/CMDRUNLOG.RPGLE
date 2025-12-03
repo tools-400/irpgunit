@@ -54,7 +54,7 @@ end-pr;
 ///
 dcl-pr logFailure extproc('CMDRUNLOG_logFailure');
   testnm      like(procNm_t) const;
-  failure     likeds(assertFailureEvent_t) const;
+  failure     likeds(testFailureEvent_t) const;
 end-pr;
 
 ///

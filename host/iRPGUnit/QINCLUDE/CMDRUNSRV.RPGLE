@@ -213,13 +213,13 @@ dcl-pr disposeTestResult extproc('CMDRUNSRV_disposeTestResult');
 end-pr;
 
 ///
-// Disposes a list of assertion events and frees resources.
+// Disposes a list of test events and frees resources.
 //
-// @param hAssertEvents - The list of assertion events to be disposed
+// @param hTestEvents - The list of test events to be disposed
 ///
-dcl-pr disposeAssertEvents extproc('CMDRUNSRV_disposeAssertEvents');
-  hAssertEvents pointer;
-  idx           int(10) options(*nopass: *omit) const;
+dcl-pr disposeTestEvents extproc('CMDRUNSRV_disposeTestEvents');
+  hTestEvents pointer;
+  idx         int(10) options(*nopass: *omit) const;
 end-pr;
 
 ///
@@ -273,9 +273,9 @@ end-pr;
 
 // Handle a test case failure.
 dcl-pr handleFailure extproc('CMDRUNSRV_handleFailure');
-  testProcNm      const like(procNm_t);
-  failure         const likeds(assertFailureEvent_t);
-  result          likeds(result_t);
+  testProcNm       const like(procNm_t);
+  testFailureEvent const likeds(testFailureEvent_t);
+  result           likeds(result_t);
 end-pr;
 
 // Handle a test case success.
@@ -285,12 +285,12 @@ dcl-pr handleSuccess extproc('CMDRUNSRV_handleSuccess');
 end-pr;
 
 // Returns the last recorded failure event.
-dcl-pr getLastFailureEvent likeds(assertFailureEvent_t) extproc('CMDRUNSRV_getLastFailureEvent');
+dcl-pr getLastFailureEvent likeds(testFailureEvent_t) extproc('CMDRUNSRV_getLastFailureEvent');
   testResult likeds(testResult_t) const;
 end-pr;
 
 // Returns the last recorded success event.
-dcl-pr getLastSuccessEvent likeds(assertSuccessEvent_t) extproc('CMDRUNSRV_getLastSuccessEvent');
+dcl-pr getLastSuccessEvent likeds(testSuccessEvent_t) extproc('CMDRUNSRV_getLastSuccessEvent');
   testResult likeds(testResult_t) const;
 end-pr;
 

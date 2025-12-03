@@ -165,8 +165,8 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc logFailure export;
   dcl-pi *N;
-    testNm      like(procNm_t) const;
-    failure     likeds(assertFailureEvent_t) const;
+    testNm           like(procNm_t) const;
+    testFailureEvent likeds(testFailureEvent_t) const;
   end-pi;
 
   // Index.
@@ -184,10 +184,10 @@ dcl-proc logFailure export;
 
   logRawLine(%trimr(testNm) + SEPARATOR + 'FAILURE');
 
-  logRawLine(failure.msg);
+  logRawLine(testFailureEvent.msg);
 
   // TODO: check callstack
-  pCallstk = failure.pCallstk;
+  pCallstk = testFailureEvent.pCallstk;
   if (Callstack_getNumE(pCallstk) > 0);
     lineFeed(); // new with *TYPE2 log output of 'expected' and 'actual' values
     Callstack_resetIteration(pCallstk);
@@ -199,9 +199,9 @@ dcl-proc logFailure export;
   endif;
 
   // new with *TYPE2 log output of 'expected' and 'actual' values
-  logValue(LABEL_EXPECTED: failure.logExpected);
-  logValue(LABEL_ACTUAL: failure.logActual);
-  logTruncated(failure.logExpected: failure.logActual);
+  logValue(LABEL_EXPECTED: testFailureEvent.logExpected);
+  logValue(LABEL_ACTUAL: testFailureEvent.logActual);
+  logTruncated(testFailureEvent.logExpected: testFailureEvent.logActual);
 
   prtLine(getLeftMargin() + LINE_SEPARATOR);
   lineFeed();

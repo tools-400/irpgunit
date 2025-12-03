@@ -92,11 +92,11 @@ dcl-proc a_testClearAssertFailEvent export;
   dcl-ds assertFailEvt_v1 likeds(assertFailEvt_t) inz;
   dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t) inz;
 
-  dcl-s hAssertEvents pointer;
+  dcl-s hTestEvents pointer;
 
-  hAssertEvents = list_create();
+  hTestEvents = list_create();
 
-  clrAssertFailEvt(hAssertEvents: '');
+  clrAssertFailEvt(hTestEvents: '');
 
   assertFailEvt_v1 = getAssertFailEvt();
   assertFailEvtLong_v2 = getAssertFailEvtLong();
@@ -108,7 +108,7 @@ dcl-proc a_testClearAssertFailEvent export;
   aEqual(EMPTY_ASSERT_FAIL_EVT_LONG: assertFailEvtLong_v2);
 
 on-exit;
-  disposeAssertEvents(hAssertEvents);
+  disposeTestEvents(hTestEvents);
 
 end-proc;
 

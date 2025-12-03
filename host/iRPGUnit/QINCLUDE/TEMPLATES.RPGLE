@@ -295,27 +295,27 @@ dcl-ds testResult_t qualified template;
   lastErrorEvent   int(10);
   lastFailureEvent int(10);
   lastSuccessEvent int(10);
-  hAssertEvents    pointer; // array(assertEvent_t) -> failure & success events
+  hTestEvents      pointer; // array(abstractTestEvent_t) -> failure & success events
 end-ds;
 
 // Assertion Event.
-dcl-ds assertEvent_t qualified template;
+dcl-ds abstractTestEvent_t qualified template;
   outcome      char(1);
   index        int(10);
-  failure      likeds(assertFailureEvent_t) pos(1) inz(*likeds);
-  success      likeds(assertSuccessEvent_t) pos(1) inz(*likeds);
+  failure      likeds(testFailureEvent_t) pos(1) inz(*likeds);
+  success      likeds(testSuccessEvent_t) pos(1) inz(*likeds);
   error        likeds(runtimeErrorEvent_t) pos(1) inz(*likeds);
 end-ds;
 
 // Assertion Success Event.
-dcl-ds assertSuccessEvent_t qualified template;
+dcl-ds testSuccessEvent_t qualified template;
   outcome      char(1) inz(TEST_CASE_SUCCESS);
   index        int(10);
   assertProc   like(assertProcNm_t) inz;
 end-ds;
 
 // Assertion Failure Event.
-dcl-ds assertFailureEvent_t qualified template;
+dcl-ds testFailureEvent_t qualified template;
   outcome      char(1) inz(TEST_CASE_FAILURE);
   index        int(10);
   assertProc   like(assertProcNm_t) inz;

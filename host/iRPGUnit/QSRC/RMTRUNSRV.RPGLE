@@ -407,8 +407,8 @@ dcl-proc createV3TestCase;
   dcl-ds stackEntry likeds(tmpl_callStkEnt_v3) based(sPtr);
   dcl-ds callstkEnt likeds(callstkEnt_t) inz;
 
-  dcl-ds failureEvent likeds(assertFailureEvent_t) inz;
-  dcl-ds errorEvent likeds(runtimeErrorEvent_t) inz;
+  dcl-ds testFailureEvent likeds(testFailureEvent_t) inz;
+  dcl-ds runtimeErrorEvent likeds(runtimeErrorEvent_t) inz;
 
   clear entry;
   entry.lenTestCase = %len(testResult.testname);
@@ -419,12 +419,12 @@ dcl-proc createV3TestCase;
   select;
   when (testResult.outcome = TEST_CASE_ERROR);
 
-    errorEvent = getLastErrorEvent(testResult);
+    runtimeErrorEvent = getLastErrorEvent(testResult);
 
-    entry.lenExcpMessage = min(%len(errorEvent.msg.txt): %len(entry.excpMessage));
-    entry.excpMessage = errorEvent.msg.txt;
-    if (errorEvent.msg.qSndStmt.specnb <> '');
-      entry.specNb = errorEvent.msg.qSndStmt.specnb;
+    entry.lenExcpMessage = min(%len(runtimeErrorEvent.msg.txt): %len(entry.excpMessage));
+    entry.excpMessage = runtimeErrorEvent.msg.txt;
+    if (runtimeErrorEvent.msg.qSndStmt.specnb <> '');
+      entry.specNb = runtimeErrorEvent.msg.qSndStmt.specnb;
     else;
       entry.specNb = NO_VALUE;
     endif;
@@ -438,11 +438,11 @@ dcl-proc createV3TestCase;
     // Add callstack entry of exception message
     sPtr = usPtr + entry.offsNext;
 
-    stackEntry.qPgm = errorEvent.msg.qSndStmt.qpgm;
-    stackEntry.qMod = errorEvent.msg.qSndStmt.qmod;
-    stackEntry.specNb = errorEvent.msg.qSndStmt.specnb;
-    stackEntry.procNm = errorEvent.msg.qSndStmt.procnm;
-    stackEntry.lenProcNm = %len(errorEvent.msg.qSndStmt.procnm);
+    stackEntry.qPgm = runtimeErrorEvent.msg.qSndStmt.qpgm;
+    stackEntry.qMod = runtimeErrorEvent.msg.qSndStmt.qmod;
+    stackEntry.specNb = runtimeErrorEvent.msg.qSndStmt.specnb;
+    stackEntry.procNm = runtimeErrorEvent.msg.qSndStmt.procnm;
+    stackEntry.lenProcNm = %len(runtimeErrorEvent.msg.qSndStmt.procnm);
 
     stackEntry.length = %size(stackEntry);
     stackEntry.offsNext = (sPtr - usPtr) + stackEntry.length;
@@ -453,12 +453,12 @@ dcl-proc createV3TestCase;
 
   when (testResult.outcome = TEST_CASE_FAILURE);
 
-    failureEvent = getLastFailureEvent(testResult);
+    testFailureEvent = getLastFailureEvent(testResult);
 
-    entry.lenExcpMessage = min(%len(failureEvent.msg): %len(entry.excpMessage));
-    entry.excpMessage = failureEvent.msg;
+    entry.lenExcpMessage = min(%len(testFailureEvent.msg): %len(entry.excpMessage));
+    entry.excpMessage = testFailureEvent.msg;
 
-    callstkEnt = Callstack_get(failureEvent.pCallstk: 1);
+    callstkEnt = Callstack_get(testFailureEvent.pCallstk: 1);
     entry.specNb = callstkEnt.qstmt.specNb;
 
     pExecTime = %addr(entry.excpMessage) + entry.lenExcpMessage;
@@ -467,8 +467,8 @@ dcl-proc createV3TestCase;
     entry.offsNext = (%addr(entry) - usPtr) + entry.length;
     entry.offsCallStkEnt = entry.offsNext;
 
-    Callstack_resetIteration(failureEvent.pCallstk);
-    dow (Callstack_getNext(failureEvent.pCallstk: callstkEnt));
+    Callstack_resetIteration(testFailureEvent.pCallstk);
+    dow (Callstack_getNext(testFailureEvent.pCallstk: callstkEnt));
 
       entry.numCallStkEnt += 1;
 
@@ -529,8 +529,8 @@ dcl-proc createV4TestCase;
   dcl-ds receiver likeds(tmpl_receiver_v4) based(pReceiver);
   dcl-ds callstkEnt likeds(callstkEnt_t) inz;
 
-  dcl-ds failureEvent likeds(assertFailureEvent_t) inz;
-  dcl-ds errorEvent likeds(runtimeErrorEvent_t) inz;
+  dcl-ds testFailureEvent likeds(testFailureEvent_t) inz;
+  dcl-ds runtimErrorEvent likeds(runtimeErrorEvent_t) inz;
 
   offsEntry = ePtr - usPtr;
 
@@ -560,12 +560,12 @@ dcl-proc createV4TestCase;
   select;
   when (testResult.outcome = TEST_CASE_ERROR);
 
-    errorEvent = getLastErrorEvent(testResult);
+    runtimErrorEvent = getLastErrorEvent(testResult);
 
     // Exception message:
-    entry.lenExcpMsg = %len(errorEvent.msg.txt);
+    entry.lenExcpMsg = %len(runtimErrorEvent.msg.txt);
     memcpy(usPtr + entry.offsExcpMsg
-           : %addr(errorEvent.msg.txt: *data)
+           : %addr(runtimErrorEvent.msg.txt: *data)
            : entry.lenExcpMsg);
 
     entry.offsNextEntry += entry.lenExcpMsg;
@@ -581,13 +581,13 @@ dcl-proc createV4TestCase;
     pSender = usPtr + entry.offsSndInf;
     clear sender;
     sender.lenEntry = %size(sender);
-    sender.qPgm = errorEvent.msg.qSndStmt.qPgm;
-    sender.qMod = errorEvent.msg.qSndStmt.qMod;
-    sender.specNb = errorEvent.msg.qSndStmt.specNb;
+    sender.qPgm = runtimErrorEvent.msg.qSndStmt.qPgm;
+    sender.qMod = runtimErrorEvent.msg.qSndStmt.qMod;
+    sender.specNb = runtimErrorEvent.msg.qSndStmt.specNb;
     sender.offsProcNm = entry.offsSndInf + %size(sender);
-    sender.lenProcNm = %len(errorEvent.msg.qSndStmt.procNm);
+    sender.lenProcNm = %len(runtimErrorEvent.msg.qSndStmt.procNm);
     memcpy(usPtr + sender.offsProcNm
-           : %addr(errorEvent.msg.qSndStmt.procNm: *data)
+           : %addr(runtimErrorEvent.msg.qSndStmt.procNm: *data)
            : entry.lenExcpMsg);
     sender.lenEntry += sender.lenProcNm;
 
@@ -603,13 +603,13 @@ dcl-proc createV4TestCase;
     pReceiver = usPtr + entry.offsRcvInf;
     clear receiver;
     receiver.lenEntry = %size(receiver);
-    receiver.qPgm = errorEvent.msg.qRcvStmt.qpgm;
-    receiver.qMod = errorEvent.msg.qRcvStmt.qmod;
-    receiver.specNb = errorEvent.msg.qRcvStmt.specnb;
+    receiver.qPgm = runtimErrorEvent.msg.qRcvStmt.qpgm;
+    receiver.qMod = runtimErrorEvent.msg.qRcvStmt.qmod;
+    receiver.specNb = runtimErrorEvent.msg.qRcvStmt.specnb;
     receiver.offsProcNm = entry.offsRcvInf + %size(receiver);
-    receiver.lenProcNm = %len(errorEvent.msg.qRcvStmt.procnm);
+    receiver.lenProcNm = %len(runtimErrorEvent.msg.qRcvStmt.procnm);
     memcpy(usPtr + receiver.offsProcNm
-           : %addr(errorEvent.msg.qRcvStmt.procNm: *data)
+           : %addr(runtimErrorEvent.msg.qRcvStmt.procNm: *data)
            : entry.lenExcpMsg);
 
     receiver.lenEntry += receiver.lenProcNm;
@@ -624,12 +624,12 @@ dcl-proc createV4TestCase;
 
   when (testResult.outcome = TEST_CASE_FAILURE);
 
-    failureEvent = getLastFailureEvent(testResult);
+    testFailureEvent = getLastFailureEvent(testResult);
 
     // Failure message:
-    entry.lenExcpMsg = %len(failureEvent.msg);
+    entry.lenExcpMsg = %len(testFailureEvent.msg);
     memcpy(usPtr + entry.offsExcpMsg
-           : %addr(failureEvent.msg: *data)
+           : %addr(testFailureEvent.msg: *data)
            : entry.lenExcpMsg);
 
     entry.offsNextEntry += entry.lenExcpMsg;
@@ -650,8 +650,8 @@ dcl-proc createV4TestCase;
     entry.offsCallStkE = offsEntry + entry.lenEntry;
     sPtr = usPtr + entry.offsCallStkE;
 
-    Callstack_resetIteration(failureEvent.pCallstk);
-    dow (Callstack_getNext(failureEvent.pCallstk: callstkEnt));
+    Callstack_resetIteration(testFailureEvent.pCallstk);
+    dow (Callstack_getNext(testFailureEvent.pCallstk: callstkEnt));
 
       entry.numCallStkE += 1;
 
@@ -753,8 +753,8 @@ dcl-proc createV5TestCase;
   dcl-ds receiver likeds(tmpl_receiver_v5) based(pReceiver);
   dcl-ds callstkEnt likeds(callstkEnt_t) inz;
 
-  dcl-ds failureEvent likeds(assertFailureEvent_t) inz;
-  dcl-ds errorEvent likeds(runtimeErrorEvent_t) inz;
+  dcl-ds testFailureEvent likeds(testFailureEvent_t) inz;
+  dcl-ds runtimeErrorEvent likeds(runtimeErrorEvent_t) inz;
 
   offsEntry = ePtr - usPtr;
 
@@ -784,12 +784,12 @@ dcl-proc createV5TestCase;
   select;
   when (testResult.outcome = TEST_CASE_ERROR);
 
-    errorEvent = getLastErrorEvent(testResult);
+    runtimeErrorEvent = getLastErrorEvent(testResult);
 
     // Exception message:
-    entry.lenExcpMsg = %len(errorEvent.msg.txt);
+    entry.lenExcpMsg = %len(runtimeErrorEvent.msg.txt);
     memcpy(usPtr + entry.offsExcpMsg
-           : %addr(errorEvent.msg.txt: *data)
+           : %addr(runtimeErrorEvent.msg.txt: *data)
            : entry.lenExcpMsg);
 
     entry.offsNextEntry += entry.lenExcpMsg;
@@ -805,13 +805,13 @@ dcl-proc createV5TestCase;
     pSender = usPtr + entry.offsSndInf;
     clear sender;
     sender.lenEntry = %size(sender);
-    sender.qPgm = errorEvent.msg.qSndStmt.qPgm;
-    sender.qMod = errorEvent.msg.qSndStmt.qMod;
-    sender.specNb = errorEvent.msg.qSndStmt.specNb;
+    sender.qPgm = runtimeErrorEvent.msg.qSndStmt.qPgm;
+    sender.qMod = runtimeErrorEvent.msg.qSndStmt.qMod;
+    sender.specNb = runtimeErrorEvent.msg.qSndStmt.specNb;
     sender.offsProcNm = entry.offsSndInf + %size(sender);
-    sender.lenProcNm = %len(errorEvent.msg.qSndStmt.procNm);
+    sender.lenProcNm = %len(runtimeErrorEvent.msg.qSndStmt.procNm);
     memcpy(usPtr + sender.offsProcNm
-           : %addr(errorEvent.msg.qSndStmt.procNm: *data)
+           : %addr(runtimeErrorEvent.msg.qSndStmt.procNm: *data)
            : entry.lenExcpMsg);
     sender.lenEntry += sender.lenProcNm;
 
@@ -827,13 +827,13 @@ dcl-proc createV5TestCase;
     pReceiver = usPtr + entry.offsRcvInf;
     clear receiver;
     receiver.lenEntry = %size(receiver);
-    receiver.qPgm = errorEvent.msg.qRcvStmt.qpgm;
-    receiver.qMod = errorEvent.msg.qRcvStmt.qmod;
-    receiver.specNb = errorEvent.msg.qRcvStmt.specnb;
+    receiver.qPgm = runtimeErrorEvent.msg.qRcvStmt.qpgm;
+    receiver.qMod = runtimeErrorEvent.msg.qRcvStmt.qmod;
+    receiver.specNb = runtimeErrorEvent.msg.qRcvStmt.specnb;
     receiver.offsProcNm = entry.offsRcvInf + %size(receiver);
-    receiver.lenProcNm = %len(errorEvent.msg.qRcvStmt.procnm);
+    receiver.lenProcNm = %len(runtimeErrorEvent.msg.qRcvStmt.procnm);
     memcpy(usPtr + receiver.offsProcNm
-           : %addr(errorEvent.msg.qRcvStmt.procNm: *data)
+           : %addr(runtimeErrorEvent.msg.qRcvStmt.procNm: *data)
            : entry.lenExcpMsg);
 
     receiver.lenEntry += receiver.lenProcNm;
@@ -852,12 +852,12 @@ dcl-proc createV5TestCase;
 
   when (testResult.outcome = TEST_CASE_FAILURE);
 
-    failureEvent = getLastFailureEvent(testResult);
+    testFailureEvent = getLastFailureEvent(testResult);
 
     // Failure message:
-    entry.lenExcpMsg = %len(failureEvent.msg);
+    entry.lenExcpMsg = %len(testFailureEvent.msg);
     memcpy(usPtr + entry.offsExcpMsg
-           : %addr(failureEvent.msg: *data)
+           : %addr(testFailureEvent.msg: *data)
            : entry.lenExcpMsg);
 
     entry.offsNextEntry += entry.lenExcpMsg;
@@ -878,8 +878,8 @@ dcl-proc createV5TestCase;
     entry.offsCallStkE = offsEntry + entry.lenEntry;
     sPtr = usPtr + entry.offsCallStkE;
 
-    Callstack_resetIteration(failureEvent.pCallstk);
-    dow (Callstack_getNext(failureEvent.pCallstk: callstkEnt));
+    Callstack_resetIteration(testFailureEvent.pCallstk);
+    dow (Callstack_getNext(testFailureEvent.pCallstk: callstkEnt));
 
       entry.numCallStkE += 1;
 
@@ -933,40 +933,40 @@ dcl-proc createV5TestCase;
     entry.lenEntry += %size(logValueExpected);
     entry.offsNextEntry += %size(logValueExpected);
     pValueExpected = usPtr + offsEntry + entry.lenEntry;
-    entry.lenEntry += failureEvent.logExpected.length;
-    entry.offsNextEntry += failureEvent.logExpected.length;
+    entry.lenEntry += testFailureEvent.logExpected.length;
+    entry.offsNextEntry += testFailureEvent.logExpected.length;
 
     logValueExpected.lenEntry = %size(tmpl_logValue_v5)
-                                + failureEvent.logExpected.length;
-    logValueExpected.length = failureEvent.logExpected.length;
-    logValueExpected.originalLength = failureEvent.logExpected.originalLength;
+                                + testFailureEvent.logExpected.length;
+    logValueExpected.length = testFailureEvent.logExpected.length;
+    logValueExpected.originalLength = testFailureEvent.logExpected.originalLength;
     logValueExpected.offsValue = pValueExpected - usPtr;
 
     logValueExpected.offsDataType = offsEntry + entry.lenEntry;
-    logValueExpected.lenDataType = %len(failureEvent.logExpected.type);
+    logValueExpected.lenDataType = %len(testFailureEvent.logExpected.type);
     pDataTypeExpected = usPtr + offsEntry  + logValueExpected.offsDataType;
     entry.lenEntry += logValueExpected.lenDataType;
     entry.offsNextEntry += logValueExpected.lenDataType;
 
     logValueExpected.offsAssertProc = offsEntry + entry.lenEntry;
-    logValueExpected.lenAssertProc = %len(failureEvent.logExpected.assertProc);
+    logValueExpected.lenAssertProc = %len(testFailureEvent.logExpected.assertProc);
     pAssertProcExpected = usPtr + offsEntry  + logValueExpected.offsAssertProc;
     entry.lenEntry += logValueExpected.lenAssertProc;
     entry.offsNextEntry += logValueExpected.lenAssertProc;
 
     memcpy(
       usPtr + logValueExpected.offsValue
-      : %addr(failureEvent.logExpected.value: *data)
+      : %addr(testFailureEvent.logExpected.value: *data)
       : logValueExpected.length);
 
     memcpy(
       usPtr + logValueExpected.offsDataType
-      : %addr(failureEvent.logExpected.type: *data)
+      : %addr(testFailureEvent.logExpected.type: *data)
       : logValueExpected.lenDataType);
 
     memcpy(
       usPtr + logValueExpected.offsAssertProc
-      : %addr(failureEvent.logExpected.assertProc: *data)
+      : %addr(testFailureEvent.logExpected.assertProc: *data)
       : logValueExpected.lenAssertProc);
 
     // add 'actual' value
@@ -975,40 +975,40 @@ dcl-proc createV5TestCase;
     entry.lenEntry += %size(logValueActual);
     entry.offsNextEntry += %size(logValueActual);
     pValueActual = usPtr + offsEntry + entry.lenEntry;
-    entry.lenEntry += failureEvent.logActual.length;
-    entry.offsNextEntry += failureEvent.logActual.length;
+    entry.lenEntry += testFailureEvent.logActual.length;
+    entry.offsNextEntry += testFailureEvent.logActual.length;
 
     logValueActual.lenEntry = %size(tmpl_logValue_v5)
-                              + failureEvent.logActual.length;
-    logValueActual.length = failureEvent.logActual.length;
-    logValueActual.originalLength = failureEvent.logActual.originalLength;
+                              + testFailureEvent.logActual.length;
+    logValueActual.length = testFailureEvent.logActual.length;
+    logValueActual.originalLength = testFailureEvent.logActual.originalLength;
     logValueActual.offsValue = pValueActual - usPtr;
 
     logValueActual.offsDataType = offsEntry + entry.lenEntry;
-    logValueActual.lenDataType = %len(failureEvent.logActual.type);
+    logValueActual.lenDataType = %len(testFailureEvent.logActual.type);
     pDataTypeActual = usPtr + offsEntry + logValueActual.offsDataType;
     entry.lenEntry += logValueActual.lenDataType;
     entry.offsNextEntry += logValueActual.lenDataType;
 
     logValueActual.offsAssertProc = offsEntry + entry.lenEntry;
-    logValueActual.lenAssertProc = %len(failureEvent.logActual.assertProc);
+    logValueActual.lenAssertProc = %len(testFailureEvent.logActual.assertProc);
     pAssertProcActual = usPtr + offsEntry  + logValueActual.offsAssertProc;
     entry.lenEntry += logValueActual.lenAssertProc;
     entry.offsNextEntry += logValueActual.lenAssertProc;
 
     memcpy(
       usPtr + logValueActual.offsValue
-      : %addr(failureEvent.logActual.value: *data)
+      : %addr(testFailureEvent.logActual.value: *data)
       : logValueActual.length);
 
     memcpy(
       usPtr + logValueActual.offsDataType
-      : %addr(failureEvent.logActual.type: *data)
+      : %addr(testFailureEvent.logActual.type: *data)
       : logValueActual.lenDataType);
 
     memcpy(
       usPtr + logValueActual.offsAssertProc
-      : %addr(failureEvent.logActual.assertProc: *data)
+      : %addr(testFailureEvent.logActual.assertProc: *data)
       : logValueActual.lenAssertProc);
 
   other; // including:  TEST_CASE_SUCCESS

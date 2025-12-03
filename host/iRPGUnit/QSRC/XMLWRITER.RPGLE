@@ -188,7 +188,7 @@ dcl-proc writeTestCases;
   dcl-s execTime packed(15:3);
 
   dcl-s numAsserts int(10);
-  dcl-ds assertEvent likeds(assertEvent_t) based(pAssertEvent);
+  dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
 
   dcl-s isEventLogged ind;
 
@@ -198,16 +198,16 @@ dcl-proc writeTestCases;
   pTestResult = list_getNext(testSuite.testResults);
   dow (pTestResult <> *null);
 
-    numAsserts = list_size(testResult.hAssertEvents);
+    numAsserts = list_size(testResult.hTestEvents);
 
     execTime = testResult.execTime / %dec(1000000 : 15 : 3);
 
     // iterate(asserts) -> failure & success events
     isEventLogged = *off;
 
-    list_resetIteration(testResult.hAssertEvents);
-    pAssertEvent = list_getNext(testResult.hAssertEvents);
-    dow (pAssertEvent <> *null);
+    list_resetIteration(testResult.hTestEvents);
+    pAbstractTestEvent = list_getNext(testResult.hTestEvents);
+    dow (pAbstractTestEvent <> *null);
 
       startElement = TAB + '<testcase name="' + %trimr(testResult.testName) + '" ';
       startElement += 'assertions="' + %char(testResult.assertCnt) + '" ';
@@ -216,22 +216,22 @@ dcl-proc writeTestCases;
       startElement += '>' + CRLF;
 
       select;
-      when (testResult.outcome = TEST_CASE_ERROR and assertEvent.outcome = TEST_CASE_ERROR);
+      when (testResult.outcome = TEST_CASE_ERROR and abstractTestEvent.outcome = TEST_CASE_ERROR);
 
         text = startElement;
 
         // start <error> element
-        text += TAB + TAB + '<error message="' + escapeXml(%trimr(assertEvent.error.msg.txt)) +
-            '" type="' + escapeXml(%trimr(assertEvent.error.msg.id)) + '">' + CRLF;
+        text += TAB + TAB + '<error message="' + escapeXml(%trimr(abstractTestEvent.error.msg.txt))+
+            '" type="' + escapeXml(%trimr(abstractTestEvent.error.msg.id)) + '">' + CRLF;
         text += escapeXml(
-            %trimr(assertEvent.error.msg.qSndStmt.procNm) + ' (' +
-            %trim(assertEvent.error.msg.qSndStmt.qPgm.nm) + '->' +
-              %trim(assertEvent.error.msg.qSndStmt.qMod.nm) + ':');
+            %trimr(abstractTestEvent.error.msg.qSndStmt.procNm) + ' ('+
+            %trim(abstractTestEvent.error.msg.qSndStmt.qPgm.nm) + '->'+
+              %trim(abstractTestEvent.error.msg.qSndStmt.qMod.nm) + ':');
 
-        if (assertEvent.error.msg.qSndStmt.specNb = *blank);
+        if (abstractTestEvent.error.msg.qSndStmt.specNb = *blank);
           text += '*N)' + CRLF;
         else;
-          text += escapeXml(%trim(assertEvent.error.msg.qSndStmt.specNb) + ')') + CRLF;
+          text += escapeXml(%trim(abstractTestEvent.error.msg.qSndStmt.specNb) + ')') + CRLF;
         endif;
 
         // close <error> element
@@ -239,22 +239,23 @@ dcl-proc writeTestCases;
 
         isEventLogged = *on;
 
-      when (testResult.outcome = TEST_CASE_FAILURE and assertEvent.outcome = TEST_CASE_FAILURE);
-        if (testResult.lastFailureEvent = assertEvent.index);
+      when (testResult.outcome = TEST_CASE_FAILURE and abstractTestEvent.outcome = TEST_CASE_FAILURE
+      );
+        if (testResult.lastFailureEvent = abstractTestEvent.index);
 
           text = startElement;
 
           // start <failure> element
           text += TAB + TAB + '<failure message="';
-          text += escapeXml(%trimr(assertEvent.failure.msg));
+          text += escapeXml(%trimr(abstractTestEvent.failure.msg));
           text += '">';
           text += '<![CDATA[' + CRLF;
 
           // always the first section of the <failure> element
           if (g_status.xmlType = XML_TYPE_1);
-            text += appendCallStackType1(fileHandle: assertEvent.failure.pCallstk);
+            text += appendCallStackType1(fileHandle: abstractTestEvent.failure.pCallstk);
           else;
-            text += appendCallStackType2(fileHandle: assertEvent.failure);
+            text += appendCallStackType2(fileHandle: abstractTestEvent.failure);
           endif;
 
           // close <failure> element
@@ -266,7 +267,7 @@ dcl-proc writeTestCases;
 
       other;
         // test case ran successful
-        if (testResult.outcome = assertEvent.outcome);
+        if (testResult.outcome = abstractTestEvent.outcome);
           text = startElement;
           isEventLogged = *on;
         endif;
@@ -282,10 +283,10 @@ dcl-proc writeTestCases;
       // Required for emulating the old behavior, where
       // RPGUNIT stops at the first failed assertion.
       if (isEventLogged);
-        list_abortIteration(testResult.hAssertEvents);
-        pAssertEvent = *null;
+        list_abortIteration(testResult.hTestEvents);
+        pAbstractTestEvent = *null;
       else;
-        pAssertEvent = list_getNext(testResult.hAssertEvents);
+        pAbstractTestEvent = list_getNext(testResult.hTestEvents);
       endif;
     enddo;
 
@@ -336,8 +337,8 @@ end-proc;
 //
 dcl-proc appendCallStackType2;
   dcl-pi *n varchar(10000);
-    fileHandle int(10) const;
-    failure    likeds(assertFailureEvent_t) const;
+    fileHandle       int(10) const;
+    testFailureEvent likeds(testFailureEvent_t) const;
   end-pi;
 
   dcl-s text varchar(10000);
@@ -349,25 +350,25 @@ dcl-proc appendCallStackType2;
   Json_addKey('callStack');
   Json_startArray(); // 'callstack'
 
-  buildCallStackType2(failure.pCallstk);
+  buildCallStackType2(testFailureEvent.pCallstk);
 
   Json_endArray(); // 'callstack'
 
-  buildFailureValues(fileHandle: failure);
+  buildFailureValues(fileHandle: testFailureEvent);
 
   // add diagnostic messages
-  if (failure.logExpected.type = DT_UNDEFINED or
-      failure.logActual.type = DT_UNDEFINED);
+  if (testFailureEvent.logExpected.type = DT_UNDEFINED or
+      testFailureEvent.logActual.type = DT_UNDEFINED);
 
     Json_addKey('diagnosticMessages');
     Json_startArray();
 
-    if (failure.logExpected.type = DT_UNDEFINED);
-      Json_addString(crtNoValueMsg(LABEL_EXPECTED: failure.logExpected.assertProc));
+    if (testFailureEvent.logExpected.type = DT_UNDEFINED);
+      Json_addString(crtNoValueMsg(LABEL_EXPECTED: testFailureEvent.logExpected.assertProc));
     endif;
 
-    if (failure.logActual.type = DT_UNDEFINED);
-      Json_addString(crtNoValueMsg(LABEL_ACTUAL: failure.logActual.assertProc));
+    if (testFailureEvent.logActual.type = DT_UNDEFINED);
+      Json_addString(crtNoValueMsg(LABEL_ACTUAL: testFailureEvent.logActual.assertProc));
     endif;
 
     Json_endArray(); // 'diagnosticMessages'
@@ -402,12 +403,12 @@ end-proc;
 
 dcl-proc buildFailureValues;
   dcl-pi *n extproc(*dclcase);
-    fileHandle int(10) const;
-    failure    likeds(assertFailureEvent_t) const;
+    fileHandle       int(10) const;
+    testFailureEvent likeds(testFailureEvent_t) const;
   end-pi;
 
-  buildLogValue(LABEL_EXPECTED: failure.logExpected);
-  buildLogValue(LABEL_ACTUAL: failure.logActual);
+  buildLogValue(LABEL_EXPECTED: testFailureEvent.logExpected);
+  buildLogValue(LABEL_ACTUAL: testFailureEvent.logActual);
 
 end-proc;
 
