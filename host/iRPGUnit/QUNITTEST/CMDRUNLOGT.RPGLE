@@ -12,20 +12,25 @@
 //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
 //   >>IMPORTANT<<
 //     >>PARM<<  MODULE(&LI/CMDRUNLOG +
+//                      &LI/CALLSTACK +
 //                      &LI/CMDRUNPRT +
 //                      &LI/JOBLOG    +
 //                      &LI/LIBL      +
+//                      &LI/LLIST     +
 //                      &LI/OSVERSION +
 //                      &LI/PGMMSG    +
 //                      &LI/STRING    +
 //                      );
+//     >>PARM<<  BNDSRVPGM(&LI/RUMEMMGR);
 //     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
 //     >>PARM<<  BOPTION(*DUPPROC);
 //   >>END-IMPORTANT<<
 //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNLOG) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/CALLSTACK) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNPRT) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/JOBLOG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/LIBL     ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/LLIST    ) SRCFILE(&SL/QLLIST) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/OSVERSION) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/PGMMSG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/STRING   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
@@ -35,15 +40,20 @@
 
 ctl-opt NoMain Option(*SrcStmt);
 
+/undefine ENABLE_DEBUG_MESSAGES
+
 //----------------------------------------------------------------------
 //   Imported Procedures
 //----------------------------------------------------------------------
 
 /copy qinclude,ASSERT
+/copy qinclude,CALLSTACK
 /copy qinclude,CMDRUNLOG
 /copy qinclude,LIBL
+/copy qinclude,MEMMGR
 /copy qinclude,TEMPLATES
 /copy qinclude,STRING
+/copy qsysinc,memcpy
 
 // CMDRUNPRTY is imported to mock module CMDRUNPRT. That way, we can
 // test what would have been printed in the spool file, without
@@ -62,18 +72,18 @@ dcl-c MARGIN '     ';
 //----------------------------------------------------------------------
 
 // The mock log lines and state.
-dcl-s logIdx          int(10);
-dcl-s logLine         char(80) Dim(100);
-dcl-s logWasOpened    ind;
-dcl-s logWasClosed    ind;
+dcl-s g_logIdx          int(10);
+dcl-s g_logLine         char(80) Dim(100);
+dcl-s g_logWasOpened    ind;
+dcl-s g_logWasClosed    ind;
 // The (dummy) service program containing the tests.
-dcl-ds testSrvPgm likeds(Object_t);
+dcl-ds g_testSrvPgm likeds(Object_t);
 // The (dummy) test case name.
-dcl-s testNm          like(ProcNm_t);
+dcl-s g_testNm          like(ProcNm_t);
 // Path and type of the XML stream file that is created
-dcl-ds xmlStmfInfo    likeds(xmlStmfInfo_t) inz;
+dcl-ds g_xmlStmfInfo    likeds(xmlStmfInfo_t) inz;
 
-dcl-s prtWidth int(10) inz(40);
+dcl-s g_prtWidth int(10) inz(40);
 
 //----------------------------------------------------------------------
 //   Test Definitions
@@ -83,18 +93,18 @@ dcl-proc setUp export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  clear logIdx;
-  clear logLine;
-  clear logWasOpened;
-  clear logWasClosed;
-  clear testSrvPgm;
-  clear testNm;
-  clear xmlStmfInfo;
+  clear g_logIdx;
+  clear g_logLine;
+  clear g_logWasOpened;
+  clear g_logWasClosed;
+  clear g_testSrvPgm;
+  clear g_testNm;
+  clear g_xmlStmfInfo;
 
-  testSrvPgm.nm = 'MY_SRVPGM';
-  setLogContext(testSrvPgm: DETAIL_ALL: OUTPUT_ALLWAYS: xmlStmfInfo);
+  g_testSrvPgm.nm = 'MY_SRVPGM';
+  setLogContext(g_testSrvPgm: DETAIL_ALL: OUTPUT_ALLWAYS: g_xmlStmfInfo);
 
-  reset prtWidth;
+  reset g_prtWidth;
 
 end-proc;
 
@@ -116,25 +126,25 @@ dcl-proc testLogSuccessWith1Assertion export;
 
   // Setup.
 
-  testNm = 'successful_test_with_one_assertion';
+  g_testNm = 'successful_test_with_one_assertion';
 
   // Execution.
 
-  logSuccess(testNm: oneAssertion);
+  logSuccess(g_testNm: oneAssertion);
 
   // Controls.
 
-  assert(logWasOpened : 'Log was not opened');
-  aEqual(MARGIN + '*** Tests of MY_SRVPGM ***         ': logLine(1));
+  assert(g_logWasOpened : 'Log was not opened');
+  aEqual(MARGIN + '*** Tests of MY_SRVPGM ***         ': g_logLine(1));
 
   r = findRow('successful_test');
   assert(r > 0: 'Row starting with ''successful_test'' not found');
 
-  aEqual(MARGIN + 'successful_test_with_one_asser     ': logLine(r));
-  aEqual(MARGIN + 'tion - Success                     ': logLine(r+1));
-  aEqual(MARGIN + '  1 assertions                     ': logLine(r+2));
-  aEqual(MARGIN + '-----------------------            ': logLine(r+3));
-  iEqual(r+4: logIdx);
+  aEqual(MARGIN + 'successful_test_with_one_asser     ': g_logLine(r));
+  aEqual(MARGIN + 'tion - Success                     ': g_logLine(r+1));
+  aEqual(MARGIN + '  1 assertions                     ': g_logLine(r+2));
+  aEqual(MARGIN + '-----------------------            ': g_logLine(r+3));
+  iEqual(r+4: g_logIdx);
 
 end-proc;
 
@@ -148,24 +158,24 @@ dcl-proc testLogSuccessWith2Assertions export;
 
   // Setup.
 
-  testNm = 'successful_test_with_two_assertions';
+  g_testNm = 'successful_test_with_two_assertions';
 
   // Execution.
 
-  logSuccess(testNm: twoAssertions);
+  logSuccess(g_testNm: twoAssertions);
 
   // Controls.
 
-  aEqual(MARGIN + '*** Tests of MY_SRVPGM ***        ': logLine(1));
+  aEqual(MARGIN + '*** Tests of MY_SRVPGM ***        ': g_logLine(1));
 
   r = findRow('successful_test');
   assert(r > 0: 'Row starting with ''successful_test'' not found');
 
-  aEqual(MARGIN + 'successful_test_with_two_asser    ': logLine(r ));
-  aEqual(MARGIN + 'tions - Success                   ': logLine(r+1));
-  aEqual(MARGIN + '  2 assertions                    ': logLine(r+2));
-  aEqual(MARGIN + '-----------------------           ': logLine(r+3));
-  iEqual(r+4: logIdx);
+  aEqual(MARGIN + 'successful_test_with_two_asser    ': g_logLine(r ));
+  aEqual(MARGIN + 'tions - Success                   ': g_logLine(r+1));
+  aEqual(MARGIN + '  2 assertions                    ': g_logLine(r+2));
+  aEqual(MARGIN + '-----------------------           ': g_logLine(r+3));
+  iEqual(r+4: g_logIdx);
 
 end-proc;
 
@@ -174,34 +184,34 @@ dcl-proc testLog2Successes export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-s testNm2 like(TestNm);
+  dcl-s testNm2 like(g_testNm);
   dcl-s r int(10);
 
   // Setup.
 
-  testNm  = 'successful_test_1';
+  g_testNm  = 'successful_test_1';
   testNm2 = 'successful_test_2';
 
   // Execution.
 
-  logSuccess(testNm: 0);
+  logSuccess(g_testNm: 0);
   logSuccess(testNm2: 0);
 
   // Controls.
 
-  aEqual(MARGIN + '*** Tests of MY_SRVPGM ***    ': logLine(1));
+  aEqual(MARGIN + '*** Tests of MY_SRVPGM ***    ': g_logLine(1));
 
   r = findRow('successful_test');
   assert(r > 0: 'Row starting with ''successful_test'' not found');
 
-  aEqual(MARGIN + 'successful_test_1 - Success   ': logLine(r ) );
-  aEqual(MARGIN + '  0 assertions                ': logLine(r+1));
-  aEqual(MARGIN + '-----------------------       ': logLine(r+2));
-  aEqual(MARGIN + ''                               : logLine(r+3));
-  aEqual(MARGIN + 'successful_test_2 - Success   ': logLine(r+4));
-  aEqual(MARGIN + '  0 assertions                ': logLine(r+5));
-  aEqual(MARGIN + '-----------------------       ': logLine(r+6));
-  iEqual(r+7: logIdx);
+  aEqual(MARGIN + 'successful_test_1 - Success   ': g_logLine(r ) );
+  aEqual(MARGIN + '  0 assertions                ': g_logLine(r+1));
+  aEqual(MARGIN + '-----------------------       ': g_logLine(r+2));
+  aEqual(MARGIN + ''                               : g_logLine(r+3));
+  aEqual(MARGIN + 'successful_test_2 - Success   ': g_logLine(r+4));
+  aEqual(MARGIN + '  0 assertions                ': g_logLine(r+5));
+  aEqual(MARGIN + '-----------------------       ': g_logLine(r+6));
+  iEqual(r+7: g_logIdx);
 
 end-proc;
 
@@ -210,43 +220,58 @@ dcl-proc testLogFailureWithoutSpecNb export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds failure likeds(AssertFailEvtLong_t) inz;
+  dcl-ds assertFailureEvent likeds(assertFailureEvent_t) inz;
   dcl-s r int(10);
+
+  dcl-s pCallstk pointer;
+  dcl-ds callstkEnt likeds(callStkEnt_t);
 
   // Setup.
 
-  testNm = 'failure_without_spec_nb';
-  failure.callStk.numE = 1;
-  failure.callStk.Entry(1).qStmt.qPgm.nm = 'MY_SRVPGM';
-  failure.callStk.Entry(1).qStmt.qMod.nm = 'MY_SRVPGM';
-  failure.callStk.Entry(1).qStmt.procNm = testNm;
-  failure.callStk.Entry(1).qStmt.specNb = *blank;
+  g_testNm = 'failure_without_spec_nb';
+
+  pCallstk = Callstack_alloc(1: 'pCallstk');
+
+  clear callstkEnt;
+  callstkEnt.qStmt.qPgm.nm = 'MY_SRVPGM';
+  callstkEnt.qStmt.qMod.nm = 'MY_SRVPGM';
+  callstkEnt.qStmt.procNm = g_testNm;
+  callstkEnt.qStmt.specNb = *blank;
+
+  Callstack_addEntry(pCallstk: callstkEnt);
+
+  assertFailureEvent.pCallstk = pCallstk;
 
   // Execution.
 
-  logFailure(testNm: failure);
+  logFailure(g_testNm: assertFailureEvent);
 
   // Controls.
 
-  assert(logWasOpened: 'Log was not opened' );
-  aEqual(MARGIN + '*** Tests of MY_SRVPGM ***        ': logLine(1));
+  assert(g_logWasOpened: 'Log was not opened' );
+  aEqual(MARGIN + '*** Tests of MY_SRVPGM ***        ': g_logLine(1));
 
   r = findRow('failure_without');
   assert(r > 0: 'Row starting with ''failure_without'' not found');
 
-  aEqual(MARGIN + 'failure_without_spec_nb - FAIL    ': logLine(r ));
-  aEqual(MARGIN + 'URE                               ': logLine(r+1));
-  aEqual(MARGIN + '                                  ': logLine(r+2)); // new with *TYPE2 log output
-  aEqual(MARGIN + '  failure_without_spec_nb (MY_    ': logLine(r+3));
-  aEqual(MARGIN + 'SRVPGM->MY_SRVPGM:*N)             ': logLine(r+4));
-  aEqual(MARGIN + '                                  ': logLine(r+5)); // new with *TYPE2 log output
-  aEqual(MARGIN + 'Expected:          Not availab    ': logLine(r+6));
-  aEqual(MARGIN + 'le                                ': logLine(r+7));
-  aEqual(MARGIN + 'Actual:            Not availab    ': logLine(r+8));
-  aEqual(MARGIN + 'le                                ': logLine(r+9));
-  aEqual(MARGIN + '-----------------------           ': logLine(r+10));
-  aEqual(MARGIN + '                                  ': logLine(r+11));
-  iEqual(r+11: logIdx);
+  aEqual(MARGIN + 'failure_without_spec_nb - FAIL    ': g_logLine(r ));
+  aEqual(MARGIN + 'URE                               ': g_logLine(r+1));
+  aEqual(MARGIN + '                                  ': g_logLine(r+2))
+  ;                                                                    // new with *TYPE2 log output
+  aEqual(MARGIN + '  failure_without_spec_nb (MY_    ': g_logLine(r+3));
+  aEqual(MARGIN + 'SRVPGM->MY_SRVPGM:*N)             ': g_logLine(r+4));
+  aEqual(MARGIN + '                                  ': g_logLine(r+5))
+  ;                                                                    // new with *TYPE2 log output
+  aEqual(MARGIN + 'Expected:          Not availab    ': g_logLine(r+6));
+  aEqual(MARGIN + 'le                                ': g_logLine(r+7));
+  aEqual(MARGIN + 'Actual:            Not availab    ': g_logLine(r+8));
+  aEqual(MARGIN + 'le                                ': g_logLine(r+9));
+  aEqual(MARGIN + '-----------------------           ': g_logLine(r+10));
+  aEqual(MARGIN + '                                  ': g_logLine(r+11));
+  iEqual(r+11: g_logIdx);
+
+on-exit;
+  MemMgr_dealloc(pCallstk: 'pCallstk');
 
 end-proc;
 
@@ -260,7 +285,7 @@ dcl-proc testLogErrorWithoutMsgId export;
 
   // Setup.
 
-  testNm = 'error_with_missing_msg_id';
+  g_testNm = 'error_with_missing_msg_id';
   excpMsgInfo.Id = *blank;
   excpMsgInfo.txt = 'Error message.';
   excpMsgInfo.qSndStmt.qPgm.nm = 'ERRORPGM';
@@ -269,21 +294,21 @@ dcl-proc testLogErrorWithoutMsgId export;
 
   // Execution.
 
-  logError(testNm: excpMsgInfo);
+  logError(g_testNm: excpMsgInfo);
 
   // Controls.
 
-  assert(logWasOpened : 'Log was not opened');
-  aEqual(MARGIN + '*** Tests of MY_SRVPGM ***        ': logLine(1));
+  assert(g_logWasOpened : 'Log was not opened');
+  aEqual(MARGIN + '*** Tests of MY_SRVPGM ***        ': g_logLine(1));
 
   r = findRow('error_with');
   assert(r > 0: 'Row starting with ''error_with'' not found');
 
-  aEqual(MARGIN + 'error_with_missing_msg_id - ERROR ': logLine(r));
-  aEqual(MARGIN + 'Error message.                    ': logLine(r+1));
-  aEqual(MARGIN + '  error_proc (ERRORPGM->:1000)    ': logLine(r+2));
-  aEqual(MARGIN + '-----------------------           ': logLine(r+3));
-  iEqual(r+4: logIdx);
+  aEqual(MARGIN + 'error_with_missing_msg_id - ERROR ': g_logLine(r));
+  aEqual(MARGIN + 'Error message.                    ': g_logLine(r+1));
+  aEqual(MARGIN + '  error_proc (ERRORPGM->:1000)    ': g_logLine(r+2));
+  aEqual(MARGIN + '-----------------------           ': g_logLine(r+3));
+  iEqual(r+4: g_logIdx);
 
 end-proc;
 
@@ -297,7 +322,7 @@ dcl-proc testLogErrorWithoutExcpInfoOrigin export;
 
   // Setup.
 
-  testNm = 'error_without_origin_info';
+  g_testNm = 'error_without_origin_info';
   excpMsgInfo.Id = 'CPF1234';
   excpMsgInfo.txt = 'Error message.';
   excpMsgInfo.qSndStmt.qPgm.nm = *blank;
@@ -306,19 +331,19 @@ dcl-proc testLogErrorWithoutExcpInfoOrigin export;
 
   // Execution.
 
-  logError(testNm: excpMsgInfo);
+  logError(g_testNm: excpMsgInfo);
 
   // Controls.
 
-  aEqual(MARGIN + '*** Tests of MY_SRVPGM ***        ': logLine(1));
+  aEqual(MARGIN + '*** Tests of MY_SRVPGM ***        ': g_logLine(1));
 
   r = findRow('error_without');
   assert(r > 0: 'Row starting with ''error_without'' not found');
 
-  aEqual(MARGIN + 'error_without_origin_info - ERROR ': logLine(r));
-  aEqual(MARGIN + 'CPF1234 - Error message.          ': logLine(r+1));
-  aEqual(MARGIN + '-----------------------           ': logLine(r+2));
-  iEqual(r+3: logIdx);
+  aEqual(MARGIN + 'error_without_origin_info - ERROR ': g_logLine(r));
+  aEqual(MARGIN + 'CPF1234 - Error message.          ': g_logLine(r+1));
+  aEqual(MARGIN + '-----------------------           ': g_logLine(r+2));
+  iEqual(r+3: g_logIdx);
 
 end-proc;
 
@@ -335,16 +360,16 @@ dcl-proc testLogCompMsg export;
 
   // Controls.
 
-  assert(logWasOpened: 'Log was not opened');
-  aEqual(MARGIN + '*** Tests of MY_SRVPGM ***        ': logLine(1));
+  assert(g_logWasOpened: 'Log was not opened');
+  aEqual(MARGIN + '*** Tests of MY_SRVPGM ***        ': g_logLine(1));
 
   r = findRow('Library list:');
   assert(r > 0: 'Row starting with ''Library list:'' not found');
 
-  aEqual(MARGIN + 'Completion message                ': logLine(r+2));
-  assert(r+2 = logIdx
+  aEqual(MARGIN + 'Completion message                ': g_logLine(r+2));
+  assert(r+2 = g_logIdx
   : 'Line with ''Completion message'' must be the last one');
-  assert(logWasClosed: 'Log was not closed');
+  assert(g_logWasClosed: 'Log was not closed');
 
 end-proc;
 
@@ -367,42 +392,42 @@ dcl-proc testLogStmfPath export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  clear logIdx;
-  clear logLine;
-  clear logWasOpened;
-  clear logWasClosed;
-  clear testSrvPgm;
-  clear testNm;
-  clear xmlStmfInfo;
+  clear g_logIdx;
+  clear g_logLine;
+  clear g_logWasOpened;
+  clear g_logWasClosed;
+  clear g_testSrvPgm;
+  clear g_testNm;
+  clear g_xmlStmfInfo;
 
-  xmlStmfInfo.path = '/home/RADDATZ/this_is_an-extra_ordinary_very_long_path_name_+
+  g_xmlStmfInfo.path = '/home/RADDATZ/this_is_an-extra_ordinary_very_long_path_name_+
                       that_requires_more_than_two_lines_for_beeing_printed_on_the_+
                       iRPGUnit_spooled_file/irpgunit-ruplugint1.xml';
-  xmlStmfInfo.type = '*TYPE2';
+  g_xmlStmfInfo.type = '*TYPE2';
 
-  prtWidth = 80;
+  g_prtWidth = 80;
 
-  testSrvPgm.nm = 'MY_SRVPGM';
-  setLogContext(testSrvPgm: DETAIL_ALL: OUTPUT_ALLWAYS: xmlStmfInfo);
+  g_testSrvPgm.nm = 'MY_SRVPGM';
+  setLogContext(g_testSrvPgm: DETAIL_ALL: OUTPUT_ALLWAYS: g_xmlStmfInfo);
 
   // Execution.
 
-  logStmfPath('XML file    : ': xmlStmfInfo.path);
-  logRawLine('XML type    : ' + xmlStmfInfo.type);
+  logStmfPath('XML file    : ': g_xmlStmfInfo.path);
+  logRawLine('XML type    : ' + g_xmlStmfInfo.type);
 
   // Controls.
 
   aEqual(MARGIN + 'XML file    : ''/home/RADDATZ/this_is_an-extra_ordinary_very_long_path'''
-        : logLine(1));
+        : g_logLine(1));
   aEqual(MARGIN + '              ''_name_that_requires_more_than_two_lines_for_beeing_pri'''
-        : logLine(2));
+        : g_logLine(2));
   aEqual(MARGIN + '              ''nted_on_the_iRPGUnit_spooled_file/irpgunit-ruplugint1.'''
-        : logLine(3));
+        : g_logLine(3));
   aEqual(MARGIN + '              ''xml'''
-        : logLine(4));
+        : g_logLine(4));
   aEqual(MARGIN + 'XML type    : *TYPE2'
-        : logLine(5));
-  iEqual(5: logIdx);
+        : g_logLine(5));
+  iEqual(5: g_logIdx);
 
 end-proc;
 
@@ -417,8 +442,8 @@ dcl-proc testLogRawLine export;
 
   // Controls.
 
-  aEqual(MARGIN + 'A short text                      ': logLine(1));
-  iEqual(1: logIdx);
+  aEqual(MARGIN + 'A short text                      ': g_logLine(1));
+  iEqual(1: g_logIdx);
 
 end-proc;
 
@@ -444,9 +469,9 @@ dcl-proc testLogRawLineWithWrapping export;
 
   //          1111111111222222222233333333334
   // 1234567890123456789012345678901234567890
-  aEqual(MARGIN + 'A very very very very very ver': logLine(1));
-  aEqual(MARGIN + 'y very very long text': logLine(2));
-  iEqual(2: logIdx);
+  aEqual(MARGIN + 'A very very very very very ver': g_logLine(1));
+  aEqual(MARGIN + 'y very very long text': g_logLine(2));
+  iEqual(2: g_logIdx);
 
 end-proc;
 
@@ -460,7 +485,7 @@ dcl-proc clsPrt export;
   dcl-pi *n;
   end-pi;
 
-  logWasClosed = *on;
+  g_logWasClosed = *on;
 
 end-proc;
 
@@ -470,7 +495,7 @@ dcl-proc getPrtWidth export;
   dcl-pi *n int(10);
   end-pi;
 
-  return prtWidth;
+  return g_prtWidth;
 
 end-proc;
 
@@ -481,7 +506,7 @@ dcl-proc opnPrt export;
     testPgmNm   const like(Object_t.nm);
   end-pi;
 
-  logWasOpened = *on;
+  g_logWasOpened = *on;
   aEqual('MY_SRVPGM': testPgmNm);
 
 end-proc;
@@ -510,8 +535,10 @@ dcl-proc prtLine export;
     line   char(80) const;
   end-pi;
 
-  logIdx += 1;
-  logLine(logIdx) = line;
+  g_logIdx += 1;
+  g_logLine(g_logIdx) = line;
+
+  sndPlainDbgMsg(%char(g_logIdx) + ': ' + g_logLine(g_logIdx));
 
 end-proc;
 
@@ -524,13 +551,27 @@ dcl-proc findRow;
 
   dcl-s i int(10);
 
-  for i = 1 to logIdx;
-    if (startsWith(value: %trim(logLine(i))));
+  for i = 1 to g_logIdx;
+    if (startsWith(value: %trim(g_logLine(i))));
       return i;
     endif;
   endfor;
 
   return -1;
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Sends a debug message to the job log.
+//----------------------------------------------------------------------
+dcl-proc sndPlainDbgMsg;
+  dcl-pi *n extproc(*dclcase);
+    i_msg varchar(256) const;
+  end-pi;
+
+/if defined(ENABLE_DEBUG_MESSAGES)
+  snd-msg *INFO '[DEBUG] ' + i_msg %target(*caller);
+/endif
 
 end-proc;
 

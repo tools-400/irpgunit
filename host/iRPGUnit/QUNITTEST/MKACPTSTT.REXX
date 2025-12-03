@@ -94,6 +94,7 @@
  "CMPMOD MODULE("prdLib"/JOBLOG   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/LIBL     ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/LSTSPLF  ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/LLIST    ) SRCFILE("prdLib"/QLLIST   ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/OBJECT   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/SRCMBR   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
@@ -107,6 +108,7 @@
                      prdLib"/JOBLOG    ",
                      prdLib"/LIBL      ",
                      prdLib"/LSTSPLF   ",
+                     prdLib"/LLIST     ",
                      prdLib"/OBJECT    ",
                      prdLib"/PGMMSG    ",
                      prdLib"/SRCMBR    ",
@@ -117,7 +119,7 @@
                      ") ",
             "EXPORT(*ALL) ",
             "OPTION(*DUPPROC) ",
-            "BNDSRVPGM("prdLib"/RUTESTCASE) ",
+            "BNDSRVPGM("prdLib"/RUTESTCASE "prdLib"/RUMEMMGR) ",
             "TEXT('RPGUnit SelfTest - Acceptance tests.')"
 
 

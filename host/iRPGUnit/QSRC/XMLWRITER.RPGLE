@@ -24,7 +24,9 @@ ctl-opt DECEDIT('0.') NOMAIN;
 
 /define COPYRIGHT_DSPEC
 /include qinclude,COPYRIGHT
+
 /include qinclude,ASSERT
+/include qinclude,CALLSTACK
 /include qinclude,JSONWTR
 /include qinclude,PGMMSG
 /include qinclude,CMDRUN
@@ -179,71 +181,115 @@ dcl-proc writeTestCases;
     result likeds(result_t) const;
   end-pi;
 
-  dcl-ds testResult likeds(TestResult_t) based(ptr);
+  dcl-ds testResult likeds(TestResult_t) based(pTestResult);
+  dcl-s startElement varchar(2000);
   dcl-s text varchar(50000);
   dcl-s rc int(10);
   dcl-s execTime packed(15:3);
 
-  list_abortIteration(testSuite.testResults);
-  ptr = list_getNext(testSuite.testResults);
-  dow (ptr <> *null);
+  dcl-s numAsserts int(10);
+  dcl-ds assertEvent likeds(assertEvent_t) based(pAssertEvent);
+
+  dcl-s isEventLogged ind;
+
+  list_resetIteration(testSuite.testResults);
+
+  // Iterate the test cases...
+  pTestResult = list_getNext(testSuite.testResults);
+  dow (pTestResult <> *null);
+
+    numAsserts = list_size(testResult.hAssertEvents);
 
     execTime = testResult.execTime / %dec(1000000 : 15 : 3);
 
-    text = TAB + '<testcase name="' + %trimr(testResult.testName) + '" ';
-    text += 'assertions="' + %char(testResult.assertCnt) + '" ';
-    text += 'classname="' + %trimr(testSuiteName.nm) + '" '; // TODO should look which modules
-    text += 'time="' + %char(exectime) + '" ';               // exports this testcase
-    text += '>' + CRLF;
+    // iterate(asserts) -> failure & success events
+    isEventLogged = *off;
 
-    select;
-    when (testResult.outcome = TEST_CASE_ERROR);
+    list_resetIteration(testResult.hAssertEvents);
+    pAssertEvent = list_getNext(testResult.hAssertEvents);
+    dow (pAssertEvent <> *null);
 
-      // start <error> element
-      text += TAB + TAB + '<error message="' + escapeXml(%trimr(testResult.error.txt)) +
-          '" type="' + escapeXml(%trimr(testResult.error.id)) + '">' + CRLF;
-      text += escapeXml(
-          %trimr(testResult.error.qSndStmt.procNm) + ' (' +
-          %trim(testResult.error.qSndStmt.qPgm.nm) + '->' +
-          %trim(testResult.error.qSndStmt.qMod.nm) + ':');
+      startElement = TAB + '<testcase name="' + %trimr(testResult.testName) + '" ';
+      startElement += 'assertions="' + %char(testResult.assertCnt) + '" ';
+      startElement += 'classname="' + %trimr(testSuiteName.nm) + '" '; // TODO: should look which mo
+      startElement += 'time="' + %char(execTime) + '" ';               // exports this testcase
+      startElement += '>' + CRLF;
 
-      if (testResult.error.qSndStmt.specNb = *blank);
-        text += '*N)' + CRLF;
-      else;
-        text += escapeXml(%trim(testResult.error.qSndStmt.specNb) + ')') + CRLF;
+      select;
+      when (testResult.outcome = TEST_CASE_ERROR and assertEvent.outcome = TEST_CASE_ERROR);
+
+        text = startElement;
+
+        // start <error> element
+        text += TAB + TAB + '<error message="' + escapeXml(%trimr(assertEvent.error.msg.txt)) +
+            '" type="' + escapeXml(%trimr(assertEvent.error.msg.id)) + '">' + CRLF;
+        text += escapeXml(
+            %trimr(assertEvent.error.msg.qSndStmt.procNm) + ' (' +
+            %trim(assertEvent.error.msg.qSndStmt.qPgm.nm) + '->' +
+              %trim(assertEvent.error.msg.qSndStmt.qMod.nm) + ':');
+
+        if (assertEvent.error.msg.qSndStmt.specNb = *blank);
+          text += '*N)' + CRLF;
+        else;
+          text += escapeXml(%trim(assertEvent.error.msg.qSndStmt.specNb) + ')') + CRLF;
+        endif;
+
+        // close <error> element
+        text += TAB + TAB + '</error>' + CRLF;
+
+        isEventLogged = *on;
+
+      when (testResult.outcome = TEST_CASE_FAILURE and assertEvent.outcome = TEST_CASE_FAILURE);
+        if (testResult.lastFailureEvent = assertEvent.index);
+
+          text = startElement;
+
+          // start <failure> element
+          text += TAB + TAB + '<failure message="';
+          text += escapeXml(%trimr(assertEvent.failure.msg));
+          text += '">';
+          text += '<![CDATA[' + CRLF;
+
+          // always the first section of the <failure> element
+          if (g_status.xmlType = XML_TYPE_1);
+            text += appendCallStackType1(fileHandle: assertEvent.failure.pCallstk);
+          else;
+            text += appendCallStackType2(fileHandle: assertEvent.failure);
+          endif;
+
+          // close <failure> element
+          text += TAB + TAB + ']]>';
+          text += '</failure>' + CRLF;
+
+          isEventLogged = *on;
+        endif;
+
+      other;
+        // test case ran successful
+        if (testResult.outcome = assertEvent.outcome);
+          text = startElement;
+          isEventLogged = *on;
+        endif;
+      endsl;
+
+      // close <testcase> element
+      if (isEventLogged);
+        text += TAB + '</testcase>' + CRLF;
+        rc = write(fileHandle : %addr(text : *data) : %len(text));
       endif;
 
-      // close <error> element
-      text += TAB + TAB + '</error>' + CRLF;
-
-    when (testResult.outcome = TEST_CASE_FAILURE);
-
-      // start <failure> element
-      text += TAB + TAB + '<failure message="';
-      text += escapeXml(%trimr(testResult.failure.msg));
-      text += '">';
-      text += '<![CDATA[' + CRLF;
-
-      // always the first section of the <failure> element
-      if (g_status.xmlType = XML_TYPE_1);
-        text += appendCallStackType1(fileHandle: testResult.failure.callstk);
+      // Abort iteration.
+      // Required for emulating the old behavior, where
+      // RPGUNIT stops at the first failed assertion.
+      if (isEventLogged);
+        list_abortIteration(testResult.hAssertEvents);
+        pAssertEvent = *null;
       else;
-        text += appendCallStackType2(fileHandle: testResult);
+        pAssertEvent = list_getNext(testResult.hAssertEvents);
       endif;
+    enddo;
 
-      // close <failure> element
-      text += TAB + TAB + ']]>';
-      text += '</failure>' + CRLF;
-
-    other;
-      // test case ran successful
-    endsl;
-
-    // close <testcase> element
-    text += TAB + '</testcase>' + CRLF;
-    rc = write(fileHandle : %addr(text : *data) : %len(text));
-
-    ptr = list_getNext(testSuite.testResults);
+    pTestResult = list_getNext(testSuite.testResults);
   enddo;
 end-proc;
 
@@ -251,12 +297,12 @@ end-proc;
 dcl-proc appendCallStackType1;
   dcl-pi *n varchar(10000);
     fileHandle int(10) const;
-    callstack  likeds(CallStk_t) const;
+    pCallstack  pointer const;
   end-pi;
 
   dcl-s text varchar(10000);
 
-  text += escapeXml(buildCallStackType1(callstack));
+  text += escapeXml(buildCallStackType1(pCallstack));
 
   return text;
 
@@ -291,7 +337,7 @@ end-proc;
 dcl-proc appendCallStackType2;
   dcl-pi *n varchar(10000);
     fileHandle int(10) const;
-    testResult likeds(testResult_t) const;
+    failure    likeds(assertFailureEvent_t) const;
   end-pi;
 
   dcl-s text varchar(10000);
@@ -303,25 +349,25 @@ dcl-proc appendCallStackType2;
   Json_addKey('callStack');
   Json_startArray(); // 'callstack'
 
-  buildCallStackType2(testResult.failure.callstk);
+  buildCallStackType2(failure.pCallstk);
 
   Json_endArray(); // 'callstack'
 
-  buildFailureValues(fileHandle: testResult.failure);
+  buildFailureValues(fileHandle: failure);
 
   // add diagnostic messages
-  if (testResult.failure.logExpected.type = DT_UNDEFINED or
-      testResult.failure.logActual.type = DT_UNDEFINED);
+  if (failure.logExpected.type = DT_UNDEFINED or
+      failure.logActual.type = DT_UNDEFINED);
 
     Json_addKey('diagnosticMessages');
     Json_startArray();
 
-    if (testResult.failure.logExpected.type = DT_UNDEFINED);
-      Json_addString(crtNoValueMsg(LABEL_EXPECTED: testResult.failure.logExpected.assertProc));
+    if (failure.logExpected.type = DT_UNDEFINED);
+      Json_addString(crtNoValueMsg(LABEL_EXPECTED: failure.logExpected.assertProc));
     endif;
 
-    if (testResult.failure.logActual.type = DT_UNDEFINED);
-      Json_addString(crtNoValueMsg(LABEL_ACTUAL: testResult.failure.logActual.assertProc));
+    if (failure.logActual.type = DT_UNDEFINED);
+      Json_addString(crtNoValueMsg(LABEL_ACTUAL: failure.logActual.assertProc));
     endif;
 
     Json_endArray(); // 'diagnosticMessages'
@@ -357,7 +403,7 @@ end-proc;
 dcl-proc buildFailureValues;
   dcl-pi *n extproc(*dclcase);
     fileHandle int(10) const;
-    failure    likeds(testResult_t.failure) const;
+    failure    likeds(assertFailureEvent_t) const;
   end-pi;
 
   buildLogValue(LABEL_EXPECTED: failure.logExpected);
@@ -405,19 +451,20 @@ end-proc;
 
 dcl-proc buildCallStackType1;
   dcl-pi *n varchar(100000);
-    callstack likeds(CallStk_t) const;
+    pCallstk pointer const;
   end-pi;
 
   dcl-s text varchar(10000);
-  dcl-s i int(10);
+  dcl-ds callstkEnt likeds(callStkEnt_t) inz;
 
-  for i = 1 to callstack.nume;
+  Callstack_resetIteration(pCallstk);
+  dow (Callstack_getNext(pCallstk: callstkEnt));
     // example: iEqual (RUTESTCASE->ASSERT:124)
-    text += callstack.entry(i).qStmt.procNm + ' (' +
-        %trim(callstack.entry(i).qStmt.qPgm.nm) + '->' +
-        %trim(callstack.entry(i).qStmt.qMod.nm) + ':' +
-        %trim(callstack.entry(i).qStmt.specNb) + ')' + CRLF;
-  endfor;
+    text += callstkEnt.qStmt.procNm + ' ('+
+        %trim(callstkEnt.qStmt.qPgm.nm) + '->'+
+        %trim(callstkEnt.qStmt.qMod.nm) + ':'+
+        %trim(callstkEnt.qStmt.specNb) + ')' + CRLF;
+  enddo;
 
   return text;
 end-proc;
@@ -425,21 +472,22 @@ end-proc;
 
 dcl-proc buildCallStackType2;
   dcl-pi *n;
-    callstack likeds(CallStk_t) const;
+    pCallstk pointer const;
   end-pi;
 
   dcl-s callStackItem varchar(1024);
-  dcl-s i int(10);
+  dcl-ds callstkEnt likeds(callstkEnt_t) inz;
 
-  for i = 1 to callstack.nume;
+  Callstack_resetIteration(pCallstk);
+  dow (Callstack_getNext(pCallstk: callstkEnt));
     // example: iEqual (RUTESTCASE->ASSERT:124)
-    callStackItem = callstack.entry(i).qStmt.procNm + ' ('
-                      + %trim(callstack.entry(i).qStmt.qPgm.nm) + '->'
-                      + %trim(callstack.entry(i).qStmt.qMod.nm) + ':'
-                      + %trim(callstack.entry(i).qStmt.specNb) + ')';
+    callStackItem = callstkEnt.qStmt.procNm + ' ('
+                      + %trim(callstkEnt.qStmt.qPgm.nm) + '->'
+                      + %trim(callstkEnt.qStmt.qMod.nm) + ':'
+                      + %trim(callstkEnt.qStmt.specNb) + ')';
 
     Json_addString(callStackItem);
-  endfor;
+  enddo;
 
 end-proc;
 

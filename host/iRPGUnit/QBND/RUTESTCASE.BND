@@ -10,9 +10,22 @@
 /* >>PRE-COMPILER<<                                                           */
 /*   >>CRTCMD<<  CRTSRVPGM SRVPGM(&LI/&OB);                                   */
 /*   >>IMPORTANT<<                                                            */
-/*     >>PARM<<  MODULE(&LI/ASSERT &LI/ASSERTV2 &LI/JOBLOG &LI/PGMMSG   +     */
-/*                      &LI/VERSION &LI/TESTUTILS &LI/STRING +                */
-/*                      &LI/SRCMBR &LI/STMF &LI/USRSPC);                      */
+/*     >>PARM<<  MODULE(&LI/ASSERT    +                                       */
+/*                      &LI/ASSERTV2  +                                       */
+/*                      &LI/CALLSTACK +                                       */
+/*                      &LI/JOBLOG    +                                       */
+/*                      &LI/PGMMSG    +                                       */
+/*                      &LI/LLIST     +                                       */
+/*                      &LI/OBJECT    +                                       */
+/*                      &LI/VERSION   +                                       */
+/*                      &LI/SRCMBR    +                                       */
+/*                      &LI/STMF      +                                       */
+/*                      &LI/STRING    +                                       */
+/*                      &LI/TESTUTILS +                                       */
+/*                      &LI/USRSPC    +                                       */
+/*                      );                                                    */
+/*     >>PARM<<  STGMDL(*SNGLVL);                                             */
+/*     >>PARM<<  BNDSRVPGM(&LI/RUMEMMGR);                                     */
 /*     >>PARM<<  EXPORT(*SRCFILE);                                            */
 /*     >>PARM<<  SRCFILE(&LI/QBND);                                           */
 /*     >>PARM<<  SRCMBR(RUTESTCASE);                                          */
@@ -72,7 +85,12 @@ STRPGMEXP  PGMLVL(*CURRENT) SIGNATURE('iRPGUNIT V6.0')
 
   EXPORT SYMBOL("getLogValue")                 /* internal self-test API */
   EXPORT SYMBOL("toInd")                       /* internal self-test API */
+
   EXPORT SYMBOL("isRuntimeError")              /* internal self-test API */
+  EXPORT SYMBOL("getAssertEventInternal")      /* internal self-test API */
+
+  EXPORT SYMBOL("G_STATUS")                    /* internal self-test API */
+  EXPORT SYMBOL("ASSERT_resetAssertionError")  /* internal self-test API */
 
 ENDPGMEXP
 

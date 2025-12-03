@@ -84,6 +84,7 @@
 
  "CMPMOD MODULE("prdLib"/PGMRMT   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/CALLPRC  ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/CALLSTACK) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/CMDRUN   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/CMDRUNLOG) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/CMDRUNPRT) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
@@ -107,6 +108,7 @@
  "CRTPGM PGM("prdLib"/RUPGMRMT) ",
         "MODULE("prdLib"/PGMRMT     ",
                  prdLib"/CALLPRC    ",
+                 prdLib"/CALLSTACK  ",
                  prdLib"/CMDRUN     ",
                  prdLib"/CMDRUNLOG  ",
                  prdLib"/CMDRUNPRT  ",
@@ -128,7 +130,8 @@
                  prdLib"/USRSPC     ",
                  prdLib"/XMLWRITER) ",
         "ENTMOD("prdLib"/PGMRMT) ",
-        "BNDSRVPGM("prdLib"/RUTESTCASE) ",
+        "STGMDL(*SNGLVL) ",
+        "BNDSRVPGM("prdLib"/RUTESTCASE "prdLib"/RUMEMMGR) ",
         "ACTGRP(*NEW) ",
         "ALWUPD(*YES) ",
         "ALWLIBUPD(*YES) ",

@@ -16,6 +16,7 @@
 /*                      &LI/CMDRUNSRV +                                       */
 /*                      &LI/CMDRUNV   +                                       */
 /*                      &LI/CALLPRC   +                                       */
+/*                      &LI/CALLSTACK +                                       */
 /*                      &LI/EXTPRC    +                                       */
 /*                      &LI/EXTTST    +                                       */
 /*                      &LI/JOBLOG    +                                       */
@@ -33,7 +34,8 @@
 /*                      &LI/XMLWRITER +                                       */
 /*                      );                                                    */
 /*     >>PARM<<  ENTMOD(&LI/CMDRUN);                                          */
-/*     >>PARM<<  BNDSRVPGM(&LI/RUTESTCASE);                                   */
+/*     >>PARM<<  STGMDL(*SNGLVL);                                             */
+/*     >>PARM<<  BNDSRVPGM(&LI/RUTESTCASE &LI/RUMEMMGR);                      */
 /*     >>PARM<<  ACTGRP(*NEW);                                                */
 /*     >>PARM<<  ALWUPD(*YES);                                                */
 /*     >>PARM<<  ALWLIBUPD(*YES);                                             */

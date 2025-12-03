@@ -35,12 +35,14 @@ ctl-opt nomain;
 
 /include qinclude,ASSERT
 /include qinclude,CALLPRC
+/include qinclude,CALLSTACK
 /include qinclude,CMDRUNLOG
 /include qinclude,CMDRUNSRV
 /include qinclude,CMDRUNV
 /include qinclude,EXTPRC
 /include qinclude,EXTTST
 /include qinclude,LIBL
+/include qinclude,MEMMGR
 /include qinclude,OBJECT
 /include qinclude,PGMMSG
 /include qinclude,RMTRUNSRV
@@ -52,6 +54,15 @@ ctl-opt nomain;
 
 /include qsysinc,QCMDEXC
 
+//----------------------------------------------------------------------
+//   GLOBAL VARIABLES
+//----------------------------------------------------------------------
+
+/include qinclude,SDS
+
+dcl-ds g_status qualified inz;
+  numListsCreated int(10);
+end-ds;
 
 //----------------------------------------------------------------------
 //   Procedure Definitions
@@ -106,6 +117,7 @@ dcl-proc runTestSuite export;
   end-pi;
 
   dcl-ds testSuite likeds(testSuite_t);
+  dcl-s maxSizeAllocMem like(memSize_t);
 
   dcl-s xmlStmfMsg char(256);
 
@@ -117,6 +129,8 @@ dcl-proc runTestSuite export;
   dcl-s mustRestoreLibl ind inz(*off);
 
   dcl-ds xmlStmfInfo likeds(xmlStmfInfo_t) inz;
+
+  MemMgr_reset();
 
   if (xmlStmf <> '');
     msg = validateXmlStmf(xmlStmf: qTestSuite);
@@ -154,8 +168,7 @@ dcl-proc runTestSuite export;
   setupTestSuite( testSuite : result );
 
   if (result.errorCnt = 0 and result.failureCnt = 0);
-    runTests(result: testSuite: testProcs:
-             order: detail: rclRsc);
+    runTests(result: testSuite: testProcs: order: detail: rclRsc);
   endif;
 
   tearDownTestSuite( testSuite : result );
@@ -184,7 +197,10 @@ dcl-proc runTestSuite export;
   checkAndRestoreLibl(mustRestoreLibl: savedLibl);
 
   monitor;
+    maxSizeAllocMem = MemMgr_getMaxSizeAllocMem();
     rclTestSuite( testSuite );
+
+    sndInfoMsg('iRPGUnit: Dynamic heap space usage: ' + %char(maxSizeAllocMem) + ' kb.');
   on-error;
     raiseRUError( 'Failed to reclaim the test suite''s resources.' );
   endmon;
@@ -201,6 +217,19 @@ dcl-proc runTestSuite export;
   on-error;
     // nothing
   endmon;
+
+  // Internal self-test
+  if (sds.pgmLib = 'RPGUNITDVP');
+    if (MemMgr_getNumLists() <> 0);
+      raiseRUError('Number of allocated linked-list must be 0, but is: '
+                    +  %char(MemMgr_getNumLists()));
+    endif;
+
+    if (MemMgr_getNumAllocs() <> 0);
+      raiseRUError('Number of allocated memory blocks must be 0, but is: '
+                    +  %char(MemMgr_getNumAllocs()));
+    endif;
+  endif;
 
   if (xmlStmfMsg <> '');
     msg = xmlStmfMsg;
@@ -248,9 +277,9 @@ dcl-proc crtTestSuite export;
 
   procList   = loadProcList( srvPgm );
   procNmList = getProcNmList( procList );
-  testSuite  = getTestSuite( procNmList );
+  testSuite  = getTestSuite( procNmList ); // allocates: testSuite.testList
   testSuite.qName = srvPgm;
-  testSuite.testResults = list_create();
+  testSuite.testResults = MemMgr_createList('testSuite.testResults');
 
   return testSuite;
 
@@ -265,8 +294,27 @@ dcl-proc rclTestSuite export;
     testSuite       likeds(testSuite_t);
   end-pi;
 
-  dealloc(n) testSuite.testList;
-  list_dispose(testSuite.testResults);
+  dcl-s numTestResults int(10);
+  dcl-s i int(10);
+  dcl-ds testResult likeds(testResult_t) based(pTestResult);
+  dcl-s testName like(testResult.testName);
+
+  // Deallocate list of test case procedures
+  // created in EXTTST.getTestSuite
+  MemMgr_dealloc(testSuite.testList: 'testSuite.testList');
+
+  // Null-Check for RUNT self-test
+  if (testSuite.testResults <> *null);
+    numTestResults = list_size(testSuite.testResults);
+    for i = 1 to numTestResults; // iterate: testResult
+      pTestResult = list_getLast(testSuite.testResults); // iterate: assertFailEventLong
+      testName = testResult.testName;
+      disposeTestResult(testResult: i);
+      list_removeLast(testSuite.testResults);
+    endfor;
+  endif;
+
+  MemMgr_disposeList(testSuite.testResults: 'testSuite.testResults');
 
 end-proc;
 
@@ -274,20 +322,25 @@ end-proc;
 //----------------------------------------------------------------------
 // Run a test case in a test suite. See prototype.
 //----------------------------------------------------------------------
-dcl-proc runTest export;
+dcl-proc runTestCase export;
   dcl-pi *N likeds(testResult_t);
     testSuite       const likeds(testSuite_t);
     testIdx         int(10) const;
   end-pi;
 
+  dcl-ds testResult likeds(testResult_t);
   dcl-ds testCase likeds(proc_t);
 
 
   testCase = getTestProc( testSuite : testIdx );
 
-  return runTestProc( testCase :
-                      testSuite.setup :
-                      testSuite.tearDown );
+  testResult = runTestProc(testCase
+                           : testSuite.setup
+                           : testSuite.tearDown);
+
+  list_add(testSuite.testResults : %addr(testResult) : %size(testResult));
+
+  return testResult;
 
 end-proc;
 
@@ -302,7 +355,8 @@ dcl-proc runTestProc export;
     tearDown        const likeds(proc_t);
   end-pi;
 
-  dcl-ds testResult likeds(testResult_t);
+  dcl-ds testResult likeds(testResult_t) inz;
+
   dcl-s startTime timestamp;
   dcl-s endTime timestamp;
 
@@ -311,15 +365,18 @@ dcl-proc runTestProc export;
   startTime = %timestamp();
 
   if (setup.procptr <> *null);
-    testResult = runProc(setup.procptr: testResult);
+    testResult = runProc(setup.procptr: testResult: 'SETUP');
   endif;
 
-  if testResult.outcome = TEST_CASE_SUCCESS;
-    testResult = runProc(testCase.procPtr: testResult);
+  if (testResult.outcome = TEST_CASE_SUCCESS);
+    testResult = runProc(testCase.procPtr: testResult: '');
   endif;
 
-  if tearDown.procPtr <> *null;
-    testResult = runProc(tearDown.procPtr: testResult);
+  if (tearDown.procPtr <> *null);
+    // As of today errors in 'teardown' are not recorded, if
+    // there was an error in 'setup', because 'testResult.outcome'
+    // has already been set to 'E' due to the error in 'setup'.
+    testResult = runProc(tearDown.procPtr: testResult: 'TEARDOWN');
   endif;
 
   endTime = %timestamp();
@@ -339,43 +396,72 @@ end-proc;
 dcl-proc runProc export;
   dcl-pi *N likeds(testResult_t);
     proc            pointer(*proc) const;
-    result          likeds(testResult_t) value;
+    testResult          likeds(testResult_t) value;
+    procNamePrefix  like(assertProcNm_t) const;
   end-pi;
 
-  dcl-ds failureEvt likeds(assertFailEvtLong_t);
+  dcl-ds failureEvent likeds(assertEvent_t) inz;
+  dcl-ds errorEvent likeds(runtimeErrorEvent_t) inz;
+  dcl-ds successEvent likeds(assertSuccessEvent_t) inz;
   dcl-s assertCnt int(10);
+  dcl-s numEventsBefore int(10);
+  dcl-s numEventsAfter int(10);
 
-  clrAssertFailEvt();
+  clrAssertFailEvt(testResult.hAssertEvents: procNamePrefix);
+
   assertCnt = getAssertCalled() * -1;
 
   monitor;
     setLowMessageKey(getHighestMsgKey());
-    callProcByPtr( proc );
+    numEventsBefore = list_size(testResult.hAssertEvents);
+    callProcByPtr(proc);
+    numEventsAfter = list_size(testResult.hAssertEvents);
+    successEvent = getAssertEventInternal();
+    select;
+    when (successEvent.outcome = '');
+      // no assertion has been called
+    when (successEvent.outcome = TEST_CASE_SUCCESS);
+      testResult.lastSuccessEvent = successEvent.index;
+    other;
+      if (successEvent.outcome = TEST_CASE_FAILURE);
+        // assert() has been ignored, such as:
+        //   callp(E) assert(*off: 'Assertion failes, but error is ignored.');
+        // Maybe that is usefull for temporary ignored assertions.
+      else;
+        sndEscapeMsgAboveCtlBdy('Unexpected event type: ''' + successEvent.outcome + '''');
+      endif;
+    endsl;
   on-error;
-    if (result.outcome = TEST_CASE_SUCCESS);
+    if (testResult.outcome = TEST_CASE_SUCCESS);
       if (isRuntimeError());
         // Handle runtime error
-        result.outcome = TEST_CASE_ERROR;
-        result.error = rcvExcpMsgInfo();
+        testResult.outcome = TEST_CASE_ERROR;
+        testResult.lastErrorEvent = errorEvent.index;
+        errorEvent.outcome = TEST_CASE_ERROR;
+        errorEvent.msg = rcvExcpMsgInfo();
+        list_add(testResult.hAssertEvents: %addr(errorEvent): %size(errorEvent));
       else;
         // Handle failed assertion
-        failureEvt = getAssertFailEvtLong();
-        result.outcome = TEST_CASE_FAILURE;
-        result.failure = failureEvt;
+        failureEvent = getAssertEventInternal();
+        testResult.lastFailureEvent = failureEvent.index;
+        testResult.outcome = TEST_CASE_FAILURE;
+// TODO: remove code
+//        testResult.failure = failureEvent;
+        resetAssertionError();
       endif;
     endif;
   endmon;
 
   assertCnt += getAssertCalled();
-  result.assertCnt += assertCnt;
+  testResult.assertCnt += assertCnt;
 
-  return result;
+  return testResult;
 
 end-proc;
 
 
 //----------------------------------------------------------------------
-// Run a test case. See prototype.
+// Initializes a test result.
 //----------------------------------------------------------------------
 dcl-proc initTestResult export;
   dcl-pi *N likeds(testResult_t);
@@ -388,8 +474,67 @@ dcl-proc initTestResult export;
   result.execTime = 0;
   result.outcome = TEST_CASE_SUCCESS;
   result.testName = testName;
+  result.hAssertEvents = MemMgr_createList('result.hAssertEvents'); // arry(assertEvent_t)
 
   return result;
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+// Disposes a test result.
+//----------------------------------------------------------------------
+dcl-proc disposeTestResult export;
+  dcl-pi *N;
+    testResult likeds(testResult_t);
+    idx        int(10) options(*nopass: *omit) const;
+  end-pi;
+
+  if (testResult.hAssertEvents <> *null);
+    disposeAssertEvents(testResult.hAssertEvents: idx);
+  endif;
+
+  clear testResult;
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Disposes a list of assertion events.
+//----------------------------------------------------------------------
+dcl-proc disposeAssertEvents export;
+  dcl-pi *N;
+    hAssertEvents pointer;
+    idx           int(10) options(*nopass: *omit) const;
+  end-pi;
+
+  dcl-s numAssertEvents int(10);
+  dcl-s i int(10);
+  dcl-ds assertEvent likeds(assertEvent_t) based(pAssertEvent);
+
+  dcl-s TESTRESULT_HASSERTEVENTS_TEXT varchar(64);
+  dcl-s ASSERT_EVENT_FAILURE_PCALLSTK_TEXT varchar(64);
+
+  if (%parms() >= %parmnum(idx) and %addr(idx) <> *null);
+    ASSERT_EVENT_FAILURE_PCALLSTK_TEXT = 'assertEvent.failure.pCallstk_' + %char(idx);
+    TESTRESULT_HASSERTEVENTS_TEXT = 'testResult.hAssertEvents_' + %char(idx);
+  else;
+    ASSERT_EVENT_FAILURE_PCALLSTK_TEXT = 'assertEvent.failure.pCallstk';
+    TESTRESULT_HASSERTEVENTS_TEXT = 'testResult.hAssertEvents';
+  endif;
+
+  numAssertEvents = list_size(hAssertEvents);
+  for i = 1 to numAssertEvents; // iterate: assertEvents of a test case
+    pAssertEvent = list_getLast(hAssertEvents);
+    if (assertEvent.outcome = TEST_CASE_FAILURE or assertEvent.outcome = TEST_CASE_SUCCESS);
+// TODO: fix creating SUCCESS event
+//      if (assertEvent.failure.pCallstk <> *null);
+        Callstack_dealloc(assertEvent.failure.pCallstk: ASSERT_EVENT_FAILURE_PCALLSTK_TEXT);
+//      endif;
+    endif;
+    list_removeLast(hAssertEvents);
+  endfor;
+
+  MemMgr_disposeList(hAssertEvents: TESTRESULT_HASSERTEVENTS_TEXT);
 
 end-proc;
 
@@ -490,12 +635,12 @@ end-proc;
 dcl-proc handleFailure export;
   dcl-pi *N;
     testProcNm      const like(procNm_t);
-    failure         const likeds(assertFailEvtLong_t);
+    failure         const likeds(assertFailureEvent_t);
     result          likeds(result_t);
   end-pi;
 
   result.failureCnt += 1;
-  logfailure(testProcNm: failure);
+  logFailure(testProcNm: failure);
 
 end-proc;
 
@@ -524,11 +669,14 @@ dcl-proc setupTestSuite;
   end-pi;
 
   dcl-ds testResult likeds(testResult_t);
+  dcl-ds failureEvent likeds(assertFailureEvent_t) inz;
+  dcl-ds errorEvent likeds(runtimeErrorEvent_t) inz;
 
   testResult = initTestResult(testSuite.setupSuite.procNm);
-  testResult = runProc( testSuite.setupSuite.procptr : testResult );
+  testResult = runProc(testSuite.setupSuite.procptr: testResult: 'SETUPSUITE');
 
   if (testResult.outcome = TEST_CASE_SUCCESS);
+    disposeTestResult(testResult);
     return TEST_CASE_SUCCESS;
   endif;
 
@@ -537,12 +685,12 @@ dcl-proc setupTestSuite;
 
   select;
   when testResult.outcome = TEST_CASE_FAILURE;
-    handleFailure(
-      testSuite.setupSuite.procNm : testResult.failure : result );
+    failureEvent = getLastFailureEvent(testResult);
+    handleFailure(testSuite.setupSuite.procNm : failureEvent : result );
     return TEST_CASE_FAILURE;
   when testResult.outcome = TEST_CASE_ERROR;
-    handleError(
-      testSuite.setupSuite.procNm : testResult.error : result );
+    errorEvent = getLastErrorEvent(testResult);
+    handleError(testSuite.setupSuite.procNm: errorEvent.msg: result );
     return TEST_CASE_ERROR;
   endsl;
 
@@ -559,11 +707,14 @@ dcl-proc tearDownTestSuite;
   end-pi;
 
   dcl-ds testResult likeds(testResult_t);
+  dcl-ds failureEvent likeds(assertFailureEvent_t) inz;
+  dcl-ds errorEvent likeds(runtimeErrorEvent_t) inz;
 
   testResult = initTestResult(testsuite.tearDownSuite.procNm);
-  testResult = runProc( testsuite.tearDownSuite.procPtr : testResult );
+  testResult = runProc(testsuite.tearDownSuite.procPtr: testResult: 'TEARDOWNSUITE');
 
   if (testResult.outcome = TEST_CASE_SUCCESS);
+    disposeTestResult(testResult);
     return TEST_CASE_SUCCESS;
   endif;
 
@@ -571,12 +722,12 @@ dcl-proc tearDownTestSuite;
 
   select;
   when testResult.outcome = TEST_CASE_FAILURE;
-    handleFailure(
-      testsuite.tearDownSuite.procNm : testResult.failure : result );
+    failureEvent = getLastFailureEvent(testResult);
+    handleFailure(testsuite.tearDownSuite.procNm : failureEvent : result );
     return TEST_CASE_FAILURE;
   when testResult.outcome = TEST_CASE_ERROR;
-    handleError(
-      testsuite.tearDownSuite.procNm : testResult.error : result );
+    errorEvent = getLastErrorEvent(testResult);
+    handleError(testsuite.tearDownSuite.procNm: errorEvent.msg: result );
     return TEST_CASE_ERROR;
   endsl;
 
@@ -604,6 +755,8 @@ dcl-proc runTests export;
   dcl-s assertionCntAfterRun int(10);
   dcl-c CMD_RCLRSC 'RCLRSC LVL(*) OPTION(*NORMAL)';
 
+  dcl-ds failureEvent likeds(assertFailureEvent_t) inz;
+  dcl-ds errorEvent likeds(runtimeErrorEvent_t) inz;
 
   setTestRunOrder( testSuite : order : testIdx : step );
 
@@ -620,9 +773,7 @@ dcl-proc runTests export;
       status( testSuite.qName.nm : testProcNm );
 
       // Run test case
-      testResult = runTest( testSuite : testIdx );
-
-      list_add(testSuite.testResults : %addr(testResult) : %size(testResult));
+      testResult = runTestCase( testSuite : testIdx );
 
       if (rclrsc = RCLRSC_ALWAYS);
         qcmdexc(CMD_RCLRSC: %len(CMD_RCLRSC));
@@ -634,12 +785,13 @@ dcl-proc runTests export;
 
       select;
       when (testResult.outcome= TEST_CASE_SUCCESS);
-        handleSuccess(
-            testProcNm : assertionCntAfterRun - assertionCntBeforeRun );
+        handleSuccess(testProcNm : assertionCntAfterRun - assertionCntBeforeRun );
       when (testResult.outcome = TEST_CASE_FAILURE);
-        handleFailure( testProcNm : testResult.failure : result );
+        failureEvent = getLastFailureEvent(testResult);
+        handleFailure( testProcNm : failureEvent : result );
       when (testResult.outcome = TEST_CASE_ERROR);
-        handleError( testProcNm : testResult.error : result );
+        errorEvent = getLastErrorEvent(testResult);
+        handleError(testProcNm: errorEvent.msg: result );
       endsl;
 
     endif;
@@ -742,6 +894,114 @@ dcl-proc checkAndRestoreLibl;
 
   if (mustRestoreLibl);
     restoreLibl(savedLibl);
+  endif;
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Returns the last recorded error event.
+//----------------------------------------------------------------------
+dcl-proc getLastErrorEvent export;
+  dcl-pi *n likeds(runtimeErrorEvent_t);
+    testResult likeds(testResult_t) const;
+  end-pi;
+
+  dcl-ds errorEvent likeds(runtimeErrorEvent_t) inz;
+
+  errorEvent = getLastEvent(testResult: TEST_CASE_ERROR);
+
+  if (testResult.lastErrorEvent <> errorEvent.index);
+    sndEscapeMsgAboveCtlBdy(
+      'Index of ''lastErrorEvent'' does not match event index: ' + %char(errorEvent.index));
+  endif;
+
+  return errorEvent;
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Returns the last recorded failure event.
+//----------------------------------------------------------------------
+dcl-proc getLastFailureEvent export;
+  dcl-pi *n likeds(assertFailureEvent_t);
+    testResult likeds(testResult_t) const;
+  end-pi;
+
+  dcl-ds failureEvent likeds(assertFailureEvent_t) inz;
+
+  failureEvent = getLastEvent(testResult: TEST_CASE_FAILURE);
+
+  if (testResult.lastFailureEvent <> failureEvent.index);
+    sndEscapeMsgAboveCtlBdy(
+      'Index of ''lastFailureEvent'' does not match event index: ' + %char(failureEvent.index));
+  endif;
+
+  return failureEvent;
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Returns the last recorded success event.
+//----------------------------------------------------------------------
+dcl-proc getLastSuccessEvent export;
+  dcl-pi *n likeds(assertSuccessEvent_t);
+    testResult likeds(testResult_t) const;
+  end-pi;
+
+  dcl-ds successEvent likeds(assertSuccessEvent_t) inz;
+
+  successEvent = getLastEvent(testResult: TEST_CASE_SUCCESS);
+
+  if (testResult.lastSuccessEvent <> successEvent.index);
+    sndEscapeMsgAboveCtlBdy(
+      'Index of ''lastSuccessEvent'' does not match event index: ' + %char(successEvent.index));
+  endif;
+
+  return successEvent;
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+// Returns the last recorded event.
+//----------------------------------------------------------------------
+dcl-proc getLastEvent;
+  dcl-pi *n likeds(assertEvent_t) extproc(*dclcase);
+    testResult likeds(testResult_t) const;
+    outcome    char(1) const;
+  end-pi;
+
+  dcl-ds assertEvent likeds(assertEvent_t) based(pAssertEvent);
+
+  pAssertEvent = list_getLast(testResult.hAssertEvents);
+
+  checkEventType(assertEvent.outcome);
+
+  if (assertEvent.outcome <> outcome);
+    sndEscapeMsgAboveCtlBdy(
+      'Event type ''' + assertEvent.outcome + ''' does not match type: ' + outcome);
+  endif;
+
+  select;
+  when (assertEvent.outcome = TEST_CASE_ERROR);
+    return assertEvent.error;
+  when (assertEvent.outcome = TEST_CASE_FAILURE);
+    return  assertEvent.failure;
+  when (assertEvent.outcome = TEST_CASE_SUCCESS);
+    return assertEvent.success;
+  endsl;
+
+end-proc;
+
+dcl-proc checkEventType;
+  dcl-pi *n extproc(*dclcase);
+    outcome char(1) const;
+  end-pi;
+
+  if (outcome <> TEST_CASE_ERROR
+      and outcome <> TEST_CASE_FAILURE
+      and outcome <> TEST_CASE_SUCCESS);
+    sndEscapeMsgAboveCtlBdy('Unknown event type: ''' + outcome + '''');
   endif;
 
 end-proc;

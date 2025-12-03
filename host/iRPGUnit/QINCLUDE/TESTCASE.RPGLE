@@ -436,6 +436,13 @@ end-pr;
 dcl-pr isRuntimeError ind extproc('isRuntimeError');
 end-pr;
 
+
+// ------------------------------------
+//   Prototypes of internal procedures
+//   But maybe public from the
+//   beginning.
+// ------------------------------------
+
 ///
 // Clears the assertion failure event.
 //
@@ -444,6 +451,24 @@ end-pr;
 // test execution.
 ///
 dcl-pr clrAssertFailEvt extproc('clrAssertFailEvt');
+  pFailureEvents pointer const;
+  procNamePrefix like(assertProcNm_t) const;
+end-pr;
+
+///
+// Get the external assertion failure event
+//
+// @return External assertion failure event data structure V1
+///
+dcl-pr getAssertFailEvt extproc('getAssertFailEvt') likeds(assertFailEvt_t);
+end-pr;
+
+///
+// Get the external extended assertion failure event with long text
+//
+// @return external extended assertion failure event data structure V2
+///
+dcl-pr getAssertFailEvtLong extproc('getAssertFailEvtLong') likeds(assertFailEvtExt_t);
 end-pr;
 
 ///
@@ -452,22 +477,6 @@ end-pr;
 // @return Number of assertions executed
 ///
 dcl-pr getAssertCalled int(10) extproc('getAssertCalled');
-end-pr;
-
-///
-// Get the assertion failure event
-//
-// @return Assertion failure event data structure
-///
-dcl-pr getAssertFailEvt extproc('getAssertFailEvt') likeds(assertfailevt_t);
-end-pr;
-
-///
-// Get the extended assertion failure event with long text
-//
-// @return Extended assertion failure event data structure
-///
-dcl-pr getAssertFailEvtLong extproc('getAssertFailEvtLong') likeds(assertFailEvtLong_t);
 end-pr;
 
 ///
@@ -484,6 +493,20 @@ end-pr;
 // ------------------------------------
 //   Prototypes of internal procedures
 // ------------------------------------
+
+///
+// Get the internal assertion event
+//
+// @return internal assertion event
+///
+dcl-pr getAssertEventInternal likeds(assertEvent_t) extproc('getAssertEventInternal');
+end-pr;
+
+///
+// Resets the assertion error flag.
+///
+dcl-pr resetAssertionError extproc('ASSERT_resetAssertionError');
+end-pr;
 
 ///
 // Register the start of a program for testing purposes

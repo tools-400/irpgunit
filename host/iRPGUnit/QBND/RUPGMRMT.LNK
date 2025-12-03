@@ -13,6 +13,7 @@
 /*     >>PARM<<  MODULE(&LI/PGMRMT    +                                       */
 /*                      &LI/JOBLOG    +                                       */
 /*                      &LI/CALLPRC   +                                       */
+/*                      &LI/CALLSTACK +                                       */
 /*                      &LI/CMDRUN    +                                       */
 /*                      &LI/CMDRUNLOG +                                       */
 /*                      &LI/CMDRUNPRT +                                       */
@@ -34,7 +35,8 @@
 /*                      &LI/XMLWRITER +                                       */
 /*                      );                                                    */
 /*     >>PARM<<  ENTMOD(&LI/PGMRMT);                                          */
-/*     >>PARM<<  BNDSRVPGM(&LI/RUTESTCASE);                                   */
+/*     >>PARM<<  STGMDL(*SNGLVL);                                             */
+/*     >>PARM<<  BNDSRVPGM(&LI/RUTESTCASE &LI/RUMEMMGR);                      */
 /*     >>PARM<<  ACTGRP(*NEW);                                                */
 /*     >>PARM<<  ALWUPD(*YES);                                                */
 /*     >>PARM<<  ALWLIBUPD(*YES);                                             */

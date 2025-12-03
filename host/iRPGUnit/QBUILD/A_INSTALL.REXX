@@ -11,7 +11,15 @@
 /*     Script parameters:                                              */
 /*       option   - The possible values are:                           */
 /*                  INSTALL : Default. Installs the iRPGUnit library.  */
-/*                  CLEAN   : Deletes the iRPGUnit modules from        */
+/*                  CLEAN_SCRIPTST :                                   */
+/*                            Deletes the iRPGUnit modules and other   */
+/*                            unnecessary objects such as self-tests   */
+/*                            from the iRPGUnit library excluding      */
+/*                            library iRPGUnit library excluding       */
+/*                            service program SCRIPTST.                */
+/*                  CLEAN:    Deletes the iRPGUnit modules and other   */
+/*                            unnecessary objects such as self-tests   */
+/*                            from the iRPGUnit library excluding      */
 /*                            library iRPGUnit library.                */
 /*                  CLEANALL: Removes all objects from the iRPGUnit    */
 /*                            product library.                         */
@@ -81,7 +89,8 @@
      "MSGTYPE(*ESCAPE)"
  end
 
- if (option <> 'INSTALL' & option <> 'CLEAN' & option <> 'CLEANALL') then do
+ if (option <> 'INSTALL' & option <> 'CLEAN_SCRIPTST' ,
+     & option <> 'CLEAN' & option <> 'CLEANALL') then do
    "SNDPGMMSG ",
      "MSGID(CPF9898) ",
      "MSGF(QCPFMSG) ",
@@ -134,6 +143,16 @@
  /*  Delete modules.                             */
  /*  Deletes all iRPGUnit modules.               */
  /* -------------------------------------------- */
+ if (option = 'CLEAN_SCRIPTST') then do
+   if prdLib = '' then prdLib = PRD_LIB
+   cleanScriptst(prdLib)
+   EXIT
+ end
+
+ /* -------------------------------------------- */
+ /*  Delete modules.                             */
+ /*  Deletes all iRPGUnit modules.               */
+ /* -------------------------------------------- */
  if (option = 'CLEAN') then do
    if prdLib = '' then prdLib = PRD_LIB
    clean(prdLib)
@@ -168,6 +187,12 @@
    /* - - - - - - - - - - - - - - - - - - - - */
    "STRREXPRC SRCMBR(MKBUILD) SRCFILE("prdLib"/QBUILD) ",
      "PARM('"prdLib" "dbgView" "tgtRls"')"
+
+   /* - - - - - - - - - - - - - - - - - - - - */
+   /*  Create service program RUMEMMGR.       */
+   /* - - - - - - - - - - - - - - - - - - - - */
+   "STRREXPRC SRCMBR(MKMEMMGR) SRCFILE("prdLib"/QSRC) ",
+     "PARM('"prdLib" "dbgView" "tgtRls" "define"')"
 
    /* - - - - - - - - - - - - - - - - - - - - */
    /*  Create service program RUTESTCASE.     */
@@ -213,6 +238,27 @@
 
  /* ------------------------------------------------------------- */
  /*  Deletes all unnecessary objects from library iRPGUnit.       */
+ /*  Excluding self-test suite SCRIPTST.                          */
+ /* ------------------------------------------------------------- */
+ cleanScriptst:
+   PARSE ARG prdLib
+
+   deleteSelfTests(prdLib)
+   deleteSelfTests('QTEMP')
+   deleteModules(prdLib)
+   deleteBuildObjects(prdLib)
+
+   "SNDPGMMSG ",
+     "MSGID(CPF9897) ",
+     "MSGF(QCPFMSG) ",
+     "MSGDTA('Successfully clean library for running SCRIPTST: "prdLib"')",
+     "TOPGMQ(*PRV (*CTLBDY)) ",
+     "MSGTYPE(*INFO)"
+
+   return ''
+
+ /* ------------------------------------------------------------- */
+ /*  Deletes all unnecessary objects from library iRPGUnit.       */
  /* ------------------------------------------------------------- */
  clean:
    PARSE ARG prdLib
@@ -221,6 +267,7 @@
    deleteSelfTests('QTEMP')
    deleteModules(prdLib)
    deleteBuildObjects(prdLib)
+   deleteSpecialObjects(prdLib)
 
    "SNDPGMMSG ",
      "MSGID(CPF9897) ",
@@ -285,6 +332,7 @@
    "DLTPGM PGM("_prdlib"/RUCRTCBL)"
    "DLTPGM PGM("_prdlib"/RUPGMRMT)"
    "DLTSRVPGM SRVPGM("_prdlib"/RUTESTCASE)"
+   "DLTSRVPGM SRVPGM("_prdlib"/RUMEMMGR)"
 
    "DLTJOBD JOBD("_prdLib"/RPGUNIT)"
    "DLTWSCST WSCST("_prdLib"/RUWSCST)"
@@ -304,12 +352,16 @@
    Signal off Error
 
    "DLTPGM PGM("_prdlib"/A_CRTPKG)"
+   "DLTPGM PGM("_prdlib"/A_TESTRMT)"
    "DLTPGM PGM("_prdlib"/A_METADATA)"
 
    "DLTPGM PGM("_prdlib"/CRTPKGCPR)"
    "DLTPGM PGM("_prdlib"/CRTPKGDBG)"
    "DLTPGM PGM("_prdlib"/CRTPKGMDT)"
    "DLTPGM PGM("_prdlib"/CRTPKGOWN)"
+
+   "DLTSRVPGM SRVPGM("_prdlib"/CBLEXAMPLE)"
+   "DLTSRVPGM SRVPGM("_prdlib"/RPGEXAMPLE)"
 
    return ''
 
@@ -349,6 +401,8 @@
    "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM17)"
    "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM18)"
    "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM19)"
+   "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM20)"
+   "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM21)"
 
    "DLTSRVPGM SRVPGM("_prdlib"/ACPTSTT)"
    "DLTSRVPGM SRVPGM("_prdlib"/ASSERTT)"
@@ -368,12 +422,10 @@
    "DLTSRVPGM SRVPGM("_prdlib"/OPDESCT)"
    "DLTSRVPGM SRVPGM("_prdlib"/PGMMSGT)"
    "DLTSRVPGM SRVPGM("_prdlib"/RUNT)"
-   "DLTSRVPGM SRVPGM("_prdlib"/SCRIPTST)"
+   "DLTSRVPGM SRVPGM("_prdlib"/SRCMBRT)"
    "DLTSRVPGM SRVPGM("_prdlib"/STMFT)"
    "DLTSRVPGM SRVPGM("_prdlib"/STRINGT)"
    "DLTSRVPGM SRVPGM("_prdlib"/TESTUTILST)"
-
-   "DLTSRVPGM SRVPGM("_prdlib"/SCRIPTST)"
 
    "DLTSRVPGM SRVPGM("_prdlib"/CBL)"
    "DLTSRVPGM SRVPGM("_prdlib"/CBLSQL)"
@@ -396,12 +448,14 @@
 
    "DLTF FILE("_prdlib"/EVFEVENT)"
 
+   "DLTMOD MODULE("_prdLib"/A_TESTRMT)"
    "DLTMOD MODULE("_prdLib"/ACPTSTT)"
    "DLTMOD MODULE("_prdLib"/ASSERT)"
    "DLTMOD MODULE("_prdLib"/ASSERTT)"
    "DLTMOD MODULE("_prdLib"/ASSERTV2)"
    "DLTMOD MODULE("_prdLib"/CALLPRC)"
    "DLTMOD MODULE("_prdLib"/CALLPRCT)"
+   "DLTMOD MODULE("_prdLib"/CALLSTACK)"
    "DLTMOD MODULE("_prdLib"/CMDRUN)"
    "DLTMOD MODULE("_prdLib"/CMDRUNLOG)"
    "DLTMOD MODULE("_prdLib"/CMDRUNLOGT)"
@@ -428,6 +482,7 @@
    "DLTMOD MODULE("_prdLib"/LLIST)"
    "DLTMOD MODULE("_prdLib"/LSTSPLF)"
    "DLTMOD MODULE("_prdLib"/LSTSPLFT)"
+   "DLTMOD MODULE("_prdLib"/MEMMGR)"
    "DLTMOD MODULE("_prdLib"/MSGQT)"
    "DLTMOD MODULE("_prdLib"/OBJECT)"
    "DLTMOD MODULE("_prdLib"/OPDESCT)"
@@ -450,14 +505,28 @@
    "DLTMOD MODULE("_prdLib"/VERSION)"
    "DLTMOD MODULE("_prdLib"/XMLWRITER)"
 
-   "DLTMOD MODULE("_prdlib"/SCRIPTST)"
-
    "DLTMOD MODULE("_prdlib"/CBL)"
    "DLTMOD MODULE("_prdlib"/CBLSQL)"
    "DLTMOD MODULE("_prdlib"/RPG)"
    "DLTMOD MODULE("_prdlib"/RPGSQL)"
    "DLTMOD MODULE("_prdlib"/RPGSQLSTMF)"
    "DLTMOD MODULE("_prdlib"/RPGSTMF)"
+
+   "DLTMOD MODULE("_prdlib"/SCRIPTST)"
+
+   Signal on Error
+
+   return ''
+
+ /* ------------------------------------------------------------- */
+ /*  Deletes special objects, e.g. test suite SCRIPTST.           */
+ /* ------------------------------------------------------------- */
+ deleteSpecialObjects:
+   PARSE ARG _prdLib
+
+   Signal off Error
+
+   "DLTSRVPGM SRVPGM("_prdlib"/SCRIPTST)"
 
    Signal on Error
 

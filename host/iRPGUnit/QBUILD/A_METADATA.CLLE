@@ -1144,6 +1144,12 @@
                           TEXT('iRPGUnit Fixture - Test options(*exact)')
              MONMSG     MSGID(CPF3288)
 
+             CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
+                          MBR(TESTPGM21) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit Fixture - Error in setUp and tearDown.')
+             MONMSG     MSGID(CPF3288)
+
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(ACPTSTT) +
                           SRCTYPE(RPGLE) +
@@ -1303,7 +1309,7 @@
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(MKLSTSPLFT) +
                           SRCTYPE(REXX) +
-                          TEXT('iRPGUnit SelftTest - Build LSTSPLFT.')
+                          TEXT('iRPGUnit SelfTest - Build LSTSPLFT.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
@@ -1357,7 +1363,7 @@
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(MKUTILST) +
                           SRCTYPE(REXX) +
-                          TEXT('iRPGUnit Self Test - Build TESTUTILST.')
+                          TEXT('iRPGUnit SelfTest - Build TESTUTILST.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
@@ -1417,7 +1423,7 @@
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(TESTUTILST) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit Self Test - Test TESTUTILS.')
+                          TEXT('iRPGUnit SelfTest - Test TESTUTILS.')
              MONMSG     MSGID(CPF3288)
 
              ENDPGM

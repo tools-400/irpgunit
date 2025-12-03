@@ -83,6 +83,10 @@ b) Optionally run the RPGUnit self tests:
 
 --------------------------
 
+Version 7.0.0 - xx.xx.xxxx
+--------------------------
+ * ???
+
 Version 6.0.0 - 03.10.2025
 --------------------------
  * Compiled plug-in for RDi 9.6.0.13.

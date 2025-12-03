@@ -94,6 +94,7 @@
 
  "CMPMOD MODULE("prdLib"/EXTTSTT  ) SRCFILE("prdLib"/QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/CALLPRC  ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/CALLSTACK) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/CMDRUN   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/CMDRUNLOG) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/CMDRUNPRT) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
@@ -105,6 +106,7 @@
  "CMPMOD MODULE("prdLib"/JSONWTR  ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/LIBL     ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/LLIST    ) SRCFILE("prdLib"/QLLIST   ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/MEMMGR ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/OBJECT   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/OSVERSION) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
@@ -118,6 +120,7 @@
  "CRTSRVPGM  SRVPGM("prdLib"/EXTTSTT) ",
             "MODULE("prdLib"/EXTTSTT   ",
                      prdLib"/CALLPRC   ",
+                     prdLib"/CALLSTACK ",
                      prdLib"/CMDRUN    ",
                      prdLib"/CMDRUNLOG ",
                      prdLib"/CMDRUNPRT ",
@@ -129,6 +132,7 @@
                      prdLib"/JSONWTR   ",
                      prdLib"/LIBL      ",
                      prdLib"/LLIST     ",
+                     prdLib"/MEMMGR    ",
                      prdLib"/OBJECT    ",
                      prdLib"/OSVERSION ",
                      prdLib"/PGMMSG    ",

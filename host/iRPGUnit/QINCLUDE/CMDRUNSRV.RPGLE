@@ -164,7 +164,7 @@ end-pr;
 //
 // @return Complete test result including outcome and execution details
 ///
-dcl-pr runTest extproc('CMDRUNSRV_runTest') likeds(testResult_t);
+dcl-pr runTestCase extproc('CMDRUNSRV_runTestCase') likeds(testResult_t);
   testSuite likeds(testSuite_t) const;
   testIdx   int(10) const;
 end-pr;
@@ -174,14 +174,17 @@ end-pr;
 // Safely executes a procedure pointer while capturing any
 // assertion failures or runtime errors that occur during execution.
 //
-// @param proc   - Procedure pointer
-// @param result - Test result
+// @param proc           - Procedure pointer
+// @param result         - Test result
+// @param procNamePrefix - Prefix of the test name procedure. One of:
+//                         setupsuite, setup, teardown, teardownsuite
 //
 // @return Test result
 ///
 dcl-pr runProc likeds(testResult_t) extproc('CMDRUNSRV_runProc');
-  proc   pointer(*proc) const;
-  result likeds(testResult_t) value;
+  proc            pointer(*proc) const;
+  result          likeds(testResult_t) value;
+  procNamePrefix  like(assertProcNm_t) const;
 end-pr;
 
 ///
@@ -195,6 +198,28 @@ end-pr;
 ///
 dcl-pr initTestResult likeds(testResult_t) extproc('CMDRUNSRV_initTestResult');
   testName like(procNm_t) const;
+end-pr;
+
+///
+// Disposes a test result and frees resources.
+// Deallocates dynamic list and clears the test
+// result data structure.
+//
+// @param testResult - The test result to be disposed
+///
+dcl-pr disposeTestResult extproc('CMDRUNSRV_disposeTestResult');
+  testResult likeds(testResult_t);
+  idx        int(10) options(*nopass: *omit) const;
+end-pr;
+
+///
+// Disposes a list of assertion events and frees resources.
+//
+// @param hAssertEvents - The list of assertion events to be disposed
+///
+dcl-pr disposeAssertEvents extproc('CMDRUNSRV_disposeAssertEvents');
+  hAssertEvents pointer;
+  idx           int(10) options(*nopass: *omit) const;
 end-pr;
 
 ///
@@ -249,7 +274,7 @@ end-pr;
 // Handle a test case failure.
 dcl-pr handleFailure extproc('CMDRUNSRV_handleFailure');
   testProcNm      const like(procNm_t);
-  failure         const likeds(assertFailEvtLong_t);
+  failure         const likeds(assertFailureEvent_t);
   result          likeds(result_t);
 end-pr;
 
@@ -257,5 +282,20 @@ end-pr;
 dcl-pr handleSuccess extproc('CMDRUNSRV_handleSuccess');
   testProcNm      const like(procNm_t);
   assertionCnt    int(10) const;
+end-pr;
+
+// Returns the last recorded failure event.
+dcl-pr getLastFailureEvent likeds(assertFailureEvent_t) extproc('CMDRUNSRV_getLastFailureEvent');
+  testResult likeds(testResult_t) const;
+end-pr;
+
+// Returns the last recorded success event.
+dcl-pr getLastSuccessEvent likeds(assertSuccessEvent_t) extproc('CMDRUNSRV_getLastSuccessEvent');
+  testResult likeds(testResult_t) const;
+end-pr;
+
+// Returns the last recorded error event.
+dcl-pr getLastErrorEvent likeds(runtimeErrorEvent_t) extproc('CMDRUNSRV_getLastErrorEvent');
+  testResult likeds(testResult_t) const;
 end-pr;
 

@@ -52,9 +52,9 @@ end-pr;
 // @param testnm  - Name of the test procedure that failed
 // @param failure - Detailed failure information including assertion details
 ///
-dcl-pr logfailure extproc('CMDRUNLOG_logFailure');
+dcl-pr logFailure extproc('CMDRUNLOG_logFailure');
   testnm      like(procNm_t) const;
-  failure     likeds(assertFailEvtLong_t) const;
+  failure     likeds(assertFailureEvent_t) const;
 end-pr;
 
 ///

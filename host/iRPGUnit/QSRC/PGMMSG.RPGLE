@@ -252,17 +252,19 @@ dcl-proc sndVldChkMsg export;
     callStkCnt   int(10) const;
   end-pi;
 
-  // The message reference key.
+  dcl-s lenMsg int(10);
   dcl-s msgKey char(4);
   dcl-s diagMsg varchar(256);
   dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
 
   diagMsg = '0000' + %trimr(msg);
 
+  lenMsg = %len(%trimr(diagMsg));
+
   qmhsndpm( 'CPD0006' :
             'QCPFMSG   *LIBL' :
             %trimr(diagMsg) :
-            %len(%trimr(diagMsg)) :
+            lenMsg :
             '*DIAG' :
             CUR_CALL_STK_ENT :
             ONE_CALL_STK_LVL_ABOVE + callStkCnt :
@@ -290,15 +292,17 @@ dcl-proc sndCompMsg export;
     msg   like(msgText_t) const;
   end-pi;
 
-  // The message reference key.
+  dcl-s lenMsg int(10);
   dcl-s msgKey char(4);
   dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
+
+  lenMsg = %len(%trimr(msg));
 
   // CPDA0FF with severity 0.
   qmhsndpm( 'CPDA0FF' :
             'QCPFMSG   *LIBL' :
             %trimr(msg) :
-            %len(%trimr(msg)) :
+            lenMsg :
             '*COMP' :
             CONTROL_BOUNDARY :
             ONE_CALL_STK_LVL_ABOVE :
@@ -317,14 +321,17 @@ dcl-proc sndEscapeMsg export;
     callStkCnt   int(10) const;
   end-pi;
 
+  dcl-s lenMsg int(10);
   dcl-s msgKey char(4);
   dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
+
+  lenMsg = %len(%trimr(msg));
 
   // CPF9897 with severity 40.
   qmhsndpm( 'CPF9897' :
             'QCPFMSG   *LIBL' :
             msg :
-            %len(msg) :
+            lenMsg :
             '*ESCAPE' :
             CUR_CALL_STK_ENT :
             ONE_CALL_STK_LVL_ABOVE + callStkCnt :
@@ -343,14 +350,17 @@ dcl-proc sndEscapeMsgToProcedure export;
     procedure   varchar(256) const  options(*omit);
   end-pi;
 
+  dcl-s lenMsg int(10);
   dcl-s msgKey char(4);
   dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
+
+  lenMsg = %len(%trimr(msg));
 
   // CPF9897 with severity 40.
   qmhsndpm( 'CPF9897' :
             'QCPFMSG   *LIBL' :
             msg :
-            %len(msg) :
+            lenMsg :
             '*ESCAPE' :
             procedure :
             0 :
@@ -384,14 +394,17 @@ dcl-proc sndEscapeMsgAboveCtlBdy export;
     msg like(msgText_t) const;
   end-pi;
 
+  dcl-s lenMsg int(10);
   dcl-s msgKey char(4);
   dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
+
+  lenMsg = %len(%trimr(msg));
 
   // CPF9897 with severity 40.
   qmhsndpm( 'CPF9897' :
             'QCPFMSG   *LIBL' :
             %trimr(msg) :
-            %len(%trimr(msg)) :
+            lenMsg :
             '*ESCAPE' :
             CONTROL_BOUNDARY :
             ONE_CALL_STK_LVL_ABOVE :
@@ -409,15 +422,17 @@ dcl-proc sndInfoMsg export;
     msg like(msgText_t) const;
   end-pi;
 
-  // The message reference key.
+  dcl-s lenMsg int(10);
   dcl-s msgKey char(4);
   dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
+
+  lenMsg = %len(%trimr(msg));
 
   // Send an immediate *INFO message without message ID
   qmhsndpm( '' :
             'QCPFMSG   *LIBL' :
             %trimr(msg) :
-            %len(%trimr(msg)) :
+            lenMsg :
             '*INFO' :
             CUR_CALL_STK_ENT :
             ONE_CALL_STK_LVL_ABOVE :
@@ -435,17 +450,19 @@ dcl-proc sndStsMsg export;
     msg   like(msgText_t) const;
   end-pi;
 
-  // The message reference key.
+  dcl-s lenMsg int(10);
   dcl-s msgKey char(4);
   dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
 
   g_status.lastStsMsg = msg;
 
+  lenMsg = %len(%trimR(msg));
+
   // CPDA0FF with severity 40.
   qmhsndpm( 'CPDA0FF' :
             'QCPFMSG   *LIBL' :
             %trimr(msg) :
-            %len(%trimr(msg)) :
+            lenMsg :
             '*STATUS' :
             '*EXT' :
             *zero :
@@ -474,7 +491,6 @@ dcl-proc getHighestMsgKey export;
   dcl-pi *N char(4);
   end-pi;
 
-  // The message reference key.
   dcl-s msg varchar(128) inz('getHighestMsgKey');
   dcl-s msgKey char(4);
   dcl-ds rawmsgbuf qualified;

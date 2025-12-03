@@ -90,29 +90,28 @@
  /* -------------------------------------------- */
  /*  Let's do it!                                */
  /* -------------------------------------------- */
- "CMPMOD MODULE("prdLib"/CMDRUNLOGT) SRCFILE("prdLib"/QUNITTEST) ",
-    "DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/CMDRUNLOG ) SRCFILE("prdLib"/QSRC     ) ",
-    "DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/CMDRUNPRT ) SRCFILE("prdLib"/QSRC     ) ",
-    "DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/JOBLOG    ) SRCFILE("prdLib"/QSRC     ) ",
-    "DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/LIBL      ) SRCFILE("prdLib"/QSRC     ) ",
-    "DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/OSVERSION ) SRCFILE("prdLib"/QSRC     ) ",
-    "DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/PGMMSG    ) SRCFILE("prdLib"/QSRC     ) ",
-    "DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/STRING    ) SRCFILE("prdLib"/QSRC     ) ",
-    "DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/CMDRUNLOGT) SRCFILE("prdLib"/QUNITTEST) DBGVIEW("dbgView") ",
+   "TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/CALLSTACK ) SRCFILE("prdLib"/QSRC  ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/CMDRUNLOG ) SRCFILE("prdLib"/QSRC  ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/CMDRUNPRT ) SRCFILE("prdLib"/QSRC  ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/JOBLOG    ) SRCFILE("prdLib"/QSRC  ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/LIBL      ) SRCFILE("prdLib"/QSRC  ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/LLIST     ) SRCFILE("prdLib"/QLLIST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/MEMMGR    ) SRCFILE("prdLib"/QSRC  ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/OSVERSION ) SRCFILE("prdLib"/QSRC  ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/PGMMSG    ) SRCFILE("prdLib"/QSRC  ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/STRING    ) SRCFILE("prdLib"/QSRC  ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
  "CRTSRVPGM  SRVPGM("prdLib"/CMDRUNLOGT) ",
             "MODULE("prdLib"/CMDRUNLOGT ",
+                     prdLib"/CALLSTACK  ",
                      prdLib"/CMDRUNLOG  ",
                      prdLib"/CMDRUNPRT  ",
                      prdLib"/JOBLOG     ",
                      prdLib"/LIBL       ",
+                     prdLib"/LLIST      ",
+                     prdLib"/MEMMGR     ",
                      prdLib"/OSVERSION  ",
                      prdLib"/PGMMSG     ",
                      prdLib"/STRING  )  ",

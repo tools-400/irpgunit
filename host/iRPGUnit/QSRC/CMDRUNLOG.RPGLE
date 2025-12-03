@@ -32,6 +32,7 @@ ctl-opt nomain;
 //   Imports
 //----------------------------------------------------------------------
 
+/include qinclude,CALLSTACK
 /include qinclude,CMDRUNPRT
 /include qinclude,TEMPLATES
 /include qinclude,STRING
@@ -162,14 +163,17 @@ end-proc;
 //----------------------------------------------------------------------
 // Log a failure event. See prototype.
 //----------------------------------------------------------------------
-dcl-proc logfailure export;
+dcl-proc logFailure export;
   dcl-pi *N;
     testNm      like(procNm_t) const;
-    failure     likeds(assertFailEvtLong_t) const;
+    failure     likeds(assertFailureEvent_t) const;
   end-pi;
 
   // Index.
   dcl-s i int(10);
+
+  dcl-s pCallStk pointer;
+  dcl-ds callstkEnt likeds(callStkEnt_t) inz;
 
   if (g_output = OUTPUT_NONE);
     return;
@@ -182,11 +186,15 @@ dcl-proc logfailure export;
 
   logRawLine(failure.msg);
 
-  if (failure.callStk.numE > 0);
+  // TODO: check callstack
+  pCallstk = failure.pCallstk;
+  if (Callstack_getNumE(pCallstk) > 0);
     lineFeed(); // new with *TYPE2 log output of 'expected' and 'actual' values
-    for i = 1 to failure.callStk.numE;
-      logStackEntry(failure.callStk.entry(i).qStmt);
-    endfor;
+    Callstack_resetIteration(pCallstk);
+    dow (Callstack_getNext(pCallstk: callstkEnt));
+      //logStackEntry(failure.callStk.entry(i).qStmt);
+      logStackEntry(callStkEnt.qStmt);
+    enddo;
     lineFeed(); // new with *TYPE2 log output of 'expected' and 'actual' values
   endif;
 

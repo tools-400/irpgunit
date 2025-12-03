@@ -77,8 +77,7 @@ dcl-proc loadProcList export;
   end-pi;
 
   // List header structure.
-  dcl-ds listhdr likeds(listhdr_t)
-  based(proclist.hdr);
+  dcl-ds listhdr likeds(listhdr_t) based(proclist.hdr);
   // Extracted procedure list.
   dcl-ds proclist likeds(procList_t);
   // Qualified name of the user space that stores the proc info.

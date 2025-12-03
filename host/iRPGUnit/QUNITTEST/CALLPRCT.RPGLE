@@ -12,6 +12,7 @@
 //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
 //   >>IMPORTANT<<
 //     >>PARM<<  MODULE(&LI/CALLPRC   +
+//                      &LI/CALLSTACK +
 //                      &LI/CMDRUN    +
 //                      &LI/CMDRUNLOG +
 //                      &LI/CMDRUNPRT +
@@ -33,9 +34,11 @@
 //                      &LI/USRSPC    +
 //                      &LI/XMLWRITER +
 //                      );
+//     >>PARM<<  BNDSRVPGM(&LI/RUMEMMGR);
 //     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
 //   >>END-IMPORTANT<<
 //   >>CMD<<     CMPMOD MODULE(&LI/CALLPRC  ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/CALLSTACK) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUN   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNLOG) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNPRT) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);

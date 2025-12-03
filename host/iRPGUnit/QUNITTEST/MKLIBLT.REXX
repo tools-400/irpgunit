@@ -90,17 +90,25 @@
  /* -------------------------------------------- */
  /*  Let's do it!                                */
  /* -------------------------------------------- */
+ "CMPMOD MODULE("prdLib"/JOBLOG ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/LIBLT  ) SRCFILE("prdLib"/QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/LIBL   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/LIBLC  ) SRCFILE("prdLib"/QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/LLIST  ) SRCFILE("prdLib"/QLLIST   ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/PGMMSG ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/STRING ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
- "CRTSRVPGM  SRVPGM("prdLib"/LIBLT) ",
-            "MODULE("prdLib"/LIBLT  ",
-                     prdLib"/LIBL   ",
-                     prdLib"/LIBLC) ",
+ "CRTSRVPGM  SRVPGM("prdLib"/LIBLT)  ",
+            "MODULE("prdLib"/LIBLT   ",
+                     prdLib"/JOBLOG  ",
+                     prdLib"/LIBL    ",
+                     prdLib"/LIBLC   ",
+                     prdLib"/LLIST   ",
+                     prdLib"/PGMMSG  ",
+                     prdLib"/STRING) ",
             "EXPORT(*ALL) ",
             "OPTION(*DUPPROC) ",
-            "BNDSRVPGM("prdLib"/RUTESTCASE) ",
+            "BNDSRVPGM("prdLib"/RUTESTCASE "prdLib"/RUMEMMGR) ",
             "TEXT('RPGUnit SelfTest - Test LIBL.')"
 
  "SNDPGMMSG ",

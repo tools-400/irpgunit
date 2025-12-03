@@ -34,6 +34,7 @@ ctl-opt nomain;
 
 /include qinclude,CALLPRC
 /include qinclude,EXTPRC
+/include qinclude,MEMMGR
 /include qinclude,TEMPLATES
 /include qinclude,STRING
 /include qllist,llist_h
@@ -113,12 +114,12 @@ end-proc;
 
 
 dcl-proc getTestCasePtr;
-  dcl-pi *N              pointer;
-    testSuite       const likeds(testSuite_t);
-    testidx         int(10) const;
+  dcl-pi *N pointer;
+    testSuite likeds(testSuite_t) const;
+    testidx   int(10) const;
   end-pi;
 
-  return testSuite.testList + %size( proc_t ) * ( testidx - 1 );
+  return testSuite.testList + %size(proc_t) * (testidx - 1);
 
 end-proc;
 
@@ -126,13 +127,13 @@ end-proc;
 dcl-proc getTestNm export;
   dcl-pi *N like(procNm_t);
     testSuite       const likeds(testSuite_t);
-    testidx         int(10) const;
+    testIdx         int(10) const;
   end-pi;
 
   dcl-ds testproc likeds(proc_t);
 
 
-  testproc = getTestProc( testSuite : testidx );
+  testproc = getTestProc( testSuite : testIdx );
   return testproc.procnm;
 
 end-proc;
@@ -176,8 +177,8 @@ dcl-proc getTestSuite export;
   procCnt = cnt( privateData );
 
   clear testSuite;
-  testSuite.testList = %alloc( procCnt * %size( proc_t ) );
-  memset(testSuite.testList : x'00' : procCnt * %size( proc_t ));
+  testSuite.testList = MemMgr_alloc(procCnt * %size(proc_t): 'testSuite.testList');
+  memset(testSuite.testList : x'00': procCnt * %size(proc_t));
   testSuite.testResults = *null;
 
   for procIdx = 1 to procCnt;
@@ -185,8 +186,7 @@ dcl-proc getTestSuite export;
     select;
     when isTest( procNm );
       testSuite.testCasesCnt += 1;
-      testCase_p = getTestCasePtr( testSuite:
-                                   testSuite.testCasesCnt );
+      testCase_p = getTestCasePtr(testSuite: testSuite.testCasesCnt);
       clear testCase;
       testCase.procnm = procNm;
     when uCase(procNm) = 'SETUPSUITE';

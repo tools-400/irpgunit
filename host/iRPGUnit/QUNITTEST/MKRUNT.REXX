@@ -94,6 +94,7 @@
 
  "CMPMOD MODULE("prdLib"/RUNT     ) SRCFILE("prdLib"/QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/CALLPRC  ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/CALLSTACK) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/CMDRUN   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/CMDRUNLOG) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
  "CMPMOD MODULE("prdLib"/CMDRUNPRT) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
@@ -118,6 +119,7 @@
  "CRTSRVPGM  SRVPGM("prdLib"/RUNT) ",
             "MODULE("prdLib"/RUNT      ",
                      prdLib"/CALLPRC   ",
+                     prdLib"/CALLSTACK ",
                      prdLib"/CMDRUN    ",
                      prdLib"/CMDRUNLOG ",
                      prdLib"/CMDRUNPRT ",
@@ -138,9 +140,8 @@
                      prdLib"/STRING    ",
                      prdLib"/USRSPC    ",
                      prdLib"/XMLWRITER)",
+            "BNDSRVPGM("prdLib"/RUTESTCASE "prdLib"/RUMEMMGR) ",
             "EXPORT(*ALL) ",
-            "OPTION(*DUPPROC) ",
-            "BNDSRVPGM("prdLib"/RUTESTCASE) ",
             "TEXT('RPGUnit SelfTest - Test CMDRUNSRV.')"
 
  "SNDPGMMSG ",

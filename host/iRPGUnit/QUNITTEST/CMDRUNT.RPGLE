@@ -13,6 +13,7 @@
 //   >>IMPORTANT<<
 //     >>PARM<<  MODULE(&LI/CMDRUN    +
 //                      &LI/CALLPRC   +
+//                      &LI/CALLSTACK +
 //                      &LI/CMDRUNLOG +
 //                      &LI/CMDRUNPRT +
 //                      &LI/CMDRUNSRV +
@@ -33,11 +34,13 @@
 //                      &LI/USRSPC    +
 //                      &LI/XMLWRITER +
 //                      );
+//     >>PARM<<  BNDSRVPGM(&LI/RUMEMMGR);
 //     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
 //     >>PARM<<  BOPTION(*DUPPROC);
 //   >>END-IMPORTANT<<
 //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUN   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/CALLPRC  ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/CALLSTACK) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNLOG) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNPRT) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNSRV) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
@@ -103,14 +106,10 @@ end-ds;
 
 dcl-s logIdx int(10);
 
-// An array of test cases, for testing purpose.
-dcl-ds testCase dim(2) likeds(Proc_t);
-// A test suite, for testing purpose.
-dcl-ds testSuite likeds(TestSuite_t);
 // Procedures to run
-dcl-ds procNms likeds(ProcNms_t);
+dcl-ds g_procNms likeds(ProcNms_t);
 // Test result
-dcl-ds result likeds(result_t);
+dcl-ds g_result likeds(result_t);
 
 // Spying flag.
 dcl-s procWithNoErrorWasCalled ind;
@@ -119,6 +118,22 @@ dcl-s procWithNoErrorWasCalled ind;
 //   Test Definitions
 //----------------------------------------------------------------------
 
+dcl-ds g_qTestSuite likeds(object_t) inz;
+
+dcl-proc setupSuite export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  g_qTestSuite.nm = 'TESTPGM03';
+  g_qTestSuite.lib = 'QTEMP';
+
+  if (TestSuite_isDirty(g_qTestSuite.nm: g_qTestSuite.lib));
+    runCmd('RUCRTRPG TSTPGM(' + %trim(g_qTestSuite.lib) + '/' + %trim(g_qTestSuite.nm) + ') +
+            SRCFILE(QTESTCASES) DLTSPLF(*YES)');
+  endif;
+
+end-proc;
+
 dcl-proc setUp export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
@@ -126,22 +141,8 @@ dcl-proc setUp export;
   clear logIdx;
   clear logLine;
 
-  clear testCase;
-  clear testSuite;
-  testSuite.testList = %addr(testCase);
-  testSuite.testResults = list_create();
-
   clear procWithNoErrorWasCalled;
-  clear procNms;
-  clear result;
-
-end-proc;
-
-dcl-proc tearDown export;
-  dcl-pi *n extproc(*dclcase);
-  end-pi;
-
-  list_dispose(testSuite.testResults);
+  clear g_procNms;
 
 end-proc;
 
@@ -150,16 +151,28 @@ dcl-proc test_runTests_SuccessfulTestWithDetailBasic export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
+  dcl-ds testSuite likeds(TestSuite_t) inz;
+  dcl-ds testCase dim(1) likeds(Proc_t) based(testSuite.testList);
+  dcl-ds result likeds(result_t) inz;
+
   // Setup.
 
+  testSuite = crtTestSuite(g_qTestSuite);
+
+  // ensure the test suite has at least 1 test procedure
+  if (not (testSuite.testCasesCnt >= 1));
+    snd-msg *escape 'Test suite must have at least 1 test case.';
+  endif;
+
+  // set number of test cases to 1 and override the test case
   testSuite.testCasesCnt = 1;
   testCase(1).procNm = 'successful_test_1';
-  procNms.numE = 1;
-  procNms.name(1) = ALL_PROCS;
+  g_procNms.numE = 1;
+  g_procNms.name(1) = ALL_PROCS;
 
   // Execution.
 
-  runTests(result: testSuite: procNms: ORDER_API: DETAIL_BASIC: RCLRSC_NO);
+  runTests(result: testSuite: g_procNms: ORDER_API: DETAIL_BASIC: RCLRSC_NO);
 
   // Controls.
 
@@ -168,6 +181,9 @@ dcl-proc test_runTests_SuccessfulTestWithDetailBasic export;
   // called by runTests() regardless of the value
   // of 'detail'.
 
+on-exit;
+  rclTestSuite(testSuite);
+
 end-proc;
 
 
@@ -175,17 +191,29 @@ dcl-proc test_runTests_SuccessfulTestWithDetailAllAndOneAssertion export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
+  dcl-ds testSuite likeds(TestSuite_t) inz;
+  dcl-ds testCase dim(1) likeds(Proc_t) based(testSuite.testList);
+  dcl-ds result likeds(result_t) inz;
+
   // Setup.
 
+  testSuite = crtTestSuite(g_qTestSuite);
+
+  // ensure the test suite has at least 1 test procedure
+  if (not (testSuite.testCasesCnt >= 1));
+    snd-msg *escape 'Test suite must have at least 1 test case.';
+  endif;
+
+  // set number of test cases to 1 and override the test case
   testSuite.testCasesCnt = 1;
   testCase(1).procNm = 'successful_test_with_one_assertion';
   testCase(1).procPtr = %paddr(successful_test_with_one_assertion);
-  procNms.numE = 1;
-  procNms.name(1) = ALL_PROCS;
+  g_procNms.numE = 1;
+  g_procNms.name(1) = ALL_PROCS;
 
   // Execution.
 
-  runTests(result: testSuite: procNms: ORDER_API: DETAIL_ALL: RCLRSC_NO);
+  runTests(result: testSuite: g_procNms: ORDER_API: DETAIL_ALL: RCLRSC_NO);
 
 
   // Controls.
@@ -195,6 +223,9 @@ dcl-proc test_runTests_SuccessfulTestWithDetailAllAndOneAssertion export;
   aEqual('successful_test_with_one_assertion': logLine(1).procNm);
   iEqual(1: logLine(1).assertionCnt);
 
+on-exit;
+  rclTestSuite(testSuite);
+
 end-proc;
 
 
@@ -202,23 +233,38 @@ dcl-proc test_runTests_SuccessfulTestWithDetailAllAndTwoAssertions export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
+  dcl-ds testSuite likeds(TestSuite_t) inz;
+  dcl-ds testCase dim(1) likeds(Proc_t) based(testSuite.testList);
+  dcl-ds result likeds(result_t) inz;
+
   // Setup.
 
+  testSuite = crtTestSuite(g_qTestSuite);
+
+  // ensure the test suite has at least 1 test procedure
+  if (not (testSuite.testCasesCnt >= 1));
+    snd-msg *escape 'Test suite must have at least 1 test case.';
+  endif;
+
+  // set number of test cases to 1 and override the test case
   testSuite.testCasesCnt = 1;
   testCase(1).procNm = 'successful_test_with_two_assertions';
   testCase(1).procPtr = %paddr(successful_test_with_two_assertions);
-  procNms.numE = 1;
-  procNms.name(1) = ALL_PROCS;
+  g_procNms.numE = 1;
+  g_procNms.name(1) = ALL_PROCS;
 
   // Execution.
 
-  runTests(result: testSuite: procNms: ORDER_API: DETAIL_ALL: RCLRSC_NO);
+  runTests(result: testSuite: g_procNms: ORDER_API: DETAIL_ALL: RCLRSC_NO);
 
   // Controls.
 
   iEqual(1: logIdx );
   aEqual('successful_test_with_two_assertions': logLine(1).procNm);
   iEqual(2: logLine(1).assertionCnt);
+
+on-exit;
+  rclTestSuite(testSuite);
 
 end-proc;
 
@@ -227,23 +273,39 @@ dcl-proc test_runTests_TwoSuccessfulTestsWithDetailAll export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
+  dcl-ds testSuite likeds(TestSuite_t) inz;
+  dcl-ds testCase dim(2) likeds(Proc_t) based(testSuite.testList);
+  dcl-ds result likeds(result_t) inz;
+
   // Setup.
+
+  testSuite = crtTestSuite(g_qTestSuite);
+
+  // ensure the test suite has at least 1 test procedure
+  if (not (testSuite.testCasesCnt >= 2));
+    snd-msg *escape 'Test suite must have at least 1 test case.';
+  endif;
+
+  // set number of test cases to 1 and override the test case
 
   testSuite.testCasesCnt = 2;
   testCase(1).procNm = 'successful_test_1';
   testCase(2).procNm = 'successful_test_2';
-  procNms.numE = 1;
-  procNms.name(1) = ALL_PROCS;
+  g_procNms.numE = 1;
+  g_procNms.name(1) = ALL_PROCS;
 
   // Execution.
 
-  runTests(result: testSuite: procNms: ORDER_API: DETAIL_ALL: RCLRSC_NO);
+  runTests(result: testSuite: g_procNms: ORDER_API: DETAIL_ALL: RCLRSC_NO);
 
   // Controls.
 
   iEqual(2: logIdx);
   aEqual('successful_test_1': logLine(1).procNm);
   aEqual('successful_test_2': logLine(2).procNm);
+
+on-exit;
+  rclTestSuite(testSuite);
 
 end-proc;
 
@@ -252,23 +314,38 @@ dcl-proc test_runTests_TwoSuccessfulTestsWithOrderReverse export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
+  dcl-ds testSuite likeds(TestSuite_t) inz;
+  dcl-ds testCase dim(2) likeds(Proc_t) based(testSuite.testList);
+  dcl-ds result likeds(result_t) inz;
+
   // Setup.
 
+  testSuite = crtTestSuite(g_qTestSuite);
+
+  // ensure the test suite has at least 2 test procedures
+  if (not (testSuite.testCasesCnt >= 2));
+    snd-msg *escape 'Test suite must have at least 1 test case.';
+  endif;
+
+  // set number of test cases to 2 and override the test case
   testSuite.testCasesCnt = 2;
   testCase(1).procNm = 'successful_test_1';
   testCase(2).procNm = 'successful_test_2';
-  procNms.numE = 1;
-  procNms.name(1) = ALL_PROCS;
+  g_procNms.numE = 1;
+  g_procNms.name(1) = ALL_PROCS;
 
   // Execution.
 
-  runTests(result: testSuite: procNms: ORDER_REVERSE: DETAIL_ALL: RCLRSC_NO);
+  runTests(result: testSuite: g_procNms: ORDER_REVERSE: DETAIL_ALL: RCLRSC_NO);
 
   // Controls.
 
   iEqual(2: logIdx);
   aEqual('successful_test_2': logLine(1).procNm);
   aEqual('successful_test_1': logLine(2).procNm);
+
+on-exit;
+  rclTestSuite(testSuite);
 
 end-proc;
 
@@ -277,22 +354,37 @@ dcl-proc test_runTests_ChooseOneTestProc export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
+  dcl-ds testSuite likeds(TestSuite_t) inz;
+  dcl-ds testCase dim(2) likeds(Proc_t) based(testSuite.testList);
+  dcl-ds result likeds(result_t) inz;
+
   // Setup.
 
+  testSuite = crtTestSuite(g_qTestSuite);
+
+  // ensure the test suite has at least 2 test procedures
+  if (not (testSuite.testCasesCnt >= 2));
+    snd-msg *escape 'Test suite must have at least 1 test case.';
+  endif;
+
+  // set number of test cases to 2 and override the test case
   testSuite.testCasesCnt = 2;
   testCase(1).procNm = 'successful_test_1';
   testCase(2).procNm = 'successful_test_2';
-  procNms.numE = 1;
-  procNms.name(1) = 'successful_test_2';
+  g_procNms.numE = 1;
+  g_procNms.name(1) = 'successful_test_2';
 
   // Execution.
 
-  runTests(result: testSuite: procNms: ORDER_API: DETAIL_ALL: RCLRSC_NO);
+  runTests(result: testSuite: g_procNms: ORDER_API: DETAIL_ALL: RCLRSC_NO);
 
   // Controls.
 
   iEqual(1: logIdx);
   aEqual('successful_test_2': logLine(1).procNm);
+
+on-exit;
+  rclTestSuite(testSuite);
 
 end-proc;
 
@@ -301,16 +393,28 @@ dcl-proc test_runTests_ChooseNonExistingTestProc export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
+  dcl-ds testSuite likeds(TestSuite_t) inz;
+  dcl-ds testCase dim(1) likeds(Proc_t) based(testSuite.testList);
+  dcl-ds result likeds(result_t) inz;
+
   // Setup.
 
+  testSuite = crtTestSuite(g_qTestSuite);
+
+  // ensure the test suite has at least 1 test procedures
+  if (not (testSuite.testCasesCnt >= 1));
+    snd-msg *escape 'Test suite must have at least 1 test case.';
+  endif;
+
+  // set number of test cases to 1 and override the test case
   testSuite.testCasesCnt = 1;
   testCase(1).procNm = 'test_1';
-  procNms.numE = 1;
-  procNms.name(1) = 'test_2';
+  g_procNms.numE = 1;
+  g_procNms.name(1) = 'test_2';
 
   // Execution.
 
-  runTests(result: testSuite: procNms: ORDER_API: DETAIL_ALL: RCLrSC_NO);
+  runTests(result: testSuite: g_procNms: ORDER_API: DETAIL_ALL: RCLrSC_NO);
 
   // Controls.
 
@@ -318,6 +422,9 @@ dcl-proc test_runTests_ChooseNonExistingTestProc export;
   aEqual('test_2': logLine(1).procNm);
   aEqual(TEST_CASE_ERROR: logLine(1).type);
   aEqual('Test procedure not found.': logLine(1).msg);
+
+on-exit;
+  rclTestSuite(testSuite);
 
 end-proc;
 
@@ -343,11 +450,12 @@ dcl-proc test_callWithLogging_withSuccess export;
   end-pi;
 
   dcl-ds procWithNoError likeds(Proc_t);
+  dcl-ds result likeds(result_t) inz;
 
   procWithNoError.procNm = 'proc_with_no_error';
   procWithNoError.procPtr = %paddr( proc_with_no_error );
 
-  callProcWithErrorHandler(procWithNoError);
+  callProcWithErrorHandler(procWithNoError: result);
 
   assert(procWithNoErrorWasCalled: 'proc_with_no_error not called');
   iEqual(0: logIdx);    // No logging if success.
@@ -360,12 +468,13 @@ dcl-proc test_callWithLogging_withError export;
   end-pi;
 
   dcl-ds procWithError likeds(Proc_t);
+  dcl-ds result likeds(result_t) inz;
 
   procWithError.procNm = 'proc_with_error';
   procWithError.procPtr = %paddr(proc_with_error);
 
   monitor;
-    callProcWithErrorHandler(procWithError);
+    callProcWithErrorHandler(procWithError: result);
   on-error;
      fail('callWithLogging should never raise an error');
   endmon;
@@ -400,7 +509,8 @@ end-proc;
 
 dcl-proc callProcWithErrorHandler;
   dcl-pi *N int(10) extproc(*dclcase);
-    proc likeds(proc_t) const;
+    proc   likeds(proc_t) const;
+    result likeds(result_t);
   end-pi;
 
   monitor;
@@ -447,7 +557,7 @@ end-proc;
 dcl-proc logFailure export;
   dcl-pi *n;
     testNm          const like(ProcNm_t);
-    failure         const likeds(AssertFailEvtLong_t);
+    failure         const likeds(assertFailureEvent_t);
   end-pi;
 
   fail('Mock logFailure not implemented');

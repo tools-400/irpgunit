@@ -22,8 +22,9 @@
 /*                      &LI/USRSPC    +                                       */
 /*                      &LI/OSVERSION +                                       */
 /*                      );                                                    */
-/*     >>PARM<<  ENTMOD(&LI/CRTTST);                                          */
-/*     >>PARM<<  BNDSRVPGM(&LI/RUTESTCASE);                                   */
+/*     >>PARM<<  ENTMOD(&LI/CRTRPG);                                          */
+/*     >>PARM<<  STGMDL(*SNGLVL);                                             */
+/*     >>PARM<<  BNDSRVPGM(&LI/RUTESTCASE &LI/RUMEMMGR);                      */
 /*     >>PARM<<  ACTGRP(*NEW);                                                */
 /*     >>PARM<<  ALWUPD(*YES);                                                */
 /*     >>PARM<<  ALWLIBUPD(*YES);                                             */

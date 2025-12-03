@@ -23,13 +23,14 @@ ctl-opt NoMain Option(*SrcStmt);
 //   Imported Procedures
 //----------------------------------------------------------------------
 
-/copy qinclude,TESTCASE
+/include qinclude,TESTCASE
+/include qinclude,OBJECT
 
 //----------------------------------------------------------------------
 //   Program Status Data Structure
 //----------------------------------------------------------------------
 
-/copy qinclude,SDS
+/include qinclude,SDS
 
 //----------------------------------------------------------------------
 //   Tests
@@ -389,6 +390,27 @@ dcl-proc testMKRUNT export;
 end-proc;
 
 
+dcl-proc testMKSRCMBRT export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-c TEST_SUITE 'SRCMBRT';
+
+  // Setup.
+
+  deleteTestSuite(TEST_SUITE);
+
+  // Run.
+
+  executeScript('MKSRCMBRT');
+
+  // Check.
+
+  assert(checkTestSuite(TEST_SUITE): 'Service program ' + TEST_SUITE + ' not found.');
+
+end-proc;
+
+
 dcl-proc testMKSTMFT export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
@@ -503,7 +525,7 @@ dcl-proc cleanup export;
 
   dcl-s params varchar(100);
 
-  params = 'CLEAN ' + %trim(sds.pgmLib);
+  params = 'CLEAN_SCRIPTST ' + %trim(sds.pgmLib);
 
   runCmd('STRREXPRC SRCMBR(A_INSTALL) +
           SRCFILE(' + %trim(sds.pgmLib) + '/QBUILD) +
