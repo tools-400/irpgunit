@@ -94,6 +94,19 @@ end-proc procWithError;
 //   Test Procedure Definitions
 //----------------------------------------------------------------------
 
+dcl-proc test_caller export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-s callingProcName like(procNm_t);
+
+  callingProcName = getCaller();
+
+  assertEqual('test_caller': callingProcName);
+
+end-proc;
+
+
 dcl-proc test_rcvExcpMsgInfo export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
@@ -233,5 +246,14 @@ dcl-proc test_monitorMessage export;
     getLatestEscMsg(msgKey: *ON);
     aEqual('8800': msgInfo.specNb);   // QSYS Compile
   endmon;
+
+end-proc;
+
+
+dcl-proc getCaller;
+  dcl-pi *n like(procNm_t) extproc(*dclcase);
+  end-pi;
+
+  return caller();
 
 end-proc;

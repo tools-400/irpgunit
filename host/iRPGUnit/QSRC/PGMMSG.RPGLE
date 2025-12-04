@@ -641,3 +641,116 @@ dcl-proc getLatestEscMsg export;
 
 end-proc;
 
+//----------------------------------------------------------------------
+// Retrieves the latest escape message between 'highMsgKey' and NOW.
+//----------------------------------------------------------------------
+dcl-proc caller export;
+  dcl-pi *n like(procNm_t);
+    i_offset  int(3) options(*nopass: *omit) const;
+    o_module  char(10) options(*nopass: *omit);
+    o_program char(10) options(*nopass: *omit);
+    o_stmtID  char(10) options(*nopass: *omit);
+  end-pi;
+
+  //  Return value
+  dcl-s procedure       varchar(256) inz;
+
+  //  Fields for optional parameters
+  dcl-s module  like(o_module  ) inz;
+  dcl-s program like(o_program ) inz;
+  dcl-s stmtID  like(o_stmtID  ) inz;
+  dcl-s offset  like(i_offset  ) inz(0);
+
+  //  Local constants
+  dcl-c cTEXT_MSG const('Who is before me?');
+
+  //  Helper fields QMHSNDPM/QMHRCVPM
+  dcl-ds qMsgF likeds(object_t)  inz;
+  dcl-s msgKey char(4) inz;
+  dcl-ds errCode likeds(errorCode_t) inz;
+  dcl-ds callStkEQ qualified;
+    module  char(10) inz;
+    program char(10) inz;
+  end-ds;
+
+  //  Helper fields QMHRCVPM
+  dcl-s memSize int(10) inz;
+  dcl-ds sndInf likeds(rcvm0300sender) based(pSndInf);
+  dcl-ds rcvm0300 likeds(rcvm0300hdr) based(pRcvm0300);
+
+  // Get optional input parameters ...
+  // .. i_offset
+  if (%parms() >= %parmnum(i_offset) and %addr(i_offset) <> *NULL);
+    offset = i_offset;
+  endif;
+
+  // Send a test message
+  clear   qMsgF;
+  qMsgF.nm = 'QCPFMSG';
+  qMsgF.lib = '*LIBL';
+
+  clear errCode;
+  errCode.bytPrv = %size(errCode);
+
+  callStkEQ.module = '*NONE';
+  callStkEQ.program = '*NONE';
+  qmhsndpm('CPF9897': qMsgF: cTEXT_MSG: %size(cTEXT_MSG): '*INFO'
+           : '*': 2 + offset: msgKey: errCode: 1: callStkEQ: 0);
+
+  if (errCode.bytAvl = 0);
+    // Receive and remove test message
+    memSize   = 2048;
+    pRcvm0300 = %alloc(memSize);
+
+    clear errCode;
+    errCode.bytPrv = %size(errCode);
+    callStkEQ.module = '*NONE';
+    callStkEQ.program = '*NONE';
+
+    qmhrcvpm(rcvm0300: memSize: 'RCVM0300'
+             : '*': 2 + offset: '*INFO': msgKey: 0: '*REMOVE': errCode: 1: callStkEQ);
+  endif;
+
+  // If everything worked as designed, ...
+  if (errCode.bytAvl = 0 and rcvm0300.bytAvl <= memSize);
+    // ... then retrieve sender information
+    pSndInf = pRcvm0300 + %size(rcvm0300)
+                        + rcvm0300.rplDataLenR
+                        + rcvm0300.msgLenR
+                        + rcvm0300.msgHlpLenR;
+    procedure = %trimR(sndInf.rcvProcNm);
+    module = sndInf.rcvModNm;
+    program = sndInf.rcvPgmNm;
+    stmtID = sndInf.rcvPgmSttNb(1);
+  else;
+    procedure = '*N';
+    module = '*N';
+    program = '*N';
+    stmtID = '*N';
+  endif;
+
+  return procedure;
+
+on-exit;
+
+  // Free memory
+  if (pRcvm0300 <> *null);
+    dealloc(n) pRcvm0300;
+  endif;
+
+  // Process optional output parameters ...
+  if (%parms() >= %parmnum(o_module) and %addr(o_module) <> *null);
+    o_module = module;
+  endif;
+
+  if (%parms() >= %parmnum(o_program) and %addr(o_program) <> *null);
+    o_program = program;
+  endif;
+
+  // .. o_stmtID
+  if (%parms() >= %parmnum(o_stmtID) and %addr(o_stmtID) <> *null);
+    o_stmtID = stmtID;
+  endif;
+
+end-proc;
+
