@@ -104,9 +104,8 @@ dcl-proc getXmlFileHandle;
   if (fileHandle < 0);
     // could not open file handle
     errorPtr = errno();
-    sndEscapeMsg('Could not create file ' + %trimr(filePath) +
-                 ': ' + %str(strError(errorNumber)) :
-                 ONE_CALL_STK_LVL_ABOVE);
+    sndEscapeMsg('Could not create file ' + %trimr(filePath) +': ' + %str(strError(errorNumber))
+                 : ONE_CALL_STK_LVL_ABOVE);
   endif;
 
   return fileHandle;
