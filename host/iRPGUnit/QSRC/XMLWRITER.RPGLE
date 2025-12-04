@@ -27,6 +27,7 @@ ctl-opt DECEDIT('0.') NOMAIN;
 
 /include qinclude,ASSERT
 /include qinclude,CALLSTACK
+/include qinclude,CMDRUNSRV
 /include qinclude,JSONWTR
 /include qinclude,PGMMSG
 /include qinclude,CMDRUN
@@ -182,7 +183,6 @@ dcl-proc writeTestCases;
   end-pi;
 
   dcl-ds testResult likeds(TestResult_t) based(pTestResult);
-  dcl-s startElement varchar(2000);
   dcl-s text varchar(50000);
   dcl-s rc int(10);
   dcl-s execTime packed(15:3);
@@ -206,19 +206,17 @@ dcl-proc writeTestCases;
     isEventLogged = *off;
 
     list_resetIteration(testResult.hTestEvents);
-    pAbstractTestEvent = list_getNext(testResult.hTestEvents);
+    pAbstractTestEvent = getfilteredTestEvents(testResult);
     dow (pAbstractTestEvent <> *null);
 
-      startElement = TAB + '<testcase name="' + %trimr(testResult.testName) + '" ';
-      startElement += 'assertions="' + %char(testResult.assertCnt) + '" ';
-      startElement += 'classname="' + %trimr(testSuiteName.nm) + '" '; // TODO: should look which mo
-      startElement += 'time="' + %char(execTime) + '" ';               // exports this testcase
-      startElement += '>' + CRLF;
+      text = TAB + '<testcase name="' + %trimr(testResult.testName) + '" ';
+      text += 'assertions="' + %char(testResult.assertCnt) + '" ';
+      text += 'classname="' + %trimr(testSuiteName.nm) + '" '; // TODO: should look which mo
+      text += 'time="' + %char(execTime) + '" ';               // exports this testcase
+      text += '>' + CRLF;
 
       select;
-      when (testResult.outcome = TEST_CASE_ERROR and abstractTestEvent.outcome = TEST_CASE_ERROR);
-
-        text = startElement;
+      when (abstractTestEvent.outcome = TEST_CASE_ERROR);
 
         // start <error> element
         text += TAB + TAB + '<error message="' + escapeXml(%trimr(abstractTestEvent.error.msg.txt))+
@@ -239,11 +237,9 @@ dcl-proc writeTestCases;
 
         isEventLogged = *on;
 
-      when (testResult.outcome = TEST_CASE_FAILURE and abstractTestEvent.outcome = TEST_CASE_FAILURE
-      );
-        if (testResult.lastFailureEvent = abstractTestEvent.index);
+      when (abstractTestEvent.outcome = TEST_CASE_FAILURE);
 
-          text = startElement;
+        if (testResult.lastFailureEvent = abstractTestEvent.index);
 
           // start <failure> element
           text += TAB + TAB + '<failure message="';
@@ -267,10 +263,7 @@ dcl-proc writeTestCases;
 
       other;
         // test case ran successful
-        if (testResult.outcome = abstractTestEvent.outcome);
-          text = startElement;
-          isEventLogged = *on;
-        endif;
+        isEventLogged = *on;
       endsl;
 
       // close <testcase> element
@@ -286,7 +279,7 @@ dcl-proc writeTestCases;
         list_abortIteration(testResult.hTestEvents);
         pAbstractTestEvent = *null;
       else;
-        pAbstractTestEvent = list_getNext(testResult.hTestEvents);
+        pAbstractTestEvent = getfilteredTestEvents(testResult);
       endif;
     enddo;
 

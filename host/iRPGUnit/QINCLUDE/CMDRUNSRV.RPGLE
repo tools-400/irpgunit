@@ -284,13 +284,13 @@ dcl-pr handleSuccess extproc('CMDRUNSRV_handleSuccess');
   assertionCnt    int(10) const;
 end-pr;
 
-// Returns the last recorded failure event.
-dcl-pr getLastFailureEvent likeds(testFailureEvent_t) extproc('CMDRUNSRV_getLastFailureEvent');
+// Returns the next matching test event.
+dcl-pr getFilteredTestEvents pointer extproc('CMDRUNSRV_getFilteredTestEvents');
   testResult likeds(testResult_t) const;
 end-pr;
 
-// Returns the last recorded success event.
-dcl-pr getLastSuccessEvent likeds(testSuccessEvent_t) extproc('CMDRUNSRV_getLastSuccessEvent');
+// Returns the last recorded failure event.
+dcl-pr getLastFailureEvent likeds(testFailureEvent_t) extproc('CMDRUNSRV_getLastFailureEvent');
   testResult likeds(testResult_t) const;
 end-pr;
 
@@ -298,4 +298,6 @@ end-pr;
 dcl-pr getLastErrorEvent likeds(runtimeErrorEvent_t) extproc('CMDRUNSRV_getLastErrorEvent');
   testResult likeds(testResult_t) const;
 end-pr;
+
+/include qinclude,templates
 

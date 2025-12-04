@@ -903,6 +903,42 @@ dcl-proc checkAndRestoreLibl;
 
 end-proc;
 
+
+//----------------------------------------------------------------------
+// Returns the next matching test event.
+//----------------------------------------------------------------------
+dcl-proc getFilteredTestEvents export;
+  dcl-pi *n pointer;
+    testResult likeds(testResult_t) const;
+  end-pi;
+
+  dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
+
+  pAbstractTestEvent = list_getNext(testResult.hTestEvents);
+  dow (pAbstractTestEvent <> *null);
+
+    // Only the last failure or error events is returned.
+    // The event must match the overall test result.
+    if (testResult.outcome = abstractTestEvent.outcome);
+      select;
+      when (abstractTestEvent.outcome = TEST_CASE_SUCCESS);
+        return pAbstractTestEvent;
+      when (testResult.outcome = TEST_CASE_ERROR
+            and testResult.lastErrorEvent = abstractTestEvent.index);
+        return pAbstractTestEvent;
+      when (testResult.outcome = TEST_CASE_FAILURE
+            and testResult.lastFailureEvent = abstractTestEvent.index);
+        return pAbstractTestEvent;
+      endsl;
+    endif;
+
+    pAbstractTestEvent = list_getNext(testResult.hTestEvents);
+  enddo;
+
+  return *null;
+
+end-proc;
+
 //----------------------------------------------------------------------
 // Returns the last recorded error event.
 //----------------------------------------------------------------------
@@ -942,27 +978,6 @@ dcl-proc getLastFailureEvent export;
   endif;
 
   return testFailureEvent;
-
-end-proc;
-
-//----------------------------------------------------------------------
-// Returns the last recorded success event.
-//----------------------------------------------------------------------
-dcl-proc getLastSuccessEvent export;
-  dcl-pi *n likeds(testSuccessEvent_t);
-    testResult likeds(testResult_t) const;
-  end-pi;
-
-  dcl-ds testSuccessEvent likeds(testSuccessEvent_t) inz;
-
-  testSuccessEvent = getLastEvent(testResult: TEST_CASE_SUCCESS);
-
-  if (testResult.lastSuccessEvent <> testSuccessEvent.index);
-    sndEscapeMsgAboveCtlBdy(
-      'Index of ''lastSuccessEvent'' does not match event index: ' + %char(testSuccessEvent.index));
-  endif;
-
-  return testSuccessEvent;
 
 end-proc;
 
