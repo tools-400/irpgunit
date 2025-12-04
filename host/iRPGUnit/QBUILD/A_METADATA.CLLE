@@ -53,6 +53,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QBND) +
+                          MBR(RUMEMMGR) +
+                          SRCTYPE(BND) +
+                          TEXT('iRPGUnit - Memory Manager.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QBND) +
                           MBR(RUPGMRMT) +
                           SRCTYPE(LNK) +
                           TEXT('iRPGUnit - Plug-in Test Runner.')
@@ -209,6 +215,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(CALLSTACK) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Callstack.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
                           MBR(CBLLINKAGE) +
                           SRCTYPE(CBLLE) +
                           TEXT('iRPGUnit - Cobol Linkage Section.')
@@ -356,6 +368,12 @@
                           MBR(LSTSPLF) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - List Spooled Files.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(MEMMGR) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Memory Manager.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
@@ -557,6 +575,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(CALLSTACK) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Callstack')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
                           MBR(CMDRUN) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - Command line runner.')
@@ -641,6 +665,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(MEMMGR) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Memory Manager.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
                           MBR(MKCALLTST) +
                           SRCTYPE(REXX) +
                           TEXT('iRPGUnit - Make RUCALLTST program.')
@@ -656,6 +686,12 @@
                           MBR(MKCRTRPG) +
                           SRCTYPE(REXX) +
                           TEXT('iRPGUnit - Make RUCRTRPG command.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(MKMEMMGR) +
+                          SRCTYPE(REXX) +
+                          TEXT('iRPGUnit - Memory Manager.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +
@@ -764,6 +800,12 @@
                           MBR(CEEAPI) +
                           SRCTYPE(RPGLE) +
                           TEXT('CEE APIs')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(CVTHC) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Convert Hex to Character (CVTHC)')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSYSINC) +
@@ -1147,7 +1189,7 @@
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(TESTPGM21) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit Fixture - Error in setUp and tearDown.')
+                          TEXT('iRPGUnit Fixture - Errors in setUp and tearDown.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
@@ -1337,6 +1379,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(MKSRCMBRT) +
+                          SRCTYPE(REXX) +
+                          TEXT('iRPGunit - Source Member Utilities.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(MKSTMFT) +
                           SRCTYPE(REXX) +
                           TEXT('iRPGUnit SelfTest - Build STMFT.')
@@ -1351,7 +1399,7 @@
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(MKUT) +
                           SRCTYPE(REXX) +
-                          TEXT('iRPGUnit SelfTest - Build and run all self tests.')
+                          TEXT('iRPGUnit - Build and run all self tests.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
