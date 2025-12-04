@@ -529,12 +529,8 @@ dcl-proc disposeTestEvents export;
   numAssertEvents = list_size(hTestEvents);
   for i = 1 to numAssertEvents; // iterate: assertEvents of a test case
     pAbstractTestEvent = list_getLast(hTestEvents);
-    if (abstractTestEvent.outcome = TEST_CASE_FAILURE or abstractTestEvent.outcome =
-    TEST_CASE_SUCCESS);
-// TODO: fix creating SUCCESS event
-//      if (assertEvent.failure.pCallstk <> *null);
-        Callstack_dealloc(abstractTestEvent.failure.pCallstk: ASSERT_EVENT_FAILURE_PCALLSTK_TEXT);
-//      endif;
+    if (abstractTestEvent.outcome = TEST_CASE_FAILURE);
+      Callstack_dealloc(abstractTestEvent.failure.pCallstk: ASSERT_EVENT_FAILURE_PCALLSTK_TEXT);
     endif;
     list_removeLast(hTestEvents);
   endfor;

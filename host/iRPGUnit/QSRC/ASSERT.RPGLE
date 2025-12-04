@@ -93,6 +93,7 @@ dcl-ds g_status qualified export;
   isAssertionError    ind inz(*off);
   pFailureEvents      pointer;
   procNamePrefix      like(assertProcNm_t) inz;
+  isJunitStyle        ind inz(*on);
 end-ds;
 
 //----------------------------------------------------------------------
@@ -338,6 +339,8 @@ dcl-proc doAssert export;
     startProc      varchar(256) options(*varsize) const;
   end-pi;
 
+  dcl-s index int(10);
+
   checkStartPgm();
 
   g_status.numAssertsCalled += 1;
@@ -352,18 +355,20 @@ dcl-proc doAssert export;
     g_abstractTestEvent.failure.outcome = TEST_CASE_FAILURE;
     doFail(msgIfFalse:  toCallStackE + 1: startProc);
   else;
-    // Add SUCCESS event with empty callstack
+    // Add SUCCESS event
     g_abstractTestEvent.success.outcome = TEST_CASE_SUCCESS;
 
-    // TODO: remove callstack
-//    sizeCallstk = %size(empty_callStk.numE) + (0 * %size(callStkEnt_t));
-//    g_assertEvent.failure.pCallstk = MemMgr_alloc(sizeCallstk: 'g_assertEvent.failure.pCallstk');
-//    memcpy(g_assertEvent.failure.pCallstk: %addr(empty_callStk): sizeCallstk);
-
-    g_abstractTestEvent.failure.pCallstk = Callstack_alloc(0: 'g_assertEvent.failure.pCallstk');
-
-    // TODO: fix creating SUCCESS event
-    list_add(g_status.pFailureEvents: %addr(g_abstractTestEvent): %size(g_abstractTestEvent));
+    if (g_status.isJunitStyle);
+      index = list_size(g_status.pFailureEvents);
+      if (index = 1);
+        list_replace(g_status.pFailureEvents
+                     : %addr(g_abstractTestEvent): %size(g_abstractTestEvent): index);
+      else;
+        sndEscapeMsgAboveCtlBdy('Unexpected list size: ' + %char(index));
+      endif;
+    else;
+      list_add(g_status.pFailureEvents: %addr(g_abstractTestEvent): %size(g_abstractTestEvent));
+    endif;
   endif;
 
 end-proc;
@@ -377,16 +382,26 @@ dcl-proc doFail;
   end-pi;
 
   dcl-s pCallstk pointer;
-
-  g_abstractTestEvent.failure.msg = %trimr(msg);
-
-  pCallStk = getCallStk(startProc);
-
-  g_abstractTestEvent.failure.pCallstk = pCallstk;
+  dcl-s index int(10);
 
   // Add FAILURE event with callstack
+  pCallStk = getCallStk(startProc);
+
+  g_abstractTestEvent.failure.msg = %trimr(msg);
+  g_abstractTestEvent.failure.pCallstk = pCallstk;
   g_abstractTestEvent.index = list_size(g_status.pFailureEvents) + 1;
-  list_add(g_status.pFailureEvents: %addr(g_abstractTestEvent): %size(g_abstractTestEvent));
+
+  if (g_status.isJunitStyle);
+    index = list_size(g_status.pFailureEvents);
+    if (index = 1);
+      list_replace(g_status.pFailureEvents
+                   : %addr(g_abstractTestEvent): %size(g_abstractTestEvent): index);
+    else;
+      sndEscapeMsgAboveCtlBdy('Unexpected list size: ' + %char(index));
+    endif;
+  else;
+    list_add(g_status.pFailureEvents: %addr(g_abstractTestEvent): %size(g_abstractTestEvent));
+  endif;
 
   g_status.isAssertionError = *on;
 
@@ -464,6 +479,8 @@ dcl-proc clrAssertFailEvt export;
 
   clear g_abstractTestEvent;
   g_abstractTestEvent.outcome = TEST_CASE_NULL;
+
+  g_status.isJunitStyle = *on;
 
 end-proc;
 
