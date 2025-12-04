@@ -402,11 +402,10 @@ dcl-proc runProc export;
 
   dcl-ds abstractTestEvent likeds(abstractTestEvent_t) inz;
   dcl-ds runtimeErrorEvent likeds(runtimeErrorEvent_t) inz;
-  dcl-ds testSuccessEvent likeds(testSuccessEvent_t) inz;
 
   dcl-s assertCnt int(10);
   dcl-s numEventsBefore int(10);
-  dcl-s numEventsAfter int(10);
+  dcl-s numEventsAdded int(10);
 
   clrAssertFailEvt(testResult.hTestEvents: procNamePrefix);
 
@@ -414,22 +413,27 @@ dcl-proc runProc export;
 
   monitor;
     setLowMessageKey(getHighestMsgKey());
+
     numEventsBefore = list_size(testResult.hTestEvents);
     callProcByPtr(proc);
-    numEventsAfter = list_size(testResult.hTestEvents);
-    testSuccessEvent = getAssertEventInternal();
+    numEventsAdded = list_size(testResult.hTestEvents) - numEventsBefore;
+
+    // Validate the event returned by the procedure.
+    //  - empty event, is there were no assertions
+    //  - test success event, if no assertion failed
+    //  - test failure event, if assertions failed but was monitored
+    abstractTestEvent = getAssertEventInternal();
     select;
-    when (testSuccessEvent.outcome = '');
+    when (numEventsAdded = 0 and abstractTestEvent.outcome = TEST_CASE_NULL);
       // no assertion has been called
-    when (testSuccessEvent.outcome = TEST_CASE_SUCCESS);
-      testResult.lastSuccessEvent = testSuccessEvent.index;
+    when (numEventsAdded > 0 and abstractTestEvent.outcome = TEST_CASE_SUCCESS);
+      testResult.lastSuccessEvent = abstractTestEvent.index;
     other;
-      if (testSuccessEvent.outcome = TEST_CASE_FAILURE);
-        // assert() has been ignored, such as:
+      if (abstractTestEvent.outcome = TEST_CASE_FAILURE);
+        // failed assert() has been ignored, such as:
         //   callp(E) assert(*off: 'Assertion failes, but error is ignored.');
-        // Maybe that is usefull for temporary ignored assertions.
       else;
-        sndEscapeMsgAboveCtlBdy('Unexpected event type: ''' + testSuccessEvent.outcome + '''');
+        sndEscapeMsgAboveCtlBdy('Unexpected event type: ''' + abstractTestEvent.outcome + '''');
       endif;
     endsl;
   on-error;
@@ -438,7 +442,7 @@ dcl-proc runProc export;
         // Handle runtime error
         testResult.outcome = TEST_CASE_ERROR;
         testResult.lastErrorEvent = runtimeErrorEvent.index;
-        // Create error event
+        // Create runtime error event
         runtimeErrorEvent.outcome = TEST_CASE_ERROR;
         runtimeErrorEvent.msg = rcvExcpMsgInfo();
         list_add(testResult.hTestEvents: %addr(runtimeErrorEvent): %size(runtimeErrorEvent));

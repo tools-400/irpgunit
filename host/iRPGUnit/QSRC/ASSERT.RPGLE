@@ -463,6 +463,7 @@ dcl-proc clrAssertFailEvt export;
   g_status.procNamePrefix = procNamePrefix;
 
   clear g_abstractTestEvent;
+  g_abstractTestEvent.outcome = TEST_CASE_NULL;
 
 end-proc;
 

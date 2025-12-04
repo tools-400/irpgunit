@@ -300,7 +300,7 @@ end-ds;
 
 // Assertion Event.
 dcl-ds abstractTestEvent_t qualified template;
-  outcome      char(1);
+  outcome      char(1) inz(TEST_CASE_NULL);
   index        int(10);
   failure      likeds(testFailureEvent_t) pos(1) inz(*likeds);
   success      likeds(testSuccessEvent_t) pos(1) inz(*likeds);
@@ -384,6 +384,7 @@ dcl-c MAX_CALL_STK_SIZE 64;
 dcl-c CALL_STACK_INCOMPLETE '*INCOMPLETE';
 
 // TestResult_t.outcome can have three values.
+dcl-c TEST_CASE_NULL    '*';
 dcl-c TEST_CASE_SUCCESS 'S';
 dcl-c TEST_CASE_FAILURE 'F';
 dcl-c TEST_CASE_ERROR   'E';
