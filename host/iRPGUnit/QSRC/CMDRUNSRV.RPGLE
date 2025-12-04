@@ -426,7 +426,7 @@ dcl-proc runProc export;
     select;
     when (numEventsAdded = 0 and abstractTestEvent.outcome = TEST_CASE_NULL);
       // no assertion has been called
-    when (numEventsAdded > 0 and abstractTestEvent.outcome = TEST_CASE_SUCCESS);
+    when (abstractTestEvent.outcome = TEST_CASE_SUCCESS);
       testResult.lastSuccessEvent = abstractTestEvent.index;
     other;
       if (abstractTestEvent.outcome = TEST_CASE_FAILURE);
