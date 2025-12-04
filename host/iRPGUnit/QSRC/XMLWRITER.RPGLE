@@ -190,7 +190,8 @@ dcl-proc writeTestCases;
   dcl-s numAsserts int(10);
   dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
 
-  dcl-s isEventLogged ind;
+  dcl-s maxNumEvents int(10);
+  dcl-s countEvents int(10);
 
   list_resetIteration(testSuite.testResults);
 
@@ -203,11 +204,14 @@ dcl-proc writeTestCases;
     execTime = testResult.execTime / %dec(1000000 : 15 : 3);
 
     // iterate(asserts) -> failure & success events
-    isEventLogged = *off;
+    maxNumEvents = 1; // TODO: legacy beaviour like JUnit
+    countEvents = 0;
 
     list_resetIteration(testResult.hTestEvents);
-    pAbstractTestEvent = getfilteredTestEvents(testResult);
+    pAbstractTestEvent = getfilteredTestEvents(testResult: maxNumEvents: countEvents);
     dow (pAbstractTestEvent <> *null);
+
+      countEvents += 1;
 
       text = TAB + '<testcase name="' + %trimr(testResult.testName) + '" ';
       text += 'assertions="' + %char(testResult.assertCnt) + '" ';
@@ -235,8 +239,6 @@ dcl-proc writeTestCases;
         // close <error> element
         text += TAB + TAB + '</error>' + CRLF;
 
-        isEventLogged = *on;
-
       when (abstractTestEvent.outcome = TEST_CASE_FAILURE);
 
         if (testResult.lastFailureEvent = abstractTestEvent.index);
@@ -258,29 +260,15 @@ dcl-proc writeTestCases;
           text += TAB + TAB + ']]>';
           text += '</failure>' + CRLF;
 
-          isEventLogged = *on;
         endif;
 
-      other;
-        // test case ran successful
-        isEventLogged = *on;
       endsl;
 
       // close <testcase> element
-      if (isEventLogged);
         text += TAB + '</testcase>' + CRLF;
         rc = write(fileHandle : %addr(text : *data) : %len(text));
-      endif;
 
-      // Abort iteration.
-      // Required for emulating the old behavior, where
-      // RPGUNIT stops at the first failed assertion.
-      if (isEventLogged);
-        list_abortIteration(testResult.hTestEvents);
-        pAbstractTestEvent = *null;
-      else;
-        pAbstractTestEvent = getfilteredTestEvents(testResult);
-      endif;
+        pAbstractTestEvent = getfilteredTestEvents(testResult: maxNumEvents: countEvents);
     enddo;
 
     pTestResult = list_getNext(testSuite.testResults);

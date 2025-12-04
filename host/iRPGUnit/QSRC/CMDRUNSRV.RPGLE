@@ -909,10 +909,16 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc getFilteredTestEvents export;
   dcl-pi *n pointer;
-    testResult likeds(testResult_t) const;
+    testResult   likeds(testResult_t) const;
+    maxNumEvents int(10) const;
+    countEvents  int(10);
   end-pi;
 
   dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
+
+  if (countEvents >= maxNumEvents);
+    return *null;
+  endif;
 
   pAbstractTestEvent = list_getNext(testResult.hTestEvents);
   dow (pAbstractTestEvent <> *null);

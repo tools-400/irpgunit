@@ -43,31 +43,9 @@ dcl-c version_5 5;
 //-------------------------------------------------------------------------
 
 /include qinclude,CALLSTACK
+/include qinclude,CMDRUNSRV
 /include qinclude,RMTRUNSRV
 /include qinclude,ERRORCODE
-
-dcl-pr createV3TestCase int(10) extproc('createV3TestCase');
-  usPtr           pointer value;
-  testResult      value likeds(testResult_t);
-  ePtr            pointer value;
-end-pr;
-
-dcl-pr createV4TestCase int(10) extproc('createV4TestCase');
-  usPtr           pointer value;
-  testResult      value likeds(testResult_t);
-  ePtr            pointer value;
-end-pr;
-
-dcl-pr createV5TestCase int(10) extproc('createV5TestCase');
-  usPtr           pointer value;
-  testResult      value likeds(testResult_t);
-  ePtr            pointer value;
-end-pr;
-
-dcl-pr min int(10) extproc('min');
-  int1            int(10) value;
-  int2            int(10) value;
-end-pr;
 
 /include qinclude,SYSTEMAPI
 /include qinclude,ASSERT
@@ -291,9 +269,11 @@ dcl-proc fillUserSpace export;
   dcl-ds testResult likeds(testResult_t) based(ptr);
   dcl-ds errorCode likeds(errorCode_t) inz(*likeds);
   dcl-s oldlength int(10);
-  dcl-s ePtr pointer;
-  dcl-ds testCaseV3 likeds(tmpl_testCase_v3) based(ePtr);
-  dcl-ds testCaseV4 likeds(tmpl_testCase_v4) based(ePtr);
+  dcl-ds testCaseV3 likeds(tmpl_testCase_v3) based(pTestCase);
+  dcl-ds testCaseV4 likeds(tmpl_testCase_v4) based(pTestCase);
+  dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
+  dcl-s maxNumEvents int(10);
+  dcl-s countEvents int(10);
 
   clear errorCode;
   errorCode.bytPrv = 0;
@@ -355,7 +335,7 @@ dcl-proc fillUserSpace export;
   list_resetIteration(testSuite.testResults);
   ptr = list_getnext(testSuite.testResults);
 
-  ePtr = usPtr + header.offsTestCases;
+  pTestCase = usPtr + header.offsTestCases;
 
   dow (ptr <> *null);
 
@@ -363,18 +343,29 @@ dcl-proc fillUserSpace export;
 
     oldlength = header.length;
 
-    select;
-    when g_status.version >= version_5;
-      header.length += createV5TestCase(usPtr: testResult: ePtr);
-    when g_status.version >= version_4;
-      header.length += createV4TestCase(usPtr: testResult: ePtr);
-    other;
-      header.length += createV3TestCase(usPtr: testResult: ePtr);
-    endsl;
+    maxNumEvents = 1; // TODO: legacy beaviour like JUnit
+    countEvents = 0;
+
+    pAbstractTestEvent = getFilteredTestEvents(testResult: maxNumEvents: countEvents);
+    dow (pAbstractTestEvent <> *null);
+
+      countEvents += 1;
+
+      select;
+      when g_status.version >= version_5;
+        header.length += createV5TestCase(usPtr: testResult: pTestCase: abstractTestEvent);
+      when g_status.version >= version_4;
+        header.length += createV4TestCase(usPtr: testResult: pTestCase: abstractTestEvent);
+      other;
+        header.length += createV3TestCase(usPtr: testResult: pTestCase: abstractTestEvent);
+      endsl;
+
+      pAbstractTestEvent = getFilteredTestEvents(testResult: maxNumEvents: countEvents);
+    enddo;
 
     ptr = list_getnext(testSuite.testResults);
     if (ptr <> *null);
-      ePtr = ePtr - oldlength + header.length;
+      pTestCase = pTestCase - oldlength + header.length;
     endif;
 
   enddo;
@@ -394,10 +385,11 @@ end-proc;
 //  Create user space with version 2 layout.
 // ==========================================================================
 dcl-proc createV3TestCase;
-  dcl-pi *N int(10);
-    usPtr           pointer value;
-    testResult      likeds(testResult_t) value;
-    ePtr            pointer value;
+  dcl-pi *N int(10) extproc(*dclcase);
+    usPtr             pointer value;
+    testResult        likeds(testResult_t) value;
+    ePtr              pointer value;
+    abstractTestEvent likeds(abstractTestEvent_t) const;
   end-pi;
 
   dcl-ds entry likeds(tmpl_testCase_v3) based(ePtr);
@@ -513,10 +505,11 @@ end-proc;
 //  Create user space with version 4 layout.
 // ==========================================================================
 dcl-proc createV4TestCase;
-  dcl-pi *N int(10);
-    usPtr        pointer value;
-    testResult   likeds(testResult_t) value;
-    ePtr         pointer value;
+  dcl-pi *N int(10) extproc(*dclcase);
+    usPtr             pointer value;
+    testResult        likeds(testResult_t) value;
+    ePtr              pointer value;
+    abstractTestEvent likeds(abstractTestEvent_t) const;
   end-pi;
 
   dcl-s offsEntry int(10);
@@ -723,10 +716,11 @@ end-proc;
 //  Create user space with version 5 layout.
 // ==========================================================================
 dcl-proc createV5TestCase;
-  dcl-pi *N int(10);
-    usPtr        pointer value;
-    testResult   likeds(testResult_t) value;
-    ePtr         pointer value;
+  dcl-pi *N int(10) extproc(*dclcase);
+    usPtr             pointer value;
+    testResult        likeds(testResult_t) value;
+    ePtr              pointer value;
+    abstractTestEvent likeds(abstractTestEvent_t) const;
   end-pi;
 
   dcl-s offsEntry int(10);
@@ -1038,7 +1032,7 @@ end-proc;
 //  Returns the minimum of two integer values.
 // ==========================================================================
 dcl-proc min;
-  dcl-pi *N int(10);
+  dcl-pi *N int(10) extproc(*dclcase);
     int1   int(10) value;
     int2   int(10) value;
   end-pi;

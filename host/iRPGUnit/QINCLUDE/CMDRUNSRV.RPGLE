@@ -286,7 +286,9 @@ end-pr;
 
 // Returns the next matching test event.
 dcl-pr getFilteredTestEvents pointer extproc('CMDRUNSRV_getFilteredTestEvents');
-  testResult likeds(testResult_t) const;
+  testResult   likeds(testResult_t) const;
+  maxNumEvents int(10) const;
+  countEvents  int(10);
 end-pr;
 
 // Returns the last recorded failure event.
