@@ -24,6 +24,7 @@
 //
 // @param userspace     - User space object for storing detailed test results and metrics
 //                        Structure: library/object format defining where results are stored
+//                        Structure: library/object format defining where results are stored
 //                        Contains execution statistics, timing data, and failure details
 // @param testsuitename - Test suite service program object containing test procedures
 //                        Structure: library/service program identifying the test suite to execute
@@ -206,6 +207,7 @@ end-pr;
 // result data structure.
 //
 // @param testResult - The test result to be disposed
+// @param idx        - Index (starting at 1) of the test result that is disposed
 ///
 dcl-pr disposeTestResult extproc('CMDRUNSRV_disposeTestResult');
   testResult likeds(testResult_t);
@@ -216,10 +218,32 @@ end-pr;
 // Disposes a list of test events and frees resources.
 //
 // @param hTestEvents - The list of test events to be disposed
+// @param idx         - Index (starting at 1) of the test result that is disposed
 ///
 dcl-pr disposeTestEvents extproc('CMDRUNSRV_disposeTestEvents');
   hTestEvents pointer;
   idx         int(10) options(*nopass: *omit) const;
+end-pr;
+
+///
+// Disposes a test event.
+//
+// @param idx - Index (starting at 1) of the test event that is disposed
+///
+dcl-pr disposeTestEvent extproc('CMDRUNSRV_disposeTestEvent');
+  hTestEvents pointer const;
+  idx         int(10) const;
+end-pr;
+
+///
+// Disposes a callstack.
+//
+// @param hCallstack - Handle of the callstack to be disposed
+// @param idx        - Index of the test result that is disposed
+///
+dcl-pr disposeCallstack extproc('CMDRUNSRC_disposeCallstack');
+  pCallstack pointer;
+  idx        int(10) options(*nopass: *omit) const;
 end-pr;
 
 ///

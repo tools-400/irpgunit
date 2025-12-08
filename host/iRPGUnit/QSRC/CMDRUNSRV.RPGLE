@@ -14,6 +14,8 @@
 //     >>PARM<<  OPTION(*EVENTF);
 //     >>PARM<<  DBGVIEW(*LIST);
 //   >>END-IMPORTANT<<
+//   >>CMD<<     STRREXPRC SRCMBR(A_INSTALL) SRCFILE(&LI/QBUILD) +
+//               PARM('CMPMOD &LI LIST');
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================
@@ -62,6 +64,7 @@ ctl-opt nomain;
 
 dcl-ds g_status qualified inz;
   numListsCreated int(10);
+  isJUnitStyle ind inz(*on);
 end-ds;
 
 //----------------------------------------------------------------------
@@ -360,6 +363,11 @@ dcl-proc runTestProc export;
   dcl-s startTime timestamp;
   dcl-s endTime timestamp;
 
+  dcl-s i int(10);
+  dcl-s listSize int(10);
+  dcl-ds abstractTestEventDisposed likeds(abstractTestEvent_t) based(pAbstractTestEventDisposed);
+  dcl-ds abstractTestEvent likeds(abstractTestEvent_t) inz;
+
   testResult = initTestResult(testCase.procnm);
 
   startTime = %timestamp();
@@ -385,6 +393,41 @@ dcl-proc runTestProc export;
     testResult.exectime = %diff(endTime: startTime: *mseconds);
   endif;
 
+  if (testResult.outcome = TEST_CASE_SUCCESS);
+
+    // Validate the event returned by the procedure.
+    //  - empty event, is there were no assertions
+    //  - test success event, if no assertion failed
+    //  - test failure event, if assertions failed but was monitored
+    abstractTestEvent = getAssertEventInternal();
+
+    if (g_status.isJunitStyle);
+      if (list_size(testResult.hTestEvents) > 0);
+        // dispose failed asserts that have been ignored
+        listSize = list_size(testResult.hTestEvents);
+        for i = 1 to listSize;
+          pAbstractTestEventDisposed = list_get(testResult.hTestEvents: i - 1);
+          if (abstractTestEventDisposed.outcome <> TEST_CASE_FAILURE);
+            sndEscapeMsgAboveCtlBdy('Unexpected failure event type: '
+                                    + abstractTestEventDisposed.outcome);
+          endif;
+        endfor;
+      endif;
+
+      // add success event to satisfy XMLWRITER and RMTRUNSRV
+      // there is no specific assert procedure, as all asserts
+      // have been executed
+      testResult.lastSuccessEvent = list_size(testResult.hTestEvents) + 1;
+
+      clear abstractTestEvent;
+      abstractTestEvent.success.outcome = TEST_CASE_SUCCESS;
+      abstractTestEvent.success.assertProc = '';
+      abstractTestEvent.success.index = testResult.lastSuccessEvent;
+      list_add(testResult.hTestEvents
+               : %addr(abstractTestEvent.success): %size(abstractTestEvent.success));
+    endif;
+  endif;
+
   return testResult;
 
 end-proc;
@@ -400,12 +443,9 @@ dcl-proc runProc export;
     procNamePrefix  like(assertProcNm_t) const;
   end-pi;
 
-  dcl-ds abstractTestEvent likeds(abstractTestEvent_t) inz;
-  dcl-ds runtimeErrorEvent likeds(runtimeErrorEvent_t) inz;
-
   dcl-s assertCnt int(10);
-  dcl-s numEventsBefore int(10);
-  dcl-s numEventsAdded int(10);
+  dcl-ds runtimeErrorEvent likeds(runtimeErrorEvent_t) inz;
+  dcl-ds abstractTestEvent likeds(abstractTestEvent_t) inz;
 
   clrAssertFailEvt(testResult.hTestEvents: procNamePrefix);
 
@@ -413,38 +453,17 @@ dcl-proc runProc export;
 
   monitor;
     setLowMessageKey(getHighestMsgKey());
-
-    numEventsBefore = list_size(testResult.hTestEvents);
     callProcByPtr(proc);
-    numEventsAdded = list_size(testResult.hTestEvents) - numEventsBefore;
-
-    // Validate the event returned by the procedure.
-    //  - empty event, is there were no assertions
-    //  - test success event, if no assertion failed
-    //  - test failure event, if assertions failed but was monitored
-    abstractTestEvent = getAssertEventInternal();
-    select;
-    when (numEventsAdded = 0 and abstractTestEvent.outcome = TEST_CASE_NULL);
-      // no assertion has been called
-    when (abstractTestEvent.outcome = TEST_CASE_SUCCESS);
-      testResult.lastSuccessEvent = abstractTestEvent.index;
-    other;
-      if (abstractTestEvent.outcome = TEST_CASE_FAILURE);
-        // failed assert() has been ignored, such as:
-        //   callp(E) assert(*off: 'Assertion failes, but error is ignored.');
-      else;
-        sndEscapeMsgAboveCtlBdy('Unexpected event type: ''' + abstractTestEvent.outcome + '''');
-      endif;
-    endsl;
   on-error;
     if (testResult.outcome = TEST_CASE_SUCCESS);
       if (isRuntimeError());
         // Handle runtime error
         testResult.outcome = TEST_CASE_ERROR;
-        testResult.lastErrorEvent = runtimeErrorEvent.index;
+        testResult.lastErrorEvent = list_size(testResult.hTestEvents) + 1;
         // Create runtime error event
         runtimeErrorEvent.outcome = TEST_CASE_ERROR;
         runtimeErrorEvent.msg = rcvExcpMsgInfo();
+        runtimeErrorEvent.index = testResult.lastErrorEvent;
         list_add(testResult.hTestEvents: %addr(runtimeErrorEvent): %size(runtimeErrorEvent));
       else;
         // Handle failed assertion
@@ -513,29 +532,63 @@ dcl-proc disposeTestEvents export;
 
   dcl-s numAssertEvents int(10);
   dcl-s i int(10);
-  dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
 
   dcl-s TESTRESULT_HASSERTEVENTS_TEXT varchar(64);
-  dcl-s ASSERT_EVENT_FAILURE_PCALLSTK_TEXT varchar(64);
 
   if (%parms() >= %parmnum(idx) and %addr(idx) <> *null);
-    ASSERT_EVENT_FAILURE_PCALLSTK_TEXT = 'assertEvent.failure.pCallstk_' + %char(idx);
     TESTRESULT_HASSERTEVENTS_TEXT = 'testResult.hTestEvents_' + %char(idx);
   else;
-    ASSERT_EVENT_FAILURE_PCALLSTK_TEXT = 'assertEvent.failure.pCallstk';
     TESTRESULT_HASSERTEVENTS_TEXT = 'testResult.hTestEvents';
   endif;
 
   numAssertEvents = list_size(hTestEvents);
-  for i = 1 to numAssertEvents; // iterate: assertEvents of a test case
-    pAbstractTestEvent = list_getLast(hTestEvents);
-    if (abstractTestEvent.outcome = TEST_CASE_FAILURE);
-      Callstack_dealloc(abstractTestEvent.failure.pCallstk: ASSERT_EVENT_FAILURE_PCALLSTK_TEXT);
-    endif;
-    list_removeLast(hTestEvents);
+  for i = 1 to numAssertEvents;
+    disposeTestEvent(hTestEvents: list_size(hTestEvents));
   endfor;
 
   MemMgr_disposeList(hTestEvents: TESTRESULT_HASSERTEVENTS_TEXT);
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Disposes a test event.
+//----------------------------------------------------------------------
+dcl-proc disposeTestEvent;
+  dcl-pi *n;
+    hTestEvents pointer const;
+    idx         int(10) const;
+  end-pi;
+
+  dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
+
+  pAbstractTestEvent = list_get(hTestEvents: idx - 1);
+
+  if (abstractTestEvent.outcome = TEST_CASE_FAILURE);
+    disposeCallstack(abstractTestEvent.failure.pCallstk);
+  endif;
+
+  list_remove(hTestEvents: idx - 1);
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Disposes a callstack.
+//----------------------------------------------------------------------
+dcl-proc disposeCallstack export;
+  dcl-pi *n;
+    pCallstack pointer;
+    idx         int(10) options(*nopass: *omit) const;
+  end-pi;
+
+  dcl-s ASSERT_EVENT_FAILURE_PCALLSTK_TEXT varchar(64);
+
+  if (%parms() >= %parmnum(idx) and %addr(idx) <> *null);
+    ASSERT_EVENT_FAILURE_PCALLSTK_TEXT = 'assertEvent.failure.pCallstk_' + %char(idx);
+  else;
+    ASSERT_EVENT_FAILURE_PCALLSTK_TEXT = 'assertEvent.failure.pCallstk';
+  endif;
+
+  Callstack_dealloc(pCallstack: ASSERT_EVENT_FAILURE_PCALLSTK_TEXT);
 
 end-proc;
 
@@ -681,8 +734,7 @@ dcl-proc setupTestSuite;
     return TEST_CASE_SUCCESS;
   endif;
 
-  list_add(testSuite.testResults : %addr(testResult) :
-           %size(testResult));
+  list_add(testSuite.testResults: %addr(testResult): %size(testResult));
 
   select;
   when testResult.outcome = TEST_CASE_FAILURE;

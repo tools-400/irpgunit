@@ -426,18 +426,6 @@ dcl-pr setLowMessageKey extproc('setLowMessageKey') opdesc;
 end-pr;
 
 // ------------------------------------
-//  Self-test procedures.
-// ------------------------------------
-
-///
-// Returns *on if the exection is due to an runtime
-// error, otherwise *off for a failed assertion.
-///
-dcl-pr isRuntimeError ind extproc('isRuntimeError');
-end-pr;
-
-
-// ------------------------------------
 //   Prototypes of internal procedures
 //   But maybe public from the
 //   beginning.
@@ -487,69 +475,6 @@ end-pr;
 // to *on.
 ///
 dcl-pr clearAssertCounter extproc('clearAssertCounter');
-end-pr;
-
-
-// ------------------------------------
-//   Prototypes of internal procedures
-// ------------------------------------
-
-///
-// Get the internal assertion event. The actual instance can be one of:
-//   - testSuccessEvent_t
-//   - testFailureEvent_t
-//   - runtimeErrorEvent_t
-//
-// @return internal assertion event
-///
-dcl-pr getAssertEventInternal likeds(abstractTestEvent_t) extproc('getAssertEventInternal');
-end-pr;
-
-///
-// Resets the assertion error flag.
-///
-dcl-pr resetAssertionError extproc('ASSERT_resetAssertionError');
-end-pr;
-
-///
-// Register the start of a program for testing purposes
-//
-// @param lib - Library name where the program resides
-// @param pgm - Program name to register
-///
-dcl-pr registerStartPgm extproc('ASSERT_registerStartPgm');
-  lib char(10) const;
-  pgm char(10) const;
-end-pr;
-
-///
-// Returns the 'expected' or 'actual' value shortend for
-// logging in the plug-in, the Jenkins XML output and the
-// printed test result log.
-//
-// @param value    - the 'expected' or 'actukl' value that is formatted for logging
-// @param dataType - the data type of 'value'. The possible value are:
-//                   DT_DATE, DT_FLOAT, DT_INT, DT_NUMERIC, DT_STRING,
-//                   DT_TIME, DT_TIMESTAMP, DT_STRING, DT_USER_DEFINED
-//
-// @return the value formatted for logging
-///
-dcl-pr getLogValue likeds(logValue_t) extproc('getLogValue');
-  value    like(assertString_t) options(*varsize) const;
-  dataType like(dataType_t) const;
-  assertProc like(assertProcNm_t) const;
-  maxLength int(10) const options(*nopass); // for self-test
-end-pr;
-
-///
-// Returns the literal of a boolean value (*on/*off).
-//
-// @param boolean - indicator value
-//
-// @return '*on' if 'boolean' is True, otherwise '*off'
-///
-dcl-pr toInd varchar(10) extproc('toInd');
-  boolean  ind const;
 end-pr;
 
 // ------------------------------------

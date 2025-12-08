@@ -12,15 +12,6 @@
 // ==========================================================================
 
 ///
-// Returns the callstack addressed by the given pointer.
-//
-// @param pCallstk_in - pointer to a data strucker of type callstk_t
-///
-dcl-pr Callstack_fromPointer likeds(callstk_t) extproc('CALLSTACK_Callstack_fromPointer');
-  pCallstk pointer const;
-end-pr;
-
-///
 // Returns the pointer of an allocated callstack memory buffer.
 //
 // @param numE - number of callstack entries

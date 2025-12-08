@@ -14,6 +14,8 @@
 //     >>PARM<<  OPTION(*EVENTF);
 //     >>PARM<<  DBGVIEW(*LIST);
 //   >>END-IMPORTANT<<
+//   >>CMD<<     STRREXPRC SRCMBR(A_INSTALL) SRCFILE(&LI/QBUILD) +
+//               PARM('CMPMOD &LI LIST');
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================
@@ -36,32 +38,6 @@ ctl-opt nomain;
 //----------------------------------------------------------------------
 
 /include qinclude,TEMPLATES
-
-//----------------------------------------------------------------------
-// Returns the callstack addressed by the given pointer.
-//----------------------------------------------------------------------
-dcl-proc Callstack_fromPointer export;
-  dcl-pi *N likeds(callstk_t);
-    pCallstk_in pointer const;
-  end-pi;
-
-  dcl-ds callstk likeds(callstk_t) inz;
-
-  dcl-ds callstk_in likeds(callstk_t) based(pCallstk_in);
-  dcl-s size_in int(10);
-
-  clear callstk;
-
-  if (pCallstk_in = *null);
-    return callstk;
-  endif;
-
-  size_in = getSize(callstk_in.header.numE);
-  memcpy(%addr(callstk): %addr(callStk_in): size_in);
-
-  return callstk;
-
-end-proc;
 
 //----------------------------------------------------------------------
 // Returns the pointer of an allocated callstack memory buffer.

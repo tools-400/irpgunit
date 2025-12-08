@@ -14,6 +14,8 @@
 //     >>PARM<<  OPTION(*EVENTF);
 //     >>PARM<<  DBGVIEW(*LIST);
 //   >>END-IMPORTANT<<
+//   >>CMD<<     STRREXPRC SRCMBR(A_INSTALL) SRCFILE(&LI/QBUILD) +
+//               PARM('CMPMOD &LI LIST');
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================
@@ -83,18 +85,51 @@ end-ds;
 //   GLOBAL VARIABLES
 //----------------------------------------------------------------------
 
-// Latest assertion failure event information. Can be blank if no
-// assertion failure event since last assertion.
-dcl-ds g_abstractTestEvent likeds(abstractTestEvent_t) inz(*likeds);
 
-dcl-ds g_status qualified export;
+dcl-ds g_status qualified;
   qStartPgm           likeds(object_t) inz;
   numAssertsCalled    int(10) inz;
   isAssertionError    ind inz(*off);
-  pFailureEvents      pointer;
+  pFailureEvents      pointer inz;
   procNamePrefix      like(assertProcNm_t) inz;
   isJunitStyle        ind inz(*on);
+  // Latest assertion failure event information. Can be blank if no
+  // assertion failure event since last assertion.
+  abstractTestEvent likeds(abstractTestEvent_t) inz(*likeds);
 end-ds;
+
+dcl-ds g_savedStatus likeds(g_status) inz;
+
+//----------------------------------------------------------------------
+// Saves the status of the ASSERT module.
+//----------------------------------------------------------------------
+dcl-proc saveAssertStatus export;
+  dcl-pi *n;
+  end-pi;
+
+  if (g_savedStatus.qStartPgm.nm <> '');
+    sndEscapeMsgAboveCtlBdy('Procedure saveAssertStatus() was called twice in a row.');
+  endif;
+
+  g_savedStatus = g_status;
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Restores the status of the ASSERT module.
+//----------------------------------------------------------------------
+dcl-proc restoreAssertStatus export;
+  dcl-pi *n;
+  end-pi;
+
+  if (g_savedStatus.qStartPgm.nm = '');
+    sndEscapeMsgAboveCtlBdy('Procedure restoreAssertStatus() was called before saving it.');
+  endif;
+
+  g_status = g_savedStatus;
+  clear g_savedStatus;
+
+end-proc;
 
 //----------------------------------------------------------------------
 // Registers the start program RUPGMRMT or RUCALLTST for
@@ -307,10 +342,10 @@ dcl-proc fail export;
   dcl-ds fc likeds(fc_t) inz;
 
   // Do not call clrAssertFailEvt() because of g_status.isRuntimeError!
-  clear g_abstractTestEvent;
-  g_abstractTestEvent.failure.outcome = TEST_CASE_FAILURE;
-  g_abstractTestEvent.failure.logExpected = getLogValue(NO_VALUE: DT_UNDEFINED: %proc());
-  g_abstractTestEvent.failure.logActual = getLogValue(NO_VALUE: DT_UNDEFINED: %proc());
+  clear g_status.abstractTestEvent;
+  g_status.abstractTestEvent.failure.outcome = TEST_CASE_FAILURE;
+  g_status.abstractTestEvent.failure.logExpected = getLogValue(NO_VALUE: DT_UNDEFINED: %proc());
+  g_status.abstractTestEvent.failure.logActual = getLogValue(NO_VALUE: DT_UNDEFINED: %proc());
 
   if (%parms() >= p_msg);
 
@@ -339,6 +374,7 @@ dcl-proc doAssert export;
     startProc      varchar(256) options(*varsize) const;
   end-pi;
 
+  dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
   dcl-s index int(10);
 
   checkStartPgm();
@@ -346,28 +382,42 @@ dcl-proc doAssert export;
   g_status.numAssertsCalled += 1;
 
   // Do not call clrAssertFailEvt() because of g_status.isRuntimeError!
-  clear g_abstractTestEvent;
-  g_abstractTestEvent.failure.logExpected = logExpected;
-  g_abstractTestEvent.failure.logActual = logActual;
-  g_abstractTestEvent.failure.assertProc = getAssertProcName(g_status.procNamePrefix: startProc);
+  clear g_status.abstractTestEvent;
+  g_status.abstractTestEvent.failure.logExpected = logExpected;
+  g_status.abstractTestEvent.failure.logActual = logActual;
+  g_status.abstractTestEvent.failure.assertProc=
+    getAssertProcName(g_status.procNamePrefix: startProc);
 
   if not condition;
-    g_abstractTestEvent.failure.outcome = TEST_CASE_FAILURE;
+    g_status.abstractTestEvent.failure.outcome = TEST_CASE_FAILURE;
     doFail(msgIfFalse:  toCallStackE + 1: startProc);
   else;
-    // Add SUCCESS event
-    g_abstractTestEvent.success.outcome = TEST_CASE_SUCCESS;
 
-    if (g_status.isJunitStyle);
+    g_status.abstractTestEvent.success.outcome = TEST_CASE_SUCCESS;
+
+    // Add SUCCESS event
+    if (not g_status.isJunitStyle);
+      // Add event if all assertins are processed
       index = list_size(g_status.pFailureEvents);
-      if (index = 1);
-        list_replace(g_status.pFailureEvents
-                     : %addr(g_abstractTestEvent): %size(g_abstractTestEvent): index);
+      if (index > 0 and g_status.isJunitStyle);
+        if (index = 1);
+          pAbstractTestEvent = list_get(g_status.pFailureEvents: index - 1);
+          if (abstractTestEvent.outcome = TEST_CASE_FAILURE);
+            // TODO: fix dealloc* procedures
+            // disposeCallstack(abstractTestEvent.failure.pCallstk);
+            Callstack_dealloc(abstractTestEvent.failure.pCallstk: 'pCallstk');
+          endif;
+          list_replace(g_status.pFailureEvents
+                       : %addr(g_status.abstractTestEvent)
+                       : %size(g_status.abstractTestEvent): index);
+        else;
+          sndEscapeMsgAboveCtlBdy('Unexpected list size in doAssert(): ' + %char(index));
+        endif;
       else;
-        sndEscapeMsgAboveCtlBdy('Unexpected list size: ' + %char(index));
+        list_add(g_status.pFailureEvents
+                 : %addr(g_status.abstractTestEvent)
+                 : %size(g_status.abstractTestEvent));
       endif;
-    else;
-      list_add(g_status.pFailureEvents: %addr(g_abstractTestEvent): %size(g_abstractTestEvent));
     endif;
   endif;
 
@@ -381,27 +431,14 @@ dcl-proc doFail;
     startProc      varchar(256) options(*varsize) const;
   end-pi;
 
-  dcl-s pCallstk pointer;
-  dcl-s index int(10);
-
   // Add FAILURE event with callstack
-  pCallStk = getCallStk(startProc);
+  g_status.abstractTestEvent.failure.msg = %trimr(msg);
+  g_status.abstractTestEvent.failure.pCallstk = getCallStk(startProc);
+  g_status.abstractTestEvent.index = list_size(g_status.pFailureEvents) + 1;
 
-  g_abstractTestEvent.failure.msg = %trimr(msg);
-  g_abstractTestEvent.failure.pCallstk = pCallstk;
-  g_abstractTestEvent.index = list_size(g_status.pFailureEvents) + 1;
-
-  if (g_status.isJunitStyle);
-    index = list_size(g_status.pFailureEvents);
-    if (index = 1);
-      list_replace(g_status.pFailureEvents
-                   : %addr(g_abstractTestEvent): %size(g_abstractTestEvent): index);
-    else;
-      sndEscapeMsgAboveCtlBdy('Unexpected list size: ' + %char(index));
-    endif;
-  else;
-    list_add(g_status.pFailureEvents: %addr(g_abstractTestEvent): %size(g_abstractTestEvent));
-  endif;
+  list_add(g_status.pFailureEvents
+           : %addr(g_status.abstractTestEvent)
+           : %size(g_status.abstractTestEvent));
 
   g_status.isAssertionError = *on;
 
@@ -477,8 +514,8 @@ dcl-proc clrAssertFailEvt export;
   g_status.pFailureEvents = pFailureEvents;
   g_status.procNamePrefix = procNamePrefix;
 
-  clear g_abstractTestEvent;
-  g_abstractTestEvent.outcome = TEST_CASE_NULL;
+  clear g_status.abstractTestEvent;
+  g_status.abstractTestEvent.outcome = TEST_CASE_NULL;
 
   g_status.isJunitStyle = *on;
 
@@ -589,7 +626,7 @@ dcl-proc getAssertEventInternal export;
   dcl-pi *N likeds(abstractTestEvent_t);
   end-pi;
 
-  return g_abstractTestEvent;
+  return g_status.abstractTestEvent;
 
 end-proc;
 

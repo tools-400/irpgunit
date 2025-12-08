@@ -11,54 +11,10 @@
 // >>PRE-COMPILER<<
 //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
 //   >>IMPORTANT<<
-//     >>PARM<<  MODULE(&LI/CALLPRC   +
-//                      &LI/CALLSTACK +
-//                      &LI/CMDRUN    +
-//                      &LI/CMDRUNLOG +
-//                      &LI/CMDRUNPRT +
-//                      &LI/CMDRUNSRV +
-//                      &LI/CMDRUNV   +
-//                      &LI/EXTPRC    +
-//                      &LI/EXTTST    +
-//                      &LI/JOBLOG    +
-//                      &LI/JSONWTR   +
-//                      &LI/LIBL      +
-//                      &LI/LLIST     +
-//                      &LI/OBJECT    +
-//                      &LI/OSVERSION +
-//                      &LI/PGMMSG    +
-//                      &LI/RMTRUNSRV +
-//                      &LI/SRCMBR    +
-//                      &LI/STMF      +
-//                      &LI/STRING    +
-//                      &LI/USRSPC    +
-//                      &LI/XMLWRITER +
-//                     );
 //     >>PARM<<  BNDSRVPGM(&LI/RUMEMMGR);
-//     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
+//     >>PARM<<  BNDDIR(&LI/IRPGUNIT);
+//     >>PARM<<  COPTION(*EVENTF);
 //   >>END-IMPORTANT<<
-//   >>CMD<<     CMPMOD MODULE(&LI/CALLPRC  ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/CALLSTACK) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/CMDRUN   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNLOG) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNPRT) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNSRV) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNV  ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/EXTPRC   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/EXTTST   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/JOBLOG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/JSONWTR  ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/LIBL     ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/LLIST    ) SRCFILE(&SL/QLLIST) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/OBJECT   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/OSVERSION) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/PGMMSG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/RMTRUNSRV) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/SRCMBR   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/STMF     ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/STRING   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/USRSPC   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/XMLWRITER) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================
@@ -69,6 +25,7 @@ ctl-opt NoMain Option(*SrcStmt);
 //   Imported Procedures
 //----------------------------------------------------------------------
 
+/copy qinclude,ASSERT
 /copy qinclude,CALLSTACK
 /copy qinclude,CMDRUNSRV
 /copy qinclude,MEMMGR
@@ -88,15 +45,6 @@ dcl-ds noTearDown likeds(Proc_t) inz;
 //---------------------------------------------------------------------
 //   Global Variables
 //---------------------------------------------------------------------
-
-// Status imported from module ASSERT.
-dcl-ds g_status qualified import;
-  qStartPgm           likeds(object_t);
-  numAssertsCalled    int(10);
-  isRuntimeError      ind;
-  pFailureEvents      pointer;
-  procNamePrefix      like(assertProcNm_t);
-end-ds;
 
 // Execution trace (and its current index).
 dcl-s g_execTrace char(256) dim(64);
@@ -207,11 +155,12 @@ dcl-proc test_runTestProc_failureInTest export;
 
   dcl-ds callstkEnt likeds(callstkEnt_t) inz;
 
-  dcl-ds savedStatus likeds(g_status);
   dcl-ds testResultControl likeds(testResult);
 
-  // save current status of RUCALLTST
-  savedStatus = g_status;
+  // -----------------------------
+  // save current assertion status
+  // -----------------------------
+  saveAssertStatus();
 
   // Execution.
 
@@ -228,8 +177,10 @@ dcl-proc test_runTestProc_failureInTest export;
   // destroy testResult to have a clean status
   disposeTestResult(testResult);
 
-  // restore status of RUCALLTST
-  g_status = savedStatus;
+  // --------------------------------
+  // restore current assertion status
+  // --------------------------------
+  restoreAssertStatus();
 
   // Controls.
 
@@ -408,11 +359,12 @@ dcl-proc test_runTestProc_tearDownAfterFailureInTest export;
 
   dcl-ds testResult likeds(TestResult_t);
 
-  dcl-ds savedStatus likeds(g_status);
   dcl-ds testResultControl likeds(testResult);
 
-  // save current status of RUCALLTST
-  savedStatus = g_status;
+  // -----------------------------
+  // save current assertion status
+  // -----------------------------
+  saveAssertStatus();
 
   // Execution.
 
@@ -430,8 +382,10 @@ dcl-proc test_runTestProc_tearDownAfterFailureInTest export;
   // destroy testResult to have a clean status
   disposeTestResult(testResult);
 
-  // restore status of RUCALLTST
-  g_status = savedStatus;
+  // --------------------------------
+  // restore current assertion status
+  // --------------------------------
+  restoreAssertStatus();
 
   // Controls.
 
@@ -441,7 +395,7 @@ dcl-proc test_runTestProc_tearDownAfterFailureInTest export;
 
 end-proc;
 
-
+// TODO: fix "Unexpected failure event type: E"
 dcl-proc test_runTestProc_tearDownAfterErrorInSetup export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
@@ -559,11 +513,12 @@ dcl-proc test_runTest_failureInTest export;
   dcl-ds testCase dim(1) likeds(Proc_t) based(testSuite.testList);
   dcl-ds testResult likeds(TestResult_t);
 
-  dcl-ds savedStatus likeds(g_status);
   dcl-ds testResultControl likeds(testResult);
 
-  // save current status of RUCALLTST
-  savedStatus = g_status;
+  // -----------------------------
+  // save current assertion status
+  // -----------------------------
+  saveAssertStatus();
 
   // Setup.
 
@@ -589,8 +544,10 @@ dcl-proc test_runTest_failureInTest export;
   // destroy testResult to have a clean status
   rclTestSuite(testSuite); // includes calling disposeTestResult()
 
-  // restore status of RUCALLTST
-  g_status = savedStatus;
+  // --------------------------------
+  // restore current assertion status
+  // --------------------------------
+  restoreAssertStatus();
 
   // Controls.
 
@@ -607,11 +564,12 @@ dcl-proc test_runTest_withSetupAndTearDown export;
   dcl-ds testResult likeds(testResult_t) inz;
   dcl-ds testCase dim(1) likeds(Proc_t) based(testSuite.testList);
 
-  dcl-ds savedStatus likeds(g_status);
   dcl-ds testResultControl likeds(testResult);
 
-  // save current status of RUCALLTST
-  savedStatus = g_status;
+  // -----------------------------
+  // save current assertion status
+  // -----------------------------
+  saveAssertStatus();
 
   // Setup.
 
@@ -643,15 +601,17 @@ dcl-proc test_runTest_withSetupAndTearDown export;
   // destroy testResult to have a clean status
   rclTestSuite(testSuite); // includes calling disposeTestResult()
 
-  // restore status of RUCALLTST
-  g_status = savedStatus;
+  // --------------------------------
+  // restore current assertion status
+  // --------------------------------
+  restoreAssertStatus();
+
+  // Controls.
 
   // Should return 2 lists created.
   // Validate that in teardown().
   g_numListsExpected = MemMgr_getNumLists();
   g_isValidateNumLists = *on;
-
-  // Controls.
 
   aEqual('setup_proc was called': g_execTrace(1));
   aEqual('test_proc was called': g_execTrace(2));
@@ -668,11 +628,12 @@ dcl-proc test_runTest_ignoreAssertFailure export;
   dcl-ds testCase dim(1) likeds(Proc_t) based(testSuite.testList);
   dcl-ds testResult likeds(TestResult_t);
 
-  dcl-ds savedStatus likeds(g_status);
   dcl-ds testResultControl likeds(testResult);
 
-  // save current status of RUCALLTST
-  savedStatus = g_status;
+  // -----------------------------
+  // save current assertion status
+  // -----------------------------
+  saveAssertStatus();
 
   // Setup.
 
@@ -697,8 +658,10 @@ dcl-proc test_runTest_ignoreAssertFailure export;
   // destroy testResult to have a clean status
   rclTestSuite(testSuite); // includes calling disposeTestResult()
 
-  // restore status of RUCALLTST
-  g_status = savedStatus;
+  // --------------------------------
+  // restore current assertion status
+  // --------------------------------
+  restoreAssertStatus();
 
   // Controls.
 
