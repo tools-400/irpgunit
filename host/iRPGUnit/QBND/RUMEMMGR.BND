@@ -10,22 +10,26 @@
 /* >>PRE-COMPILER<<                                                           */
 /*   >>CRTCMD<<  CRTSRVPGM SRVPGM(&LI/&OB);                                   */
 /*   >>IMPORTANT<<                                                            */
-/*     >>PARM<<  MODULE(&LI/MEMMGR    +                                       */
-/*                      &LI/JOBLOG    +                                       */
-/*                      &LI/LLIST     +                                       */
-/*                      &LI/PGMMSG    +                                       */
-/*                      &LI/STRING    +                                       */
+/*     >>PARM<<  MODULE( +                                                    */
+/*                      &LI/CALLSTACK +                                       */
+/*                      &LI/MEMMGR    +                                       */
 /*                      );                                                    */
-/*     >>PARM<<  STGMDL(*SNGLVL);                                             */
+/*     >>PARM<<  BNDDIR(&LI/IRPGUNIT);                                        */
 /*     >>PARM<<  EXPORT(*SRCFILE);                                            */
 /*     >>PARM<<  SRCFILE(&LI/QBND);                                           */
-/*     >>PARM<<  SRCMBR(RUMEMMGR);                                            */
+/*     >>PARM<<  SRCMBR(&OB);                                                 */
+/*     >>PARM<<  BNDDIR(&LI/IRPGUNIT);                                        */
 /*     >>PARM<<  ACTGRP(*CALLER);                                             */
 /*     >>PARM<<  ALWUPD(*YES);                                                */
 /*     >>PARM<<  ALWLIBUPD(*YES);                                             */
+/*     >>PARM<<  STGMDL(*INHERIT);                                            */
 /*     >>PARM<<  TEXT('iRPGUnit - Memory Manager.');                          */
 /*     >>PARM<<  DETAIL(*BASIC);                                              */
 /*   >>END-IMPORTANT<<                                                        */
+/*   >>CMD<<     DLTSRVPGM SRVPGM(&LI/&OB);                                   */
+/*   >>MONMSG<<                                                               */
+/*     >>MSGID<< CPF2105; // Object FOO not found;                            */
+/*   >>END-MONMSG<<                                                           */
 /*   >>EXECUTE<<                                                              */
 /* >>END-PRE-COMPILER<<                                                       */
 /* ========================================================================== */
@@ -41,5 +45,13 @@ STRPGMEXP  PGMLVL(*CURRENT) SIGNATURE('MemoryManager')
   EXPORT SYMBOL("MEMMGR_MemMgr_disposeList")
   EXPORT SYMBOL("MEMMGR_MemMgr_getNumLists")
   EXPORT SYMBOL("MEMMGR_MemMgr_reset")
+
+  EXPORT SYMBOL("CALLSTACK_Callstack_alloc")
+  EXPORT SYMBOL("CALLSTACK_Callstack_dealloc")
+  EXPORT SYMBOL("CALLSTACK_Callstack_getNumE")
+  EXPORT SYMBOL("CALLSTACK_Callstack_addEntry")
+  EXPORT SYMBOL("CALLSTACK_Callstack_resetIteration")
+  EXPORT SYMBOL("CALLSTACK_Callstack_getNext")
+  EXPORT SYMBOL("CALLSTACK_Callstack_get")
 
 ENDPGMEXP

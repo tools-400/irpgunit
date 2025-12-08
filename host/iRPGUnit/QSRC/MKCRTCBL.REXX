@@ -78,45 +78,26 @@
  end
 
  /* -------------------------------------------- */
+ /*  Recreate the modules if needed.             */
+ /* -------------------------------------------- */
+
+ "STRREXPRC SRCMBR(A_INSTALL) SRCFILE(RPGUNITDVP/QBUILD) PARM('CMPMOD "prdLib" "dbgView"')"
+
+ /* -------------------------------------------- */
  /*  Let's do it!                                */
  /* -------------------------------------------- */
- "STRREXPRC SRCMBR(MKLLIST) SRCFILE("prdLib"/QLLIST) PARM('"prdLib" "dbgView" "tgtRls"')"
-
- "CMPMOD MODULE("prdLib"/CRTCBL   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/CRTTST   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/JOBLOG   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/LSTSPLF  ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/OBJECT   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/OSVERSION) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/SRCMBR   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/STMF     ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/STRING   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/TAGTST   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/USRSPC   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
  "CRTPGM PGM("prdLib"/RUCRTCBL) ",
-        "MODULE("prdLib"/CRTTST     ",
-                 prdLib"/CRTCBL     ",
-                 prdLib"/JOBLOG     ",
-                 prdLib"/LSTSPLF    ",
-                 prdLib"/OBJECT     ",
-                 prdLib"/OSVERSION  ",
-                 prdLib"/PGMMSG     ",
-                 prdLib"/SRCMBR     ",
-                 prdLib"/STRING     ",
-                 prdLib"/STMF       ",
-                 prdLib"/TAGTST     ",
-                 prdLib"/USRSPC   ) ",
+        "MODULE("prdLib"/CRTCBL) ",
         "ENTMOD("prdLib"/CRTCBL) ",
-        "STGMDL(*SNGLVL) ",
-        "BNDSRVPGM("prdLib"/RUTESTCASE "prdLib"/RUMEMMGR) ",
+        "BNDDIR("prdLib"/IRPGUNIT) ",
         "ACTGRP(*NEW) ",
         "ALWUPD(*YES) ",
         "ALWLIBUPD(*YES) ",
-        "DETAIL(*NONE) ",
         "TGTRLS("tgtRls") ",
-        "TEXT('iRPGUnit - Create Test Suite.')"
+        "STGMDL(*SNGLVL) ",
+        "TEXT('iRPGUnit - Create Test Suite.') ",
+        "DETAIL(*NONE) "
 
  "CRTPNLGRP  PNLGRP("prdLib"/RUCRTCBL) SRCFILE("prdLib"/QPNLGRP)"
  deleteSpooledFile('RUCRTCBL')

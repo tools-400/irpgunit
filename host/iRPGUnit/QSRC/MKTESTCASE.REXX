@@ -90,42 +90,33 @@
  end
 
  /* -------------------------------------------- */
+ /*  Recreate the modules if needed.             */
+ /* -------------------------------------------- */
+
+ "STRREXPRC SRCMBR(A_INSTALL) SRCFILE(RPGUNITDVP/QBUILD) PARM('CMPMOD "prdLib" "dbgView"')"
+
+ /* -------------------------------------------- */
  /*  Let's do it!                                */
  /* -------------------------------------------- */
 
- "CMPMOD MODULE("prdLib"/ASSERT   ) SRCFILE("prdLib"/QSRC  ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/ASSERTV2 ) SRCFILE("prdLib"/QSRC  ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/CALLSTACK) SRCFILE("prdLib"/QSRC  ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/JOBLOG   ) SRCFILE("prdLib"/QSRC  ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/LLIST    ) SRCFILE("prdLib"/QLLIST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/OBJECT   ) SRCFILE("prdLib"/QSRC  ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE("prdLib"/QSRC  ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/VERSION  ) SRCFILE("prdLib"/QSRC  ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/TESTUTILS) SRCFILE("prdLib"/QSRC  ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/STRING   ) SRCFILE("prdLib"/QSRC  ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/SRCMBR   ) SRCFILE("prdLib"/QSRC  ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/STMF     ) SRCFILE("prdLib"/QSRC  ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/USRSPC   ) SRCFILE("prdLib"/QSRC  ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ Signal off Error
+ "DLTSRVPGM SRVPGM("prdLib"/RUTESTCASE)"
+ Signal on Error
 
  "CRTSRVPGM  SRVPGM("prdLib"/RUTESTCASE) ",
-              "MODULE("prdLib"/ASSERT     ",
-                       prdLib"/ASSERTV2   ",
-                       prdLib"/CALLSTACK  ",
-                       prdLib"/JOBLOG     ",
-                       prdLib"/LLIST      ",
-                       prdLib"/OBJECT     ",
-                       prdLib"/PGMMSG     ",
-                       prdLib"/VERSION    ",
-                       prdLib"/TESTUTILS  ",
-                       prdLib"/STRING     ",
-                       prdLib"/SRCMBR     ",
-                       prdLib"/STMF       ",
-                       prdLib"/USRSPC)    ",
-              "STGMDL(*INHERIT) ",
-              "BNDSRVPGM("prdLib"/RUMEMMGR) ",
+              "MODULE("prdLib"/ASSERT    ",
+                       prdLib"/ASSERTV2  ",
+                       prdLib"/TESTUTILS ",
+                       prdLib"/VERSION)  ",
               "EXPORT(*SRCFILE) ",
-              "SRCFILE("prdLib"/QBND) SRCMBR(RUTESTCASE) ",
+              "SRCFILE("prdLib"/QBND) ",
+              "SRCMBR(RUTESTCASE) ",
+              "BNDDIR("prdLib"/IRPGUNIT) ",
+              "ACTGRP(*CALLER) ",
+              "ALWUPD(*YES) ",
+              "ALWLIBUPD(*YES) ",
               "TGTRLS("tgtRls") ",
+              "STGMDL(*INHERIT) ",
               "TEXT('iRPGUnit - Test Suite Toolkit.')"
 
  "SNDPGMMSG ",

@@ -10,24 +10,13 @@
 /* >>PRE-COMPILER<<                                                           */
 /*   >>CRTCMD<<  CRTPGM PGM(&LI/&OB);                                         */
 /*   >>IMPORTANT<<                                                            */
-/*     >>PARM<<  MODULE(&LI/CRTTST    +                                       */
-/*                      &LI/JOBLOG    +                                       */
-/*                      &LI/LSTSPLF   +                                       */
-/*                      &LI/OBJECT    +                                       */
-/*                      &LI/PGMMSG    +                                       */
-/*                      &LI/SRCMBR    +                                       */
-/*                      &LI/STMF      +                                       */
-/*                      &LI/STRING    +                                       */
-/*                      &LI/TAGTST    +                                       */
-/*                      &LI/USRSPC    +                                       */
-/*                      &LI/OSVERSION +                                       */
-/*                      );                                                    */
+/*     >>PARM<<  MODULE(&LI/CRTRPG);                                          */
 /*     >>PARM<<  ENTMOD(&LI/CRTRPG);                                          */
-/*     >>PARM<<  STGMDL(*SNGLVL);                                             */
-/*     >>PARM<<  BNDSRVPGM(&LI/RUTESTCASE &LI/RUMEMMGR);                      */
+/*     >>PARM<<  BNDDIR(&LI/IRPGUNIT);                                        */
 /*     >>PARM<<  ACTGRP(*NEW);                                                */
 /*     >>PARM<<  ALWUPD(*YES);                                                */
 /*     >>PARM<<  ALWLIBUPD(*YES);                                             */
+/*     >>PARM<<  STGMDL(*SNGLVL);                                             */
 /*     >>PARM<<  TEXT('iRPGUnit - Create RPG Test Suite.');                   */
 /*     >>PARM<<  DETAIL(*BASIC);                                              */
 /*   >>END-IMPORTANT<<                                                        */

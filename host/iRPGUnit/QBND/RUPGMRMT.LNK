@@ -10,36 +10,13 @@
 /* >>PRE-COMPILER<<                                                           */
 /*   >>CRTCMD<<  CRTPGM PGM(&LI/&OB);                                         */
 /*   >>IMPORTANT<<                                                            */
-/*     >>PARM<<  MODULE(&LI/PGMRMT    +                                       */
-/*                      &LI/JOBLOG    +                                       */
-/*                      &LI/CALLPRC   +                                       */
-/*                      &LI/CALLSTACK +                                       */
-/*                      &LI/CMDRUN    +                                       */
-/*                      &LI/CMDRUNLOG +                                       */
-/*                      &LI/CMDRUNPRT +                                       */
-/*                      &LI/CMDRUNSRV +                                       */
-/*                      &LI/CMDRUNV   +                                       */
-/*                      &LI/EXTPRC    +                                       */
-/*                      &LI/EXTTST    +                                       */
-/*                      &LI/JSONWTR   +                                       */
-/*                      &LI/OBJECT    +                                       */
-/*                      &LI/LIBL      +                                       */
-/*                      &LI/LLIST     +                                       */
-/*                      &LI/OSVERSION +                                       */
-/*                      &LI/PGMMSG    +                                       */
-/*                      &LI/SRCMBR    +                                       */
-/*                      &LI/STMF      +                                       */
-/*                      &LI/STRING    +                                       */
-/*                      &LI/USRSPC    +                                       */
-/*                      &LI/RMTRUNSRV +                                       */
-/*                      &LI/XMLWRITER +                                       */
-/*                      );                                                    */
+/*     >>PARM<<  MODULE(&LI/PGMRMT);                                          */
 /*     >>PARM<<  ENTMOD(&LI/PGMRMT);                                          */
-/*     >>PARM<<  STGMDL(*SNGLVL);                                             */
-/*     >>PARM<<  BNDSRVPGM(&LI/RUTESTCASE &LI/RUMEMMGR);                      */
+/*     >>PARM<<  BNDDIR(&LI/IRPGUNIT);                                        */
 /*     >>PARM<<  ACTGRP(*NEW);                                                */
 /*     >>PARM<<  ALWUPD(*YES);                                                */
 /*     >>PARM<<  ALWLIBUPD(*YES);                                             */
+/*     >>PARM<<  STGMDL(*SNGLVL);                                             */
 /*     >>PARM<<  TEXT('iRPGUnit - Plug-in Test Runner.');                     */
 /*     >>PARM<<  DETAIL(*BASIC);                                              */
 /*   >>END-IMPORTANT<<                                                        */

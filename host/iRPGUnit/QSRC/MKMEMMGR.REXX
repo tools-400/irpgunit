@@ -90,26 +90,29 @@
  end
 
  /* -------------------------------------------- */
+ /*  Recreate the modules if needed.             */
+ /* -------------------------------------------- */
+
+ "STRREXPRC SRCMBR(A_INSTALL) SRCFILE(RPGUNITDVP/QBUILD) PARM('CMPMOD "prdLib" "dbgView"')"
+
+ /* -------------------------------------------- */
  /*  Let's do it!                                */
  /* -------------------------------------------- */
 
- "CMPMOD MODULE("prdLib"/JOBLOG   ) SRCFILE("prdLib"/QSRC  ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/MEMMGR   ) SRCFILE("prdLib"/QSRC  ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/LLIST    ) SRCFILE("prdLib"/QLLIST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE("prdLib"/QSRC  ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/STRING   ) SRCFILE("prdLib"/QSRC  ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ Signal off Error
+ "DLTSRVPGM SRVPGM("prdLib"/RUMEMMGR)"
+ Signal on Error
 
  "CRTSRVPGM  SRVPGM("prdLib"/RUMEMMGR  ) ",
-              "MODULE("prdLib"/MEMMGR  ",
-                       prdLib"/JOBLOG  ",
-                       prdLib"/LLIST   ",
-                       prdLib"/PGMMSG  ",
-                       prdLib"/STRING) ",
-              "STGMDL(*INHERIT) ",
+              "MODULE("prdLib"/CALLSTACK ",
+                       prdLib"/MEMMGR)   ",
+              "BNDDIR("prdLib"/IRPGUNIT)",
               "EXPORT(*SRCFILE) ",
               "SRCFILE("prdLib"/QBND) SRCMBR(RUMEMMGR) ",
               "TGTRLS("tgtRls") ",
-              "TEXT('iRPGUnit - Memory Manager.')"
+              "STGMDL(*INHERIT) ",
+              "TEXT('iRPGUnit - Memory Manager.') ",
+              "DETAIL(*NONE) "
 
  "SNDPGMMSG ",
    "MSGID(CPF9897) ",

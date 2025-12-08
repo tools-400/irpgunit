@@ -33,7 +33,7 @@
 /*   >>PRE-COMPILER<<                                                  */
 /*     >>CRTCMD<<  STRREXPRC SRCMBR(&SM) SRCFILE(&SL/&SF);             */
 /*     >>IMPORTANT<<                                                   */
-/*       >>PARM<< PARM('&LI');                                         */
+/*       >>PARM<< PARM('&LI *LIST');                                   */
 /*     >>END-IMPORTANT<<                                               */
 /*     >>EXECUTE<<                                                     */
 /*   >>END-PRE-COMPILER<<                                              */
@@ -88,23 +88,22 @@
  end
 
  /* -------------------------------------------- */
+ /*  Recreate the modules if needed.             */
+ /* -------------------------------------------- */
+
+ "STRREXPRC SRCMBR(A_INSTALL) SRCFILE(RPGUNITDVP/QBUILD) PARM('CMPMOD "prdLib" "dbgView"')"
+
+ /* -------------------------------------------- */
  /*  Let's do it!                                */
  /* -------------------------------------------- */
+
  "CMPMOD MODULE("prdLib"/TESTUTILST) SRCFILE("prdLib"/QUNITTEST) ",
     "DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
- "CMPMOD MODULE("prdLib"/JOBLOG   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/STRING    ) SRCFILE("prdLib"/QSRC    ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-
  "CRTSRVPGM  SRVPGM("prdLib"/TESTUTILST) ",
-            "MODULE("prdLib"/TESTUTILST",
-                     prdLib"/JOBLOG    ",
-                     prdLib"/PGMMSG    ",
-                     prdLib"/STRING  ) ",
+            "MODULE("prdLib"/TESTUTILST) ",
             "EXPORT(*ALL) ",
-            "OPTION(*DUPPROC) ",
-            "BNDSRVPGM("prdLib"/RUTESTCASE) ",
+            "BNDDIR("prdLib"/IRPGUNIT) ",
             "TEXT('RPGUnit SelfTest - Test TESTUTILS.')"
 
  "SNDPGMMSG ",
