@@ -14,6 +14,8 @@
 //     >>PARM<<  OPTION(*EVENTF);
 //     >>PARM<<  DBGVIEW(*LIST);
 //   >>END-IMPORTANT<<
+//   >>CMD<<     STRREXPRC SRCMBR(A_INSTALL) SRCFILE(&LI/QBUILD) +
+//               PARM('CMPMOD &LI LIST');
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================
@@ -33,9 +35,9 @@ ctl-opt main(cmdRun);
 //   Imported Procedures
 //----------------------------------------------------------------------
 
+/include qinclude,ASSERT
 /include qinclude,CMDRUNSRV
 /include qinclude,PGMMSG
-/include qinclude,TESTCASE
 
 /include qinclude,SDS
 

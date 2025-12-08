@@ -17,6 +17,8 @@
 //     >>PARM<<  RPGPPOPT(*LVL2);
 //     >>PARM<<  COMPILEOPT('TRUNCNBR(*NO) DBGVIEW(*ALL)');
 //   >>END-IMPORTANT<<
+//   >>CMD<<     STRREXPRC SRCMBR(A_INSTALL) SRCFILE(&LI/QBUILD) +
+//               PARM('CMPMOD &LI LIST');
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================
