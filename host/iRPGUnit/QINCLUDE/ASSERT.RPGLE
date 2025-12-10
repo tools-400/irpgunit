@@ -40,6 +40,7 @@ end-pr;
 dcl-pr registerStartPgm extproc('ASSERT_registerStartPgm');
   lib char(10) const;
   pgm char(10) const;
+  isJunitStyle ind const;
 end-pr;
 
 ///
@@ -103,7 +104,7 @@ end-pr;
 // This procdure is used for sellf-tests. Saving the status
 // is required for self-tests calling a procedure that affects
 // the assertion status, e.g.:
-//   - registerStartProgram()
+//   - registerStartPgm()
 //   - fail()
 //   - doAssert()
 //   - doFail()
@@ -120,6 +121,12 @@ end-pr;
 // This procdure is used for sellf-tests.
 ///
 dcl-pr restoreAssertStatus extproc('ASSERT_restoreAssertStatus');
+end-pr;
+
+///
+// Returns the number of failures counted.
+///
+dcl-pr getFailureCounted int(10) extproc('ASSERT_getFailureCounted');
 end-pr;
 
 /include qinclude,TESTCASE

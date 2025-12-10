@@ -14,8 +14,6 @@
 //     >>PARM<<  OPTION(*EVENTF);
 //     >>PARM<<  DBGVIEW(*LIST);
 //   >>END-IMPORTANT<<
-//   >>CMD<<     STRREXPRC SRCMBR(A_INSTALL) SRCFILE(&LI/QBUILD) +
-//               PARM('CMPMOD &LI LIST');
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================
@@ -209,7 +207,7 @@ dcl-proc writeTestCases;
     countEvents = 0;
 
     list_resetIteration(testResult.hTestEvents);
-    pAbstractTestEvent = getfilteredTestEvents(testResult: maxNumEvents: countEvents);
+    pAbstractTestEvent = getFilteredTestEvents(testResult: maxNumEvents: countEvents);
     dow (pAbstractTestEvent <> *null);
 
       countEvents += 1;
@@ -269,7 +267,7 @@ dcl-proc writeTestCases;
         text += TAB + '</testcase>' + CRLF;
         rc = write(fileHandle : %addr(text : *data) : %len(text));
 
-        pAbstractTestEvent = getfilteredTestEvents(testResult: maxNumEvents: countEvents);
+        pAbstractTestEvent = getFilteredTestEvents(testResult: maxNumEvents: countEvents);
     enddo;
 
     pTestResult = list_getNext(testSuite.testResults);

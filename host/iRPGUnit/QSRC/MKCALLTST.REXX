@@ -27,7 +27,7 @@
 /*   >>PRE-COMPILER<<                                                  */
 /*     >>CRTCMD<<  STRREXPRC SRCMBR(&SM) SRCFILE(&SL/&SF);             */
 /*     >>IMPORTANT<<                                                   */
-/*       >>PARM<< PARM('&LI');                                         */
+/*       >>PARM<< PARM('&LI *LIST');                                   */
 /*     >>END-IMPORTANT<<                                               */
 /*     >>EXECUTE<<                                                     */
 /*   >>END-PRE-COMPILER<<                                              */

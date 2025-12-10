@@ -14,8 +14,6 @@
 //     >>PARM<<  OPTION(*EVENTF);
 //     >>PARM<<  DBGVIEW(*LIST);
 //   >>END-IMPORTANT<<
-//   >>CMD<<     STRREXPRC SRCMBR(A_INSTALL) SRCFILE(&LI/QBUILD) +
-//               PARM('CMPMOD &LI LIST');
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================
@@ -89,13 +87,14 @@ end-ds;
 dcl-ds g_status qualified;
   qStartPgm           likeds(object_t) inz;
   numAssertsCalled    int(10) inz;
+  numFailuresCounted  int(10) inz;
   isAssertionError    ind inz(*off);
-  pFailureEvents      pointer inz;
+  pAssertEvents       pointer inz;
   procNamePrefix      like(assertProcNm_t) inz;
   isJunitStyle        ind inz(*on);
   // Latest assertion failure event information. Can be blank if no
   // assertion failure event since last assertion.
-  abstractTestEvent likeds(abstractTestEvent_t) inz(*likeds);
+  abstractTestEvent   likeds(abstractTestEvent_t) inz(*likeds);
 end-ds;
 
 dcl-ds g_savedStatus likeds(g_status) inz;
@@ -137,12 +136,15 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc registerStartPgm export;
   dcl-pi *N;
-    lib   char(10) const;
-    pgm   char(10) const;
+    lib          char(10) const;
+    pgm          char(10) const;
+    isJunitStyle ind const;
   end-pi;
 
   g_status.qStartPgm.nm = pgm;
   g_status.qStartPgm.lib = lib;
+
+  g_status.isJunitStyle = isJunitStyle;
 
 end-proc;
 
@@ -383,42 +385,32 @@ dcl-proc doAssert export;
 
   // Do not call clrAssertFailEvt() because of g_status.isRuntimeError!
   clear g_status.abstractTestEvent;
-  g_status.abstractTestEvent.failure.logExpected = logExpected;
-  g_status.abstractTestEvent.failure.logActual = logActual;
-  g_status.abstractTestEvent.failure.assertProc=
-    getAssertProcName(g_status.procNamePrefix: startProc);
+  g_status.abstractTestEvent.failure.assertProc = getAssertProcName(g_status.procNamePrefix:
+                                                                    startProc);
 
   if not condition;
+    g_status.numFailuresCounted += 1;
+
+    // Add unconfirmed failure event.
+    // The event gets confirmed in CMDRUNSRV.runProc() if
+    // it is not monitored. Otherwise is stays in status
+    // "unconfirmed" (= monitored).
+    g_status.abstractTestEvent.failure.isConfirmed = *off;
     g_status.abstractTestEvent.failure.outcome = TEST_CASE_FAILURE;
+    g_status.abstractTestEvent.failure.logExpected = logExpected;
+    g_status.abstractTestEvent.failure.logActual = logActual;
     doFail(msgIfFalse:  toCallStackE + 1: startProc);
   else;
-
+    // add success event
     g_status.abstractTestEvent.success.outcome = TEST_CASE_SUCCESS;
-
-    // Add SUCCESS event
-    if (not g_status.isJunitStyle);
-      // Add event if all assertins are processed
-      index = list_size(g_status.pFailureEvents);
-      if (index > 0 and g_status.isJunitStyle);
-        if (index = 1);
-          pAbstractTestEvent = list_get(g_status.pFailureEvents: index - 1);
-          if (abstractTestEvent.outcome = TEST_CASE_FAILURE);
-            // TODO: fix dealloc* procedures
-            // disposeCallstack(abstractTestEvent.failure.pCallstk);
-            Callstack_dealloc(abstractTestEvent.failure.pCallstk: 'pCallstk');
-          endif;
-          list_replace(g_status.pFailureEvents
-                       : %addr(g_status.abstractTestEvent)
-                       : %size(g_status.abstractTestEvent): index);
-        else;
-          sndEscapeMsgAboveCtlBdy('Unexpected list size in doAssert(): ' + %char(index));
-        endif;
-      else;
-        list_add(g_status.pFailureEvents
-                 : %addr(g_status.abstractTestEvent)
-                 : %size(g_status.abstractTestEvent));
-      endif;
-    endif;
+    g_status.abstractTestEvent.success.logExpected = logExpected;
+    g_status.abstractTestEvent.success.logActual = logActual;
+//    if (not g_status.isJunitStyle);
+//      // Add event if all assertions are processed
+      list_add(g_status.pAssertEvents
+               : %addr(g_status.abstractTestEvent.success)
+               : %size(g_status.abstractTestEvent.success));
+//    endif;
   endif;
 
 end-proc;
@@ -434,18 +426,22 @@ dcl-proc doFail;
   // Add FAILURE event with callstack
   g_status.abstractTestEvent.failure.msg = %trimr(msg);
   g_status.abstractTestEvent.failure.pCallstk = getCallStk(startProc);
-  g_status.abstractTestEvent.index = list_size(g_status.pFailureEvents) + 1;
+  g_status.abstractTestEvent.index = list_size(g_status.pAssertEvents) + 1;
 
-  list_add(g_status.pFailureEvents
+  list_add(g_status.pAssertEvents
            : %addr(g_status.abstractTestEvent)
            : %size(g_status.abstractTestEvent));
 
   g_status.isAssertionError = *on;
 
   if (%addr(toCallStackE) = *null);
+    // called by fail()
     sndEscapeMsgToProcedure(msg: TEST_CASE_EXECUTOR);
   else;
-    sndEscapeMsg(msg: toCallStackE + 1);
+    // called by assertion procedure
+    if (g_status.isJunitStyle);
+      sndEscapeMsg(msg: toCallStackE + 1);
+    endif;
   endif;
 
 end-proc;
@@ -505,25 +501,23 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc clrAssertFailEvt export;
   dcl-pi *N;
-    pFailureEvents pointer const;
+    pAssertEvents  pointer const;
     procNamePrefix like(assertProcNm_t) const;
   end-pi;
 
   resetAssertionError();
 
-  g_status.pFailureEvents = pFailureEvents;
+  g_status.pAssertEvents = pAssertEvents;
   g_status.procNamePrefix = procNamePrefix;
 
   clear g_status.abstractTestEvent;
   g_status.abstractTestEvent.outcome = TEST_CASE_NULL;
 
-  g_status.isJunitStyle = *on;
-
 end-proc;
 
 
 //----------------------------------------------------------------------
-// Returns the number of time assertions were called. See prototype.
+// Returns the number of assertions called. See prototype.
 // *** public API ***
 //----------------------------------------------------------------------
 dcl-proc getAssertCalled export;
@@ -531,6 +525,19 @@ dcl-proc getAssertCalled export;
   end-pi;
 
   return g_status.numAssertsCalled;
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+// Returns the number of failures counted.
+// *** public API ***
+//----------------------------------------------------------------------
+dcl-proc getFailureCounted export;
+  dcl-pi *N int(10);
+  end-pi;
+
+  return g_status.numFailuresCounted;
 
 end-proc;
 
@@ -646,6 +653,7 @@ dcl-proc clearAssertCounter export;
   end-pi;
 
   g_status.numAssertsCalled = 0;
+  g_status.numFailuresCounted = 0;
 
 end-proc;
 

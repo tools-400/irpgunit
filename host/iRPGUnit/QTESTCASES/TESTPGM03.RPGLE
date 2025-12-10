@@ -35,7 +35,7 @@ dcl-proc testFalse2 export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  callp(E) iEqual(6: 2+2); // intetionally ignored
+  callp(E) iEqual(6: 2+2); // intentionally ignored
 
   iEqual(6: 2+2);
 

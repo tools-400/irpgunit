@@ -14,8 +14,6 @@
 //     >>PARM<<  OPTION(*EVENTF);
 //     >>PARM<<  DBGVIEW(*LIST);
 //   >>END-IMPORTANT<<
-//   >>CMD<<     STRREXPRC SRCMBR(A_INSTALL) SRCFILE(&LI/QBUILD) +
-//               PARM('CMPMOD &LI LIST');
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================
@@ -47,26 +45,36 @@ ctl-opt main(cmdRun);
 
 dcl-proc cmdrun;
   dcl-pi *n;
-    gi_qTestSuite likeds(object_t) const;
-    gi_testProcs  likeds(procNms_t) const;
-    gi_order      like(order_t) const;
-    gi_detail     like(detail_t) const;
-    gi_output     like(output_t) const;
-    gi_libL       likeds(libl_t) const;
-    gi_qJobD      likeds(object_t) const;
-    gi_rclRsc     like(rclrsc_t) const;
-    gi_xmlStmf    like(stmf_t) const;
-    gi_xmlType    like(xmlType_t) const;
+    gi_qTestSuite   likeds(object_t) const;
+    gi_testProcs    likeds(procNms_t) const;
+    gi_order        like(order_t) const;
+    gi_detail       like(detail_t) const;
+    gi_output       like(output_t) const;
+    gi_libL         likeds(libl_t) const;
+    gi_qJobD        likeds(object_t) const;
+    gi_rclRsc       like(rclrsc_t) const;
+    gi_xmlStmf      like(stmf_t) const;
+    gi_xmlType      like(xmlType_t) const;
+    gi_isJUnitStyle ind options(*nopass) const;
   end-pi;
+
+  dcl-s isJUnitStyle ind;
 
   dcl-s isSuccess ind;
   dcl-s msg varchar(256);
 
-  registerStartPgm(sds.pgmLib: sds.pgmname);
+  if (%parms() >= %parmnum(gi_isJUnitStyle) and %addr(gi_isJUnitStyle) <> *null);
+    isJUnitStyle = %trimr(gi_isJUnitStyle);
+  else;
+    isJUnitStyle = DEFAULT_IS_JUNIT_STYLE;
+  endif;
+
+  registerStartPgm(sds.pgmLib: sds.pgmname: isJUnitStyle);
 
   isSuccess = runTestSuite(*omit: gi_qTestSuite: gi_testProcs:
                            gi_order: gi_detail: gi_output: gi_libL:
-                           gi_qJobD: gi_rclRsc: gi_xmlStmf: gi_xmlType: msg);
+                           gi_qJobD: gi_rclRsc: gi_xmlStmf: gi_xmlType:
+                           isJUnitStyle: msg);
 
   if (isSuccess);
     sndCompMsg( msg );

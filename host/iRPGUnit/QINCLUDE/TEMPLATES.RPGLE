@@ -13,6 +13,8 @@
 //  http://www.eclipse.org/legal/cpl-v10.html
 // ==========================================================================
 
+dcl-c DEFAULT_IS_JUNIT_STYLE *on;
+
 dcl-c TEST_CASE_EXECUTOR 'CMDRUNSRV_runProc';
 
 dcl-c TEST_PREFIX 'TEST';
@@ -312,6 +314,8 @@ dcl-ds testSuccessEvent_t qualified template;
   outcome      char(1) inz(TEST_CASE_SUCCESS);
   index        int(10);
   assertProc   like(assertProcNm_t) inz;
+  logExpected  likeds(logValue_t) inz(*likeds);
+  logActual    likeds(logValue_t) inz(*likeds);
 end-ds;
 
 // Assertion Failure Event.
@@ -319,9 +323,10 @@ dcl-ds testFailureEvent_t qualified template;
   outcome      char(1) inz(TEST_CASE_FAILURE);
   index        int(10);
   assertProc   like(assertProcNm_t) inz;
-  msg          like(msgText_t) inz;
   logExpected  likeds(logValue_t) inz(*likeds);
   logActual    likeds(logValue_t) inz(*likeds);
+  isConfirmed  ind inz(*off);
+  msg          like(msgText_t) inz;
   pCallstk     pointer inz;
 end-ds;
 

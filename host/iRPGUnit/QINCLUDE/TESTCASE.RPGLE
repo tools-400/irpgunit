@@ -439,7 +439,7 @@ end-pr;
 // test execution.
 ///
 dcl-pr clrAssertFailEvt extproc('clrAssertFailEvt');
-  pFailureEvents pointer const;
+  pAssertEvents pointer const;
   procNamePrefix like(assertProcNm_t) const;
 end-pr;
 

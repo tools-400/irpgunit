@@ -62,6 +62,8 @@
 //                                 element '<failure>'. The Json object includes
 //                                 the stack trace as well as the 'expected' and
 //                                 'actual' test values.
+// @param isJunitStyle  - Specifies whether the test case fails on the first
+//                        failed assertion.
 // @param msg           - Message of the test result.
 //
 // @return Status code indicating overall test execution outcome:
@@ -84,6 +86,7 @@ dcl-pr runTestSuite ind extproc('CMDRUNSRV_runTestSuite');
   rclrsc        like(rclrsc_t) const;
   xmlstmf       like(stmf_t) const;
   xmlType       like(xmlType_t) const;
+  isJunitStyle  ind const;
   msg           varchar(256);
 end-pr;
 
@@ -288,26 +291,6 @@ dcl-pr fmtCompMsg varchar(256) extproc('CMDRUNSRV_fmtCompMsg');
   errorCnt    int(10) const;
 end-pr;
 
-// Handle a test case error.
-dcl-pr handleError extproc('CMDRUNSRV_handleError');
-  testProcNm      const like(procNm_t);
-  excpMsgInfo     const likeds(msg_t);
-  result          likeds(result_t);
-end-pr;
-
-// Handle a test case failure.
-dcl-pr handleFailure extproc('CMDRUNSRV_handleFailure');
-  testProcNm       const like(procNm_t);
-  testFailureEvent const likeds(testFailureEvent_t);
-  result           likeds(result_t);
-end-pr;
-
-// Handle a test case success.
-dcl-pr handleSuccess extproc('CMDRUNSRV_handleSuccess');
-  testProcNm      const like(procNm_t);
-  assertionCnt    int(10) const;
-end-pr;
-
 // Returns the next matching test event.
 dcl-pr getFilteredTestEvents pointer extproc('CMDRUNSRV_getFilteredTestEvents');
   testResult   likeds(testResult_t) const;
@@ -323,6 +306,12 @@ end-pr;
 // Returns the last recorded error event.
 dcl-pr getLastErrorEvent likeds(runtimeErrorEvent_t) extproc('CMDRUNSRV_getLastErrorEvent');
   testResult likeds(testResult_t) const;
+end-pr;
+
+dcl-pr logTestResult extproc('CMRUNSRV_logTestResult');
+  testSuite       likeds(testSuite_t) const;
+  testSuiteName   likeds(Object_t) const;
+  testSuiteResult likeds(result_t);
 end-pr;
 
 /include qinclude,templates

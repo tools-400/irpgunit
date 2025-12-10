@@ -145,7 +145,7 @@ on-exit;
 
 end-proc;
 
-
+// TODO: fix "Event type 'S' does not match type: F"
 dcl-proc test_runTestProc_failureInTest export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
