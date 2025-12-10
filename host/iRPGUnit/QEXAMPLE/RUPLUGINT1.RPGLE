@@ -102,7 +102,7 @@ dcl-proc testNumFailure_noMessage export;
 
   end-proc;
 
-  dcl-proc procInError export;
+dcl-proc procInError export;
   dcl-pi *n extproc(*dclcase);
     level      int(10) value;
     maxLevel   int(10) value;
@@ -111,9 +111,10 @@ dcl-proc testNumFailure_noMessage export;
   level += 1;
   if (level < maxLevel);
     procInError(level: maxLevel);
+    return;
   endif;
 
-  iEqual(1: 2); // Failure, no message
+  assert(1=2: 'Intentionally failed'); // Failure, no message
 
 end-proc;
 
