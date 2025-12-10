@@ -56,7 +56,7 @@ dcl-ds g_setupProc likeds(Proc_t);
 // Tear down proc.
 dcl-ds g_tearDownProc likeds(Proc_t);
 // Result of a test case run.
-dcl-ds g_result likeds(TestResult_t);
+dcl-ds g_result likeds(testCaseResult_t);
 
 dcl-s setUpSuiteWasCalled ind;
 
@@ -127,7 +127,7 @@ dcl-proc test_runTestProc_successfulTest export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds testResult likeds(TestResult_t);
+  dcl-ds testResult likeds(testCaseResult_t);
 
   // Execution.
 
@@ -150,7 +150,7 @@ dcl-proc test_runTestProc_failureInTest export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds testResult likeds(TestResult_t);
+  dcl-ds testResult likeds(testCaseResult_t);
   dcl-ds testFailureEvent likeds(testFailureEvent_t);
 
   dcl-ds callstkEnt likeds(callstkEnt_t) inz;
@@ -200,7 +200,7 @@ dcl-proc test_runTestProc_errorInTest export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds testResult likeds(TestResult_t);
+  dcl-ds testResult likeds(testCaseResult_t);
   dcl-ds errorEvent likeds(runtimeErrorEvent_t) inz;
 
   // Execution.
@@ -227,7 +227,7 @@ dcl-proc test_runTestProc_withSetup export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds testResult likeds(TestResult_t);
+  dcl-ds testResult likeds(testCaseResult_t);
 
   // Execution.
 
@@ -255,7 +255,7 @@ dcl-proc test_runTestProc_errorInSetup export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds testResult likeds(TestResult_t);
+  dcl-ds testResult likeds(testCaseResult_t);
   dcl-ds errorEvent likeds(runtimeErrorEvent_t) inz;
 
   // Execution.
@@ -292,7 +292,7 @@ dcl-proc test_runTestProc_withTearDown export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds testResult likeds(TestResult_t);
+  dcl-ds testResult likeds(testCaseResult_t);
 
   // Execution.
 
@@ -320,7 +320,7 @@ dcl-proc test_runTestProc_errorInTearDown export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds testResult likeds(TestResult_t);
+  dcl-ds testResult likeds(testCaseResult_t);
   dcl-ds errorEvent likeds(runtimeErrorEvent_t) inz;
 
   // Execution.
@@ -357,7 +357,7 @@ dcl-proc test_runTestProc_tearDownAfterFailureInTest export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds testResult likeds(TestResult_t);
+  dcl-ds testResult likeds(testCaseResult_t);
 
   dcl-ds testResultControl likeds(testResult);
 
@@ -400,7 +400,7 @@ dcl-proc test_runTestProc_tearDownAfterErrorInSetup export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds testResult likeds(TestResult_t);
+  dcl-ds testResult likeds(testCaseResult_t);
   dcl-ds errorEvent likeds(runtimeErrorEvent_t) inz;
 
   // Execution.
@@ -473,7 +473,7 @@ dcl-proc test_runTest_successfulTest export;
 
   dcl-ds testSuite likeds(TestSuite_t) inz;
   dcl-ds testCase dim(1) likeds(Proc_t) based(testSuite.testList);
-  dcl-ds testResult likeds(TestResult_t);
+  dcl-ds testResult likeds(testCaseResult_t);
 
 
   // Setup.
@@ -511,7 +511,7 @@ dcl-proc test_runTest_failureInTest export;
 
   dcl-ds testSuite likeds(TestSuite_t) inz;
   dcl-ds testCase dim(1) likeds(Proc_t) based(testSuite.testList);
-  dcl-ds testResult likeds(TestResult_t);
+  dcl-ds testResult likeds(testCaseResult_t);
 
   dcl-ds testResultControl likeds(testResult);
 
@@ -561,7 +561,7 @@ dcl-proc test_runTest_withSetupAndTearDown export;
   end-pi;
 
   dcl-ds testSuite likeds(TestSuite_t) inz;
-  dcl-ds testResult likeds(testResult_t) inz;
+  dcl-ds testResult likeds(testCaseResult_t) inz;
   dcl-ds testCase dim(1) likeds(Proc_t) based(testSuite.testList);
 
   dcl-ds testResultControl likeds(testResult);
@@ -626,7 +626,7 @@ dcl-proc test_runTest_ignoreAssertFailure export;
 
   dcl-ds testSuite likeds(TestSuite_t) inz;
   dcl-ds testCase dim(1) likeds(Proc_t) based(testSuite.testList);
-  dcl-ds testResult likeds(TestResult_t);
+  dcl-ds testResult likeds(testCaseResult_t);
 
   dcl-ds testResultControl likeds(testResult);
 

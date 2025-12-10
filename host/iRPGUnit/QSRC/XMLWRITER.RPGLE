@@ -59,7 +59,7 @@ dcl-proc writeXmlFile export;
     filepath      char(1024) const;
     testSuite     likeds(testSuite_t) const;
     testSuiteName likeds(Object_t) const;
-    result        likeds(result_t) const;
+    result        likeds(testSuiteResult_t) const;
     xmlType       like(xmlType_t) const;
   end-pi;
 
@@ -117,7 +117,7 @@ dcl-proc writeHeader;
     fileHandle int(10) const;
     testSuite likeds(testSuite_t) const;
     testSuiteName likeds(Object_t) const;
-    result likeds(result_t) const;
+    result likeds(testSuiteResult_t) const;
   end-pi;
 
   dcl-s text char(1000);
@@ -178,10 +178,10 @@ dcl-proc writeTestCases;
     fileHandle int(10) const;
     testSuite likeds(testSuite_t) const;
     testSuiteName likeds(Object_t) const;
-    result likeds(result_t) const;
+    result likeds(testSuiteResult_t) const;
   end-pi;
 
-  dcl-ds testCaseResult likeds(TestResult_t) based(pTestResult);
+  dcl-ds testCaseResult likeds(testCaseResult_t) based(pTestResult);
   dcl-s text varchar(50000);
   dcl-s rc int(10);
   dcl-s execTime packed(15:3);

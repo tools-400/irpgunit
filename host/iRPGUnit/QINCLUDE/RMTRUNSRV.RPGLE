@@ -16,15 +16,15 @@
 ///
 // Fills the user space for reporting the test result to the RDi plug-in.
 //
-// @param userSpace     - Qualified name of the user space.
-// @param testSuite     - Test suite that was executed.
-// @param testSuiteName - Qualified name oif the test suite service program.
-// @param result        - Test result.
+// @param userSpace       - Qualified name of the user space.
+// @param testSuite       - Test suite that was executed.
+// @param testSuiteName   - Qualified name oif the test suite service program.
+// @param testSuiteResult - Test result.
 ///
 dcl-pr fillUserSpace extproc('RMTRUNSRV_fillUserSpace');
   userSpace       likeds(object_t ) const;
   testSuite       likeds(testSuite_t) const;
   testSuiteName   likeds(object_t) const;
-  result          likeds(result_t) const;
+  testSuiteResult likeds(testSuiteResult_t) const;
 end-pr;
 

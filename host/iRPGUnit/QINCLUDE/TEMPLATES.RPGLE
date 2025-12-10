@@ -282,18 +282,16 @@ dcl-ds testSuite_t qualified template;
   testList        pointer;
   tearDown        likeds(proc_t);
   tearDownSuite   likeds(proc_t);
-  testResults     pointer; // array(testResult_t)
+  testResults     pointer; // array(testCaseResult_t)
 end-ds;
 
-dcl-ds testResult_t qualified template;
+dcl-ds testCaseResult_t qualified template;
   outcome          char(1);
   reserved_1       char(15);
   testName         like(procNm_t);
   execTime         int(20);
-  srcFile          char(10);
-  srcLib           char(10);
-  srcMbr           char(10);
   assertCnt        int(10);
+  failedMonitoredCnt int(10);
   lastErrorEvent   int(10);
   lastFailureEvent int(10);
   lastSuccessEvent int(10);
@@ -346,7 +344,7 @@ dcl-ds logValue_t qualified template;
    assertProc     like(assertProcNm_t) inz;
 end-ds;
 
-dcl-ds result_t qualified;
+dcl-ds testSuiteResult_t qualified;
   assertCnt  int(10);
   errorCnt   int(10);
   failureCnt int(10);
@@ -388,7 +386,7 @@ end-ds;
 dcl-c MAX_CALL_STK_SIZE 64;
 dcl-c CALL_STACK_INCOMPLETE '*INCOMPLETE';
 
-// TestResult_t.outcome can have three values.
+// testCaseResult_t.outcome can have three values.
 dcl-c TEST_CASE_NULL    '*';
 dcl-c TEST_CASE_SUCCESS 'S';
 dcl-c TEST_CASE_FAILURE 'F';

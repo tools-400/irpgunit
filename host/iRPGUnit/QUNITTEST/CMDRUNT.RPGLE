@@ -52,7 +52,7 @@ dcl-c ALL_PROCS const('*ALL');
 
 // In-memory log spool, made of an array and its index.
 dcl-ds g_logLine qualified Dim(2);
-  type            like(TestResult_t.outcome);
+  type            like(testCaseResult_t.outcome);
   procNm          like(ProcNm_t);
   assertionCnt    int(10);
   msg             like(Msg_t.txt);
@@ -105,7 +105,7 @@ dcl-proc test_runTests_SuccessfulTestWithDetailBasic export;
 
   dcl-ds testSuite likeds(TestSuite_t) inz;
   dcl-ds testCase dim(1) likeds(Proc_t) based(testSuite.testList);
-  dcl-ds result likeds(result_t) inz;
+  dcl-ds result likeds(testSuiteResult_t) inz;
 
   // -----------------------------
   // save current assertion status
@@ -155,7 +155,7 @@ dcl-proc test_runTests_SuccessfulTestWithDetailAllAndOneAssertion export;
 
   dcl-ds testSuite likeds(TestSuite_t) inz;
   dcl-ds testCase dim(1) likeds(Proc_t) based(testSuite.testList);
-  dcl-ds result likeds(result_t) inz;
+  dcl-ds result likeds(testSuiteResult_t) inz;
 
 // -----------------------------
   // save current assertion status
@@ -208,7 +208,7 @@ dcl-proc test_runTests_SuccessfulTestWithDetailAllAndTwoAssertions export;
 
   dcl-ds testSuite likeds(TestSuite_t) inz;
   dcl-ds testCase dim(1) likeds(Proc_t) based(testSuite.testList);
-  dcl-ds result likeds(result_t) inz;
+  dcl-ds result likeds(testSuiteResult_t) inz;
 
   // -----------------------------
   // save current assertion status
@@ -260,7 +260,7 @@ dcl-proc test_runTests_TwoSuccessfulTestsWithDetailAll export;
 
   dcl-ds testSuite likeds(TestSuite_t) inz;
   dcl-ds testCase dim(2) likeds(Proc_t) based(testSuite.testList);
-  dcl-ds result likeds(result_t) inz;
+  dcl-ds result likeds(testSuiteResult_t) inz;
 
   // -----------------------------
   // save current assertion status
@@ -315,7 +315,7 @@ dcl-proc test_runTests_TwoSuccessfulTestsWithOrderReverse export;
 
   dcl-ds testSuite likeds(TestSuite_t) inz;
   dcl-ds testCase dim(2) likeds(Proc_t) based(testSuite.testList);
-  dcl-ds result likeds(result_t) inz;
+  dcl-ds result likeds(testSuiteResult_t) inz;
 
   // -----------------------------
   // save current assertion status
@@ -369,7 +369,7 @@ dcl-proc test_runTests_ChooseOneTestProc export;
 
   dcl-ds testSuite likeds(TestSuite_t) inz;
   dcl-ds testCase dim(2) likeds(Proc_t) based(testSuite.testList);
-  dcl-ds result likeds(result_t) inz;
+  dcl-ds result likeds(testSuiteResult_t) inz;
 
   // -----------------------------
   // save current assertion status
@@ -422,7 +422,7 @@ dcl-proc test_runTests_ChooseNonExistingTestProc export;
 
   dcl-ds testSuite likeds(TestSuite_t) inz;
   dcl-ds testCase dim(1) likeds(Proc_t) based(testSuite.testList);
-  dcl-ds result likeds(result_t) inz;
+  dcl-ds result likeds(testSuiteResult_t) inz;
 
   // Setup.
 
@@ -480,7 +480,7 @@ dcl-proc test_callWithLogging_withSuccess export;
   end-pi;
 
   dcl-ds procWithNoError likeds(Proc_t);
-  dcl-ds result likeds(result_t) inz;
+  dcl-ds result likeds(testSuiteResult_t) inz;
 
   procWithNoError.procNm = 'proc_with_no_error';
   procWithNoError.procPtr = %paddr( proc_with_no_error );
@@ -498,7 +498,7 @@ dcl-proc test_callWithLogging_withError export;
   end-pi;
 
   dcl-ds procWithError likeds(Proc_t);
-  dcl-ds result likeds(result_t) inz;
+  dcl-ds result likeds(testSuiteResult_t) inz;
 
   // -----------------------------
   // save current assertion status
@@ -552,7 +552,7 @@ end-proc;
 dcl-proc callProcWithErrorHandler;
   dcl-pi *N int(10) extproc(*dclcase);
     proc   likeds(proc_t) const;
-    result likeds(result_t);
+    result likeds(testSuiteResult_t);
   end-pi;
 
   monitor;

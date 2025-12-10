@@ -102,7 +102,7 @@ end-pr;
 //
 // @return Complete test result with execution details and outcome
 ///
-dcl-pr runTestProc extproc('CMDRUNSRV_runTestProc') likeds(testResult_t);
+dcl-pr runTestProc extproc('CMDRUNSRV_runTestProc') likeds(testCaseResult_t);
   testproc likeds(proc_t) const;
   setup    likeds(proc_t) const;
   tearDown likeds(proc_t) const;
@@ -168,7 +168,7 @@ end-pr;
 //
 // @return Complete test result including outcome and execution details
 ///
-dcl-pr runTestCase extproc('CMDRUNSRV_runTestCase') likeds(testResult_t);
+dcl-pr runTestCase extproc('CMDRUNSRV_runTestCase') likeds(testCaseResult_t);
   testSuite likeds(testSuite_t) const;
   testIdx   int(10) const;
 end-pr;
@@ -185,9 +185,9 @@ end-pr;
 //
 // @return Test result
 ///
-dcl-pr runProc likeds(testResult_t) extproc('CMDRUNSRV_runProc');
+dcl-pr runProc likeds(testCaseResult_t) extproc('CMDRUNSRV_runProc');
   proc            pointer(*proc) const;
-  result          likeds(testResult_t) value;
+  result          likeds(testCaseResult_t) value;
   procNamePrefix  like(assertProcNm_t) const;
 end-pr;
 
@@ -200,7 +200,7 @@ end-pr;
 //
 // @return Initialized test result structure
 ///
-dcl-pr initTestResult likeds(testResult_t) extproc('CMDRUNSRV_initTestResult');
+dcl-pr initTestResult likeds(testCaseResult_t) extproc('CMDRUNSRV_initTestResult');
   testName like(procNm_t) const;
 end-pr;
 
@@ -213,7 +213,7 @@ end-pr;
 // @param idx        - Index (starting at 1) of the test result that is disposed
 ///
 dcl-pr disposeTestResult extproc('CMDRUNSRV_disposeTestResult');
-  testResult likeds(testResult_t);
+  testResult likeds(testCaseResult_t);
   idx        int(10) options(*nopass: *omit) const;
 end-pr;
 
@@ -255,20 +255,20 @@ end-pr;
 // execution, teardown, and result collection based on specified
 // execution parameters and filtering criteria.
 //
-// @param result         - Test result accumulator for collecting execution statistics
-// @param testSuite      - Test suite containing test procedures to execute
-// @param testProcsToRun - Filter specifying which test procedures to execute
-// @param order          - Execution order specification (*API or *REVERSE)
-// @param detail         - Detail level for logging and output
-// @param rclRsc         - Resource reclamation strategy between tests
+// @param testSuiteResult - Test result accumulator for collecting execution statistics
+// @param testSuite       - Test suite containing test procedures to execute
+// @param testProcsToRun  - Filter specifying which test procedures to execute
+// @param order           - Execution order specification (*API or *REVERSE)
+// @param detail          - Detail level for logging and output
+// @param rclRsc          - Resource reclamation strategy between tests
 ///
 dcl-pr runTests extproc('CMDRUNSRV_runTests');
-  result         likeds(result_t);
-  testSuite      likeds(testSuite_t) const;
-  testProcsToRun likeds(procNms_t) const;
-  order          char(8) const;
-  detail         char(6) const;
-  rclRsc         char(10) const;
+  testSuiteResult likeds(testSuiteResult_t);
+  testSuite       likeds(testSuite_t) const;
+  testProcsToRun  likeds(procNms_t) const;
+  order           char(8) const;
+  detail          char(6) const;
+  rclRsc          char(10) const;
 end-pr;
 
 ///
@@ -293,25 +293,25 @@ end-pr;
 
 // Returns the next matching test event.
 dcl-pr getFilteredTestEvents pointer extproc('CMDRUNSRV_getFilteredTestEvents');
-  testResult   likeds(testResult_t) const;
+  testResult   likeds(testCaseResult_t) const;
   maxNumEvents int(10) const;
   countEvents  int(10);
 end-pr;
 
 // Returns the last recorded failure event.
 dcl-pr getLastFailureEvent likeds(testFailureEvent_t) extproc('CMDRUNSRV_getLastFailureEvent');
-  testResult likeds(testResult_t) const;
+  testResult likeds(testCaseResult_t) const;
 end-pr;
 
 // Returns the last recorded error event.
 dcl-pr getLastErrorEvent likeds(runtimeErrorEvent_t) extproc('CMDRUNSRV_getLastErrorEvent');
-  testResult likeds(testResult_t) const;
+  testResult likeds(testCaseResult_t) const;
 end-pr;
 
 dcl-pr logTestResult extproc('CMRUNSRV_logTestResult');
   testSuite       likeds(testSuite_t) const;
   testSuiteName   likeds(Object_t) const;
-  testSuiteResult likeds(result_t);
+  testSuiteResult likeds(testSuiteResult_t);
 end-pr;
 
 /include qinclude,templates

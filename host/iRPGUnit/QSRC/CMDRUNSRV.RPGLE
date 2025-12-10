@@ -124,7 +124,7 @@ dcl-proc runTestSuite export;
   dcl-s xmlStmfMsg char(256);
 
   // Test event counters.
-  dcl-ds testSuiteResult likeds(result_t);
+  dcl-ds testSuiteResult likeds(testSuiteResult_t);
 
   // Save/set/restore library list
   dcl-ds savedLibl likeds(liblData_t);
@@ -250,10 +250,10 @@ dcl-proc logTestResult export;
   dcl-pi *N;
     testSuite       likeds(testSuite_t) const;
     testSuiteName   likeds(Object_t) const;
-    testSuiteResult likeds(result_t);
+    testSuiteResult likeds(testSuiteResult_t);
   end-pi;
 
-  dcl-ds testCaseResult likeds(testResult_t) based(pTestResult);
+  dcl-ds testCaseResult likeds(testCaseResult_t) based(pTestResult);
   dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
   dcl-s msg varchar(256);
 
@@ -354,7 +354,7 @@ dcl-proc rclTestSuite export;
 
   dcl-s numTestResults int(10);
   dcl-s i int(10);
-  dcl-ds testCaseResult likeds(testResult_t) based(pTestResult);
+  dcl-ds testCaseResult likeds(testCaseResult_t) based(pTestResult);
   dcl-s testName like(testCaseResult.testName);
 
   // Deallocate list of test case procedures
@@ -381,12 +381,12 @@ end-proc;
 // Run a test case in a test suite. See prototype.
 //----------------------------------------------------------------------
 dcl-proc runTestCase export;
-  dcl-pi *N likeds(testResult_t);
+  dcl-pi *N likeds(testCaseResult_t);
     testSuite       const likeds(testSuite_t);
     testIdx         int(10) const;
   end-pi;
 
-  dcl-ds testCaseResult likeds(testResult_t);
+  dcl-ds testCaseResult likeds(testCaseResult_t);
   dcl-ds testCase likeds(proc_t);
 
 
@@ -407,13 +407,13 @@ end-proc;
 // Run a test case. See prototype.
 //----------------------------------------------------------------------
 dcl-proc runTestProc export;
-  dcl-pi *N likeds(testResult_t);
+  dcl-pi *N likeds(testCaseResult_t);
     testCase likeds(proc_t) const;
     setup    likeds(proc_t) const;
     tearDown likeds(proc_t) const;
   end-pi;
 
-  dcl-ds testCaseResult likeds(testResult_t) inz;
+  dcl-ds testCaseResult likeds(testCaseResult_t) inz;
 
   dcl-s startTime timestamp;
   dcl-s endTime timestamp;
@@ -493,9 +493,9 @@ end-proc;
 // Run a setup, teardown or test procedure. See prototype.
 //----------------------------------------------------------------------
 dcl-proc runProc export;
-  dcl-pi *N likeds(testResult_t);
+  dcl-pi *N likeds(testCaseResult_t);
     proc            pointer(*proc) const;
-    testCaseResult  likeds(testResult_t) value;
+    testCaseResult  likeds(testCaseResult_t) value;
     procNamePrefix  like(assertProcNm_t) const;
   end-pi;
 
@@ -551,18 +551,18 @@ end-proc;
 // Initializes a test result.
 //----------------------------------------------------------------------
 dcl-proc initTestResult export;
-  dcl-pi *N likeds(testResult_t);
+  dcl-pi *N likeds(testCaseResult_t);
     testName        const like(procNm_t);
   end-pi;
 
-  dcl-ds testCaseResult likeds(testResult_t);
+  dcl-ds testCaseResult likeds(testCaseResult_t);
 
   clear testCaseResult;
-  testCaseResult.execTime = 0;
   testCaseResult.outcome = TEST_CASE_SUCCESS;
   testCaseResult.testName = testName;
-  testCaseResult.hTestEvents = MemMgr_createList('result.hTestEvents')
-  ;                                                             // arry(abstractTestEvent_t)
+  testCaseResult.execTime = 0;
+  // ...
+  testCaseResult.hTestEvents = MemMgr_createList('result.hTestEvents'); // arry(abstractTestEvent_t)
 
   return testCaseResult;
 
@@ -574,7 +574,7 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc disposeTestResult export;
   dcl-pi *N;
-    testCaseResult likeds(testResult_t);
+    testCaseResult likeds(testCaseResult_t);
     idx            int(10) options(*nopass: *omit) const;
   end-pi;
 
@@ -664,11 +664,11 @@ dcl-proc assertHasRunAtLeastOneTestCase;
   dcl-pi *N extproc(*dclcase);
     testSuite       likeds(testSuite_t) const;
     testProcNm      like(procNm_t) const;
-    testSuiteResult likeds(result_t);
+    testSuiteResult likeds(testSuiteResult_t);
   end-pi;
 
   dcl-ds excpMsgInfo likeds(msg_t);
-  dcl-ds testResult likeds(testResult_t) inz;
+  dcl-ds testResult likeds(testCaseResult_t) inz;
   dcl-ds abstractTestEvent likeds(abstractTestEvent_t) inz;
 
   if testSuiteResult.runsCnt = 0;
@@ -681,9 +681,6 @@ dcl-proc assertHasRunAtLeastOneTestCase;
     testResult.outcome = TEST_CASE_ERROR;
     testResult.testName = testProcNm;
     testResult.execTime = 0;
-    testResult.srcFile = '';
-    testResult.srcLib = '';
-    testResult.srcFile = '';
     testResult.assertCnt = 0;
     testResult.lastErrorEvent = 1;
     testResult.lastFailureEvent = 0;
@@ -764,7 +761,7 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc handleError;
   dcl-pi *N;
-    testSuiteResult likeds(result_t);
+    testSuiteResult likeds(testSuiteResult_t);
   end-pi;
 
   testSuiteResult.errorCnt += 1;
@@ -777,7 +774,7 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc handleFailure;
   dcl-pi *N;
-    testSuiteResult likeds(result_t);
+    testSuiteResult likeds(testSuiteResult_t);
   end-pi;
 
   testSuiteResult.failureCnt += 1;
@@ -791,10 +788,10 @@ end-proc;
 dcl-proc setupTestSuite;
   dcl-pi *N char(1) extproc(*dclcase);
     testSuite       likeds(testSuite_t) const;
-    testSuiteResult likeds(result_t);
+    testSuiteResult likeds(testSuiteResult_t);
   end-pi;
 
-  dcl-ds testCaseResult likeds(testResult_t);
+  dcl-ds testCaseResult likeds(testCaseResult_t);
   dcl-ds testFailureEvent likeds(testFailureEvent_t) inz;
   dcl-ds runtimeErrorEvent likeds(runtimeErrorEvent_t) inz;
 
@@ -828,10 +825,10 @@ end-proc;
 dcl-proc tearDownTestSuite;
   dcl-pi *N char(1) extproc(*dclcase);
     testSuite       likeds(testSuite_t) const;
-    testSuiteResult likeds(result_t);
+    testSuiteResult likeds(testSuiteResult_t);
   end-pi;
 
-  dcl-ds testCaseResult likeds(testResult_t);
+  dcl-ds testCaseResult likeds(testCaseResult_t);
   dcl-ds testFailureEvent likeds(testFailureEvent_t) inz;
   dcl-ds runtimeErrorEvent likeds(runtimeErrorEvent_t) inz;
 
@@ -864,7 +861,7 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc runTests export;
   dcl-pi *N;
-    testSuiteResult likeds(result_t);
+    testSuiteResult likeds(testSuiteResult_t);
     testSuite       likeds(testSuite_t) const;
     testProcsToRun  likeds(procNms_t) const;
     order           char(8) const;
@@ -875,7 +872,7 @@ dcl-proc runTests export;
   dcl-s step int(10);
   dcl-s testIdx int(10);
   dcl-s testProcNm like(procNm_t);
-  dcl-ds testCaseResult likeds(testResult_t);
+  dcl-ds testCaseResult likeds(testCaseResult_t);
   dcl-s assertionCntBeforeRun int(10);
   dcl-s assertionCntAfterRun int(10);
   dcl-c CMD_RCLRSC 'RCLRSC LVL(*) OPTION(*NORMAL)';
@@ -1029,7 +1026,7 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc getFilteredTestEvents export;
   dcl-pi *n pointer;
-    testCaseResult likeds(testResult_t) const;
+    testCaseResult likeds(testCaseResult_t) const;
     maxNumEvents   int(10) const;
     countEvents    int(10);
   end-pi;
@@ -1070,7 +1067,7 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc getLastErrorEvent export;
   dcl-pi *n likeds(runtimeErrorEvent_t);
-    testCaseResult likeds(testResult_t) const;
+    testCaseResult likeds(testCaseResult_t) const;
   end-pi;
 
   dcl-ds errorEvent likeds(runtimeErrorEvent_t) inz;
@@ -1091,7 +1088,7 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc getLastFailureEvent export;
   dcl-pi *n likeds(testFailureEvent_t);
-    testCaseResult likeds(testResult_t) const;
+    testCaseResult likeds(testCaseResult_t) const;
   end-pi;
 
   dcl-ds testFailureEvent likeds(testFailureEvent_t) inz;
@@ -1113,7 +1110,7 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc getLastEvent;
   dcl-pi *n likeds(abstractTestEvent_t) extproc(*dclcase);
-    testCaseResult likeds(testResult_t) const;
+    testCaseResult likeds(testCaseResult_t) const;
     outcome        char(1) const;
   end-pi;
 
