@@ -260,7 +260,7 @@ dcl-proc fillUserSpace export;
     userSpace       likeds(object_t ) const;
     testSuite       likeds(testSuite_t) const;
     testSuiteName   likeds(object_t) const;
-    result          likeds(result_t) const;
+    testSuiteResult likeds(result_t) const;
   end-pi;
 
   dcl-s usPtr pointer;
@@ -301,10 +301,10 @@ dcl-proc fillUserSpace export;
   header.length = %size(header) + header.lenSrcStmf;
   header.version = g_status.version;
   header.testSuite = testSuiteName;
-  header.numRuns = result.runsCnt;
-  header.numAsserts = result.assertCnt;
-  header.numFailures = result.failureCnt;
-  header.numErrors = result.errorCnt;
+  header.numRuns = testSuiteResult.runsCnt;
+  header.numAsserts = testSuiteResult.assertCnt;
+  header.numFailures = testSuiteResult.failureCnt;
+  header.numErrors = testSuiteResult.errorCnt;
   header.offsTestCases = header.length;
   header.numTestCases = testSuite.testCasesCnt;
 

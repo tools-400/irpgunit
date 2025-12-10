@@ -395,22 +395,26 @@ dcl-proc doAssert export;
     // The event gets confirmed in CMDRUNSRV.runProc() if
     // it is not monitored. Otherwise is stays in status
     // "unconfirmed" (= monitored).
-    g_status.abstractTestEvent.failure.isConfirmed = *off;
+    if (g_status.isJunitStyle);
+      g_status.abstractTestEvent.failure.isConfirmed = *off;
+    else;
+      // Flag event as confirmed in non-JUnit mode
+      g_status.abstractTestEvent.failure.isConfirmed = *on;
+    endif;
     g_status.abstractTestEvent.failure.outcome = TEST_CASE_FAILURE;
     g_status.abstractTestEvent.failure.logExpected = logExpected;
     g_status.abstractTestEvent.failure.logActual = logActual;
+
     doFail(msgIfFalse:  toCallStackE + 1: startProc);
   else;
     // add success event
     g_status.abstractTestEvent.success.outcome = TEST_CASE_SUCCESS;
     g_status.abstractTestEvent.success.logExpected = logExpected;
     g_status.abstractTestEvent.success.logActual = logActual;
-//    if (not g_status.isJunitStyle);
-//      // Add event if all assertions are processed
-      list_add(g_status.pAssertEvents
-               : %addr(g_status.abstractTestEvent.success)
-               : %size(g_status.abstractTestEvent.success));
-//    endif;
+
+    list_add(g_status.pAssertEvents
+             : %addr(g_status.abstractTestEvent.success)
+             : %size(g_status.abstractTestEvent.success));
   endif;
 
 end-proc;

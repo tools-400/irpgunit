@@ -181,7 +181,7 @@ dcl-proc writeTestCases;
     result likeds(result_t) const;
   end-pi;
 
-  dcl-ds testResult likeds(TestResult_t) based(pTestResult);
+  dcl-ds testCaseResult likeds(TestResult_t) based(pTestResult);
   dcl-s text varchar(50000);
   dcl-s rc int(10);
   dcl-s execTime packed(15:3);
@@ -198,22 +198,22 @@ dcl-proc writeTestCases;
   pTestResult = list_getNext(testSuite.testResults);
   dow (pTestResult <> *null);
 
-    numAsserts = list_size(testResult.hTestEvents);
+    numAsserts = list_size(testCaseResult.hTestEvents);
 
-    execTime = testResult.execTime / %dec(1000000 : 15 : 3);
+    execTime = testCaseResult.execTime / %dec(1000000 : 15 : 3);
 
     // iterate(asserts) -> failure & success events
     maxNumEvents = 1; // TODO: legacy beaviour like JUnit
     countEvents = 0;
 
-    list_resetIteration(testResult.hTestEvents);
-    pAbstractTestEvent = getFilteredTestEvents(testResult: maxNumEvents: countEvents);
+    list_resetIteration(testCaseResult.hTestEvents);
+    pAbstractTestEvent = getFilteredTestEvents(testCaseResult: maxNumEvents: countEvents);
     dow (pAbstractTestEvent <> *null);
 
       countEvents += 1;
 
-      text = TAB + '<testcase name="' + %trimr(testResult.testName) + '" ';
-      text += 'assertions="' + %char(testResult.assertCnt) + '" ';
+      text = TAB + '<testcase name="' + %trimr(testCaseResult.testName) + '" ';
+      text += 'assertions="' + %char(testCaseResult.assertCnt) + '" ';
       text += 'classname="' + %trimr(testSuiteName.nm) + '" '; // TODO: should look which mo
       text += 'time="' + %char(execTime) + '" ';               // exports this testcase
       text += '>' + CRLF;
@@ -240,7 +240,7 @@ dcl-proc writeTestCases;
 
       when (abstractTestEvent.outcome = TEST_CASE_FAILURE);
 
-        if (testResult.lastFailureEvent = abstractTestEvent.index);
+        if (testCaseResult.lastFailureEvent = abstractTestEvent.index);
 
           // start <failure> element
           text += TAB + TAB + '<failure message="';
@@ -267,7 +267,7 @@ dcl-proc writeTestCases;
         text += TAB + '</testcase>' + CRLF;
         rc = write(fileHandle : %addr(text : *data) : %len(text));
 
-        pAbstractTestEvent = getFilteredTestEvents(testResult: maxNumEvents: countEvents);
+        pAbstractTestEvent = getFilteredTestEvents(testCaseResult: maxNumEvents: countEvents);
     enddo;
 
     pTestResult = list_getNext(testSuite.testResults);

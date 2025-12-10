@@ -460,10 +460,13 @@ dcl-proc runTestProc export;
         pAbstractTestEventDisposed = list_get(testCaseResult.hTestEvents: idx - 1);
         select;
         when (abstractTestEventDisposed.outcome = TEST_CASE_SUCCESS);
-            disposeTestEvent(testCaseResult.hTestEvents: idx);
+          disposeTestEvent(testCaseResult.hTestEvents: idx);
         when (abstractTestEventDisposed.outcome = TEST_CASE_FAILURE);
           // dispose failure event and remove it from the list
-            disposeTestEvent(testCaseResult.hTestEvents: idx);
+          if (not abstractTestEventDisposed.failure.isConfirmed);
+            // handleFailure(testSuiteResult); TODO: count unconfirmed failure events
+          endif;
+          disposeTestEvent(testCaseResult.hTestEvents: idx);
         endsl;
       endfor;
     endif;
@@ -824,7 +827,7 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc tearDownTestSuite;
   dcl-pi *N char(1) extproc(*dclcase);
-    testsuite       likeds(testSuite_t) const;
+    testSuite       likeds(testSuite_t) const;
     testSuiteResult likeds(result_t);
   end-pi;
 
@@ -832,15 +835,15 @@ dcl-proc tearDownTestSuite;
   dcl-ds testFailureEvent likeds(testFailureEvent_t) inz;
   dcl-ds runtimeErrorEvent likeds(runtimeErrorEvent_t) inz;
 
-  testCaseResult = initTestResult(testsuite.tearDownSuite.procNm);
-  testCaseResult = runProc(testsuite.tearDownSuite.procPtr: testCaseResult: 'TEARDOWNSUITE');
+  testCaseResult = initTestResult(testSuite.tearDownSuite.procNm);
+  testCaseResult = runProc(testSuite.tearDownSuite.procPtr: testCaseResult: 'TEARDOWNSUITE');
 
   if (testCaseResult.outcome = TEST_CASE_SUCCESS);
     disposeTestResult(testCaseResult);
     return TEST_CASE_SUCCESS;
   endif;
 
-  list_add(testsuite.testResults : %addr(testCaseResult) : %size(testCaseResult));
+  list_add(testSuite.testResults : %addr(testCaseResult) : %size(testCaseResult));
 
   select;
   when testCaseResult.outcome = TEST_CASE_FAILURE;
