@@ -196,11 +196,13 @@ end-pr;
 // Creates a clean test result data structure and sets
 // default values before a test case is executed.
 //
+// @param outcome  - Initial outcome of the test result
 // @param testName - Name of the test procedure
 //
 // @return Initialized test result structure
 ///
 dcl-pr initTestResult likeds(testCaseResult_t) extproc('CMDRUNSRV_initTestResult');
+  outcome  like(outcome_t) const;
   testName like(procNm_t) const;
 end-pr;
 
@@ -291,13 +293,6 @@ dcl-pr fmtCompMsg varchar(256) extproc('CMDRUNSRV_fmtCompMsg');
   errorCnt    int(10) const;
 end-pr;
 
-// Returns the next matching test event.
-dcl-pr getFilteredTestEvents pointer extproc('CMDRUNSRV_getFilteredTestEvents');
-  testResult   likeds(testCaseResult_t) const;
-  maxNumEvents int(10) const;
-  countEvents  int(10);
-end-pr;
-
 // Returns the last recorded failure event.
 dcl-pr getLastFailureEvent likeds(testFailureEvent_t) extproc('CMDRUNSRV_getLastFailureEvent');
   testResult likeds(testCaseResult_t) const;
@@ -312,6 +307,33 @@ dcl-pr logTestResult extproc('CMRUNSRV_logTestResult');
   testSuite       likeds(testSuite_t) const;
   testSuiteName   likeds(Object_t) const;
   testSuiteResult likeds(testSuiteResult_t);
+end-pr;
+
+
+///
+// Adds a "success" test event.
+///
+dcl-pr addSuccessTestEvent int(10) extproc('CMDRUNSRV_addSuccessTestEvent');
+  hTestEvents      pointer const;
+  successTestEvent likeds(testSuccessEvent_t);
+end-pr;
+
+
+///
+// Adds a "failure" test event.
+///
+dcl-pr addFailureTestEvent int(10) extproc('CMDRUNSRV_addFailureTestEvent');
+  hTestEvents      pointer const;
+  failureTestEvent likeds(testFailureEvent_t);
+end-pr;
+
+
+///
+// Adds a "error" test event.
+///
+dcl-pr addErrorTestEvent int(10) extproc('CMDRUNSRV_addErrorTestEvent');
+  hTestEvents    pointer const;
+  errorTestEvent likeds(runtimeErrorEvent_t);
 end-pr;
 
 /include qinclude,templates

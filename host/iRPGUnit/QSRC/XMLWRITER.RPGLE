@@ -207,7 +207,7 @@ dcl-proc writeTestCases;
     countEvents = 0;
 
     list_resetIteration(testCaseResult.hTestEvents);
-    pAbstractTestEvent = getFilteredTestEvents(testCaseResult: maxNumEvents: countEvents);
+    pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
     dow (pAbstractTestEvent <> *null);
 
       countEvents += 1;
@@ -264,10 +264,10 @@ dcl-proc writeTestCases;
       endsl;
 
       // close <testcase> element
-        text += TAB + '</testcase>' + CRLF;
-        rc = write(fileHandle : %addr(text : *data) : %len(text));
+      text += TAB + '</testcase>' + CRLF;
+      rc = write(fileHandle : %addr(text : *data) : %len(text));
 
-        pAbstractTestEvent = getFilteredTestEvents(testCaseResult: maxNumEvents: countEvents);
+      pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
     enddo;
 
     pTestResult = list_getNext(testSuite.testResults);

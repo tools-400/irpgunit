@@ -114,7 +114,7 @@ dcl-proc procInError export;
     return;
   endif;
 
-  assert(1=2: 'Intentionally failed'); // Failure, no message
+  iEqual(1: 2); // Failure, no message
 
 end-proc;
 

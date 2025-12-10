@@ -28,6 +28,7 @@ ctl-opt nomain;
 
 /define RPGUNIT_INTERNAL
 /include qinclude,ASSERT
+/include qinclude,CMDRUNSRV
 /include qinclude,CALLSTACK
 /include qinclude,ERRORCODE
 /include qinclude,JOBLOG
@@ -89,7 +90,7 @@ dcl-ds g_status qualified;
   numAssertsCalled    int(10) inz;
   numFailuresCounted  int(10) inz;
   isAssertionError    ind inz(*off);
-  pAssertEvents       pointer inz;
+  hTestEvents         pointer inz;
   procNamePrefix      like(assertProcNm_t) inz;
   isJunitStyle        ind inz(*on);
   // Latest assertion failure event information. Can be blank if no
@@ -376,9 +377,6 @@ dcl-proc doAssert export;
     startProc      varchar(256) options(*varsize) const;
   end-pi;
 
-  dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
-  dcl-s index int(10);
-
   checkStartPgm();
 
   g_status.numAssertsCalled += 1;
@@ -412,9 +410,7 @@ dcl-proc doAssert export;
     g_status.abstractTestEvent.success.logExpected = logExpected;
     g_status.abstractTestEvent.success.logActual = logActual;
 
-    list_add(g_status.pAssertEvents
-             : %addr(g_status.abstractTestEvent.success)
-             : %size(g_status.abstractTestEvent.success));
+    addSuccessTestEvent(g_status.hTestEvents: g_status.abstractTestEvent.success);
   endif;
 
 end-proc;
@@ -430,11 +426,9 @@ dcl-proc doFail;
   // Add FAILURE event with callstack
   g_status.abstractTestEvent.failure.msg = %trimr(msg);
   g_status.abstractTestEvent.failure.pCallstk = getCallStk(startProc);
-  g_status.abstractTestEvent.index = list_size(g_status.pAssertEvents) + 1;
+  g_status.abstractTestEvent.index = list_size(g_status.hTestEvents) + 1;
 
-  list_add(g_status.pAssertEvents
-           : %addr(g_status.abstractTestEvent)
-           : %size(g_status.abstractTestEvent));
+  addFailureTestEvent(g_status.hTestEvents: g_status.abstractTestEvent.failure);
 
   g_status.isAssertionError = *on;
 
@@ -511,7 +505,7 @@ dcl-proc clrAssertFailEvt export;
 
   resetAssertionError();
 
-  g_status.pAssertEvents = pAssertEvents;
+  g_status.hTestEvents = pAssertEvents;
   g_status.procNamePrefix = procNamePrefix;
 
   clear g_status.abstractTestEvent;

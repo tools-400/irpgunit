@@ -257,8 +257,8 @@ dcl-ds procNmList_t qualified template;
   gotonext   pointer(*proc);
 end-ds;
 
+dcl-s outcome_t char(1) template;
 dcl-s procNm_t varchar(256) template;
-
 dcl-s memSize_t zoned(25: 3) template;
 
 dcl-ds procNms_t qualified template;
@@ -286,7 +286,7 @@ dcl-ds testSuite_t qualified template;
 end-ds;
 
 dcl-ds testCaseResult_t qualified template;
-  outcome          char(1);
+  outcome          like(outcome_t);
   reserved_1       char(15);
   testName         like(procNm_t);
   execTime         int(20);
@@ -300,7 +300,7 @@ end-ds;
 
 // Assertion Event.
 dcl-ds abstractTestEvent_t qualified template;
-  outcome      char(1) inz(TEST_CASE_NULL);
+  outcome      like(outcome_t) inz(TEST_CASE_NULL);
   index        int(10);
   failure      likeds(testFailureEvent_t) pos(1) inz(*likeds);
   success      likeds(testSuccessEvent_t) pos(1) inz(*likeds);
@@ -309,7 +309,7 @@ end-ds;
 
 // Assertion Success Event.
 dcl-ds testSuccessEvent_t qualified template;
-  outcome      char(1) inz(TEST_CASE_SUCCESS);
+  outcome      like(outcome_t) inz(TEST_CASE_SUCCESS);
   index        int(10);
   assertProc   like(assertProcNm_t) inz;
   logExpected  likeds(logValue_t) inz(*likeds);
@@ -318,7 +318,7 @@ end-ds;
 
 // Assertion Failure Event.
 dcl-ds testFailureEvent_t qualified template;
-  outcome      char(1) inz(TEST_CASE_FAILURE);
+  outcome      like(outcome_t) inz(TEST_CASE_FAILURE);
   index        int(10);
   assertProc   like(assertProcNm_t) inz;
   logExpected  likeds(logValue_t) inz(*likeds);
@@ -330,7 +330,7 @@ end-ds;
 
 // Runtime Error Event.
 dcl-ds runtimeErrorEvent_t qualified template;
-  outcome      char(1) inz(TEST_CASE_ERROR);
+  outcome      like(outcome_t) inz(TEST_CASE_ERROR);
   index        int(10);
   msg          likeds(msg_t) inz;
 end-ds;

@@ -14,8 +14,6 @@
 //     >>PARM<<  OPTION(*EVENTF);
 //     >>PARM<<  DBGVIEW(*LIST);
 //   >>END-IMPORTANT<<
-//   >>CMD<<     STRREXPRC SRCMBR(A_INSTALL) SRCFILE(&LI/QBUILD) +
-//               PARM('CMPMOD &LI LIST');
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================
@@ -44,6 +42,7 @@ dcl-c version_5 5;
 // Prototypes
 //-------------------------------------------------------------------------
 
+/include qinclude,CMDRUNSRV
 /include qinclude,CALLSTACK
 /include qinclude,CMDRUNSRV
 /include qinclude,RMTRUNSRV
@@ -268,7 +267,7 @@ dcl-proc fillUserSpace export;
   dcl-ds srcInf likeds(srcInf_t) inz;
   dcl-ds header likeds(tmpl_testSuite) based(usPtr);
   dcl-s header_SrcStmf char(1024) based(pHeader_SrcStmf); // varying-length portion of 'header'
-  dcl-ds testResult likeds(testCaseResult_t) based(ptr);
+  dcl-ds testCaseResult likeds(testCaseResult_t) based(ptr);
   dcl-ds errorCode likeds(errorCode_t) inz(*likeds);
   dcl-s oldlength int(10);
   dcl-ds testCaseV3 likeds(tmpl_testCase_v3) based(pTestCase);
@@ -348,21 +347,21 @@ dcl-proc fillUserSpace export;
     maxNumEvents = 1; // TODO: legacy beaviour like JUnit
     countEvents = 0;
 
-    pAbstractTestEvent = getFilteredTestEvents(testResult: maxNumEvents: countEvents);
+    pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
     dow (pAbstractTestEvent <> *null);
 
       countEvents += 1;
 
       select;
       when g_status.version >= version_5;
-        header.length += createV5TestCase(usPtr: testResult: pTestCase: abstractTestEvent);
+        header.length += createV5TestCase(usPtr: testCaseResult: pTestCase: abstractTestEvent);
       when g_status.version >= version_4;
-        header.length += createV4TestCase(usPtr: testResult: pTestCase: abstractTestEvent);
+        header.length += createV4TestCase(usPtr: testCaseResult: pTestCase: abstractTestEvent);
       other;
-        header.length += createV3TestCase(usPtr: testResult: pTestCase: abstractTestEvent);
+        header.length += createV3TestCase(usPtr: testCaseResult: pTestCase: abstractTestEvent);
       endsl;
 
-      pAbstractTestEvent = getFilteredTestEvents(testResult: maxNumEvents: countEvents);
+      pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
     enddo;
 
     ptr = list_getnext(testSuite.testResults);
@@ -389,7 +388,7 @@ end-proc;
 dcl-proc createV3TestCase;
   dcl-pi *N int(10) extproc(*dclcase);
     usPtr             pointer value;
-    testResult        likeds(testCaseResult_t) value;
+    testCaseResult    likeds(testCaseResult_t) value;
     ePtr              pointer value;
     abstractTestEvent likeds(abstractTestEvent_t) const;
   end-pi;
@@ -405,15 +404,15 @@ dcl-proc createV3TestCase;
   dcl-ds runtimeErrorEvent likeds(runtimeErrorEvent_t) inz;
 
   clear entry;
-  entry.lenTestCase = %len(testResult.testname);
-  entry.testCase = testResult.testname;
-  entry.result = testResult.outcome;
-  entry.numberAssertions = testResult.assertCnt;
+  entry.lenTestCase = %len(testCaseResult.testname);
+  entry.testCase = testCaseResult.testname;
+  entry.result = testCaseResult.outcome;
+  entry.numberAssertions = testCaseResult.assertCnt;
 
   select;
-  when (testResult.outcome = TEST_CASE_ERROR);
+  when (testCaseResult.outcome = TEST_CASE_ERROR);
 
-    runtimeErrorEvent = getLastErrorEvent(testResult);
+    runtimeErrorEvent = getLastErrorEvent(testCaseResult);
 
     entry.lenExcpMessage = min(%len(runtimeErrorEvent.msg.txt): %len(entry.excpMessage));
     entry.excpMessage = runtimeErrorEvent.msg.txt;
@@ -445,9 +444,9 @@ dcl-proc createV3TestCase;
     entry.offsNext += stackEntry.length;
     entry.numCallStkEnt += 1;
 
-  when (testResult.outcome = TEST_CASE_FAILURE);
+  when (testCaseResult.outcome = TEST_CASE_FAILURE);
 
-    testFailureEvent = getLastFailureEvent(testResult);
+    testFailureEvent = getLastFailureEvent(testCaseResult);
 
     entry.lenExcpMessage = min(%len(testFailureEvent.msg): %len(entry.excpMessage));
     entry.excpMessage = testFailureEvent.msg;
@@ -491,7 +490,7 @@ dcl-proc createV3TestCase;
     entry.excpMessage = '';
     entry.specNb = '';
     pExecTime = %addr(entry.excpMessage) + entry.lenExcpMessage;
-    execTime = testResult.exectime;
+    execTime = testCaseResult.exectime;
     entry.length = %size(entry) + entry.lenExcpMessage + %size(execTime);
     entry.offsNext = (%addr(entry) - usPtr) + entry.length;
     entry.offsCallStkEnt = 0;
@@ -509,7 +508,7 @@ end-proc;
 dcl-proc createV4TestCase;
   dcl-pi *N int(10) extproc(*dclcase);
     usPtr             pointer value;
-    testResult        likeds(testCaseResult_t) value;
+    testCaseResult    likeds(testCaseResult_t) value;
     ePtr              pointer value;
     abstractTestEvent likeds(abstractTestEvent_t) const;
   end-pi;
@@ -533,16 +532,16 @@ dcl-proc createV4TestCase;
   entry.offsNextEntry = offsEntry + %size(entry);
   entry.lenEntry = %size(entry);
 
-  entry.result = testResult.outcome;
+  entry.result = testCaseResult.outcome;
   entry.reserved_1 = '';
-  entry.numAsserts = testResult.assertCnt;
-  entry.execTime = testResult.exectime;
+  entry.numAsserts = testCaseResult.assertCnt;
+  entry.execTime = testCaseResult.exectime;
 
   // Test case text:
   entry.offsTestCaseText = offsEntry + %size(entry);
-  entry.lenTestCaseText = %len(testResult.testname);
+  entry.lenTestCaseText = %len(testCaseResult.testname);
   memcpy(usPtr + entry.offsTestCaseText
-         : %addr(testResult.testName: *data)
+         : %addr(testCaseResult.testName: *data)
          : entry.lenTestCaseText);
 
   entry.offsNextEntry += entry.lenTestCaseText;
@@ -553,9 +552,9 @@ dcl-proc createV4TestCase;
 
 
   select;
-  when (testResult.outcome = TEST_CASE_ERROR);
+  when (testCaseResult.outcome = TEST_CASE_ERROR);
 
-    runtimErrorEvent = getLastErrorEvent(testResult);
+    runtimErrorEvent = getLastErrorEvent(testCaseResult);
 
     // Exception message:
     entry.lenExcpMsg = %len(runtimErrorEvent.msg.txt);
@@ -617,9 +616,9 @@ dcl-proc createV4TestCase;
     entry.offsCallStkE = 0;
     entry.numCallStkE = 0;
 
-  when (testResult.outcome = TEST_CASE_FAILURE);
+  when (testCaseResult.outcome = TEST_CASE_FAILURE);
 
-    testFailureEvent = getLastFailureEvent(testResult);
+    testFailureEvent = getLastFailureEvent(testCaseResult);
 
     // Failure message:
     entry.lenExcpMsg = %len(testFailureEvent.msg);
@@ -720,7 +719,7 @@ end-proc;
 dcl-proc createV5TestCase;
   dcl-pi *N int(10) extproc(*dclcase);
     usPtr             pointer value;
-    testResult        likeds(testCaseResult_t) value;
+    testCaseResult    likeds(testCaseResult_t) value;
     ePtr              pointer value;
     abstractTestEvent likeds(abstractTestEvent_t) const;
   end-pi;
@@ -758,16 +757,16 @@ dcl-proc createV5TestCase;
   entry.offsNextEntry = offsEntry + %size(entry);
   entry.lenEntry = %size(entry);
 
-  entry.result = testResult.outcome;
+  entry.result = testCaseResult.outcome;
   entry.reserved_1 = '';
-  entry.numAsserts = testResult.assertCnt;
-  entry.execTime = testResult.exectime;
+  entry.numAsserts = testCaseResult.assertCnt;
+  entry.execTime = testCaseResult.exectime;
 
   // Test case text:
   entry.offsTestCaseText = offsEntry + %size(entry);
-  entry.lenTestCaseText = %len(testResult.testname);
+  entry.lenTestCaseText = %len(testCaseResult.testname);
   memcpy(usPtr + entry.offsTestCaseText
-         : %addr(testResult.testName: *data)
+         : %addr(testCaseResult.testName: *data)
          : entry.lenTestCaseText);
 
   entry.offsNextEntry += entry.lenTestCaseText;
@@ -778,9 +777,9 @@ dcl-proc createV5TestCase;
 
 
   select;
-  when (testResult.outcome = TEST_CASE_ERROR);
+  when (testCaseResult.outcome = TEST_CASE_ERROR);
 
-    runtimeErrorEvent = getLastErrorEvent(testResult);
+    runtimeErrorEvent = getLastErrorEvent(testCaseResult);
 
     // Exception message:
     entry.lenExcpMsg = %len(runtimeErrorEvent.msg.txt);
@@ -846,9 +845,9 @@ dcl-proc createV5TestCase;
     entry.offsExpected = 0;
     entry.offsActual = 0;
 
-  when (testResult.outcome = TEST_CASE_FAILURE);
+  when (testCaseResult.outcome = TEST_CASE_FAILURE);
 
-    testFailureEvent = getLastFailureEvent(testResult);
+    testFailureEvent = getLastFailureEvent(testCaseResult);
 
     // Failure message:
     entry.lenExcpMsg = %len(testFailureEvent.msg);
