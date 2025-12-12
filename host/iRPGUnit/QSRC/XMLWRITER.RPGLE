@@ -230,9 +230,6 @@ dcl-proc writeTestCases;
 
   dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
 
-  dcl-s maxNumEvents int(10);
-  dcl-s countEvents int(10);
-
   list_resetIteration(testSuite.testResults);
 
   // Iterate the test cases...
@@ -241,15 +238,9 @@ dcl-proc writeTestCases;
 
     execTime = testCaseResult.execTime / %dec(1000000 : 15 : 3);
 
-    // iterate(asserts) -> failure & success events
-    maxNumEvents = 1; // TODO: legacy beaviour like JUnit
-    countEvents = 0;
-
     list_resetIteration(testCaseResult.hTestEvents);
     pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
     dow (pAbstractTestEvent <> *null);
-
-      countEvents += 1;
 
       text = TAB + '<testcase name="'
                  + buildReportTestCaseName(testCaseResult: abstractTestEvent) + '" ';
