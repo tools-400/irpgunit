@@ -132,7 +132,7 @@ dcl-proc test_runTests_SuccessfulTestWithDetailBasic export;
 
   runTests(result: testSuite: g_procNms: ORDER_API: DETAIL_BASIC: RCLRSC_NO);
 
-  logTestResult(testSuite: g_qTestSuite: result);
+  writeTestReport(testSuite: g_qTestSuite: result);
 
   // --------------------------------
   // restore current assertion status
@@ -182,7 +182,7 @@ dcl-proc test_runTests_SuccessfulTestWithDetailAllAndOneAssertion export;
 
   runTests(result: testSuite: g_procNms: ORDER_API: DETAIL_ALL: RCLRSC_NO);
 
-  logTestResult(testSuite: g_qTestSuite: result);
+  writeTestReport(testSuite: g_qTestSuite: result);
 
 // --------------------------------
   // restore current assertion status
@@ -235,7 +235,7 @@ dcl-proc test_runTests_SuccessfulTestWithDetailAllAndTwoAssertions export;
 
   runTests(result: testSuite: g_procNms: ORDER_API: DETAIL_ALL: RCLRSC_NO);
 
-  logTestResult(testSuite: g_qTestSuite: result);
+  writeTestReport(testSuite: g_qTestSuite: result);
 
   // --------------------------------
   // restore current assertion status
@@ -290,7 +290,7 @@ dcl-proc test_runTests_TwoSuccessfulTestsWithDetailAll export;
 
   runTests(result: testSuite: g_procNms: ORDER_API: DETAIL_ALL: RCLRSC_NO);
 
-  logTestResult(testSuite: g_qTestSuite: result);
+  writeTestReport(testSuite: g_qTestSuite: result);
 
   // --------------------------------
   // restore current assertion status
@@ -344,7 +344,7 @@ dcl-proc test_runTests_TwoSuccessfulTestsWithOrderReverse export;
 
   runTests(result: testSuite: g_procNms: ORDER_REVERSE: DETAIL_ALL: RCLRSC_NO);
 
-  logTestResult(testSuite: g_qTestSuite: result);
+  writeTestReport(testSuite: g_qTestSuite: result);
 
   // --------------------------------
   // restore current assertion status
@@ -398,7 +398,7 @@ dcl-proc test_runTests_ChooseOneTestProc export;
 
   runTests(result: testSuite: g_procNms: ORDER_API: DETAIL_ALL: RCLRSC_NO);
 
-  logTestResult(testSuite: g_qTestSuite: result);
+  writeTestReport(testSuite: g_qTestSuite: result);
 
   // --------------------------------
   // restore current assertion status
@@ -444,7 +444,7 @@ dcl-proc test_runTests_ChooseNonExistingTestProc export;
 
   runTests(result: testSuite: g_procNms: ORDER_API: DETAIL_ALL: RCLrSC_NO);
 
-  logTestResult(testSuite: g_qTestSuite: result);
+  writeTestReport(testSuite: g_qTestSuite: result);
 
   // Controls.
 

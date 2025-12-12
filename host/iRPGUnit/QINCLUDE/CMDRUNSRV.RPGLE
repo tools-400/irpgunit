@@ -40,6 +40,11 @@
 //                        '*BASIC' = Summary information only
 //                        '*ALL' = Detailed execution information including timings
 //                        '*FAILURE' = Detailed information for failures only
+// @param mode          - Mode of how assertions are processed:
+//                        '*FAILFIRST' = Executing assertions is stopped after the first
+//                                       failed assertion
+//                        '*ALL' = All assertions are executed
+//                        '*FAILURE' = Detailed information for failures only
 // @param output        - Output format specification for test results:
 //                        '*NONE' = No output formatting
 //                        '*VERBOSE' = Detailed console output
@@ -62,8 +67,6 @@
 //                                 element '<failure>'. The Json object includes
 //                                 the stack trace as well as the 'expected' and
 //                                 'actual' test values.
-// @param isJunitStyle  - Specifies whether the test case fails on the first
-//                        failed assertion.
 // @param msg           - Message of the test result.
 //
 // @return Status code indicating overall test execution outcome:
@@ -80,13 +83,13 @@ dcl-pr runTestSuite ind extproc('CMDRUNSRV_runTestSuite');
   testProcs     likeds(procNms_t) const;
   order         like(order_t) const;
   detail        like(detail_t) const;
+  assertMode    like(assertMode_t) const;
   output        like(output_t) const;
   libl          likeds(libl_t) const;
   qJobD         likeds(object_t) const;
   rclrsc        like(rclrsc_t) const;
   xmlstmf       like(stmf_t) const;
   xmlType       like(xmlType_t) const;
-  isJunitStyle  ind const;
   msg           varchar(256);
 end-pr;
 
@@ -303,7 +306,7 @@ dcl-pr getLastErrorEvent likeds(runtimeErrorEvent_t) extproc('CMDRUNSRV_getLastE
   testResult likeds(testCaseResult_t) const;
 end-pr;
 
-dcl-pr logTestResult extproc('CMRUNSRV_logTestResult');
+dcl-pr writeTestReport extproc('CMRUNSRV_writeTestReport');
   testSuite       likeds(testSuite_t) const;
   testSuiteName   likeds(Object_t) const;
   testSuiteResult likeds(testSuiteResult_t);
@@ -334,6 +337,25 @@ end-pr;
 dcl-pr addErrorTestEvent int(10) extproc('CMDRUNSRV_addErrorTestEvent');
   hTestEvents    pointer const;
   errorTestEvent likeds(runtimeErrorEvent_t);
+end-pr;
+
+///
+// Builds the name of the test case as it is displayed in the XML.
+// Uses the test case name for assertion mode *FAILFIRST, otherwise
+// builds the names with template 'testName.assertProcName'.
+///
+dcl-pr buildReportTestCaseName like(string_t) extproc('CMDRUNSRV_buildReportTestCaseName');
+  testcaseResult likeds(testCaseResult_t) const;
+  abstractTestEvent likeds(abstractTestEvent_t) const;
+end-pr;
+
+///
+// Returns the number of assertions as displayed in the XML.
+// Returns the total number of assertions for assertion mode *FAILFIRST,
+// otherwise 1.
+///
+dcl-pr getReportNumAsserts int(10) extproc('CMDRUNSRV_getReportNumAsserts');
+  testcaseResult likeds(testCaseResult_t) const;
 end-pr;
 
 /include qinclude,templates

@@ -345,7 +345,7 @@ dcl-proc fail export;
   dcl-ds fc likeds(fc_t) inz;
 
   // Do not call clrAssertFailEvt() because of g_status.isRuntimeError!
-  clear g_status.abstractTestEvent;
+  clear g_status.abstractTestEvent.failure;
   g_status.abstractTestEvent.failure.outcome = TEST_CASE_FAILURE;
   g_status.abstractTestEvent.failure.logExpected = getLogValue(NO_VALUE: DT_UNDEFINED: %proc());
   g_status.abstractTestEvent.failure.logActual = getLogValue(NO_VALUE: DT_UNDEFINED: %proc());
@@ -389,14 +389,16 @@ dcl-proc doAssert export;
   if not condition;
     g_status.numFailuresCounted += 1;
 
-    // Add unconfirmed failure event.
-    // The event gets confirmed in CMDRUNSRV.runProc() if
-    // it is not monitored. Otherwise is stays in status
-    // "unconfirmed" (= monitored).
     if (g_status.isJunitStyle);
+      // Add unconfirmed failure event.
+      // The event gets confirmed in CMDRUNSRV.runProc() if
+      // it is not monitored. Otherwise is stays in status
+      // "unconfirmed" (= monitored).
       g_status.abstractTestEvent.failure.isConfirmed = *off;
     else;
-      // Flag event as confirmed in non-JUnit mode
+      // Flag event as confirmed in non-JUnit mode, because
+      // there is no chance to figure out whether or not errors
+      // of assertion statements have been monitored.
       g_status.abstractTestEvent.failure.isConfirmed = *on;
     endif;
     g_status.abstractTestEvent.failure.outcome = TEST_CASE_FAILURE;

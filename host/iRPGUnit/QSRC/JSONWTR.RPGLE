@@ -14,8 +14,6 @@
 //     >>PARM<<  OPTION(*EVENTF);
 //     >>PARM<<  DBGVIEW(*LIST);
 //   >>END-IMPORTANT<<
-//   >>CMD<<     STRREXPRC SRCMBR(A_INSTALL) SRCFILE(&LI/QBUILD) +
-//               PARM('CMPMOD &LI LIST');
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================
@@ -30,14 +28,26 @@ ctl-opt DECEDIT('0.') NOMAIN;
 /include qinclude,JSONWTR
 /include qinclude,PGMMSG
 
+// Use hex constants to define variant character in UTF-8.
+// This way RPG correctly translates the strings to the current job CCSID.
+// See: https://www.ibm.com/docs/en/i/7.5.0?topic=considerations-runtime-character-set
+dcl-c UTF8_COMMA u'002C';
+dcl-c UTF8_DOUBLE_QUOTES u'0022';
+dcl-c UTF8_LEFT_CURLY_BRACKET u'007B';
+dcl-c UTF8_RIGHT_CURLY_BRACKET u'007D';
+dcl-c UTF8_LEFT_SQUARE_BRACKET u'005B';
+dcl-c UTF8_RIGHT_SQUARE_BRACKET u'005D';
+
+dcl-s COMMA varchar(2);
+dcl-s DOUBLE_QUOTES varchar(2);
+dcl-s START_OBJECT varchar(2);
+dcl-s END_OBJECT varchar(2);
+dcl-s START_ARRAY varchar(2);
+dcl-s END_ARRAY varchar(2);
+
+// The constents below are made of invariant charcaters.
 dcl-c CRLF x'0d25';
 dcl-c TAB '    ';
-dcl-c COMMA ',';
-dcl-c DOUBLE_QUOTES '"';
-dcl-c START_OBJECT '{';
-dcl-c END_OBJECT '}';
-dcl-c START_ARRAY '[';
-dcl-c END_ARRAY ']';
 dcl-c DELIMITER ':';
 
 dcl-ds g_status qualified inz;
@@ -48,6 +58,9 @@ dcl-ds g_status qualified inz;
   json_isPrettyPrint  ind inz(*on);
 end-ds;
 
+//----------------------------------------------------------------------
+// Initializes the Json object builder.
+//----------------------------------------------------------------------
 dcl-proc Json_clear export;
   dcl-pi *n;
     value        varchar(50000) options(*varsize: *nopass) const; // self-tests only!
@@ -55,6 +68,8 @@ dcl-proc Json_clear export;
     count_array  int(10) options(*nopass) const;                  // self-tests only!
     count_indent int(10) options(*nopass) const;                  // self-tests only!
   end-pi;
+
+  initVariantCharacters();
 
   clear g_status.json;
   if (%parms() >= %parmnum(value));
@@ -85,6 +100,26 @@ dcl-proc Json_clear export;
 
 end-proc;
 
+//----------------------------------------------------------------------
+// Initializes variant characters.
+// Characters are translated from UTF-8 to the job CCSID.
+//----------------------------------------------------------------------
+dcl-proc initVariantCharacters;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  COMMA = UTF8_COMMA;
+  DOUBLE_QUOTES = UTF8_DOUBLE_QUOTES;
+  START_OBJECT = UTF8_LEFT_CURLY_BRACKET;
+  END_OBJECT = UTF8_RIGHT_CURLY_BRACKET;
+  START_ARRAY = UTF8_LEFT_SQUARE_BRACKET;
+  END_ARRAY = UTF8_RIGHT_SQUARE_BRACKET;
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Enables/disables pretty print.
+//----------------------------------------------------------------------
 dcl-proc Json_setPrettyPrintEnabled export;
   dcl-pi *n ind;
     enabled  ind const;
@@ -96,6 +131,9 @@ dcl-proc Json_setPrettyPrintEnabled export;
 
 end-proc;
 
+//----------------------------------------------------------------------
+// Returns the string representation of the current Json object.
+//----------------------------------------------------------------------
 dcl-proc Json_get export;
   dcl-pi *n varchar(50000);
   end-pi;
@@ -116,6 +154,9 @@ dcl-proc Json_get export;
 
 end-proc;
 
+//----------------------------------------------------------------------
+// Starts a Json object.
+//----------------------------------------------------------------------
 dcl-proc Json_startObject export;
   dcl-pi *n;
   end-pi;
@@ -127,6 +168,9 @@ dcl-proc Json_startObject export;
 
 end-proc;
 
+//----------------------------------------------------------------------
+// Ends a Json object.
+//----------------------------------------------------------------------
 dcl-proc Json_endObject export;
   dcl-pi *n;
   end-pi;
@@ -147,6 +191,9 @@ dcl-proc Json_endObject export;
 
 end-proc;
 
+//----------------------------------------------------------------------
+// Starts a Json array.
+//----------------------------------------------------------------------
 dcl-proc Json_startArray export;
   dcl-pi *n;
   end-pi;
@@ -158,6 +205,9 @@ dcl-proc Json_startArray export;
 
 end-proc;
 
+//----------------------------------------------------------------------
+// Adds a Json key entry.
+//----------------------------------------------------------------------
 dcl-proc Json_addKey export;
   dcl-pi *n;
     key like(string_t) const;
@@ -198,6 +248,9 @@ dcl-proc Json_addKey export;
 
 end-proc;
 
+//----------------------------------------------------------------------
+// Adds a Json string value.
+//----------------------------------------------------------------------
 dcl-proc Json_addString export;
   dcl-pi *n;
     value like(string_t) const;
@@ -207,6 +260,9 @@ dcl-proc Json_addString export;
 
 end-proc;
 
+//----------------------------------------------------------------------
+// Adds a Json integer value.
+//----------------------------------------------------------------------
 dcl-proc Json_addInteger export;
   dcl-pi *n;
     integer int(20) const;
@@ -216,6 +272,9 @@ dcl-proc Json_addInteger export;
 
 end-proc;
 
+//----------------------------------------------------------------------
+// Internally used function for adding a Json value of any type.
+//----------------------------------------------------------------------
 dcl-proc addValueInternally;
   dcl-pi *n extproc(*dclcase);
     value like(string_t) const;
@@ -251,6 +310,9 @@ dcl-proc addValueInternally;
 
 end-proc;
 
+//----------------------------------------------------------------------
+// Removes the trailing coma from a given Json string.
+//----------------------------------------------------------------------
 dcl-proc removeTrailingComma;
   dcl-pi *n extproc(*dclcase);
   end-pi;
@@ -264,6 +326,9 @@ dcl-proc removeTrailingComma;
 
 end-proc;
 
+//----------------------------------------------------------------------
+// Ends a Json array.
+//----------------------------------------------------------------------
 dcl-proc Json_endArray export;
   dcl-pi *n;
   end-pi;
@@ -284,6 +349,9 @@ dcl-proc Json_endArray export;
 
 end-proc;
 
+//----------------------------------------------------------------------
+// Adds the indention when starting a new line.
+//----------------------------------------------------------------------
 dcl-proc Json_indent export;
   dcl-pi *n varchar(1024);
   end-pi;
@@ -307,6 +375,9 @@ dcl-proc Json_indent export;
 
 end-proc;
 
+//----------------------------------------------------------------------
+// Returns the last character of the current Json object.
+//----------------------------------------------------------------------
 dcl-proc Json_lastChar export;
   dcl-pi *n varchar(2);
   end-pi;
@@ -344,6 +415,9 @@ dcl-proc Json_lastChar export;
 
 end-proc;
 
+//----------------------------------------------------------------------
+// Quotes a Json value.
+//----------------------------------------------------------------------
 dcl-proc quoteJson;
   dcl-pi *n varchar(4096);
     value    like(logValue_t.value) options(*varsize) const;

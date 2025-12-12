@@ -13,8 +13,6 @@
 //  http://www.eclipse.org/legal/cpl-v10.html
 // ==========================================================================
 
-dcl-c DEFAULT_IS_JUNIT_STYLE *on;
-
 dcl-c TEST_CASE_EXECUTOR 'CMDRUNSRV_runProc';
 
 dcl-c TEST_PREFIX 'TEST';
@@ -26,6 +24,9 @@ dcl-c ORDER_REVERSE '*REVERSE';
 
 dcl-c DETAIL_BASIC '*BASIC';
 dcl-c DETAIL_ALL '*ALL';
+
+dcl-c MODE_FAIL_FIRST '*FAILFIRST';
+dcl-c MODE_ALL '*ALL';
 
 dcl-c OUTPUT_NONE '*NONE';
 dcl-c OUTPUT_ERROR '*ERROR';
@@ -61,6 +62,7 @@ dcl-c COLON u'003A';
 
 dcl-s order_t char(10) template;
 dcl-s detail_t char(10) template;
+dcl-s assertMode_t char(10) template;
 dcl-s output_t char(10) template;
 dcl-s rclrsc_t char(10) template;
 dcl-s stmf_t varchar(1024) template;
@@ -291,7 +293,6 @@ dcl-ds testCaseResult_t qualified template;
   testName         like(procNm_t);
   execTime         int(20);
   assertCnt        int(10);
-  failedMonitoredCnt int(10);
   lastErrorEvent   int(10);
   lastFailureEvent int(10);
   lastSuccessEvent int(10);

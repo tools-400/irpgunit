@@ -20,6 +20,7 @@
 
 ctl-opt DECEDIT('0.') NOMAIN;
 /define NO_DECEDIT
+/define NO_DECEDIT
 /include qinclude,H_SPEC
 
 /define COPYRIGHT_DSPEC
@@ -41,11 +42,24 @@ ctl-opt DECEDIT('0.') NOMAIN;
 
 /include qinclude,XMLWRITER
 
+// Use hex constants to define variant character in UTF-8.
+// This way RPG correctly translates the strings to the current job CCSID.
+// See: https://www.ibm.com/docs/en/i/7.5.0?topic=considerations-runtime-character-set
+dcl-c UTF8_START_CDATA u'003C0021005B00430044004100540041005B';
+dcl-c UTF8_END_CDATA u'005D005D003E';
+
+// The constents below are made of invariant charcaters.
 dcl-c CRLF x'0d25';
 dcl-c TAB '    ';
 
+dcl-s START_CDATA varchar(30);
+dcl-s END_CDATA varchar(3);
+
+dcl-s dbg_length int(10);
+
 dcl-ds g_status qualified inz;
   xmlType             like(xmlType_t);
+  isJunitStyle        ind;
   json                varchar(50000);
   json_countObject    int(10);
   json_countArray     int(10);
@@ -54,25 +68,32 @@ dcl-ds g_status qualified inz;
   json_isPrettyPrint  ind inz(*on);
 end-ds;
 
+//----------------------------------------------------------------------
+// Main entry point for writing the XML result file.
+//----------------------------------------------------------------------
 dcl-proc writeXmlFile export;
   dcl-pi *n;
-    filepath      char(1024) const;
-    testSuite     likeds(testSuite_t) const;
-    testSuiteName likeds(Object_t) const;
-    result        likeds(testSuiteResult_t) const;
-    xmlType       like(xmlType_t) const;
+    filepath        char(1024) const;
+    testSuite       likeds(testSuite_t) const;
+    testSuiteName   likeds(Object_t) const;
+    testSuiteResult likeds(testSuiteResult_t) const;
+    xmlType         like(xmlType_t) const;
+    isJunitStyle    ind const;
   end-pi;
 
   dcl-s fileHandle int(10);
   dcl-s rc int(10);
 
+  initVariantCharacters();
+
   clear g_status;
   g_status.xmlType = xmlType;
+  g_status.isJunitStyle = isJunitStyle;
 
   fileHandle = getXmlFileHandle(filepath);
-  writeHeader(fileHandle : testSuite : testSuiteName : result);
+  writeHeader(fileHandle : testSuite : testSuiteName : testSuiteResult);
   writeProperties(fileHandle);
-  writeTestCases(fileHandle : testSuite : testSuiteName : result);
+  writeTestCases(fileHandle : testSuite : testSuiteName : testSuiteResult);
   writeFooter(fileHandle);
 
   if (fileHandle >= 0);
@@ -80,7 +101,22 @@ dcl-proc writeXmlFile export;
   endif;
 end-proc;
 
+//----------------------------------------------------------------------
+// Initializes variant characters.
+// Characters are translated from UTF-8 to the job CCSID.
+//----------------------------------------------------------------------
+dcl-proc initVariantCharacters;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
 
+  START_CDATA = UTF8_START_CDATA;
+  END_CDATA = UTF8_END_CDATA;
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Opens the XML file and returns the file handle.
+//----------------------------------------------------------------------
 dcl-proc getXmlFileHandle;
   dcl-pi *n int(10);
     filePath char(1024) const;
@@ -100,7 +136,7 @@ dcl-proc getXmlFileHandle;
   flags = O_WRONLY + O_CREAT + O_TRUNC + O_CCSID +
           O_TEXTDATA + O_TEXT_CREAT;
   mode =  S_IRUSR + S_IWUSR + S_IRGRP;
-  fileHandle = open(%trimr(filePath) : flags : mode : 819 : 0);
+  fileHandle = open(%trimr(filePath) : flags : mode : 1208 : 0);
   if (fileHandle < 0);
     // could not open file handle
     errorPtr = errno();
@@ -111,7 +147,9 @@ dcl-proc getXmlFileHandle;
   return fileHandle;
 end-proc;
 
-
+//----------------------------------------------------------------------
+// Writes the XML header section.
+//----------------------------------------------------------------------
 dcl-proc writeHeader;
   dcl-pi *n;
     fileHandle int(10) const;
@@ -136,7 +174,9 @@ dcl-proc writeHeader;
   writeA(fileHandle : text : %len(%trimr(text)));
 end-proc;
 
-
+//----------------------------------------------------------------------
+// Writes the XML properties section.
+//----------------------------------------------------------------------
 dcl-proc writeProperties;
   dcl-pi *n;
     fileHandle int(10) const;
@@ -172,7 +212,9 @@ dcl-proc writeProperties;
   rc =  write(fileHandle : %addr(text : *data) : %len(text));
 end-proc;
 
-
+//----------------------------------------------------------------------
+// Writes the XML test cases section.
+//----------------------------------------------------------------------
 dcl-proc writeTestCases;
   dcl-pi *n;
     fileHandle int(10) const;
@@ -186,7 +228,6 @@ dcl-proc writeTestCases;
   dcl-s rc int(10);
   dcl-s execTime packed(15:3);
 
-  dcl-s numAsserts int(10);
   dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
 
   dcl-s maxNumEvents int(10);
@@ -197,8 +238,6 @@ dcl-proc writeTestCases;
   // Iterate the test cases...
   pTestResult = list_getNext(testSuite.testResults);
   dow (pTestResult <> *null);
-
-    numAsserts = list_size(testCaseResult.hTestEvents);
 
     execTime = testCaseResult.execTime / %dec(1000000 : 15 : 3);
 
@@ -212,8 +251,9 @@ dcl-proc writeTestCases;
 
       countEvents += 1;
 
-      text = TAB + '<testcase name="' + %trimr(testCaseResult.testName) + '" ';
-      text += 'assertions="' + %char(testCaseResult.assertCnt) + '" ';
+      text = TAB + '<testcase name="'
+                 + buildReportTestCaseName(testCaseResult: abstractTestEvent) + '" ';
+      text += 'assertions="' + %char(getReportNumAsserts(testCaseResult)) + '" ';
       text += 'classname="' + %trimr(testSuiteName.nm) + '" '; // TODO: should look which mo
       text += 'time="' + %char(execTime) + '" ';               // exports this testcase
       text += '>' + CRLF;
@@ -246,17 +286,17 @@ dcl-proc writeTestCases;
           text += TAB + TAB + '<failure message="';
           text += escapeXml(%trimr(abstractTestEvent.failure.msg));
           text += '">';
-          text += '<![CDATA[' + CRLF;
+          text += START_CDATA + CRLF;
 
           // always the first section of the <failure> element
           if (g_status.xmlType = XML_TYPE_1);
-            text += appendCallStackType1(fileHandle: abstractTestEvent.failure.pCallstk);
+            text += appendCallStackVersion1(fileHandle: abstractTestEvent.failure.pCallstk);
           else;
-            text += appendCallStackType2(fileHandle: abstractTestEvent.failure);
+            text += appendCallStackVersion2(fileHandle: abstractTestEvent.failure);
           endif;
 
           // close <failure> element
-          text += TAB + TAB + ']]>';
+          text += TAB + TAB + END_CDATA;
           text += '</failure>' + CRLF;
 
         endif;
@@ -274,8 +314,10 @@ dcl-proc writeTestCases;
   enddo;
 end-proc;
 
-
-dcl-proc appendCallStackType1;
+//----------------------------------------------------------------------
+// Builds and returns the callstack as XML.
+//----------------------------------------------------------------------
+dcl-proc appendCallStackVersion1;
   dcl-pi *n varchar(10000);
     fileHandle int(10) const;
     pCallstack  pointer const;
@@ -283,12 +325,11 @@ dcl-proc appendCallStackType1;
 
   dcl-s text varchar(10000);
 
-  text += escapeXml(buildCallStackType1(pCallstack));
+  text += escapeXml(buildCallStackVersion1(pCallstack));
 
   return text;
 
 end-proc;
-
 
 // --------------------------------------------------------
 // Produces a Json object with the following format:
@@ -315,7 +356,7 @@ end-proc;
 // }
 // --------------------------------------------------------
 //
-dcl-proc appendCallStackType2;
+dcl-proc appendCallStackVersion2;
   dcl-pi *n varchar(10000);
     fileHandle       int(10) const;
     testFailureEvent likeds(testFailureEvent_t) const;
@@ -330,11 +371,11 @@ dcl-proc appendCallStackType2;
   Json_addKey('callStack');
   Json_startArray(); // 'callstack'
 
-  buildCallStackType2(testFailureEvent.pCallstk);
+  buildCallStackVersion2(testFailureEvent.pCallstk);
 
   Json_endArray(); // 'callstack'
 
-  buildFailureValues(fileHandle: testFailureEvent);
+  appendFailureValues(fileHandle: testFailureEvent);
 
   // add diagnostic messages
   if (testFailureEvent.logExpected.type = DT_UNDEFINED or
@@ -363,7 +404,9 @@ dcl-proc appendCallStackType2;
 
 end-proc;
 
-
+//----------------------------------------------------------------------
+// Produces the 'No value' message.
+//----------------------------------------------------------------------
 dcl-proc crtNoValueMsg;
   dcl-pi *n varchar(256) extproc(*dclcase);
     name       varchar(20) const;
@@ -380,20 +423,24 @@ dcl-proc crtNoValueMsg;
 
 end-proc;
 
-
-dcl-proc buildFailureValues;
+//----------------------------------------------------------------------
+// Appends the log value (expected and actual) to the Json object.
+//----------------------------------------------------------------------
+dcl-proc appendFailureValues;
   dcl-pi *n extproc(*dclcase);
     fileHandle       int(10) const;
     testFailureEvent likeds(testFailureEvent_t) const;
   end-pi;
 
-  buildLogValue(LABEL_EXPECTED: testFailureEvent.logExpected);
-  buildLogValue(LABEL_ACTUAL: testFailureEvent.logActual);
+  appendLogValue(LABEL_EXPECTED: testFailureEvent.logExpected);
+  appendLogValue(LABEL_ACTUAL: testFailureEvent.logActual);
 
 end-proc;
 
-
-dcl-proc buildLogValue;
+//----------------------------------------------------------------------
+// Appends a log value (expected or actual) to the Json object.
+//----------------------------------------------------------------------
+dcl-proc appendLogValue;
   dcl-pi *n extproc(*dclcase);
     name     varchar(20) const;
     logValue likeds(logValue_t) const;
@@ -417,7 +464,9 @@ dcl-proc buildLogValue;
 
 end-proc;
 
-
+//----------------------------------------------------------------------
+// Writes the footer as XML.
+//----------------------------------------------------------------------
 dcl-proc writeFooter;
   dcl-pi *n;
     fileHandle int(10) const;
@@ -429,8 +478,10 @@ dcl-proc writeFooter;
   writeA(fileHandle : text : %len(%trimr(text)));
 end-proc;
 
-
-dcl-proc buildCallStackType1;
+//----------------------------------------------------------------------
+// Builds and returns a callstack version 1 item.
+//----------------------------------------------------------------------
+dcl-proc buildCallStackVersion1;
   dcl-pi *n varchar(100000);
     pCallstk pointer const;
   end-pi;
@@ -450,8 +501,10 @@ dcl-proc buildCallStackType1;
   return text;
 end-proc;
 
-
-dcl-proc buildCallStackType2;
+//----------------------------------------------------------------------
+// Builds and returns a callstack version 2 item.
+//----------------------------------------------------------------------
+dcl-proc buildCallStackVersion2;
   dcl-pi *n;
     pCallstk pointer const;
   end-pi;
@@ -472,9 +525,12 @@ dcl-proc buildCallStackType2;
 
 end-proc;
 
-
-// Using this SO answer for implementing escaping:
+//----------------------------------------------------------------------
+// Escapes a given value for beeing added to a XML string.
+//----------------------------------------------------------------------
+// Use this StackOverflow answer for implementing escaping:
 // https://stackoverflow.com/questions/1091945/what-characters-do-i-need-to-escape-in-xml-documents
+//----------------------------------------------------------------------
 dcl-proc escapeXml;
   dcl-pi *n varchar(100000);
     xml varchar(100000) const;
@@ -491,7 +547,9 @@ dcl-proc escapeXml;
   return escaped;
 end-proc;
 
-
+//----------------------------------------------------------------------
+// Resolves the library name of a given object.
+//----------------------------------------------------------------------
 dcl-proc resolveObjectPath;
   dcl-pi *n likeds(object_t);
     object likeds(Object_t) const;
@@ -541,8 +599,9 @@ dcl-proc resolveObjectPath;
   return resolvedObject;
 end-proc;
 
-
-
+//----------------------------------------------------------------------
+// Returns the name of the IBM i host.
+//----------------------------------------------------------------------
 dcl-proc getServerName;
   dcl-pi *n varchar(100) end-pi;
 

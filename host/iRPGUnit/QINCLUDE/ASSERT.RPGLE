@@ -34,8 +34,11 @@ end-pr;
 ///
 // Register the start of a program for testing purposes
 //
-// @param lib - Library name where the program resides
-// @param pgm - Program name to register
+// @param lib          - Library name where the program resides
+// @param pgm          - Program name to register
+// @param isJunitStyle - Specifies whether the test case fails on the first
+//                       failed assertion. Fails on the first failed assertion
+//                       if set to *on, otherwise continues.
 ///
 dcl-pr registerStartPgm extproc('ASSERT_registerStartPgm');
   lib char(10) const;

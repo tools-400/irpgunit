@@ -39,6 +39,9 @@
 //                            *TYPE1 - Legacy type.
 //                            *TYPE2 - Extended type designed for the 'IBM i Testing'
 //                                     VSCode plug-in.
+// @param isJunitStyle    - Specifies whether the test case fails on the first
+//                          failed assertion. Fails on the first failed assertion
+//                          if set to *on, otherwise continues.
 ///
 
 dcl-pr writeXmlFile extproc('XMLWRITER_writeXmlFile');
@@ -47,5 +50,6 @@ dcl-pr writeXmlFile extproc('XMLWRITER_writeXmlFile');
   testSuiteName   likeds(Object_t) const;
   testSuiteResult likeds(testSuiteResult_t) const;
   xmlType         like(xmlType_t) const;
+  isJunitStyle    ind const;
 end-pr;
 

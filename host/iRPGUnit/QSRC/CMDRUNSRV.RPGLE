@@ -108,13 +108,13 @@ dcl-proc runTestSuite export;
     testProcs     likeds(procNms_t) const;
     order         like(order_t) const;
     detail        like(detail_t) const;
+    assertMode    like(assertMode_t) const;
     output        like(output_t) const;
     libl          likeds(libl_t) const;
     qJobD         likeds(object_t) const;
     rclRsc        like(rclrsc_t) const;
     xmlStmf       like(stmf_t) const;
     xmlType       like(xmlType_t) const;
-    isJunitStyle  ind const;
     msg           varchar(256); // Completion message.
   end-pi;
 
@@ -132,7 +132,13 @@ dcl-proc runTestSuite export;
 
   dcl-ds xmlStmfInfo likeds(xmlStmfInfo_t) inz;
 
-  g_status.isJunitStyle = isJunitStyle;
+  if (assertMode = MODE_ALL);
+    g_status.isJunitStyle = *off;
+  else;
+    g_status.isJunitStyle = *on;
+  endif;
+
+  registerStartPgm(sds.pgmLib: sds.pgmname: g_status.isJunitStyle);
 
   MemMgr_reset();
 
@@ -180,13 +186,13 @@ dcl-proc runTestSuite export;
   testSuiteResult.assertCnt = getAssertCalled();
 
   // Return result to printer file
-  logTestResult(testSuite: qTestSuite: testSuiteResult);
+  writeTestReport(testSuite: qTestSuite: testSuiteResult);
 
   // Return result to xml file
   if (xmlStmfInfo.path <> '');
     monitor;
       writeXmlFile(xmlStmfInfo.path:
-                   testSuite: qTestSuite: testSuiteResult: xmlStmfInfo.type);
+                   testSuite: qTestSuite: testSuiteResult: xmlStmfInfo.type: g_status.isJunitStyle);
       xmlStmfMsg = 'Created XML file (' + xmlStmfInfo.type + '): ' + xmlStmfInfo.path;
       sndInfoMsg(xmlStmfMsg);
       xmlStmfMsg = '';
@@ -246,7 +252,7 @@ end-proc;
 //----------------------------------------------------------------------
 // Logs the test result to a printer file.
 //----------------------------------------------------------------------
-dcl-proc logTestResult export;
+dcl-proc writeTestReport export;
   dcl-pi *N;
     testSuite       likeds(testSuite_t) const;
     testSuiteName   likeds(Object_t) const;
@@ -271,7 +277,8 @@ dcl-proc logTestResult export;
 
       when (abstractTestEvent.outcome = TEST_CASE_FAILURE);
         // Log confirmed failure events only. Unconfirmed
-        // events had been monitored.
+        // events have been monitored, e.g.:
+        //    callp(E) assert()
         if (abstractTestEvent.failure.isConfirmed);
           logFailure(testCaseResult.testName: abstractTestEvent.failure);
         endif;
@@ -418,10 +425,6 @@ dcl-proc runTestProc export;
   dcl-s startTime timestamp;
   dcl-s endTime timestamp;
 
-  dcl-s i int(10);
-  dcl-s listSize int(10);
-  dcl-s idx int(10);
-  dcl-ds abstractTestEventDisposed likeds(abstractTestEvent_t) based(pAbstractTestEventDisposed);
   dcl-ds testSuccessEvent likeds(testSuccessEvent_t) inz;
 
   testCaseResult = initTestResult(TEST_CASE_SUCCESS: testCase.procnm);
@@ -449,28 +452,10 @@ dcl-proc runTestProc export;
     testCaseResult.exectime = %diff(endTime: startTime: *mseconds);
   endif;
 
-  // Validate the events returned by the test case and
-  // remove monitored failure events and success events.
-  if (g_status.isJunitStyle);
-    if (list_size(testCaseResult.hTestEvents) > 0);
-      // dispose or flag failed assertions that have been ignored
-      listSize = list_size(testCaseResult.hTestEvents);
-      idx = listSize; // = start deleting with the last element of the list
-      for i = 1 to listSize; // test each element
-        pAbstractTestEventDisposed = list_get(testCaseResult.hTestEvents: idx - 1);
-        select;
-        when (abstractTestEventDisposed.outcome = TEST_CASE_SUCCESS);
-          disposeTestEvent(testCaseResult.hTestEvents: idx);
-        when (abstractTestEventDisposed.outcome = TEST_CASE_FAILURE);
-          // dispose failure event and remove it from the list
-          if (not abstractTestEventDisposed.failure.isConfirmed);
-            // handleFailure(testSuiteResult); TODO: count unconfirmed failure events
-            disposeTestEvent(testCaseResult.hTestEvents: idx);
-          endif;
-        endsl;
-        idx -= 1;
-      endfor;
-    endif;
+  if (g_status.isJUnitStyle);
+    discardUnneededTestEvents(testCaseResult.hTestEvents);
+  else;
+    updateTestCaseOutcome(testCaseResult);
   endif;
 
   if (g_status.isJunitStyle and testCaseResult.outcome = TEST_CASE_SUCCESS);
@@ -491,6 +476,69 @@ dcl-proc runTestProc export;
 
 end-proc;
 
+//----------------------------------------------------------------------
+// Removed unneded test events, such as unconfirmed failure events
+// and all success events.
+//----------------------------------------------------------------------
+dcl-proc discardUnneededTestEvents;
+  dcl-pi *n extproc(*dclcase);
+    hTestEvents pointer const;
+  end-pi;
+
+  dcl-s i int(10);
+  dcl-s listSize int(10);
+  dcl-s idx int(10);
+
+  dcl-ds abstractTestEventDisposed likeds(abstractTestEvent_t) based(pAbstractTestEventDisposed);
+
+  listSize = list_size(hTestEvents);
+
+  idx = listSize;
+  for i = 1 to listSize;
+    pAbstractTestEventDisposed = list_get(hTestEvents: idx - 1);
+    select;
+    when (abstractTestEventDisposed.outcome = TEST_CASE_SUCCESS);
+      disposeTestEvent(hTestEvents: idx);
+    when (abstractTestEventDisposed.outcome = TEST_CASE_FAILURE);
+      // dispose failure event and remove it from the list
+      if (not abstractTestEventDisposed.failure.isConfirmed);
+        disposeTestEvent(hTestEvents: idx);
+      endif;
+    endsl;
+    idx -= 1;
+  endfor;
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Iterates the test events and determines the final outcome.
+//----------------------------------------------------------------------
+dcl-proc updateTestCaseOutcome;
+  dcl-pi *n extproc(*dclcase);
+    testCaseResult likeds(testCaseResult_t);
+  end-pi;
+
+  dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
+
+  if (testCaseResult.outcome = TEST_CASE_ERROR);
+    return;
+  endif;
+
+  list_resetIteration(testCaseResult.hTestEvents);
+  pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
+  dow (pAbstractTestEvent <> *null);
+    select;
+    when (abstractTestEvent.outcome = TEST_CASE_SUCCESS);
+      testCaseResult.outcome = TEST_CASE_SUCCESS;
+      testCaseResult.lastSuccessEvent = abstractTestEvent.index;
+    when (abstractTestEvent.outcome = TEST_CASE_FAILURE);
+      testCaseResult.outcome = TEST_CASE_FAILURE;
+      testCaseResult.lastFailureEvent = abstractTestEvent.index;
+    endsl;
+    pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
+  enddo;
+
+end-proc;
 
 //----------------------------------------------------------------------
 // Run a setup, teardown or test procedure. See prototype.
@@ -571,7 +619,6 @@ dcl-proc initTestResult export;
   testCaseResult.testName = testName;
   testCaseResult.execTime = 0;
   testCaseResult.assertCnt = 0;
-  testCaseResult.failedMonitoredCnt = 0;
   testCaseResult.lastErrorEvent = 0;
   testCaseResult.lastFailureEvent = 0;
   testCaseResult.lastSuccessEvent = 0;
@@ -1183,6 +1230,58 @@ dcl-proc addErrorTestEvent export;
                : errorTestEventUpdated.index - 1);
 
   return errorTestEventUpdated.index;
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Builds the name of the test case as it is displayed in the XML.
+// Uses the test case name for assertion mode *FAILFIRST, otherwise
+// builds the names with template 'testName.assertProcName'.
+//----------------------------------------------------------------------
+dcl-proc buildReportTestCaseName export;
+  dcl-pi *n like(string_t);
+    testcaseResult likeds(testCaseResult_t) const;
+    abstractTestEvent likeds(abstractTestEvent_t) const;
+  end-pi;
+
+  dcl-s assertProcName like(assertProcNm_t);
+
+  select;
+  when (abstractTestEvent.outcome = TEST_CASE_SUCCESS);
+    assertProcName = abstractTestEvent.success.assertProc;
+  when (abstractTestEvent.outcome = TEST_CASE_FAILURE);
+    assertProcName = abstractTestEvent.failure.assertProc;
+  other;
+    assertProcName = '';
+  endsl;
+
+  if (g_status.isJunitStyle or assertProcName = '');
+    return %trimr(testCaseResult.testName);
+  else;
+    return %trimr(testCaseResult.testName) + '.' + abstractTestEvent.failure.assertProc;
+  endif;
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Returns the number of assertions as displayed in the XML.
+// Returns the total number of assertions for assertion mode *FAILFIRST,
+// otherwise 1.
+//----------------------------------------------------------------------
+dcl-proc getReportNumAsserts export;
+  dcl-pi *n int(10);
+    testcaseResult likeds(testCaseResult_t) const;
+  end-pi;
+
+  dcl-s numAssertions int(10);
+
+  if (g_status.isJunitStyle);
+    numAssertions = testCaseResult.assertCnt;
+  else;
+    numAssertions = 1;
+  endif;
+
+  return numAssertions;
 
 end-proc;
 

@@ -36,20 +36,21 @@
 //                                 element '<failure>'. The Json object includes
 //                                 the stack trace as well as the 'expected' and
 //                                 'actual' test values.
+// @param gi_assertMode - Mode of how assertions are processed (*FAILFIRST, *ALL)
 ///
 dcl-pr pgmrmt extpgm('PGMRMT');
-  go_returnCode   int(10);
-  gi_qUserSpace   likeds(object_t) const;
-  gi_qTestSuite   likeds(object_t) const;
-  gi_testProcs    likeds(procNms_t) const;
-  gi_order        like(order_t) const;
-  gi_detail       like(detail_t) const;
-  gi_output       like(output_t) const;
-  gi_libL         likeds(libl_t) const;
-  gi_qJobD        likeds(object_t) const;
-  gi_rclRsc       like(rclrsc_t) const;
-  gi_xmlStmf      like(stmf_fl_t) options(*nopass) const;
-  gi_xmlType      like(xmlType_fl_t) options(*nopass) const;
-  gi_isJUnitStyle ind options(*nopass) const;
+  go_returnCode int(10);
+  gi_qUserSpace likeds(object_t) const;
+  gi_qTestSuite likeds(object_t) const;
+  gi_testProcs  likeds(procNms_t) const;
+  gi_order      like(order_t) const;
+  gi_detail     like(detail_t) const;
+  gi_output     like(output_t) const;
+  gi_libL       likeds(libl_t) const;
+  gi_qJobD      likeds(object_t) const;
+  gi_rclRsc     like(rclrsc_t) const;
+  gi_xmlStmf    like(stmf_fl_t) options(*nopass) const;
+  gi_xmlType    like(xmlType_fl_t) options(*nopass) const;
+  gi_assertMode like(assertMode_t) options(*nopass) const;
 end-pr;
 

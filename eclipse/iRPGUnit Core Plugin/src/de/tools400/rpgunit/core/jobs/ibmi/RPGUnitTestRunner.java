@@ -167,9 +167,15 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
     private static final int PARM_XML_TYPE = 11;
 
     /**
+     * Mode of executing assertions, 13. parameter of the test suite driver
+     * program.
+     */
+    private static final int PARM_ASSERT_MODE = 12;
+
+    /**
      * Number of parameters of the remote test driver program.
      */
-    private static final int PARM_NUM_ENTRIES = 12;
+    private static final int PARM_NUM_ENTRIES = 13;
 
     /*
      * User space: Properties of the user space object.
@@ -575,6 +581,9 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
 
         // Parameter 12: XML type
         parameter[PARM_XML_TYPE] = produceStringParameter(Preferences.getInstance().getXmlType(), 10);
+
+        // Parameter 13: Assert Mode
+        parameter[PARM_ASSERT_MODE] = produceStringParameter(Preferences.getInstance().getAssertMode(), 10);
 
         return parameter;
     }

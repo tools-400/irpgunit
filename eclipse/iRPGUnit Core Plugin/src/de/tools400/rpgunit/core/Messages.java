@@ -139,6 +139,8 @@ public class Messages extends NLS {
     public static String PreferencesPage2_lblProductLibrary_choice;
     public static String PreferencesPage2_lblReportDetail_text;
     public static String PreferencesPage2_cboReportDetail_toolTipText;
+    public static String PreferencesPage2_lblReportAssertMode_text;
+    public static String PreferencesPage2_cboReportAssertMode_toolTipText;
     public static String PreferencesPage2_lblCreateReport_text;
     public static String PreferencesPage2_cboCreateReport_toolTipText;
     public static String PreferencesPage2_lblReclaimResources_text;
