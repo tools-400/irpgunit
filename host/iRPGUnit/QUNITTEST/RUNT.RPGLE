@@ -145,13 +145,13 @@ on-exit;
 
 end-proc;
 
-// TODO: fix "Event type 'S' does not match type: F"
+
 dcl-proc test_runTestProc_failureInTest export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
   dcl-ds testResult likeds(testCaseResult_t);
-  dcl-ds testFailureEvent likeds(testFailureEvent_t);
+  dcl-ds abstractTestEvent likeds(abstractTestEvent_t) inz;
 
   dcl-ds callstkEnt likeds(callstkEnt_t) inz;
 
@@ -169,7 +169,7 @@ dcl-proc test_runTestProc_failureInTest export;
 
   testResult = runTestProc(g_testProc: noSetUp: noTearDown);
 
-  testFailureEvent = getLastFailureEvent(testResult);
+  abstractTestEvent = getLastTestEvent(testResult);
 
   // save test result before destroying it
   testResultControl = testResult;
@@ -184,14 +184,27 @@ dcl-proc test_runTestProc_failureInTest export;
 
   // Controls.
 
-  Callstack_resetIteration(testFailureEvent.pCallstk);
-  Callstack_getNext(testFailureEvent.pCallstk: callstkEnt);
+  Callstack_resetIteration(abstractTestEvent.failure.pCallstk);
+  Callstack_getNext(abstractTestEvent.failure.pCallstk: callstkEnt);
 
   aEqual('test_fail was called': g_execTrace(1));
   aEqual(TEST_CASE_FAILURE: testResultControl.outcome);
-  aEqual('My Failure Message': testFailureEvent.msg);
+  aEqual('My Failure Message': abstractTestEvent.failure.msg);
   iEqual(1: callstkEnt.level);
   aEqual('test_fail': callstkEnt.qStmt.procNm);
+
+end-proc;
+
+dcl-proc getLastTestEvent;
+  dcl-pi *n likeds(abstractTestEvent_t) extproc(*dclcase);
+    testCaseResult likeds(testCaseResult_t) const;
+  end-pi;
+
+  dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
+
+  pAbstractTestEvent = list_getLast(testCaseResult.hTestEvents);
+
+  return abstractTestEvent;
 
 end-proc;
 
@@ -395,7 +408,7 @@ dcl-proc test_runTestProc_tearDownAfterFailureInTest export;
 
 end-proc;
 
-// TODO: fix "Unexpected failure event type: E"
+
 dcl-proc test_runTestProc_tearDownAfterErrorInSetup export;
   dcl-pi *n extproc(*dclcase);
   end-pi;

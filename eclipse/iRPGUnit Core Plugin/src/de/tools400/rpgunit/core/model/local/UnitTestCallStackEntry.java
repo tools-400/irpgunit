@@ -25,7 +25,7 @@ public class UnitTestCallStackEntry extends AbstractUnitTestObject implements IU
     private static final String PROPERTY_ID_PROGRAM_LIBRARY = "programLibrary"; //$NON-NLS-1$
     private static final String PROPERTY_ID_PROGRAM = "program"; //$NON-NLS-1$
 
-    private UnitTestCase unitTestCase;
+    private UnitTestCaseEvent unitTestCaseEvent;
 
     private String program;
     private String programLibrary;
@@ -42,7 +42,7 @@ public class UnitTestCallStackEntry extends AbstractUnitTestObject implements IU
 
     public UnitTestCallStackEntry(String aProgram, String aProgramLibrary, String aModule, String aModuleLibrary, String aProcedure,
         String aStatementNumber, String aSourceFile, String aSourceLibrary, String aSourceMember) {
-        unitTestCase = null;
+        unitTestCaseEvent = null;
         program = aProgram.trim();
         programLibrary = aProgramLibrary.trim();
         module = aModule.trim();
@@ -58,7 +58,7 @@ public class UnitTestCallStackEntry extends AbstractUnitTestObject implements IU
 
     public UnitTestCallStackEntry(String aProgram, String aProgramLibrary, String aModule, String aModuleLibrary, String aProcedure,
         String aStatementNumber, String aSourceStreamFile) {
-        unitTestCase = null;
+        unitTestCaseEvent = null;
         program = aProgram.trim();
         programLibrary = aProgramLibrary.trim();
         module = aModule.trim();
@@ -72,12 +72,12 @@ public class UnitTestCallStackEntry extends AbstractUnitTestObject implements IU
         editableSource = null;
     }
 
-    public void setUnitTestCase(UnitTestCase aUnitTestCase) {
-        unitTestCase = aUnitTestCase;
+    public void setUnitTestCaseEvent(UnitTestCaseEvent aUnitTestCaseEvent) {
+        unitTestCaseEvent = aUnitTestCaseEvent;
     }
 
-    public UnitTestCase getUnitTestCase() {
-        return unitTestCase;
+    public UnitTestCaseEvent getUnitTestCaseEvent() {
+        return unitTestCaseEvent;
     }
 
     private boolean isSourceStreamFile() {
@@ -99,6 +99,7 @@ public class UnitTestCallStackEntry extends AbstractUnitTestObject implements IU
     @Override
     public IEditableSource getEditableSource() {
         if (editableSource == null) {
+            UnitTestCase unitTestCase = unitTestCaseEvent.getUnitTestCase();
             if (isSourceStreamFile()) {
                 editableSource = EditableSourceStreamFile.getSourceStreamFile(unitTestCase.getServiceprogram().getLibrary().getConnection(),
                     sourceStreamFile);

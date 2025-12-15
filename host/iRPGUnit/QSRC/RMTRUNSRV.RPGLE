@@ -24,19 +24,33 @@ ctl-opt nomain;
 
 // User space version number 1. Introduced 22.04.2013.
 // Changed because of enhancements for RPGUnit plug-in.
+// @ignore-unused
 dcl-c version_1 1;
+
 // User space version number 2. Introduced 10.10.2016.
 // Changed exception message to varsize up to 1024 bytes.
+// @ignore-unused
 dcl-c version_2 2;
+
 // User space version number 3. Introduced 23.04.2017.
 // Added 'tmpl_testSuite.numTestCasesRtn'.
+// @ignore-unused
 dcl-c version_3 3;
+
 // User space version number 4. Introduced 09.04.2024.
 // Added message 'receiver' and program library name.
+// @ignore-unused
 dcl-c version_4 4;
-// User space version number 4. Introduced 03.10.2025.
+
+// User space version number 5. Introduced 03.10.2025.
 // Added message 'expected' and 'actual' values.
+// @ignore-unused
 dcl-c version_5 5;
+
+// User space version number 6. Introduced 13.12.2025.
+// Added option for processing all assertions. Added
+// assertion events as children of test cases.
+dcl-c version_6 6;
 
 //-------------------------------------------------------------------------
 // Prototypes
@@ -65,143 +79,70 @@ dcl-c version_5 5;
 // Type Templates
 //-------------------------------------------------------------------------
 dcl-ds tmpl_testSuite len(256) qualified template;
-  length          int(10);
-  version         int(10);
-  testSuite       likeds(object_t);
-  numRuns         int(10);
-  numAsserts      int(10);
-  numFailures     int(10);
-  numErrors       int(10);
-  offsTestCases   int(10);
-  numTestCases    int(10);
-  system          char(10);
-  splf_name       char(10);
-  splf_nbr        int(10);
-  job_name        char(10);
-  job_user        char(10);
-  job_nbr         char(6);
-  qSrcMbr         likeds(srcMbr_t);
-  numTestCasesRtn int(10);
+  length            int(10);
+  version           int(10);
+  testSuite         likeds(object_t);
+  numRuns           int(10);
+  numAsserts        int(10);
+  numFailures       int(10);
+  numErrors         int(10);
+  offsFirstTestCase int(10);
+  numTestCases      int(10);
+  system            char(10);
+  splf_name         char(10);
+  splf_nbr          int(10);
+  job_name          char(10);
+  job_user          char(10);
+  job_nbr           char(6);
+  qSrcMbr           likeds(srcMbr_t);
+  numTestCasesRtn   int(10);
   // added 15.5.2025
-  typeOfSrc       char(10);
-  offsSrcStmf     int(10);
-  lenSrcStmf      int(10);
-  reserved_1       char(102);
+  typeOfSrc         char(10);
+  offsSrcStmf       int(10);
+  lenSrcStmf        int(10);
+  reserved_1        char(102);
 end-ds;
 
-dcl-ds tmpl_testCase_v3 len(1160) qualified template;
-  length           int(10);
-  result           char(1);
-  reserved_1       char(1);
-  specNb           char(10);
-  numberAssertions int(10);
-  numCallStkEnt    int(10);
-  offsCallStkEnt   int(10);
-  offsNext         int(10);
-  lenTestCase      int(5);
-  lenExcpMessage   int(5);
-  testCase         char(100);
-  excpMessage      char(1024);
+dcl-ds tmpl_testCase_v5 len(34) qualified template;
+  offsNextEntry          int(10);
+  lenEntry               int(5);
+  outcome                char(1);
+  reserved_1             char(1);
+  numAsserts             int(10);
+  execTime               int(20);
+  offsTestCaseText       int(10);
+  lenTestCaseText        int(5);
+  numTestCaseEvents      int(10);
+  offsFirstTestCaseEvent int(10);
 end-ds;
 
-dcl-s tmpl_execTime_v3 int(20) template;
-
-dcl-ds tmpl_callStkEnt_v3 len(354) qualified template;
-  qPgm            likeds(object_t);
-  qMod            likeds(object_t);
-  specNb          char(10);
-  length          int(10);
-  offsNext        int(10);
-  reserved_1      char(8);
-  lenProcNm       int(5);
-  procNm          char(256);
-  qSrcMbr         likeds(srcMbr_t);
-end-ds;
-
-dcl-ds tmpl_sender_v3 len(308) qualified template;
-  qPgm            likeds(object_t);
-  qMod            likeds(object_t);
-  specNb          char(10);
-  lenProcNm       int(5);
-  procNm          char(256);
-end-ds;
-
-dcl-ds tmpl_receiver_v3 likeds(tmpl_sender_v3) template;
-
-dcl-ds tmpl_testCase_v4 len(50) qualified template;
-  offsNextEntry    int(10);
+dcl-ds tmpl_testCaseEvent_v5 len(46) qualified template;
+  outcome          char(1);
+  reserved_2       char(1);
   lenEntry         int(5);
-  result           char(1);
-  reserved_1       char(1);
-  numAsserts       int(10);
-  execTime         int(20);
-  offsTestCaseText int(10);
-  lenTestCaseText  int(5);
+  offsNextEntry    int(10);
+  offsAssertProcNm int(10);
+  lenAssertProcNm  int(5);
+  // runtimeErrorEvent
   offsExcpMsg      int(10);
   lenExcpMsg       int(5);
   offsSndInf       int(10);
   lenSndInf        int(5);
   offsRcvInf       int(10);
   lenRcvInf        int(5);
+  // testFailureEvent
   offsCallStkE     int(10);
   numCallStkE      int(5);
-end-ds;
-
-dcl-ds tmpl_callStkEnt_v4 len(122) qualified template;
-  offsNextEntry    int(10);
-  lenEntry         int(5);
-  qPgm             likeds(object_t);
-  qMod             likeds(object_t);
-  specNb           char(10);
-  offsProcNm       int(10);
-  lenProcNm        int(5);
-  qSrcMbr          likeds(srcMbr_t);
-  // added 15.5.2025
-  typeOfSrc       char(10);
-  offsSrcStmf     int(10);
-  lenSrcStmf      int(10);
-end-ds;
-
-dcl-ds tmpl_sender_v4 len(58) qualified template;
-  lenEntry         int(5);
-  qPgm             likeds(object_t);
-  qMod             likeds(object_t);
-  specNb           char(10);
-  offsProcNm       int(10);
-  lenProcNm        int(5);
-  // TODO: add qualified source member (information not (yet?) available in callstack)
-end-ds;
-
-dcl-ds tmpl_receiver_v4 likeds(tmpl_sender_v4) template;
-
-dcl-ds tmpl_testCase_v5 len(58) qualified template;
-  offsNextEntry    int(10);
-  lenEntry         int(5);
-  result           char(1);
-  reserved_1       char(1);
-  numAsserts       int(10);
-  execTime         int(20);
-  offsTestCaseText int(10);
-  lenTestCaseText  int(5);
-  offsExcpMsg      int(10);
-  lenExcpMsg       int(5);
-  offsSndInf       int(10);
-  lenSndInf        int(5);
-  offsRcvInf       int(10);
-  lenRcvInf        int(5);
-  offsCallStkE     int(10);
-  numCallStkE      int(5);
-  offsExpected     int(10); // offset from the start of user space
-  offsActual       int(10); // offset from the start of user space
-  // logExpected      likeds(tmpl_logValue_v5); // added, is available
-  // expectedValue    char(*)
-  // logActual        likeds(tmpl_logValue_v5); // added, is available
-  // actualValue      char(*)
+  // testFailureEvent & testSuccessEvent
+  offsExpected     int(10);
+  offsActual       int(10);
+  // logExpected      likeds(tmpl_logValue_v5);
+  // logActual        likeds(tmpl_logValue_v5);
 end-ds;
 
 dcl-ds tmpl_logValue_v5 len(23) qualified template;
   lenEntry         int(5);
-  length           int(5);
+  lenValue         int(5);
   originalLength   int(5);
   offsDataType     int(10);
   lenDataType      int(5);
@@ -244,7 +185,7 @@ dcl-ds tmpl_receiver_v5 likeds(tmpl_sender_v5) template;
 // Module Status
 //-------------------------------------------------------------------------
 dcl-ds g_status qualified;
-  version   int(10) inz(version_5);
+  version   int(10) inz(version_6);
 end-ds;
 
 //-------------------------------------------------------------------------
@@ -267,14 +208,12 @@ dcl-proc fillUserSpace export;
   dcl-ds srcInf likeds(srcInf_t) inz;
   dcl-ds header likeds(tmpl_testSuite) based(usPtr);
   dcl-s header_SrcStmf char(1024) based(pHeader_SrcStmf); // varying-length portion of 'header'
-  dcl-ds testCaseResult likeds(testCaseResult_t) based(ptr);
+// @ignore-unused
+///  dcl-ds testCaseV5 likeds(tmpl_testCase_v5) based(pTestCase);
+  dcl-s offsCurrentTestCase int(10);
+  dcl-ds testCaseResult likeds(testCaseResult_t) based(pTestCaseResult);
   dcl-ds errorCode likeds(errorCode_t) inz(*likeds);
-  dcl-s oldlength int(10);
-  dcl-ds testCaseV3 likeds(tmpl_testCase_v3) based(pTestCase);
-  dcl-ds testCaseV4 likeds(tmpl_testCase_v4) based(pTestCase);
-  dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
-  dcl-s maxNumEvents int(10);
-  dcl-s countEvents int(10);
+  dcl-s lenTestCaseEntry int(10);
 
   clear errorCode;
   errorCode.bytPrv = 0;
@@ -304,7 +243,6 @@ dcl-proc fillUserSpace export;
   header.numAsserts = testSuiteResult.assertCnt;
   header.numFailures = testSuiteResult.failureCnt;
   header.numErrors = testSuiteResult.errorCnt;
-  header.offsTestCases = header.length;
   header.numTestCases = testSuite.testCasesCnt;
 
   header.system = splf.system;
@@ -323,409 +261,48 @@ dcl-proc fillUserSpace export;
      pHeader_SrcStmf = %addr(header) + %size(header);
      header_SrcStmf = %subst(srcInf.stmf: 1: %len(srcInf.stmf));
      header.length += header.lenSrcStmf;
-     header.offsTestCases += header.lenSrcStmf;
   else;
      header.qSrcMbr = srcInf.mbr;
      header.offsSrcStmf = 0;
      header.lenSrcStmf = 0;
   endif;
 
+  header.offsFirstTestCase = header.length;
+
   header.numTestCasesRtn = 0;
   header.reserved_1 = *blank;
 
+  offsCurrentTestCase = header.offsFirstTestCase;
+
   list_resetIteration(testSuite.testResults);
-  ptr = list_getnext(testSuite.testResults);
-
-  pTestCase = usPtr + header.offsTestCases;
-
-  dow (ptr <> *null);
+  pTestCaseResult = list_getnext(testSuite.testResults);
+  dow (pTestCaseResult <> *null);
 
     header.numTestCasesRtn += 1;
 
-    oldlength = header.length;
+    lenTestCaseEntry = createV6TestCase(usPtr: testCaseResult: offsCurrentTestCase);
 
-    maxNumEvents = 1; // TODO: legacy beaviour like JUnit
-    countEvents = 0;
+    header.length += lenTestCaseEntry;
+    offsCurrentTestCase = header.length;
 
-    pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
-    dow (pAbstractTestEvent <> *null);
-
-      countEvents += 1;
-
-      select;
-      when g_status.version >= version_5;
-        header.length += createV5TestCase(usPtr: testCaseResult: pTestCase: abstractTestEvent);
-      when g_status.version >= version_4;
-        header.length += createV4TestCase(usPtr: testCaseResult: pTestCase: abstractTestEvent);
-      other;
-        header.length += createV3TestCase(usPtr: testCaseResult: pTestCase: abstractTestEvent);
-      endsl;
-
-      pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
-    enddo;
-
-    ptr = list_getnext(testSuite.testResults);
-    if (ptr <> *null);
-      pTestCase = pTestCase - oldlength + header.length;
-    endif;
-
+    pTestCaseResult = list_getnext(testSuite.testResults);
   enddo;
 
-  select;
-  when g_status.version >= version_5;
-    testCaseV4.offsNextEntry = 0;
-  when g_status.version >= version_4;
-    testCaseV4.offsNextEntry = 0;
-  other;
-    testCaseV3.offsNext = 0;
-  endsl;
-
 end-proc;
 
 // ==========================================================================
-//  Create user space with version 2 layout.
+//  Create user space with version 6 layout.
 // ==========================================================================
-dcl-proc createV3TestCase;
+dcl-proc createV6TestCase;
   dcl-pi *N int(10) extproc(*dclcase);
     usPtr             pointer value;
     testCaseResult    likeds(testCaseResult_t) value;
-    ePtr              pointer value;
-    abstractTestEvent likeds(abstractTestEvent_t) const;
+    offsTestCase      int(10) const;
   end-pi;
 
-  dcl-ds entry likeds(tmpl_testCase_v3) based(ePtr);
-  dcl-s execTime like(tmpl_execTime_v3) based(pExecTime);
-
-  dcl-ds srcInf likeds(srcInf_t) inz;
-  dcl-ds stackEntry likeds(tmpl_callStkEnt_v3) based(sPtr);
-  dcl-ds callstkEnt likeds(callstkEnt_t) inz;
-
-  dcl-ds testFailureEvent likeds(testFailureEvent_t) inz;
-  dcl-ds runtimeErrorEvent likeds(runtimeErrorEvent_t) inz;
-
-  clear entry;
-  entry.lenTestCase = %len(testCaseResult.testname);
-  entry.testCase = testCaseResult.testname;
-  entry.result = testCaseResult.outcome;
-  entry.numberAssertions = testCaseResult.assertCnt;
-
-  select;
-  when (testCaseResult.outcome = TEST_CASE_ERROR);
-
-    runtimeErrorEvent = getLastErrorEvent(testCaseResult);
-
-    entry.lenExcpMessage = min(%len(runtimeErrorEvent.msg.txt): %len(entry.excpMessage));
-    entry.excpMessage = runtimeErrorEvent.msg.txt;
-    if (runtimeErrorEvent.msg.qSndStmt.specnb <> '');
-      entry.specNb = runtimeErrorEvent.msg.qSndStmt.specnb;
-    else;
-      entry.specNb = NO_VALUE;
-    endif;
-    pExecTime = %addr(entry.excpMessage) + entry.lenExcpMessage;
-    execTime = -1;
-    entry.length = %size(entry) + entry.lenExcpMessage + %size(execTime);
-    entry.offsNext = (%addr(entry) - usPtr) + entry.length;
-    entry.offsCallStkEnt = entry.offsNext;
-    entry.numCallStkEnt = 0;
-
-    // Add callstack entry of exception message
-    sPtr = usPtr + entry.offsNext;
-
-    stackEntry.qPgm = runtimeErrorEvent.msg.qSndStmt.qpgm;
-    stackEntry.qMod = runtimeErrorEvent.msg.qSndStmt.qmod;
-    stackEntry.specNb = runtimeErrorEvent.msg.qSndStmt.specnb;
-    stackEntry.procNm = runtimeErrorEvent.msg.qSndStmt.procnm;
-    stackEntry.lenProcNm = %len(runtimeErrorEvent.msg.qSndStmt.procnm);
-
-    stackEntry.length = %size(stackEntry);
-    stackEntry.offsNext = (sPtr - usPtr) + stackEntry.length;
-
-    entry.length += stackEntry.length;
-    entry.offsNext += stackEntry.length;
-    entry.numCallStkEnt += 1;
-
-  when (testCaseResult.outcome = TEST_CASE_FAILURE);
-
-    testFailureEvent = getLastFailureEvent(testCaseResult);
-
-    entry.lenExcpMessage = min(%len(testFailureEvent.msg): %len(entry.excpMessage));
-    entry.excpMessage = testFailureEvent.msg;
-
-    callstkEnt = Callstack_get(testFailureEvent.pCallstk: 1);
-    entry.specNb = callstkEnt.qstmt.specNb;
-
-    pExecTime = %addr(entry.excpMessage) + entry.lenExcpMessage;
-    execTime = -1;
-    entry.length = %size(entry) + entry.lenExcpMessage + %size(execTime);
-    entry.offsNext = (%addr(entry) - usPtr) + entry.length;
-    entry.offsCallStkEnt = entry.offsNext;
-
-    Callstack_resetIteration(testFailureEvent.pCallstk);
-    dow (Callstack_getNext(testFailureEvent.pCallstk: callstkEnt));
-
-      entry.numCallStkEnt += 1;
-
-      sPtr = usPtr + entry.offsNext;
-
-      stackEntry.qPgm = callstkEnt.qstmt.qPgm;
-      stackEntry.qMod = callstkEnt.qstmt.qMod;
-      stackEntry.lenProcNm = %len(callstkEnt.qstmt.procNm);
-      stackEntry.procNm = callstkEnt.qstmt.procNm;
-      stackEntry.specNb = callstkEnt.qstmt.specNb;
-
-      // TODO: add source stream file path to 'stackEntry'
-      srcInf = SrcMbr_getModSrc(stackEntry.qPgm: stackEntry.qMod);
-      stackEntry.qSrcMbr = srcInf.mbr;
-
-      stackEntry.length = %size(stackEntry);
-      stackEntry.offsNext = (sPtr - usPtr) + stackEntry.length;
-
-      entry.length += stackEntry.length;
-      entry.offsNext += stackEntry.length;
-
-    enddo;
-
-  other; // including:  TEST_CASE_SUCCESS
-    entry.lenExcpMessage = 0;
-    entry.excpMessage = '';
-    entry.specNb = '';
-    pExecTime = %addr(entry.excpMessage) + entry.lenExcpMessage;
-    execTime = testCaseResult.exectime;
-    entry.length = %size(entry) + entry.lenExcpMessage + %size(execTime);
-    entry.offsNext = (%addr(entry) - usPtr) + entry.length;
-    entry.offsCallStkEnt = 0;
-    entry.numCallStkEnt = 0;
-
-  endsl;
-
-  return entry.length;
-
-end-proc;
-
-// ==========================================================================
-//  Create user space with version 4 layout.
-// ==========================================================================
-dcl-proc createV4TestCase;
-  dcl-pi *N int(10) extproc(*dclcase);
-    usPtr             pointer value;
-    testCaseResult    likeds(testCaseResult_t) value;
-    ePtr              pointer value;
-    abstractTestEvent likeds(abstractTestEvent_t) const;
-  end-pi;
-
-  dcl-s offsEntry int(10);
-  dcl-ds entry likeds(tmpl_testCase_v4) based(ePtr);
-
-  dcl-ds srcInf likeds(srcInf_t) inz;
-  dcl-ds stackEntry likeds(tmpl_callStkEnt_v4) based(sPtr);
-  dcl-s stackEntry_SrcStmf char(1024) based(pStackEntry_SrcStmf); // var-len portion of 'header'
-  dcl-ds sender likeds(tmpl_sender_v4) based(pSender);
-  dcl-ds receiver likeds(tmpl_receiver_v4) based(pReceiver);
-  dcl-ds callstkEnt likeds(callstkEnt_t) inz;
-
-  dcl-ds testFailureEvent likeds(testFailureEvent_t) inz;
-  dcl-ds runtimErrorEvent likeds(runtimeErrorEvent_t) inz;
-
-  offsEntry = ePtr - usPtr;
-
-  clear entry;
-  entry.offsNextEntry = offsEntry + %size(entry);
-  entry.lenEntry = %size(entry);
-
-  entry.result = testCaseResult.outcome;
-  entry.reserved_1 = '';
-  entry.numAsserts = testCaseResult.assertCnt;
-  entry.execTime = testCaseResult.exectime;
-
-  // Test case text:
-  entry.offsTestCaseText = offsEntry + %size(entry);
-  entry.lenTestCaseText = %len(testCaseResult.testname);
-  memcpy(usPtr + entry.offsTestCaseText
-         : %addr(testCaseResult.testName: *data)
-         : entry.lenTestCaseText);
-
-  entry.offsNextEntry += entry.lenTestCaseText;
-  entry.lenEntry += entry.lenTestCaseText;
-
-  // Exception message:
-  entry.offsExcpMsg = entry.offsTestCaseText + entry.lenTestCaseText;
-
-
-  select;
-  when (testCaseResult.outcome = TEST_CASE_ERROR);
-
-    runtimErrorEvent = getLastErrorEvent(testCaseResult);
-
-    // Exception message:
-    entry.lenExcpMsg = %len(runtimErrorEvent.msg.txt);
-    memcpy(usPtr + entry.offsExcpMsg
-           : %addr(runtimErrorEvent.msg.txt: *data)
-           : entry.lenExcpMsg);
-
-    entry.offsNextEntry += entry.lenExcpMsg;
-    entry.lenEntry += entry.lenExcpMsg;
-
-    // Execution time:
-    entry.execTime = -1;
-
-    // Sender information:
-    entry.offsSndInf = offsEntry + entry.lenEntry;
-    entry.lenSndInf = %size(sender);
-
-    pSender = usPtr + entry.offsSndInf;
-    clear sender;
-    sender.lenEntry = %size(sender);
-    sender.qPgm = runtimErrorEvent.msg.qSndStmt.qPgm;
-    sender.qMod = runtimErrorEvent.msg.qSndStmt.qMod;
-    sender.specNb = runtimErrorEvent.msg.qSndStmt.specNb;
-    sender.offsProcNm = entry.offsSndInf + %size(sender);
-    sender.lenProcNm = %len(runtimErrorEvent.msg.qSndStmt.procNm);
-    memcpy(usPtr + sender.offsProcNm
-           : %addr(runtimErrorEvent.msg.qSndStmt.procNm: *data)
-           : entry.lenExcpMsg);
-    sender.lenEntry += sender.lenProcNm;
-
-    entry.lenSndInf += sender.lenProcNm;
-
-    entry.offsNextEntry += sender.lenEntry;
-    entry.lenEntry += sender.lenEntry;
-
-    // Receiver information:
-    entry.offsRcvInf = offsEntry + entry.lenEntry;
-    entry.lenRcvInf = %size(receiver);
-
-    pReceiver = usPtr + entry.offsRcvInf;
-    clear receiver;
-    receiver.lenEntry = %size(receiver);
-    receiver.qPgm = runtimErrorEvent.msg.qRcvStmt.qpgm;
-    receiver.qMod = runtimErrorEvent.msg.qRcvStmt.qmod;
-    receiver.specNb = runtimErrorEvent.msg.qRcvStmt.specnb;
-    receiver.offsProcNm = entry.offsRcvInf + %size(receiver);
-    receiver.lenProcNm = %len(runtimErrorEvent.msg.qRcvStmt.procnm);
-    memcpy(usPtr + receiver.offsProcNm
-           : %addr(runtimErrorEvent.msg.qRcvStmt.procNm: *data)
-           : entry.lenExcpMsg);
-
-    receiver.lenEntry += receiver.lenProcNm;
-    entry.lenRcvInf += receiver.lenProcNm;
-
-    entry.offsNextEntry += receiver.lenEntry;
-    entry.lenEntry += receiver.lenEntry;
-
-    // Call stack entries:
-    entry.offsCallStkE = 0;
-    entry.numCallStkE = 0;
-
-  when (testCaseResult.outcome = TEST_CASE_FAILURE);
-
-    testFailureEvent = getLastFailureEvent(testCaseResult);
-
-    // Failure message:
-    entry.lenExcpMsg = %len(testFailureEvent.msg);
-    memcpy(usPtr + entry.offsExcpMsg
-           : %addr(testFailureEvent.msg: *data)
-           : entry.lenExcpMsg);
-
-    entry.offsNextEntry += entry.lenExcpMsg;
-    entry.lenEntry += entry.lenExcpMsg;
-
-    // Execution time:
-    entry.execTime = -1;
-
-    // Sender information:
-    entry.offsSndInf = 0;
-    entry.lenSndInf = 0;
-
-    // Receiver information:
-    entry.offsRcvInf = 0;
-    entry.lenRcvInf = 0;
-
-    // Call stack entries:
-    entry.offsCallStkE = offsEntry + entry.lenEntry;
-    sPtr = usPtr + entry.offsCallStkE;
-
-    Callstack_resetIteration(testFailureEvent.pCallstk);
-    dow (Callstack_getNext(testFailureEvent.pCallstk: callstkEnt));
-
-      entry.numCallStkE += 1;
-
-      clear stackEntry;
-
-      stackEntry.offsNextEntry = (sPtr - usPtr) + %size(stackEntry);
-      stackEntry.lenEntry = %size(stackEntry);
-
-      stackEntry.qPgm = callstkEnt.qstmt.qpgm;
-      stackEntry.qMod = callstkEnt.qstmt.qmod;
-      stackEntry.specNb = callstkEnt.qstmt.specnb;
-
-      // TODO: add source stream file path to 'stackEntry'
-      srcInf = SrcMbr_getModSrc(stackEntry.qPgm: stackEntry.qMod);
-
-      stackEntry.typeOfSrc = srcInf.type;
-      if (stackEntry.typeOfSrc = TYPE_STMF);
-         clear stackEntry.qSrcMbr;
-         stackEntry.offsSrcStmf = (sPtr - usPtr) + stackEntry.lenEntry;
-         stackEntry.lenSrcStmf = %len(srcInf.stmf);
-         pStackEntry_SrcStmf = %addr(stackEntry) + %size(stackEntry);
-         stackEntry_SrcStmf = %subst(srcInf.stmf: 1: %len(srcInf.stmf));
-
-         stackEntry.offsNextEntry += stackEntry.lenSrcStmf;
-         stackEntry.lenEntry += stackEntry.lenSrcStmf;
-      else;
-         stackEntry.qSrcMbr = srcInf.mbr;
-         stackEntry.offsSrcStmf = 0;
-         stackEntry.lenSrcStmf = 0;
-      endif;
-
-      stackEntry.offsProcNm = (sPtr - usPtr) + stackEntry.lenEntry;
-      stackEntry.lenProcNm = %len(callstkEnt.qstmt.procnm);
-      memcpy(usPtr + stackEntry.offsProcNm
-             : %addr(callstkEnt.qStmt.procNm:*data)
-             : stackEntry.lenProcNm);
-
-      stackEntry.offsNextEntry += stackEntry.lenProcNm;
-      stackEntry.lenEntry += stackEntry.lenProcNm;
-
-      entry.lenEntry += stackEntry.lenEntry;
-      entry.offsNextEntry += stackEntry.lenEntry;
-
-      sPtr = usPtr + stackEntry.offsNextEntry;
-
-    enddo;
-
-  other; // including:  TEST_CASE_SUCCESS
-
-    entry.offsExcpMsg = 0;
-    entry.lenExcpMsg = 0;
-
-    entry.lenSndInf = 0;
-    entry.offsSndInf = 0;
-
-    entry.lenRcvInf = 0;
-    entry.offsRcvInf = 0;
-
-    entry.offsCallStkE = 0;
-    entry.numCallStkE = 0;
-
-  endsl;
-
-  return entry.lenEntry;
-
-end-proc;
-
-// ==========================================================================
-//  Create user space with version 5 layout.
-// ==========================================================================
-dcl-proc createV5TestCase;
-  dcl-pi *N int(10) extproc(*dclcase);
-    usPtr             pointer value;
-    testCaseResult    likeds(testCaseResult_t) value;
-    ePtr              pointer value;
-    abstractTestEvent likeds(abstractTestEvent_t) const;
-  end-pi;
-
-  dcl-s offsEntry int(10);
-  dcl-ds entry likeds(tmpl_testCase_v5) based(ePtr);
+  dcl-ds testCase likeds(tmpl_testCase_v5) based(pTestCase);
+  dcl-s offsTestCaseEvent int(10);
+  dcl-ds testCaseEvent likeds(tmpl_testCaseEvent_v5) based(pTestCaseEvent);
   dcl-ds logValueExpected likeds(tmpl_logValue_v5) based(pLogValueExpected);
 // @ignore-unused
   dcl-s valueExpected char(2048) based(pValueExpected);
@@ -742,307 +319,342 @@ dcl-proc createV5TestCase;
   dcl-s assertProcActual char(32) based(pAssertProcActual);
 
   dcl-ds srcInf likeds(srcInf_t) inz;
-  dcl-ds stackEntry likeds(tmpl_callStkEnt_v5) based(sPtr);
+  dcl-ds stackEntry likeds(tmpl_callStkEnt_v5) based(pStackEntry);
   dcl-s stackEntry_SrcStmf char(1024) based(pStackEntry_SrcStmf);
   dcl-ds sender likeds(tmpl_sender_v5) based(pSender);
   dcl-ds receiver likeds(tmpl_receiver_v5) based(pReceiver);
   dcl-ds callstkEnt likeds(callstkEnt_t) inz;
 
+  dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
   dcl-ds testFailureEvent likeds(testFailureEvent_t) inz;
   dcl-ds runtimeErrorEvent likeds(runtimeErrorEvent_t) inz;
+  dcl-ds testSuccessEvent likeds(testSuccessEvent_t) inz;
 
-  offsEntry = ePtr - usPtr;
+  pTestCase = usPtr + offsTestCase;
 
-  clear entry;
-  entry.offsNextEntry = offsEntry + %size(entry);
-  entry.lenEntry = %size(entry);
+  clear testCase;
+  testCase.lenEntry = %size(testCase);
 
-  entry.result = testCaseResult.outcome;
-  entry.reserved_1 = '';
-  entry.numAsserts = testCaseResult.assertCnt;
-  entry.execTime = testCaseResult.exectime;
+  testCase.outcome = testCaseResult.outcome;
+  testCase.reserved_1 = '';
+  testCase.numAsserts = testCaseResult.assertCnt;
+  testCase.execTime = testCaseResult.exectime;
 
   // Test case text:
-  entry.offsTestCaseText = offsEntry + %size(entry);
-  entry.lenTestCaseText = %len(testCaseResult.testname);
-  memcpy(usPtr + entry.offsTestCaseText
+  testCase.offsTestCaseText = offsTestCase + %size(testCase);
+  testCase.lenTestCaseText = %len(testCaseResult.testname);
+  memcpy(usPtr + testCase.offsTestCaseText
          : %addr(testCaseResult.testName: *data)
-         : entry.lenTestCaseText);
+         : testCase.lenTestCaseText);
 
-  entry.offsNextEntry += entry.lenTestCaseText;
-  entry.lenEntry += entry.lenTestCaseText;
+  testCase.lenEntry += testCase.lenTestCaseText;
 
-  // Exception message:
-  entry.offsExcpMsg = entry.offsTestCaseText + entry.lenTestCaseText;
+  testCase.numTestCaseEvents = 0;
+  testCase.offsFirstTestCaseEvent = offsTestCase + testCase.lenEntry;
+
+  offsTestCaseEvent = testCase.offsFirstTestCaseEvent;
+
+  pTestCaseEvent = usPtr + offsTestCaseEvent;
+
+  pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
+  dow (pAbstractTestEvent <> *null);
+
+    testCase.numTestCaseEvents += 1;
+
+    select;
+    when (abstractTestEvent.outcome = TEST_CASE_ERROR);
+
+      runtimeErrorEvent = abstractTestEvent.error;
+
+      testCaseEvent.lenEntry = %size(testCaseEvent);
+
+      testCaseEvent.outcome = abstractTestEvent.outcome;
+
+      // Assert procedure name:
+      testCaseEvent.offsAssertProcNm = 0;
+      testCaseEvent.lenAssertProcNm = 0;
+
+      // Exception message:
+      testCaseEvent.offsExcpMsg = offsTestCaseEvent + testCaseEvent.lenEntry;
+      testCaseEvent.lenExcpMsg = %len(runtimeErrorEvent.msg.txt);
+      memcpy(usPtr + testCaseEvent.offsExcpMsg
+             : %addr(runtimeErrorEvent.msg.txt: *data)
+             : testCaseEvent.lenExcpMsg);
+
+      testCaseEvent.lenEntry += testCaseEvent.lenExcpMsg;
+
+      // Execution time:
+      testCase.execTime = -1;
+
+      // Sender information:
+      testCaseEvent.offsSndInf = offsTestCaseEvent + testCaseEvent.lenEntry;
+      testCaseEvent.lenSndInf = %size(sender);
+
+      pSender = usPtr + testCaseEvent.offsSndInf;
+      clear sender;
+      sender.lenEntry = %size(sender);
+      sender.qPgm = runtimeErrorEvent.msg.qSndStmt.qPgm;
+      sender.qMod = runtimeErrorEvent.msg.qSndStmt.qMod;
+      sender.specNb = runtimeErrorEvent.msg.qSndStmt.specNb;
+      sender.offsProcNm = testCaseEvent.offsSndInf + %size(sender);
+      sender.lenProcNm = %len(runtimeErrorEvent.msg.qSndStmt.procNm);
+      memcpy(usPtr + sender.offsProcNm
+             : %addr(runtimeErrorEvent.msg.qSndStmt.procNm: *data)
+             : testCaseEvent.lenExcpMsg);
+
+      sender.lenEntry += sender.lenProcNm;
+
+      testCaseEvent.lenSndInf += sender.lenProcNm;
+      testCaseEvent.lenEntry += sender.lenEntry;
+
+      // Receiver information:
+      testCaseEvent.offsRcvInf = offsTestCaseEvent + testCaseEvent.lenEntry;
+      testCaseEvent.lenRcvInf = %size(receiver);
+
+      pReceiver = usPtr + testCaseEvent.offsRcvInf;
+      clear receiver;
+      receiver.lenEntry = %size(receiver);
+      receiver.qPgm = runtimeErrorEvent.msg.qRcvStmt.qpgm;
+      receiver.qMod = runtimeErrorEvent.msg.qRcvStmt.qmod;
+      receiver.specNb = runtimeErrorEvent.msg.qRcvStmt.specnb;
+      receiver.offsProcNm = testCaseEvent.offsRcvInf + %size(receiver);
+      receiver.lenProcNm = %len(runtimeErrorEvent.msg.qRcvStmt.procnm);
+      memcpy(usPtr + receiver.offsProcNm
+             : %addr(runtimeErrorEvent.msg.qRcvStmt.procNm: *data)
+             : testCaseEvent.lenExcpMsg);
+
+      receiver.lenEntry += receiver.lenProcNm;
+
+      testCaseEvent.lenRcvInf += receiver.lenProcNm;
+      testCaseEvent.lenEntry += receiver.lenEntry;
+
+      // Call stack entries:
+      testCaseEvent.offsCallStkE = 0;
+      testCaseEvent.numCallStkE = 0;
+
+      // 'expected' and 'actual' values:
+      testCaseEvent.offsExpected = 0;
+      testCaseEvent.offsActual = 0;
+
+    when (abstractTestEvent.outcome = TEST_CASE_FAILURE);
+
+      testFailureEvent = abstractTestEvent.failure;
+
+      testCaseEvent.lenEntry = %size(testCaseEvent);
+
+      testCaseEvent.outcome = abstractTestEvent.outcome;
+
+      // Assert procedure name:
+      testCaseEvent.offsAssertProcNm = offsTestCaseEvent + testCaseEvent.lenEntry;
+      testCaseEvent.lenAssertProcNm = %len(testFailureEvent.assertProc);
+      memcpy(usPtr + testCaseEvent.offsAssertProcNm
+             : %addr(testFailureEvent.assertProc: *data)
+             : testCaseEvent.lenAssertProcNm);
+
+      testCaseEvent.lenEntry += testCaseEvent.lenAssertProcNm;
+
+      // Failure message:
+      testCaseEvent.offsExcpMsg = offsTestCaseEvent + testCaseEvent.lenEntry;
+      testCaseEvent.lenExcpMsg = %len(testFailureEvent.msg);
+      memcpy(usPtr + testCaseEvent.offsExcpMsg
+             : %addr(testFailureEvent.msg: *data)
+             : testCaseEvent.lenExcpMsg);
+
+      testCaseEvent.lenEntry += testCaseEvent.lenExcpMsg;
+
+      // Execution time:
+      testCase.execTime = -1;
+
+      // Sender information:
+      testCaseEvent.offsSndInf = 0;
+      testCaseEvent.lenSndInf = 0;
+
+      // Receiver information:
+      testCaseEvent.offsRcvInf = 0;
+      testCaseEvent.lenRcvInf = 0;
+
+      // Call stack entries:
+      testCaseEvent.offsCallStkE = offsTestCaseEvent + testCaseEvent.lenEntry;
+      pStackEntry = usPtr + testCaseEvent.offsCallStkE;
+
+      Callstack_resetIteration(testFailureEvent.pCallstk);
+      dow (Callstack_getNext(testFailureEvent.pCallstk: callstkEnt));
+
+        testCaseEvent.numCallStkE += 1;
+
+        clear stackEntry;
+
+        stackEntry.offsNextEntry = (pStackEntry - usPtr) + %size(stackEntry);
+        stackEntry.lenEntry = %size(stackEntry);
+
+        stackEntry.qPgm = callstkEnt.qstmt.qpgm;
+        stackEntry.qMod = callstkEnt.qstmt.qmod;
+        stackEntry.specNb = callstkEnt.qstmt.specnb;
+
+        // TODO: add source stream file path to 'stackEntry'
+        srcInf = SrcMbr_getModSrc(stackEntry.qPgm: stackEntry.qMod);
+
+        stackEntry.typeOfSrc = srcInf.type;
+        if (stackEntry.typeOfSrc = TYPE_STMF);
+           clear stackEntry.qSrcMbr;
+           stackEntry.offsSrcStmf = (pStackEntry - usPtr) + stackEntry.lenEntry;
+           stackEntry.lenSrcStmf = %len(srcInf.stmf);
+           pStackEntry_SrcStmf = %addr(stackEntry) + %size(stackEntry);
+           stackEntry_SrcStmf = %subst(srcInf.stmf: 1: %len(srcInf.stmf));
+
+           stackEntry.offsNextEntry += stackEntry.lenSrcStmf;
+           stackEntry.lenEntry += stackEntry.lenSrcStmf;
+        else;
+           stackEntry.qSrcMbr = srcInf.mbr;
+           stackEntry.offsSrcStmf = 0;
+           stackEntry.lenSrcStmf = 0;
+        endif;
+
+        stackEntry.offsProcNm = (pStackEntry - usPtr) + stackEntry.lenEntry;
+        stackEntry.lenProcNm = %len(callstkEnt.qstmt.procnm);
+        memcpy(usPtr + stackEntry.offsProcNm
+               : %addr(callstkEnt.qStmt.procNm:*data)
+               : stackEntry.lenProcNm);
+
+        stackEntry.offsNextEntry += stackEntry.lenProcNm;
+        stackEntry.lenEntry += stackEntry.lenProcNm;
+
+        testCaseEvent.lenEntry += stackEntry.lenEntry;
+
+        pStackEntry = usPtr + stackEntry.offsNextEntry;
+
+      enddo;
+
+      // add 'expected' value
+      testCaseEvent.offsExpected = addLogValue(usPtr: testCaseEvent: testFailureEvent.logExpected);
+      pLogValueExpected = usPtr + testCaseEvent.offsExpected;
+      testCaseEvent.lenEntry += logValueExpected.lenEntry;
+
+      // add 'actual' value
+      testCaseEvent.offsActual = addLogValue(usPtr: testCaseEvent: testFailureEvent.logActual);
+      pLogValueActual = usPtr + testCaseEvent.offsActual;
+      testCaseEvent.lenEntry += logValueActual.lenEntry;
+
+    other; // including:  TEST_CASE_SUCCESS
+
+      testSuccessEvent = abstractTestEvent.success;
+
+      testCaseEvent.lenEntry = %size(testCaseEvent);
+
+      testCaseEvent.outcome = abstractTestEvent.outcome;
+
+      // Assert procedure name:
+      testCaseEvent.offsAssertProcNm = offsTestCaseEvent + testCaseEvent.lenEntry;
+      testCaseEvent.lenAssertProcNm = %len(testSuccessEvent.assertProc);
+      memcpy(usPtr + testCaseEvent.offsAssertProcNm
+             : %addr(testSuccessEvent.assertProc: *data)
+             : testCaseEvent.lenAssertProcNm);
+
+      testCaseEvent.lenEntry += testCaseEvent.lenAssertProcNm;
+
+      testCaseEvent.offsExcpMsg = 0;
+      testCaseEvent.lenExcpMsg = 0;
+
+      testCaseEvent.lenSndInf = 0;
+      testCaseEvent.offsSndInf = 0;
+
+      testCaseEvent.lenRcvInf = 0;
+      testCaseEvent.offsRcvInf = 0;
+
+      testCaseEvent.offsCallStkE = 0;
+      testCaseEvent.numCallStkE = 0;
+
+      testCaseEvent.offsExpected = 0;
+      testCaseEvent.offsActual = 0;
+
+    endsl;
+
+    testCaseEvent.offsNextEntry = offsTestCaseEvent + testCaseEvent.lenEntry;
+    offsTestCaseEvent = testCaseEvent.offsNextEntry;
+
+    testCase.lenEntry += testCaseEvent.lenEntry;
+
+    pTestCaseEvent = usPtr + offsTestCaseEvent;
+    pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
+  enddo;
 
 
-  select;
-  when (testCaseResult.outcome = TEST_CASE_ERROR);
+  testCase.offsNextEntry = offsTestCase + testCase.lenEntry;
 
-    runtimeErrorEvent = getLastErrorEvent(testCaseResult);
-
-    // Exception message:
-    entry.lenExcpMsg = %len(runtimeErrorEvent.msg.txt);
-    memcpy(usPtr + entry.offsExcpMsg
-           : %addr(runtimeErrorEvent.msg.txt: *data)
-           : entry.lenExcpMsg);
-
-    entry.offsNextEntry += entry.lenExcpMsg;
-    entry.lenEntry += entry.lenExcpMsg;
-
-    // Execution time:
-    entry.execTime = -1;
-
-    // Sender information:
-    entry.offsSndInf = offsEntry + entry.lenEntry;
-    entry.lenSndInf = %size(sender);
-
-    pSender = usPtr + entry.offsSndInf;
-    clear sender;
-    sender.lenEntry = %size(sender);
-    sender.qPgm = runtimeErrorEvent.msg.qSndStmt.qPgm;
-    sender.qMod = runtimeErrorEvent.msg.qSndStmt.qMod;
-    sender.specNb = runtimeErrorEvent.msg.qSndStmt.specNb;
-    sender.offsProcNm = entry.offsSndInf + %size(sender);
-    sender.lenProcNm = %len(runtimeErrorEvent.msg.qSndStmt.procNm);
-    memcpy(usPtr + sender.offsProcNm
-           : %addr(runtimeErrorEvent.msg.qSndStmt.procNm: *data)
-           : entry.lenExcpMsg);
-    sender.lenEntry += sender.lenProcNm;
-
-    entry.lenSndInf += sender.lenProcNm;
-
-    entry.offsNextEntry += sender.lenEntry;
-    entry.lenEntry += sender.lenEntry;
-
-    // Receiver information:
-    entry.offsRcvInf = offsEntry + entry.lenEntry;
-    entry.lenRcvInf = %size(receiver);
-
-    pReceiver = usPtr + entry.offsRcvInf;
-    clear receiver;
-    receiver.lenEntry = %size(receiver);
-    receiver.qPgm = runtimeErrorEvent.msg.qRcvStmt.qpgm;
-    receiver.qMod = runtimeErrorEvent.msg.qRcvStmt.qmod;
-    receiver.specNb = runtimeErrorEvent.msg.qRcvStmt.specnb;
-    receiver.offsProcNm = entry.offsRcvInf + %size(receiver);
-    receiver.lenProcNm = %len(runtimeErrorEvent.msg.qRcvStmt.procnm);
-    memcpy(usPtr + receiver.offsProcNm
-           : %addr(runtimeErrorEvent.msg.qRcvStmt.procNm: *data)
-           : entry.lenExcpMsg);
-
-    receiver.lenEntry += receiver.lenProcNm;
-    entry.lenRcvInf += receiver.lenProcNm;
-
-    entry.offsNextEntry += receiver.lenEntry;
-    entry.lenEntry += receiver.lenEntry;
-
-    // Call stack entries:
-    entry.offsCallStkE = 0;
-    entry.numCallStkE = 0;
-
-    // 'expected' and 'actual' values:
-    entry.offsExpected = 0;
-    entry.offsActual = 0;
-
-  when (testCaseResult.outcome = TEST_CASE_FAILURE);
-
-    testFailureEvent = getLastFailureEvent(testCaseResult);
-
-    // Failure message:
-    entry.lenExcpMsg = %len(testFailureEvent.msg);
-    memcpy(usPtr + entry.offsExcpMsg
-           : %addr(testFailureEvent.msg: *data)
-           : entry.lenExcpMsg);
-
-    entry.offsNextEntry += entry.lenExcpMsg;
-    entry.lenEntry += entry.lenExcpMsg;
-
-    // Execution time:
-    entry.execTime = -1;
-
-    // Sender information:
-    entry.offsSndInf = 0;
-    entry.lenSndInf = 0;
-
-    // Receiver information:
-    entry.offsRcvInf = 0;
-    entry.lenRcvInf = 0;
-
-    // Call stack entries:
-    entry.offsCallStkE = offsEntry + entry.lenEntry;
-    sPtr = usPtr + entry.offsCallStkE;
-
-    Callstack_resetIteration(testFailureEvent.pCallstk);
-    dow (Callstack_getNext(testFailureEvent.pCallstk: callstkEnt));
-
-      entry.numCallStkE += 1;
-
-      clear stackEntry;
-
-      stackEntry.offsNextEntry = (sPtr - usPtr) + %size(stackEntry);
-      stackEntry.lenEntry = %size(stackEntry);
-
-      stackEntry.qPgm = callstkEnt.qstmt.qpgm;
-      stackEntry.qMod = callstkEnt.qstmt.qmod;
-      stackEntry.specNb = callstkEnt.qstmt.specnb;
-
-      // TODO: add source stream file path to 'stackEntry'
-      srcInf = SrcMbr_getModSrc(stackEntry.qPgm: stackEntry.qMod);
-
-      stackEntry.typeOfSrc = srcInf.type;
-      if (stackEntry.typeOfSrc = TYPE_STMF);
-         clear stackEntry.qSrcMbr;
-         stackEntry.offsSrcStmf = (sPtr - usPtr) + stackEntry.lenEntry;
-         stackEntry.lenSrcStmf = %len(srcInf.stmf);
-         pStackEntry_SrcStmf = %addr(stackEntry) + %size(stackEntry);
-         stackEntry_SrcStmf = %subst(srcInf.stmf: 1: %len(srcInf.stmf));
-
-         stackEntry.offsNextEntry += stackEntry.lenSrcStmf;
-         stackEntry.lenEntry += stackEntry.lenSrcStmf;
-      else;
-         stackEntry.qSrcMbr = srcInf.mbr;
-         stackEntry.offsSrcStmf = 0;
-         stackEntry.lenSrcStmf = 0;
-      endif;
-
-      stackEntry.offsProcNm = (sPtr - usPtr) + stackEntry.lenEntry;
-      stackEntry.lenProcNm = %len(callstkEnt.qstmt.procnm);
-      memcpy(usPtr + stackEntry.offsProcNm
-             : %addr(callstkEnt.qStmt.procNm:*data)
-             : stackEntry.lenProcNm);
-
-      stackEntry.offsNextEntry += stackEntry.lenProcNm;
-      stackEntry.lenEntry += stackEntry.lenProcNm;
-
-      entry.lenEntry += stackEntry.lenEntry;
-      entry.offsNextEntry += stackEntry.lenEntry;
-
-      sPtr = usPtr + stackEntry.offsNextEntry;
-
-    enddo;
-
-    // add 'expected' value
-    pLogValueExpected = usPtr + offsEntry + entry.lenEntry;
-    entry.offsExpected = offsEntry + entry.lenEntry;
-    entry.lenEntry += %size(logValueExpected);
-    entry.offsNextEntry += %size(logValueExpected);
-    pValueExpected = usPtr + offsEntry + entry.lenEntry;
-    entry.lenEntry += testFailureEvent.logExpected.length;
-    entry.offsNextEntry += testFailureEvent.logExpected.length;
-
-    logValueExpected.lenEntry = %size(tmpl_logValue_v5)
-                                + testFailureEvent.logExpected.length;
-    logValueExpected.length = testFailureEvent.logExpected.length;
-    logValueExpected.originalLength = testFailureEvent.logExpected.originalLength;
-    logValueExpected.offsValue = pValueExpected - usPtr;
-
-    logValueExpected.offsDataType = offsEntry + entry.lenEntry;
-    logValueExpected.lenDataType = %len(testFailureEvent.logExpected.type);
-    pDataTypeExpected = usPtr + offsEntry  + logValueExpected.offsDataType;
-    entry.lenEntry += logValueExpected.lenDataType;
-    entry.offsNextEntry += logValueExpected.lenDataType;
-
-    logValueExpected.offsAssertProc = offsEntry + entry.lenEntry;
-    logValueExpected.lenAssertProc = %len(testFailureEvent.logExpected.assertProc);
-    pAssertProcExpected = usPtr + offsEntry  + logValueExpected.offsAssertProc;
-    entry.lenEntry += logValueExpected.lenAssertProc;
-    entry.offsNextEntry += logValueExpected.lenAssertProc;
-
-    memcpy(
-      usPtr + logValueExpected.offsValue
-      : %addr(testFailureEvent.logExpected.value: *data)
-      : logValueExpected.length);
-
-    memcpy(
-      usPtr + logValueExpected.offsDataType
-      : %addr(testFailureEvent.logExpected.type: *data)
-      : logValueExpected.lenDataType);
-
-    memcpy(
-      usPtr + logValueExpected.offsAssertProc
-      : %addr(testFailureEvent.logExpected.assertProc: *data)
-      : logValueExpected.lenAssertProc);
-
-    // add 'actual' value
-    pLogValueActual = usPtr + offsEntry + entry.lenEntry;
-    entry.offsActual = offsEntry + entry.lenEntry;
-    entry.lenEntry += %size(logValueActual);
-    entry.offsNextEntry += %size(logValueActual);
-    pValueActual = usPtr + offsEntry + entry.lenEntry;
-    entry.lenEntry += testFailureEvent.logActual.length;
-    entry.offsNextEntry += testFailureEvent.logActual.length;
-
-    logValueActual.lenEntry = %size(tmpl_logValue_v5)
-                              + testFailureEvent.logActual.length;
-    logValueActual.length = testFailureEvent.logActual.length;
-    logValueActual.originalLength = testFailureEvent.logActual.originalLength;
-    logValueActual.offsValue = pValueActual - usPtr;
-
-    logValueActual.offsDataType = offsEntry + entry.lenEntry;
-    logValueActual.lenDataType = %len(testFailureEvent.logActual.type);
-    pDataTypeActual = usPtr + offsEntry + logValueActual.offsDataType;
-    entry.lenEntry += logValueActual.lenDataType;
-    entry.offsNextEntry += logValueActual.lenDataType;
-
-    logValueActual.offsAssertProc = offsEntry + entry.lenEntry;
-    logValueActual.lenAssertProc = %len(testFailureEvent.logActual.assertProc);
-    pAssertProcActual = usPtr + offsEntry  + logValueActual.offsAssertProc;
-    entry.lenEntry += logValueActual.lenAssertProc;
-    entry.offsNextEntry += logValueActual.lenAssertProc;
-
-    memcpy(
-      usPtr + logValueActual.offsValue
-      : %addr(testFailureEvent.logActual.value: *data)
-      : logValueActual.length);
-
-    memcpy(
-      usPtr + logValueActual.offsDataType
-      : %addr(testFailureEvent.logActual.type: *data)
-      : logValueActual.lenDataType);
-
-    memcpy(
-      usPtr + logValueActual.offsAssertProc
-      : %addr(testFailureEvent.logActual.assertProc: *data)
-      : logValueActual.lenAssertProc);
-
-  other; // including:  TEST_CASE_SUCCESS
-
-    entry.offsExcpMsg = 0;
-    entry.lenExcpMsg = 0;
-
-    entry.lenSndInf = 0;
-    entry.offsSndInf = 0;
-
-    entry.lenRcvInf = 0;
-    entry.offsRcvInf = 0;
-
-    entry.offsCallStkE = 0;
-    entry.numCallStkE = 0;
-
-    entry.offsExpected = 0;
-    entry.offsActual = 0;
-
-  endsl;
-
-  return entry.lenEntry;
+  return testCase.lenEntry;
 
 end-proc;
 
 // ==========================================================================
-//  Returns the minimum of two integer values.
+//  Adds a log value (actual or expected) to a user space
+//  with version 5 layout.
 // ==========================================================================
-dcl-proc min;
-  dcl-pi *N int(10) extproc(*dclcase);
-    int1   int(10) value;
-    int2   int(10) value;
+dcl-proc addLogValue;
+  dcl-pi *n int(10) extproc(*dclcase);
+    usPtr         pointer const;
+    testCaseEvent likeds(tmpl_testCaseEvent_v5);
+    logValue      likeds(logValue_t);
   end-pi;
 
-  if (int1 < int2);
-    return int1;
-  else;
-    return int2;
-  endif;
+  dcl-s offsTestCaseEvent int(10);
+  dcl-ds entryLogValue likeds(tmpl_logValue_v5) based(pEntryLogValue);
+// @ignore-unused
+  dcl-s value char(2048) based(pValue);
+// @ignore-unused
+  dcl-s dataType char(20) based(pDataType);
+// @ignore-unused
+  dcl-s assertProc char(32) based(pAssertProc);
+
+  dcl-s offsEntryLogValue int(10);
+
+  offsTestCaseEvent = %addr(testCaseEvent) - usPtr;
+
+  pEntryLogValue = usPtr + offsTestCaseEvent + testCaseEvent.lenEntry;
+  offsEntryLogValue = pEntryLogValue - usPtr;
+
+  entryLogValue.lenEntry = %size(entryLogValue);
+
+  // Value
+  entryLogValue.originalLength = logValue.originalLength;
+
+  entryLogValue.offsValue = offsEntryLogValue + entryLogValue.lenEntry;
+  entryLogValue.lenValue = logValue.length;
+
+  entryLogValue.lenEntry += entryLogValue.lenValue;
+
+  // Data Type
+  entryLogValue.offsDataType = offsEntryLogValue + entryLogValue.lenEntry;
+  entryLogValue.lenDataType = %len(logValue.type);
+
+  entryLogValue.lenEntry += entryLogValue.lenDataType;
+
+  // Assert Procedure
+  entryLogValue.offsAssertProc = offsEntryLogValue + entryLogValue.lenEntry;
+  entryLogValue.lenAssertProc = %len(logValue.assertProc);
+
+  entryLogValue.lenEntry += entryLogValue.lenAssertProc;
+
+  memcpy(
+    usPtr + entryLogValue.offsValue
+    : %addr(logValue.value: *data)
+    : entryLogValue.lenValue);
+
+  memcpy(
+    usPtr + entryLogValue.offsDataType
+    : %addr(logValue.type: *data)
+    : entryLogValue.lenDataType);
+
+  memcpy(
+    usPtr + entryLogValue.offsAssertProc
+    : %addr(logValue.assertProc: *data)
+    : entryLogValue.lenAssertProc);
+
+  // For debugging
+  pValue = usPtr + entryLogValue.offsValue;
+  pDataType = usPtr + entryLogValue.offsDataType;
+  pAssertProc = usPtr + entryLogValue.offsAssertProc;
+
+  return offsEntryLogValue;
 
 end-proc;
 

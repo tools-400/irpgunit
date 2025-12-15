@@ -98,7 +98,7 @@ dcl-proc setUp export;
 
 end-proc;
 
-// TODO: fix "Expected 1, but was 2."
+
 dcl-proc test_runTests_SuccessfulTestWithDetailBasic export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
@@ -148,7 +148,7 @@ on-exit;
 
 end-proc;
 
-// TODO: fix "Expected 1, but was 2."
+
 dcl-proc test_runTests_SuccessfulTestWithDetailAllAndOneAssertion export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
@@ -201,7 +201,7 @@ on-exit;
 
 end-proc;
 
-// TODO: fix "Range of subscript value or character string error."
+
 dcl-proc test_runTests_SuccessfulTestWithDetailAllAndTwoAssertions export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
@@ -253,7 +253,7 @@ on-exit;
 
 end-proc;
 
-// TODO: fix "Range of subscript value or character string error."
+
 dcl-proc test_runTests_TwoSuccessfulTestsWithDetailAll export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
@@ -308,7 +308,7 @@ on-exit;
 
 end-proc;
 
-// TODO: fix "Range of subscript value or character string error."
+
 dcl-proc test_runTests_TwoSuccessfulTestsWithOrderReverse export;
   dcl-pi *n extproc(*dclcase);
   end-pi;

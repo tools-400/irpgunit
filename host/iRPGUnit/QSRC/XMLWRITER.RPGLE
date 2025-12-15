@@ -230,13 +230,13 @@ dcl-proc writeTestCases;
 
   dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
 
-  list_resetIteration(testSuite.testResults);
 
   // Iterate the test cases...
+  list_resetIteration(testSuite.testResults);
   pTestResult = list_getNext(testSuite.testResults);
   dow (pTestResult <> *null);
 
-    execTime = testCaseResult.execTime / %dec(1000000 : 15 : 3);
+    execTime = getReportExecutionTimeTestCase(testCaseResult);
 
     list_resetIteration(testCaseResult.hTestEvents);
     pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
@@ -245,7 +245,7 @@ dcl-proc writeTestCases;
       text = TAB + '<testcase name="'
                  + buildReportTestCaseName(testCaseResult: abstractTestEvent) + '" ';
       text += 'assertions="' + %char(getReportNumAsserts(testCaseResult)) + '" ';
-      text += 'classname="' + %trimr(testSuiteName.nm) + '" '; // TODO: should look which mo
+      text += 'classname="' + %trimr(testSuiteName.nm) + '" '; // TODO: should look which module
       text += 'time="' + %char(execTime) + '" ';               // exports this testcase
       text += '>' + CRLF;
 

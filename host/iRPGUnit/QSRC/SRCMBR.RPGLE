@@ -78,7 +78,7 @@ dcl-proc SrcMbr_initialize export;
 
   g_usrspc.nm  = 'RUMODLIST';
   g_usrspc.lib = 'QTEMP';
-  g_pModList = crtusrspc( g_usrspc: 'RPGUnit - Module list.');
+  g_pModList = crtUsrSpc( g_usrspc: 'RPGUnit - Module list.');
 
   clear g_lastObject;
 

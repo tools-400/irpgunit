@@ -343,9 +343,11 @@ end-pr;
 // Builds the name of the test case as it is displayed in the XML.
 // Uses the test case name for assertion mode *FAILFIRST, otherwise
 // builds the names with template 'testName.assertProcName'.
+// If all assertions are executed, the name of the "virtual" test
+// is created as 'testName.assertProcName', otherwise 'testName'.
 ///
 dcl-pr buildReportTestCaseName like(string_t) extproc('CMDRUNSRV_buildReportTestCaseName');
-  testcaseResult likeds(testCaseResult_t) const;
+  testCaseResult likeds(testCaseResult_t) const;
   abstractTestEvent likeds(abstractTestEvent_t) const;
 end-pr;
 
@@ -353,9 +355,23 @@ end-pr;
 // Returns the number of assertions as displayed in the XML.
 // Returns the total number of assertions for assertion mode *FAILFIRST,
 // otherwise 1.
+// If all assertions are executed, the number of assertions per "virtual"
+// test case is 1, otherwise the total number of assertions.
 ///
 dcl-pr getReportNumAsserts int(10) extproc('CMDRUNSRV_getReportNumAsserts');
-  testcaseResult likeds(testCaseResult_t) const;
+  testCaseResult likeds(testCaseResult_t) const;
+end-pr;
+
+///
+// Returns the number of assertions as displayed in the XML.
+// Returns the total number of assertions for assertion mode *FAILFIRST,
+// otherwise 1.
+// IF all assertions are eceuted, the total execution time is divided
+// by the totall number of assertions. There is no way to figure out
+// how long it took to process a specific assertion.
+///
+dcl-pr getReportExecutionTimeTestCase int(10);
+  testCaseResult likeds(testCaseResult_t) const;
 end-pr;
 
 /include qinclude,templates

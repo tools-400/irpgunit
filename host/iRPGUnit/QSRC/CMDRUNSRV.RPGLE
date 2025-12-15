@@ -688,9 +688,10 @@ dcl-proc disposeTestEvent;
 
   pAbstractTestEvent = list_get(hTestEvents: idx - 1);
 
-  if (abstractTestEvent.outcome = TEST_CASE_FAILURE);
+  select;
+  when (abstractTestEvent.outcome = TEST_CASE_FAILURE);
     disposeCallstack(abstractTestEvent.failure.pCallstk);
-  endif;
+  endsl;
 
   list_remove(hTestEvents: idx - 1);
 
@@ -842,8 +843,6 @@ dcl-proc setupTestSuite;
   end-pi;
 
   dcl-ds testCaseResult likeds(testCaseResult_t);
-  dcl-ds testFailureEvent likeds(testFailureEvent_t) inz;
-  dcl-ds runtimeErrorEvent likeds(runtimeErrorEvent_t) inz;
 
   testCaseResult = initTestResult(TEST_CASE_SUCCESS: testSuite.setupSuite.procNm);
   testCaseResult = runProc(testSuite.setupSuite.procptr: testCaseResult: 'SETUPSUITE');
@@ -857,11 +856,9 @@ dcl-proc setupTestSuite;
 
   select;
   when testCaseResult.outcome = TEST_CASE_FAILURE;
-    testFailureEvent = getLastFailureEvent(testCaseResult);
     handleFailure(testSuiteResult);
     return TEST_CASE_FAILURE;
   when testCaseResult.outcome = TEST_CASE_ERROR;
-    runtimeErrorEvent = getLastErrorEvent(testCaseResult);
     handleError(testSuiteResult);
     return TEST_CASE_ERROR;
   endsl;
@@ -879,8 +876,6 @@ dcl-proc tearDownTestSuite;
   end-pi;
 
   dcl-ds testCaseResult likeds(testCaseResult_t);
-  dcl-ds testFailureEvent likeds(testFailureEvent_t) inz;
-  dcl-ds runtimeErrorEvent likeds(runtimeErrorEvent_t) inz;
 
   testCaseResult = initTestResult(TEST_CASE_SUCCESS: testSuite.tearDownSuite.procNm);
   testCaseResult = runProc(testSuite.tearDownSuite.procPtr: testCaseResult: 'TEARDOWNSUITE');
@@ -894,11 +889,9 @@ dcl-proc tearDownTestSuite;
 
   select;
   when testCaseResult.outcome = TEST_CASE_FAILURE;
-    testFailureEvent = getLastFailureEvent(testCaseResult);
     handleFailure(testSuiteResult);
     return TEST_CASE_FAILURE;
   when testCaseResult.outcome = TEST_CASE_ERROR;
-    runtimeErrorEvent = getLastErrorEvent(testCaseResult);
     handleError(testSuiteResult);
     return TEST_CASE_ERROR;
   endsl;
@@ -926,9 +919,6 @@ dcl-proc runTests export;
   dcl-s assertionCntBeforeRun int(10);
   dcl-s assertionCntAfterRun int(10);
   dcl-c CMD_RCLRSC 'RCLRSC LVL(*) OPTION(*NORMAL)';
-
-  dcl-ds testFailureEvent likeds(testFailureEvent_t) inz;
-  dcl-ds runtimeErrorEvent likeds(runtimeErrorEvent_t) inz;
 
   setTestRunOrder( testSuite : order : testIdx : step );
 
@@ -959,10 +949,8 @@ dcl-proc runTests export;
       when (testCaseResult.outcome = TEST_CASE_SUCCESS);
         // nothing to do here
       when (testCaseResult.outcome = TEST_CASE_FAILURE);
-        testFailureEvent = getLastFailureEvent(testCaseResult);
         handleFailure(testSuiteResult);
       when (testCaseResult.outcome = TEST_CASE_ERROR);
-        runtimeErrorEvent = getLastErrorEvent(testCaseResult);
         handleError(testSuiteResult);
       endsl;
 
@@ -1240,7 +1228,7 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc buildReportTestCaseName export;
   dcl-pi *n like(string_t);
-    testcaseResult likeds(testCaseResult_t) const;
+    testCaseResult likeds(testCaseResult_t) const;
     abstractTestEvent likeds(abstractTestEvent_t) const;
   end-pi;
 
@@ -1258,7 +1246,8 @@ dcl-proc buildReportTestCaseName export;
   if (g_status.isJunitStyle or assertProcName = '');
     return %trimr(testCaseResult.testName);
   else;
-    return %trimr(testCaseResult.testName) + '.' + abstractTestEvent.failure.assertProc;
+    return %trimr(testCaseResult.testName) + '.' + abstractTestEvent.failure.assertProc
+                                           + '_' + %char(abstractTestEvent.failure.index);
   endif;
 
 end-proc;
@@ -1270,7 +1259,29 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc getReportNumAsserts export;
   dcl-pi *n int(10);
-    testcaseResult likeds(testCaseResult_t) const;
+    testCaseResult likeds(testCaseResult_t) const;
+  end-pi;
+
+  dcl-s numAssertions int(10);
+
+  if (g_status.isJunitStyle);
+    numAssertions = testCaseResult.assertCnt;
+  else;
+    numAssertions = 1;
+  endif;
+
+  return numAssertions;
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Returns the number of assertions as displayed in the XML.
+// Returns the total number of assertions for assertion mode *FAILFIRST,
+// otherwise 1.
+//----------------------------------------------------------------------
+dcl-proc getReportExecutionTimeTestCase export;
+  dcl-pi *n int(10);
+    testCaseResult likeds(testCaseResult_t) const;
   end-pi;
 
   dcl-s numAssertions int(10);

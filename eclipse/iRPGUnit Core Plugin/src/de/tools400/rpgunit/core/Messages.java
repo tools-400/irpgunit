@@ -48,6 +48,8 @@ public class Messages extends NLS {
     public static String Statement_number;
     public static String Error_message;
     public static String Result;
+    public static String Number_of_assertions;
+    public static String AssertProcName;
     public static String Not_available_due_to_assertion_procedure;
     public static String Execution_time;
     public static String Actual_value;

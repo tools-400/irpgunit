@@ -474,7 +474,6 @@ dcl-proc testBigIntegerEquality export;
 end-proc;
 
 
-// TODO: fix "Dealloc: Invalid external pointer."
 dcl-proc testAssertClear export;
   dcl-pi *n extproc(*dclcase);
   end-pi;

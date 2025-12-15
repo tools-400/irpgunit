@@ -171,9 +171,6 @@ dcl-proc logFailure export;
     testFailureEvent likeds(testFailureEvent_t) const;
   end-pi;
 
-  // Index.
-  dcl-s i int(10);
-
   dcl-s pCallStk pointer;
   dcl-ds callstkEnt likeds(callStkEnt_t) inz;
 
@@ -188,7 +185,6 @@ dcl-proc logFailure export;
 
   logRawLine(testFailureEvent.msg);
 
-  // TODO: check callstack
   pCallstk = testFailureEvent.pCallstk;
   if (Callstack_getNumE(pCallstk) > 0);
     lineFeed(); // new with *TYPE2 log output of 'expected' and 'actual' values

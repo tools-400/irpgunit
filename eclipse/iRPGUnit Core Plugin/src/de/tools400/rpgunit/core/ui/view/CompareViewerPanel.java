@@ -42,7 +42,7 @@ import de.tools400.rpgunit.core.Messages;
 import de.tools400.rpgunit.core.RPGUnitCorePlugin;
 import de.tools400.rpgunit.core.helpers.ClipboardHelper;
 import de.tools400.rpgunit.core.helpers.StringHelper;
-import de.tools400.rpgunit.core.model.local.UnitTestCase;
+import de.tools400.rpgunit.core.model.local.UnitTestCaseEvent;
 import de.tools400.rpgunit.core.model.local.UnitTestLogValue;
 
 public class CompareViewerPanel implements ISelectionChangedListener, IPropertyChangeListener {
@@ -62,7 +62,7 @@ public class CompareViewerPanel implements ISelectionChangedListener, IPropertyC
     private Font courier;
     private WorkbenchPlugin workbenchPLugin;
 
-    private UnitTestCase testCase;
+    private UnitTestCaseEvent testCaseEvent;
 
     private Composite mainPanel;
     private StyledText txtExpected;
@@ -250,9 +250,9 @@ public class CompareViewerPanel implements ISelectionChangedListener, IPropertyC
         }
     }
 
-    public void setInput(UnitTestCase testCase) {
+    public void setInput(UnitTestCaseEvent testCaseEvent) {
 
-        this.testCase = testCase;
+        this.testCaseEvent = testCaseEvent;
 
         doDisplayValue();
     }
@@ -265,13 +265,13 @@ public class CompareViewerPanel implements ISelectionChangedListener, IPropertyC
 
         clearCompareResult();
 
-        if (this.testCase == null) {
+        if (this.testCaseEvent == null) {
             setWidgetEnablements();
             return;
         }
 
-        UnitTestLogValue expectedValue = this.testCase.getExpected();
-        UnitTestLogValue actualValue = this.testCase.getActual();
+        UnitTestLogValue expectedValue = this.testCaseEvent.getExpected();
+        UnitTestLogValue actualValue = this.testCaseEvent.getActual();
 
         if (expectedValue == null || actualValue == null) {
             return;
@@ -298,8 +298,8 @@ public class CompareViewerPanel implements ISelectionChangedListener, IPropertyC
 
         boolean isEnabled = false;
 
-        if (testCase != null) {
-            if (hasTestValue(testCase.getExpected()) || hasTestValue(testCase.getActual())) {
+        if (testCaseEvent != null) {
+            if (hasTestValue(testCaseEvent.getExpected()) || hasTestValue(testCaseEvent.getActual())) {
                 isEnabled = true;
             }
         }
@@ -347,14 +347,14 @@ public class CompareViewerPanel implements ISelectionChangedListener, IPropertyC
         if (selection instanceof IStructuredSelection) {
             IStructuredSelection structuredSelection = (IStructuredSelection)selection;
             Object item = structuredSelection.getFirstElement();
-            if (!(item instanceof UnitTestCase)) {
+            if (!(item instanceof UnitTestCaseEvent)) {
                 // clearCompareResult();
                 setInput(null);
                 return;
             }
 
-            UnitTestCase testCase = (UnitTestCase)item;
-            setInput(testCase);
+            UnitTestCaseEvent testCaseEvent = (UnitTestCaseEvent)item;
+            setInput(testCaseEvent);
         } else {
             setInput(null);
         }

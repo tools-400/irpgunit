@@ -57,9 +57,6 @@
 
              DCL        VAR(&CCSID     ) TYPE(*CHAR) LEN( 4) VALUE('273')
 
-             /* TODO: Remove this line at 31.12.2019 */
-             DCL        VAR(&RPGUNIT1  ) TYPE(*CHAR) LEN(10) VALUE('RPGUNIT1')
-
              CHGVAR     VAR(&DEVLIB) VALUE(&DEVLIB)
              MONMSG     MSGID(MCH3601) EXEC(DO)
                RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
@@ -129,8 +126,6 @@
                         TEXT('iRPGUnit - SelfTests Test Cases')
              CRTSRCPF   FILE(&LIB/&QUNITTEST ) RCDLEN(112) CCSID(&CCSID) +
                         TEXT('iRPGUnit - SelfTests')
-             CRTSRCPF   FILE(&LIB/&RPGUNIT1  ) RCDLEN(112) CCSID(&CCSID) +
-                        TEXT('iRPGUnit - Backward compatibility')
 
              /* ---------------------------------------------------- */
              /*  Copy source members: QBND                           */
@@ -916,13 +911,6 @@
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(TESTUTILST) +
-                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
-
-             /* ---------------------------------------------------- */
-             /*  Copy source members: RPGUNIT1 (backward compatib.)  */
-             /* ---------------------------------------------------- */
-             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
-                          TOFILE(&LIB/&QUNITTEST) FROMMBR(ACPTSTT) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
 
              /* ---------------------------------------------------- */

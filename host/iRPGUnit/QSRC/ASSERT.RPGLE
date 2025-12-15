@@ -979,6 +979,7 @@ end-proc;
 dcl-proc getCallStk;
   dcl-pi *N pointer extproc(*dclcase);
     startProc   varchar(256) options(*varsize) const;
+    maxEntries  int(10) options(*nopass);
   end-pi;
 
   // Call stack entries.
@@ -1017,6 +1018,14 @@ dcl-proc getCallStk;
   dcl-ds callstkEnt      likeds(callStkEnt_t);
   dcl-s doReturnStckE    ind inz(*off);
   dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
+
+  dcl-s maxEntriesToReturn int(10);
+
+  if (%parms() >= %parmnum(maxEntries));
+    maxEntriesToReturn = maxEntries;
+  else;
+    maxEntriesToReturn = *hival;
+  endif;
 
   jobIdInfo.jobNm = '*';
   jobIdInfo.usrNm = '';
@@ -1081,6 +1090,12 @@ dcl-proc getCallStk;
 
     endEntry = i;
     ent_p += ent.len;
+
+    maxEntriesToReturn -= 1;
+    if (maxEntriesToReturn <= 0);
+      leave;
+    endif;
+
   endfor;
 
   // Prepare callstack

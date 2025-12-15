@@ -54,8 +54,6 @@ dcl-proc Callstack_alloc export;
 
   size = getSize(numE);
   pCallstk = MemMgr_alloc(size: msg);
-// TODO: remove code callstack
-//  memcpy(pCallstk: %addr(callStk): size);
   callstk.header.id = CALLSTACK_ID;
   callstk.header.iteration = -1;
   callstk.header.numE = 0;
