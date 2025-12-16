@@ -387,6 +387,7 @@ dcl-proc runTestCase export;
   dcl-pi *N likeds(testCaseResult_t);
     testSuite       const likeds(testSuite_t);
     testIdx         int(10) const;
+    seqNbr          int(10) const;
   end-pi;
 
   dcl-ds testCaseResult likeds(testCaseResult_t);
@@ -424,6 +425,7 @@ dcl-proc runTestProc export;
   dcl-ds testSuccessEvent likeds(testSuccessEvent_t) inz;
 
   testCaseResult = initTestResult(TEST_CASE_SUCCESS: testCase.procnm);
+  testCaseResult.seqNbr = testCase.seqNbr;
 
   startTime = %timestamp();
 
@@ -745,6 +747,7 @@ dcl-proc assertHasRunAtLeastOneTestCase;
     excpMsgInfo.txt = 'Test procedure not found.';
 
     testCaseResult = initTestResult(TEST_CASE_ERROR: testProcNm);
+    testCaseResult.seqNbr = 0;
 
     clear errorTestEvent;
     errorTestEvent.outcome = TEST_CASE_ERROR;
@@ -852,6 +855,8 @@ dcl-proc setupTestSuite;
   dcl-ds testCaseResult likeds(testCaseResult_t);
 
   testCaseResult = initTestResult(TEST_CASE_SUCCESS: testSuite.setupSuite.procNm);
+  testCaseResult.seqNbr = 0;
+
   testCaseResult = runProc(testSuite.setupSuite.procptr: testCaseResult: 'SETUPSUITE');
 
   if (testCaseResult.outcome = TEST_CASE_SUCCESS);
@@ -885,6 +890,8 @@ dcl-proc tearDownTestSuite;
   dcl-ds testCaseResult likeds(testCaseResult_t);
 
   testCaseResult = initTestResult(TEST_CASE_SUCCESS: testSuite.tearDownSuite.procNm);
+  testCaseResult.seqNbr = 0;
+
   testCaseResult = runProc(testSuite.tearDownSuite.procPtr: testCaseResult: 'TEARDOWNSUITE');
 
   if (testCaseResult.outcome = TEST_CASE_SUCCESS);
@@ -921,6 +928,7 @@ dcl-proc runTests export;
 
   dcl-s step int(10);
   dcl-s testIdx int(10);
+  dcl-s seqNbr int(10);
   dcl-s testProcNm like(procNm_t);
   dcl-ds testCaseResult likeds(testCaseResult_t);
   dcl-s assertionCntBeforeRun int(10);
@@ -928,6 +936,8 @@ dcl-proc runTests export;
   dcl-c CMD_RCLRSC 'RCLRSC LVL(*) OPTION(*NORMAL)';
 
   setTestRunOrder( testSuite : order : testIdx : step );
+
+  seqNbr = 0;
 
   dow (1 <= testIdx and testIdx <= testSuite.testCasesCnt);
     testProcNm = getTestNm( testSuite : testIdx );
@@ -938,11 +948,13 @@ dcl-proc runTests export;
 
     if isInTestProcToRun(testProcNm: testProcsToRun);
 
+      seqNbr += 1;
+
       assertionCntBeforeRun = getAssertCalled();
       status( testSuite.qName.nm : testProcNm );
 
       // Run test case
-      testCaseResult = runTestCase( testSuite : testIdx );
+      testCaseResult = runTestCase(testSuite: testIdx: seqNbr);
 
       if (rclrsc = RCLRSC_ALWAYS);
         qcmdexc(CMD_RCLRSC: %len(CMD_RCLRSC));

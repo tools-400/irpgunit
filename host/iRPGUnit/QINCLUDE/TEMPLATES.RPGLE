@@ -247,9 +247,10 @@ dcl-ds job_t qualified template;
 end-ds;
 
 // Named callable procedure.
-dcl-ds proc_t qualified template;
-  procnm    like(procNm_t);
-  procptr   pointer(*proc);
+dcl-ds proc_t qualified align template;
+  seqNbr    int(10);
+  procNm    like(procNm_t);
+  procPtr   pointer(*proc);
 end-ds;
 
 dcl-ds procNmList_t qualified template;
@@ -289,7 +290,8 @@ end-ds;
 
 dcl-ds testCaseResult_t qualified template;
   outcome          like(outcome_t);
-  reserved_1       char(15);
+  seqNbr           int(10);
+  reserved_1       char(11);
   testName         like(procNm_t);
   execTime         int(20);
   assertCnt        int(10);

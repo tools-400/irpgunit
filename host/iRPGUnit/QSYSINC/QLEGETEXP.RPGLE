@@ -16,3 +16,10 @@ dcl-pr qlegetexp pointer(*proc) extproc('QleGetExp');
   expType         int(10) options(*omit);
   error           char(32767) options(*varsize: *omit) noopt;
 end-pr;
+
+// Named callable procedure.
+dcl-ds qlegetexp_proc_t qualified template;
+  procNm    like(procNm_t);
+  procPtr   pointer(*proc);
+end-ds;
+

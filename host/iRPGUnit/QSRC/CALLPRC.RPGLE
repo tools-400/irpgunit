@@ -66,7 +66,7 @@ dcl-s callDynProc_p   pointer(*proc);
 //----------------------------------------------------------------------
 dcl-proc activateSrvPgm export;
   dcl-pi *N int(10);
-    srvPgm          value likeds(object_t);
+    srvPgm likeds(object_t) value;
   end-pi;
 
   // Activation mark.
@@ -109,7 +109,7 @@ end-proc;
 
 dcl-proc callProcByPtr export;
   dcl-pi *N;
-    procPtr         pointer(*proc) const;
+    procPtr pointer(*proc) const;
   end-pi;
 
   if (procPtr <> *null);
@@ -122,28 +122,36 @@ end-proc;
 
 dcl-proc rslvProc export;
   dcl-pi *N;
-    proc            likeds(proc_t);
-    actMark         const like(actMark_t);
+    proc    likeds(proc_t);
+    actMark like(actMark_t) const;
   end-pi;
 
   // Type of export in a service program.
   dcl-s exportType      int(10) inz(0);
-  // One export type is PROCEDURE.
-  dcl-c procedure const(1);
 
+  // One export type is PROCEDURE.
+  dcl-c TYPE_PROCEDURE const(1);
+
+  dcl-ds proc_tmpl likeds(qlegetexp_proc_t) inz;
   dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
+
+  clear proc_tmpl;
+  proc_tmpl.procNm = proc.procNm;
+  proc_tmpl.procPtr = proc.procPtr;
 
   // Get export.
   qlegetexp( actMark :
              0 :
-             %len(proc.procNm) :
-             proc.procNm :
-             proc.procPtr :
+             %len(proc_tmpl.procNm) :
+             proc_tmpl.procNm :
+             proc_tmpl.procPtr :
              exportType :
              percolateErrors );
 
-  if (exportType <> procedure);
+  if (exportType <> TYPE_PROCEDURE);
     proc.procPtr = *null;
+  else;
+    proc.procPtr = proc_tmpl.procPtr;
   endif;
 
 end-proc;

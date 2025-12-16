@@ -42,6 +42,9 @@ ctl-opt NoMain Option(*SrcStmt);
 dcl-ds noSetUp likeds(Proc_t) inz;
 dcl-ds noTearDown likeds(Proc_t) inz;
 
+dcl-c NO_SEQ_NBR 0;
+dcl-c TEST_CASE_INDEX 1;
+
 //---------------------------------------------------------------------
 //   Global Variables
 //---------------------------------------------------------------------
@@ -501,12 +504,12 @@ dcl-proc test_runTest_successfulTest export;
 
   // set number of test cases to 1 and override the test case
   testSuite.testCasesCnt = 1;
-  testCase(1).procNm  = 'test_proc' ;
-  testCase(1).procPtr = %paddr(test_proc);
+  testCase(TEST_CASE_INDEX).procNm  = 'test_proc' ;
+  testCase(TEST_CASE_INDEX).procPtr = %paddr(test_proc);
 
   // Execution.
 
-  testResult = runTestCase(testSuite: 1);
+  testResult = runTestCase(testSuite: TEST_CASE_INDEX: NO_SEQ_NBR);
 
   // Controls.
 
@@ -544,12 +547,12 @@ dcl-proc test_runTest_failureInTest export;
 
   // set number of test cases to 1 and override the test case
   testSuite.testCasesCnt = 1;
-  testCase(1).procNm = 'test_fail' ;
-  testCase(1).procPtr = %paddr(test_fail);
+  testCase(TEST_CASE_INDEX).procNm = 'test_fail' ;
+  testCase(TEST_CASE_INDEX).procPtr = %paddr(test_fail);
 
   // Execution.
 
-  testResult = runTestCase(testSuite: 1);
+  testResult = runTestCase(testSuite: TEST_CASE_INDEX: NO_SEQ_NBR);
 
   // save test result before destroying it
   testResultControl = testResult;
@@ -598,15 +601,15 @@ dcl-proc test_runTest_withSetupAndTearDown export;
 
   // set number of test cases to 1 and override the test case
   testSuite.testCasesCnt = 1;
-  testCase(1).procNm  = 'test_proc' ;
-  testCase(1).procPtr = %paddr(test_proc);
+  testCase(TEST_CASE_INDEX).procNm  = 'test_proc' ;
+  testCase(TEST_CASE_INDEX).procPtr = %paddr(test_proc);
 
   testSuite.tearDown.procNm = 'tearDown_proc';
   testSuite.tearDown.procPtr = %paddr(tearDown_proc);
 
   // Execution.
 
-  testResult = runTestCase(testSuite: 1);
+  testResult = runTestCase(testSuite: TEST_CASE_INDEX: NO_SEQ_NBR);
 
   // save test result before destroying it
   testResultControl = testResult;
@@ -659,11 +662,11 @@ dcl-proc test_runTest_ignoreAssertFailure export;
 
   // set number of test cases to 1 and override the test case
   testSuite.testCasesCnt = 1;
-  testCase(1).procNm  = 'test_ignore_assert_error' ;
-  testCase(1).procPtr = %paddr(test_ignore_assert_error);
+  testCase(TEST_CASE_INDEX).procNm  = 'test_ignore_assert_error' ;
+  testCase(TEST_CASE_INDEX).procPtr = %paddr(test_ignore_assert_error);
 
 
-  testResult = runTestCase(testSuite: 1);
+  testResult = runTestCase(testSuite: TEST_CASE_INDEX: NO_SEQ_NBR);
 
   // save test result before destroying it
   testResultControl = testResult;

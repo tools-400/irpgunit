@@ -104,8 +104,9 @@ dcl-ds tmpl_testSuite len(256) qualified template;
   reserved_1        char(102);
 end-ds;
 
-dcl-ds tmpl_testCase_v6 len(34) qualified template;
+dcl-ds tmpl_testCase_v6 len(38) qualified template;
   offsNextEntry          int(10);
+  seqNbr                 int(10);
   lenEntry               int(5);
   outcome                char(1);
   reserved_1             char(1);
@@ -316,6 +317,7 @@ dcl-proc createV6TestCase;
 
   clear testCase;
   testCase.lenEntry = %size(testCase);
+  testCase.seqNbr = testCaseResult.seqNbr;
 
   testCase.outcome = testCaseResult.outcome;
   testCase.reserved_1 = '';

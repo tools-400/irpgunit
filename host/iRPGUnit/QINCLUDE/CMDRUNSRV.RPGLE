@@ -168,12 +168,14 @@ end-pr;
 //
 // @param testSuite - Test suite containing the test case
 // @param testIdx   - Zero-based index of the test case to execute
+// @param seqNbr    - Sequence number of the order the test cases are executed
 //
 // @return Complete test result including outcome and execution details
 ///
 dcl-pr runTestCase extproc('CMDRUNSRV_runTestCase') likeds(testCaseResult_t);
   testSuite likeds(testSuite_t) const;
   testIdx   int(10) const;
+  seqNbr          int(10) const;
 end-pr;
 
 ///
