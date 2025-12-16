@@ -151,14 +151,14 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc goToNextProc export;
   dcl-pi *N;
-    proclist        likeds(procList_t);
+    procList likeds(procList_t);
   end-pi;
 
-  dcl-ds procdesc likeds(spgl0610_t)
-  based(proclist.current);
+  dcl-ds procDesc likeds(spgl0610_t)
+  based(procList.current);
 
 
-  proclist.current += procdesc.size;
+  procList.current += procDesc.size;
 
 end-proc goToNextProc;
 
