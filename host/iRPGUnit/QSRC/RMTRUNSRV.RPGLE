@@ -341,6 +341,11 @@ dcl-proc createV6TestCase;
   pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
   dow (pAbstractTestEvent <> *null);
 
+    if (abstractTestEvent.outcome = TEST_CASE_SUCCESS and g_status.isJUnitStyle);
+      pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
+      iter;
+    endif;
+
     testCase.numTestCaseEvents += 1;
 
     select;
@@ -512,6 +517,7 @@ dcl-proc createV6TestCase;
     testCase.lenEntry += testCaseEvent.lenEntry;
 
     pTestCaseEvent = usPtr + offsTestCaseEvent;
+
     pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
   enddo;
 
