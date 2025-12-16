@@ -8,8 +8,8 @@
 
 package de.tools400.rpgunit.core.model.local;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -44,6 +44,7 @@ public class UnitTestCase extends AbstractUnitTestObject
     private long executionTime;
     private Date lastRunDate;
     private Outcome outcome;
+    private int seqNbr;
     private List<UnitTestCaseEvent> testCaseEvents;
 
     public UnitTestCase(String aProcedure) {
@@ -53,7 +54,7 @@ public class UnitTestCase extends AbstractUnitTestObject
         this.isExpanded = false;
         this.executionTimeFormatter = new UnitTestExecutionTimeFormatter();
 
-        this.testCaseEvents = new ArrayList<UnitTestCaseEvent>();
+        this.testCaseEvents = new LinkedList<UnitTestCaseEvent>();
     }
 
     public boolean isExecutable() {
@@ -137,6 +138,10 @@ public class UnitTestCase extends AbstractUnitTestObject
 
     private void setOutcome(Outcome anOutcome) {
         this.outcome = anOutcome;
+    }
+
+    public void setSeqNbr(int seqNbr) {
+        this.seqNbr = seqNbr;
     }
 
     public Date getLastRunDate() {
@@ -253,8 +258,8 @@ public class UnitTestCase extends AbstractUnitTestObject
     }
 
     public void addUnitTestCaseEvent(UnitTestCaseEvent aUnitTestCaseEvent) {
-        aUnitTestCaseEvent.setUnitTestCase(this);
         testCaseEvents.add(aUnitTestCaseEvent);
+        aUnitTestCaseEvent.setUnitTestCase(this);
     }
 
     public UnitTestCaseEvent[] getUnitTestCaseEvents() {
@@ -346,5 +351,10 @@ public class UnitTestCase extends AbstractUnitTestObject
 
     @Override
     public void setPropertyValue(Object arg0, Object arg1) {
+    }
+
+    @Override
+    public int category() {
+        return 0;
     }
 }

@@ -8,13 +8,14 @@
 
 package de.tools400.rpgunit.core.model.local;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.ui.views.properties.IPropertySource;
 
 import de.tools400.rpgunit.core.Messages;
 import de.tools400.rpgunit.core.helpers.IntHelper;
+import de.tools400.rpgunit.core.helpers.StringHelper;
 import de.tools400.rpgunit.core.jobs.ibmi.RPGUnitTestRunner;
 
 public class UnitTestCaseEvent extends AbstractUnitTestObject implements IUnitTestTreeItem, IUnitTestItemWithSourceMember, IPropertySource {
@@ -57,7 +58,7 @@ public class UnitTestCaseEvent extends AbstractUnitTestObject implements IUnitTe
         this.unitTestCase = null;
         this.isExpanded = false;
 
-        this.callStackEntries = new ArrayList<UnitTestCallStackEntry>();
+        this.callStackEntries = new LinkedList<UnitTestCallStackEntry>();
     }
 
     @Override
@@ -204,6 +205,16 @@ public class UnitTestCaseEvent extends AbstractUnitTestObject implements IUnitTe
         assertProcName = anAssertProcName.trim();
     }
 
+    public String getAssertProcNameUI() {
+
+        String assertProcName = getAssertProcName();
+        if (!StringHelper.isNullOrEmpty(assertProcName)) {
+            return assertProcName + "()";
+        }
+
+        return "";
+    }
+
     public String getAssertProcName() {
         return assertProcName;
     }
@@ -259,8 +270,8 @@ public class UnitTestCaseEvent extends AbstractUnitTestObject implements IUnitTe
      * @param aCallStackEntry - Call stack entry as returned by RUPGMRMT.
      */
     public void addCallStackEntry(UnitTestCallStackEntry aCallStackEntry) {
-        aCallStackEntry.setUnitTestCaseEvent(this);
         callStackEntries.add(aCallStackEntry);
+        aCallStackEntry.setUnitTestCaseEvent(this);
     }
 
     public List<UnitTestCallStackEntry> getCallStack() {
@@ -420,7 +431,7 @@ public class UnitTestCaseEvent extends AbstractUnitTestObject implements IUnitTe
         } else if (PROPERTY_ID_ERROR_MESSAGE.equals(id)) {
             return getMessage();
         } else if (PROPERTY_ID_ASSERT_PROC_NAME.equals(id)) {
-            return getAssertProcName() + "()";
+            return getAssertProcNameUI();
         } else if (PROPERTY_ID_OUTCOME.equals(id)) {
             return getOutcome().getLabel();
         } else if (PROPERTY_ID_EXPECTED_VALUE.equals(id)) {
@@ -480,5 +491,10 @@ public class UnitTestCaseEvent extends AbstractUnitTestObject implements IUnitTe
     @Override
     public boolean hasStatistics() {
         return false;
+    }
+
+    @Override
+    public int category() {
+        return getStatementNumber();
     }
 }

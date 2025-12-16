@@ -723,7 +723,7 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
         }
 
         private String getUnitTestCaseEventLabel(UnitTestCaseEvent unitTestCaseEvent) {
-            String tText = unitTestCaseEvent.getAssertProcName();
+            String tText = unitTestCaseEvent.getAssertProcNameUI();
             tText = tText + " [Stmt: " + unitTestCaseEvent.getStatementNumberText() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
             if (!StringHelper.isNullOrEmpty(unitTestCaseEvent.getMessage())) {
                 tText = tText + "  - " + unitTestCaseEvent.getMessage(); //$NON-NLS-1$
@@ -981,6 +981,14 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
                 return cat1 - cat2;
             }
             return super.compare(viewer, e1, e2);
+        }
+
+        @Override
+        public int category(Object element) {
+            if (element instanceof IUnitTestTreeItem) {
+                return ((IUnitTestTreeItem)element).category();
+            }
+            return super.category(element);
         }
     }
 

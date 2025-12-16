@@ -73,7 +73,7 @@ public class UnitTestCallStackEntry extends AbstractUnitTestObject implements IU
     }
 
     public void setUnitTestCaseEvent(UnitTestCaseEvent aUnitTestCaseEvent) {
-        unitTestCaseEvent = aUnitTestCaseEvent;
+        this.unitTestCaseEvent = aUnitTestCaseEvent;
     }
 
     public UnitTestCaseEvent getUnitTestCaseEvent() {

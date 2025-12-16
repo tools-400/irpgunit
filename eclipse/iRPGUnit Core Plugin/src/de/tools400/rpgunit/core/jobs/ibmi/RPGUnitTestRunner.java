@@ -40,7 +40,6 @@ import de.tools400.rpgunit.core.model.ibmi.I5LibraryList;
 import de.tools400.rpgunit.core.model.ibmi.I5Object;
 import de.tools400.rpgunit.core.model.ibmi.I5ObjectName;
 import de.tools400.rpgunit.core.model.ibmi.I5ServiceProgram;
-import de.tools400.rpgunit.core.model.local.Outcome;
 import de.tools400.rpgunit.core.model.local.UnitTestCallStackEntry;
 import de.tools400.rpgunit.core.model.local.UnitTestCase;
 import de.tools400.rpgunit.core.model.local.UnitTestCaseEvent;
@@ -1146,8 +1145,9 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
          * Structure of test case entry: 
          *   
          * D tmpl_testCase_v6...
-         * D                 DS            34    qualified template
+         * D                 DS            38    qualified template
          * D  offsNextEntry                10i 0
+         * D  seqNbr                       10i 0
          * D  lenEntry                      5i 0
          * D  outcome                       1a
          * D  reserved_1                    1a
@@ -1192,6 +1192,7 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
         for (int i = 0; i < numTestCasesRtn; i++) {
 
             int tOffsNextEntry = extractInt(aUserSpaceBytes, tOffset);
+            int tSeqNbr = extractInt(aUserSpaceBytes, tOffset);
             short tLenEntry = extractShort(aUserSpaceBytes, tOffset);
 
             String tOutcome = extractString(aUserSpaceBytes, tOffset, 1);
@@ -1216,16 +1217,17 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
 
             UnitTestCase testCase = new UnitTestCase(tTestCaseText);
             testCase.setOutcome(tOutcome);
+            testCase.setSeqNbr(tSeqNbr);
             testCase.setStatistics(tLastRunDate, tExecutionTime);
             testCase.setAssertions(tNumAsserts);
             aTestSuite.addUnitTestCase(testCase);
 
-            if (testCase.getOutcome() != Outcome.SUCCESS) {
-                int tOffsTestCaseEvent = tOffsFirstTestCaseEvent;
-                for (int x = 0; x < tNumTestCaseEvents; x++) {
-                    tOffsTestCaseEvent = retrieveTestCaseEventV6(aUserSpaceBytes, aTotalLength, testCase, tOffsTestCaseEvent);
-                }
+            // if (testCase.getOutcome() != Outcome.SUCCESS) {
+            int tOffsTestCaseEvent = tOffsFirstTestCaseEvent;
+            for (int x = 0; x < tNumTestCaseEvents; x++) {
+                tOffsTestCaseEvent = retrieveTestCaseEventV6(aUserSpaceBytes, aTotalLength, testCase, tOffsTestCaseEvent);
             }
+            // }
 
             tOffset[0] = tOffsNextEntry;
         }
