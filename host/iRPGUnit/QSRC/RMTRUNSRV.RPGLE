@@ -302,26 +302,10 @@ dcl-proc createV6TestCase;
   dcl-s offsTestCaseEvent int(10);
   dcl-ds testCaseEvent likeds(tmpl_testCaseEvent_v6) based(pTestCaseEvent);
   dcl-ds logValueExpected likeds(tmpl_logValue_v6) based(pLogValueExpected);
-// @ignore-unused
-  dcl-s valueExpected char(2048) based(pValueExpected);
   dcl-ds logValueActual likeds(tmpl_logValue_v6) based(pLogValueActual);
-// @ignore-unused
-  dcl-s valueActual char(2048) based(pValueActual);
-// @ignore-unused
-  dcl-s dataTypeExpected char(20) based(pDataTypeExpected);
-// @ignore-unused
-  dcl-s assertProcExpected char(32) based(pAssertProcExpected);
-// @ignore-unused
-  dcl-s dataTypeActual char(20) based(pDataTypeActual);
-// @ignore-unused
-  dcl-s assertProcActual char(32) based(pAssertProcActual);
 
-  dcl-ds srcInf likeds(srcInf_t) inz;
-  dcl-ds stackEntry likeds(tmpl_callStkEnt_v5) based(pStackEntry);
-  dcl-s stackEntry_SrcStmf char(1024) based(pStackEntry_SrcStmf);
   dcl-ds sender likeds(tmpl_sender_v5) based(pSender);
   dcl-ds receiver likeds(tmpl_receiver_v5) based(pReceiver);
-  dcl-ds callstkEnt likeds(callstkEnt_t) inz;
 
   dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
   dcl-ds testFailureEvent likeds(testFailureEvent_t) inz;
