@@ -315,6 +315,7 @@ dcl-ds testSuccessEvent_t qualified template;
   assertProc   like(assertProcNm_t) inz;
   logExpected  likeds(logValue_t) inz(*likeds);
   logActual    likeds(logValue_t) inz(*likeds);
+  pCallstk     pointer inz;
 end-ds;
 
 // Assertion Failure Event.
@@ -324,9 +325,9 @@ dcl-ds testFailureEvent_t qualified template;
   assertProc   like(assertProcNm_t) inz;
   logExpected  likeds(logValue_t) inz(*likeds);
   logActual    likeds(logValue_t) inz(*likeds);
+  pCallstk     pointer inz;
   isConfirmed  ind inz(*off);
   msg          like(msgText_t) inz;
-  pCallstk     pointer inz;
 end-ds;
 
 // Runtime Error Event.

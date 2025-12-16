@@ -59,7 +59,7 @@ dcl-s dbg_length int(10);
 
 dcl-ds g_status qualified inz;
   xmlType             like(xmlType_t);
-  isJunitStyle        ind;
+  isJUnitStyle        ind;
   json                varchar(50000);
   json_countObject    int(10);
   json_countArray     int(10);
@@ -78,7 +78,7 @@ dcl-proc writeXmlFile export;
     testSuiteName   likeds(Object_t) const;
     testSuiteResult likeds(testSuiteResult_t) const;
     xmlType         like(xmlType_t) const;
-    isJunitStyle    ind const;
+    isJUnitStyle    ind const;
   end-pi;
 
   dcl-s fileHandle int(10);
@@ -88,7 +88,7 @@ dcl-proc writeXmlFile export;
 
   clear g_status;
   g_status.xmlType = xmlType;
-  g_status.isJunitStyle = isJunitStyle;
+  g_status.isJUnitStyle = isJUnitStyle;
 
   fileHandle = getXmlFileHandle(filepath);
   writeHeader(fileHandle : testSuite : testSuiteName : testSuiteResult);

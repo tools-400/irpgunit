@@ -94,7 +94,7 @@ public class CompareViewerPanel implements ISelectionChangedListener, IPropertyC
         txtExpected = createLogValueText(mainPanel, Messages.Label_Expected);
         txtActual = createLogValueText(mainPanel, Messages.Label_Actual);
 
-        setInput(null);
+        clearCompareResultEditor();
 
         return mainPanel;
     }
@@ -250,7 +250,7 @@ public class CompareViewerPanel implements ISelectionChangedListener, IPropertyC
         }
     }
 
-    public void setInput(UnitTestCaseEvent testCaseEvent) {
+    private void setInput(UnitTestCaseEvent testCaseEvent) {
 
         this.testCaseEvent = testCaseEvent;
 
@@ -348,16 +348,19 @@ public class CompareViewerPanel implements ISelectionChangedListener, IPropertyC
             IStructuredSelection structuredSelection = (IStructuredSelection)selection;
             Object item = structuredSelection.getFirstElement();
             if (!(item instanceof UnitTestCaseEvent)) {
-                // clearCompareResult();
-                setInput(null);
+                clearCompareResultEditor();
                 return;
             }
 
             UnitTestCaseEvent testCaseEvent = (UnitTestCaseEvent)item;
             setInput(testCaseEvent);
         } else {
-            setInput(null);
+            clearCompareResultEditor();
         }
+    }
+
+    private void clearCompareResultEditor() {
+        setInput(null);
     }
 
     private void compareValue(String expected, String actual) {

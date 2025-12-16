@@ -44,6 +44,7 @@ dcl-c version_4 4;
 
 // User space version number 5. Introduced 03.10.2025.
 // Added message 'expected' and 'actual' values.
+// Was never in production.
 // @ignore-unused
 dcl-c version_5 5;
 
@@ -103,7 +104,7 @@ dcl-ds tmpl_testSuite len(256) qualified template;
   reserved_1        char(102);
 end-ds;
 
-dcl-ds tmpl_testCase_v5 len(34) qualified template;
+dcl-ds tmpl_testCase_v6 len(34) qualified template;
   offsNextEntry          int(10);
   lenEntry               int(5);
   outcome                char(1);
@@ -116,7 +117,7 @@ dcl-ds tmpl_testCase_v5 len(34) qualified template;
   offsFirstTestCaseEvent int(10);
 end-ds;
 
-dcl-ds tmpl_testCaseEvent_v5 len(46) qualified template;
+dcl-ds tmpl_testCaseEvent_v6 len(46) qualified template;
   outcome          char(1);
   reserved_2       char(1);
   lenEntry         int(5);
@@ -136,18 +137,16 @@ dcl-ds tmpl_testCaseEvent_v5 len(46) qualified template;
   // testFailureEvent & testSuccessEvent
   offsExpected     int(10);
   offsActual       int(10);
-  // logExpected      likeds(tmpl_logValue_v5);
-  // logActual        likeds(tmpl_logValue_v5);
+  // logExpected      likeds(tmpl_logValue_v6);
+  // logActual        likeds(tmpl_logValue_v6);
 end-ds;
 
-dcl-ds tmpl_logValue_v5 len(23) qualified template;
+dcl-ds tmpl_logValue_v6 len(23) qualified template;
   lenEntry         int(5);
   lenValue         int(5);
   originalLength   int(5);
   offsDataType     int(10);
   lenDataType      int(5);
-  offsAssertProc   int(10);
-  lenAssertProc    int(5);
   isTruncated      char(1);
   offsValue        int(10);
 end-ds;
@@ -185,12 +184,9 @@ dcl-ds tmpl_receiver_v5 likeds(tmpl_sender_v5) template;
 // Module Status
 //-------------------------------------------------------------------------
 dcl-ds g_status qualified;
-  version   int(10) inz(version_6);
+  version      int(10) inz(version_6);
+  isJUnitStyle Ind;
 end-ds;
-
-//-------------------------------------------------------------------------
-// Procedures
-//-------------------------------------------------------------------------
 
 // ==========================================================================
 //  Fill user space, all versions.
@@ -201,6 +197,7 @@ dcl-proc fillUserSpace export;
     testSuite       likeds(testSuite_t) const;
     testSuiteName   likeds(object_t) const;
     testSuiteResult likeds(testSuiteResult_t) const;
+    isJUnitStyle    ind const;
   end-pi;
 
   dcl-s usPtr pointer;
@@ -208,12 +205,13 @@ dcl-proc fillUserSpace export;
   dcl-ds srcInf likeds(srcInf_t) inz;
   dcl-ds header likeds(tmpl_testSuite) based(usPtr);
   dcl-s header_SrcStmf char(1024) based(pHeader_SrcStmf); // varying-length portion of 'header'
-// @ignore-unused
-///  dcl-ds testCaseV5 likeds(tmpl_testCase_v5) based(pTestCase);
+
   dcl-s offsCurrentTestCase int(10);
   dcl-ds testCaseResult likeds(testCaseResult_t) based(pTestCaseResult);
   dcl-ds errorCode likeds(errorCode_t) inz(*likeds);
   dcl-s lenTestCaseEntry int(10);
+
+  g_status.isJUnitStyle = isJUnitStyle;
 
   clear errorCode;
   errorCode.bytPrv = 0;
@@ -300,13 +298,13 @@ dcl-proc createV6TestCase;
     offsTestCase      int(10) const;
   end-pi;
 
-  dcl-ds testCase likeds(tmpl_testCase_v5) based(pTestCase);
+  dcl-ds testCase likeds(tmpl_testCase_v6) based(pTestCase);
   dcl-s offsTestCaseEvent int(10);
-  dcl-ds testCaseEvent likeds(tmpl_testCaseEvent_v5) based(pTestCaseEvent);
-  dcl-ds logValueExpected likeds(tmpl_logValue_v5) based(pLogValueExpected);
+  dcl-ds testCaseEvent likeds(tmpl_testCaseEvent_v6) based(pTestCaseEvent);
+  dcl-ds logValueExpected likeds(tmpl_logValue_v6) based(pLogValueExpected);
 // @ignore-unused
   dcl-s valueExpected char(2048) based(pValueExpected);
-  dcl-ds logValueActual likeds(tmpl_logValue_v5) based(pLogValueActual);
+  dcl-ds logValueActual likeds(tmpl_logValue_v6) based(pLogValueActual);
 // @ignore-unused
   dcl-s valueActual char(2048) based(pValueActual);
 // @ignore-unused
@@ -474,56 +472,7 @@ dcl-proc createV6TestCase;
       testCaseEvent.lenRcvInf = 0;
 
       // Call stack entries:
-      testCaseEvent.offsCallStkE = offsTestCaseEvent + testCaseEvent.lenEntry;
-      pStackEntry = usPtr + testCaseEvent.offsCallStkE;
-
-      Callstack_resetIteration(testFailureEvent.pCallstk);
-      dow (Callstack_getNext(testFailureEvent.pCallstk: callstkEnt));
-
-        testCaseEvent.numCallStkE += 1;
-
-        clear stackEntry;
-
-        stackEntry.offsNextEntry = (pStackEntry - usPtr) + %size(stackEntry);
-        stackEntry.lenEntry = %size(stackEntry);
-
-        stackEntry.qPgm = callstkEnt.qstmt.qpgm;
-        stackEntry.qMod = callstkEnt.qstmt.qmod;
-        stackEntry.specNb = callstkEnt.qstmt.specnb;
-
-        // TODO: add source stream file path to 'stackEntry'
-        srcInf = SrcMbr_getModSrc(stackEntry.qPgm: stackEntry.qMod);
-
-        stackEntry.typeOfSrc = srcInf.type;
-        if (stackEntry.typeOfSrc = TYPE_STMF);
-           clear stackEntry.qSrcMbr;
-           stackEntry.offsSrcStmf = (pStackEntry - usPtr) + stackEntry.lenEntry;
-           stackEntry.lenSrcStmf = %len(srcInf.stmf);
-           pStackEntry_SrcStmf = %addr(stackEntry) + %size(stackEntry);
-           stackEntry_SrcStmf = %subst(srcInf.stmf: 1: %len(srcInf.stmf));
-
-           stackEntry.offsNextEntry += stackEntry.lenSrcStmf;
-           stackEntry.lenEntry += stackEntry.lenSrcStmf;
-        else;
-           stackEntry.qSrcMbr = srcInf.mbr;
-           stackEntry.offsSrcStmf = 0;
-           stackEntry.lenSrcStmf = 0;
-        endif;
-
-        stackEntry.offsProcNm = (pStackEntry - usPtr) + stackEntry.lenEntry;
-        stackEntry.lenProcNm = %len(callstkEnt.qstmt.procnm);
-        memcpy(usPtr + stackEntry.offsProcNm
-               : %addr(callstkEnt.qStmt.procNm:*data)
-               : stackEntry.lenProcNm);
-
-        stackEntry.offsNextEntry += stackEntry.lenProcNm;
-        stackEntry.lenEntry += stackEntry.lenProcNm;
-
-        testCaseEvent.lenEntry += stackEntry.lenEntry;
-
-        pStackEntry = usPtr + stackEntry.offsNextEntry;
-
-      enddo;
+      addCallstack(usPtr: testCaseEvent: testFailureEvent.pCallstk);
 
       // add 'expected' value
       testCaseEvent.offsExpected = addLogValue(usPtr: testCaseEvent: testFailureEvent.logExpected);
@@ -561,8 +510,12 @@ dcl-proc createV6TestCase;
       testCaseEvent.lenRcvInf = 0;
       testCaseEvent.offsRcvInf = 0;
 
-      testCaseEvent.offsCallStkE = 0;
-      testCaseEvent.numCallStkE = 0;
+      if (g_status.isJUnitStyle);
+        testCaseEvent.offsCallStkE = 0;
+        testCaseEvent.numCallStkE = 0;
+      else;
+        addCallstack(usPtr: testCaseEvent: testSuccessEvent.pCallstk);
+      endif;
 
       testCaseEvent.offsExpected = 0;
       testCaseEvent.offsActual = 0;
@@ -589,21 +542,100 @@ end-proc;
 //  Adds a log value (actual or expected) to a user space
 //  with version 5 layout.
 // ==========================================================================
+dcl-proc addCallstack;
+  dcl-pi *n int(10) extproc(*dclcase);
+    usPtr         pointer const;
+    testCaseEvent likeds(tmpl_testCaseEvent_v6);
+    pCallstk      pointer const;
+  end-pi;
+
+  dcl-s offsTestCaseEvent int(10);
+
+  dcl-s offsStackEntry int(10);
+  dcl-ds stackEntry likeds(tmpl_callStkEnt_v5) based(pStackEntry);
+
+  dcl-ds callstkEnt likeds(callstkEnt_t) inz;
+  dcl-ds srcInf likeds(srcInf_t) inz;
+  dcl-s stackEntry_SrcStmf char(1024) based(pStackEntry_SrcStmf);
+
+  offsTestCaseEvent = %addr(testCaseEvent) - usPtr;
+
+  pStackEntry = usPtr + offsTestCaseEvent + testCaseEvent.lenEntry;
+
+  testCaseEvent.offsCallStkE = pStackEntry - usPtr;
+
+  offsStackEntry = testCaseEvent.offsCallStkE;
+
+  Callstack_resetIteration(pCallstk);
+  dow (Callstack_getNext(pCallstk: callstkEnt));
+
+    testCaseEvent.numCallStkE += 1;
+
+    clear stackEntry;
+
+    stackEntry.offsNextEntry = offsStackEntry + %size(stackEntry);
+    stackEntry.lenEntry = %size(stackEntry);
+
+    stackEntry.qPgm = callstkEnt.qstmt.qpgm;
+    stackEntry.qMod = callstkEnt.qstmt.qmod;
+    stackEntry.specNb = callstkEnt.qstmt.specnb;
+
+    // TODO: add source stream file path to 'stackEntry'
+    srcInf = SrcMbr_getModSrc(stackEntry.qPgm: stackEntry.qMod);
+
+    stackEntry.typeOfSrc = srcInf.type;
+    if (stackEntry.typeOfSrc = TYPE_STMF);
+       clear stackEntry.qSrcMbr;
+       stackEntry.offsSrcStmf = offsStackEntry + stackEntry.lenEntry;
+       stackEntry.lenSrcStmf = %len(srcInf.stmf);
+       pStackEntry_SrcStmf = %addr(stackEntry) + %size(stackEntry);
+       stackEntry_SrcStmf = %subst(srcInf.stmf: 1: %len(srcInf.stmf));
+
+       stackEntry.offsNextEntry += stackEntry.lenSrcStmf;
+       stackEntry.lenEntry += stackEntry.lenSrcStmf;
+    else;
+       stackEntry.qSrcMbr = srcInf.mbr;
+       stackEntry.offsSrcStmf = 0;
+       stackEntry.lenSrcStmf = 0;
+    endif;
+
+    stackEntry.offsProcNm = offsStackEntry + stackEntry.lenEntry;
+    stackEntry.lenProcNm = %len(callstkEnt.qstmt.procnm);
+    memcpy(usPtr + stackEntry.offsProcNm
+           : %addr(callstkEnt.qStmt.procNm:*data)
+           : stackEntry.lenProcNm);
+
+    stackEntry.offsNextEntry += stackEntry.lenProcNm;
+    stackEntry.lenEntry += stackEntry.lenProcNm;
+
+    testCaseEvent.lenEntry += stackEntry.lenEntry;
+
+    pStackEntry = usPtr + stackEntry.offsNextEntry;
+    offsStackEntry = pStackEntry - usPtr;
+
+  enddo;
+
+  return offsStackEntry;
+
+end-proc;
+
+// ==========================================================================
+//  Adds a log value (actual or expected) to a user space
+//  with version 5 layout.
+// ==========================================================================
 dcl-proc addLogValue;
   dcl-pi *n int(10) extproc(*dclcase);
     usPtr         pointer const;
-    testCaseEvent likeds(tmpl_testCaseEvent_v5);
+    testCaseEvent likeds(tmpl_testCaseEvent_v6);
     logValue      likeds(logValue_t);
   end-pi;
 
   dcl-s offsTestCaseEvent int(10);
-  dcl-ds entryLogValue likeds(tmpl_logValue_v5) based(pEntryLogValue);
+  dcl-ds entryLogValue likeds(tmpl_logValue_v6) based(pEntryLogValue);
 // @ignore-unused
   dcl-s value char(2048) based(pValue);
 // @ignore-unused
   dcl-s dataType char(20) based(pDataType);
-// @ignore-unused
-  dcl-s assertProc char(32) based(pAssertProc);
 
   dcl-s offsEntryLogValue int(10);
 
@@ -628,12 +660,6 @@ dcl-proc addLogValue;
 
   entryLogValue.lenEntry += entryLogValue.lenDataType;
 
-  // Assert Procedure
-  entryLogValue.offsAssertProc = offsEntryLogValue + entryLogValue.lenEntry;
-  entryLogValue.lenAssertProc = %len(logValue.assertProc);
-
-  entryLogValue.lenEntry += entryLogValue.lenAssertProc;
-
   memcpy(
     usPtr + entryLogValue.offsValue
     : %addr(logValue.value: *data)
@@ -644,15 +670,9 @@ dcl-proc addLogValue;
     : %addr(logValue.type: *data)
     : entryLogValue.lenDataType);
 
-  memcpy(
-    usPtr + entryLogValue.offsAssertProc
-    : %addr(logValue.assertProc: *data)
-    : entryLogValue.lenAssertProc);
-
   // For debugging
   pValue = usPtr + entryLogValue.offsValue;
   pDataType = usPtr + entryLogValue.offsDataType;
-  pAssertProc = usPtr + entryLogValue.offsAssertProc;
 
   return offsEntryLogValue;
 

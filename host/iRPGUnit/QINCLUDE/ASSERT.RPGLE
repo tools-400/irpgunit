@@ -36,14 +36,14 @@ end-pr;
 //
 // @param lib          - Library name where the program resides
 // @param pgm          - Program name to register
-// @param isJunitStyle - Specifies whether the test case fails on the first
+// @param isJUnitStyle - Specifies whether the test case fails on the first
 //                       failed assertion. Fails on the first failed assertion
 //                       if set to *on, otherwise continues.
 ///
 dcl-pr registerStartPgm extproc('ASSERT_registerStartPgm');
   lib char(10) const;
   pgm char(10) const;
-  isJunitStyle ind const;
+  isJUnitStyle ind const;
 end-pr;
 
 ///

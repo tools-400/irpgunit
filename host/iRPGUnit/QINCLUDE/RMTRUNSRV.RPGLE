@@ -20,11 +20,15 @@
 // @param testSuite       - Test suite that was executed.
 // @param testSuiteName   - Qualified name oif the test suite service program.
 // @param testSuiteResult - Test result.
+// @param isJUnitStyle    - Specifies whether the test case fails on the first
+//                          failed assertion. Fails on the first failed assertion
+//                          if set to *on, otherwise continues.
 ///
 dcl-pr fillUserSpace extproc('RMTRUNSRV_fillUserSpace');
   userSpace       likeds(object_t ) const;
   testSuite       likeds(testSuite_t) const;
   testSuiteName   likeds(object_t) const;
   testSuiteResult likeds(testSuiteResult_t) const;
+  isJUnitStyle    ind const;
 end-pr;
 

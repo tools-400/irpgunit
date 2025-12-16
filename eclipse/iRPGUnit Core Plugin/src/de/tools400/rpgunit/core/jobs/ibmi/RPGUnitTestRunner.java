@@ -1085,11 +1085,7 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
                 tOffset[0] = tExpectedOffsDataType;
                 String tExpectedDataType = extractString(aUserSpaceBytes, tOffset, tExpectedLenDataType);
 
-                tOffset[0] = tExpectedOffsAssertProc;
-                String tExpectedAssertProc = extractString(aUserSpaceBytes, tOffset, tExpectedLenAssertProc);
-
-                tLogValueExpected = new UnitTestLogValue(tExpectedLen, tExpectedOrigLen, tExpectedDataType, tExpectedAssertProc, tExpectedIsTruncated,
-                    tExpectedValue);
+                tLogValueExpected = new UnitTestLogValue(tExpectedLen, tExpectedOrigLen, tExpectedDataType, tExpectedIsTruncated, tExpectedValue);
             } else {
                 tLogValueExpected = null;
             }
@@ -1113,11 +1109,7 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
                 tOffset[0] = tActualOffsDataType;
                 String tActualDataType = extractString(aUserSpaceBytes, tOffset, tActualLenDataType);
 
-                tOffset[0] = tActualOffsAssertProc;
-                String tActualAssertProc = extractString(aUserSpaceBytes, tOffset, tActualLenAssertProc);
-
-                tLogValueActual = new UnitTestLogValue(tActualLen, tActualOrigLen, tActualDataType, tActualAssertProc, tActualIsTruncated,
-                    tActualValue);
+                tLogValueActual = new UnitTestLogValue(tActualLen, tActualOrigLen, tActualDataType, tActualIsTruncated, tActualValue);
             } else {
                 tLogValueActual = null;
             }
@@ -1153,8 +1145,8 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
         /* 
          * Structure of test case entry: 
          *   
-         * D tmpl_testCase_v5...
-         * D                 DS            58    qualified template
+         * D tmpl_testCase_v6...
+         * D                 DS            34    qualified template
          * D  offsNextEntry                10i 0
          * D  lenEntry                      5i 0
          * D  outcome                       1a
@@ -1165,29 +1157,31 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
          * D                               10i 0
          * D  lenTestCaseText...
          * D                                5i 0
+         * D  numTestCaseEvents...
+         * D                               10i 0
          * D  offsTestCaseEvent...
          * D                               10i 0
-         *   
-         *   Length over all: 30
-
-         * D tmpl_testCaseEvent_v5...
-         * D                 DS            58    qualified template
+         *
+         * D tmpl_testCaseEvent_v6...
+         * D                 DS            46    qualified template
          * D  outcome                       1a
          * D  reserved_2                    1a
          * D  lenEntry                      5i 0
          * D  offsNextEntry                10i 0
+         * D  offsAssertProcNm...
+         * D                               10i 0
+         * D  lenAssertProcNm...
+         * D                                5i 0
          * D  offsExcpMsg                  10i 0
          * D  lenExcpMsg                    5i 0
          * D  offsSndInf                   10i 0
          * D  lenSndInf                     5i 0
          * D  offsRcvInf                   10i 0
-         * D  lenRcvInf                     5   i 0
+         * D  lenRcvInf                  5   i 0
          * D  offsCallStkE                 10i 0
          * D  numCallStkE                   5i 0
          * D  offsExpected                 10i 0
          * D  offsActual                   10i 0
-         *   
-         *   Length over all: 32
          */
         // @formatter:on
 
@@ -1329,8 +1323,10 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             short tExpectedOrigLen = extractShort(aUserSpaceBytes, tmpOffset);
             int tExpectedOffsDataType = extractInt(aUserSpaceBytes, tmpOffset);
             short tExpectedLenDataType = extractShort(aUserSpaceBytes, tmpOffset);
-            int tExpectedOffsAssertProc = extractInt(aUserSpaceBytes, tmpOffset);
-            short tExpectedLenAssertProc = extractShort(aUserSpaceBytes, tmpOffset);
+            // int tExpectedOffsAssertProc = extractInt(aUserSpaceBytes,
+            // tmpOffset);
+            // short tExpectedLenAssertProc = extractShort(aUserSpaceBytes,
+            // tmpOffset);
             String tExpectedIsTruncated = extractString(aUserSpaceBytes, tmpOffset, 1);
             int tExpectedOffsValue = extractInt(aUserSpaceBytes, tmpOffset);
 
@@ -1340,11 +1336,11 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             tmpOffset[0] = tExpectedOffsDataType;
             String tExpectedDataType = extractString(aUserSpaceBytes, tmpOffset, tExpectedLenDataType);
 
-            tmpOffset[0] = tExpectedOffsAssertProc;
-            String tExpectedAssertProc = extractString(aUserSpaceBytes, tmpOffset, tExpectedLenAssertProc);
+            // tmpOffset[0] = tExpectedOffsAssertProc;
+            // String tExpectedAssertProc = extractString(aUserSpaceBytes,
+            // tmpOffset, tExpectedLenAssertProc);
 
-            tLogValueExpected = new UnitTestLogValue(tExpectedLen, tExpectedOrigLen, tExpectedDataType, tExpectedAssertProc, tExpectedIsTruncated,
-                tExpectedValue);
+            tLogValueExpected = new UnitTestLogValue(tExpectedLen, tExpectedOrigLen, tExpectedDataType, tExpectedIsTruncated, tExpectedValue);
         } else {
             tLogValueExpected = null;
         }
@@ -1357,8 +1353,6 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             short tActualOrigLen = extractShort(aUserSpaceBytes, tmpOffset);
             int tActualOffsDataType = extractInt(aUserSpaceBytes, tmpOffset);
             short tActualLenDataType = extractShort(aUserSpaceBytes, tmpOffset);
-            int tActualOffsAssertProc = extractInt(aUserSpaceBytes, tmpOffset);
-            short tActualLenAssertProc = extractShort(aUserSpaceBytes, tmpOffset);
             String tActualIsTruncated = extractString(aUserSpaceBytes, tmpOffset, 1);
             int tActualOffsValue = extractInt(aUserSpaceBytes, tmpOffset);
 
@@ -1368,10 +1362,7 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             tmpOffset[0] = tActualOffsDataType;
             String tActualDataType = extractString(aUserSpaceBytes, tmpOffset, tActualLenDataType);
 
-            tmpOffset[0] = tActualOffsAssertProc;
-            String tActualAssertProc = extractString(aUserSpaceBytes, tmpOffset, tActualLenAssertProc);
-
-            tLogValueActual = new UnitTestLogValue(tActualLen, tActualOrigLen, tActualDataType, tActualAssertProc, tActualIsTruncated, tActualValue);
+            tLogValueActual = new UnitTestLogValue(tActualLen, tActualOrigLen, tActualDataType, tActualIsTruncated, tActualValue);
         } else {
             tLogValueActual = null;
         }

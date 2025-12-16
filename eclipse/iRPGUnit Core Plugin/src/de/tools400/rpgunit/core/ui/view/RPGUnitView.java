@@ -64,6 +64,7 @@ import de.tools400.rpgunit.core.extensions.testcase.UpdateTestResultContribution
 import de.tools400.rpgunit.core.extensions.view.SelectionChangedContributionsHandler;
 import de.tools400.rpgunit.core.handler.Command;
 import de.tools400.rpgunit.core.handler.EditRemoteSourceHandler;
+import de.tools400.rpgunit.core.helpers.StringHelper;
 import de.tools400.rpgunit.core.model.ibmi.I5ServiceProgram;
 import de.tools400.rpgunit.core.model.local.IUnitTestItemWithSourceMember;
 import de.tools400.rpgunit.core.model.local.IUnitTestTreeItem;
@@ -606,15 +607,13 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
                     updateTreeItemsExpandedStatus(aViewer, tTreeItem.getItems());
                 }
             }
+            TreeItem[] tChildren = tTreeItem.getItems();
+            updateTreeItemsExpandedStatus(aViewer, tChildren);
         }
     }
 
     private void setTreeItemExpandedStatus(TreeViewer aViewer, TreeItem aTreeItem, boolean anExpanded) {
         aTreeItem.setExpanded(anExpanded);
-        if (aTreeItem.getData() instanceof IUnitTestTreeItem) {
-            IUnitTestTreeItem tStatistics = (IUnitTestTreeItem)aTreeItem.getData();
-            tStatistics.setExpanded(aTreeItem.getExpanded());
-        }
         aViewer.refresh();
     }
 
@@ -670,21 +669,19 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
         @Override
         public String getText(Object element) {
             if (element instanceof UnitTestCaseEvent) {
-                UnitTestCaseEvent tTestCaseEvent = (UnitTestCaseEvent)element;
+                UnitTestCaseEvent tUnitTestCaseEvent = (UnitTestCaseEvent)element;
                 String tText = "";
-                if (tTestCaseEvent.isError() || tTestCaseEvent.isFailure()) {
-                    tText = tTestCaseEvent.getAssertProcName();
-                    tText = tText + " [Stmt: " + tTestCaseEvent.getStatementNumberText() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
-                    tText = tText + "  - " + tTestCaseEvent.getMessage(); //$NON-NLS-1$
-                } else {
-                    tText = tTestCaseEvent.getAssertProcName();
-                }
+                tText = getUnitTestCaseEventLabel(tUnitTestCaseEvent);
                 return tText;
             } else if (element instanceof UnitTestCase) {
                 UnitTestCase tTestCase = (UnitTestCase)element;
                 String tText = tTestCase.getProcedure();
                 if (tTestCase.hasStatistics()) {
                     tText = tText + " " + formatExecutionTime(tTestCase.getExecutionTime()); //$NON-NLS-1$
+                }
+                if (tTestCase.getUnitTestCaseEvents().length == 1) {
+                    UnitTestCaseEvent unitTestCaseEvent = tTestCase.getUnitTestCaseEvents()[0];
+                    tText = tText + " - " + getUnitTestCaseEventLabel(unitTestCaseEvent);
                 }
                 return tText;
             } else if (element instanceof UnitTestSuite) {
@@ -723,6 +720,15 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
             } else {
                 return ""; //$NON-NLS-1$
             }
+        }
+
+        private String getUnitTestCaseEventLabel(UnitTestCaseEvent unitTestCaseEvent) {
+            String tText = unitTestCaseEvent.getAssertProcName();
+            tText = tText + " [Stmt: " + unitTestCaseEvent.getStatementNumberText() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+            if (!StringHelper.isNullOrEmpty(unitTestCaseEvent.getMessage())) {
+                tText = tText + "  - " + unitTestCaseEvent.getMessage(); //$NON-NLS-1$
+            }
+            return tText;
         }
 
         private String formatExecutionTime(long executionTime) {

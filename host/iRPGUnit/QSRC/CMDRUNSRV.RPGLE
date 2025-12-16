@@ -66,10 +66,6 @@ dcl-ds g_status qualified inz;
 end-ds;
 
 //----------------------------------------------------------------------
-//   Procedure Definitions
-//----------------------------------------------------------------------
-
-//----------------------------------------------------------------------
 // Load a test suite. See prototype.
 //----------------------------------------------------------------------
 dcl-proc loadTestSuite export;
@@ -133,12 +129,12 @@ dcl-proc runTestSuite export;
   dcl-ds xmlStmfInfo likeds(xmlStmfInfo_t) inz;
 
   if (assertMode = MODE_ALL);
-    g_status.isJunitStyle = *off;
+    g_status.isJUnitStyle = *off;
   else;
-    g_status.isJunitStyle = *on;
+    g_status.isJUnitStyle = *on;
   endif;
 
-  registerStartPgm(sds.pgmLib: sds.pgmname: g_status.isJunitStyle);
+  registerStartPgm(sds.pgmLib: sds.pgmname: g_status.isJUnitStyle);
 
   MemMgr_reset();
 
@@ -192,7 +188,7 @@ dcl-proc runTestSuite export;
   if (xmlStmfInfo.path <> '');
     monitor;
       writeXmlFile(xmlStmfInfo.path:
-                   testSuite: qTestSuite: testSuiteResult: xmlStmfInfo.type: g_status.isJunitStyle);
+                   testSuite: qTestSuite: testSuiteResult: xmlStmfInfo.type: g_status.isJUnitStyle);
       xmlStmfMsg = 'Created XML file (' + xmlStmfInfo.type + '): ' + xmlStmfInfo.path;
       sndInfoMsg(xmlStmfMsg);
       xmlStmfMsg = '';
@@ -203,7 +199,7 @@ dcl-proc runTestSuite export;
 
   // Return result to plug-in
   if (%parms() >= %parmnum(userSpace) and %addr(userSpace) <> *null);
-    fillUserSpace(userSpace : testSuite : qTestSuite : testSuiteResult);
+    fillUserSpace(userSpace : testSuite : qTestSuite : testSuiteResult: g_status.isJUnitStyle);
   endif;
 
   // Restore library list
@@ -458,7 +454,7 @@ dcl-proc runTestProc export;
     updateTestCaseOutcome(testCaseResult);
   endif;
 
-  if (g_status.isJunitStyle and testCaseResult.outcome = TEST_CASE_SUCCESS);
+  if (g_status.isJUnitStyle and testCaseResult.outcome = TEST_CASE_SUCCESS);
     // Add success event to satisfy XMLWRITER and RMTRUNSRV.
     // There is no specific assert procedure, as all asserts
     // have been successfully executed.
@@ -467,6 +463,7 @@ dcl-proc runTestProc export;
     clear testSuccessEvent;
     testSuccessEvent.outcome = TEST_CASE_SUCCESS;
     testSuccessEvent.assertProc = '';
+    testSuccessEvent.pCallstk = *null;
 
     testCaseResult.lastSuccessEvent =
       addSuccessTestEvent(testCaseResult.hTestEvents: testSuccessEvent);
@@ -691,6 +688,14 @@ dcl-proc disposeTestEvent;
   select;
   when (abstractTestEvent.outcome = TEST_CASE_FAILURE);
     disposeCallstack(abstractTestEvent.failure.pCallstk);
+  when (abstractTestEvent.outcome = TEST_CASE_SUCCESS);
+    if (g_status.isJUnitStyle);
+      if (abstractTestEvent.success.pCallstk <> *null);
+        sndEscapeMsgAboveCtlBdy('Call stack must be *null if using JUnit style.');
+      endif;
+    else;
+      disposeCallstack(abstractTestEvent.success.pCallstk);
+    endif;
   endsl;
 
   list_remove(hTestEvents: idx - 1);
@@ -1243,7 +1248,7 @@ dcl-proc buildReportTestCaseName export;
     assertProcName = '';
   endsl;
 
-  if (g_status.isJunitStyle or assertProcName = '');
+  if (g_status.isJUnitStyle or assertProcName = '');
     return %trimr(testCaseResult.testName);
   else;
     return %trimr(testCaseResult.testName) + '.' + abstractTestEvent.failure.assertProc
@@ -1264,7 +1269,7 @@ dcl-proc getReportNumAsserts export;
 
   dcl-s numAssertions int(10);
 
-  if (g_status.isJunitStyle);
+  if (g_status.isJUnitStyle);
     numAssertions = testCaseResult.assertCnt;
   else;
     numAssertions = 1;
@@ -1286,7 +1291,7 @@ dcl-proc getReportExecutionTimeTestCase export;
 
   dcl-s numAssertions int(10);
 
-  if (g_status.isJunitStyle);
+  if (g_status.isJUnitStyle);
     numAssertions = testCaseResult.assertCnt;
   else;
     numAssertions = 1;

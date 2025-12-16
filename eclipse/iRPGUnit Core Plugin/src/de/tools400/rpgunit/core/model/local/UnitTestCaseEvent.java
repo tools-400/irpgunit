@@ -223,10 +223,8 @@ public class UnitTestCaseEvent extends AbstractUnitTestObject implements IUnitTe
                     statementNumber = Integer.toString(callStackEntries.get(0).getStatementNumber());
                 }
             }
-        } else if (getOutcome() == Outcome.FAILURE) {
-            if (!callStackEntries.isEmpty()) {
-                statementNumber = callStackEntries.get(0).getStatementNumberText();
-            }
+        } else if (!callStackEntries.isEmpty()) {
+            statementNumber = callStackEntries.get(0).getStatementNumberText();
         }
 
         return statementNumber;
@@ -234,8 +232,7 @@ public class UnitTestCaseEvent extends AbstractUnitTestObject implements IUnitTe
 
     public void setMessageSender(UnitTestMessageSender messageSender) {
         if (messageSender != null) {
-            // TODO: fix setting UnitTestCase
-            // messageSender.setUnitTestCase(this);
+            messageSender.setUnitTestCaseEvent(this);
         }
         this.messageSender = messageSender;
     }
@@ -246,8 +243,7 @@ public class UnitTestCaseEvent extends AbstractUnitTestObject implements IUnitTe
 
     public void setMessageReceiver(UnitTestMessageReceiver messageReceiver) {
         if (messageReceiver != null) {
-            // TODO: fix setting UnitTestCase
-            // messageReceiver.setUnitTestCase(this);
+            messageReceiver.setUnitTestCaseEvent(this);
         }
         this.messageReceiver = messageReceiver;
     }
@@ -424,7 +420,7 @@ public class UnitTestCaseEvent extends AbstractUnitTestObject implements IUnitTe
         } else if (PROPERTY_ID_ERROR_MESSAGE.equals(id)) {
             return getMessage();
         } else if (PROPERTY_ID_ASSERT_PROC_NAME.equals(id)) {
-            return getAssertProcName();
+            return getAssertProcName() + "()";
         } else if (PROPERTY_ID_OUTCOME.equals(id)) {
             return getOutcome().getLabel();
         } else if (PROPERTY_ID_EXPECTED_VALUE.equals(id)) {
@@ -435,8 +431,6 @@ public class UnitTestCaseEvent extends AbstractUnitTestObject implements IUnitTe
             return getOriginalLength(expected);
         } else if (PROPERTY_ID_EXPECTED_DATA_TYPE.equals(id)) {
             return getDataType(expected);
-        } else if (PROPERTY_ID_EXPECTED_ASSERTION_PROCEDURE.equals(id)) {
-            return getAssertionProcedure(expected);
         } else if (PROPERTY_ID_ACTUAL_VALUE.equals(id)) {
             return getValue(actual);
         } else if (PROPERTY_ID_ACTUAL_LENGTH.equals(id)) {
@@ -445,32 +439,20 @@ public class UnitTestCaseEvent extends AbstractUnitTestObject implements IUnitTe
             return getOriginalLength(actual);
         } else if (PROPERTY_ID_ACTUAL_DATA_TYPE.equals(id)) {
             return getDataType(actual);
-        } else if (PROPERTY_ID_ACTUAL_ASSERTION_PROCEDURE.equals(id)) {
-            return getAssertionProcedure(actual);
         }
 
         return null;
     }
 
     private Object getOriginalLength(UnitTestLogValue logValue) {
-        // if (logValue != null) {
         return logValue.getOriginalLength();
-        // } else {
-        // return NOT_APPLICABLE;
-        // }
     }
 
     private Object getLength(UnitTestLogValue logValue) {
-        // if (logValue != null) {
         return logValue.getLength();
-        // } else {
-        // return NOT_APPLICABLE;
-        // }
     }
 
     private String getValue(UnitTestLogValue logValue) {
-        // if (logValue != null && !RPG_NULL_VALUE.equals(logValue.getValue()))
-        // {
         if (RPG_NULL_VALUE.equals(logValue.getDataType())) {
             return Messages.Not_available_due_to_assertion_procedure;
         } else {
@@ -479,19 +461,7 @@ public class UnitTestCaseEvent extends AbstractUnitTestObject implements IUnitTe
     }
 
     private String getDataType(UnitTestLogValue logValue) {
-        // if (logValue != null &&
-        // !RPG_NULL_VALUE.equals(logValue.getDataType())) {
         return logValue.getDataType();
-    }
-
-    private String getAssertionProcedure(UnitTestLogValue logValue) {
-        // if (logValue != null &&
-        // !RPG_NULL_VALUE.equals(logValue.getAssertProcedure())) {
-        // if (RPG_NULL_VALUE.equals(logValue.getAssertProcedure())) {
-        // return NOT_APPLICABLE;
-        // } else {
-        return logValue.getAssertProcedure() + "()";
-        // }
     }
 
     @Override

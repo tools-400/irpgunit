@@ -92,7 +92,7 @@ dcl-ds g_status qualified;
   isAssertionError    ind inz(*off);
   hTestEvents         pointer inz;
   procNamePrefix      like(assertProcNm_t) inz;
-  isJunitStyle        ind inz(*on);
+  isJUnitStyle        ind inz(*on);
   // Latest assertion failure event information. Can be blank if no
   // assertion failure event since last assertion.
   abstractTestEvent   likeds(abstractTestEvent_t) inz(*likeds);
@@ -139,13 +139,13 @@ dcl-proc registerStartPgm export;
   dcl-pi *N;
     lib          char(10) const;
     pgm          char(10) const;
-    isJunitStyle ind const;
+    isJUnitStyle ind const;
   end-pi;
 
   g_status.qStartPgm.nm = pgm;
   g_status.qStartPgm.lib = lib;
 
-  g_status.isJunitStyle = isJunitStyle;
+  g_status.isJUnitStyle = isJUnitStyle;
 
 end-proc;
 
@@ -389,7 +389,7 @@ dcl-proc doAssert export;
   if not condition;
     g_status.numFailuresCounted += 1;
 
-    if (g_status.isJunitStyle);
+    if (g_status.isJUnitStyle);
       // Add unconfirmed failure event.
       // The event gets confirmed in CMDRUNSRV.runProc() if
       // it is not monitored. Otherwise is stays in status
@@ -401,6 +401,7 @@ dcl-proc doAssert export;
       // of assertion statements have been monitored.
       g_status.abstractTestEvent.failure.isConfirmed = *on;
     endif;
+
     g_status.abstractTestEvent.failure.outcome = TEST_CASE_FAILURE;
     g_status.abstractTestEvent.failure.logExpected = logExpected;
     g_status.abstractTestEvent.failure.logActual = logActual;
@@ -411,6 +412,12 @@ dcl-proc doAssert export;
     g_status.abstractTestEvent.success.outcome = TEST_CASE_SUCCESS;
     g_status.abstractTestEvent.success.logExpected = logExpected;
     g_status.abstractTestEvent.success.logActual = logActual;
+
+    if (g_status.isJUnitStyle);
+      g_status.abstractTestEvent.success.pCallstk = *null;
+    else;
+      g_status.abstractTestEvent.success.pCallstk = getCallStk(startProc: 1);
+    endif;
 
     addSuccessTestEvent(g_status.hTestEvents: g_status.abstractTestEvent.success);
   endif;
@@ -439,7 +446,7 @@ dcl-proc doFail;
     sndEscapeMsgToProcedure(msg: TEST_CASE_EXECUTOR);
   else;
     // called by assertion procedure
-    if (g_status.isJunitStyle);
+    if (g_status.isJUnitStyle);
       sndEscapeMsg(msg: toCallStackE + 1);
     endif;
   endif;
@@ -979,7 +986,7 @@ end-proc;
 dcl-proc getCallStk;
   dcl-pi *N pointer extproc(*dclcase);
     startProc   varchar(256) options(*varsize) const;
-    maxEntries  int(10) options(*nopass);
+    maxEntries  int(10) options(*nopass) const;
   end-pi;
 
   // Call stack entries.
@@ -987,36 +994,36 @@ dcl-proc getCallStk;
   dcl-s pCallstk pointer;
 
   // Job id.
-  dcl-ds jobIdInfo       likeds(dsjidf0100);
+  dcl-ds jobIdInfo likeds(dsjidf0100);
 
   // Call stack info header.
-  dcl-ds hdr             likeds(dscstk0100hdr) based(hdr_p);
-  dcl-s hdr_p            pointer;
+  dcl-ds hdr likeds(dscstk0100hdr) based(hdr_p);
+  dcl-s hdr_p pointer;
 
   // Call stack info entry.
-  dcl-ds ent             likeds(dscstk0100ent) based(ent_p);
-  dcl-s ent_p            pointer;
+  dcl-ds ent likeds(dscstk0100ent) based(ent_p);
+  dcl-s ent_p pointer;
 
   // Big buffer to receive call stack info.
-  dcl-s rawCallStk       char(16383);
+  dcl-s rawCallStk char(16383);
 
   // Statement Id.
-  dcl-s sttid            char(10) based(sttid_p);
-  dcl-s sttid_p          pointer;
+  dcl-s sttid char(10) based(sttid_p);
+  dcl-s sttid_p pointer;
 
   // Procedure name buffer.
-  dcl-s procMmBuffer_p   pointer;
-  dcl-s procNmBuffer     char(256) based(procMmBuffer_p);
+  dcl-s procMmBuffer_p pointer;
+  dcl-s procNmBuffer char(256) based(procMmBuffer_p);
 
-  dcl-s startEntry       int(10);
-  dcl-s endEntry         int(10);
-  dcl-s procName         like(procNm_t);
+  dcl-s startEntry int(10);
+  dcl-s endEntry int(10);
+  dcl-s procName like(procNm_t);
 
-  dcl-s i                int(10);
-  dcl-s level            int(10);
-  dcl-s maxStkEnt        int(10);
-  dcl-ds callstkEnt      likeds(callStkEnt_t);
-  dcl-s doReturnStckE    ind inz(*off);
+  dcl-s i int(10);
+  dcl-s level int(10);
+  dcl-s maxStkEnt int(10);
+  dcl-ds callstkEnt likeds(callStkEnt_t);
+  dcl-s doReturnStckE ind inz(*off);
   dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
 
   dcl-s maxEntriesToReturn int(10);
