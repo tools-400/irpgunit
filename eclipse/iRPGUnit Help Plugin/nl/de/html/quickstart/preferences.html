@@ -28,6 +28,25 @@ Die möglichen Werte sind:<p>
 </table>
 <p>
 
+<h3>Verarbeitung Zusicherungen</h3>
+Specifies how assertions are processed.<p>
+The possible values are:<p>
+<table width="80%">
+<colgroup>
+ <col width="100">
+</colgroup>
+<tr><td valign="top">*FAILFIRST</td><td>Die Verarbeitung von Zusicherungen wird nach dem Auftrteten des
+ersten Fehlers beendet. Dies entspricht dem Verhalten von JUnit und der originären Arbeitsweise von iRPGUnit.</td></tr>
+<tr><td valign="top">*ALL</td><td>Alle Zusicherungen werden unabhängig ihres Ergebnisses verarbeitet.
+Das finale Ergeniss ist <b>Fehlgeschlagen</b> falls eine der Zusicherungen des Testfalls fehlgeschlagen ist,
+andernfalls <b>Erfolgreich</b>.</td></tr>
+</table>
+<p>
+<table class="notice">
+<tr><td><b>Warning</b>: Die Auswahl <b>*FAILFIRST</b> kann unerwartet große Ergebnisse produzieren!</td></tr>
+</table>
+<p>
+
 <h3>Bibliotheksliste</h3>
 Gibt an, mit welcher Bibliotheksliste die Test Cases (Prozeduren) einer Test Suite 
 (Serviceprogramm) ausgeführt werden.<p>

@@ -15,7 +15,7 @@ As usual the preferences are available from the menu "Window" -> "Preferences".
 </p>
 
 <h3>Run order</h3>
-Specifies the order for running the test procedures.  Useful to check
+Specifies the order for running the test procedures. Useful to check
 that there is no dependencies between test procedures.<p>
 The possible values are:<p>
 <table width="80%">
@@ -24,6 +24,24 @@ The possible values are:<p>
 </colgroup>
 <tr><td valign="top">*API</td><td>Run test procedures in the order provided by the system API.</td></tr>
 <tr><td valign="top">*REVERSE</td><td>Run test procedures in reverse order.</td></tr>
+</table>
+<p>
+
+<h3>Processing of assertions</h3>
+Specifies how assertions are processed.<p>
+The possible values are:<p>
+<table width="80%">
+<colgroup>
+ <col width="100">
+</colgroup>
+<tr><td valign="top">*FAILFIRST</td><td>Executing assertions is stopped after the first failed assertion. This
+mode matches the JUnit behavior and equals the original mode of iRPGUnit.</td></tr>
+<tr><td valign="top">*ALL</td><td>All assertions are executed despite of their results. The final
+result is <b>Failure</b> if at least one assertion has failed, otherwise <b>Success</b>.</td></tr>
+</table>
+<p>
+<table class="notice">
+<tr><td><b>Warning</b>: Option <b>*FAILFIRST</b> may cause unexpected large results!</td></tr>
 </table>
 <p>
 

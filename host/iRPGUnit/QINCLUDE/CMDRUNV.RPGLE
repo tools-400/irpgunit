@@ -18,26 +18,30 @@
 // compatibility. Prevents runtime errors by catching configuration
 // issues early in the command processing lifecycle.
 //
-// @param gi_testsuite - Test suite service program object to validate
-// @param gi_testprocs - Test procedure names to verify exist
-// @param gi_order     - Execution order parameter validation
-// @param gi_detail    - Detail level parameter validation
-// @param gi_output    - Output format parameter validation
-// @param gi_libl      - Library list configuration validation
-// @param gi_jobd      - Job description object validation
-// @param gi_rclrsc    - Reclaim resources parameter validation
-// @param gi_xmlstmf   - XML stream file path validation
+// @param gi_testSuite  - Test suite service program object to validate
+// @param gi_testProcs  - Test procedure names to verify exist
+// @param gi_order      - Execution order parameter validation
+// @param gi_detail     - Detail level parameter validation
+// @param gi_output     - Output format parameter validation
+// @param gi_libl       - Library list configuration validation
+// @param gi_jobD       - Job description object validation
+// @param gi_rclRsc     - Reclaim resources parameter validation
+// @param gi_xmlStmf    - XML stream file path validation
+// @param gi_xmlType    - Specifies the type of the generated XML stream file.
+// @param gi_assertMode - Mode of how assertions are processed (*FAILFIRST, *ALL)
 ///
 dcl-pr cmdrunv extpgm('CMDRUNV');
-  gi_testsuite likeds(object_t) const;
-  gi_testprocs likeds(procNms_t) const;
-  gi_order     like(order_t) const;
-  gi_detail    like(detail_t) const;
-  gi_output    like(output_t) const;
-  gi_libl      likeds(libl_t) const;
-  gi_jobd      likeds(object_t) const;
-  gi_rclrsc    like(rclrsc_t) const;
-  gi_xmlstmf   like(stmf_t) const;
+  gi_testSuite  likeds(object_t) const;
+  gi_testProcs  likeds(procNms_t) const;
+  gi_order      like(order_t) const;
+  gi_detail     like(detail_t) const;
+  gi_output     like(output_t) const;
+  gi_libl       likeds(libl_t) const;
+  gi_jobD       likeds(object_t) const;
+  gi_rclRsc     like(rclrsc_t) const;
+  gi_xmlStmf    like(stmf_fl_t) options(*nopass) const;
+  gi_xmlType    like(xmlType_fl_t) options(*nopass) const;
+  gi_assertMode like(assertMode_t) options(*nopass) const;
 end-pr;
 
 ///

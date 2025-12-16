@@ -37,38 +37,39 @@ ctl-opt main(pgmrmt);
 /include qinclude,PGMMSG
 /include qinclude,CMDRUNSRV
 
-/include qinclude,SDS
-
 //----------------------------------------------------------------------
 //   Main Procedure
 //----------------------------------------------------------------------
 
 dcl-proc pgmrmt;
   dcl-pi *n;
-    go_returnCode int(10);
-    gi_qUserSpace likeds(object_t) const;
-    gi_qTestSuite likeds(object_t) const;
-    gi_testProcs  likeds(procNms_t) const;
-    gi_order      like(order_t) const;
-    gi_detail     like(detail_t) const;
-    gi_output     like(output_t) const;
-    gi_libL       likeds(libl_t) const;
-    gi_qJobD      likeds(object_t) const;
-    gi_rclRsc     like(rclrsc_t) const;
-    gi_xmlStmf    like(stmf_fl_t) options(*nopass) const;
-    gi_xmlType    like(xmlType_fl_t) options(*nopass) const;
+    go_returnCode   int(10);
+    gi_qUserSpace   likeds(object_t) const;
+    gi_qTestSuite   likeds(object_t) const;
+    gi_testProcs    likeds(procNms_t) const;
+    gi_order        like(order_t) const;
+    gi_detail       like(detail_t) const;
+    gi_output       like(output_t) const;
+    gi_libL         likeds(libl_t) const;
+    gi_qJobD        likeds(object_t) const;
+    gi_rclRsc       like(rclrsc_t) const;
+    gi_xmlStmf      like(stmf_fl_t) options(*nopass) const;
+    gi_xmlType      like(xmlType_fl_t) options(*nopass) const;
+    gi_assertMode   like(assertMode_t) options(*nopass) const;
   end-pi;
 
   dcl-c SUCCESS 0;
   dcl-c FAILURE -1;
 
-  dcl-s xmlStmf like(stmf_t);
-  dcl-s xmlType like(xmlType_t);
+  dcl-s xmlStmf like(gi_xmlStmf);
+  dcl-s xmlType like(gi_xmlType);
+  dcl-s assertMode like(gi_assertMode);
+
   dcl-s isSuccess ind;
   dcl-s msg varchar(256);
 
   if (%parms() >= %parmnum(gi_xmlStmf) and %addr(gi_xmlStmf) <> *null);
-    xmlStmf = %trimr(gi_xmlStmf);
+    xmlStmf = %trim(gi_xmlStmf);
   else;
     xmlStmf = '';
   endif;
@@ -79,11 +80,16 @@ dcl-proc pgmrmt;
     xmlType = XML_TYPE_1;
   endif;
 
-  registerStartPgm(sds.pgmLib: sds.pgmname);
+  if (%parms() >= %parmnum(gi_assertMode) and %addr(gi_assertMode) <> *null);
+    assertMode = %trimr(gi_assertMode);
+  else;
+    assertMode = MODE_FAIL_FIRST;
+  endif;
 
   isSuccess = runTestSuite(gi_qUserSpace: gi_qTestSuite: gi_testProcs:
-                           gi_order: gi_detail: gi_output: gi_libL:
-                           gi_qJobD: gi_rclRsc: gi_xmlStmf: gi_xmlType: msg);
+                           gi_order: gi_detail: assertMode: gi_output:
+                           gi_libL: gi_qJobD: gi_rclRsc: xmlStmf:
+                           xmlType: msg);
 
   if (isSuccess);
     go_returnCode = SUCCESS;

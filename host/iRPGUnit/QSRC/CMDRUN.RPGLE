@@ -33,11 +33,9 @@ ctl-opt main(cmdRun);
 //   Imported Procedures
 //----------------------------------------------------------------------
 
+/include qinclude,ASSERT
 /include qinclude,CMDRUNSRV
 /include qinclude,PGMMSG
-/include qinclude,TESTCASE
-
-/include qinclude,SDS
 
 //---------------------------------------------------------------------
 //   Main Procedure
@@ -53,18 +51,18 @@ dcl-proc cmdrun;
     gi_libL       likeds(libl_t) const;
     gi_qJobD      likeds(object_t) const;
     gi_rclRsc     like(rclrsc_t) const;
-    gi_xmlStmf    like(stmf_t) const;
+    gi_xmlStmf    like(stmf_fl_t) const;
     gi_xmlType    like(xmlType_t) const;
+    gi_assertMode like(assertMode_t) const;
   end-pi;
 
   dcl-s isSuccess ind;
   dcl-s msg varchar(256);
 
-  registerStartPgm(sds.pgmLib: sds.pgmname);
-
   isSuccess = runTestSuite(*omit: gi_qTestSuite: gi_testProcs:
-                           gi_order: gi_detail: gi_output: gi_libL:
-                           gi_qJobD: gi_rclRsc: gi_xmlStmf: gi_xmlType: msg);
+                           gi_order: gi_detail: gi_assertMode: gi_output:
+                           gi_libL: gi_qJobD: gi_rclRsc: %trim(gi_xmlStmf):
+                           gi_xmlType: msg);
 
   if (isSuccess);
     sndCompMsg( msg );

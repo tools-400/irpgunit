@@ -14,6 +14,8 @@
 //     >>PARM<<  OPTION(*EVENTF);
 //     >>PARM<<  DBGVIEW(*LIST);
 //   >>END-IMPORTANT<<
+//   >>CMD<<     STRREXPRC SRCMBR(A_INSTALL) SRCFILE(&LI/QBUILD) +
+//               PARM('CMPMOD &LI LIST');
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================
@@ -32,6 +34,7 @@ ctl-opt nomain;
 //   Imported Procedures
 //----------------------------------------------------------------------
 
+/include qinclude,MEMMGR
 /include qinclude,TEMPLATES
 /include qinclude,SYSTEMAPI
 /include qinclude,ERRORCODE
@@ -57,7 +60,7 @@ dcl-proc getLibl export;
   qusrjobi(apiinfo: %size(apiinfo): 'JOBI0700': '*': '': percolateErrors);
 
 
-  pjobi0700 = %alloc(apiinfo.bytAvl);
+  pjobi0700 = MemMgr_alloc(apiinfo.bytAvl: 'pjobi0700');
 
   qusrjobi(jobi0700: apiinfo.bytAvl: 'JOBI0700': '*': '': percolateErrors);
 
@@ -82,7 +85,7 @@ dcl-proc getLibl export;
     libldata.curlib = '*CRTDFT';
   endif;
 
-  dealloc(n) pjobi0700;
+  MemMgr_dealloc(pjobi0700: 'pjobi0700');
 
   return libldata;
 
@@ -109,7 +112,7 @@ dcl-proc loadLibl export;
   qwdrjobd(
         apiinfo: %size(apiinfo): 'JOBD0100': qJobD: percolateErrors);
 
-  pjobd0100 = %alloc(apiinfo.bytAvl);
+  pjobd0100 = MemMgr_alloc(apiinfo.bytAvl: 'pjobd0100');
 
   qwdrjobd(
         jobd0100: apiinfo.bytAvl: 'JOBD0100': qJobD: percolateErrors);
@@ -125,7 +128,7 @@ dcl-proc loadLibl export;
 
   libldata.curlib = '*CRTDFT';
 
-  dealloc(n) pjobd0100;
+  MemMgr_dealloc(pjobd0100: 'pjobd0100');
 
   return libldata;
 

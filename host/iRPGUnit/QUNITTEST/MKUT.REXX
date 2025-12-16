@@ -105,6 +105,7 @@
  executeUnitTest('MKOPDESCT', 'OPDESCT')
  executeUnitTest('MKPGMMSGT', 'PGMMSGT')
  executeUnitTest('MKRUNT', 'RUNT')
+ executeUnitTest('MKSRCMBRT', 'SRCMBRT')
  executeUnitTest('MKSTMFT', 'STMFT')
  executeUnitTest('MKSTRINGT', 'STRINGT')
  executeUnitTest('MKUTILST', 'TESTUTILST')

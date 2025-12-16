@@ -11,32 +11,10 @@
 // >>PRE-COMPILER<<
 //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
 //   >>IMPORTANT<<
-//     >>PARM<<  MODULE(&LI/JOBLOG    +
-//                      &LI/LIBL      +
-//                      &LI/LSTSPLF   +
-//                      &LI/OBJECT    +
-//                      &LI/OSVERSION +
-//                      &LI/PGMMSG    +
-//                      &LI/SRCMBR    +
-//                      &LI/STMF      +
-//                      &LI/STRING    +
-//                      &LI/USRSPC    +
-//                      &LI/SPLF      +
-//                      );
-//     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
-//     >>PARM<<  BOPTION(*DUPPROC);
+//     >>PARM<<  BNDSRVPGM(&LI/RUMEMMGR);
+//     >>PARM<<  BNDDIR(&LI/IRPGUNIT);
+//     >>PARM<<  COPTION(*EVENTF);
 //   >>END-IMPORTANT<<
-//   >>CMD<<     CMPMOD MODULE(&LI/JOBLOG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/LIBL     ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/LSTSPLF  ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/OBJECT   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/OSVERSION) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/PGMMSG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/SRCMBR   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/STMF     ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/STRING   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/USRSPC   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/SPLF     ) SRCFILE(&SL/QUNITTEST) DBGVIEW(*LIST);
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================
@@ -47,7 +25,6 @@ ctl-opt NoMain Option(*SrcStmt);
 //   Imported Procedures
 //----------------------------------------------------------------------
 
-/include qinclude,ASSERT
 /include qinclude,LIBL
 /include qinclude,OBJECT
 /include qinclude,PGMMSG
@@ -170,7 +147,7 @@ dcl-proc testFailures export;
 
   run('RUCALLTST TESTPGM03': errorExpected: '*ESCAPE': msgTxt);
 
-  aEqual('FAILURE. 2 test cases, 2 assertions, 2 failures, 0 error.': msgTxt);
+  aEqual('FAILURE. 2 test cases, 3 assertions, 2 failures, 0 error.': msgTxt);
 
   opnSplf('RPGUNIT': 'TESTPGM03');
   splfLineStartsWith('*** Tests of TESTPGM03 ***');
@@ -192,7 +169,7 @@ dcl-proc testFailures export;
   splfLineStartsWith('testFalse - FAILURE');
   splfLineStartsWith('Expected 5, but was 4.');
   splfSkipLine();  // Skip [blank line]
-  splfLineStartsWith('testFalse (TESTPGM03->TESTPGM03:20');
+  splfLineStartsWith('testFalse (TESTPGM03->TESTPGM03:30');
   splfSkipLine();  // Skip [blank line]
   splfLineStartsWith('Expected:        1 ''5''');
   splfLineStartsWith('Actual:          1 ''4''');
@@ -201,13 +178,13 @@ dcl-proc testFailures export;
   splfLineStartsWith('testFalse2 - FAILURE');
   splfLineStartsWith('Expected 6, but was 4.');
   splfSkipLine();  // Skip [blank line]
-  splfLineStartsWith('testFalse2 (TESTPGM03->TESTPGM03:28');
+  splfLineStartsWith('testFalse2 (TESTPGM03->TESTPGM03:40');
   splfSkipLine();  // Skip [blank line]
   splfLineStartsWith('Expected:        1 ''6''');
   splfLineStartsWith('Actual:          1 ''4''');
   splfLineStartsWith('-----------------------');
   splfSkipLine();  // Skip [blank line]
-  splfLineStartsWith('FAILURE. 2 test cases, 2 assertions, 2 failures, 0 error.');
+  splfLineStartsWith('FAILURE. 2 test cases, 3 assertions, 2 failures, 0 error.');
   cloSplf();
 
 end-proc;
@@ -298,7 +275,7 @@ dcl-proc testError export;
 
   splfLineStartsWith('testError - ERROR');
   splfLineStartsWith('MCH1211 - ');
-  splfLineStartsWith('testError (TESTPGM06->TESTPGM06:23');
+  splfLineStartsWith('testError (TESTPGM06->TESTPGM06:33');
   splfLineStartsWith('-----------------------');
   splfSkipLine();  // Skip [blank line]
   splfLineStartsWith('ERROR. 1 test case, 0 assertion, 0 failure, 1 error.');
@@ -342,8 +319,8 @@ dcl-proc testStackTrace export;
   splfLineStartsWith('testStack - FAILURE');
   splfLineStartsWith('Expected 5, but was 4.');
   splfSkipLine();  // Skip [blank line]
-  splfLineStartsWith('failingProc (TESTPGM07->TESTPGM07:20');
-  splfLineStartsWith('testStack (TESTPGM07->TESTPGM07:28');
+  splfLineStartsWith('failingProc (TESTPGM07->TESTPGM07:30');
+  splfLineStartsWith('testStack (TESTPGM07->TESTPGM07:38');
   splfSkipLine();  // Skip [blank line]
   splfLineStartsWith('Expected:        1 ''5''');
   splfLineStartsWith('Actual:          1 ''4''');
@@ -433,7 +410,7 @@ dcl-proc testErrorDuringSetup export;
 
   splfLineStartsWith('test - ERROR');
   splfLineStartsWith('MCH1211 - ');
-  splfLineStartsWith('setup (TESTPGM09->TESTPGM09:25');
+  splfLineStartsWith('setup (TESTPGM09->TESTPGM09:35');
   splfLineStartsWith('-----------------------');
   splfSkipLine();  // Skip [blank line]
   splfLineStartsWith('ERROR. 1 test case, 0 assertion, 0 failure, 1 error.');
@@ -476,7 +453,50 @@ dcl-proc testErrorDuringTearDown export;
 
   splfLineStartsWith('test - ERROR');
   splfLineStartsWith('MCH1211 - ');
-  splfLineStartsWith('tearDown (TESTPGM10->TESTPGM10:27');
+  splfLineStartsWith('tearDown (TESTPGM10->TESTPGM10:37');
+  splfLineStartsWith('-----------------------');
+  splfSkipLine();  // Skip [blank line]
+  splfLineStartsWith('ERROR. 1 test case, 0 assertion, 0 failure, 1 error.');
+  cloSplf();
+
+end-proc;
+
+
+dcl-proc testErrorDuringBothSetUpAndTearDown export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-s i int(10);
+
+  if (TestSuite_isDirty('TESTPGM21': 'QTEMP'));
+    runCmd('RUCRTRPG TSTPGM(QTEMP/TESTPGM21) +
+            SRCFILE(QTESTCASES) DLTSPLF(*YES)');
+  endif;
+
+  run('RUCALLTST TESTPGM21': errorExpected: '*ESCAPE': msgTxt);
+
+  aEqual('ERROR. 1 test case, 0 assertion, 0 failure, 1 error.' :msgTxt);
+
+  opnSplf('RPGUNIT': 'TESTPGM21');
+  splfLineStartsWith('*** Tests of TESTPGM21 ***');
+  splfSkipLine();  // Skip "Date"
+  splfSkipLine();  // Skip "Job"
+  splfSkipLine();  // Skip "User"
+  splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
+  splfSkipLine();  // Skip "IBM i       : V7R3M0"
+  splfSkipLine();  // Skip [blank line]
+
+  splfSkipLine();  // Skip "Cur. library: *CRTDFT"
+  i = numRows;
+  dow (i > 0);
+    splfSkipLine();  // Skip lines of library list
+    i -= 1;
+  enddo;
+  splfSkipLine();  // Skip [blank line]
+
+  splfLineStartsWith('test - ERROR');
+  splfLineStartsWith('MCH1211 - ');
+  splfLineStartsWith('setup (TESTPGM21->TESTPGM21:3600');
   splfLineStartsWith('-----------------------');
   splfSkipLine();  // Skip [blank line]
   splfLineStartsWith('ERROR. 1 test case, 0 assertion, 0 failure, 1 error.');
@@ -590,7 +610,7 @@ dcl-proc testBigInteger export;
   splfLineStartsWith('Expected 1234567890123456789012345678901, but was 12345678901234567890');
   splfLineStartsWith('12345678900.');
   splfSkipLine();  // Skip [blank line]
-  splfLineStartsWith('test_Different (TESTPGM14->TESTPGM14:30');
+  splfLineStartsWith('test_Different (TESTPGM14->TESTPGM14:40');
   splfSkipLine();  // Skip [blank line]
   splfLineStartsWith('Expected:        1 ''1234567890123456789012345678901''');
   splfLineStartsWith('Actual:          1 ''1234567890123456789012345678900''');
@@ -714,7 +734,7 @@ dcl-proc testChooseTest export;
   splfLineStartsWith( 'test2 - FAILURE');
   splfLineStartsWith( 'test2');
   splfSkipLine();  // Skip [blank line]
-  splfLineStartsWith( 'test2 (TESTPGM05->TESTPGM05:3900)');
+  splfLineStartsWith( 'test2 (TESTPGM05->TESTPGM05:4900)');
   splfSkipLine();  // Skip [blank line]
   splfLineStartsWith( 'Expected:          Not available');
   splfLineStartsWith( 'Actual:            Not available');
@@ -805,7 +825,7 @@ dcl-proc testErrorInSetUpSuite export;
 
   splfLineStartsWith( 'setupSuite - ERROR');
   splfLineStartsWith( 'MCH1211 - ');
-  splfLineStartsWith( 'setupSuite (TESTPGM17->TESTPGM17:25');
+  splfLineStartsWith( 'setupSuite (TESTPGM17->TESTPGM17:35');
   splfLineStartsWith( '-----------------------');
   splfSkipLine();  // Skip [blank line]
   splfLineStartsWith( 'ERROR. 0 test case, 0 assertion, 0 failure, 1 error.');
@@ -852,7 +872,7 @@ dcl-proc testErrorInTearDownSuite export;
 
   splfLineStartsWith( 'tearDownSuite - ERROR');
   splfLineStartsWith( 'MCH1211 - ');
-  splfLineStartsWith( 'tearDownSuite (TESTPGM18->TESTPGM18:41');
+  splfLineStartsWith( 'tearDownSuite (TESTPGM18->TESTPGM18:51');
   splfLineStartsWith( '-----------------------');
   splfSkipLine();  // Skip [blank line]
   splfLineStartsWith( 'ERROR. 1 test case, 0 assertion, 0 failure, 1 error.');
@@ -946,7 +966,7 @@ dcl-proc testFailuresNoOutput export;
 
   run('RUCALLTST TESTPGM03 OUTPUT(*NONE)': errorExpected: '*ESCAPE': msgTxt);
 
-  aEqual('FAILURE. 2 test cases, 2 assertions, 2 failures, 0 error.': msgTxt);
+  aEqual('FAILURE. 2 test cases, 3 assertions, 2 failures, 0 error.': msgTxt);
 
   assert( dltSplFs('RPGUNIT': 'TESTPGM03') = 0 : 'Unexpected spooled file');
 

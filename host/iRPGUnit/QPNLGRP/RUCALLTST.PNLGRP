@@ -61,6 +61,22 @@ Useful to check that there is no dependencies between test procedures.
 :eparml.
 :ehelp.
 .*
+:help name='RUCALLTST/MODE' WIDTH=64.
+Assertion mode (MODE) - Help
+:xh3.Assertion mode (MODE)
+:p.
+Specifies how assertions are executed.
+:parml.
+:pt.:pk def.*FAILFIRST:epk.
+:pd.Executing assertions is stopped after the first failed assertion. This
+mode matches the JUnit behavior and equals the original mode of iRPGUnit.
+:pt.*ALL
+:pd.All assertions are executed. This mode may produce very large result
+data. The final result is :HP2.Failure:EHP2. is there was a failed assertion,
+otherwise :HP2.Success:EHP2. .
+:eparml.
+:ehelp.
+.*
 :help name='RUCALLTST/DETAIL' WIDTH=64.
 Report detail (DETAIL) - Help
 :xh3.Report detail (DETAIL)

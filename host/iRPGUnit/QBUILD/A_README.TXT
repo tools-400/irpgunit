@@ -83,6 +83,10 @@ b) Optionally run the RPGUnit self tests:
 
 --------------------------
 
+Version 7.0.0 - xx.xx.xxxx
+--------------------------
+ * ???
+
 Version 6.0.0 - 03.10.2025
 --------------------------
  * Compiled plug-in for RDi 9.6.0.13.
@@ -101,6 +105,8 @@ Version 6.0.0 - 03.10.2025
  * Add 'expected' and 'actual' values.
  * Fixed compiling objects from a source file stored in an ASP group.
  * Dropped source physical file RPGUNIT1 with member TESTCASE.
+ * Dropped support support for version 3 (23.04.2017-09.04.2024)
+   user spaces.
 
 --------------------------
 

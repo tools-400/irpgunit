@@ -64,12 +64,14 @@ import de.tools400.rpgunit.core.extensions.testcase.UpdateTestResultContribution
 import de.tools400.rpgunit.core.extensions.view.SelectionChangedContributionsHandler;
 import de.tools400.rpgunit.core.handler.Command;
 import de.tools400.rpgunit.core.handler.EditRemoteSourceHandler;
+import de.tools400.rpgunit.core.helpers.StringHelper;
 import de.tools400.rpgunit.core.model.ibmi.I5ServiceProgram;
 import de.tools400.rpgunit.core.model.local.IUnitTestItemWithSourceMember;
 import de.tools400.rpgunit.core.model.local.IUnitTestTreeItem;
 import de.tools400.rpgunit.core.model.local.Outcome;
 import de.tools400.rpgunit.core.model.local.UnitTestCallStackEntry;
 import de.tools400.rpgunit.core.model.local.UnitTestCase;
+import de.tools400.rpgunit.core.model.local.UnitTestCaseEvent;
 import de.tools400.rpgunit.core.model.local.UnitTestExecutionTimeFormatter;
 import de.tools400.rpgunit.core.model.local.UnitTestMessageReceiver;
 import de.tools400.rpgunit.core.model.local.UnitTestMessageSender;
@@ -605,15 +607,13 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
                     updateTreeItemsExpandedStatus(aViewer, tTreeItem.getItems());
                 }
             }
+            TreeItem[] tChildren = tTreeItem.getItems();
+            updateTreeItemsExpandedStatus(aViewer, tChildren);
         }
     }
 
     private void setTreeItemExpandedStatus(TreeViewer aViewer, TreeItem aTreeItem, boolean anExpanded) {
         aTreeItem.setExpanded(anExpanded);
-        if (aTreeItem.getData() instanceof IUnitTestTreeItem) {
-            IUnitTestTreeItem tStatistics = (IUnitTestTreeItem)aTreeItem.getData();
-            tStatistics.setExpanded(aTreeItem.getExpanded());
-        }
         aViewer.refresh();
     }
 
@@ -645,32 +645,43 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
 
         @Override
         public Image getImage(Object element) {
-            if (element instanceof UnitTestCase) {
+            if (element instanceof UnitTestCaseEvent) {
+                UnitTestCaseEvent unitTestCaseEvent = (UnitTestCaseEvent)element;
+                return getOutcomeImage(unitTestCaseEvent.getOutcome());
+            } else if (element instanceof UnitTestCase) {
                 UnitTestCase unitTestCase = (UnitTestCase)element;
-                Outcome outcome = unitTestCase.getOutcome();
-                return outcome.getImage();
+                return getOutcomeImage(unitTestCase.getOutcome());
             } else if (element instanceof UnitTestSuite) {
                 UnitTestSuite unitTestSuite = (UnitTestSuite)element;
-                Outcome outcome = unitTestSuite.getOutcome();
-                return outcome.getImage();
+                return getOutcomeImage(unitTestSuite.getOutcome());
             } else {
                 return null;
             }
         }
 
+        private Image getOutcomeImage(Outcome outcome) {
+            if (outcome == null) {
+                return null;
+            }
+            return outcome.getImage();
+        }
+
         @Override
         public String getText(Object element) {
-            if (element instanceof UnitTestCase) {
+            if (element instanceof UnitTestCaseEvent) {
+                UnitTestCaseEvent tUnitTestCaseEvent = (UnitTestCaseEvent)element;
+                String tText = "";
+                tText = getUnitTestCaseEventLabel(tUnitTestCaseEvent);
+                return tText;
+            } else if (element instanceof UnitTestCase) {
                 UnitTestCase tTestCase = (UnitTestCase)element;
                 String tText = tTestCase.getProcedure();
-                if (tTestCase.isError() || tTestCase.isFailure()) {
-                    tText = tText + " [Stmt: " + tTestCase.getStatementNumberText() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
-                }
                 if (tTestCase.hasStatistics()) {
                     tText = tText + " " + formatExecutionTime(tTestCase.getExecutionTime()); //$NON-NLS-1$
                 }
-                if (tTestCase.isError() || tTestCase.isFailure()) {
-                    tText = tText + "  - " + tTestCase.getMessage(); //$NON-NLS-1$
+                if (tTestCase.getUnitTestCaseEvents().length == 1) {
+                    UnitTestCaseEvent unitTestCaseEvent = tTestCase.getUnitTestCaseEvents()[0];
+                    tText = tText + " - " + getUnitTestCaseEventLabel(unitTestCaseEvent);
                 }
                 return tText;
             } else if (element instanceof UnitTestSuite) {
@@ -711,6 +722,15 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
             }
         }
 
+        private String getUnitTestCaseEventLabel(UnitTestCaseEvent unitTestCaseEvent) {
+            String tText = unitTestCaseEvent.getAssertProcName();
+            tText = tText + " [Stmt: " + unitTestCaseEvent.getStatementNumberText() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+            if (!StringHelper.isNullOrEmpty(unitTestCaseEvent.getMessage())) {
+                tText = tText + "  - " + unitTestCaseEvent.getMessage(); //$NON-NLS-1$
+            }
+            return tText;
+        }
+
         private String formatExecutionTime(long executionTime) {
             String text = " (" + executionTimeFormatter.formatExecutionTime(executionTime) + " s)"; //$NON-NLS-1$ //$NON-NLS-2$
             return text;
@@ -727,14 +747,16 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
             } else if (parentElement instanceof UnitTestSuite) {
                 return ((UnitTestSuite)parentElement).getUnitTestCases();
             } else if (parentElement instanceof UnitTestCase) {
-                UnitTestCase unitTestCase = (UnitTestCase)parentElement;
-                Outcome outcome = unitTestCase.getOutcome();
+                return ((UnitTestCase)parentElement).getUnitTestCaseEvents();
+            } else if (parentElement instanceof UnitTestCaseEvent) {
+                UnitTestCaseEvent unitTestCaseEvent = (UnitTestCaseEvent)parentElement;
+                Outcome outcome = unitTestCaseEvent.getOutcome();
                 if (Outcome.ERROR.equals(outcome)) {
-                    UnitTestMessageSender messageSender = unitTestCase.getMessageSender();
-                    UnitTestMessageReceiver messageReceiver = unitTestCase.getMessageReceiver();
+                    UnitTestMessageSender messageSender = unitTestCaseEvent.getMessageSender();
+                    UnitTestMessageReceiver messageReceiver = unitTestCaseEvent.getMessageReceiver();
                     return new Object[] { messageSender, messageReceiver };
                 } else if (Outcome.FAILURE.equals(outcome)) {
-                    return unitTestCase.getCallStack().toArray();
+                    return unitTestCaseEvent.getCallStack().toArray();
                 } else {
                     return noElements;
                 }
@@ -749,8 +771,10 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
                 return getInput();
             } else if (element instanceof UnitTestCase) {
                 return ((UnitTestCase)element).getUnitTestSuite();
+            } else if (element instanceof UnitTestCaseEvent) {
+                return ((UnitTestCaseEvent)element).getUnitTestCase();
             } else if (element instanceof UnitTestCallStackEntry) {
-                return ((UnitTestCallStackEntry)element).getUnitTestCase();
+                return ((UnitTestCallStackEntry)element).getUnitTestCaseEvent();
             } else {
                 return null;
             }
@@ -879,6 +903,12 @@ public class RPGUnitView extends ViewPart implements ICursorProvider, IInputProv
                         MessageDialog.openError(getSite().getShell(), Messages.ERROR, message);
                     }
                 } else if (tElement instanceof UnitTestCase) {
+                    EditRemoteSourceHandler tHandler = new EditRemoteSourceHandler();
+                    tHandler.editSourceMember(tSelection);
+                } else if (tElement instanceof UnitTestCaseEvent) {
+                    EditRemoteSourceHandler tHandler = new EditRemoteSourceHandler();
+                    tHandler.editSourceMember(tSelection);
+                } else if (tElement instanceof UnitTestCallStackEntry) {
                     EditRemoteSourceHandler tHandler = new EditRemoteSourceHandler();
                     tHandler.editSourceMember(tSelection);
                 }

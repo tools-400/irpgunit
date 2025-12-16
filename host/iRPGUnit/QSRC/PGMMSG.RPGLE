@@ -14,6 +14,8 @@
 //     >>PARM<<  OPTION(*EVENTF);
 //     >>PARM<<  DBGVIEW(*LIST);
 //   >>END-IMPORTANT<<
+//   >>CMD<<     STRREXPRC SRCMBR(A_INSTALL) SRCFILE(&LI/QBUILD) +
+//               PARM('CMPMOD &LI LIST');
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================
@@ -252,17 +254,19 @@ dcl-proc sndVldChkMsg export;
     callStkCnt   int(10) const;
   end-pi;
 
-  // The message reference key.
+  dcl-s lenMsg int(10);
   dcl-s msgKey char(4);
   dcl-s diagMsg varchar(256);
   dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
 
   diagMsg = '0000' + %trimr(msg);
 
+  lenMsg = %len(%trimr(diagMsg));
+
   qmhsndpm( 'CPD0006' :
             'QCPFMSG   *LIBL' :
             %trimr(diagMsg) :
-            %len(%trimr(diagMsg)) :
+            lenMsg :
             '*DIAG' :
             CUR_CALL_STK_ENT :
             ONE_CALL_STK_LVL_ABOVE + callStkCnt :
@@ -290,15 +294,17 @@ dcl-proc sndCompMsg export;
     msg   like(msgText_t) const;
   end-pi;
 
-  // The message reference key.
+  dcl-s lenMsg int(10);
   dcl-s msgKey char(4);
   dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
+
+  lenMsg = %len(%trimr(msg));
 
   // CPDA0FF with severity 0.
   qmhsndpm( 'CPDA0FF' :
             'QCPFMSG   *LIBL' :
             %trimr(msg) :
-            %len(%trimr(msg)) :
+            lenMsg :
             '*COMP' :
             CONTROL_BOUNDARY :
             ONE_CALL_STK_LVL_ABOVE :
@@ -317,14 +323,17 @@ dcl-proc sndEscapeMsg export;
     callStkCnt   int(10) const;
   end-pi;
 
+  dcl-s lenMsg int(10);
   dcl-s msgKey char(4);
   dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
+
+  lenMsg = %len(%trimr(msg));
 
   // CPF9897 with severity 40.
   qmhsndpm( 'CPF9897' :
             'QCPFMSG   *LIBL' :
             msg :
-            %len(msg) :
+            lenMsg :
             '*ESCAPE' :
             CUR_CALL_STK_ENT :
             ONE_CALL_STK_LVL_ABOVE + callStkCnt :
@@ -343,14 +352,17 @@ dcl-proc sndEscapeMsgToProcedure export;
     procedure   varchar(256) const  options(*omit);
   end-pi;
 
+  dcl-s lenMsg int(10);
   dcl-s msgKey char(4);
   dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
+
+  lenMsg = %len(%trimr(msg));
 
   // CPF9897 with severity 40.
   qmhsndpm( 'CPF9897' :
             'QCPFMSG   *LIBL' :
             msg :
-            %len(msg) :
+            lenMsg :
             '*ESCAPE' :
             procedure :
             0 :
@@ -384,14 +396,17 @@ dcl-proc sndEscapeMsgAboveCtlBdy export;
     msg like(msgText_t) const;
   end-pi;
 
+  dcl-s lenMsg int(10);
   dcl-s msgKey char(4);
   dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
+
+  lenMsg = %len(%trimr(msg));
 
   // CPF9897 with severity 40.
   qmhsndpm( 'CPF9897' :
             'QCPFMSG   *LIBL' :
             %trimr(msg) :
-            %len(%trimr(msg)) :
+            lenMsg :
             '*ESCAPE' :
             CONTROL_BOUNDARY :
             ONE_CALL_STK_LVL_ABOVE :
@@ -409,15 +424,17 @@ dcl-proc sndInfoMsg export;
     msg like(msgText_t) const;
   end-pi;
 
-  // The message reference key.
+  dcl-s lenMsg int(10);
   dcl-s msgKey char(4);
   dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
+
+  lenMsg = %len(%trimr(msg));
 
   // Send an immediate *INFO message without message ID
   qmhsndpm( '' :
             'QCPFMSG   *LIBL' :
             %trimr(msg) :
-            %len(%trimr(msg)) :
+            lenMsg :
             '*INFO' :
             CUR_CALL_STK_ENT :
             ONE_CALL_STK_LVL_ABOVE :
@@ -435,17 +452,19 @@ dcl-proc sndStsMsg export;
     msg   like(msgText_t) const;
   end-pi;
 
-  // The message reference key.
+  dcl-s lenMsg int(10);
   dcl-s msgKey char(4);
   dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
 
   g_status.lastStsMsg = msg;
 
+  lenMsg = %len(%trimR(msg));
+
   // CPDA0FF with severity 40.
   qmhsndpm( 'CPDA0FF' :
             'QCPFMSG   *LIBL' :
             %trimr(msg) :
-            %len(%trimr(msg)) :
+            lenMsg :
             '*STATUS' :
             '*EXT' :
             *zero :
@@ -474,7 +493,6 @@ dcl-proc getHighestMsgKey export;
   dcl-pi *N char(4);
   end-pi;
 
-  // The message reference key.
   dcl-s msg varchar(128) inz('getHighestMsgKey');
   dcl-s msgKey char(4);
   dcl-ds rawmsgbuf qualified;
@@ -622,6 +640,119 @@ dcl-proc getLatestEscMsg export;
   enddo;
 
   return msg;
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Retrieves the latest escape message between 'highMsgKey' and NOW.
+//----------------------------------------------------------------------
+dcl-proc caller export;
+  dcl-pi *n like(procNm_t);
+    i_offset  int(3) options(*nopass: *omit) const;
+    o_module  char(10) options(*nopass: *omit);
+    o_program char(10) options(*nopass: *omit);
+    o_stmtID  char(10) options(*nopass: *omit);
+  end-pi;
+
+  //  Return value
+  dcl-s procedure       varchar(256) inz;
+
+  //  Fields for optional parameters
+  dcl-s module  like(o_module  ) inz;
+  dcl-s program like(o_program ) inz;
+  dcl-s stmtID  like(o_stmtID  ) inz;
+  dcl-s offset  like(i_offset  ) inz(0);
+
+  //  Local constants
+  dcl-c cTEXT_MSG const('Who is before me?');
+
+  //  Helper fields QMHSNDPM/QMHRCVPM
+  dcl-ds qMsgF likeds(object_t)  inz;
+  dcl-s msgKey char(4) inz;
+  dcl-ds errCode likeds(errorCode_t) inz;
+  dcl-ds callStkEQ qualified;
+    module  char(10) inz;
+    program char(10) inz;
+  end-ds;
+
+  //  Helper fields QMHRCVPM
+  dcl-s memSize int(10) inz;
+  dcl-ds sndInf likeds(rcvm0300sender) based(pSndInf);
+  dcl-ds rcvm0300 likeds(rcvm0300hdr) based(pRcvm0300);
+
+  // Get optional input parameters ...
+  // .. i_offset
+  if (%parms() >= %parmnum(i_offset) and %addr(i_offset) <> *NULL);
+    offset = i_offset;
+  endif;
+
+  // Send a test message
+  clear   qMsgF;
+  qMsgF.nm = 'QCPFMSG';
+  qMsgF.lib = '*LIBL';
+
+  clear errCode;
+  errCode.bytPrv = %size(errCode);
+
+  callStkEQ.module = '*NONE';
+  callStkEQ.program = '*NONE';
+  qmhsndpm('CPF9897': qMsgF: cTEXT_MSG: %size(cTEXT_MSG): '*INFO'
+           : '*': 2 + offset: msgKey: errCode: 1: callStkEQ: 0);
+
+  if (errCode.bytAvl = 0);
+    // Receive and remove test message
+    memSize   = 2048;
+    pRcvm0300 = %alloc(memSize);
+
+    clear errCode;
+    errCode.bytPrv = %size(errCode);
+    callStkEQ.module = '*NONE';
+    callStkEQ.program = '*NONE';
+
+    qmhrcvpm(rcvm0300: memSize: 'RCVM0300'
+             : '*': 2 + offset: '*INFO': msgKey: 0: '*REMOVE': errCode: 1: callStkEQ);
+  endif;
+
+  // If everything worked as designed, ...
+  if (errCode.bytAvl = 0 and rcvm0300.bytAvl <= memSize);
+    // ... then retrieve sender information
+    pSndInf = pRcvm0300 + %size(rcvm0300)
+                        + rcvm0300.rplDataLenR
+                        + rcvm0300.msgLenR
+                        + rcvm0300.msgHlpLenR;
+    procedure = %trimR(sndInf.rcvProcNm);
+    module = sndInf.rcvModNm;
+    program = sndInf.rcvPgmNm;
+    stmtID = sndInf.rcvPgmSttNb(1);
+  else;
+    procedure = '*N';
+    module = '*N';
+    program = '*N';
+    stmtID = '*N';
+  endif;
+
+  return procedure;
+
+on-exit;
+
+  // Free memory
+  if (pRcvm0300 <> *null);
+    dealloc(n) pRcvm0300;
+  endif;
+
+  // Process optional output parameters ...
+  if (%parms() >= %parmnum(o_module) and %addr(o_module) <> *null);
+    o_module = module;
+  endif;
+
+  if (%parms() >= %parmnum(o_program) and %addr(o_program) <> *null);
+    o_program = program;
+  endif;
+
+  // .. o_stmtID
+  if (%parms() >= %parmnum(o_stmtID) and %addr(o_stmtID) <> *null);
+    o_stmtID = stmtID;
+  endif;
 
 end-proc;
 

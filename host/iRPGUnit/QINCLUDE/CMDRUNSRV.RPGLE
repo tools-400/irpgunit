@@ -24,6 +24,7 @@
 //
 // @param userspace     - User space object for storing detailed test results and metrics
 //                        Structure: library/object format defining where results are stored
+//                        Structure: library/object format defining where results are stored
 //                        Contains execution statistics, timing data, and failure details
 // @param testsuitename - Test suite service program object containing test procedures
 //                        Structure: library/service program identifying the test suite to execute
@@ -38,6 +39,11 @@
 // @param detail        - Level of detail for test output and reporting:
 //                        '*BASIC' = Summary information only
 //                        '*ALL' = Detailed execution information including timings
+//                        '*FAILURE' = Detailed information for failures only
+// @param mode          - Mode of how assertions are processed:
+//                        '*FAILFIRST' = Executing assertions is stopped after the first
+//                                       failed assertion
+//                        '*ALL' = All assertions are executed
 //                        '*FAILURE' = Detailed information for failures only
 // @param output        - Output format specification for test results:
 //                        '*NONE' = No output formatting
@@ -77,6 +83,7 @@ dcl-pr runTestSuite ind extproc('CMDRUNSRV_runTestSuite');
   testProcs     likeds(procNms_t) const;
   order         like(order_t) const;
   detail        like(detail_t) const;
+  assertMode    like(assertMode_t) const;
   output        like(output_t) const;
   libl          likeds(libl_t) const;
   qJobD         likeds(object_t) const;
@@ -98,7 +105,7 @@ end-pr;
 //
 // @return Complete test result with execution details and outcome
 ///
-dcl-pr runTestProc extproc('CMDRUNSRV_runTestProc') likeds(testResult_t);
+dcl-pr runTestProc extproc('CMDRUNSRV_runTestProc') likeds(testCaseResult_t);
   testproc likeds(proc_t) const;
   setup    likeds(proc_t) const;
   tearDown likeds(proc_t) const;
@@ -164,7 +171,7 @@ end-pr;
 //
 // @return Complete test result including outcome and execution details
 ///
-dcl-pr runTest extproc('CMDRUNSRV_runTest') likeds(testResult_t);
+dcl-pr runTestCase extproc('CMDRUNSRV_runTestCase') likeds(testCaseResult_t);
   testSuite likeds(testSuite_t) const;
   testIdx   int(10) const;
 end-pr;
@@ -174,14 +181,17 @@ end-pr;
 // Safely executes a procedure pointer while capturing any
 // assertion failures or runtime errors that occur during execution.
 //
-// @param proc   - Procedure pointer
-// @param result - Test result
+// @param proc           - Procedure pointer
+// @param result         - Test result
+// @param procNamePrefix - Prefix of the test name procedure. One of:
+//                         setupsuite, setup, teardown, teardownsuite
 //
 // @return Test result
 ///
-dcl-pr runProc likeds(testResult_t) extproc('CMDRUNSRV_runProc');
-  proc   pointer(*proc) const;
-  result likeds(testResult_t) value;
+dcl-pr runProc likeds(testCaseResult_t) extproc('CMDRUNSRV_runProc');
+  proc            pointer(*proc) const;
+  result          likeds(testCaseResult_t) value;
+  procNamePrefix  like(assertProcNm_t) const;
 end-pr;
 
 ///
@@ -189,12 +199,59 @@ end-pr;
 // Creates a clean test result data structure and sets
 // default values before a test case is executed.
 //
+// @param outcome  - Initial outcome of the test result
 // @param testName - Name of the test procedure
 //
 // @return Initialized test result structure
 ///
-dcl-pr initTestResult likeds(testResult_t) extproc('CMDRUNSRV_initTestResult');
+dcl-pr initTestResult likeds(testCaseResult_t) extproc('CMDRUNSRV_initTestResult');
+  outcome  like(outcome_t) const;
   testName like(procNm_t) const;
+end-pr;
+
+///
+// Disposes a test result and frees resources.
+// Deallocates dynamic list and clears the test
+// result data structure.
+//
+// @param testResult - The test result to be disposed
+// @param idx        - Index (starting at 1) of the test result that is disposed
+///
+dcl-pr disposeTestResult extproc('CMDRUNSRV_disposeTestResult');
+  testResult likeds(testCaseResult_t);
+  idx        int(10) options(*nopass: *omit) const;
+end-pr;
+
+///
+// Disposes a list of test events and frees resources.
+//
+// @param hTestEvents - The list of test events to be disposed
+// @param idx         - Index (starting at 1) of the test result that is disposed
+///
+dcl-pr disposeTestEvents extproc('CMDRUNSRV_disposeTestEvents');
+  hTestEvents pointer;
+  idx         int(10) options(*nopass: *omit) const;
+end-pr;
+
+///
+// Disposes a test event.
+//
+// @param idx - Index (starting at 1) of the test event that is disposed
+///
+dcl-pr disposeTestEvent extproc('CMDRUNSRV_disposeTestEvent');
+  hTestEvents pointer const;
+  idx         int(10) const;
+end-pr;
+
+///
+// Disposes a callstack.
+//
+// @param hCallstack - Handle of the callstack to be disposed
+// @param idx        - Index of the test result that is disposed
+///
+dcl-pr disposeCallstack extproc('CMDRUNSRC_disposeCallstack');
+  pCallstack pointer;
+  idx        int(10) options(*nopass: *omit) const;
 end-pr;
 
 ///
@@ -203,20 +260,20 @@ end-pr;
 // execution, teardown, and result collection based on specified
 // execution parameters and filtering criteria.
 //
-// @param result         - Test result accumulator for collecting execution statistics
-// @param testSuite      - Test suite containing test procedures to execute
-// @param testProcsToRun - Filter specifying which test procedures to execute
-// @param order          - Execution order specification (*API or *REVERSE)
-// @param detail         - Detail level for logging and output
-// @param rclRsc         - Resource reclamation strategy between tests
+// @param testSuiteResult - Test result accumulator for collecting execution statistics
+// @param testSuite       - Test suite containing test procedures to execute
+// @param testProcsToRun  - Filter specifying which test procedures to execute
+// @param order           - Execution order specification (*API or *REVERSE)
+// @param detail          - Detail level for logging and output
+// @param rclRsc          - Resource reclamation strategy between tests
 ///
 dcl-pr runTests extproc('CMDRUNSRV_runTests');
-  result         likeds(result_t);
-  testSuite      likeds(testSuite_t) const;
-  testProcsToRun likeds(procNms_t) const;
-  order          char(8) const;
-  detail         char(6) const;
-  rclRsc         char(10) const;
+  testSuiteResult likeds(testSuiteResult_t);
+  testSuite       likeds(testSuite_t) const;
+  testProcsToRun  likeds(procNms_t) const;
+  order           char(8) const;
+  detail          char(6) const;
+  rclRsc          char(10) const;
 end-pr;
 
 ///
@@ -239,23 +296,83 @@ dcl-pr fmtCompMsg varchar(256) extproc('CMDRUNSRV_fmtCompMsg');
   errorCnt    int(10) const;
 end-pr;
 
-// Handle a test case error.
-dcl-pr handleError extproc('CMDRUNSRV_handleError');
-  testProcNm      const like(procNm_t);
-  excpMsgInfo     const likeds(msg_t);
-  result          likeds(result_t);
+// Returns the last recorded failure event.
+dcl-pr getLastFailureEvent likeds(testFailureEvent_t) extproc('CMDRUNSRV_getLastFailureEvent');
+  testResult likeds(testCaseResult_t) const;
 end-pr;
 
-// Handle a test case failure.
-dcl-pr handleFailure extproc('CMDRUNSRV_handleFailure');
-  testProcNm      const like(procNm_t);
-  failure         const likeds(assertFailEvtLong_t);
-  result          likeds(result_t);
+// Returns the last recorded error event.
+dcl-pr getLastErrorEvent likeds(runtimeErrorEvent_t) extproc('CMDRUNSRV_getLastErrorEvent');
+  testResult likeds(testCaseResult_t) const;
 end-pr;
 
-// Handle a test case success.
-dcl-pr handleSuccess extproc('CMDRUNSRV_handleSuccess');
-  testProcNm      const like(procNm_t);
-  assertionCnt    int(10) const;
+dcl-pr writeTestReport extproc('CMRUNSRV_writeTestReport');
+  testSuite       likeds(testSuite_t) const;
+  testSuiteName   likeds(Object_t) const;
+  testSuiteResult likeds(testSuiteResult_t);
 end-pr;
+
+
+///
+// Adds a "success" test event.
+///
+dcl-pr addSuccessTestEvent int(10) extproc('CMDRUNSRV_addSuccessTestEvent');
+  hTestEvents      pointer const;
+  successTestEvent likeds(testSuccessEvent_t);
+end-pr;
+
+
+///
+// Adds a "failure" test event.
+///
+dcl-pr addFailureTestEvent int(10) extproc('CMDRUNSRV_addFailureTestEvent');
+  hTestEvents      pointer const;
+  failureTestEvent likeds(testFailureEvent_t);
+end-pr;
+
+
+///
+// Adds a "error" test event.
+///
+dcl-pr addErrorTestEvent int(10) extproc('CMDRUNSRV_addErrorTestEvent');
+  hTestEvents    pointer const;
+  errorTestEvent likeds(runtimeErrorEvent_t);
+end-pr;
+
+///
+// Builds the name of the test case as it is displayed in the XML.
+// Uses the test case name for assertion mode *FAILFIRST, otherwise
+// builds the names with template 'testName.assertProcName'.
+// If all assertions are executed, the name of the "virtual" test
+// is created as 'testName.assertProcName', otherwise 'testName'.
+///
+dcl-pr buildReportTestCaseName like(string_t) extproc('CMDRUNSRV_buildReportTestCaseName');
+  testCaseResult likeds(testCaseResult_t) const;
+  abstractTestEvent likeds(abstractTestEvent_t) const;
+end-pr;
+
+///
+// Returns the number of assertions as displayed in the XML.
+// Returns the total number of assertions for assertion mode *FAILFIRST,
+// otherwise 1.
+// If all assertions are executed, the number of assertions per "virtual"
+// test case is 1, otherwise the total number of assertions.
+///
+dcl-pr getReportNumAsserts int(10) extproc('CMDRUNSRV_getReportNumAsserts');
+  testCaseResult likeds(testCaseResult_t) const;
+end-pr;
+
+///
+// Returns the number of assertions as displayed in the XML.
+// Returns the total number of assertions for assertion mode *FAILFIRST,
+// otherwise 1.
+// IF all assertions are eceuted, the total execution time is divided
+// by the totall number of assertions. There is no way to figure out
+// how long it took to process a specific assertion.
+///
+dcl-pr getReportExecutionTimeTestCase int(10);
+  testCaseResult likeds(testCaseResult_t) const;
+end-pr;
+
+/include qinclude,templates
 

@@ -15,6 +15,7 @@
 /*                      &LI/PGMMSG    +                                       */
 /*                      );                                                    */
 /*     >>PARM<<  ENTMOD(&LI/CMDRUNV);                                         */
+/*     >>PARM<<  STGMDL(*SNGLVL);                                             */
 /*     >>PARM<<  ACTGRP(*CALLER);                                             */
 /*     >>PARM<<  ALWUPD(*YES);                                                */
 /*     >>PARM<<  ALWLIBUPD(*YES);                                             */

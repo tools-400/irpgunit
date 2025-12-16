@@ -8,6 +8,16 @@
 //  which accompanies this distribution, and is available at
 //  http://www.eclipse.org/legal/cpl-v10.html
 // ==========================================================================
+//    >>PRE-COMPILER<<
+//      >>CRTCMD<<  RUCRTRPG    TSTPGM(&LI/&OB) +
+//                              SRCFILE(&SL/&SF) SRCMBR(&SM);
+//      >>IMPORTANT<<
+//        >>PARM<< COPTION(*SRCSTMT *EVENTF);
+//        >>PARM<< DBGVIEW(*LIST);
+//      >>END-IMPORTANT<<
+//      >>EXECUTE<<
+//    >>END-PRE-COMPILER<<
+// ==========================================================================
 
 ctl-opt nomain option(*srcstmt: *nodebugio);
 
@@ -26,11 +36,11 @@ dcl-proc setupSuite export;
 
 end-proc;
 
-dcl-proc test1 export;
+dcl-proc test export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  sndInfoMsg( 'test1' );
+  sndInfoMsg( 'Test should not be called.' );
 
 end-proc;
 

@@ -33,7 +33,7 @@
 /*   >>PRE-COMPILER<<                                                  */
 /*     >>CRTCMD<<  STRREXPRC SRCMBR(&SM) SRCFILE(&SL/&SF);             */
 /*     >>IMPORTANT<<                                                   */
-/*       >>PARM<< PARM('&LI');                                         */
+/*       >>PARM<< PARM('&LI *LIST');                                   */
 /*     >>END-IMPORTANT<<                                               */
 /*     >>EXECUTE<<                                                     */
 /*   >>END-PRE-COMPILER<<                                              */
@@ -88,37 +88,22 @@
  end
 
  /* -------------------------------------------- */
+ /*  Recreate the modules if needed.             */
+ /* -------------------------------------------- */
+
+ "STRREXPRC SRCMBR(A_INSTALL) SRCFILE(RPGUNITDVP/QBUILD) PARM('CMPMOD "prdLib" "dbgView" "tgtRls"')"
+
+ /* -------------------------------------------- */
  /*  Let's do it!                                */
  /* -------------------------------------------- */
- "CMPMOD MODULE("prdLib"/CMDRUNLOGT) SRCFILE("prdLib"/QUNITTEST) ",
-    "DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/CMDRUNLOG ) SRCFILE("prdLib"/QSRC     ) ",
-    "DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/CMDRUNPRT ) SRCFILE("prdLib"/QSRC     ) ",
-    "DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/JOBLOG    ) SRCFILE("prdLib"/QSRC     ) ",
-    "DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/LIBL      ) SRCFILE("prdLib"/QSRC     ) ",
-    "DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/OSVERSION ) SRCFILE("prdLib"/QSRC     ) ",
-    "DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/PGMMSG    ) SRCFILE("prdLib"/QSRC     ) ",
-    "DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/STRING    ) SRCFILE("prdLib"/QSRC     ) ",
-    "DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/CMDRUNLOGT) SRCFILE("prdLib"/QUNITTEST) DBGVIEW("dbgView") ",
+   "TGTRLS("tgtRls")"
 
  "CRTSRVPGM  SRVPGM("prdLib"/CMDRUNLOGT) ",
-            "MODULE("prdLib"/CMDRUNLOGT ",
-                     prdLib"/CMDRUNLOG  ",
-                     prdLib"/CMDRUNPRT  ",
-                     prdLib"/JOBLOG     ",
-                     prdLib"/LIBL       ",
-                     prdLib"/OSVERSION  ",
-                     prdLib"/PGMMSG     ",
-                     prdLib"/STRING  )  ",
+            "MODULE("prdLib"/CMDRUNLOGT) ",
             "EXPORT(*ALL) ",
+            "BNDDIR("prdLib"/IRPGUNIT) ",
             "OPTION(*DUPPROC) ",
-            "BNDSRVPGM("prdLib"/RUTESTCASE) ",
             "TEXT('RPGUnit SelfTest - Test CMDRUNLOG.')"
 
  "SNDPGMMSG ",

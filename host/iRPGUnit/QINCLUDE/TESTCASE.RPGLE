@@ -426,15 +426,10 @@ dcl-pr setLowMessageKey extproc('setLowMessageKey') opdesc;
 end-pr;
 
 // ------------------------------------
-//  Self-test procedures.
+//   Prototypes of internal procedures
+//   But maybe public from the
+//   beginning.
 // ------------------------------------
-
-///
-// Returns *on if the exection is due to an runtime
-// error, otherwise *off for a failed assertion.
-///
-dcl-pr isRuntimeError ind extproc('isRuntimeError');
-end-pr;
 
 ///
 // Clears the assertion failure event.
@@ -444,6 +439,24 @@ end-pr;
 // test execution.
 ///
 dcl-pr clrAssertFailEvt extproc('clrAssertFailEvt');
+  pAssertEvents pointer const;
+  procNamePrefix like(assertProcNm_t) const;
+end-pr;
+
+///
+// Get the external assertion failure event
+//
+// @return External assertion failure event data structure V1
+///
+dcl-pr getAssertFailEvt extproc('getAssertFailEvt') likeds(assertFailEvt_t);
+end-pr;
+
+///
+// Get the external extended assertion failure event with long text
+//
+// @return external extended assertion failure event data structure V2
+///
+dcl-pr getAssertFailEvtLong extproc('getAssertFailEvtLong') likeds(assertFailEvtExt_t);
 end-pr;
 
 ///
@@ -455,22 +468,6 @@ dcl-pr getAssertCalled int(10) extproc('getAssertCalled');
 end-pr;
 
 ///
-// Get the assertion failure event
-//
-// @return Assertion failure event data structure
-///
-dcl-pr getAssertFailEvt extproc('getAssertFailEvt') likeds(assertfailevt_t);
-end-pr;
-
-///
-// Get the extended assertion failure event with long text
-//
-// @return Extended assertion failure event data structure
-///
-dcl-pr getAssertFailEvtLong extproc('getAssertFailEvtLong') likeds(assertFailEvtLong_t);
-end-pr;
-
-///
 // Resets the assert module for a new test case.
 //
 // Sets the total number of assertions of the
@@ -478,52 +475,6 @@ end-pr;
 // to *on.
 ///
 dcl-pr clearAssertCounter extproc('clearAssertCounter');
-end-pr;
-
-
-// ------------------------------------
-//   Prototypes of internal procedures
-// ------------------------------------
-
-///
-// Register the start of a program for testing purposes
-//
-// @param lib - Library name where the program resides
-// @param pgm - Program name to register
-///
-dcl-pr registerStartPgm extproc('ASSERT_registerStartPgm');
-  lib char(10) const;
-  pgm char(10) const;
-end-pr;
-
-///
-// Returns the 'expected' or 'actual' value shortend for
-// logging in the plug-in, the Jenkins XML output and the
-// printed test result log.
-//
-// @param value    - the 'expected' or 'actukl' value that is formatted for logging
-// @param dataType - the data type of 'value'. The possible value are:
-//                   DT_DATE, DT_FLOAT, DT_INT, DT_NUMERIC, DT_STRING,
-//                   DT_TIME, DT_TIMESTAMP, DT_STRING, DT_USER_DEFINED
-//
-// @return the value formatted for logging
-///
-dcl-pr getLogValue likeds(logValue_t) extproc('getLogValue');
-  value    like(assertString_t) options(*varsize) const;
-  dataType like(dataType_t) const;
-  assertProc like(assertProcNm_t) const;
-  maxLength int(10) const options(*nopass); // for self-test
-end-pr;
-
-///
-// Returns the literal of a boolean value (*on/*off).
-//
-// @param boolean - indicator value
-//
-// @return '*on' if 'boolean' is True, otherwise '*off'
-///
-dcl-pr toInd varchar(10) extproc('toInd');
-  boolean  ind const;
 end-pr;
 
 // ------------------------------------

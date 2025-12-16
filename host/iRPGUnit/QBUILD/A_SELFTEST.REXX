@@ -100,6 +100,7 @@
  "CRTBNDDIR BNDDIR("prdLib"/"bndDir") TEXT('iRPGUnit - Binding Directory')"
  "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/ASSERT    *MODULE))"
  "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/CALLPRC   *MODULE))"
+ "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/CALLSTACK *MODULE))"
  "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/CMDRUN    *MODULE))"
  "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/CMDRUNLOG *MODULE))"
  "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/CMDRUNPRT *MODULE))"
@@ -131,9 +132,12 @@
  "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/LIBLC     *MODULE))"
  "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/SPLF      *MODULE))"
 
+ "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/RUMEMMGR  *SRVPGM))"
+
  /* Compile iRPGUnit modules. */
 
  "CMPMOD MODULE("prdLib"/ASSERT   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("TGTRLS")"
+ "CMPMOD MODULE("prdLib"/CALLSTACK) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("TGTRLS")"
  "CMPMOD MODULE("prdLib"/CALLPRC  ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("TGTRLS")"
  "CMPMOD MODULE("prdLib"/CMDRUN   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("TGTRLS")"
  "CMPMOD MODULE("prdLib"/CMDRUNLOG) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("TGTRLS")"
@@ -233,7 +237,7 @@
      "SRCFILE("_prdLib"/QUNITTEST) ",
      "DBGVIEW("_dbgView") ",
      "BNDDIR("_prdLib"/"_bndDir") ",
-     "BOPTION(*DUPPROC) ",
+     "BOPTION(*DUPPROC *DUPVAR) ",
      "DLTSPLF(*YES) TGTRLS("TGTRLS")"
 
    return ''

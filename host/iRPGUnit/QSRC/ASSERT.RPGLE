@@ -28,12 +28,18 @@ ctl-opt nomain;
 
 /define RPGUNIT_INTERNAL
 /include qinclude,ASSERT
+/include qinclude,CMDRUNSRV
+/include qinclude,CALLSTACK
 /include qinclude,ERRORCODE
 /include qinclude,JOBLOG
+/include qinclude,MEMMGR
 /include qinclude,PGMMSG
 /include qinclude,TEMPLATES
 /include qinclude,STRING
 /include qinclude,SYSTEMAPI
+/include qsysinc,memcpy
+
+/include qllist,llist_h
 
 /include qinclude,SDS
 
@@ -44,20 +50,6 @@ ctl-opt nomain;
 //----------------------------------------------------------------------
 
 dcl-pr checkStartPgm extproc('ASSERT_checkStartPgm');
-end-pr;
-
-dcl-pr doFail extproc('ASSERT_doFail');
-  msg            varchar(16384) options(*varsize) const;
-  toCallStackE   int(10) options(*omit) const;
-  startProc      varchar(256) options(*varsize) const;
-end-pr;
-
-dcl-pr getCallStk extproc('ASSERT_getCallStk') likeds(callStk_t);
-  startProc      varchar(256) options(*varsize) const;
-end-pr;
-
-dcl-pr getSentTimeMsgQMsg timestamp extproc('ASSERT_getSentTimeMsgQMsg');
-  msg            likeds(dsLstm0100EntHdr_t) const;
 end-pr;
 
 dcl-pr getValueFromDesc varchar(32565) extproc('ASSERT_getValueFromDescriptor_internal');
@@ -77,18 +69,6 @@ dcl-pr getValueFromDescriptor_internal varchar(32565)
   dftLen         int(10) const;
 end-pr;
 
-dcl-pr descTypeToExt varchar(20) extproc('ASSERT_descTypeToExt');
-  dataType       int(10) const;
-end-pr;
-
-dcl-pr jobLogCallback ind extproc('ASSERT_jobLogCallback');
-  i_hMsgInfo     pointer const;
-  i_pUserData    pointer const;
-  i_msgID        char(7) const;
-  i_msgText      varchar(132) const;
-  i_msgSentTime  timestamp const;
-end-pr;
-
 //----------------------------------------------------------------------
 //   TYPE TEMPLATE
 //----------------------------------------------------------------------
@@ -104,15 +84,52 @@ end-ds;
 //   GLOBAL VARIABLES
 //----------------------------------------------------------------------
 
-// Latest assertion failure event information. Can be blank if no
-//  assertion failure event since last assertion.
-dcl-ds assertFailEvt likeds(assertFailEvtLong_t) inz;
 
 dcl-ds g_status qualified;
   qStartPgm           likeds(object_t) inz;
   numAssertsCalled    int(10) inz;
-  isRuntimeError      ind inz(*on);
+  numFailuresCounted  int(10) inz;
+  isAssertionError    ind inz(*off);
+  hTestEvents         pointer inz;
+  procNamePrefix      like(assertProcNm_t) inz;
+  isJUnitStyle        ind inz(*on);
+  // Latest assertion failure event information. Can be blank if no
+  // assertion failure event since last assertion.
+  abstractTestEvent   likeds(abstractTestEvent_t) inz(*likeds);
 end-ds;
+
+dcl-ds g_savedStatus likeds(g_status) inz;
+
+//----------------------------------------------------------------------
+// Saves the status of the ASSERT module.
+//----------------------------------------------------------------------
+dcl-proc saveAssertStatus export;
+  dcl-pi *n;
+  end-pi;
+
+  if (g_savedStatus.qStartPgm.nm <> '');
+    sndEscapeMsgAboveCtlBdy('Procedure saveAssertStatus() was called twice in a row.');
+  endif;
+
+  g_savedStatus = g_status;
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Restores the status of the ASSERT module.
+//----------------------------------------------------------------------
+dcl-proc restoreAssertStatus export;
+  dcl-pi *n;
+  end-pi;
+
+  if (g_savedStatus.qStartPgm.nm = '');
+    sndEscapeMsgAboveCtlBdy('Procedure restoreAssertStatus() was called before saving it.');
+  endif;
+
+  g_status = g_savedStatus;
+  clear g_savedStatus;
+
+end-proc;
 
 //----------------------------------------------------------------------
 // Registers the start program RUPGMRMT or RUCALLTST for
@@ -120,12 +137,15 @@ end-ds;
 //----------------------------------------------------------------------
 dcl-proc registerStartPgm export;
   dcl-pi *N;
-    lib   char(10) const;
-    pgm   char(10) const;
+    lib          char(10) const;
+    pgm          char(10) const;
+    isJUnitStyle ind const;
   end-pi;
 
   g_status.qStartPgm.nm = pgm;
   g_status.qStartPgm.lib = lib;
+
+  g_status.isJUnitStyle = isJUnitStyle;
 
 end-proc;
 
@@ -324,11 +344,11 @@ dcl-proc fail export;
   dcl-ds strInf likeds(ceegsi_inf_t) inz;
   dcl-ds fc likeds(fc_t) inz;
 
-  g_status.isRuntimeError = *off;
-
-  clear assertFailEvt; // Do not call clrAssertFailEvt() because of g_status.isRuntimeError!
-  assertFailEvt.logExpected = getLogValue(NO_VALUE: DT_UNDEFINED: %proc());
-  assertFailEvt.logActual = getLogValue(NO_VALUE: DT_UNDEFINED: %proc());
+  // Do not call clrAssertFailEvt() because of g_status.isRuntimeError!
+  clear g_status.abstractTestEvent.failure;
+  g_status.abstractTestEvent.failure.outcome = TEST_CASE_FAILURE;
+  g_status.abstractTestEvent.failure.logExpected = getLogValue(NO_VALUE: DT_UNDEFINED: %proc());
+  g_status.abstractTestEvent.failure.logActual = getLogValue(NO_VALUE: DT_UNDEFINED: %proc());
 
   if (%parms() >= p_msg);
 
@@ -359,38 +379,98 @@ dcl-proc doAssert export;
 
   checkStartPgm();
 
-  g_status.isRuntimeError = *off;
   g_status.numAssertsCalled += 1;
 
-  clear assertFailEvt; // Do not call clrAssertFailEvt() because of g_status.isRuntimeError!
-  assertFailEvt.logExpected = logExpected;
-  assertFailEvt.logActual = logActual;
+  // Do not call clrAssertFailEvt() because of g_status.isRuntimeError!
+  clear g_status.abstractTestEvent;
+  g_status.abstractTestEvent.failure.assertProc = getAssertProcName(g_status.procNamePrefix:
+                                                                    startProc);
 
   if not condition;
+    g_status.numFailuresCounted += 1;
+
+    if (g_status.isJUnitStyle);
+      // Add unconfirmed failure event.
+      // The event gets confirmed in CMDRUNSRV.runProc() if
+      // it is not monitored. Otherwise is stays in status
+      // "unconfirmed" (= monitored).
+      g_status.abstractTestEvent.failure.isConfirmed = *off;
+    else;
+      // Flag event as confirmed in non-JUnit mode, because
+      // there is no chance to figure out whether or not errors
+      // of assertion statements have been monitored.
+      g_status.abstractTestEvent.failure.isConfirmed = *on;
+    endif;
+
+    g_status.abstractTestEvent.failure.outcome = TEST_CASE_FAILURE;
+    g_status.abstractTestEvent.failure.logExpected = logExpected;
+    g_status.abstractTestEvent.failure.logActual = logActual;
+
     doFail(msgIfFalse:  toCallStackE + 1: startProc);
+  else;
+    // add success event
+    g_status.abstractTestEvent.success.outcome = TEST_CASE_SUCCESS;
+    g_status.abstractTestEvent.success.logExpected = logExpected;
+    g_status.abstractTestEvent.success.logActual = logActual;
+
+    if (g_status.isJUnitStyle);
+      g_status.abstractTestEvent.success.pCallstk = *null;
+    else;
+      g_status.abstractTestEvent.success.pCallstk = getCallStk(startProc: 1);
+    endif;
+
+    addSuccessTestEvent(g_status.hTestEvents: g_status.abstractTestEvent.success);
   endif;
 
 end-proc;
 
 
-dcl-proc doFail export;
-  dcl-pi *N;
+dcl-proc doFail;
+  dcl-pi *N extproc(*dclcase);
     msg            varchar(16384) options(*varsize) const;
     toCallStackE   int(10) options(*omit) const;
     startProc      varchar(256) options(*varsize) const;
   end-pi;
 
-  assertFailEvt.msg = %trimr(msg);
-  assertFailEvt.callstk = getCallStk(startProc);
+  // Add FAILURE event with callstack
+  g_status.abstractTestEvent.failure.msg = %trimr(msg);
+  g_status.abstractTestEvent.failure.pCallstk = getCallStk(startProc);
+  g_status.abstractTestEvent.index = list_size(g_status.hTestEvents) + 1;
+
+  addFailureTestEvent(g_status.hTestEvents: g_status.abstractTestEvent.failure);
+
+  g_status.isAssertionError = *on;
 
   if (%addr(toCallStackE) = *null);
+    // called by fail()
     sndEscapeMsgToProcedure(msg: TEST_CASE_EXECUTOR);
   else;
-    sndEscapeMsg(msg: toCallStackE + 1);
+    // called by assertion procedure
+    if (g_status.isJUnitStyle);
+      sndEscapeMsg(msg: toCallStackE + 1);
+    endif;
   endif;
 
 end-proc;
 
+
+dcl-proc getAssertProcName;
+  dcl-pi *n like(procNm_t) extproc(*dclcase);
+    procNamePrefix like(assertProcNm_t) const;
+    assertProcName like(assertProcNm_t) const;
+  end-pi;
+
+  dcl-s procName like(procNm_t);
+
+  if (procNamePrefix <> '');
+    procName = procNamePrefix + '.' + assertProcName;
+  else;
+    procName = assertProcName;
+  endif;
+
+  return procName;
+
+end-proc;
 
 //----------------------------------------------------------------------
 // Returns *on if the exection is due to an runtime
@@ -400,13 +480,26 @@ dcl-proc isRuntimeError export;
   dcl-pi *N ind;
   end-pi;
 
-  return g_status.isRuntimeError;
+  return not g_status.isAssertionError;
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+// Resets the assertion error flag.
+//----------------------------------------------------------------------
+dcl-proc resetAssertionError export;
+  dcl-pi *N;
+  end-pi;
+
+  g_status.isAssertionError = *off;
 
 end-proc;
 
 
 //----------------------------------------------------------------------
 // Clears the assertion failure event.
+// *** public API ***
 //
 // This procedure is called before calling one of:
 //   setup(), testProc(), teardown()
@@ -415,17 +508,24 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc clrAssertFailEvt export;
   dcl-pi *N;
+    pAssertEvents  pointer const;
+    procNamePrefix like(assertProcNm_t) const;
   end-pi;
 
-  g_status.isRuntimeError = *on;
+  resetAssertionError();
 
-  clear assertFailEvt;
+  g_status.hTestEvents = pAssertEvents;
+  g_status.procNamePrefix = procNamePrefix;
+
+  clear g_status.abstractTestEvent;
+  g_status.abstractTestEvent.outcome = TEST_CASE_NULL;
 
 end-proc;
 
 
 //----------------------------------------------------------------------
-// Returns the number of time assertions were called. See prototype.
+// Returns the number of assertions called. See prototype.
+// *** public API ***
 //----------------------------------------------------------------------
 dcl-proc getAssertCalled export;
   dcl-pi *N int(10);
@@ -437,16 +537,42 @@ end-proc;
 
 
 //----------------------------------------------------------------------
-// Return information about the latest assertion failure event.
+// Returns the number of failures counted.
+// *** public API ***
 //----------------------------------------------------------------------
-dcl-proc getAssertFailEvt export;
-  dcl-pi *N likeds(assertfailevt_t);
+dcl-proc getFailureCounted export;
+  dcl-pi *N int(10);
   end-pi;
 
-  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t) inz;
+  return g_status.numFailuresCounted;
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+// Return information about the latest assertion failure event V1.
+// *** public API ***
+//----------------------------------------------------------------------
+dcl-proc getAssertFailEvt export;
+  dcl-pi *N likeds(assertFailEvt_t);
+  end-pi;
+
+  dcl-ds assertFailEvtLong likeds(assertFailEvtExt_t) inz;
 
   // Assert Failure Event of version 1
-  dcl-ds assertFailEvt_v1 likeds(assertfailevt_t) inz;
+  dcl-ds assertFailEvt_v1 likeds(assertFailEvt_t) inz;
+  dcl-ds callstk_v1 likeds(assertFailEvt_v1.callstk);
+
+  // A callstack v1 must have the below structure.
+  // The number of entries must be 64.
+  // Let the compiler check it.
+  callstk_v1.numE = 0;
+  callstk_v1.entry(64).qStmt.qPgm.nm = '';
+  callstk_v1.entry(64).qStmt.qPgm.lib = '';
+  callstk_v1.entry(64).qStmt.qMod.nm = '';
+  callstk_v1.entry(64).qStmt.qMod.lib = '';
+  callstk_v1.entry(64).qStmt.procNm = '';
+  callstk_v1.entry(64).qStmt.specNb = '';
 
   assertFailEvtLong = getAssertFailEvtLong();
 
@@ -459,19 +585,69 @@ end-proc;
 
 
 //----------------------------------------------------------------------
-// Return information about the latest assertion failure event.
+// Return information about the latest assertion failure event V2.
+// *** public API ***
 //----------------------------------------------------------------------
 dcl-proc getAssertFailEvtLong export;
-  dcl-pi *N likeds(assertFailEvtLong_t);
+  dcl-pi *N likeds(assertFailEvtExt_t);
   end-pi;
 
-  return assertFailEvt;
+  dcl-ds abstractTestEvent likeds(abstractTestEvent_t) inz;
+  dcl-ds assertFailEvtExt likeds(assertFailEvtExt_t) inz;
+  dcl-ds callstkEnt likeds(callStkEnt_t) inz;
+  dcl-ds callstk_v2 likeds(assertFailEvtExt_t.callstk);
+
+
+  // A callstack v1 must have the below structure.
+  // The number of entries must be 64.
+  // It is the same layout as the callstack v1.
+  // Let the compiler check it.
+  callstk_v2.numE = 0;
+  callstk_v2.entry(64).qStmt.qPgm.nm = '';
+  callstk_v2.entry(64).qStmt.qPgm.lib = '';
+  callstk_v2.entry(64).qStmt.qMod.nm = '';
+  callstk_v2.entry(64).qStmt.qMod.lib = '';
+  callstk_v2.entry(64).qStmt.procNm = '';
+  callstk_v2.entry(64).qStmt.specNb = '';
+
+  abstractTestEvent = getAssertEventInternal();
+
+  clear assertFailEvtExt;
+  assertFailEvtExt.msg = abstractTestEvent.failure.msg;
+  assertFailEvtExt.logExpected = abstractTestEvent.failure.logExpected;
+  assertFailEvtExt.logActual = abstractTestEvent.failure.logActual;
+
+  clear assertFailEvtExt.callstk;
+
+  if (abstractTestEvent.failure.pCallstk <> *null);
+    Callstack_resetIteration(abstractTestEvent.failure.pCallstk);
+    dow (Callstack_getNext(abstractTestEvent.failure.pCallstk: callstkEnt));
+      assertFailEvtExt.callstk.numE += 1;
+      assertFailEvtExt.callstk.entry(assertFailEvtExt.callstk.numE).level = callstkEnt.level;
+      assertFailEvtExt.callstk.entry(assertFailEvtExt.callstk.numE).qStmt = callstkEnt.qStmt;
+    enddo;
+  endif;
+
+  return assertFailEvtExt;
+
+end-proc;
+
+
+//----------------------------------------------------------------------
+// Return information about the latest assertion failure event.
+//----------------------------------------------------------------------
+dcl-proc getAssertEventInternal export;
+  dcl-pi *N likeds(abstractTestEvent_t);
+  end-pi;
+
+  return g_status.abstractTestEvent;
 
 end-proc;
 
 
 //----------------------------------------------------------------------
 // Resets the assert module for a new test case.
+// *** public API ***
 //
 // This procedure is called before executing a complete test case
 // cicle:
@@ -484,7 +660,7 @@ dcl-proc clearAssertCounter export;
   end-pi;
 
   g_status.numAssertsCalled = 0;
-  g_status.isRuntimeError = *on;
+  g_status.numFailuresCounted = 0;
 
 end-proc;
 
@@ -540,7 +716,7 @@ dcl-proc getLogValue export;
     logValue.isTruncated = *off;
     logValue.length = 0;
     logValue.originalLength = 0;
-    logValue.assertProc = assertProc;
+    logValue.assertProc = getAssertProcName(g_status.procNamePrefix: assertProc);
   elseif (%len(value) > maxValueLength);
     logValue.value = %subst(value: 1: chunkLength)
                      + DELIMITER
@@ -548,13 +724,13 @@ dcl-proc getLogValue export;
     logValue.isTruncated = *on;
     logValue.length = %len(logValue.value);
     logValue.originalLength = %len(value);
-    logValue.assertProc = assertProc;
+    logValue.assertProc = getAssertProcName(g_status.procNamePrefix: assertProc);
   else;
     logValue.value = value;
     logValue.isTruncated = *off;
     logValue.length = %len(logValue.value);
     logValue.originalLength = %len(value);
-    logValue.assertProc = assertProc;
+    logValue.assertProc = getAssertProcName(g_status.procNamePrefix: assertProc);
   endif;
 
   return logValue;
@@ -591,8 +767,8 @@ end-proc;
 //----------------------------------------------------------------------
 // Call back of JobLogReader used by assertJobLogContains().
 //----------------------------------------------------------------------
-dcl-proc jobLogCallback;
-  dcl-pi *N ind;
+dcl-proc ASSERT_jobLogCallback;
+  dcl-pi *N ind extproc(*dclcase);
     i_hMsgInfo      pointer const;
     i_pUserData     pointer const;
     i_msgID         char(7) const;
@@ -808,34 +984,55 @@ end-proc;
 //  and the lower levels to QCMD.
 //----------------------------------------------------------------------
 dcl-proc getCallStk;
-  dcl-pi *N likeds(callStk_t);
+  dcl-pi *N pointer extproc(*dclcase);
     startProc   varchar(256) options(*varsize) const;
+    maxEntries  int(10) options(*nopass) const;
   end-pi;
 
   // Call stack entries.
-  dcl-ds callStk         likeds(callStk_t) inz;
+  dcl-s numE int(10);
+  dcl-s pCallstk pointer;
+
   // Job id.
-  dcl-ds jobIdInfo       likeds(dsjidf0100);
+  dcl-ds jobIdInfo likeds(dsjidf0100);
+
   // Call stack info header.
-  dcl-ds hdr             likeds(dscstk0100hdr) based(hdr_p);
-  dcl-s hdr_p            pointer;
+  dcl-ds hdr likeds(dscstk0100hdr) based(hdr_p);
+  dcl-s hdr_p pointer;
+
   // Call stack info entry.
-  dcl-ds ent             likeds(dscstk0100ent) based(ent_p);
-  dcl-s ent_p            pointer;
+  dcl-ds ent likeds(dscstk0100ent) based(ent_p);
+  dcl-s ent_p pointer;
+
   // Big buffer to receive call stack info.
-  dcl-s rawCallStk       char(16383);
+  dcl-s rawCallStk char(16383);
+
   // Statement Id.
-  dcl-s sttid            char(10) based(sttid_p);
-  dcl-s sttid_p          pointer;
+  dcl-s sttid char(10) based(sttid_p);
+  dcl-s sttid_p pointer;
+
   // Procedure name buffer.
-  dcl-s procMmBuffer_p   pointer;
-  dcl-s procNmBuffer     char(256) based(procMmBuffer_p);
-  // Index.
-  dcl-s i                int(10);
-  dcl-s maxStkEnt        int(10);
-  dcl-ds callStkE        likeds(callStkEnt_t);
-  dcl-s doReturnStckE    ind inz(*off);
+  dcl-s procMmBuffer_p pointer;
+  dcl-s procNmBuffer char(256) based(procMmBuffer_p);
+
+  dcl-s startEntry int(10);
+  dcl-s endEntry int(10);
+  dcl-s procName like(procNm_t);
+
+  dcl-s i int(10);
+  dcl-s level int(10);
+  dcl-s maxStkEnt int(10);
+  dcl-ds callstkEnt likeds(callStkEnt_t);
+  dcl-s doReturnStckE ind inz(*off);
   dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
+
+  dcl-s maxEntriesToReturn int(10);
+
+  if (%parms() >= %parmnum(maxEntries));
+    maxEntriesToReturn = maxEntries;
+  else;
+    maxEntriesToReturn = *hival;
+  endif;
 
   jobIdInfo.jobNm = '*';
   jobIdInfo.usrNm = '';
@@ -860,47 +1057,31 @@ dcl-proc getCallStk;
     maxStkEnt = MAX_CALL_STK_SIZE;
   endif;
 
+  // Find relevant entries
   for i = 1 to maxStkEnt;
-
     if (ent.pgmNm = 'RUCALLTST' or ent.pgmNm = 'RUPGMRMT');
       leave;
     endif;
 
-    clear callStkE;
-
     if (i = maxStkEnt);
-      callStkE.level = 0;
-      callStkE.qstmt.procnm = CALL_STACK_INCOMPLETE;
+      procName = CALL_STACK_INCOMPLETE;
     else;
-      callStkE.level = 0;
-      callStkE.qstmt.qpgm.nm = ent.pgmNm;
-      callStkE.qstmt.qpgm.lib = ent.pgmLibNm;
-      callStkE.qstmt.qmod.nm = ent.modNm;
-      callStkE.qstmt.qmod.lib = ent.modLibNm;
-
       if ent.procNmLen <> 0;
         procMmBuffer_p = ent_p + ent.dspLtoProcNm;
-        callStkE.qstmt.procnm =
-           %subst(procNmBuffer: 1: ent.procNmLen);
+        procName = %subst(procNmBuffer: 1: ent.procNmLen);
       else;
-        callStkE.qstmt.procnm = '';
-      endif;
-
-      if ent.nbSttid > 0;
-        sttid_p = ent_p + ent.dspLtoSttid;
-        callStkE.qstmt.specnb = %triml(%trim(sttid): '0');
-      else;
-        callStkE.qstmt.specnb = NO_VALUE;
+        procName = '';
       endif;
     endif;
 
     // Skip all procedures until we saw the
     // assertion procedure
-    if (callStkE.qstmt.qpgm.nm = 'RUTESTCASE' and
-        (callStkE.qstmt.qmod.nm = 'ASSERT' or
-         callStkE.qstmt.qmod.nm = 'ASSERTV2') and
-        callStkE.qstmt.procnm = startProc);
+    if (ent.pgmNm = 'RUTESTCASE' and
+        (ent.modNm = 'ASSERT' or
+         ent.modNm = 'ASSERTV2') and
+        procName = startProc);
       doReturnStckE = *on;
+      startEntry = -1;
       ent_p += ent.len;
       iter;
     endif;
@@ -910,14 +1091,67 @@ dcl-proc getCallStk;
       iter;
     endif;
 
-    callStk.nume += 1;
-    callStk.entry(callStk.nume) = callStkE;
+    if (startEntry = -1);
+      startEntry = i;
+    endif;
 
+    endEntry = i;
     ent_p += ent.len;
+
+    maxEntriesToReturn -= 1;
+    if (maxEntriesToReturn <= 0);
+      leave;
+    endif;
 
   endfor;
 
-  return callStk;
+  // Prepare callstack
+  numE = endEntry - startEntry + 1;
+  pCallstk = Callstack_alloc(numE: 'pCallstk');
+
+  // Copy relevant entries to callstack data structure
+  ent_p = hdr_p + hdr.callStkOffs;
+  level = 1;
+
+  for i = 1 to endEntry;
+
+    if (i >= startEntry);
+      clear callstkEnt;
+
+      if (i = maxStkEnt);
+        callstkEnt.level = 0;
+        callstkEnt.qstmt.procnm = CALL_STACK_INCOMPLETE;
+      else;
+        callstkEnt.level = level;
+        callstkEnt.qstmt.qpgm.nm = ent.pgmNm;
+        callstkEnt.qstmt.qpgm.lib = ent.pgmLibNm;
+        callstkEnt.qstmt.qmod.nm = ent.modNm;
+        callstkEnt.qstmt.qmod.lib = ent.modLibNm;
+
+        if ent.procNmLen <> 0;
+          procMmBuffer_p = ent_p + ent.dspLtoProcNm;
+          callstkEnt.qstmt.procnm = %subst(procNmBuffer: 1: ent.procNmLen);
+        else;
+          callstkEnt.qstmt.procnm = '';
+        endif;
+
+        if ent.nbSttid > 0;
+          sttid_p = ent_p + ent.dspLtoSttid;
+          callstkEnt.qstmt.specnb = %triml(%trim(sttid): '0');
+        else;
+          callstkEnt.qstmt.specnb = NO_VALUE;
+        endif;
+      endif;
+
+      Callstack_addEntry(pCallstk: callstkEnt);
+
+      level += 1;
+    endif;
+
+    ent_p += ent.len;
+  endfor;
+
+  return pCallStk;
 
 end-proc;
 
@@ -926,7 +1160,7 @@ end-proc;
 // format CYMD to the ISO format.
 //----------------------------------------------------------------------
 dcl-proc getSentTimeMsgQMsg;
-  dcl-pi *N timestamp;
+  dcl-pi *N timestamp extproc(*dclcase);
     msg   likeds(dsLstm0100EntHdr_t) const;
   end-pi;
 
@@ -1022,7 +1256,7 @@ end-proc;
 
 
 dcl-proc descTypeToExt;
-  dcl-pi *N varchar(20);
+  dcl-pi *N varchar(20) extproc(*dclcase);
     dataType   int(10) const;
   end-pi;
 

@@ -38,7 +38,7 @@
 /*   >>PRE-COMPILER<<                                                  */
 /*     >>CRTCMD<<  STRREXPRC SRCMBR(&SM) SRCFILE(&SL/&SF);             */
 /*     >>IMPORTANT<<                                                   */
-/*       >>PARM<< PARM('&LI');                                         */
+/*       >>PARM<< PARM('&LI *LIST');                                   */
 /*     >>END-IMPORTANT<<                                               */
 /*     >>EXECUTE<<                                                     */
 /*   >>END-PRE-COMPILER<<                                              */
@@ -90,57 +90,33 @@
  end
 
  /* -------------------------------------------- */
+ /*  Recreate the modules if needed.             */
+ /* -------------------------------------------- */
+
+ "STRREXPRC SRCMBR(A_INSTALL) SRCFILE(RPGUNITDVP/QBUILD) PARM('CMPMOD "prdLib" "dbgView" "tgtRls"')"
+
+ /* -------------------------------------------- */
  /*  Let's do it!                                */
  /* -------------------------------------------- */
 
- "CMPMOD MODULE("prdLib"/ASSERT   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") ",
-   "TGTRLS("tgtRls") DEFINE("define")"
-
- "CMPMOD MODULE("prdLib"/ASSERTV2 ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") ",
-   "TGTRLS("tgtRls") DEFINE("define")"
-
- "CMPMOD MODULE("prdLib"/JOBLOG   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") ",
-   "TGTRLS("tgtRls") DEFINE("define")"
-
- "CMPMOD MODULE("prdLib"/OBJECT   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") ",
-   "TGTRLS("tgtRls") DEFINE("define")"
-
- "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") ",
-   "TGTRLS("tgtRls") DEFINE("define")"
-
- "CMPMOD MODULE("prdLib"/VERSION  ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") ",
-   "TGTRLS("tgtRls") DEFINE("define")"
-
- "CMPMOD MODULE("prdLib"/TESTUTILS) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") ",
-   "TGTRLS("tgtRls") DEFINE("define")"
-
- "CMPMOD MODULE("prdLib"/STRING   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") ",
-   "TGTRLS("tgtRls") DEFINE("define")"
-
- "CMPMOD MODULE("prdLib"/SRCMBR   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") ",
-   "TGTRLS("tgtRls") DEFINE("define")"
-
- "CMPMOD MODULE("prdLib"/STMF     ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") ",
-   "TGTRLS("tgtRls") DEFINE("define")"
-
- "CMPMOD MODULE("prdLib"/USRSPC   ) SRCFILE("prdLib"/QSRC) DBGVIEW("dbgView") ",
-   "TGTRLS("tgtRls") DEFINE("define")"
+ Signal off Error
+ "DLTSRVPGM SRVPGM("prdLib"/RUTESTCASE)"
+ Signal on Error
 
  "CRTSRVPGM  SRVPGM("prdLib"/RUTESTCASE) ",
-              "MODULE("prdLib"/ASSERT     ",
-                       prdLib"/ASSERTV2   ",
-                       prdLib"/JOBLOG     ",
-                       prdLib"/OBJECT     ",
-                       prdLib"/PGMMSG     ",
-                       prdLib"/VERSION    ",
-                       prdLib"/TESTUTILS  ",
-                       prdLib"/STRING     ",
-                       prdLib"/SRCMBR     ",
-                       prdLib"/STMF       ",
-                       prdLib"/USRSPC)    ",
+              "MODULE("prdLib"/ASSERT    ",
+                       prdLib"/ASSERTV2  ",
+                       prdLib"/TESTUTILS ",
+                       prdLib"/VERSION)  ",
               "EXPORT(*SRCFILE) ",
-              "SRCFILE("prdLib"/QBND) SRCMBR(RUTESTCASE) ",
+              "SRCFILE("prdLib"/QBND) ",
+              "SRCMBR(RUTESTCASE) ",
+              "BNDDIR("prdLib"/IRPGUNIT) ",
+              "ACTGRP(*CALLER) ",
+              "ALWUPD(*YES) ",
+              "ALWLIBUPD(*YES) ",
               "TGTRLS("tgtRls") ",
+              "STGMDL(*INHERIT) ",
               "TEXT('iRPGUnit - Test Suite Toolkit.')"
 
  "SNDPGMMSG ",

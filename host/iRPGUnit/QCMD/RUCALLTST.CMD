@@ -25,7 +25,7 @@
              PARM       KWD(TSTPGM)                          +
                         TYPE(OBJ)                            +
                         MIN(1)                               +
-                        PROMPT('Test program')
+                        PROMPT('Test program' 1)
 
              PARM       KWD(TSTPRC)                          +
                         TYPE(*CHAR)                          +
@@ -36,7 +36,7 @@
                         DFT(*ALL)                            +
                         SNGVAL(*ALL)                         +
                         CASE(*MIXED)                         +
-                        PROMPT('Test procedure')
+                        PROMPT('Test procedure' 2)
 
              PARM       KWD(ORDER)                           +
                         TYPE(*CHAR)                          +
@@ -45,7 +45,7 @@
                         DFT(*API)                            +
                         VALUES(*API                          +
                                *REVERSE)                     +
-                        PROMPT('Run order')
+                        PROMPT('Run order' 3)
 
              PARM       KWD(DETAIL)                          +
                         TYPE(*CHAR)                          +
@@ -54,7 +54,7 @@
                         DFT(*BASIC)                          +
                         VALUES(*BASIC                        +
                                *ALL)                         +
-                        PROMPT('Report detail')
+                        PROMPT('Report detail' 5)
 
              PARM       KWD(OUTPUT)                          +
                         TYPE(*CHAR)                          +
@@ -64,7 +64,7 @@
                         VALUES(*ALLWAYS                      +
                                *ERROR                        +
                                *NONE)                        +
-                        PROMPT('Create report')
+                        PROMPT('Create report' 6)
 
              PARM       KWD(LIBL)                            +
                         TYPE(*NAME)                          +
@@ -73,7 +73,7 @@
                         DFT(*CURRENT)                        +
                         SNGVAL((*CURRENT)                    +
                                (*JOBD   ))                   +
-                        PROMPT('Libraries for unit test')
+                        PROMPT('Libraries for unit test' 7)
 
              PARM       KWD(JOBD)                            +
                         TYPE(JOBD)                           +
@@ -81,7 +81,7 @@
                         PMTCTL(P_JOBD)                       +
                         SNGVAL(*DFT)                         +
                         DFT(*DFT)                            +
-                        PROMPT('Job description')
+                        PROMPT('Job description' 8)
 
              PARM       KWD(RCLRSC)                          +
                         TYPE(*CHAR)                          +
@@ -91,16 +91,15 @@
                         VALUES(*NO                           +
                                *ALWAYS                       +
                                *ONCE   )                     +
-                        PROMPT('Reclaim resources')
+                        PROMPT('Reclaim resources' 9)
 
              PARM       KWD(XMLSTMF)                         +
                         TYPE(*CHAR)                          +
                         LEN(1024)                            +
-                        VARY(*YES *INT2)                     +
                         CASE(*MIXED)                         +
                         DFT(*NONE)                           +
                         SPCVAL((*NONE ''))                   +
-                        PROMPT('XML stream file')
+                        PROMPT('XML stream file' 10)
 
              PARM       KWD(XMLTYPE)                         +
                         TYPE(*CHAR)                          +
@@ -110,7 +109,16 @@
                         DFT(*TYPE2)                          +
                         VALUES(*TYPE1                        +
                                *TYPE2  )                     +
-                        PROMPT('XML output type')
+                        PROMPT('XML output type' 11)
+
+             PARM       KWD(MODE)                            +
+                        TYPE(*CHAR)                          +
+                        LEN(10)                              +
+                        RSTD(*YES)                           +
+                        DFT(*FAILFIRST)                      +
+                        VALUES(*FAILFIRST                    +
+                               *ALL)                         +
+                        PROMPT('Assertion mode' 4)
 
  OBJ:        QUAL       TYPE(*NAME) LEN(10)
              QUAL       TYPE(*NAME) LEN(10) DFT(*LIBL)       +
