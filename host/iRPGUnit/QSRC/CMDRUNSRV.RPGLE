@@ -446,6 +446,8 @@ dcl-proc runTestProc export;
 
   if (startTime < endTime);
     testCaseResult.exectime = %diff(endTime: startTime: *mseconds);
+  else;
+    testCaseResult.exectime = 0;
   endif;
 
   if (g_status.isJUnitStyle);

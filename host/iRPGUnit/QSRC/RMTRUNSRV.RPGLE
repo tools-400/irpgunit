@@ -320,6 +320,7 @@ dcl-proc createV6TestCase;
   testCase.outcome = testCaseResult.outcome;
   testCase.reserved_1 = '';
   testCase.numAsserts = testCaseResult.assertCnt;
+
   testCase.execTime = testCaseResult.exectime;
 
   // Test case text:
@@ -369,9 +370,6 @@ dcl-proc createV6TestCase;
              : testCaseEvent.lenExcpMsg);
 
       testCaseEvent.lenEntry += testCaseEvent.lenExcpMsg;
-
-      // Execution time:
-      testCase.execTime = -1;
 
       // Sender information:
       testCaseEvent.offsSndInf = offsTestCaseEvent + testCaseEvent.lenEntry;
@@ -449,9 +447,6 @@ dcl-proc createV6TestCase;
 
       testCaseEvent.lenEntry += testCaseEvent.lenExcpMsg;
 
-      // Execution time:
-      testCase.execTime = -1;
-
       // Sender information:
       testCaseEvent.offsSndInf = 0;
       testCaseEvent.lenSndInf = 0;
@@ -506,8 +501,15 @@ dcl-proc createV6TestCase;
         addCallstack(usPtr: testCaseEvent: testSuccessEvent.pCallstk);
       endif;
 
-      testCaseEvent.offsExpected = 0;
-      testCaseEvent.offsActual = 0;
+      // add 'expected' value
+      testCaseEvent.offsExpected = addLogValue(usPtr: testCaseEvent: testSuccessEvent.logExpected);
+      pLogValueExpected = usPtr + testCaseEvent.offsExpected;
+      testCaseEvent.lenEntry += logValueExpected.lenEntry;
+
+      // add 'actual' value
+      testCaseEvent.offsActual = addLogValue(usPtr: testCaseEvent: testSuccessEvent.logActual);
+      pLogValueActual = usPtr + testCaseEvent.offsActual;
+      testCaseEvent.lenEntry += logValueActual.lenEntry;
 
     endsl;
 
@@ -622,12 +624,20 @@ dcl-proc addLogValue;
 
   dcl-s offsTestCaseEvent int(10);
   dcl-ds entryLogValue likeds(tmpl_logValue_v6) based(pEntryLogValue);
+  dcl-ds emptyLogValue likeds(tmpl_logValue_v6) inz;
 // @ignore-unused
   dcl-s value char(2048) based(pValue);
 // @ignore-unused
   dcl-s dataType char(20) based(pDataType);
 
   dcl-s offsEntryLogValue int(10);
+
+  if (logValue.type = '');
+     clear emptyLogValue;
+     emptyLogValue.lenEntry = 0;
+     offsEntryLogValue = 0;
+     return offsEntryLogValue;
+  endif;
 
   offsTestCaseEvent = %addr(testCaseEvent) - usPtr;
 
