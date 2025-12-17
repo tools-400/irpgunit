@@ -61,8 +61,11 @@ dcl-proc pgmrmt;
   dcl-c SUCCESS 0;
   dcl-c FAILURE -1;
 
-  dcl-s xmlStmf like(gi_xmlStmf);
-  dcl-s xmlType like(gi_xmlType);
+  // Do not change the field definitions of xmlStmf and xmlType,
+  // because the fixed-length values must be stored in varying
+  // length fields.
+  dcl-s xmlStmf like(stmf_t);
+  dcl-s xmlType like(xmlType_t);
   dcl-s assertMode like(gi_assertMode);
 
   dcl-s isSuccess ind;
@@ -75,7 +78,7 @@ dcl-proc pgmrmt;
   endif;
 
   if (%parms() >= %parmnum(gi_xmlType) and %addr(gi_xmlType) <> *null);
-    xmlType = %trimr(gi_xmlType);
+    xmlType = %trim(gi_xmlType);
   else;
     xmlType = XML_TYPE_1;
   endif;
