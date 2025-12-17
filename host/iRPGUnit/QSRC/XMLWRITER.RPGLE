@@ -207,6 +207,7 @@ dcl-proc writeProperties;
 
   text = TAB + TAB + '<property name="os.version" value="' + OS_getVersion() + '"/>' + CRLF;
   text += TAB + TAB + '<property name="irpgunit.version" value="' + RPGUNIT_VERSION + '"/>' + CRLF;
+  text += TAB + TAB + '<property name="output.type" value="' + g_status.xmlType + '"/>' + CRLF;
 
   text += TAB + '</properties>' + CRLF;
   rc =  write(fileHandle : %addr(text : *data) : %len(text));
@@ -229,7 +230,6 @@ dcl-proc writeTestCases;
   dcl-s execTime packed(15:3);
 
   dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
-
 
   // Iterate the test cases...
   list_resetIteration(testSuite.testResults);
