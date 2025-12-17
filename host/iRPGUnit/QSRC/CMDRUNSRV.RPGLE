@@ -1303,15 +1303,15 @@ dcl-proc getReportExecutionTimeTestCase export;
     testCaseResult likeds(testCaseResult_t) const;
   end-pi;
 
-  dcl-s numAssertions int(10);
+  dcl-s execTimeInMSecs int(10);
 
   if (g_status.isJUnitStyle);
-    numAssertions = testCaseResult.assertCnt;
+    execTimeInMSecs = testCaseResult.execTime;
   else;
-    numAssertions = 1;
+    execTimeInMSecs = 1;
   endif;
 
-  return numAssertions;
+  return execTimeInMSecs;
 
 end-proc;
 
