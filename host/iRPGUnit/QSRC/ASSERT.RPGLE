@@ -383,8 +383,8 @@ dcl-proc doAssert export;
 
   // Do not call clrAssertFailEvt() because of g_status.isRuntimeError!
   clear g_status.abstractTestEvent;
-  g_status.abstractTestEvent.failure.assertProc = getAssertProcName(g_status.procNamePrefix:
-                                                                    startProc);
+  g_status.abstractTestEvent.failure.assertProc =
+    getAssertProcName(g_status.procNamePrefix: startProc);
 
   if not condition;
     g_status.numFailuresCounted += 1;
@@ -433,6 +433,8 @@ dcl-proc doFail;
   end-pi;
 
   // Add FAILURE event with callstack
+  g_status.abstractTestEvent.failure.assertProc =
+    getAssertProcName(g_status.procNamePrefix: startProc);
   g_status.abstractTestEvent.failure.msg = %trimr(msg);
   g_status.abstractTestEvent.failure.pCallstk = getCallStk(startProc);
   g_status.abstractTestEvent.index = list_size(g_status.hTestEvents) + 1;

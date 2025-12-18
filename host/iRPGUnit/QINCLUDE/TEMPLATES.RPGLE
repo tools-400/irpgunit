@@ -99,13 +99,15 @@ dcl-ds assertFailEvtExt_t qualified template;
   callstk      likeds(callStk_v1_t) inz(*likeds);
 end-ds;
 
+dcl-s execTime_t packed(15:3) template;
 dcl-s assertProcNm_t varchar(32) template;
 dcl-s dataType_t varchar(20) template;
 dcl-s xmlType_t varchar(10) template;
 dcl-s xmlType_fl_t char(10) template;
 
-dcl-c XML_TYPE_1 '*TYPE1';
-dcl-c XML_TYPE_2 '*TYPE2';
+dcl-c XML_JENKINS_TYPE_1 '*TYPE1';
+dcl-c XML_JENKINS_TYPE_2 '*TYPE2';
+dcl-c XML_TYPE_VSCODE_1 '*VSCODE1';
 
 dcl-c LABEL_EXPECTED 'expected';
 dcl-c LABEL_ACTUAL 'actual';

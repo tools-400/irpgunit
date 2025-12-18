@@ -80,7 +80,7 @@ dcl-proc pgmrmt;
   if (%parms() >= %parmnum(gi_xmlType) and %addr(gi_xmlType) <> *null);
     xmlType = %trim(gi_xmlType);
   else;
-    xmlType = XML_TYPE_1;
+    xmlType = XML_JENKINS_TYPE_1;
   endif;
 
   if (%parms() >= %parmnum(gi_assertMode) and %addr(gi_assertMode) <> *null);

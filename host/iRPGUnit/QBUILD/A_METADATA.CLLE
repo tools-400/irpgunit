@@ -347,6 +347,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(JENKINS) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Jenkins File Writer.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
                           MBR(JSONWTR) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - Json Memory Writer')
@@ -476,6 +482,12 @@
                           MBR(VERSION) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - Product Version Utilities.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(VSCODE) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - VS Code File Writer.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
@@ -641,6 +653,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(JENKINS) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Jenkins File Writer.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
                           MBR(JOBLOG) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - Job Log Reader.')
@@ -782,6 +800,12 @@
                           MBR(VERSION) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - Product Version Procedures Definitions.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSRC) +
+                          MBR(VSCODE) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - VS Code File Writer.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSRC) +

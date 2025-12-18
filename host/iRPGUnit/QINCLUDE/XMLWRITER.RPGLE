@@ -53,3 +53,107 @@ dcl-pr writeXmlFile extproc('XMLWRITER_writeXmlFile');
   isJUnitStyle    ind const;
 end-pr;
 
+// ==========================================================================
+//  Internal stuff.
+// ==========================================================================
+
+dcl-s xmlName_t varchar(100) template;
+dcl-s xmlValue_t varchar(500) template;
+dcl-s xmlBuffer_t varchar(3000) template;
+dcl-s xmlBufferLarge_t varchar(10000) template;
+
+dcl-ds xmlWriter_t qualified template;
+  xmlType      like(xmlType_t);
+  isJUnitStyle ind;
+  indLvl       int(10);
+end-ds;
+
+///
+// Returns the XML representation of a test case event.
+///
+dcl-pr buildTestCaseEventXml like(xmlBufferLarge_t) extproc('XMLWRITER_buildTestCaseEventXml');
+  abstractTestEvent likeds(abstractTestEvent_t) const;
+end-pr;
+
+///
+// Produces the 'No value' message.
+///
+dcl-pr crtNoValueMsg varchar(256) extproc('XMLWRITER_crtNoValueMsg');
+  name       varchar(20) const;
+  assertProc like(assertProcNm_t) const;
+end-pr;
+
+///
+// Escapes a given value for beeing added to a XML string.
+//
+// Use this StackOverflow answer for implementing escaping:
+// https://stackoverflow.com/questions/1091945/what-characters-do-i-need-to-escape-in-xml-documents
+///
+dcl-pr escapeXml varchar(100000) extproc('XMLWRITER_escapeXml');
+  xml varchar(100000) const;
+end-pr;
+
+///
+// Returns the name of the assertion depending of the test case type.
+///
+dcl-pr getAssertProcName like(procNm_t) extproc('XML_WRITER_getAssertProcName');
+  abstractTestEvent likeds(abstractTestEvent_t) const;
+end-pr;
+
+///
+// Returns the name of the test case as is.
+///
+dcl-pr getTestCaseName like(procNm_t) extproc('XMLWRITER_getTestCaseName');
+  testCaseResult likeds(testCaseResult_t) const;
+end-pr;
+
+///
+// Returns indention for pretty printing.
+///
+dcl-pr indent varchar(100) extproc('XMLWRITER_indent');
+  indentLevel int(10) value;
+end-pr;
+
+///
+// Returns the XML representation of 'outcome'.
+///
+dcl-pr outcomeToXml varchar(30) extproc('XMLWRITER_outcomeToXml');
+  outcome like(outcome_t) const;
+end-pr;
+
+///
+// Write an XML element.
+///
+dcl-pr writeXmlElement extproc('XMLWRITER_writeXmlElement');
+  name  like(xmlName_t) options(*varsize) const;
+  value like(xmlValue_t) options(*varsize) const;
+end-pr;
+
+///
+// Starts an XML element.
+///
+dcl-pr startXmlElement like(xmlName_t) extproc('XMLWRITER_startXmlElement');
+  name like(xmlName_t) value;
+end-pr;
+
+///
+// Starts an XML element.
+///
+dcl-pr endXmlElement like(xmlName_t) extproc('XMLWRITER_endXmlElement');
+  name like(xmlName_t) value;
+end-pr;
+
+///
+// Produces an empty XML element.
+///
+dcl-pr emptyXmlElement like(xmlName_t) extproc('XMLWRITER_emptyXmlElement');
+  name   like(xmlName_t) value;
+end-pr;
+
+///
+// Writes the specified data to the XML output file.
+///
+dcl-pr appendToXmlFile extproc('XMLWRITER_appendToXmlFile');
+  data like(xmlBufferLarge_t) options(*varsize);
+end-pr;
+

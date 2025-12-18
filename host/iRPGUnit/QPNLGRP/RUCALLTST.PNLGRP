@@ -261,6 +261,11 @@ The actual and expected values are trucated after 2048 characters. The
 format of the truncated value is: :HP2.<firstBytes>....<lastBytes>:EHP2.
 :p.
 This option was added for VS Code.
+:pt.*VSCODE1
+:pd.This type produces an XML outfile for the VS Code :HP2.IBM i Testing:EHP2.
+extension.
+:p.
+This option was added for VS Code.
 :eparml.
 :ehelp.
 .*

@@ -108,7 +108,8 @@
                         RSTD(*YES)                           +
                         DFT(*TYPE2)                          +
                         VALUES(*TYPE1                        +
-                               *TYPE2  )                     +
+                               *TYPE2                        +
+                               *VSCODE1)                     +
                         PROMPT('XML output type' 11)
 
              PARM       KWD(MODE)                            +

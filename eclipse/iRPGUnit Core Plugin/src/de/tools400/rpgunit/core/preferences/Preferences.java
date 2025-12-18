@@ -57,45 +57,46 @@ public final class Preferences {
      */
     private static final String RMTPGM = RPGUNIT + ".rmtpgm"; //$NON-NLS-1$
 
-    public static final String RUN_ORDER = RMTPGM + ".order"; //$NON-NLS-1$
-    public static final String RUN_ORDER_API = "*API"; //$NON-NLS-1$
-    public static final String RUN_ORDER_REVERSE = "*REVERSE"; //$NON-NLS-1$
+    private static final String RUN_ORDER = RMTPGM + ".order"; //$NON-NLS-1$
+    private static final String RUN_ORDER_API = "*API"; //$NON-NLS-1$
+    private static final String RUN_ORDER_REVERSE = "*REVERSE"; //$NON-NLS-1$
 
-    public static final String REPORT_DETAIL = RMTPGM + ".detail"; //$NON-NLS-1$
-    public static final String REPORT_DETAIL_BASIC = "*BASIC"; //$NON-NLS-1$
-    public static final String REPORT_DETAIL_ALL = "*ALL"; //$NON-NLS-1$
+    private static final String REPORT_DETAIL = RMTPGM + ".detail"; //$NON-NLS-1$
+    private static final String REPORT_DETAIL_BASIC = "*BASIC"; //$NON-NLS-1$
+    private static final String REPORT_DETAIL_ALL = "*ALL"; //$NON-NLS-1$
 
-    public static final String REPORT_ASSERT_MODE = RMTPGM + ".assertMode"; //$NON-NLS-1$
-    public static final String REPORT_ASSERT_MODE_FAILFIRST = "*FAILFIRST"; //$NON-NLS-1$
-    public static final String REPORT_ASSERT_MODE_ALL = "*ALL"; //$NON-NLS-1$
+    private static final String REPORT_ASSERT_MODE = RMTPGM + ".assertMode"; //$NON-NLS-1$
+    private static final String REPORT_ASSERT_MODE_FAILFIRST = "*FAILFIRST"; //$NON-NLS-1$
+    private static final String REPORT_ASSERT_MODE_ALL = "*ALL"; //$NON-NLS-1$
 
-    public static final String OUTPUT = RMTPGM + ".output"; //$NON-NLS-1$
+    private static final String OUTPUT = RMTPGM + ".output"; //$NON-NLS-1$
     public static final String OUTPUT_NONE = "*NONE"; //$NON-NLS-1$
-    public static final String OUTPUT_ERROR = "*ERROR"; //$NON-NLS-1$
-    public static final String OUTPUT_ALWAYS = "*ALLWAYS"; //$NON-NLS-1$
+    private static final String OUTPUT_ERROR = "*ERROR"; //$NON-NLS-1$
+    private static final String OUTPUT_ALWAYS = "*ALLWAYS"; //$NON-NLS-1$
 
-    public static final String LIBRARY_LIST = RMTPGM + ".libraryList"; //$NON-NLS-1$
+    private static final String LIBRARY_LIST = RMTPGM + ".libraryList"; //$NON-NLS-1$
     public static final String LIBRARY_LIST_CURRENT = "*CURRENT"; //$NON-NLS-1$
     public static final String LIBRARY_LIST_JOBD = "*JOBD"; //$NON-NLS-1$
 
-    public static final String JOBD_NAME = RMTPGM + ".jobDescription.name"; //$NON-NLS-1$
-    public static final String JOBD_LIBRARY = RMTPGM + ".jobDescription.library"; //$NON-NLS-1$
+    private static final String JOBD_NAME = RMTPGM + ".jobDescription.name"; //$NON-NLS-1$
+    private static final String JOBD_LIBRARY = RMTPGM + ".jobDescription.library"; //$NON-NLS-1$
     public static final String JOBD_NAME_DFT = "*DFT"; //$NON-NLS-1$
     public static final String JOBD_LIBRARY_LIBL = "*LIBL"; //$NON-NLS-1$
-    public static final String JOBD_DEFAULT_NAME = "*DFT"; //$NON-NLS-1$
-    public static final String JOBD_DEFAULT_LIBRARY = ""; //$NON-NLS-1$
+    private static final String JOBD_DEFAULT_NAME = "*DFT"; //$NON-NLS-1$
+    private static final String JOBD_DEFAULT_LIBRARY = ""; //$NON-NLS-1$
 
-    public static final String RECLAIM_RESOURCES = RMTPGM + ".reclaimResources"; //$NON-NLS-1$
-    public static final String RECLAIM_RESOURCES_NO = "*NO"; //$NON-NLS-1$
-    public static final String RECLAIM_RESOURCES_ALWAYS = "*ALWAYS"; //$NON-NLS-1$
-    public static final String RECLAIM_RESOURCES_ONCE = "*ONCE"; //$NON-NLS-1$
+    private static final String RECLAIM_RESOURCES = RMTPGM + ".reclaimResources"; //$NON-NLS-1$
+    private static final String RECLAIM_RESOURCES_NO = "*NO"; //$NON-NLS-1$
+    private static final String RECLAIM_RESOURCES_ALWAYS = "*ALWAYS"; //$NON-NLS-1$
+    private static final String RECLAIM_RESOURCES_ONCE = "*ONCE"; //$NON-NLS-1$
 
-    public static final String XML_STMF = RMTPGM + ".xmlStmf"; //$NON-NLS-1$
+    private static final String XML_STMF = RMTPGM + ".xmlStmf"; //$NON-NLS-1$
     public static final String XML_STMF_NONE = ""; //$NON-NLS-1$
 
-    public static final String XML_TYPE = RMTPGM + ".xmlType"; //$NON-NLS-1$
-    public static final String XML_TYPE_TYPE1 = "*TYPE1"; //$NON-NLS-1$
-    public static final String XML_TYPE_TYPE2 = "*TYPE2"; //$NON-NLS-1$
+    private static final String XML_TYPE = RMTPGM + ".xmlType"; //$NON-NLS-1$
+    private static final String XML_JENKINS_TYPE_1 = "*TYPE1"; //$NON-NLS-1$
+    private static final String XML_JENKINS_TYPE_2 = "*TYPE2"; //$NON-NLS-1$
+    private static final String XML_VSCODE_TYPE_1 = "*VSCODE1"; //$NON-NLS-1$
 
     /**
      * RPGUnit warning messages:
@@ -744,7 +745,7 @@ public final class Preferences {
     }
 
     public String getDefaultXmlType() {
-        return XML_TYPE_TYPE2;
+        return XML_JENKINS_TYPE_2;
     }
 
     public boolean getDefaultShowWarnMessages() {
@@ -800,7 +801,7 @@ public final class Preferences {
     }
 
     public String[] getXmlTypeItems() {
-        return new String[] { XML_TYPE_TYPE1, XML_TYPE_TYPE2 };
+        return new String[] { XML_JENKINS_TYPE_1, XML_JENKINS_TYPE_2, XML_VSCODE_TYPE_1 };
     }
 
     public String[] getCheckTestSuiteItems() {
