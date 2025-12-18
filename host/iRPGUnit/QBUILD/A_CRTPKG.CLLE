@@ -664,6 +664,9 @@
                           TOFILE(&LIB/&QSYSINC) FROMMBR(QUSROBJD) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
+                          TOFILE(&LIB/&QSYSINC) FROMMBR(QWCRDTAA) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
                           TOFILE(&LIB/&QSYSINC) FROMMBR(QWCRTVCA) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSYSINC) +

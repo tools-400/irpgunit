@@ -341,15 +341,15 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
-                          MBR(JOBLOG) +
-                          SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - Job Log Reader.')
-             MONMSG     MSGID(CPF3288)
-
-             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
                           MBR(JENKINS) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - Jenkins File Writer.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(JOBLOG) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Job Log Reader.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
@@ -1034,6 +1034,12 @@
                           MBR(QUSROBJD) +
                           SRCTYPE(RPGLE) +
                           TEXT('Retrieve Object Description (QUSROBJD) API.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QSYSINC) +
+                          MBR(QWCRDTAA) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('Retrieve Data Area (QWCRDTAA) API')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QSYSINC) +
