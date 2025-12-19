@@ -63,17 +63,17 @@ end-pr;
 
 dcl-proc cmdrunv;
   dcl-pi cmdrunv;
-    gi_testSuite  likeds(object_t) const;
-    gi_testProcs  likeds(procNms_t) const;
-    gi_order      like(order_t) const;
-    gi_detail     like(detail_t) const;
-    gi_output     like(output_t) const;
-    gi_libl       likeds(libl_t) const;
-    gi_jobD       likeds(object_t) const;
-    gi_rclRsc     like(rclrsc_t) const;
-    gi_xmlStmf    like(stmf_fl_t) options(*nopass) const;
-    gi_xmlType    like(xmlType_fl_t) options(*nopass) const;
-    gi_assertMode like(assertMode_t) options(*nopass) const;
+    gi_testSuite likeds(object_t) const;
+    gi_testProcs likeds(procNms_t) const;
+    gi_order     like(order_t) const;
+    gi_detail    like(detail_t) const;
+    gi_output    like(output_t) const;
+    gi_libl      likeds(libl_t) const;
+    gi_jobD      likeds(object_t) const;
+    gi_rclRsc    like(rclrsc_t) const;
+    gi_xmlStmf   like(stmf_fl_t) options(*nopass) const;
+    gi_xmlType   like(xmlType_t) options(*nopass) const;
+    gi_onFailure like(onFailure_t) options(*nopass) const;
   end-pi;
 
   dcl-s xmlStmf like(stmf_t);

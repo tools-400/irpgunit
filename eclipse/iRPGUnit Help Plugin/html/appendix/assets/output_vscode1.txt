@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite errors="0" failures="1" hostname="gfd400.gfd.de" id="0" name="RPGUNITDVP/RUPLUGINT9" tests="6" >
+  <properties>
+    <property name="currentlibrary" value="RADDATZ400"/>
+    <property name="user.librarylist" value="RPGUNITDVP QGPL QTEMP"/>
+    <property name="os.version" value="V7R5M0"/>
+    <property name="irpgunit.version" value="v6.0.0.b012"/>
+    <property name="output.type" value="*VSCODE1  "/>
+  </properties>
+  <testcase name="test_assertEqual_string" assertions="1" classname="RUPLUGINT9" time="490.000" outcome="Failure" >
+  <assertion name="assertEqual_string" outcome="Failure" >
+    <failure message="Expected &apos;Dagobert Duck&apos;, but was &apos;Donald Duck&apos;.">
+      <callstack size="1">
+        <item>test_assertEqual_string (RUPLUGINT9->RUPLUGINT9:5700)</item>
+      </callstack>
+      <expected>
+        <value>Dagobert Duck</value>
+        <type>string</type>
+        <length>13</length>
+        <originalLength>13</originalLength>
+      </expected>
+      <actual>
+        <value>Donald Duck</value>
+        <type>string</type>
+        <length>11</length>
+        <originalLength>11</originalLength>
+      </actual>
+    </failure>
+  </assertion>
+  </testcase>
+</testsuite>

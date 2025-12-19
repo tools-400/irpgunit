@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+    <title>Verwendung mit VS Code</title>
+</head>
+
+<body>
+<h1>Verwendung mit VS Code</h1>
+iRPGUnit ist in die VS Code Erweiterung <a href="https://marketplace.visualstudio.com/items?itemName=IBM.vscode-ibmi-testing">IBM i Testing</a>
+integriert. Testfälle lassen sich direkt aus VS Code heraus starten.
+<p>
+Installieren Sie die Erweiterung direkt vom VS Code Marktplatz:
+<p class="indent">
+<img src="assets/InstallVSCodeExtension.png" alt="IBM i Testing Extension">
+</p>
+<p>
+Konfigurieren Sie die Erweiterung anhand der Dokumentation:
+<ul>
+<li><a href="https://codefori.github.io/docs/install/">Installation</a></li>
+<li><a href="https://codefori.github.io/docs/developing/testing/writing/">Writing Tests</a></li>
+<li><a href="https://codefori.github.io/docs/developing/testing/running/">Running Tests</a></li>
+</ul>
+<p>
+<table>
+<tr>
+<td class="notice">Hinweis: Bei der Konfiguration ist es wichtig das in den Voreinstellungen die
+                   korrekten Werte der Attribute <b>Test Source File</b> und <b>Test Source Directory</b>
+                   angegeben sind. Anderfalls werden die Testfälle nicht in der Ansicht <b>Test Explorer</b>
+                   angezeigt.
+</td>
+</tr>
+</table>
+<p>
+<h2>Beispielansichten</h2>
+<p>
+<h3>Test Explorer</h3>
+<p>
+<img src="assets/VSCodeTestExplorer.png" alt="VS Code Test Explorer">
+<p>
+<h3>Testergebnis</h3>
+<p>
+<img src="assets/VSCodeTestResult.png" alt="VS Code Test Ergebnis">
+<p>
+<h2>Konfiguration<h2>
+<p>
+<h3>iRPGUnit</h3>
+<p>
+Der Parameter <code>XMLTYPE</code> wird von der <i>IBM i Testing Extension</i>
+Erweiterung auf <code>*VSCODE1</code> gesetzt.
+<p>
+<h3>Testfälle<h3>
+<p>
+<img src="assets/VSCodePreferences.png" alt="VS Code Voreinstellungen">
+<p>
+<iframe src="../../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

@@ -32,7 +32,7 @@
 //                                 element '<failure>'. The Json object includes
 //                                 the stack trace as well as the 'expected' and
 //                                 'actual' test values.
-// @param gi_assertMode - Mode of how assertions are processed (*FAILFIRST, *ALL)
+// @param gi_onFailure  - Mode of how assertions are processed (*ABORT, *CONTINUE)
 ///
 dcl-pr cmdrun extpgm('RUCALLTST');
   gi_qTestSuite likeds(object_t) const;
@@ -45,7 +45,7 @@ dcl-pr cmdrun extpgm('RUCALLTST');
   gi_rclRsc     like(rclrsc_t) const;
   gi_xmlStmf    like(stmf_fl_t) const;
   gi_xmlType    like(xmlType_t) const;
-  gi_assertMode like(assertMode_t) const;
+  gi_onFailure  like(onFailure_t) const;
 end-pr;
 
 /include qinclude,TEMPLATES

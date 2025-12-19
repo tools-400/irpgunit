@@ -43,19 +43,19 @@ ctl-opt main(pgmrmt);
 
 dcl-proc pgmrmt;
   dcl-pi *n;
-    go_returnCode   int(10);
-    gi_qUserSpace   likeds(object_t) const;
-    gi_qTestSuite   likeds(object_t) const;
-    gi_testProcs    likeds(procNms_t) const;
-    gi_order        like(order_t) const;
-    gi_detail       like(detail_t) const;
-    gi_output       like(output_t) const;
-    gi_libL         likeds(libl_t) const;
-    gi_qJobD        likeds(object_t) const;
-    gi_rclRsc       like(rclrsc_t) const;
-    gi_xmlStmf      like(stmf_fl_t) options(*nopass) const;
-    gi_xmlType      like(xmlType_fl_t) options(*nopass) const;
-    gi_assertMode   like(assertMode_t) options(*nopass) const;
+    go_returnCode int(10);
+    gi_qUserSpace likeds(object_t) const;
+    gi_qTestSuite likeds(object_t) const;
+    gi_testProcs  likeds(procNms_t) const;
+    gi_order      like(order_t) const;
+    gi_detail     like(detail_t) const;
+    gi_output     like(output_t) const;
+    gi_libL       likeds(libl_t) const;
+    gi_qJobD      likeds(object_t) const;
+    gi_rclRsc     like(rclrsc_t) const;
+    gi_xmlStmf    like(stmf_fl_t) options(*nopass) const;
+    gi_xmlType    like(xmlType_t) options(*nopass) const;
+    gi_onFailure  like(onFailure_t) options(*nopass) const;
   end-pi;
 
   dcl-c SUCCESS 0;
@@ -66,7 +66,7 @@ dcl-proc pgmrmt;
   // length fields.
   dcl-s xmlStmf like(stmf_t);
   dcl-s xmlType like(xmlType_t);
-  dcl-s assertMode like(gi_assertMode);
+  dcl-s onFailure like(gi_onFailure);
 
   dcl-s isSuccess ind;
   dcl-s msg varchar(256);
@@ -78,19 +78,19 @@ dcl-proc pgmrmt;
   endif;
 
   if (%parms() >= %parmnum(gi_xmlType) and %addr(gi_xmlType) <> *null);
-    xmlType = %trim(gi_xmlType);
+    xmlType = gi_xmlType;
   else;
     xmlType = XML_JENKINS_TYPE_1;
   endif;
 
-  if (%parms() >= %parmnum(gi_assertMode) and %addr(gi_assertMode) <> *null);
-    assertMode = %trimr(gi_assertMode);
+  if (%parms() >= %parmnum(gi_onFailure) and %addr(gi_onFailure) <> *null);
+    onFailure = gi_onFailure;
   else;
-    assertMode = MODE_FAIL_FIRST;
+    onFailure = ON_FAILURE_ABORT;
   endif;
 
   isSuccess = runTestSuite(gi_qUserSpace: gi_qTestSuite: gi_testProcs:
-                           gi_order: gi_detail: assertMode: gi_output:
+                           gi_order: gi_detail: onFailure: gi_output:
                            gi_libL: gi_qJobD: gi_rclRsc: xmlStmf:
                            xmlType: msg);
 

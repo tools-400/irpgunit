@@ -25,8 +25,8 @@ dcl-c ORDER_REVERSE '*REVERSE';
 dcl-c DETAIL_BASIC '*BASIC';
 dcl-c DETAIL_ALL '*ALL';
 
-dcl-c MODE_FAIL_FIRST '*FAILFIRST';
-dcl-c MODE_ALL '*ALL';
+dcl-c ON_FAILURE_ABORT '*ABORT';
+dcl-c ON_FAILURE_CONTINUE '*CONTINUE';
 
 dcl-c OUTPUT_NONE '*NONE';
 dcl-c OUTPUT_ERROR '*ERROR';
@@ -62,7 +62,7 @@ dcl-c COLON u'003A';
 
 dcl-s order_t char(10) template;
 dcl-s detail_t char(10) template;
-dcl-s assertMode_t char(10) template;
+dcl-s onFailure_t char(10) template;
 dcl-s output_t char(10) template;
 dcl-s rclrsc_t char(10) template;
 dcl-s stmf_t varchar(1024) template;
@@ -77,6 +77,8 @@ dcl-c MAX_NUM_LIB 250;
 // 'Modul created in' message IDs
 dcl-c MOD_CRT_RPG 'RNS9305';
 dcl-c MOD_CRT_CBL 'LNC0899';
+
+dcl-c CRLF x'0d25';
 
 dcl-ds libl_t template;
   nume   int(5) pos(1);
@@ -102,8 +104,7 @@ end-ds;
 dcl-s execTime_t packed(15:3) template;
 dcl-s assertProcNm_t varchar(32) template;
 dcl-s dataType_t varchar(20) template;
-dcl-s xmlType_t varchar(10) template;
-dcl-s xmlType_fl_t char(10) template;
+dcl-s xmlType_t char(10) template;
 
 dcl-c XML_JENKINS_TYPE_1 '*TYPE1';
 dcl-c XML_JENKINS_TYPE_2 '*TYPE2';

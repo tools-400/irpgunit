@@ -50,16 +50,13 @@ dcl-c UTF8_START_CDATA u'003C0021005B00430044004100540041005B';
 dcl-c UTF8_END_CDATA u'005D005D003E';
 
 // The constents below are made of invariant charcaters.
-dcl-c CRLF x'0d25';
-dcl-c TAB '    ';
+dcl-c TAB '  ';
 
 dcl-c XML_OUTCOME_SUCCESS 'Success';
 dcl-c XML_OUTCOME_FAILURE 'Failure';
 dcl-c XML_OUTCOME_ERROR 'Error';
 
-dcl-s START_CDATA varchar(30);
-dcl-s END_CDATA varchar(3);
-
+dcl-ds g likeds(sharedChars_t) export;
 dcl-ds g_xmlWriter likeds(xmlWriter_t) export;
 
 dcl-s g_hFile int(10);
@@ -134,8 +131,8 @@ dcl-proc initVariantCharacters;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  START_CDATA = UTF8_START_CDATA;
-  END_CDATA = UTF8_END_CDATA;
+  g.START_CDATA = UTF8_START_CDATA;
+  g.END_CDATA = UTF8_END_CDATA;
 
 end-proc;
 
@@ -214,7 +211,7 @@ dcl-proc writeProperties;
 
   g_xmlWriter.indLvl += 1;
 
-  text = indent(g_xmlWriter.indLvl) + '<properties>' + CRLF;
+  text = indent() + '<properties>' + CRLF;
   appendToXmlFile(text);
 
   libl = getLibl();
@@ -238,7 +235,7 @@ dcl-proc writeProperties;
   writeProperty('irpgunit.version': RPGUNIT_VERSION);
   writeProperty('output.type': g_xmlWriter.xmlType);
 
-  text = indent(g_xmlWriter.indLvl) + '</properties>' + CRLF;
+  text = indent() + '</properties>' + CRLF;
   appendToXmlFile(text);
 
 on-exit;
@@ -259,8 +256,7 @@ dcl-proc writeProperty;
 
   g_xmlWriter.indLvl += 1;
 
-  text = indent(g_xmlWriter.indLvl)
-         + '<property name="' + name + '" value="' + value + '"/>' + CRLF;
+  text = indent() + '<property name="' + name + '" value="' + value + '"/>' + CRLF;
   appendToXmlFile(text);
 
 on-exit;
@@ -297,7 +293,7 @@ dcl-proc writeTestCasesJenkinsStyle;
     pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
     dow (pAbstractTestEvent <> *null);
 
-      text = indent(g_xmlWriter.indLvl) + '<testcase name="'
+      text = indent() + '<testcase name="'
                  + buildReportTestCaseName(testCaseResult: abstractTestEvent) + '" ';
       text += 'assertions="' + %char(getReportNumAsserts(testCaseResult)) + '" ';
       text += 'classname="' + %trimr(testSuiteName.nm) + '" '; // TODO: should look which module
@@ -305,10 +301,10 @@ dcl-proc writeTestCasesJenkinsStyle;
       text += '>' + CRLF;
       appendToXmlFile(text);
 
-      text = buildTestCaseEventXml(abstractTestEvent);
+      appendTestCaseEventXml(abstractTestEvent);
 
       // close <testcase> element
-      text += indent(g_xmlWriter.indLvl) + '</testcase>' + CRLF;
+      text = indent() + '</testcase>' + CRLF;
       appendToXmlFile(text);
 
       pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
@@ -325,8 +321,8 @@ end-proc;
 //----------------------------------------------------------------------
 // Returns the XML representation of a test case event.
 //----------------------------------------------------------------------
-dcl-proc buildTestCaseEventXml export;
-  dcl-pi *n like(xmlBufferLarge_t);
+dcl-proc appendTestCaseEventXml export;
+  dcl-pi *n;
     abstractTestEvent likeds(abstractTestEvent_t) const;
   end-pi;
 
@@ -340,7 +336,7 @@ dcl-proc buildTestCaseEventXml export;
   when (abstractTestEvent.outcome = TEST_CASE_ERROR);
 
     // start <error> element
-    text += indent(g_xmlWriter.indLvl) + '<error message="'
+    text += indent() + '<error message="'
             + escapeXml(%trimr(abstractTestEvent.error.msg.txt))
             + '" type="' + escapeXml(%trimr(abstractTestEvent.error.msg.id)) + '">'
             + CRLF;
@@ -355,34 +351,31 @@ dcl-proc buildTestCaseEventXml export;
     endif;
 
     // close <error> element
-    text += indent(g_xmlWriter.indLvl) + '</error>' + CRLF;
+    text += indent() + '</error>' + CRLF;
+    appendToXmlFile(text);
 
   when (abstractTestEvent.outcome = TEST_CASE_FAILURE);
 
     // start <failure> element
-    text += indent(g_xmlWriter.indLvl) + '<failure message="';
+    text += indent() + '<failure message="';
     text += escapeXml(%trimr(abstractTestEvent.failure.msg));
     text += '">';
-    text += START_CDATA + CRLF;
     appendToXmlFile(text);
 
     // always the first section of the <failure> element
     if (g_xmlWriter.xmlType = XML_JENKINS_TYPE_1);
-      text = Jenkins_appendTestCaseFailureV1(abstractTestEvent.failure.pCallstk);
+      text = Jenkins_appendTestCaseFailureV1(abstractTestEvent.failure.pCallstk) + CRLF;
+      text += indent();
       appendToXmlFile(text);
     else;
-///      text = Jenkins_appendTestCaseAsJson(abstractTestEvent.failure);
-      Jenkins_appendTestCaseAsText(abstractTestEvent.failure);
+      Jenkins_appendTestCaseFailureAsText(abstractTestEvent.failure);
     endif;
 
     // close <failure> element
-    text = indent(g_xmlWriter.indLvl) + END_CDATA;
-    text += '</failure>' + CRLF;
+    text = '</failure>' + CRLF;
     appendToXmlFile(text);
 
   endsl;
-
-  return text;
 
 on-exit;
   g_xmlWriter.indLvl -= 1;
@@ -467,7 +460,7 @@ dcl-proc writeXmlElement export;
   g_xmlWriter.indLvl += 1;
 
   if (value <> '');
-    text = indent(g_xmlWriter.indLvl) + startXmlElement(name);
+    text = indent() + startXmlElement(name);
     text += value;
     text += endXmlElement(name) + CRLF;
     appendToXmlFile(text);
@@ -612,15 +605,14 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc indent export;
   dcl-pi *n varchar(100);
-    indentLevel int(10) value;
   end-pi;
 
+  dcl-s i int(10);
   dcl-s indention varchar(100);
 
-  dow (indentLevel > 0);
-    indentLevel -= 1;
+  for i = 1 to g_xmlWriter.indLvl;
     indention += TAB;
-  enddo;
+  endfor;
 
   return indention;
 
@@ -679,11 +671,14 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc appendToXmlFile export;
   dcl-pi *n;
-    data like(xmlBufferLarge_t) options(*varsize);
+    text like(xmlBufferLarge_t) options(*varsize);
   end-pi;
 
   dcl-s rc int(10);
 
-  rc =  write(g_hFile : %addr(data : *data) : %len(data));
+  rc =  write(g_hFile : %addr(text : *data) : %len(text));
+
+  %len(text) = 0;
 
 end-proc;
+

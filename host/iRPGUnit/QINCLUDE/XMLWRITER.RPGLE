@@ -68,10 +68,15 @@ dcl-ds xmlWriter_t qualified template;
   indLvl       int(10);
 end-ds;
 
+dcl-ds sharedChars_t qualified template;
+  START_CDATA varchar(30);
+  END_CDATA   varchar(30);
+end-ds;
+
 ///
 // Returns the XML representation of a test case event.
 ///
-dcl-pr buildTestCaseEventXml like(xmlBufferLarge_t) extproc('XMLWRITER_buildTestCaseEventXml');
+dcl-pr appendTestCaseEventXml extproc('XMLWRITER_appendTestCaseEventXml');
   abstractTestEvent likeds(abstractTestEvent_t) const;
 end-pr;
 
@@ -111,7 +116,6 @@ end-pr;
 // Returns indention for pretty printing.
 ///
 dcl-pr indent varchar(100) extproc('XMLWRITER_indent');
-  indentLevel int(10) value;
 end-pr;
 
 ///
@@ -154,6 +158,6 @@ end-pr;
 // Writes the specified data to the XML output file.
 ///
 dcl-pr appendToXmlFile extproc('XMLWRITER_appendToXmlFile');
-  data like(xmlBufferLarge_t) options(*varsize);
+  text like(xmlBufferLarge_t) options(*varsize);
 end-pr;
 

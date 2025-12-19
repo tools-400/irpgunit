@@ -66,8 +66,8 @@ public final class Preferences {
     private static final String REPORT_DETAIL_ALL = "*ALL"; //$NON-NLS-1$
 
     private static final String REPORT_ASSERT_MODE = RMTPGM + ".assertMode"; //$NON-NLS-1$
-    private static final String REPORT_ASSERT_MODE_FAILFIRST = "*FAILFIRST"; //$NON-NLS-1$
-    private static final String REPORT_ASSERT_MODE_ALL = "*ALL"; //$NON-NLS-1$
+    private static final String REPORT_ASSERT_MODE_ABORT = "*ABORT"; //$NON-NLS-1$
+    private static final String REPORT_ASSERT_MODE_CONTINUE = "*CONTINUE"; //$NON-NLS-1$
 
     private static final String OUTPUT = RMTPGM + ".output"; //$NON-NLS-1$
     public static final String OUTPUT_NONE = "*NONE"; //$NON-NLS-1$
@@ -628,7 +628,7 @@ public final class Preferences {
     }
 
     private boolean isValidAssertMode(String aAssertMode) {
-        if (REPORT_ASSERT_MODE_FAILFIRST.equals(aAssertMode) || REPORT_ASSERT_MODE_ALL.equals(aAssertMode)) {
+        if (REPORT_ASSERT_MODE_ABORT.equals(aAssertMode) || REPORT_ASSERT_MODE_CONTINUE.equals(aAssertMode)) {
             return true;
         }
         return false;
@@ -684,7 +684,7 @@ public final class Preferences {
     }
 
     public String getDefaultAssertMode() {
-        return REPORT_ASSERT_MODE_FAILFIRST;
+        return REPORT_ASSERT_MODE_ABORT;
     }
 
     public String getDefaultRunOrder() {
@@ -789,7 +789,7 @@ public final class Preferences {
     }
 
     public String[] getAssertModeItems() {
-        return new String[] { REPORT_ASSERT_MODE_FAILFIRST, REPORT_ASSERT_MODE_ALL };
+        return new String[] { REPORT_ASSERT_MODE_ABORT, REPORT_ASSERT_MODE_CONTINUE };
     }
 
     public String[] getOutputItems() {

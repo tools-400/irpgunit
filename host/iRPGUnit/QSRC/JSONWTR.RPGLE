@@ -46,8 +46,7 @@ dcl-s START_ARRAY varchar(2);
 dcl-s END_ARRAY varchar(2);
 
 // The constents below are made of invariant charcaters.
-dcl-c CRLF x'0d25';
-dcl-c TAB '    ';
+dcl-c TAB '  ';
 dcl-c DELIMITER ':';
 
 dcl-ds g_status qualified inz;

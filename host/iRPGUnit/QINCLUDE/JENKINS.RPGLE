@@ -56,7 +56,7 @@ end-pr;
 ///
 // Appends a test case event in text format.
 ///
-dcl-pr Jenkins_appendTestCaseAsText extproc('JENKINS_Jenkins_appendTestCaseAsText');
+dcl-pr Jenkins_appendTestCaseFailureAsText extproc('JENKINS_Jenkins_appendTestCaseFailureAsText');
   testFailureEvent likeds(testFailureEvent_t) const;
 end-pr;
 

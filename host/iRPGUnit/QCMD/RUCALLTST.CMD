@@ -104,7 +104,6 @@
              PARM       KWD(XMLTYPE)                         +
                         TYPE(*CHAR)                          +
                         LEN(10)                              +
-                        VARY(*YES *INT2)                     +
                         RSTD(*YES)                           +
                         DFT(*TYPE2)                          +
                         VALUES(*TYPE1                        +
@@ -112,14 +111,14 @@
                                *VSCODE1)                     +
                         PROMPT('XML output type' 11)
 
-             PARM       KWD(MODE)                            +
+             PARM       KWD(ONFAILURE)                       +
                         TYPE(*CHAR)                          +
                         LEN(10)                              +
                         RSTD(*YES)                           +
-                        DFT(*FAILFIRST)                      +
-                        VALUES(*FAILFIRST                    +
-                               *ALL)                         +
-                        PROMPT('Assertion mode' 4)
+                        DFT(*ABORT)                          +
+                        VALUES(*ABORT                        +
+                               *CONTINUE)                    +
+                        PROMPT('On failed assertion' 4)
 
  OBJ:        QUAL       TYPE(*NAME) LEN(10)
              QUAL       TYPE(*NAME) LEN(10) DFT(*LIBL)       +

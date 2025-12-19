@@ -2,7 +2,11 @@
 <?NLS TYPE="org.eclipse.help.toc"?>
 
 <toc label="Integration" link_to="toc/toc.xml#integration"> 
-	<topic href="html/integration/cmone/usage_cmone.html"                         label="CMOne" >
- 		<topic href="html/integration/cmone/preferences/preferences_cmone.html"   label="Voreinstellungen" />
- 	</topic>
+    <topic href="html/integration/cmone/usage_cmone.html"                         label="CMOne" >
+        <topic href="html/integration/cmone/preferences/preferences_cmone.html"   label="Preferences" />
+    </topic>
+    <topic href="html/integration/jenkins/usage_jenkins.html"                     label="Jenkins" >
+    </topic>
+    <topic href="html/integration/vscode/usage_vscode.html"                       label="VS Code" >
+    </topic>
 </toc>

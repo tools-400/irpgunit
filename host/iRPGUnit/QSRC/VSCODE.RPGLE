@@ -39,8 +39,7 @@ ctl-opt DECEDIT('0.') NOMAIN;
 
 /include qinclude,SDS
 
-dcl-c CRLF x'0d25';
-
+dcl-ds g likeds(sharedChars_t) import;
 dcl-ds g_xmlWriter likeds(xmlWriter_t) import;
 
 //----------------------------------------------------------------------
@@ -67,7 +66,7 @@ dcl-proc VSCode_writeTestCases export;
     execTime = testCaseResult.execTime;
 
     // open <testcase> element
-    text = indent(g_xmlWriter.indLvl) + '<testcase name="' + getTestCaseName(testCaseResult) + '" ';
+    text = indent() + '<testcase name="' + getTestCaseName(testCaseResult) + '" ';
     text += 'assertions="' + %char(testCaseResult.assertCnt) + '" ';
     text += 'classname="' + %trimr(testSuiteName.nm) + '" '; // TODO: should look which module
     text += 'time="' + %char(execTime) + '" ';               // exports this testcase
@@ -78,7 +77,7 @@ dcl-proc VSCode_writeTestCases export;
     VSCode_writeTestCaseEvents(testCaseResult);
 
     // close <testcase> element
-    text = indent(g_xmlWriter.indLvl) + '</testcase>' + CRLF;
+    text = indent() + '</testcase>' + CRLF;
     appendToXmlFile(text);
 
     pTestCaseResult = list_getNext(testSuite.testResults);
@@ -109,7 +108,7 @@ dcl-proc VSCode_writeTestCaseEvents;
   dow (pAbstractTestEvent <> *null);
 
     // open <assertion> element
-    text = indent(g_xmlWriter.indLvl) + '<assertion name="'
+    text = indent() + '<assertion name="'
                                    + getAssertProcName(abstractTestEvent) + '" ';
     text += 'outcome="' + outcomeToXml(abstractTestEvent.outcome) + '" ';
     text += '>' + CRLF;
@@ -119,7 +118,7 @@ dcl-proc VSCode_writeTestCaseEvents;
     VSCode_writeTestCaseEvent(abstractTestEvent);
 
     // close <assertion> element
-    text = indent(g_xmlWriter.indLvl) + '</assertion>' + CRLF;
+    text = indent() + '</assertion>' + CRLF;
     appendToXmlFile(text);
 
     pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
@@ -138,7 +137,6 @@ dcl-proc VSCode_writeTestCaseEvent;
   dcl-ds runtimeErrorEvent likeds(runtimeErrorEvent_t) inz;
   dcl-ds testFailureEvent likeds(testFailureEvent_t) inz;
 
-  dcl-s rc int(10);
   dcl-s text like(xmlBuffer_t);
 
   g_xmlWriter.indLvl += 1;
@@ -149,7 +147,7 @@ dcl-proc VSCode_writeTestCaseEvent;
     runtimeErrorEvent = abstractTestEvent.error;
 
     // start <error> element
-    text = indent(g_xmlWriter.indLvl) + '<error message="'
+    text = indent() + '<error message="'
            + escapeXml(%trimr(runtimeErrorEvent.msg.txt))
            + '" type="' + escapeXml(%trimr(runtimeErrorEvent.msg.id)) + '">' + CRLF;
     appendToXmlFile(text);
@@ -165,7 +163,7 @@ dcl-proc VSCode_writeTestCaseEvent;
     writeXmlElement('messageSender': text);
 
     // close <error> element
-    text = indent(g_xmlWriter.indLvl) + '</error>' + CRLF;
+    text = indent() + '</error>' + CRLF;
     appendToXmlFile(text);
 
   when (abstractTestEvent.outcome = TEST_CASE_FAILURE);
@@ -173,31 +171,52 @@ dcl-proc VSCode_writeTestCaseEvent;
     testFailureEvent = abstractTestEvent.failure;
 
     // start <failure> element
-    text = indent(g_xmlWriter.indLvl) + '<failure message="';
+    text = indent() + '<failure message="';
     text += escapeXml(%trimr(testFailureEvent.msg));
-    text += '">' + CRLF;
+    text += '">';
     appendToXmlFile(text);
 
     if (not isUseJsonFormat());
-      // always the first section of the <failure> element
-      VSCode_writeCallStack(testFailureEvent.pCallstk);
-
-      VSCode_writeFailureValues(testFailureEvent);
-
-      VSCode_writeDiagnosticMessages(testFailureEvent);
+      VSCode_appendTestCaseAsXml(abstractTestEvent.failure);
+      text = indent();
+      appendToXmlFile(text);
     else;
-      text = Jenkins_appendTestCaseAsJson(abstractTestEvent.failure);
+      text = g.START_CDATA;
+      text += Jenkins_appendTestCaseAsJson(abstractTestEvent.failure);
+      text += indent() + g.END_CDATA;
       appendToXmlFile(text);
     endif;
 
     // close <failure> element
-    text = indent(g_xmlWriter.indLvl) + '</failure>' + CRLF;
+    text = '</failure>' + CRLF;
     appendToXmlFile(text);
 
   endsl;
 
 on-exit;
   g_xmlWriter.indLvl -= 1;
+
+end-proc;
+
+// --------------------------------------------------------
+// Writes the test case as XML in VS Code style.
+// --------------------------------------------------------
+dcl-proc VSCode_appendTestCaseAsXml;
+  dcl-pi *n extproc(*dclcase);
+    testFailureEvent likeds(testFailureEvent_t) const;
+  end-pi;
+
+  dcl-s text like(xmlBuffer_t);
+
+  text = CRLF;
+  appendToXmlFile(text);
+
+  // always the first section of the <failure> element
+  VSCode_writeCallStack(testFailureEvent.pCallstk);
+
+  VSCode_writeFailureValues(testFailureEvent);
+
+  VSCode_writeDiagnosticMessages(testFailureEvent);
 
 end-proc;
 
@@ -216,12 +235,12 @@ dcl-proc VSCode_writeCallStack;
 
   // start Json object
   size = Callstack_getNumE(pCallstk);
-  text = indent(g_xmlWriter.indLvl) + '<callstack size="' + %char(size) + '">' + CRLF;
+  text = indent() + '<callstack size="' + %char(size) + '">' + CRLF;
   appendToXmlFile(text);
 
   VSCode_writeCallstackEntries(pCallstk);
 
-  text = indent(g_xmlWriter.indLvl) + '</callstack>' + CRLF;
+  text = indent() + '</callstack>' + CRLF;
   appendToXmlFile(text);
 
 on-exit;
@@ -292,7 +311,7 @@ dcl-proc VSCode_writeLogValue;
   g_xmlWriter.indLvl += 1;
 
   if (logValue.type <> NO_VALUE);
-    text = indent(g_xmlWriter.indLvl) + startXmlElement(name) + CRLF;
+    text = indent() + startXmlElement(name) + CRLF;
     appendToXmlFile(text);
 
     writeXmlElement('value': logValue.value);
@@ -300,9 +319,9 @@ dcl-proc VSCode_writeLogValue;
     writeXmlElement('length': %char(logValue.length));
     writeXmlElement('originalLength': %char(logValue.originalLength));
 
-    text = indent(g_xmlWriter.indLvl) + endXmlElement(name) + CRLF;
+    text = indent() + endXmlElement(name) + CRLF;
   else;
-    text = indent(g_xmlWriter.indLvl) + emptyXmlElement(name) + CRLF;
+    text = indent() + emptyXmlElement(name) + CRLF;
   endif;
 
   appendToXmlFile(text);
@@ -342,13 +361,13 @@ dcl-proc VSCode_writeDiagnosticMessages;
 
   if (size > 0);
 
-    text = indent(g_xmlWriter.indLvl) + '<diagnosticMessages size="' + %char(size) + '">' + CRLF;
+    text = indent() + '<diagnosticMessages size="' + %char(size) + '">' + CRLF;
     appendToXmlFile(text);
 
     writeXmlElement('item': message1);
     writeXmlElement('item': message2);
 
-    text = indent(g_xmlWriter.indLvl) + '</diagnosticMessages>' + CRLF;
+    text = indent() + '</diagnosticMessages>' + CRLF;
     appendToXmlFile(text);
 
   endif;

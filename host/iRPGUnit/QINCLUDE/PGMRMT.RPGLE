@@ -36,7 +36,7 @@
 //                                 element '<failure>'. The Json object includes
 //                                 the stack trace as well as the 'expected' and
 //                                 'actual' test values.
-// @param gi_assertMode - Mode of how assertions are processed (*FAILFIRST, *ALL)
+// @param gi_onFailure  - Mode of how assertions are processed (*ABORT, *CONTINUE)
 ///
 dcl-pr pgmrmt extpgm('PGMRMT');
   go_returnCode int(10);
@@ -50,7 +50,7 @@ dcl-pr pgmrmt extpgm('PGMRMT');
   gi_qJobD      likeds(object_t) const;
   gi_rclRsc     like(rclrsc_t) const;
   gi_xmlStmf    like(stmf_fl_t) options(*nopass) const;
-  gi_xmlType    like(xmlType_fl_t) options(*nopass) const;
-  gi_assertMode like(assertMode_t) options(*nopass) const;
+  gi_xmlType    like(xmlType_t) options(*nopass) const;
+  gi_onFailure  like(onFailure_t) options(*nopass) const;
 end-pr;
 

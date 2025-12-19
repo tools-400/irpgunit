@@ -32,7 +32,23 @@ ctl-opt DECEDIT('0.') NOMAIN;
 
 /include qinclude,JENKINS
 
-dcl-c CRLF x'0d25';
+dcl-ds g likeds(sharedChars_t) import;
+
+//----------------------------------------------------------------------
+// Builds and returns the callstack as XML.
+//----------------------------------------------------------------------
+dcl-proc Jenkins_appendTestCaseFailureV1 export;
+  dcl-pi *n like(xmlBufferLarge_t);
+    pCallstack  pointer const;
+  end-pi;
+
+  dcl-s text like(xmlBufferLarge_t);
+
+  text += CRLF + escapeXml(Jenkins_buildCallStackV1(pCallstack));
+
+  return text;
+
+end-proc;
 
 //----------------------------------------------------------------------
 // Builds and returns a callstack version 1 item.
@@ -44,6 +60,7 @@ dcl-proc Jenkins_buildCallStackV1;
 
   dcl-s text like(xmlBufferLarge_t);
   dcl-ds callstkEnt likeds(callStkEnt_t) inz;
+
 
   Callstack_resetIteration(pCallstk);
   dow (Callstack_getNext(pCallstk: callstkEnt));
@@ -70,22 +87,6 @@ dcl-proc buildCallstackEntry;
                    + %trim(callstkEnt.qStmt.qMod.nm) + ':'
                    + %trim(callstkEnt.qStmt.specNb)
             + ')';
-
-  return text;
-
-end-proc;
-
-//----------------------------------------------------------------------
-// Builds and returns the callstack as XML.
-//----------------------------------------------------------------------
-dcl-proc Jenkins_appendTestCaseFailureV1 export;
-  dcl-pi *n like(xmlBufferLarge_t);
-    pCallstack  pointer const;
-  end-pi;
-
-  dcl-s text like(xmlBufferLarge_t);
-
-  text += escapeXml(Jenkins_buildCallStackV1(pCallstack));
 
   return text;
 
@@ -140,7 +141,7 @@ dcl-proc Jenkins_appendTestCaseAsJson export;
   // end Json object
   Json_endObject(); // Json Root Object
 
-  text = Json_get() + CRLF;
+  text = CRLF + Json_get() + CRLF;
 
   return text;
 
@@ -238,18 +239,24 @@ end-proc;
 // --------------------------------------------------------
 // Appends a test case event in text format.
 // --------------------------------------------------------
-dcl-proc Jenkins_appendTestCaseAsText export;
+dcl-proc Jenkins_appendTestCaseFailureAsText export;
   dcl-pi *n;
     testFailureEvent likeds(testFailureEvent_t) const;
   end-pi;
 
-  dcl-s text like(xmlBufferLarge_t);
+  dcl-s text like(xmlBuffer_t);
+
+  text = g.START_CDATA;
+  appendToXmlFile(text);
 
   Jenkins_appendCallStackAsText(testFailureEvent.pCallstk);
 
   Jenkins_appendFailureValuesAsText(testFailureEvent);
 
   Jenkins_appendDiagnosticMessagesAsText(testFailureEvent);
+
+  text = g.END_CDATA;
+  appendToXmlFile(text);
 
 end-proc;
 
