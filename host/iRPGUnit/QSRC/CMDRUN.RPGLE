@@ -53,14 +53,14 @@ dcl-proc cmdrun;
     gi_rclRsc     like(rclrsc_t) const;
     gi_xmlStmf    like(stmf_fl_t) const;
     gi_xmlType    like(xmlType_t) const;
-    gi_assertMode like(assertMode_t) const;
+    gi_onFailure  like(onFailure_t) const;
   end-pi;
 
   dcl-s isSuccess ind;
   dcl-s msg varchar(256);
 
   isSuccess = runTestSuite(*omit: gi_qTestSuite: gi_testProcs:
-                           gi_order: gi_detail: gi_assertMode: gi_output:
+                           gi_order: gi_detail: gi_onFailure: gi_output:
                            gi_libL: gi_qJobD: gi_rclRsc: %trim(gi_xmlStmf):
                            gi_xmlType: msg);
 

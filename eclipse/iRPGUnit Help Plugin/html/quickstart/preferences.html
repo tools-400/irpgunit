@@ -34,14 +34,15 @@ The possible values are:<p>
 <colgroup>
  <col width="100">
 </colgroup>
-<tr><td valign="top">*FAILFIRST</td><td>Executing assertions is stopped after the first failed assertion. This
-mode matches the JUnit behavior and equals the original mode of iRPGUnit.</td></tr>
-<tr><td valign="top">*ALL</td><td>All assertions are executed despite of their results. The final
-result is <b>Failure</b> if at least one assertion has failed, otherwise <b>Success</b>.</td></tr>
+<tr><td valign="top">*ABORT</td><td>Processing of the test case is aborted after the first failed assertion.
+This action matches the JUnit behavior and equals the original mode of iRPGUnit.</td></tr>
+<tr><td valign="top">*CONINUE</td><td>Test case processing continues even if an assertion fails. This mode
+can generate unexpectedly large amounts of result data. The final
+result is <b>Failure</b>, if an assertion fails, otherwise <b>Success</b>.</td></tr>
 </table>
 <p>
 <table class="notice">
-<tr><td><b>Warning</b>: Option <b>*FAILFIRST</b> may cause unexpected large results!</td></tr>
+<tr><td><b>Warning</b>: Option <b>*ABORT</b> may generate unexpectedly large amounts of result data.</td></tr>
 </table>
 <p>
 
@@ -183,7 +184,11 @@ Specifies the format of the XML output stream file:<p>
 </td></tr> 
 <tr><td valign="top">*TYPE2</td><td>New format of iRPGUnit >= v6.0.0.r.<br>
                      Element <code>&lt;failure&gt;</code> (call stack) is append in Json format.<br>
-                     This format supports both, the Jenkins <a href="https://plugins.jenkins.io/junit/">JUnit</a> plug-in and the VS Code <a href="https://github.com/IBM/vscode-ibmi-testing">IBM I Testing</a> extension.
+                     This format supports both, the Jenkins <a href="https://plugins.jenkins.io/junit/">JUnit</a> plug-in
+                     and the VS Code <a href="https://github.com/IBM/vscode-ibmi-testing">IBM I Testing</a> extension.
+</td></tr> 
+<tr><td valign="top">*VSCODE1</td><td>New XML output format exclusively for the VS Code
+                     <a href="https://github.com/IBM/vscode-ibmi-testing">IBM I Testing</a> extension.
 </td></tr> 
 </table>
 <p>

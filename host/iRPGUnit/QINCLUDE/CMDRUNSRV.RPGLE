@@ -33,22 +33,22 @@
 //                        Structure: Array of procedure names for selective execution
 //                        If empty, all test procedures in the suite are executed
 // @param order         - Execution order specification for test procedures:
-//                        '*API' = Execute in the order defined by the test suite
-//                        '*REVERSE' = Execute in reverse order
+//                        *API     = Execute in the order defined by the test suite
+//                        *REVERSE = Execute in reverse order
 //                        Controls sequence of test procedure execution
 // @param detail        - Level of detail for test output and reporting:
-//                        '*BASIC' = Summary information only
-//                        '*ALL' = Detailed execution information including timings
-//                        '*FAILURE' = Detailed information for failures only
-// @param mode          - Mode of how assertions are processed:
-//                        '*FAILFIRST' = Executing assertions is stopped after the first
-//                                       failed assertion
-//                        '*ALL' = All assertions are executed
-//                        '*FAILURE' = Detailed information for failures only
+//                        *BASIC = Full details for failures and errors, no detail for
+//                                 successes.
+//                        *ALL   = Full detail in all cases.
+// @param onFailure     - Mode of how assertions are processed:
+//                        *ABORT    = Processing of the test case is aborted after the
+//                                    first failed assertion
+//                        *CONTINUE = Test case processing continues even if an assertion
+//                                    fails.
 // @param output        - Output format specification for test results:
-//                        '*NONE' = No output formatting
-//                        '*VERBOSE' = Detailed console output
-//                        '*CSV' = Comma-separated values format
+//                        *ALLWAYS = Creates a report regardless of the test result.
+//                        *ERROR   = Creates a report in case of failures and errors, only.
+//                        *NONE    = Does not create any report.
 // @param libl          - Library list configuration for test execution environment
 //                        Structure: Defines the library search order during test execution
 //                        Ensures proper resolution of objects and dependencies
@@ -56,17 +56,18 @@
 //                        Structure: library/object format specifying job attributes
 //                        Controls job environment, locale, and system settings
 // @param rclrsc        - Resource cleanup specification after test execution:
-//                        '*YES' = Clean up temporary objects and resources
-//                        '*NO' = Leave resources for debugging or analysis
+//                        *NO      = Resources are not reclaimed.
+//                        *ALLWAYS = Resources are reclaimed after each test case and
+//                                   at the end of the test suite.
+//                        *ONCE    = Resources are reclaimed at the end of the test
+//                                   suite.
 // @param xmlstmf       - XML stream file path for structured output
 //                        Stream file path for generating XML-formatted test results
 //                        Enables integration with CI/CD tools and reporting systems
 // @param xmlType       - Specifies the type of the generated XML stream file.
-//                        *TYPE1 = original type created by iRPGUnit <= v5.1.0.r
-//                        *TYPE2 = new type that associates a Json object to XML
-//                                 element '<failure>'. The Json object includes
-//                                 the stack trace as well as the 'expected' and
-//                                 'actual' test values.
+//                        *TYPE1   = Original XML format created by iRPGUnit <= v5.1.0.r
+//                        *TYPE2   = New XML format created by iRPGUnit v6.0.0.r.
+//                        *VSCODE1 = XML format for the VS Code 'IBM i Testing' extension.
 // @param msg           - Message of the test result.
 //
 // @return Status code indicating overall test execution outcome:
@@ -83,7 +84,7 @@ dcl-pr runTestSuite ind extproc('CMDRUNSRV_runTestSuite');
   testProcs     likeds(procNms_t) const;
   order         like(order_t) const;
   detail        like(detail_t) const;
-  assertMode    like(assertMode_t) const;
+  onFailure     like(onFailure_t) const;
   output        like(output_t) const;
   libl          likeds(libl_t) const;
   qJobD         likeds(object_t) const;
@@ -343,7 +344,7 @@ end-pr;
 
 ///
 // Builds the name of the test case as it is displayed in the XML.
-// Uses the test case name for assertion mode *FAILFIRST, otherwise
+// Uses the test case name for assertion mode *ABORT, otherwise
 // builds the names with template 'testName.assertProcName'.
 // If all assertions are executed, the name of the "virtual" test
 // is created as 'testName.assertProcName', otherwise 'testName'.
@@ -355,7 +356,7 @@ end-pr;
 
 ///
 // Returns the number of assertions as displayed in the XML.
-// Returns the total number of assertions for assertion mode *FAILFIRST,
+// Returns the total number of assertions for assertion mode *ABORT,
 // otherwise 1.
 // If all assertions are executed, the number of assertions per "virtual"
 // test case is 1, otherwise the total number of assertions.
@@ -366,7 +367,7 @@ end-pr;
 
 ///
 // Returns the number of assertions as displayed in the XML.
-// Returns the total number of assertions for assertion mode *FAILFIRST,
+// Returns the total number of assertions for assertion mode *ABORT,
 // otherwise 1.
 // IF all assertions are eceuted, the total execution time is divided
 // by the totall number of assertions. There is no way to figure out

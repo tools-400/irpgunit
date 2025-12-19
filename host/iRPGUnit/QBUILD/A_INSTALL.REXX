@@ -482,6 +482,7 @@
    "DLTMOD MODULE("_prdLib"/EXTPRCT)"
    "DLTMOD MODULE("_prdLib"/EXTTST)"
    "DLTMOD MODULE("_prdLib"/EXTTSTT)"
+   "DLTMOD MODULE("_prdLib"/JENKINS)"
    "DLTMOD MODULE("_prdLib"/JOBLOG)"
    "DLTMOD MODULE("_prdLib"/JOBLOGT)"
    "DLTMOD MODULE("_prdLib"/JSONWTR)"
@@ -513,6 +514,7 @@
    "DLTMOD MODULE("_prdLib"/TESTUTILST)"
    "DLTMOD MODULE("_prdLib"/USRSPC)"
    "DLTMOD MODULE("_prdLib"/VERSION)"
+   "DLTMOD MODULE("_prdLib"/VSCODE)"
    "DLTMOD MODULE("_prdLib"/XMLWRITER)"
 
    "DLTMOD MODULE("_prdlib"/CBL)"
@@ -585,6 +587,7 @@ createBindingDirectory:
    "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/CRTTST    *MODULE))"
    "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/EXTPRC    *MODULE))"
    "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/EXTTST    *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/JENKINS   *MODULE))"
    "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/JOBLOG    *MODULE))"
    "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/JSONWTR   *MODULE))"
    "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/LIBL      *MODULE))"
@@ -599,6 +602,7 @@ createBindingDirectory:
    "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/STRING    *MODULE))"
    "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/TAGTST    *MODULE))"
    "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/USRSPC    *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/VSCODE    *MODULE))"
    "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/XMLWRITER *MODULE))"
 
    "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/LLIST     *MODULE))"
@@ -607,7 +611,7 @@ createBindingDirectory:
    "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/SPLF      *MODULE))"
 
    "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/RUTESTCASE *SRVPGM))"
-   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/RUMEMMGR   *SRVPGM))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/RUMEMMGR  *SRVPGM))"
 
    return ''
 
@@ -629,6 +633,7 @@ compileModules:
    "CMPMOD MODULE("prdLib"/CRTCBL   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
    "CMPMOD MODULE("prdLib"/CRTRPG   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
    "CMPMOD MODULE("prdLib"/CRTTST   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/JENKINS  ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
    "CMPMOD MODULE("prdLib"/JOBLOG   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
    "CMPMOD MODULE("prdLib"/JSONWTR  ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
    "CMPMOD MODULE("prdLib"/EXTPRC   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
@@ -648,6 +653,7 @@ compileModules:
    "CMPMOD MODULE("prdLib"/TESTUTILS) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
    "CMPMOD MODULE("prdLib"/USRSPC   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
    "CMPMOD MODULE("prdLib"/VERSION  ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/VSCODE   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
    "CMPMOD MODULE("prdLib"/XMLWRITER) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
    "CMPMOD MODULE("prdLib"/LIBLC    ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"

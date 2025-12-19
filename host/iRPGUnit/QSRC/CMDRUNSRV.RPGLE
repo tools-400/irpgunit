@@ -99,19 +99,19 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc runTestSuite export;
   dcl-pi *N ind;
-    userSpace     likeds(object_t) options(*omit) const;
-    qTestSuite    likeds(object_t) const;
-    testProcs     likeds(procNms_t) const;
-    order         like(order_t) const;
-    detail        like(detail_t) const;
-    assertMode    like(assertMode_t) const;
-    output        like(output_t) const;
-    libl          likeds(libl_t) const;
-    qJobD         likeds(object_t) const;
-    rclRsc        like(rclrsc_t) const;
-    xmlStmf       like(stmf_t) const;
-    xmlType       like(xmlType_t) const;
-    msg           varchar(256); // Completion message.
+    userSpace  likeds(object_t) options(*omit) const;
+    qTestSuite likeds(object_t) const;
+    testProcs  likeds(procNms_t) const;
+    order      like(order_t) const;
+    detail     like(detail_t) const;
+    onFailure  like(onFailure_t) const;
+    output     like(output_t) const;
+    libl       likeds(libl_t) const;
+    qJobD      likeds(object_t) const;
+    rclRsc     like(rclrsc_t) const;
+    xmlStmf    like(stmf_t) const;
+    xmlType    like(xmlType_t) const;
+    msg        varchar(256); // Completion message.
   end-pi;
 
   dcl-ds testSuite likeds(testSuite_t);
@@ -128,7 +128,7 @@ dcl-proc runTestSuite export;
 
   dcl-ds xmlStmfInfo likeds(xmlStmfInfo_t) inz;
 
-  if (assertMode = MODE_ALL);
+  if (onFailure = ON_FAILURE_CONTINUE);
     g_status.isJUnitStyle = *off;
   else;
     g_status.isJUnitStyle = *on;
@@ -1242,7 +1242,7 @@ end-proc;
 
 //----------------------------------------------------------------------
 // Builds the name of the test case as it is displayed in the XML.
-// Uses the test case name for assertion mode *FAILFIRST, otherwise
+// Uses the test case name for assertion mode *ABORT, otherwise
 // builds the names with template 'testName.assertProcName'.
 //----------------------------------------------------------------------
 dcl-proc buildReportTestCaseName export;
@@ -1273,7 +1273,7 @@ end-proc;
 
 //----------------------------------------------------------------------
 // Returns the number of assertions as displayed in the XML.
-// Returns the total number of assertions for assertion mode *FAILFIRST,
+// Returns the total number of assertions for assertion mode *ABORT,
 // otherwise 1.
 //----------------------------------------------------------------------
 dcl-proc getReportNumAsserts export;
@@ -1295,7 +1295,7 @@ end-proc;
 
 //----------------------------------------------------------------------
 // Returns the number of assertions as displayed in the XML.
-// Returns the total number of assertions for assertion mode *FAILFIRST,
+// Returns the total number of assertions for assertion mode *ABORT,
 // otherwise 1.
 //----------------------------------------------------------------------
 dcl-proc getReportExecutionTimeTestCase export;
