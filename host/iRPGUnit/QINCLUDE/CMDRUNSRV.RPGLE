@@ -66,7 +66,7 @@
 //                        Enables integration with CI/CD tools and reporting systems
 // @param xmlType       - Specifies the type of the generated XML stream file.
 //                        *TYPE1   = Original XML format created by iRPGUnit <= v5.1.0.r
-//                        *TYPE2   = New XML format created by iRPGUnit >= v5.2.0.r.
+//                        *TYPE2   = New XML format created by iRPGUnit v6.0.0.r.
 //                        *VSCODE1 = XML format for the VS Code 'IBM i Testing' extension.
 // @param msg           - Message of the test result.
 //
