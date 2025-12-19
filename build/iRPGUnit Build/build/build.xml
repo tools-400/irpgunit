@@ -1193,6 +1193,7 @@
             </and>
         </condition>
 
+    	<!--
         <if>
             <equals arg1="${is.project.doc}" arg2="true" />
             <then>
@@ -1214,6 +1215,9 @@
                 <echo>No project documentation file specified. Updating the PDF file is skipped.</echo>
             </else>
         </if>
+        -->
+        <property name="pdf.needs.update" value="false"/>
+        <echo>Winword is not available.</echo>
 
     </target>
 
