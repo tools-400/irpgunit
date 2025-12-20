@@ -373,7 +373,7 @@ end-pr;
 // by the totall number of assertions. There is no way to figure out
 // how long it took to process a specific assertion.
 ///
-dcl-pr getReportExecutionTimeTestCase int(10);
+dcl-pr getReportExecutionTimeTestCase int(20);
   testCaseResult likeds(testCaseResult_t) const;
 end-pr;
 

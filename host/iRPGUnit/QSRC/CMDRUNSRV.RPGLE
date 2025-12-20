@@ -1299,16 +1299,18 @@ end-proc;
 // otherwise 1.
 //----------------------------------------------------------------------
 dcl-proc getReportExecutionTimeTestCase export;
-  dcl-pi *n int(10);
+  dcl-pi *n int(20);
     testCaseResult likeds(testCaseResult_t) const;
   end-pi;
 
-  dcl-s execTimeInMSecs int(10);
+  dcl-s execTimeInMSecs int(20);
+  dcl-s numTestCaseEvents int(10);
 
   if (g_status.isJUnitStyle);
     execTimeInMSecs = testCaseResult.execTime;
   else;
-    execTimeInMSecs = 1;
+    numTestCaseEvents = list_size(testCaseResult.hTestEvents);
+    execTimeInMSecs = testCaseResult.execTime / numTestCaseEvents;
   endif;
 
   return execTimeInMSecs;
