@@ -11,23 +11,9 @@
 // >>PRE-COMPILER<<
 //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
 //   >>IMPORTANT<<
-//     >>PARM<<  MODULE(&LI/SRCMBR    +
-//                      &LI/OBJECT    +
-//                      &LI/JOBLOG    +
-//                      &LI/USRSPC    +
-//                      &LI/PGMMSG    +
-//                      &LI/STMF      +
-//                      &LI/STRING    +
-//                      );
-//     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
+//     >>PARM<<  BNDDIR(&LI/IRPGUNIT);
+//     >>PARM<<  COPTION(*EVENTF);
 //   >>END-IMPORTANT<<
-//   >>CMD<<     CMPMOD MODULE(&LI/SRCMBR   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/OBJECT   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/JOBLOG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/USRSPC   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/PGMMSG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/STMF     ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/STRING   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================

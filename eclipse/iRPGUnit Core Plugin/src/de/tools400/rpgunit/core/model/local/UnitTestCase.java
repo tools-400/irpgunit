@@ -8,8 +8,8 @@
 
 package de.tools400.rpgunit.core.model.local;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -24,24 +24,11 @@ import de.tools400.rpgunit.core.model.ibmi.I5ServiceProgram;
 public class UnitTestCase extends AbstractUnitTestObject
     implements IRPGUnitTestCaseItem, IUnitTestTreeItem, IUnitTestItemWithSourceMember, IPropertySource {
 
-    private static final String PROPERTY_ID_ACTUAL_VALUE = "actualValue"; //$NON-NLS-1$
-    private static final String PROPERTY_ID_ACTUAL_LENGTH = "actualLength"; //$NON-NLS-1$
-    private static final String PROPERTY_ID_ACTUAL_ORIGINAL_LENGTH = "actualOriginalLength"; //$NON-NLS-1$
-    private static final String PROPERTY_ID_ACTUAL_DATA_TYPE = "actualDataType"; //$NON-NLS-1$
-    private static final String PROPERTY_ID_ACTUAL_ASSERTION_PROCEDURE = "actualAssertionProcedure"; //$NON-NLS-1$
-
-    private static final String PROPERTY_ID_EXPECTED_VALUE = "expectedValue"; //$NON-NLS-1$
-    private static final String PROPERTY_ID_EXPECTED_LENGTH = "expectedLength"; //$NON-NLS-1$
-    private static final String PROPERTY_ID_EXPECTED_ORIGINAL_LENGTH = "expectedOriginalLength"; //$NON-NLS-1$
-    private static final String PROPERTY_ID_EXPECTED_DATA_TYPE = "expectedDataType"; //$NON-NLS-1$
-    private static final String PROPERTY_ID_EXPECTED_ASSERTION_PROCEDURE = "expectedAssertionProcedure"; //$NON-NLS-1$
-
     private static final String PROPERTY_ID_OUTCOME = "outcome"; //$NON-NLS-1$
-    private static final String PROPERTY_ID_ERROR_MESSAGE = "errorMessage"; //$NON-NLS-1$
     private static final String PROPERTY_ID_EXECUTION_TIME = "executionTime"; //$NON-NLS-1$
+    private static final String PROPERTY_ID_NUM_TEST_EVENTS = "numTestEvents"; //$NON-NLS-1$
 
     private static final String PROPERTY_ID_PROCEDURE_NAME = "procedureName"; //$NON-NLS-1$
-    private static final String PROPERTY_ID_STATEMENT_NUMBER = "statementNumber"; //$NON-NLS-1$
 
     private static final String NOT_APPLICABLE = "n/a";
     private static final String RPG_NULL_VALUE = "*N";
@@ -54,15 +41,11 @@ public class UnitTestCase extends AbstractUnitTestObject
 
     /* Run Statistics */
     private int assertions;
-    private List<UnitTestCallStackEntry> callStackEntries;
-    private String errorMessage;
     private long executionTime;
     private Date lastRunDate;
     private Outcome outcome;
-    private UnitTestMessageSender messageSender;
-    private UnitTestMessageReceiver messageReceiver;
-    private UnitTestLogValue expected;
-    private UnitTestLogValue actual;
+    private int seqNbr;
+    private List<UnitTestCaseEvent> testCaseEvents;
 
     public UnitTestCase(String aProcedure) {
         this.unitTestSuite = null;
@@ -71,7 +54,7 @@ public class UnitTestCase extends AbstractUnitTestObject
         this.isExpanded = false;
         this.executionTimeFormatter = new UnitTestExecutionTimeFormatter();
 
-        this.callStackEntries = new ArrayList<UnitTestCallStackEntry>();
+        this.testCaseEvents = new LinkedList<UnitTestCaseEvent>();
     }
 
     public boolean isExecutable() {
@@ -157,28 +140,16 @@ public class UnitTestCase extends AbstractUnitTestObject
         this.outcome = anOutcome;
     }
 
+    public void setSeqNbr(int seqNbr) {
+        this.seqNbr = seqNbr;
+    }
+
     public Date getLastRunDate() {
         return lastRunDate;
     }
 
     public long getExecutionTime() {
         return executionTime;
-    }
-
-    public void setExpected(UnitTestLogValue expected) {
-        this.expected = expected;
-    }
-
-    public UnitTestLogValue getExpected() {
-        return expected;
-    }
-
-    public void setActual(UnitTestLogValue actual) {
-        this.actual = actual;
-    }
-
-    public UnitTestLogValue getActual() {
-        return actual;
     }
 
     /**
@@ -227,17 +198,13 @@ public class UnitTestCase extends AbstractUnitTestObject
         }
 
         IEditableSource editableSource;
-        if (callStackEntries.isEmpty()) {
+        if (testCaseEvents.isEmpty()) {
             editableSource = null;
         } else {
-            editableSource = callStackEntries.get(0).getEditableSource();
+            editableSource = testCaseEvents.get(0).getEditableSource();
         }
 
         return editableSource;
-    }
-
-    public IRPGUnitSpooledFile getSpooledFile() {
-        return getUnitTestSuite().getSpooledFile();
     }
 
     @Override
@@ -246,67 +213,21 @@ public class UnitTestCase extends AbstractUnitTestObject
         int statementNumber = -1;
 
         if (getOutcome() == Outcome.ERROR) {
-            UnitTestMessageReceiver messageReceiver = getMessageReceiver();
+            UnitTestCaseEvent unitTestCaseEvent = testCaseEvents.get(0);
+            UnitTestMessageReceiver messageReceiver = unitTestCaseEvent.getMessageReceiver();
             String statementNumberString = messageReceiver.getStatementNumberText();
             statementNumber = IntHelper.tryParseInt(statementNumberString, -1);
         } else if (getOutcome() == Outcome.FAILURE) {
-            if (!callStackEntries.isEmpty()) {
-                statementNumber = callStackEntries.get(0).getStatementNumber();
+            if (!testCaseEvents.isEmpty()) {
+                statementNumber = testCaseEvents.get(0).getStatementNumber();
             }
         }
 
         return statementNumber;
     }
 
-    /**
-     * Sets the message. Called only by the @link {@link RPGUnitTestRunner}.
-     * 
-     * @param aMessage - Message as returned by RUPGMRMT.
-     */
-    public void setMessage(String aMessage) {
-        errorMessage = aMessage.trim();
-    }
-
-    public String getMessage() {
-        return errorMessage;
-    }
-
-    public String getStatementNumberText() {
-
-        String statementNumber = NOT_APPLICABLE;
-
-        if (getOutcome() == Outcome.ERROR) {
-            UnitTestMessageReceiver messageReceiver = getMessageReceiver();
-            statementNumber = messageReceiver.getStatementNumberText();
-        } else if (getOutcome() == Outcome.FAILURE) {
-            if (!callStackEntries.isEmpty()) {
-                statementNumber = callStackEntries.get(0).getStatementNumberText();
-            }
-        }
-
-        return statementNumber;
-    }
-
-    public void setMessageSender(UnitTestMessageSender messageSender) {
-        if (messageSender != null) {
-            messageSender.setUnitTestCase(this);
-        }
-        this.messageSender = messageSender;
-    }
-
-    public UnitTestMessageSender getMessageSender() {
-        return messageSender;
-    }
-
-    public void setMessageReceiver(UnitTestMessageReceiver messageReceiver) {
-        if (messageReceiver != null) {
-            messageReceiver.setUnitTestCase(this);
-        }
-        this.messageReceiver = messageReceiver;
-    }
-
-    public UnitTestMessageReceiver getMessageReceiver() {
-        return messageReceiver;
+    public IRPGUnitSpooledFile getSpooledFile() {
+        return getUnitTestSuite().getSpooledFile();
     }
 
     public String getKey() {
@@ -336,46 +257,33 @@ public class UnitTestCase extends AbstractUnitTestObject
         this.executionTime = -1;
     }
 
-    /**
-     * Adds a call stack entry. Called only by the @link
-     * {@link RPGUnitTestRunner}.
-     * 
-     * @param aCallStackEntry - Call stack entry as returned by RUPGMRMT.
-     */
-    public void addCallStackEntry(UnitTestCallStackEntry aCallStackEntry) {
-        aCallStackEntry.setUnitTestCase(this);
-        callStackEntries.add(aCallStackEntry);
+    public void addUnitTestCaseEvent(UnitTestCaseEvent aUnitTestCaseEvent) {
+        testCaseEvents.add(aUnitTestCaseEvent);
+        aUnitTestCaseEvent.setUnitTestCase(this);
     }
 
-    public List<UnitTestCallStackEntry> getCallStack() {
-        return callStackEntries;
+    public UnitTestCaseEvent[] getUnitTestCaseEvents() {
+        UnitTestCaseEvent[] tUnitTestCaseEvents = new UnitTestCaseEvent[testCaseEvents.size()];
+        return testCaseEvents.toArray(tUnitTestCaseEvents);
     }
 
     /* Intentionally set restricted to 'package-private' */
     void updateUnitTestResult(UnitTestCase aUnitTestCase) {
 
-        setAssertions(aUnitTestCase.assertions);
-        setMessage(aUnitTestCase.errorMessage);
+        setAssertions(aUnitTestCase.getAssertions());
         setStatistics(aUnitTestCase.getLastRunDate(), aUnitTestCase.getExecutionTime());
         setOutcome(aUnitTestCase.getOutcome());
-        setMessageSender(aUnitTestCase.getMessageSender());
-        setMessageReceiver(aUnitTestCase.getMessageReceiver());
-        setExpected(aUnitTestCase.getExpected());
-        setActual(aUnitTestCase.getActual());
-
-        callStackEntries.clear();
-        for (UnitTestCallStackEntry tUnitTestCallStackEntry : aUnitTestCase.getCallStack()) {
-            addCallStackEntry(tUnitTestCallStackEntry);
+        testCaseEvents.clear();
+        for (UnitTestCaseEvent tUnitTestCaseEvent : aUnitTestCase.getUnitTestCaseEvents()) {
+            addUnitTestCaseEvent(tUnitTestCaseEvent);
         }
     }
 
     public void cancel() {
 
         setAssertions(0);
-        setMessage(""); //$NON-NLS-1$ ;
         resetStatistics();
         setOutcome(Outcome.CANCELED);
-        callStackEntries.clear();
     }
 
     /*
@@ -398,29 +306,12 @@ public class UnitTestCase extends AbstractUnitTestObject
 
         createCategoryResult();
         createCategoryStatement();
-
-        // expected == null, if:
-        // - outcome = success
-        // -
-
-        if (getExpected() != null) {
-            createCategoryExpectedValue();
-        }
-        if (getActual() != null) {
-            createCategoryActualValue();
-        }
     }
 
     private void createCategoryStatement() {
 
         // Category: Statement
         createPropertyDescriptor(PROPERTY_ID_PROCEDURE_NAME, Messages.Procedure, false, Messages.Category_Statement);
-
-        if (getOutcome() != Outcome.SUCCESS) {
-            if (!isPropertyEmpty((String)getPropertyValue(PROPERTY_ID_STATEMENT_NUMBER))) {
-                createPropertyDescriptor(PROPERTY_ID_STATEMENT_NUMBER, Messages.Statement_number, false, Messages.Category_Statement);
-            }
-        }
     }
 
     private void createCategoryResult() {
@@ -428,154 +319,25 @@ public class UnitTestCase extends AbstractUnitTestObject
         // Category: Result
         createPropertyDescriptor(PROPERTY_ID_OUTCOME, Messages.Result, false, Messages.Category_Result);
 
-        if (!isPropertyEmpty((String)getPropertyValue(PROPERTY_ID_ERROR_MESSAGE))) {
-            createPropertyDescriptor(PROPERTY_ID_ERROR_MESSAGE, Messages.Error_message, false, Messages.Category_Result);
-        }
-
         // ... advanced properties
         createPropertyDescriptor(PROPERTY_ID_EXECUTION_TIME, Messages.Execution_time, true, Messages.Category_Result);
-    }
-
-    private void createCategoryExpectedValue() {
-
-        Short length = (Short)getPropertyValue(PROPERTY_ID_EXPECTED_LENGTH);
-
-        // Category: Expected Test Values
-        if (length > 0) {
-            createPropertyDescriptor(PROPERTY_ID_EXPECTED_VALUE, Messages.Expected_value, false, Messages.Category_Expected_Test_Value);
-            createPropertyDescriptor(PROPERTY_ID_EXPECTED_LENGTH, Messages.Expected_length, false, Messages.Category_Expected_Test_Value);
-        } else if (getOutcome() == Outcome.FAILURE) {
-            createPropertyDescriptor(PROPERTY_ID_EXPECTED_VALUE, Messages.Expected_value, false, Messages.Category_Expected_Test_Value);
-        }
-
-        if (!isPropertyEmpty((Short)getPropertyValue(PROPERTY_ID_EXPECTED_ORIGINAL_LENGTH))) {
-            Short originalLength = (Short)getPropertyValue(PROPERTY_ID_EXPECTED_ORIGINAL_LENGTH);
-            if (originalLength != length) {
-                createPropertyDescriptor(PROPERTY_ID_EXPECTED_ORIGINAL_LENGTH, Messages.Expected_original_length, false,
-                    Messages.Category_Expected_Test_Value);
-            }
-        }
-
-        // ... advanced properties
-        String dataType = (String)getPropertyValue(PROPERTY_ID_EXPECTED_DATA_TYPE);
-        if (!RPG_NULL_VALUE.equals(dataType)) {
-            createPropertyDescriptor(PROPERTY_ID_EXPECTED_DATA_TYPE, Messages.Expected_data_type, true, Messages.Category_Expected_Test_Value);
-        }
-
-        createPropertyDescriptor(PROPERTY_ID_EXPECTED_ASSERTION_PROCEDURE, Messages.Expected_assertion_procedure, true,
-            Messages.Category_Expected_Test_Value);
-    }
-
-    private void createCategoryActualValue() {
-
-        Short length = (Short)getPropertyValue(PROPERTY_ID_ACTUAL_LENGTH);
-
-        // Category: Actual Test Values
-        if (length > 0) {
-            createPropertyDescriptor(PROPERTY_ID_ACTUAL_VALUE, Messages.Actual_value, false, Messages.Category_Actual_Test_Value);
-            createPropertyDescriptor(PROPERTY_ID_ACTUAL_LENGTH, Messages.Actual_length, false, Messages.Category_Actual_Test_Value);
-        } else if (getOutcome() == Outcome.FAILURE) {
-            createPropertyDescriptor(PROPERTY_ID_ACTUAL_VALUE, Messages.Actual_value, false, Messages.Category_Actual_Test_Value);
-        }
-
-        if (!isPropertyEmpty((Short)getPropertyValue(PROPERTY_ID_ACTUAL_ORIGINAL_LENGTH))) {
-            Short originalLength = (Short)getPropertyValue(PROPERTY_ID_ACTUAL_ORIGINAL_LENGTH);
-            if (originalLength != length) {
-                createPropertyDescriptor(PROPERTY_ID_ACTUAL_ORIGINAL_LENGTH, Messages.Actual_original_length, false,
-                    Messages.Category_Actual_Test_Value);
-            }
-        }
-
-        // ... advanced properties
-        String dataType = (String)getPropertyValue(PROPERTY_ID_ACTUAL_DATA_TYPE);
-        if (!RPG_NULL_VALUE.equals(dataType)) {
-            createPropertyDescriptor(PROPERTY_ID_ACTUAL_DATA_TYPE, Messages.Actual_data_type, true, Messages.Category_Actual_Test_Value);
-        }
-        createPropertyDescriptor(PROPERTY_ID_ACTUAL_ASSERTION_PROCEDURE, Messages.Actual_assertion_procedure, true,
-            Messages.Category_Actual_Test_Value);
+        createPropertyDescriptor(PROPERTY_ID_NUM_TEST_EVENTS, Messages.Number_of_assertions, true, Messages.Category_Result);
     }
 
     @Override
     public Object getPropertyValue(Object id) {
 
-        UnitTestLogValue expected = getExpected();
-        UnitTestLogValue actual = getActual();
-
         if (PROPERTY_ID_PROCEDURE_NAME.equals(id)) {
             return getProcedure();
-        } else if (PROPERTY_ID_STATEMENT_NUMBER.equals(id)) {
-            return getStatementNumberText();
-        } else if (PROPERTY_ID_ERROR_MESSAGE.equals(id)) {
-            return getMessage();
         } else if (PROPERTY_ID_EXECUTION_TIME.equals(id)) {
             return executionTimeFormatter.formatExecutionTime(getExecutionTime()) + " s"; //$NON-NLS-1$
+        } else if (PROPERTY_ID_NUM_TEST_EVENTS.equals(id)) {
+            return Integer.toString(testCaseEvents.size());
         } else if (PROPERTY_ID_OUTCOME.equals(id)) {
             return getOutcome().getLabel();
-        } else if (PROPERTY_ID_EXPECTED_VALUE.equals(id)) {
-            return getValue(expected);
-        } else if (PROPERTY_ID_EXPECTED_LENGTH.equals(id)) {
-            return getLength(expected);
-        } else if (PROPERTY_ID_EXPECTED_ORIGINAL_LENGTH.equals(id)) {
-            return getOriginalLength(expected);
-        } else if (PROPERTY_ID_EXPECTED_DATA_TYPE.equals(id)) {
-            return getDataType(expected);
-        } else if (PROPERTY_ID_EXPECTED_ASSERTION_PROCEDURE.equals(id)) {
-            return getAssertionProcedure(expected);
-        } else if (PROPERTY_ID_ACTUAL_VALUE.equals(id)) {
-            return getValue(actual);
-        } else if (PROPERTY_ID_ACTUAL_LENGTH.equals(id)) {
-            return getLength(actual);
-        } else if (PROPERTY_ID_ACTUAL_ORIGINAL_LENGTH.equals(id)) {
-            return getOriginalLength(actual);
-        } else if (PROPERTY_ID_ACTUAL_DATA_TYPE.equals(id)) {
-            return getDataType(actual);
-        } else if (PROPERTY_ID_ACTUAL_ASSERTION_PROCEDURE.equals(id)) {
-            return getAssertionProcedure(actual);
         }
 
         return null;
-    }
-
-    private Object getOriginalLength(UnitTestLogValue logValue) {
-        // if (logValue != null) {
-        return logValue.getOriginalLength();
-        // } else {
-        // return NOT_APPLICABLE;
-        // }
-    }
-
-    private Object getLength(UnitTestLogValue logValue) {
-        // if (logValue != null) {
-        return logValue.getLength();
-        // } else {
-        // return NOT_APPLICABLE;
-        // }
-    }
-
-    private String getValue(UnitTestLogValue logValue) {
-        // if (logValue != null && !RPG_NULL_VALUE.equals(logValue.getValue()))
-        // {
-        if (RPG_NULL_VALUE.equals(logValue.getDataType())) {
-            return Messages.Not_available_due_to_assertion_procedure;
-        } else {
-            return logValue.getValue();
-        }
-    }
-
-    private String getDataType(UnitTestLogValue logValue) {
-        // if (logValue != null &&
-        // !RPG_NULL_VALUE.equals(logValue.getDataType())) {
-        return logValue.getDataType();
-    }
-
-    private String getAssertionProcedure(UnitTestLogValue logValue) {
-        // if (logValue != null &&
-        // !RPG_NULL_VALUE.equals(logValue.getAssertProcedure())) {
-        // if (RPG_NULL_VALUE.equals(logValue.getAssertProcedure())) {
-        // return NOT_APPLICABLE;
-        // } else {
-        return logValue.getAssertProcedure() + "()";
-        // }
     }
 
     @Override
@@ -589,5 +351,10 @@ public class UnitTestCase extends AbstractUnitTestObject
 
     @Override
     public void setPropertyValue(Object arg0, Object arg1) {
+    }
+
+    @Override
+    public int category() {
+        return 0;
     }
 }

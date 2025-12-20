@@ -22,7 +22,7 @@ public abstract class AbstractUnitTestMessageProvider extends AbstractUnitTestOb
     private static final String PROPERTY_ID_PROCEDURE_NAME = "procedureName"; //$NON-NLS-1$
     private static final String PROPERTY_ID_STATEMENT_NUMBER = "statementNumber"; //$NON-NLS-1$
 
-    private UnitTestCase unitTestCase;
+    private UnitTestCaseEvent unitTestCaseEvent;
 
     private String program;
     private String programLibrary;
@@ -40,12 +40,12 @@ public abstract class AbstractUnitTestMessageProvider extends AbstractUnitTestOb
         this.statementNumber = aStmtNb.trim();
     }
 
-    public void setUnitTestCase(UnitTestCase aUnitTestCase) {
-        unitTestCase = aUnitTestCase;
+    public void setUnitTestCaseEvent(UnitTestCaseEvent aUnitTestCaseEvent) {
+        unitTestCaseEvent = aUnitTestCaseEvent;
     }
 
-    public UnitTestCase getUnitTestCase() {
-        return unitTestCase;
+    public UnitTestCaseEvent getUnitTestCaseEvent() {
+        return unitTestCaseEvent;
     }
 
     public String getProgram() {

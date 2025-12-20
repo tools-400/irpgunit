@@ -14,10 +14,13 @@
 //     >>PARM<<  OPTION(*EVENTF);
 //     >>PARM<<  DBGVIEW(*LIST);
 //   >>END-IMPORTANT<<
+//   >>CMD<<     STRREXPRC SRCMBR(A_INSTALL) SRCFILE(&LI/QBUILD) +
+//               PARM('CMPMOD &LI LIST');
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================
 
+ctl-opt nomain;
 /include qinclude,H_SPEC
 /include qinclude,COPYRIGHT
 
@@ -296,7 +299,7 @@ dcl-proc isStmf;
 end-proc;
 
 dcl-proc resolveLibraries;
-  dcl-pi *N likeds(objectArray_t);
+  dcl-pi *N likeds(objectArray_t) extproc(*dclcase);
     modules   likeds(objectArray_t) const;
   end-pi;
 
@@ -330,7 +333,7 @@ end-proc;
 
 
 dcl-proc getCreatedModulesFromJobLog;
-  dcl-pi *N likeds(objectArray_t);
+  dcl-pi *N likeds(objectArray_t) extproc(*dclcase);
     crtmsgid        char(7) const;
     timelimit       timestamp const;
   end-pi;
@@ -403,7 +406,7 @@ end-proc;
 
 
 dcl-proc addModules;
-  dcl-pi *N;
+  dcl-pi *N extproc(*dclcase);
     modules   likeds(objectArray_t);
     items     likeds(objectArray_t);
   end-pi;
@@ -419,7 +422,7 @@ end-proc;
 
 
 dcl-proc addModule;
-  dcl-pi *N;
+  dcl-pi *N extproc(*dclcase);
     modules      likeds(objectArray_t);
     module       likeds(object_t) const;
     isfirstmod   ind options(*nopass) const;
@@ -467,7 +470,7 @@ end-proc;
 
 
 dcl-proc crtRpgMod;
-  dcl-pi *N;
+  dcl-pi *N extproc(*dclcase);
     testpgm         const likeds(object_t);
     srcFile         const likeds(object_t);
     srcMbr          const like(srcMbr_t.mbr);
@@ -614,7 +617,7 @@ end-proc;
 
 
 dcl-proc deleteModulesAndSpooledFiles;
-  dcl-pi *N;
+  dcl-pi *N extproc(*dclcase);
     dltsplf         ind const;
     starttime       timestamp const;
     modules         const likeds(objectArray_t);
@@ -668,7 +671,7 @@ dcl-proc deleteSplfCallback;
 end-proc;
 
 dcl-proc crtSrvPgm;
-  dcl-pi *N likeds(object_t);
+  dcl-pi *N likeds(object_t) extproc(*dclcase);
     testPgm         const likeds(object_t);
     bndSrvPgm       const likeds(objectArray_t);
     bndDir          const likeds(objectArray_t);
@@ -768,7 +771,7 @@ end-proc;
 
 
 dcl-proc formatCommand;
-  dcl-pi *N like(cmd_t);
+  dcl-pi *N like(cmd_t) extproc(*dclcase);
     cmd   like(cmd_t) const;
   end-pi;
 
@@ -1022,7 +1025,7 @@ end-proc;
 
 
 dcl-proc getDltModCmd;
-  dcl-pi *N like(cmd_t);
+  dcl-pi *N like(cmd_t) extproc(*dclcase);
     testPgm   const likeds(object_t);
   end-pi;
 

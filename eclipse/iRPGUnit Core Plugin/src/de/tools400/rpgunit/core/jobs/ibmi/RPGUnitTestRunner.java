@@ -42,6 +42,7 @@ import de.tools400.rpgunit.core.model.ibmi.I5ObjectName;
 import de.tools400.rpgunit.core.model.ibmi.I5ServiceProgram;
 import de.tools400.rpgunit.core.model.local.UnitTestCallStackEntry;
 import de.tools400.rpgunit.core.model.local.UnitTestCase;
+import de.tools400.rpgunit.core.model.local.UnitTestCaseEvent;
 import de.tools400.rpgunit.core.model.local.UnitTestLogValue;
 import de.tools400.rpgunit.core.model.local.UnitTestMessageReceiver;
 import de.tools400.rpgunit.core.model.local.UnitTestMessageSender;
@@ -86,6 +87,13 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
      * Added message 'expected' and 'actual' values.
      */
     private static int VERSION_5 = 5;
+
+    /**
+     * User space version number 6. Introduced 13.12.2025.<br>
+     * Added option for processing all assertions. Added assertion events as
+     * children of test cases.
+     */
+    private static int VERSION_6 = 6;
 
     /**
      * Name of the remote test suite driver program.
@@ -167,9 +175,15 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
     private static final int PARM_XML_TYPE = 11;
 
     /**
+     * Mode of executing assertions, 13. parameter of the test suite driver
+     * program.
+     */
+    private static final int PARM_ASSERT_MODE = 12;
+
+    /**
      * Number of parameters of the remote test driver program.
      */
-    private static final int PARM_NUM_ENTRIES = 12;
+    private static final int PARM_NUM_ENTRIES = 13;
 
     /*
      * User space: Properties of the user space object.
@@ -576,6 +590,9 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
         // Parameter 12: XML type
         parameter[PARM_XML_TYPE] = produceStringParameter(Preferences.getInstance().getXmlType(), 10);
 
+        // Parameter 13: Assert Mode
+        parameter[PARM_ASSERT_MODE] = produceStringParameter(Preferences.getInstance().getAssertMode(), 10);
+
         return parameter;
     }
 
@@ -651,7 +668,7 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
         int[] offset = new int[] { 0 };
         int headerLength = extractInt(bytes, offset);
         int tVersion = extractInt(bytes, offset);
-        if (tVersion != VERSION_3 && tVersion != VERSION_4 && tVersion != VERSION_5) {
+        if (tVersion != VERSION_3 && tVersion != VERSION_4 && tVersion != VERSION_5 && tVersion != VERSION_6) {
             throw new InvalidVersionException(tVersion);
         }
 
@@ -721,12 +738,12 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             testResult.setSpooledFile(null);
         }
 
-        if (tVersion == VERSION_5) {
-            retrieveTestCasesV5(bytes, tTotalSizeUserSpace, tOffsetTestCases, numTestCasesRtn, testResult, tVersion);
+        if (tVersion == VERSION_6) {
+            retrieveTestCasesV6(bytes, tTotalSizeUserSpace, tOffsetTestCases, numTestCasesRtn, testResult);
+        } else if (tVersion == VERSION_5) {
+            retrieveTestCasesV5(bytes, tTotalSizeUserSpace, tOffsetTestCases, numTestCasesRtn, testResult);
         } else if (tVersion == VERSION_4) {
-            retrieveTestCasesV4(bytes, tTotalSizeUserSpace, tOffsetTestCases, numTestCasesRtn, testResult, tVersion, isV4Extended);
-        } else if (tVersion == VERSION_3) {
-            retrieveTestCasesV3(bytes, tTotalSizeUserSpace, tOffsetTestCases, numTestCasesRtn, testResult, tVersion);
+            retrieveTestCasesV4(bytes, tTotalSizeUserSpace, tOffsetTestCases, numTestCasesRtn, testResult, isV4Extended);
         } else {
             throw new InvalidVersionException(tVersion);
         }
@@ -736,130 +753,8 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
         return testResult;
     }
 
-    private void retrieveTestCasesV3(byte[] aUserSpaceBytes, int aTotalLength, int anOffsetTestCases, int numTestCasesRtn, UnitTestSuite aTestSuite,
-        int aVersion) throws Exception {
-
-        // @formatter:off
-        /* 
-         * Structure of test case entry: 
-         *   
-         * D tmpl_testCase_v3...
-         * D                 DS            50    qualified template
-         * D  length                       10i 0
-         * D  result                        1a
-         * D  reserved_1                    1a
-         * D  specNb                       10a
-         * D  numberAssertions             10i 0
-         * D  numCallStkEnt                10i 0
-         * D  offsCallStkEnt               10i 0
-         * D  offsNext                     10i 0
-         * D  lenTestCase                   5i 0
-         * D  lenExcpMessage                5i 0
-         * D  testCase                    100a
-         * D  excpMessage                1024a
-         *   
-         *   Length over all: 1160
-         */
-        // @formatter:on
-
-        String tOutcome = null;
-        String tReserved_1 = null;
-        String tNoLongerUsed = null;
-        int tAssertions = 0;
-        short tLenExcpMessage = 0;
-        String tExcpMessage = null;
-        long tExecutionTime = 0;
-        int tNumCallStkEnt = 0;
-        int tOffsCallStkEnt = 0;
-        int tEntryLength = 0;
-        int tOffsetNext = 0;
-        short tLenProcName = 0;
-        String tProcedure = null;
-
-        int[] tOffset = { anOffsetTestCases };
-
-        Date tLastRunDate = new Date();
-
-        for (int i = 0; i < numTestCasesRtn; i++) {
-            tEntryLength = extractInt(aUserSpaceBytes, tOffset);
-            tOutcome = extractString(aUserSpaceBytes, tOffset, ENTRY_OUTCOME);
-            tReserved_1 = extractString(aUserSpaceBytes, tOffset, ENTRY_RESERVED_1);
-            tNoLongerUsed = extractString(aUserSpaceBytes, tOffset, ENTRY_STATEMENT_NUMBER);
-            tAssertions = extractInt(aUserSpaceBytes, tOffset);
-            tNumCallStkEnt = extractInt(aUserSpaceBytes, tOffset);
-            tOffsCallStkEnt = extractInt(aUserSpaceBytes, tOffset);
-            tOffsetNext = extractInt(aUserSpaceBytes, tOffset);
-            tLenProcName = extractShort(aUserSpaceBytes, tOffset);
-            tLenExcpMessage = extractShort(aUserSpaceBytes, tOffset);
-            tProcedure = extractString(aUserSpaceBytes, tOffset, ENTRY_PROCEDURE).trim();
-
-            tExcpMessage = extractString(aUserSpaceBytes, tOffset, tLenExcpMessage).trim();
-            tExecutionTime = extractLong(aUserSpaceBytes, tOffset);
-
-            UnitTestCase testCase = new UnitTestCase(tProcedure);
-            testCase.setOutcome(tOutcome);
-            testCase.setStatistics(tLastRunDate, tExecutionTime);
-            testCase.setAssertions(tAssertions);
-            testCase.setMessage(tExcpMessage);
-            aTestSuite.addUnitTestCase(testCase);
-
-            retrieveTestCaseCallStackV3(aUserSpaceBytes, tEntryLength, tOffsCallStkEnt, tNumCallStkEnt, testCase, aVersion);
-
-            tOffset[0] = tOffsetNext;
-        }
-    }
-
-    private void retrieveTestCaseCallStackV3(byte[] aUserSpaceBytes, int aTotalLength, int anOffsetCallStackEntries, int aNumCallStackEntries,
-        UnitTestCase aTestCase, int aVersion) throws Exception {
-
-        // @formatter:off
-        /* 
-         * Structure of test case entry: 
-         *   
-         * D tmpl_callStkEnt_V4...
-         * D                 DS            92    qualified template
-         * D  offsNextEntry                10i 0
-         * D  lenEntry                      5i 0
-         * D  qPgm                               likeds(Object_t)
-         * D  qMod                               likeds(Object_t)
-         * D  specNb                       10a
-         * D  offsProcNm                   10i 0
-         * D  lenProcNm                     5i 0
-         * D  qSrcMbr                            likeds(SrcMbr_t)
-         *
-         *   Length over all: 92
-         */
-        // @formatter:on
-
-        int[] tOffset = { anOffsetCallStackEntries };
-
-        for (int s = 0; s < aNumCallStackEntries; s++) {
-            String tPgmNm = extractString(aUserSpaceBytes, tOffset, CALL_STACK_PROGRAM);
-            String tPgmLibNm = extractString(aUserSpaceBytes, tOffset, CALL_STACK_PROGRAM_LIB);
-            String tModNm = extractString(aUserSpaceBytes, tOffset, CALL_STACK_MODULE);
-            String tModLibNm = extractString(aUserSpaceBytes, tOffset, CALL_STACK_MODULE_LIB);
-            String tSpecNb = extractString(aUserSpaceBytes, tOffset, CALL_STACK_STATEMENT_NUMBER);
-            int tLength = extractInt(aUserSpaceBytes, tOffset);
-            int tOffsNext = extractInt(aUserSpaceBytes, tOffset);
-            String tReserved_1 = extractString(aUserSpaceBytes, tOffset, CALL_STACK_RESERVED_1);
-            short tLenProcNm = extractShort(aUserSpaceBytes, tOffset);
-            String tProcNm = extractString(aUserSpaceBytes, tOffset, CALL_STACK_PROCEDURE);
-
-            String tSrcFile = extractString(aUserSpaceBytes, tOffset, CALL_STACK_SOURCE_FILE);
-            String tSrcLibrary = extractString(aUserSpaceBytes, tOffset, CALL_STACK_SOURCE_LIBRARY);
-            String tSrcMember = extractString(aUserSpaceBytes, tOffset, CALL_STACK_SOURCE_MEMBER);
-
-            UnitTestCallStackEntry tStackEntry = new UnitTestCallStackEntry(tPgmNm, tPgmLibNm, tModNm, tModLibNm, tProcNm, tSpecNb, tSrcFile,
-                tSrcLibrary, tSrcMember);
-
-            aTestCase.addCallStackEntry(tStackEntry);
-
-            tOffset[0] = tOffsNext;
-        }
-    }
-
     private void retrieveTestCasesV4(byte[] aUserSpaceBytes, int aTotalLength, int anOffsetTestCases, int numTestCasesRtn, UnitTestSuite aTestSuite,
-        int aVersion, boolean isV4Extended) throws Exception {
+        boolean isV4Extended) throws Exception {
 
         // @formatter:off
         /* 
@@ -978,21 +873,28 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             testCase.setOutcome(tOutcome);
             testCase.setStatistics(tLastRunDate, tExecutionTime);
             testCase.setAssertions(tNumAsserts);
-            testCase.setMessage(tExcpMsg);
-            testCase.setMessageSender(tSender);
-            testCase.setMessageReceiver(tReceiver);
             aTestSuite.addUnitTestCase(testCase);
 
+            UnitTestCaseEvent testCaseEvent = new UnitTestCaseEvent();
+            testCaseEvent.setOutcome(testCase.getOutcome().getId());
+            testCaseEvent.setMessage(tExcpMsg);
+            testCaseEvent.setMessageSender(tSender);
+            testCaseEvent.setMessageReceiver(tReceiver);
+            testCaseEvent.setExpected(null);
+            testCaseEvent.setActual(null);
+
             if (tOffsCallStkE > 0 && tNumCallStkE > 0) {
-                retrieveTestCaseCallStackV4(aUserSpaceBytes, tOffsCallStkE, tNumCallStkE, testCase, aVersion, isV4Extended);
+                retrieveTestCaseCallStackV4(aUserSpaceBytes, tOffsCallStkE, tNumCallStkE, testCaseEvent, true);
             }
+
+            testCase.addUnitTestCaseEvent(testCaseEvent);
 
             tOffset[0] = tOffsNextEntry;
         }
     }
 
-    private void retrieveTestCaseCallStackV4(byte[] aUserSpaceBytes, int anOffsetCallStackEntries, int aNumCallStackEntries, UnitTestCase aTestCase,
-        int aVersion, boolean isV4Extended) throws Exception {
+    private void retrieveTestCaseCallStackV4(byte[] aUserSpaceBytes, int anOffsetCallStackEntries, int aNumCallStackEntries,
+        UnitTestCaseEvent aTestCaseEvent, boolean isV4Extended) throws Exception {
 
         int[] tOffset = { anOffsetCallStackEntries };
 
@@ -1036,20 +938,20 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
                 tStackEntry = new UnitTestCallStackEntry(tPgmNm, tPgmLibNm, tModNm, tModLibNm, tProcNm, tSpecNb, tSourceStreamFile);
             }
 
-            aTestCase.addCallStackEntry(tStackEntry);
+            aTestCaseEvent.addCallStackEntry(tStackEntry);
 
             tOffset[0] = tOffsNextEntry;
         }
     }
 
-    private void retrieveTestCasesV5(byte[] aUserSpaceBytes, int aTotalLength, int anOffsetTestCases, int numTestCasesRtn, UnitTestSuite aTestSuite,
-        int aVersion) throws Exception {
+    private void retrieveTestCasesV5(byte[] aUserSpaceBytes, int aTotalLength, int anOffsetTestCases, int numTestCasesRtn, UnitTestSuite aTestSuite)
+        throws Exception {
 
         // @formatter:off
         /* 
          * Structure of test case entry: 
          *   
-         * D tmpl_testCase_v4...
+         * D tmpl_testCase_v5...
          * D                 DS            58    qualified template
          * D  offsNextEntry                10i 0
          * D  lenEntry                      5i 0
@@ -1182,11 +1084,7 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
                 tOffset[0] = tExpectedOffsDataType;
                 String tExpectedDataType = extractString(aUserSpaceBytes, tOffset, tExpectedLenDataType);
 
-                tOffset[0] = tExpectedOffsAssertProc;
-                String tExpectedAssertProc = extractString(aUserSpaceBytes, tOffset, tExpectedLenAssertProc);
-
-                tLogValueExpected = new UnitTestLogValue(tExpectedLen, tExpectedOrigLen, tExpectedDataType, tExpectedAssertProc, tExpectedIsTruncated,
-                    tExpectedValue);
+                tLogValueExpected = new UnitTestLogValue(tExpectedLen, tExpectedOrigLen, tExpectedDataType, tExpectedIsTruncated, tExpectedValue);
             } else {
                 tLogValueExpected = null;
             }
@@ -1210,11 +1108,7 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
                 tOffset[0] = tActualOffsDataType;
                 String tActualDataType = extractString(aUserSpaceBytes, tOffset, tActualLenDataType);
 
-                tOffset[0] = tActualOffsAssertProc;
-                String tActualAssertProc = extractString(aUserSpaceBytes, tOffset, tActualLenAssertProc);
-
-                tLogValueActual = new UnitTestLogValue(tActualLen, tActualOrigLen, tActualDataType, tActualAssertProc, tActualIsTruncated,
-                    tActualValue);
+                tLogValueActual = new UnitTestLogValue(tActualLen, tActualOrigLen, tActualDataType, tActualIsTruncated, tActualValue);
             } else {
                 tLogValueActual = null;
             }
@@ -1223,19 +1117,274 @@ public class RPGUnitTestRunner extends AbstractUnitTestRunner {
             testCase.setOutcome(tOutcome);
             testCase.setStatistics(tLastRunDate, tExecutionTime);
             testCase.setAssertions(tNumAsserts);
-            testCase.setMessage(tExcpMsg);
-            testCase.setMessageSender(tSender);
-            testCase.setMessageReceiver(tReceiver);
-            testCase.setExpected(tLogValueExpected);
-            testCase.setActual(tLogValueActual);
             aTestSuite.addUnitTestCase(testCase);
 
+            UnitTestCaseEvent testCaseEvent = new UnitTestCaseEvent();
+            testCaseEvent.setOutcome(testCase.getOutcome().getId());
+            testCaseEvent.setMessage(tExcpMsg);
+            testCaseEvent.setMessageSender(tSender);
+            testCaseEvent.setMessageReceiver(tReceiver);
+            testCaseEvent.setExpected(tLogValueExpected);
+            testCaseEvent.setActual(tLogValueActual);
+
             if (tOffsCallStkE > 0 && tNumCallStkE > 0) {
-                retrieveTestCaseCallStackV4(aUserSpaceBytes, tOffsCallStkE, tNumCallStkE, testCase, aVersion, true);
+                retrieveTestCaseCallStackV4(aUserSpaceBytes, tOffsCallStkE, tNumCallStkE, testCaseEvent, true);
             }
+
+            testCase.addUnitTestCaseEvent(testCaseEvent);
 
             tOffset[0] = tOffsNextEntry;
         }
+    }
+
+    private void retrieveTestCasesV6(byte[] aUserSpaceBytes, int aTotalLength, int anOffsetTestCases, int numTestCasesRtn, UnitTestSuite aTestSuite)
+        throws Exception {
+
+        // @formatter:off
+        /* 
+         * Structure of test case entry: 
+         *   
+         * D tmpl_testCase_v6...
+         * D                 DS            38    qualified template
+         * D  offsNextEntry                10i 0
+         * D  seqNbr                       10i 0
+         * D  lenEntry                      5i 0
+         * D  outcome                       1a
+         * D  reserved_1                    1a
+         * D  numAsserts                   10i 0
+         * D  execTime                     20i 0
+         * D  offsTestCaseText...
+         * D                               10i 0
+         * D  lenTestCaseText...
+         * D                                5i 0
+         * D  numTestCaseEvents...
+         * D                               10i 0
+         * D  offsTestCaseEvent...
+         * D                               10i 0
+         *
+         * D tmpl_testCaseEvent_v6...
+         * D                 DS            46    qualified template
+         * D  outcome                       1a
+         * D  reserved_2                    1a
+         * D  lenEntry                      5i 0
+         * D  offsNextEntry                10i 0
+         * D  offsAssertProcNm...
+         * D                               10i 0
+         * D  lenAssertProcNm...
+         * D                                5i 0
+         * D  offsExcpMsg                  10i 0
+         * D  lenExcpMsg                    5i 0
+         * D  offsSndInf                   10i 0
+         * D  lenSndInf                     5i 0
+         * D  offsRcvInf                   10i 0
+         * D  lenRcvInf                  5   i 0
+         * D  offsCallStkE                 10i 0
+         * D  numCallStkE                   5i 0
+         * D  offsExpected                 10i 0
+         * D  offsActual                   10i 0
+         */
+        // @formatter:on
+
+        int[] tOffset = { anOffsetTestCases };
+
+        Date tLastRunDate = new Date();
+
+        for (int i = 0; i < numTestCasesRtn; i++) {
+
+            int tOffsNextEntry = extractInt(aUserSpaceBytes, tOffset);
+            int tSeqNbr = extractInt(aUserSpaceBytes, tOffset);
+            short tLenEntry = extractShort(aUserSpaceBytes, tOffset);
+
+            String tOutcome = extractString(aUserSpaceBytes, tOffset, 1);
+            String reserved_1 = extractString(aUserSpaceBytes, tOffset, 1);
+
+            int tNumAsserts = extractInt(aUserSpaceBytes, tOffset);
+            long tExecutionTime = extractLong(aUserSpaceBytes, tOffset);
+
+            int tOffsTestCaseText = extractInt(aUserSpaceBytes, tOffset);
+            short tLenTestCaseText = extractShort(aUserSpaceBytes, tOffset);
+
+            int tNumTestCaseEvents = extractInt(aUserSpaceBytes, tOffset);
+            int tOffsFirstTestCaseEvent = extractInt(aUserSpaceBytes, tOffset);
+
+            String tTestCaseText;
+            if (tOffsTestCaseText > 0 && tLenTestCaseText > 0) {
+                tOffset[0] = tOffsTestCaseText;
+                tTestCaseText = extractString(aUserSpaceBytes, tOffset, tLenTestCaseText).trim();
+            } else {
+                tTestCaseText = EMPTY_STRING;
+            }
+
+            UnitTestCase testCase = new UnitTestCase(tTestCaseText);
+            testCase.setOutcome(tOutcome);
+            testCase.setSeqNbr(tSeqNbr);
+            testCase.setStatistics(tLastRunDate, tExecutionTime);
+            testCase.setAssertions(tNumAsserts);
+            aTestSuite.addUnitTestCase(testCase);
+
+            // if (testCase.getOutcome() != Outcome.SUCCESS) {
+            int tOffsTestCaseEvent = tOffsFirstTestCaseEvent;
+            for (int x = 0; x < tNumTestCaseEvents; x++) {
+                tOffsTestCaseEvent = retrieveTestCaseEventV6(aUserSpaceBytes, aTotalLength, testCase, tOffsTestCaseEvent);
+            }
+            // }
+
+            tOffset[0] = tOffsNextEntry;
+        }
+    }
+
+    private int retrieveTestCaseEventV6(byte[] aUserSpaceBytes, int aTotalLength, UnitTestCase testCase, int anOffsFirstTestCaseEvent)
+        throws Exception {
+
+        int[] tOffset = { anOffsFirstTestCaseEvent };
+        int[] tmpOffset = { 0 };
+
+        String tOutcomeTestEvent = extractString(aUserSpaceBytes, tOffset, 1);
+        String reserved_2 = extractString(aUserSpaceBytes, tOffset, 1);
+
+        short tLenTestEvent = extractShort(aUserSpaceBytes, tOffset);
+        int tOffsNextTestEvent = extractInt(aUserSpaceBytes, tOffset);
+
+        int tOffsAssertProc = extractInt(aUserSpaceBytes, tOffset);
+        short tLenAssertProc = extractShort(aUserSpaceBytes, tOffset);
+
+        int tOffsExcpMsg = extractInt(aUserSpaceBytes, tOffset);
+        short tLenExcpMsg = extractShort(aUserSpaceBytes, tOffset);
+
+        int tOffsSndInf = extractInt(aUserSpaceBytes, tOffset);
+        short tLenSndInf = extractShort(aUserSpaceBytes, tOffset);
+
+        int tOffsRcvInf = extractInt(aUserSpaceBytes, tOffset);
+        short tLenRcvInf = extractShort(aUserSpaceBytes, tOffset);
+
+        int tOffsCallStkE = extractInt(aUserSpaceBytes, tOffset);
+        short tNumCallStkE = extractShort(aUserSpaceBytes, tOffset);
+
+        int tOffsExtended = extractInt(aUserSpaceBytes, tOffset);
+        int tOffsActual = extractInt(aUserSpaceBytes, tOffset);
+
+        String tAssertProcName;
+        if (tOffsAssertProc > 0 && tLenAssertProc > 0) {
+            tmpOffset[0] = tOffsAssertProc;
+            tAssertProcName = extractString(aUserSpaceBytes, tmpOffset, tLenAssertProc).trim();
+        } else {
+            tAssertProcName = EMPTY_STRING;
+        }
+
+        String tExcpMsg;
+        if (tOffsExcpMsg > 0 && tLenExcpMsg > 0) {
+            tmpOffset[0] = tOffsExcpMsg;
+            tExcpMsg = extractString(aUserSpaceBytes, tmpOffset, tLenExcpMsg).trim();
+        } else {
+            tExcpMsg = EMPTY_STRING;
+        }
+
+        UnitTestMessageSender tSender;
+        if (tOffsSndInf > 0) {
+            tmpOffset[0] = tOffsSndInf;
+            short tlenSender = extractShort(aUserSpaceBytes, tmpOffset);
+            String tPgmNm = extractString(aUserSpaceBytes, tmpOffset, 10);
+            String tPgmLibNm = extractString(aUserSpaceBytes, tmpOffset, 10);
+            String tModNm = extractString(aUserSpaceBytes, tmpOffset, 10);
+            String tModLibNm = extractString(aUserSpaceBytes, tmpOffset, 10);
+            String tSpecNb = extractString(aUserSpaceBytes, tmpOffset, 10);
+            int tOffsProcNm = extractInt(aUserSpaceBytes, tmpOffset);
+            short tLenProcNm = extractShort(aUserSpaceBytes, tmpOffset);
+            tmpOffset[0] = tOffsProcNm;
+            String tProcNm = extractString(aUserSpaceBytes, tmpOffset, tLenProcNm);
+
+            tSender = new UnitTestMessageSender(tPgmNm, tPgmLibNm, tModNm, tModLibNm, tProcNm, tSpecNb);
+        } else {
+            tSender = null;
+        }
+
+        UnitTestMessageReceiver tReceiver;
+        if (tOffsRcvInf > 0) {
+            tmpOffset[0] = tOffsRcvInf;
+            short tlenReceiver = extractShort(aUserSpaceBytes, tmpOffset);
+            String tPgmNm = extractString(aUserSpaceBytes, tmpOffset, 10);
+            String tPgmLibNm = extractString(aUserSpaceBytes, tmpOffset, 10);
+            String tModNm = extractString(aUserSpaceBytes, tmpOffset, 10);
+            String tModLibNm = extractString(aUserSpaceBytes, tmpOffset, 10);
+            String tSpecNb = extractString(aUserSpaceBytes, tmpOffset, 10);
+            int tOffsProcNm = extractInt(aUserSpaceBytes, tmpOffset);
+            short tLenProcNm = extractShort(aUserSpaceBytes, tmpOffset);
+            tmpOffset[0] = tOffsProcNm;
+            String tProcNm = extractString(aUserSpaceBytes, tmpOffset, tLenProcNm);
+
+            tReceiver = new UnitTestMessageReceiver(tPgmNm, tPgmLibNm, tModNm, tModLibNm, tProcNm, tSpecNb);
+        } else {
+            tReceiver = null;
+        }
+
+        UnitTestLogValue tLogValueExpected;
+        if (tOffsExtended > 0) {
+            tmpOffset[0] = tOffsExtended;
+            short tExpectedLenEntry = extractShort(aUserSpaceBytes, tmpOffset);
+            short tExpectedLen = extractShort(aUserSpaceBytes, tmpOffset);
+            short tExpectedOrigLen = extractShort(aUserSpaceBytes, tmpOffset);
+            int tExpectedOffsDataType = extractInt(aUserSpaceBytes, tmpOffset);
+            short tExpectedLenDataType = extractShort(aUserSpaceBytes, tmpOffset);
+            // int tExpectedOffsAssertProc = extractInt(aUserSpaceBytes,
+            // tmpOffset);
+            // short tExpectedLenAssertProc = extractShort(aUserSpaceBytes,
+            // tmpOffset);
+            String tExpectedIsTruncated = extractString(aUserSpaceBytes, tmpOffset, 1);
+            int tExpectedOffsValue = extractInt(aUserSpaceBytes, tmpOffset);
+
+            tmpOffset[0] = tExpectedOffsValue;
+            String tExpectedValue = extractString(aUserSpaceBytes, tmpOffset, tExpectedLen);
+
+            tmpOffset[0] = tExpectedOffsDataType;
+            String tExpectedDataType = extractString(aUserSpaceBytes, tmpOffset, tExpectedLenDataType);
+
+            // tmpOffset[0] = tExpectedOffsAssertProc;
+            // String tExpectedAssertProc = extractString(aUserSpaceBytes,
+            // tmpOffset, tExpectedLenAssertProc);
+
+            tLogValueExpected = new UnitTestLogValue(tExpectedLen, tExpectedOrigLen, tExpectedDataType, tExpectedIsTruncated, tExpectedValue);
+        } else {
+            tLogValueExpected = null;
+        }
+
+        UnitTestLogValue tLogValueActual;
+        if (tOffsActual > 0) {
+            tmpOffset[0] = tOffsActual;
+            short tActualLenEntry = extractShort(aUserSpaceBytes, tmpOffset);
+            short tActualLen = extractShort(aUserSpaceBytes, tmpOffset);
+            short tActualOrigLen = extractShort(aUserSpaceBytes, tmpOffset);
+            int tActualOffsDataType = extractInt(aUserSpaceBytes, tmpOffset);
+            short tActualLenDataType = extractShort(aUserSpaceBytes, tmpOffset);
+            String tActualIsTruncated = extractString(aUserSpaceBytes, tmpOffset, 1);
+            int tActualOffsValue = extractInt(aUserSpaceBytes, tmpOffset);
+
+            tmpOffset[0] = tActualOffsValue;
+            String tActualValue = extractString(aUserSpaceBytes, tmpOffset, tActualLen);
+
+            tmpOffset[0] = tActualOffsDataType;
+            String tActualDataType = extractString(aUserSpaceBytes, tmpOffset, tActualLenDataType);
+
+            tLogValueActual = new UnitTestLogValue(tActualLen, tActualOrigLen, tActualDataType, tActualIsTruncated, tActualValue);
+        } else {
+            tLogValueActual = null;
+        }
+
+        UnitTestCaseEvent testCaseEvent = new UnitTestCaseEvent();
+        testCaseEvent.setOutcome(tOutcomeTestEvent);
+        testCaseEvent.setAssertProcName(tAssertProcName);
+        testCaseEvent.setMessage(tExcpMsg);
+        testCaseEvent.setMessageSender(tSender);
+        testCaseEvent.setMessageReceiver(tReceiver);
+        testCaseEvent.setExpected(tLogValueExpected);
+        testCaseEvent.setActual(tLogValueActual);
+
+        if (tOffsCallStkE > 0 && tNumCallStkE > 0) {
+            retrieveTestCaseCallStackV4(aUserSpaceBytes, tOffsCallStkE, tNumCallStkE, testCaseEvent, true);
+        }
+
+        testCase.addUnitTestCaseEvent(testCaseEvent);
+
+        return tOffsNextTestEvent;
     }
 
     private UserSpace createUserspace() {

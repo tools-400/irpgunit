@@ -13,14 +13,12 @@ public class UnitTestLogValue {
     private short length;
     private short originalLength;
     private String dataType;
-    private String assertProcedure;
     private String value;
 
-    public UnitTestLogValue(short aLen, short anOrigLen, String aDataType, String anAssertProc, String anIsTruncated, String aValue) {
+    public UnitTestLogValue(short aLen, short anOrigLen, String aDataType, String anIsTruncated, String aValue) {
         this.length = aLen;
         this.originalLength = anOrigLen;
         this.dataType = aDataType;
-        this.assertProcedure = anAssertProc;
         this.value = aValue;
     }
 
@@ -34,10 +32,6 @@ public class UnitTestLogValue {
 
     public String getDataType() {
         return dataType;
-    }
-
-    public String getAssertProcedure() {
-        return assertProcedure;
     }
 
     public String getValue() {

@@ -17,8 +17,8 @@ public class UnitTestExecutionTimeFormatter {
     public String formatExecutionTime(long executionTime) {
         double tSeconds = 0;
         if (executionTime > 0) {
-            double tMicroSeconds = (1000 * 1000);
-            tSeconds = executionTime / tMicroSeconds;
+            double tMilliSeconds = (1000);
+            tSeconds = executionTime / tMilliSeconds;
         }
         return df.format(tSeconds);
     }

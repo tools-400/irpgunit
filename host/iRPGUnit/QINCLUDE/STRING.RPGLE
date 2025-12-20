@@ -318,7 +318,7 @@ end-pr;
 //         Uses standard formatting rules for the numeric type
 //         Includes decimal places only when necessary
 ///
-dcl-pr formatNumeric varchar(128) extproc('formatNumeric');
+dcl-pr formatNumeric varchar(128) extproc('STRING_formatNumeric');
   numericValue like(assertNumeric_t) const;
 end-pr;
 
@@ -347,6 +347,27 @@ end-pr;
 dcl-pr rAlign like(string_t) extproc('STRING_rAlign');
   string  like(string_t) const;
   length int(10) const;
+end-pr;
+
+///
+// Produces the hex string representation of a buffer
+//
+// @param pBuffer - pointer of the buffer represented as a hex string
+// @param size    - buffer site
+///
+dcl-pr bufferToStr like(string_t) extproc('STRING_bufferToStr');
+  pBuffer pointer const;
+  size    uns(5) const;
+end-pr;
+
+///
+// Produces the hex string representation of a pointer
+//
+// @param pointer - pointer represented as a hex string
+///
+dcl-pr ptrToStr like(string_t) extproc('STRING_ptrToStr');
+  pointer   pointer value;
+  shortened ind options(*nopass);
 end-pr;
 
 /endif

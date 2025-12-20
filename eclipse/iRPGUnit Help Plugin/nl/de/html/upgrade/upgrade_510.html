@@ -9,6 +9,16 @@
 
 <body>
 <h1>Aktualisieren von v5.1.0 nach v6.0.0</h1>
+<h2>Inkompatible Änderung</h2>
+Das Layout des Benutzerbereichs (user space) für die Übertragung der Testergebnisse an das Eclipse iRPGUnit-Plug-in hat
+sich geändert. Die aktuelle Version ist 6. Benutzerbereiche der Version 4, eingeführt mit v5.1.0.r (12.07.2025), werden
+weiterhin unterstützt.
+<h2>Verarbeitung von Zusicherungen</h2>
+Optional können jetzt alle Zusicherungen eines Testfalls abgerabeitet werden. Bisher wurde die
+Abarbeitung der Zusicherungen beim Auftreten des ersten Fehlers beendet.
+<p>
+Siehe: <a href="../quickstart/preferences.html">Voreinstellungen</a>
+<h2>XML Ausgabeformat</h2>
 Beginnend mit v6.0.0, ist der Standardwert für die XML Ausgabedatei auf <code>*TYPE2</code> gesetzt. Das alte Format
 wird ausgegeben, wenn der Parameter <code>XMLTYPE</code> auf <code>*TYPE1</code> gesetzt ist.
 <p>
@@ -22,6 +32,10 @@ eines fehlgeschlagenen Testfalls ausgibt.
 <h2>XML Ausgabeformat 2<h2>
 <p>
 <iframe class="indent" src="../appendix/assets/output_type2.txt" width="90%" height="30%" name="iRPGUnit-Popup" ></iframe>
+<p>
+<h2>XML Ausgabeformat VS Code 1<h2>
+<p>
+<iframe class="indent" src="../appendix/assets/output_vscode1.txt" width="90%" height="30%" name="iRPGUnit-Popup" ></iframe>
 <p>
 <iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
 </body>

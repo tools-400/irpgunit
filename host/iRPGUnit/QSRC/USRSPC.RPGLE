@@ -14,6 +14,8 @@
 //     >>PARM<<  OPTION(*EVENTF);
 //     >>PARM<<  DBGVIEW(*LIST);
 //   >>END-IMPORTANT<<
+//   >>CMD<<     STRREXPRC SRCMBR(A_INSTALL) SRCFILE(&LI/QBUILD) +
+//               PARM('CMPMOD &LI LIST');
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================
@@ -46,11 +48,11 @@ ctl-opt nomain;
 //   Procedures Definition
 //----------------------------------------------------------------------
 
-dcl-proc crtusrspc export;
+dcl-proc crtUsrSpc export;
   //----------------------------------------------------------------------
   // Creates a user space. See prototype.
   //----------------------------------------------------------------------
-  dcl-pi crtusrspc pointer;
+  dcl-pi crtUsrSpc pointer;
     qUsrSpc   const likeds(object_t);
     text     char(50) const;
   end-pi;

@@ -39,7 +39,7 @@ dcl-proc testAllOK_4 export;
   end-pi;
 
   dcl-ds assertFailEvt_v1 likeds(assertFailEvt_t) inz;
-  dcl-ds assertFailEvt_v2 likeds(assertFailEvtLong_t) inz;
+  dcl-ds assertFailEvt_v2 likeds(assertFailEvtExt_t) inz;
 
   assert(*on: 'OK: 1');
   assert(*on: 'OK: 2');
@@ -102,7 +102,7 @@ dcl-proc testNumFailure_noMessage export;
 
   end-proc;
 
-  dcl-proc procInError export;
+dcl-proc procInError export;
   dcl-pi *n extproc(*dclcase);
     level      int(10) value;
     maxLevel   int(10) value;
@@ -111,6 +111,7 @@ dcl-proc testNumFailure_noMessage export;
   level += 1;
   if (level < maxLevel);
     procInError(level: maxLevel);
+    return;
   endif;
 
   iEqual(1: 2); // Failure, no message

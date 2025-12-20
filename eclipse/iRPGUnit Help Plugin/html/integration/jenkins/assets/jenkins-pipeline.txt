@@ -1,0 +1,27 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Unit Tests') {
+            steps {
+                echo 'Testing...'
+
+                system "RUCALLTST TSTPGM(TESTPGM03) XMLSTMF('jenkins-testpgm03.xml') XMLTYPE(*TYPE2)"
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Collecting JUnit test results...'
+
+            junit(testResults: '**/jenkins*.xml', allowEmptyResults: true)
+        }
+        success {
+            echo 'Build succeeded!'
+        }
+        failure {
+            echo 'Build failed!'
+        }
+    }
+}

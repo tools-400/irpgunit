@@ -33,7 +33,7 @@
 /*   >>PRE-COMPILER<<                                                  */
 /*     >>CRTCMD<<  STRREXPRC SRCMBR(&SM) SRCFILE(&SL/&SF);             */
 /*     >>IMPORTANT<<                                                   */
-/*       >>PARM<< PARM('&LI');                                         */
+/*       >>PARM<< PARM('&LI *LIST');                                   */
 /*     >>END-IMPORTANT<<                                               */
 /*     >>EXECUTE<<                                                     */
 /*   >>END-PRE-COMPILER<<                                              */
@@ -88,15 +88,20 @@
  end
 
  /* -------------------------------------------- */
+ /*  Recreate the modules if needed.             */
+ /* -------------------------------------------- */
+
+ "STRREXPRC SRCMBR(A_INSTALL) SRCFILE(RPGUNITDVP/QBUILD) PARM('CMPMOD "prdLib" "dbgView" "tgtRls"')"
+
+ /* -------------------------------------------- */
  /*  Let's do it!                                */
  /* -------------------------------------------- */
  "CMPMOD MODULE("prdLib"/CMPTPLT  ) SRCFILE("prdLib"/QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
  "CRTSRVPGM  SRVPGM("prdLib"/CMPTPLT) ",
             "MODULE("prdLib"/CMPTPLT)  ",
-            "OPTION(*DUPPROC) ",
-            "BNDSRVPGM("prdLib"/RUTESTCASE) ",
             "EXPORT(*ALL) ",
+            "BNDDIR("prdLib"/IRPGUNIT) ",
             "TEXT('RPGUnit SelfTest - Test CMPTPLT.')"
 
  "SNDPGMMSG ",

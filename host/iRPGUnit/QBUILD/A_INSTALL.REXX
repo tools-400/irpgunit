@@ -11,7 +11,16 @@
 /*     Script parameters:                                              */
 /*       option   - The possible values are:                           */
 /*                  INSTALL : Default. Installs the iRPGUnit library.  */
-/*                  CLEAN   : Deletes the iRPGUnit modules from        */
+/*                  CMPMOD  : Compiles the modules.                    */
+/*                  CLEAN_SCRIPTST :                                   */
+/*                            Deletes the iRPGUnit modules and other   */
+/*                            unnecessary objects such as self-tests   */
+/*                            from the iRPGUnit library excluding      */
+/*                            library iRPGUnit library excluding       */
+/*                            service program SCRIPTST.                */
+/*                  CLEAN:    Deletes the iRPGUnit modules and other   */
+/*                            unnecessary objects such as self-tests   */
+/*                            from the iRPGUnit library excluding      */
 /*                            library iRPGUnit library.                */
 /*                  CLEANALL: Removes all objects from the iRPGUnit    */
 /*                            product library.                         */
@@ -81,7 +90,8 @@
      "MSGTYPE(*ESCAPE)"
  end
 
- if (option <> 'INSTALL' & option <> 'CLEAN' & option <> 'CLEANALL') then do
+ if (option <> 'INSTALL' & option <> 'CMPMOD' & option <> 'CLEAN_SCRIPTST' ,
+     & option <> 'CLEAN' & option <> 'CLEANALL') then do
    "SNDPGMMSG ",
      "MSGID(CPF9898) ",
      "MSGF(QCPFMSG) ",
@@ -131,6 +141,26 @@
  end
 
  /* -------------------------------------------- */
+ /*  Compile the modules.                        */
+ /* -------------------------------------------- */
+ if (option = 'CMPMOD') then do
+   if prdLib = '' then prdLib = PRD_LIB
+   compileModules(prdLib, dbgView, tgtRls)
+   createBindingDirectory(prdLib, dbgView, tgtRls)
+   EXIT
+ end
+
+ /* -------------------------------------------- */
+ /*  Delete modules.                             */
+ /*  Deletes all iRPGUnit modules.               */
+ /* -------------------------------------------- */
+ if (option = 'CLEAN_SCRIPTST') then do
+   if prdLib = '' then prdLib = PRD_LIB
+   cleanScriptst(prdLib)
+   EXIT
+ end
+
+ /* -------------------------------------------- */
  /*  Delete modules.                             */
  /*  Deletes all iRPGUnit modules.               */
  /* -------------------------------------------- */
@@ -161,13 +191,19 @@
    deleteSelfTests('QTEMP')
    deleteModules(prdLib)
    deleteBuildObjects(prdLib)
-   deleteIRPGUnit(prdLib);
+   deleteIRPGUnit(prdLib)
 
-   /* - - - - - - - - - - - -   - - - - - - - - */
-   /*  Create commands BUILD and CMPMOD.      */
+   createBuildCOmmand(prdLib, dbgView, tgtRls)
+   if (prdLib = 'RPGUNITDVP') then do
+     compileModules(prdLib, dbgView, tgtRls)
+     createBindingDirectory(prdLib, dbgView, tgtRls)
+   end
+
    /* - - - - - - - - - - - - - - - - - - - - */
-   "STRREXPRC SRCMBR(MKBUILD) SRCFILE("prdLib"/QBUILD) ",
-     "PARM('"prdLib" "dbgView" "tgtRls"')"
+   /*  Create service program RUMEMMGR.       */
+   /* - - - - - - - - - - - - - - - - - - - - */
+   "STRREXPRC SRCMBR(MKMEMMGR) SRCFILE("prdLib"/QSRC) ",
+     "PARM('"prdLib" "dbgView" "tgtRls" "define"')"
 
    /* - - - - - - - - - - - - - - - - - - - - */
    /*  Create service program RUTESTCASE.     */
@@ -213,6 +249,27 @@
 
  /* ------------------------------------------------------------- */
  /*  Deletes all unnecessary objects from library iRPGUnit.       */
+ /*  Excluding self-test suite SCRIPTST.                          */
+ /* ------------------------------------------------------------- */
+ cleanScriptst:
+   PARSE ARG prdLib
+
+   deleteSelfTests(prdLib)
+   deleteSelfTests('QTEMP')
+   deleteModules(prdLib)
+   deleteBuildObjects(prdLib)
+
+   "SNDPGMMSG ",
+     "MSGID(CPF9897) ",
+     "MSGF(QCPFMSG) ",
+     "MSGDTA('Successfully clean library for running SCRIPTST: "prdLib"')",
+     "TOPGMQ(*PRV (*CTLBDY)) ",
+     "MSGTYPE(*INFO)"
+
+   return ''
+
+ /* ------------------------------------------------------------- */
+ /*  Deletes all unnecessary objects from library iRPGUnit.       */
  /* ------------------------------------------------------------- */
  clean:
    PARSE ARG prdLib
@@ -221,6 +278,7 @@
    deleteSelfTests('QTEMP')
    deleteModules(prdLib)
    deleteBuildObjects(prdLib)
+   deleteSpecialObjects(prdLib)
 
    "SNDPGMMSG ",
      "MSGID(CPF9897) ",
@@ -285,6 +343,7 @@
    "DLTPGM PGM("_prdlib"/RUCRTCBL)"
    "DLTPGM PGM("_prdlib"/RUPGMRMT)"
    "DLTSRVPGM SRVPGM("_prdlib"/RUTESTCASE)"
+   "DLTSRVPGM SRVPGM("_prdlib"/RUMEMMGR)"
 
    "DLTJOBD JOBD("_prdLib"/RPGUNIT)"
    "DLTWSCST WSCST("_prdLib"/RUWSCST)"
@@ -304,12 +363,16 @@
    Signal off Error
 
    "DLTPGM PGM("_prdlib"/A_CRTPKG)"
+   "DLTPGM PGM("_prdlib"/A_TESTRMT)"
    "DLTPGM PGM("_prdlib"/A_METADATA)"
 
    "DLTPGM PGM("_prdlib"/CRTPKGCPR)"
    "DLTPGM PGM("_prdlib"/CRTPKGDBG)"
    "DLTPGM PGM("_prdlib"/CRTPKGMDT)"
    "DLTPGM PGM("_prdlib"/CRTPKGOWN)"
+
+   "DLTSRVPGM SRVPGM("_prdlib"/CBLEXAMPLE)"
+   "DLTSRVPGM SRVPGM("_prdlib"/RPGEXAMPLE)"
 
    return ''
 
@@ -323,7 +386,6 @@
 
    bndDir = 'IRPGUNIT'
 
-   "DLTBNDDIR BNDDIR("_prdlib"/"bndDir")"
    "DLTUSRSPC USRSPC("_prdlib"/RUSPOOL)"
    "DLTUSRSPC USRSPC("_prdlib"/RUPROCLIST)"
 
@@ -349,6 +411,8 @@
    "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM17)"
    "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM18)"
    "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM19)"
+   "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM20)"
+   "DLTSRVPGM SRVPGM("_prdlib"/TESTPGM21)"
 
    "DLTSRVPGM SRVPGM("_prdlib"/ACPTSTT)"
    "DLTSRVPGM SRVPGM("_prdlib"/ASSERTT)"
@@ -368,12 +432,10 @@
    "DLTSRVPGM SRVPGM("_prdlib"/OPDESCT)"
    "DLTSRVPGM SRVPGM("_prdlib"/PGMMSGT)"
    "DLTSRVPGM SRVPGM("_prdlib"/RUNT)"
-   "DLTSRVPGM SRVPGM("_prdlib"/SCRIPTST)"
+   "DLTSRVPGM SRVPGM("_prdlib"/SRCMBRT)"
    "DLTSRVPGM SRVPGM("_prdlib"/STMFT)"
    "DLTSRVPGM SRVPGM("_prdlib"/STRINGT)"
    "DLTSRVPGM SRVPGM("_prdlib"/TESTUTILST)"
-
-   "DLTSRVPGM SRVPGM("_prdlib"/SCRIPTST)"
 
    "DLTSRVPGM SRVPGM("_prdlib"/CBL)"
    "DLTSRVPGM SRVPGM("_prdlib"/CBLSQL)"
@@ -396,12 +458,14 @@
 
    "DLTF FILE("_prdlib"/EVFEVENT)"
 
+   "DLTMOD MODULE("_prdLib"/A_TESTRMT)"
    "DLTMOD MODULE("_prdLib"/ACPTSTT)"
    "DLTMOD MODULE("_prdLib"/ASSERT)"
    "DLTMOD MODULE("_prdLib"/ASSERTT)"
    "DLTMOD MODULE("_prdLib"/ASSERTV2)"
    "DLTMOD MODULE("_prdLib"/CALLPRC)"
    "DLTMOD MODULE("_prdLib"/CALLPRCT)"
+   "DLTMOD MODULE("_prdLib"/CALLSTACK)"
    "DLTMOD MODULE("_prdLib"/CMDRUN)"
    "DLTMOD MODULE("_prdLib"/CMDRUNLOG)"
    "DLTMOD MODULE("_prdLib"/CMDRUNLOGT)"
@@ -418,6 +482,7 @@
    "DLTMOD MODULE("_prdLib"/EXTPRCT)"
    "DLTMOD MODULE("_prdLib"/EXTTST)"
    "DLTMOD MODULE("_prdLib"/EXTTSTT)"
+   "DLTMOD MODULE("_prdLib"/JENKINS)"
    "DLTMOD MODULE("_prdLib"/JOBLOG)"
    "DLTMOD MODULE("_prdLib"/JOBLOGT)"
    "DLTMOD MODULE("_prdLib"/JSONWTR)"
@@ -428,6 +493,7 @@
    "DLTMOD MODULE("_prdLib"/LLIST)"
    "DLTMOD MODULE("_prdLib"/LSTSPLF)"
    "DLTMOD MODULE("_prdLib"/LSTSPLFT)"
+   "DLTMOD MODULE("_prdLib"/MEMMGR)"
    "DLTMOD MODULE("_prdLib"/MSGQT)"
    "DLTMOD MODULE("_prdLib"/OBJECT)"
    "DLTMOD MODULE("_prdLib"/OPDESCT)"
@@ -448,9 +514,8 @@
    "DLTMOD MODULE("_prdLib"/TESTUTILST)"
    "DLTMOD MODULE("_prdLib"/USRSPC)"
    "DLTMOD MODULE("_prdLib"/VERSION)"
+   "DLTMOD MODULE("_prdLib"/VSCODE)"
    "DLTMOD MODULE("_prdLib"/XMLWRITER)"
-
-   "DLTMOD MODULE("_prdlib"/SCRIPTST)"
 
    "DLTMOD MODULE("_prdlib"/CBL)"
    "DLTMOD MODULE("_prdlib"/CBLSQL)"
@@ -459,7 +524,142 @@
    "DLTMOD MODULE("_prdlib"/RPGSQLSTMF)"
    "DLTMOD MODULE("_prdlib"/RPGSTMF)"
 
+   "DLTMOD MODULE("_prdlib"/SCRIPTST)"
+
    Signal on Error
+
+   return ''
+
+ /* ------------------------------------------------------------- */
+ /*  Deletes special objects, e.g. test suite SCRIPTST.           */
+ /* ------------------------------------------------------------- */
+ deleteSpecialObjects:
+   PARSE ARG _prdLib
+
+   Signal off Error
+
+   "DLTSRVPGM SRVPGM("_prdlib"/SCRIPTST)"
+   "DLTBNDDIR BNDDIR("_prdlib"/"bndDir")"
+
+   Signal on Error
+
+   return ''
+
+ /* ------------------------------------------------------------- */
+ /*  Create CMPMOD command.                                       */
+ /* ------------------------------------------------------------- */
+createBuildCommand:
+   PARSE ARG prdLib, dbgView, tgtRls
+
+   "STRREXPRC SRCMBR(MKBUILD) SRCFILE("prdLib"/QBUILD) ",
+     "PARM('"prdLib" "dbgView" "tgtRls"')"
+
+ /* ------------------------------------------------------------- */
+ /*  Create binding directory and compile modules.                */
+ /* ------------------------------------------------------------- */
+createBindingDirectory:
+   PARSE ARG prdLib, dbgView, tgtRls
+
+   bndDir = 'IRPGUNIT'
+
+   /* Create iRPGUnit binding directory. */
+
+   Signal off Error
+   "DLTBNDDIR BNDDIR("prdLib"/"bndDir")"
+   Signal on Error
+
+   if ("CHKOBJ OBJ("prdLib"/"bndDir") OBJTYPE(*BNDDIR)" = 1) then do
+     "SNDPGMMSG ",
+       "MSGID(CPF9898) ",
+       "MSGF(QCPFMSG) ",
+       "MSGDTA('ERROR: Could not delete binding directory: 'bndDir) ",
+       "TOPGMQ(*PRV (*CTLBDY)) ",
+       "MSGTYPE(*ESCAPE)"
+   end
+
+   "CRTBNDDIR BNDDIR("prdLib"/"bndDir") TEXT('iRPGUnit - Binding Directory')"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/CALLPRC   *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/CMDRUN    *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/CMDRUNLOG *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/CMDRUNPRT *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/CMDRUNSRV *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/CMDRUNV   *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/CRTTST    *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/EXTPRC    *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/EXTTST    *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/JENKINS   *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/JOBLOG    *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/JSONWTR   *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/LIBL      *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/LSTSPLF   *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/OBJECT    *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/OSVERSION *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/PGMMSG    *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/PGMRMT    *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/RMTRUNSRV *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/SRCMBR    *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/STMF      *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/STRING    *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/TAGTST    *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/USRSPC    *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/VSCODE    *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/XMLWRITER *MODULE))"
+
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/LLIST     *MODULE))"
+
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/LIBLC     *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/SPLF      *MODULE))"
+
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/RUTESTCASE *SRVPGM))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/RUMEMMGR  *SRVPGM))"
+
+   return ''
+
+ /* ------------------------------------------------------------- */
+ /*  Compile the modules.                                         */
+ /* ------------------------------------------------------------- */
+compileModules:
+   PARSE ARG prdLib, dbgView, tgtRls
+
+   "CMPMOD MODULE("prdLib"/ASSERT   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/ASSERTV2 ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/CALLSTACK) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/CALLPRC  ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/CMDRUN   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/CMDRUNLOG) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/CMDRUNPRT) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/CMDRUNSRV) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/CMDRUNV  ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/CRTCBL   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/CRTRPG   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/CRTTST   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/JENKINS  ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/JOBLOG   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/JSONWTR  ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/EXTPRC   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/EXTTST   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/LIBL     ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/LSTSPLF  ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/MEMMGR   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/OBJECT   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/OSVERSION) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/PGMRMT   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/RMTRUNSRV) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/SRCMBR   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/STMF     ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/STRING   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/TAGTST   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/TESTUTILS) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/USRSPC   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/VERSION  ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/VSCODE   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/XMLWRITER) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+
+   "CMPMOD MODULE("prdLib"/LIBLC    ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/SPLF     ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+
+   "CMPMOD MODULE("prdLib"/LLIST    ) SRCFILE(QLLIST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
    return ''
 

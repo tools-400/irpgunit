@@ -12,6 +12,7 @@
       //   >>IMPORTANT<<
       //     >>PARM<<  TRUNCNBR(*NO);
       //     >>PARM<<  DBGVIEW(*LIST);
+      //     >>PARM<<  OPTION(*EVENTF);
       //   >>END-IMPORTANT<<
       //   >>CMD<<     CMPMOD MODULE(&LI/CALLPRC  ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
       //   >>CMD<<     CMPMOD MODULE(&LI/CMDRUN   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
@@ -22,6 +23,7 @@
       //   >>CMD<<     CMPMOD MODULE(&LI/EXTPRC   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
       //   >>CMD<<     CMPMOD MODULE(&LI/EXTTST   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
       //   >>CMD<<     CMPMOD MODULE(&LI/JOBLOG   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+      //   >>CMD<<     CMPMOD MODULE(&LI/JSONWTR  ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
       //   >>CMD<<     CMPMOD MODULE(&LI/LIBL     ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
       //   >>CMD<<     CMPMOD MODULE(&LI/LLIST    ) SRCFILE(&SL/QLLIST) DBGVIEW(*LIST);
       //   >>CMD<<     CMPMOD MODULE(&LI/OBJECT   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
@@ -47,6 +49,7 @@
       //                      &LI/EXTPRC    +
       //                      &LI/EXTTST    +
       //                      &LI/JOBLOG    +
+      //                      &LI/JSONWTR   +
       //                      &LI/LIBL      +
       //                      &LI/LLIST     +
       //                      &LI/OBJECT    +
@@ -77,6 +80,7 @@
        //----------------------------------------------------------------------
 
       /include qinclude,TEMPLATES
+      /include qinclude,CMDRUNSRV
       /include qinclude,CMDRUNV
       /include qinclude,PGMMSG
       /include qinclude,RMTRUNSRV
@@ -89,24 +93,27 @@
      D A_TESTRMT...
      D                 pi
 
-     D  go_returnCode  s             10I 0 inz
-     D  gi_userspace   ds                  likeds(object_t ) inz
-     D  gi_testSuite   ds                  likeds(object_t ) inz
+     D  g_isSuccess...
+     D                 s               n   inz
+     D  gi_userspace   ds                  likeds(object_t) inz
+     D  gi_testSuite   ds                  likeds(object_t) inz
      D  gi_procNames   ds                  likeds(ProcNms_t) inz
-     D  gi_order       s                   like(order_t    ) inz
-     D  gi_detail      s                   like(detail_t   ) inz
-     D  gi_output      s                   like(output_t   ) inz
-     D  gi_libl        ds                  likeDs(libL_t   ) inz
-     D  gi_qJobD       ds                  likeDs(Object_t ) inz
-     D  gi_rclrsc      s                   like(rclrsc_t   ) inz
-     D  gi_xmlStmf     s                   like(stmf_fl_t  ) inz
+     D  gi_order       s                   like(order_t) inz
+     D  gi_detail      s                   like(detail_t) inz
+     D  gi_output      s                   like(output_t) inz
+     D  gi_libl        ds                  likeDs(libL_t) inz
+     D  gi_qJobD       ds                  likeDs(Object_t) inz
+     D  gi_rclrsc      s                   like(rclrsc_t) inz
+     D  gi_xmlStmf     s                   like(stmf_fl_t) inz
+     D  gi_xmlType     s                   like(xmlType_t) inz
+     D  gio_msg        s            256a   varying inz
 
-     D qUsrSpc         ds                  likeds(Object_t ) inz
+     D g_qUsrSpc       ds                  likeds(Object_t ) inz
       /free
 
-       qUsrSpc.nm = 'A_TESTRMT';
-       qUsrSpc.lib = 'QTEMP';
-       crtUsrSpc(qUsrSpc: 'iRPGUnit - User Space of A_TESTRMT');
+       g_qUsrSpc.nm = 'A_TESTRMT';
+       g_qUsrSpc.lib = 'QTEMP';
+       crtUsrSpc(g_qUsrSpc: 'iRPGUnit - User Space of A_TESTRMT');
 
        gi_userspace.lib = 'QTEMP';
        gi_userspace.nm = 'A_TESTRMT';
@@ -124,11 +131,13 @@
        gi_qJobD.nm = JOBD_DEFAULT;
        gi_rclrsc = RCLRSC_NO;
        gi_xmlStmf = '';
+       gi_xmlType = '*TYPE2';
 
-       go_returnCode =
-            rpgunit_runTestSuite(
-               gi_userspace: gi_testSuite: gi_procNames: gi_order
-             : gi_detail: gi_output: gi_libl: gi_qJobD: gi_rclrsc: gi_xmlStmf);
+       g_isSuccess=
+            runTestSuite(
+               gi_userspace: gi_testSuite: gi_procNames: gi_order:
+               gi_detail: gi_output: gi_libl: gi_qJobD: gi_rclrsc:
+               gi_xmlStmf: gi_xmlType: gio_msg);
 
        *inlr = *on;
 

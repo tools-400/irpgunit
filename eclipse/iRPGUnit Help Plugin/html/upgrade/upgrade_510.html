@@ -9,6 +9,16 @@
 
 <body>
 <h1>Upgrading From v5.1.0 to v6.0.0</h1>
+<h2>Breaking Change</h2>
+The layout of the user space for carrying the test results to the Eclipse iRPGUnit plug-in has changed. The current version is 6.
+Version 4 user spaces, introduced with v5.1.0.r (12.07.2025), are still supported.
+<h2>Processing of Assertions</h2>
+Optionally all assertions of a test case can be executed, now.
+Optional können jetzt alle Zusicherungen eines Testfalls abgerabeitet werden. Until now,
+the processing of assertions was aborted at the first error.
+<p>
+See: <a href="../quickstart/preferences.html">Preferences</a>
+<h2>XML Output Type</h2>
 Starting with v6.0.0, the XML output type defaults to <code>*TYPE2</code>. The old format
 is produced, if parameter <code>XMLTYPE</code> is set to <code>*TYPE1</code>.
 <p>
@@ -22,6 +32,10 @@ of a failed test case, now.
 <h2>XML Output Type 2<h2>
 <p>
 <iframe class="indent" src="../appendix/assets/output_type2.txt" width="90%" height="30%" name="iRPGUnit-Popup" ></iframe>
+<p>
+<h2>XML Output VS Code 1<h2>
+<p>
+<iframe class="indent" src="../appendix/assets/output_vscode1.txt" width="90%" height="30%" name="iRPGUnit-Popup" ></iframe>
 <p>
 <iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
 </body>

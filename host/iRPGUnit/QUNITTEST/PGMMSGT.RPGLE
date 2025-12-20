@@ -11,13 +11,50 @@
 // >>PRE-COMPILER<<
 //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
 //   >>IMPORTANT<<
-//     >>PARM<<  MODULE(&LI/JOBLOG    +
+//     >>PARM<<  MODULE(&LI/CALLPRC   +
+//                      &LI/CMDRUNLOG +
+//                      &LI/CMDRUNPRT +
+//                      &LI/CMDRUNSRV +
+//                      &LI/CMDRUNV   +
+//                      &LI/EXTPRC    +
+//                      &LI/EXTTST    +
+//                      &LI/JOBLOG    +
+//                      &LI/JSONWTR   +
+//                      &LI/LIBL      +
+//                      &LI/LLIST     +
+//                      &LI/OBJECT    +
+//                      &LI/OSVERSION +
 //                      &LI/PGMMSG    +
+//                      &LI/RMTRUNSRV +
+//                      &LI/STMF      +
+//                      &LI/SRCMBR    +
+//                      &LI/STRING    +
+//                      &LI/USRSPC    +
+//                      &LI/XMLWRITER +
 //                      );
 //     >>PARM<<    COPTION(*SRCSTMT *EVENTF);
+//     >>PARM<<    BNDSRVPGM(&LI/RUMEMMGR);
 //   >>END-IMPORTANT<<
-//   >>CMD<<     CMPMOD MODULE(&LI/JOBLOG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/PGMMSG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/CALLPRC  ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNLOG) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNPRT) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNSRV) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNV  ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/EXTPRC   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/EXTTST   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/JOBLOG   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/JSONWTR  ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/LIBL     ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/LLIST    ) SRCFILE(&SL/QLLIST) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/OBJECT   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/OSVERSION) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/PGMMSG   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/RMTRUNSRV) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/STMF     ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/SRCMBR   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/STRING   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/USRSPC   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
+//   >>CMD<<     CMPMOD MODULE(&LI/XMLWRITER) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================
@@ -29,27 +66,16 @@ ctl-opt NoMain Option(*SrcStmt);
 //----------------------------------------------------------------------
 
 /copy qinclude,ASSERT
+/copy qinclude,CMDRUNSRV
 /copy qinclude,ERRORCODE
+/copy qinclude,MEMMGR
 /copy qinclude,PGMMSG
 /copy qinclude,TEMPLATES
 /copy qinclude,TESTUTILS
 
+/copy qllist,llist_h
+
 /include qinclude,SDS
-
-//----------------------------------------------------------------------
-//   Private Procedures
-//----------------------------------------------------------------------
-
-//dcl-pr callSndEscapeMsgToCaller
-//       extproc('callSndEscapeMsgToCaller');
-//end-pr;
-//dcl-pr monitorEscapeMsgAndResendIt
-//       extproc('monitorEscapeMsgAndResendIt+
-//       ');
-//end-pr;
-//dcl-pr procWithError
-//       int(10) extproc('procWithError');
-//end-pr;
 
 //----------------------------------------------------------------------
 //   Helper Procedures Definitions
@@ -85,7 +111,7 @@ dcl-proc procWithError;
 
   dcl-s zero int(10) inz(0);
 
-  return (1 / zero);
+  return (1 / zero); // statement in error
 
 end-proc procWithError;
 
@@ -94,6 +120,19 @@ end-proc procWithError;
 //   Test Procedure Definitions
 //----------------------------------------------------------------------
 
+dcl-proc test_caller export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-s callingProcName like(procNm_t);
+
+  callingProcName = getCaller();
+
+  assertEqual('test_caller': callingProcName);
+
+end-proc;
+
+
 dcl-proc test_rcvExcpMsgInfo export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
@@ -101,7 +140,18 @@ dcl-proc test_rcvExcpMsgInfo export;
   dcl-ds excpMsgInfo likeds(Msg_t);
   dcl-s msgKey char(4);
 
+  dcl-s hTestEvents pointer;
+  dcl-ds abstractTestEvent likeds(abstractTestEvent_t);
+
+  // -----------------------------
+  // save current assertion status
+  // -----------------------------
+  saveAssertStatus();
+
   setLowMessageKey(getHighestMsgKey());
+
+  hTestEvents = MemMgr_createList('hTestEvents');
+  clrAssertFailEvt(hTestEvents: '');
 
   monitor;
     procWithError();
@@ -112,6 +162,14 @@ dcl-proc test_rcvExcpMsgInfo export;
 
   excpMsgInfo = rcvExcpMsgInfo();
 
+  abstractTestEvent = getAssertEventInternal();
+  disposeTestEvents(hTestEvents);
+
+  // --------------------------------
+  // restore current assertion status
+  // --------------------------------
+  restoreAssertStatus();
+
   aEqual('MCH1211': excpMsgInfo.Id);
   assert(excpMsgInfo.txt <> *blank: 'Exception message not retrieved');
   // We should be checking the message content, but I do not know how to
@@ -120,12 +178,14 @@ dcl-proc test_rcvExcpMsgInfo export;
   aEqual(sds.pgmLib: excpMsgInfo.qSndStmt.qPgm.lib);
   aEqual('procWithError': excpMsgInfo.qSndStmt.procNm);
 
+  // The statement number can be found in
+  // procedure procWithError().
   monitor;
     msgKey = getHighestMsgKey();
-    aEqual('88': excpMsgInfo.qSndStmt.specNb);   // IFS Compile
+    aEqual('114': excpMsgInfo.qSndStmt.specNb); // IFS Compile
   on-error;
     getLatestEscMsg(msgKey: *ON);
-    aEqual('8800': excpMsgInfo.qSndStmt.specNb);   // QSYS Compile
+    aEqual('11400': excpMsgInfo.qSndStmt.specNb); // QSYS Compile
   endmon;
 
 end-proc;
@@ -176,15 +236,25 @@ dcl-proc test_monitorMessage export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds msgInfo likeds(MsgInfo_t);
+  dcl-ds msgInfo1 likeds(MsgInfo_t);
   dcl-ds msgInfo2 likeds(MsgInfo_t);
   dcl-ds msgInfo3 likeds(MsgInfo_t);
+  dcl-ds msgInfo4 likeds(MsgInfo_t);
   dcl-s a int(10);
   dcl-s b int(10);
   dcl-s c int(10);
   dcl-s msgKey char(4);
 
+  // -----------------------------
+  // save current assertion status
+  // -----------------------------
+  saveAssertStatus();
+
+  // Prepare
+
   setLowMessageKey(getHighestMsgKey());
+
+  // Step 1
 
   monitor;
     a = 10;
@@ -192,18 +262,45 @@ dcl-proc test_monitorMessage export;
     c = a / b; // fixed point operation. (MCH1211)
     fail('Division by zero did not raise an error.');
   on-error;
-    msgInfo = getMonitoredMessage();
+    msgInfo1 = getMonitoredMessage();
   endmon;
 
-  aEqual('MCH1211': msgInfo.Id);
+  // Step 2
 
   // receive message info again
   // and remove message
   msgInfo2 = getMonitoredMessage(*ON);
-  assert(msgInfo = msgInfo2: 'Message info values must match');
+
+  // Step 3
 
   // try to receive it a third time
   msgInfo3 = getMonitoredMessage();
+
+  // Step 4
+
+  monitor;
+    procWithError();
+    fail('procWithError() did not raise an error.');
+  on-error;
+    msgInfo4 = getMonitoredMessage();
+  endmon;
+
+
+  // --------------------------------
+  // restore current assertion status
+  // --------------------------------
+  restoreAssertStatus();
+
+  // Check result of step 1
+
+  aEqual('MCH1211': msgInfo1.Id);
+
+  // Check result of step 2
+
+  assert(msgInfo1 = msgInfo2: 'Message #1 must match message #2');
+
+  // Check result of step 3
+
   assert(msgInfo3.id     = '' and
          msgInfo3.txt    = '' and
          msgInfo3.pgm    = '' and
@@ -212,26 +309,32 @@ dcl-proc test_monitorMessage export;
          msgInfo3.specNb = ''
          : 'Message MCH1211 must habe been removed from the job log');
 
-  monitor;
-    procWithError();
-    fail('procWithError() did not raise an error.');
-  on-error;
-    msgInfo = getMonitoredMessage();
-  endmon;
+  // Check result of step 4
 
-  aEqual('MCH1211': msgInfo.Id );
-  assert(msgInfo.txt <> *blank: 'Exception message not retrieved');
+  aEqual('MCH1211': msgInfo4.Id );
+  assert(msgInfo4.txt <> *blank: 'Exception message not retrieved');
   // We should be checking the message content, but I do not know how to
   // do that, since it depends on the locale.
-  aEqual('PGMMSGT': msgInfo.pgm);
-  aEqual('procWithError': msgInfo.proc);
+  aEqual('PGMMSGT': msgInfo4.pgm);
+  aEqual('procWithError': msgInfo4.proc);
 
+  // The statement number can be found in
+  // procedure procWithError().
   monitor;
     msgKey = getHighestMsgKey();
-    aEqual('88': msgInfo.specNb);   // IFS Compile
+    aEqual('114': msgInfo4.specNb); // IFS Compile
   on-error;
     getLatestEscMsg(msgKey: *ON);
-    aEqual('8800': msgInfo.specNb);   // QSYS Compile
+    aEqual('11400': msgInfo4.specNb); // QSYS Compile
   endmon;
+
+end-proc;
+
+
+dcl-proc getCaller;
+  dcl-pi *n like(procNm_t) extproc(*dclcase);
+  end-pi;
+
+  return caller();
 
 end-proc;

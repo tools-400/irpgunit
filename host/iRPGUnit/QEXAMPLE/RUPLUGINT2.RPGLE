@@ -1,7 +1,7 @@
 **FREE
 // ==========================================================================
 //  iRPGUnit Dev. of RDP Plugin. ON-EXIT op-code.
-//  Success. 2 test cases, 3 assertions, 0 failure, 0 error.
+//  Success. 2 test cases, 3 assertions, 0 failure, 1 error.
 // ==========================================================================
 //  Copyright (c) 2013-2019 iRPGUnit Project Team
 //  All rights reserved. This program and the accompanying materials
@@ -59,9 +59,10 @@ dcl-proc testError_1 export;
   end-pi;
 
   dcl-s a int(10);
-  dcl-s b int(10);
+  dcl-s zero int(10);
 
-  b = a / b;
+  // enforce a division by zero runtime error
+  a = a / zero;
 
   assert(*off: 'SHOULD NEVER BE REACHED');
 

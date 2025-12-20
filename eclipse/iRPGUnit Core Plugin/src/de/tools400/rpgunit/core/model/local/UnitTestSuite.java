@@ -8,7 +8,7 @@
 
 package de.tools400.rpgunit.core.model.local;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -159,7 +159,7 @@ public class UnitTestSuite extends AbstractUnitTestObject
 
     public String[] getSelectedUnitTestProcedureNames() {
 
-        ArrayList<String> tSelectedUnitTestProcedureNames = new ArrayList<String>();
+        LinkedList<String> tSelectedUnitTestProcedureNames = new LinkedList<String>();
         for (UnitTestCase tUnitTestCase : getUnitTestCases()) {
             if (tUnitTestCase.isSelected()) {
                 tSelectedUnitTestProcedureNames.add(tUnitTestCase.getProcedure());
@@ -246,8 +246,11 @@ public class UnitTestSuite extends AbstractUnitTestObject
     public long getTotalExecutionTime() {
         long executionTime = 0;
         for (UnitTestCase tUnitTestCase : unitTestCases.values()) {
-            if (tUnitTestCase.hasStatistics() && tUnitTestCase.isSuccessful()) {
-                executionTime += tUnitTestCase.getExecutionTime();
+            if (tUnitTestCase.hasStatistics()) {
+                long tExecutionTime = tUnitTestCase.getExecutionTime();
+                if (tExecutionTime > 0) {
+                    executionTime += tExecutionTime;
+                }
             }
         }
         return executionTime;
@@ -317,9 +320,10 @@ public class UnitTestSuite extends AbstractUnitTestObject
 
     public void addUnitTestCase(UnitTestCase aUnitTestCase) {
 
-        aUnitTestCase.setUnitTestSuite(this);
         unitTestCases.put(aUnitTestCase.getKey(), aUnitTestCase);
         addUnitTestStatistics(aUnitTestCase);
+
+        aUnitTestCase.setUnitTestSuite(this);
 
         clearOutcome();
     }
@@ -455,5 +459,10 @@ public class UnitTestSuite extends AbstractUnitTestObject
 
     @Override
     public void setPropertyValue(Object arg0, Object arg1) {
+    }
+
+    @Override
+    public int category() {
+        return 0;
     }
 }

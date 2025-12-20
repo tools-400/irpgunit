@@ -14,6 +14,8 @@
 //     >>PARM<<  OPTION(*EVENTF);
 //     >>PARM<<  DBGVIEW(*LIST);
 //   >>END-IMPORTANT<<
+//   >>CMD<<     STRREXPRC SRCMBR(A_INSTALL) SRCFILE(&LI/QBUILD) +
+//               PARM('CMPMOD &LI LIST');
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================
@@ -30,14 +32,13 @@ ctl-opt decedit(*jobrun);
 
 /include qinclude,STRING
 
-
 //----------------------------------------------------------------------
 //   Imported Procedures
 //----------------------------------------------------------------------
 
 /include qinclude,SYSTEMAPI
 /include qinclude,PGMMSG
-
+/include qsysinc,cvthc
 
 //----------------------------------------------------------------------
 //   Type Templates
@@ -51,12 +52,6 @@ dcl-ds errCode_t qualified template;
   reserved_1 char(1);
   excDta char(512);
 end-ds;
-
-
-//----------------------------------------------------------------------
-//   Procedure Definitions
-//----------------------------------------------------------------------
-
 
 //----------------------------------------------------------------------
 //  Converts a given string to upper case.
@@ -717,6 +712,57 @@ dcl-proc rAlign export;
   result = rightStr(spaces(length) + string: length);
 
   return result;
+
+end-proc;
+
+//----------------------------------------------------------------------
+//  Produces the hex string representation of a buffer
+//----------------------------------------------------------------------
+dcl-proc bufferToStr export;
+  dcl-pi *n like(string_t);
+    pBuffer pointer const;
+    size    uns(5) const;
+  end-pi;
+
+  //  Return value (as varying field)
+  dcl-ds rtnValue qualified;
+    string              like(string_t);
+    str_len             uns(5) overlay(string);
+    str_data_first_byte char(1) overlay(string: *next);
+  end-ds;
+
+  if (size * 2 > %len(rtnValue.string: *max));
+    sndEscapeMsgToCaller(
+      'Length of ''buffer'' (' + %char(size) +
+      ') exceeded maximum length allowed (' + %char(size) + ').');
+  endif;
+
+  cvthc(%addr(rtnValue.str_data_first_byte): pBuffer: size * 2);
+  rtnValue.str_len = size * 2;
+
+  return rtnValue;
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Returns the string representation a pointer
+//----------------------------------------------------------------------
+dcl-proc ptrToStr export;
+  dcl-pi *n like(string_t);
+    pointer pointer value;
+    shortened ind options(*nopass);
+  end-pi;
+
+  dcl-s strPointer varchar(32);
+
+  if (pointer = *null);
+    return '*null';
+  endif;
+
+  strPointer = bufferToStr(%addr(pointer): %size(pointer));
+  strPointer = %subst(strPointer: 17);
+
+  return strPointer;
 
 end-proc;
 

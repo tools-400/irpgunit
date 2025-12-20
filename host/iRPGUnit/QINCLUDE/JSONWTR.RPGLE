@@ -17,7 +17,7 @@
 // @param count_array  - Number of open Json arrays. Used for self-tests only
 // @param count_indent - Current indention level if pretty-print is enabled
 ///
-dcl-pr Json_clear extproc(*dclcase);
+dcl-pr Json_clear extproc('JSONWTR_Json_clear');
   value        varchar(50000) options(*varsize: *nopass) const; // self-tests only!
   count_object int(10) options(*nopass) const;                  // self-tests only!
   count_array  int(10) options(*nopass) const;                  // self-tests only!
@@ -29,38 +29,38 @@ end-pr;
 //
 // @param enabled - '*on' enabled pretty-print
 ///
-dcl-pr Json_setPrettyPrintEnabled ind extproc(*dclcase);
+dcl-pr Json_setPrettyPrintEnabled ind extproc('JSONWTR_Json_setPrettyPrintEnabled');
   enabled  ind const;
 end-pr;
 
 ///
 // Returns the Json data.
 ///
-dcl-pr Json_get varchar(50000) extproc(*dclcase);
+dcl-pr Json_get varchar(50000) extproc('JSONWTR_Json_get');
 end-pr;
 
 ///
 // Starts a new Json object.
 ///
-dcl-pr Json_startObject extproc(*dclcase);
+dcl-pr Json_startObject extproc('JSONWTR_Json_startObject');
 end-pr;
 
 ///
 // Ends the current Json object.
 ///
-dcl-pr Json_endObject extproc(*dclcase);
+dcl-pr Json_endObject extproc('JSONWTR_Json_endObject');
 end-pr;
 
 ///
 // Starts a new Json array.
 ///
-dcl-pr Json_startArray extproc(*dclcase);
+dcl-pr Json_startArray extproc('JSONWTR_Json_startArray');
 end-pr;
 
 ///
 // Ends the current Json array.
 ///
-dcl-pr Json_endArray extproc(*dclcase);
+dcl-pr Json_endArray extproc('JSONWTR_Json_endArray');
 end-pr;
 
 ///
@@ -68,7 +68,7 @@ end-pr;
 //
 // @param key - Key value
 ///
-dcl-pr Json_addKey extproc(*dclcase);
+dcl-pr Json_addKey extproc('JSONWTR_Json_addKey');
   key like(string_t) const;
 end-pr;
 
@@ -77,7 +77,7 @@ end-pr;
 //
 // @param value - Value that is assigned to the key
 ///
-dcl-pr Json_addString extproc(*dclcase);
+dcl-pr Json_addString extproc('JSONWTR_Json_addString');
   value like(string_t) const;
 end-pr;
 
@@ -86,7 +86,7 @@ end-pr;
 //
 // @param value - Value that is assigned to the key
 ///
-dcl-pr Json_addInteger extproc(*dclcase);
+dcl-pr Json_addInteger extproc('JSONWTR_Json_addInteger');
   integer int(20) const;
 end-pr;
 
@@ -94,7 +94,7 @@ end-pr;
 // Returns the number of spaces required for pretty-print.
 // Exported for self-tests only.
 ///
-dcl-pr Json_indent varchar(1024)  extproc(*dclcase);
+dcl-pr Json_indent varchar(1024)  extproc('JSONWTR_Json_indent');
 end-pr;
 
 ///
@@ -102,7 +102,7 @@ end-pr;
 // a legal character or CRLF.
 // Exported for self-tests only.
 ///
-dcl-pr Json_lastChar varchar(2) extproc(*dclcase);
+dcl-pr Json_lastChar varchar(2) extproc('JSONWTR_Json_lastChar');
 end-pr;
 
 /include qinclude,TESTCASE
