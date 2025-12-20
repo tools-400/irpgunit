@@ -44,7 +44,7 @@ dcl-proc Jenkins_appendTestCaseFailureV1 export;
 
   dcl-s text like(xmlBufferLarge_t);
 
-  text += CRLF + escapeXml(Jenkins_buildCallStackV1(pCallstack));
+  text += escapeXml(Jenkins_buildCallStackV1(pCallstack));
 
   return text;
 
@@ -65,7 +65,7 @@ dcl-proc Jenkins_buildCallStackV1;
   Callstack_resetIteration(pCallstk);
   dow (Callstack_getNext(pCallstk: callstkEnt));
     // example: iEqual (RUTESTCASE->ASSERT:124)
-    text += buildCallstackEntry(callstkEnt);
+    text += CRLF + buildCallstackEntry(callstkEnt);
   enddo;
 
   return text;
