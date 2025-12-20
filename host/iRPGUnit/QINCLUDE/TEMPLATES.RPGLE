@@ -101,7 +101,8 @@ dcl-ds assertFailEvtExt_t qualified template;
   callstk      likeds(callStk_v1_t) inz(*likeds);
 end-ds;
 
-dcl-s execTime_t packed(15:3) template;
+dcl-s execTimeMSecs_t int(20) template;
+dcl-s execTimeSecs_t packed(22:2) template;
 dcl-s assertProcNm_t varchar(32) template;
 dcl-s dataType_t varchar(20) template;
 dcl-s xmlType_t char(10) template;
@@ -296,7 +297,7 @@ dcl-ds testCaseResult_t qualified template;
   seqNbr           int(10);
   reserved_1       char(11);
   testName         like(procNm_t);
-  execTime         int(20);
+  execTimeMSecs    like(execTimeMSecs_t);
   assertCnt        int(10);
   lastErrorEvent   int(10);
   lastFailureEvent int(10);

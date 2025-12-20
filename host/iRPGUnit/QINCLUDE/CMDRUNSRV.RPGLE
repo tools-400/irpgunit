@@ -373,7 +373,7 @@ end-pr;
 // by the totall number of assertions. There is no way to figure out
 // how long it took to process a specific assertion.
 ///
-dcl-pr getReportExecutionTimeTestCase int(20);
+dcl-pr getReportExecTimeSecs like(execTimeSecs_t) extproc('CMDRUNSRV_getReportExecTimeSecs');
   testCaseResult likeds(testCaseResult_t) const;
 end-pr;
 

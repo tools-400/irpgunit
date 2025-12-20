@@ -276,7 +276,7 @@ dcl-proc writeTestCasesJenkinsStyle;
 
   dcl-ds testCaseResult likeds(testCaseResult_t) based(pTestResult);
   dcl-s text like(xmlBufferLarge_t);
-  dcl-s execTime like(execTime_t);
+  dcl-s execTimeSecs like(execTimeSecs_t);
 
   dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
 
@@ -287,7 +287,7 @@ dcl-proc writeTestCasesJenkinsStyle;
   pTestResult = list_getNext(testSuite.testResults);
   dow (pTestResult <> *null);
 
-    execTime = getReportExecutionTimeTestCase(testCaseResult);
+    execTimeSecs = getReportExecTimeSecs(testCaseResult);
 
     list_resetIteration(testCaseResult.hTestEvents);
     pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
@@ -297,7 +297,7 @@ dcl-proc writeTestCasesJenkinsStyle;
                  + buildReportTestCaseName(testCaseResult: abstractTestEvent) + '" ';
       text += 'assertions="' + %char(getReportNumAsserts(testCaseResult)) + '" ';
       text += 'classname="' + %trimr(testSuiteName.nm) + '" '; // TODO: should look which module
-      text += 'time="' + %char(execTime) + '" ';               // exports this testcase
+      text += 'time="' + %char(execTimeSecs) + '" ';           // exports this testcase
       text += '>' + CRLF;
       appendToXmlFile(text);
 

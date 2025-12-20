@@ -111,7 +111,7 @@ dcl-ds tmpl_testCase_v6 len(38) qualified template;
   outcome                char(1);
   reserved_1             char(1);
   numAsserts             int(10);
-  execTime               int(20);
+  execTimeMSecs               int(20);
   offsTestCaseText       int(10);
   lenTestCaseText        int(5);
   numTestCaseEvents      int(10);
@@ -315,7 +315,7 @@ dcl-proc createV6TestCase;
   testCase.reserved_1 = '';
   testCase.numAsserts = testCaseResult.assertCnt;
 
-  testCase.execTime = testCaseResult.exectime;
+  testCase.execTimeMSecs = testCaseResult.execTimeMSecs;
 
   // Test case text:
   testCase.offsTestCaseText = offsTestCase + %size(testCase);

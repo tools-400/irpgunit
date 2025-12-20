@@ -447,9 +447,9 @@ dcl-proc runTestProc export;
   endTime = %timestamp();
 
   if (startTime < endTime);
-    testCaseResult.exectime = %diff(endTime: startTime: *mseconds);
+    testCaseResult.execTimeMSecs = %diff(endTime: startTime: *mseconds);
   else;
-    testCaseResult.exectime = 0;
+    testCaseResult.execTimeMSecs = 0;
   endif;
 
   if (g_status.isJUnitStyle);
@@ -618,7 +618,7 @@ dcl-proc initTestResult export;
   clear testCaseResult;
   testCaseResult.outcome = TEST_CASE_SUCCESS;
   testCaseResult.testName = testName;
-  testCaseResult.execTime = 0;
+  testCaseResult.execTimeMSecs = 0;
   testCaseResult.assertCnt = 0;
   testCaseResult.lastErrorEvent = 0;
   testCaseResult.lastFailureEvent = 0;
@@ -1298,22 +1298,25 @@ end-proc;
 // Returns the total number of assertions for assertion mode *ABORT,
 // otherwise 1.
 //----------------------------------------------------------------------
-dcl-proc getReportExecutionTimeTestCase export;
-  dcl-pi *n int(20);
+dcl-proc getReportExecTimeSecs export;
+  dcl-pi *n like(execTimeSecs_t);
     testCaseResult likeds(testCaseResult_t) const;
   end-pi;
 
-  dcl-s execTimeInMSecs int(20);
+  dcl-s execTimeSecs like(execTimeSecs_t);
   dcl-s numTestCaseEvents int(10);
 
+  dcl-c DIGITS %len(execTimeSecs);
+  dcl-c DECPOS %decpos(execTimeSecs);
+
   if (g_status.isJUnitStyle);
-    execTimeInMSecs = testCaseResult.execTime;
+    execTimeSecs = %dech(testCaseResult.execTimeMSecs / 1000: DIGITS: DECPOS);
   else;
     numTestCaseEvents = list_size(testCaseResult.hTestEvents);
-    execTimeInMSecs = testCaseResult.execTime / numTestCaseEvents;
+    execTimeSecs = %dech(testCaseResult.execTimeMSecs / numTestCaseEvents / 1000: DIGITS: DECPOS);
   endif;
 
-  return execTimeInMSecs;
+  return execTimeSecs;
 
 end-proc;
 

@@ -54,7 +54,7 @@ dcl-proc VSCode_writeTestCases export;
 
   dcl-ds testCaseResult likeds(testCaseResult_t) based(pTestCaseResult);
   dcl-s text like(xmlBuffer_t);
-  dcl-s execTime like(execTime_t);
+  dcl-s execTime like(execTimeMSecs_t);
 
   g_xmlWriter.indLvl += 1;
 
@@ -63,7 +63,7 @@ dcl-proc VSCode_writeTestCases export;
   pTestCaseResult = list_getNext(testSuite.testResults);
   dow (pTestCaseResult <> *null);
 
-    execTime = testCaseResult.execTime;
+    execTime = testCaseResult.execTimeMSecs;
 
     // open <testcase> element
     text = indent() + '<testcase name="' + getTestCaseName(testCaseResult) + '" ';
@@ -305,7 +305,6 @@ dcl-proc VSCode_writeLogValue;
     logValue   likeds(logValue_t) const;
   end-pi;
 
-  dcl-s rc int(10);
   dcl-s text like(xmlBuffer_t);
 
   g_xmlWriter.indLvl += 1;
