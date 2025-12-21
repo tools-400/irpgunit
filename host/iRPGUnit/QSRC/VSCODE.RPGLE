@@ -97,6 +97,8 @@ dcl-proc VSCode_writeTestCaseEvents;
   dcl-s text like(xmlBuffer_t);
   dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
 
+  g_xmlWriter.indLvl += 1;
+
   if (g_xmlWriter.isJUnitStyle and testCaseResult.outcome = TEST_CASE_SUCCESS);
     return;
   endif;
@@ -121,6 +123,9 @@ dcl-proc VSCode_writeTestCaseEvents;
     pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
   enddo;
 
+on-exit;
+  g_xmlWriter.indLvl -= 1;
+
 end-proc;
 
 //----------------------------------------------------------------------
@@ -131,17 +136,54 @@ dcl-proc VSCode_writeTestCaseEvent;
     abstractTestEvent likeds(abstractTestEvent_t) const;
   end-pi;
 
-  dcl-ds runtimeErrorEvent likeds(runtimeErrorEvent_t) inz;
-  dcl-ds testFailureEvent likeds(testFailureEvent_t) inz;
-
-  dcl-s text like(xmlBuffer_t);
-
   g_xmlWriter.indLvl += 1;
 
   select;
-  when (abstractTestEvent.outcome = TEST_CASE_ERROR);
+  when (abstractTestEvent.outcome = TEST_CASE_SUCCESS);
+    VSCode_appendTestCaseSuccess(abstractTestEvent.success);
 
-    runtimeErrorEvent = abstractTestEvent.error;
+  when (abstractTestEvent.outcome = TEST_CASE_ERROR);
+    VSCode_appendTestCaseError(abstractTestEvent.error);
+
+  when (abstractTestEvent.outcome = TEST_CASE_FAILURE);
+    VSCode_appendTestCaseFailure(abstractTestEvent.failure);
+
+  endsl;
+
+on-exit;
+  g_xmlWriter.indLvl -= 1;
+
+end-proc;
+
+// --------------------------------------------------------
+// Writes a test case 'success' element.
+// --------------------------------------------------------
+dcl-proc VSCode_appendTestCaseSuccess;
+  dcl-pi *n extproc(*dclcase);
+    testSuccessEvent likeds(testSuccessEvent_t) const;
+  end-pi;
+
+  dcl-s text like(xmlBuffer_t);
+
+  text = indent() + startXmlElement('success') + CRLF;
+  appendToXmlFile(text);
+
+  VSCode_writeLogValue(LABEL_EXPECTED: testSuccessEvent.logExpected);
+
+  text = indent() + endXmlElement('success') + CRLF;
+  appendToXmlFile(text);
+
+end-proc;
+
+// --------------------------------------------------------
+// Writes a test case 'error' element.
+// --------------------------------------------------------
+dcl-proc VSCode_appendTestCaseError;
+  dcl-pi *n extproc(*dclcase);
+    runtimeErrorEvent likeds(runtimeErrorEvent_t) const;
+  end-pi;
+
+  dcl-s text like(xmlBuffer_t);
 
     // start <error> element
     text = indent() + '<error message="'
@@ -156,50 +198,31 @@ dcl-proc VSCode_writeTestCaseEvent;
     text = indent() + '</error>' + CRLF;
     appendToXmlFile(text);
 
-  when (abstractTestEvent.outcome = TEST_CASE_FAILURE);
-
-    testFailureEvent = abstractTestEvent.failure;
-
-    // start <failure> element
-    text = indent() + '<failure message="';
-    text += escapeXml(%trimr(testFailureEvent.msg));
-    text += '">';
-    appendToXmlFile(text);
-
-    VSCode_appendTestCaseAsXml(abstractTestEvent.failure);
-    text = indent();
-    appendToXmlFile(text);
-
-    // close <failure> element
-    text = '</failure>' + CRLF;
-    appendToXmlFile(text);
-
-  endsl;
-
-on-exit;
-  g_xmlWriter.indLvl -= 1;
-
 end-proc;
 
 // --------------------------------------------------------
-// Writes the test case as XML in VS Code style.
+// Writes a test case 'failure' element.
 // --------------------------------------------------------
-dcl-proc VSCode_appendTestCaseAsXml;
+dcl-proc VSCode_appendTestCaseFailure;
   dcl-pi *n extproc(*dclcase);
     testFailureEvent likeds(testFailureEvent_t) const;
   end-pi;
 
   dcl-s text like(xmlBuffer_t);
 
-  text = CRLF;
+  // start <failure> element
+  text = indent() + '<failure message="';
+  text += escapeXml(%trimr(testFailureEvent.msg));
+  text += '">' + CRLF;
   appendToXmlFile(text);
 
-  // always the first section of the <failure> element
   VSCode_writeCallStack(testFailureEvent.pCallstk);
-
   VSCode_writeFailureValues(testFailureEvent);
-
   VSCode_writeDiagnosticMessages(testFailureEvent);
+
+  // close <failure> element
+  text = indent() + '</failure>' + CRLF;
+  appendToXmlFile(text);
 
 end-proc;
 
