@@ -284,9 +284,6 @@
                           TOFILE(&LIB/&QINCLUDE) FROMMBR(JOBLOG) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
-                          TOFILE(&LIB/&QINCLUDE) FROMMBR(JSONWTR) +
-                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
-             CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
                           TOFILE(&LIB/&QINCLUDE) FROMMBR(FDINFDS) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QINCLUDE) +
@@ -472,9 +469,6 @@
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSRC) +
                           TOFILE(&LIB/&QSRC) FROMMBR(JOBLOG) +
-                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
-             CPYF       FROMFILE(&DEVLIB/&QSRC) +
-                          TOFILE(&LIB/&QSRC) FROMMBR(JSONWTR) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSRC) +
                           TOFILE(&LIB/&QSRC) FROMMBR(LIBL) +
@@ -664,9 +658,6 @@
                           TOFILE(&LIB/&QSYSINC) FROMMBR(QUSROBJD) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
-                          TOFILE(&LIB/&QSYSINC) FROMMBR(QWCRDTAA) +
-                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
-             CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
                           TOFILE(&LIB/&QSYSINC) FROMMBR(QWCRTVCA) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QSYSINC) +
@@ -817,9 +808,6 @@
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(JOBLOGT) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
-                          TOFILE(&LIB/&QUNITTEST) FROMMBR(JSONWTRT) +
-                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
-             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(LIBLC) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
@@ -857,9 +845,6 @@
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(MKJOBLOGT) +
-                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
-             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
-                          TOFILE(&LIB/&QUNITTEST) FROMMBR(MKJSONWTRT) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(MKLIBLT) +

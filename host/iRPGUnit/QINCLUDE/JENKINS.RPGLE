@@ -25,35 +25,6 @@ dcl-pr Jenkins_buildCallStackV2 extproc('JENKINS_Jenkins_buildCallStackV2');
 end-pr;
 
 ///
-// Produces a Json object with the following format:
-//
-// {
-//     "callstack": [
-//         "callstack-items"
-//     ],
-//     "expected": {
-//         "value": "theValue",
-//         "type": "theType",
-//         "length": 0,
-//         "originalLength": 0
-//     },
-//     "actual": {
-//         "value": "theValue",
-//         "type": "theType",
-//         "length": 0,
-//         "originalLength": 0
-//     },
-//     "diagnosticMessages": [
-//         "diagnostic-messages"
-//     ]
-// }
-///
-dcl-pr Jenkins_appendTestCaseAsJson like(xmlBufferLarge_t) extproc('JENKINS_+
-                                                                Jenkins_appendTestCaseAsJson');
-  testFailureEvent likeds(testFailureEvent_t) const;
-end-pr;
-
-///
 // Appends a test case event in text format.
 ///
 dcl-pr Jenkins_appendTestCaseFailureAsText extproc('JENKINS_Jenkins_appendTestCaseFailureAsText');

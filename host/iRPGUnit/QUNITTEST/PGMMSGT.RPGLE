@@ -11,50 +11,11 @@
 // >>PRE-COMPILER<<
 //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
 //   >>IMPORTANT<<
-//     >>PARM<<  MODULE(&LI/CALLPRC   +
-//                      &LI/CMDRUNLOG +
-//                      &LI/CMDRUNPRT +
-//                      &LI/CMDRUNSRV +
-//                      &LI/CMDRUNV   +
-//                      &LI/EXTPRC    +
-//                      &LI/EXTTST    +
-//                      &LI/JOBLOG    +
-//                      &LI/JSONWTR   +
-//                      &LI/LIBL      +
-//                      &LI/LLIST     +
-//                      &LI/OBJECT    +
-//                      &LI/OSVERSION +
-//                      &LI/PGMMSG    +
-//                      &LI/RMTRUNSRV +
-//                      &LI/STMF      +
-//                      &LI/SRCMBR    +
-//                      &LI/STRING    +
-//                      &LI/USRSPC    +
-//                      &LI/XMLWRITER +
-//                      );
-//     >>PARM<<    COPTION(*SRCSTMT *EVENTF);
-//     >>PARM<<    BNDSRVPGM(&LI/RUMEMMGR);
+//     >>PARM<<  MODULE(&LI/PGMMSGT);
+//     >>PARM<<  BNDSRVPGM(&LI/RUMEMMGR);
+//     >>PARM<<  BNDDIR(&LI/IRPGUNIT);
+//     >>PARM<<  COPTION(*EVENTF);
 //   >>END-IMPORTANT<<
-//   >>CMD<<     CMPMOD MODULE(&LI/CALLPRC  ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNLOG) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNPRT) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNSRV) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNV  ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/EXTPRC   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/EXTTST   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/JOBLOG   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/JSONWTR  ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/LIBL     ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/LLIST    ) SRCFILE(&SL/QLLIST) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/OBJECT   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/OSVERSION) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/PGMMSG   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/RMTRUNSRV) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/STMF     ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/SRCMBR   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/STRING   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/USRSPC   ) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/XMLWRITER) SRCFILE(&SL/QSRC  ) DBGVIEW(*LIST);
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================
@@ -182,10 +143,10 @@ dcl-proc test_rcvExcpMsgInfo export;
   // procedure procWithError().
   monitor;
     msgKey = getHighestMsgKey();
-    aEqual('114': excpMsgInfo.qSndStmt.specNb); // IFS Compile
+    aEqual('75': excpMsgInfo.qSndStmt.specNb); // IFS Compile
   on-error;
     getLatestEscMsg(msgKey: *ON);
-    aEqual('11400': excpMsgInfo.qSndStmt.specNb); // QSYS Compile
+    aEqual('7500': excpMsgInfo.qSndStmt.specNb); // QSYS Compile
   endmon;
 
 end-proc;
@@ -322,10 +283,10 @@ dcl-proc test_monitorMessage export;
   // procedure procWithError().
   monitor;
     msgKey = getHighestMsgKey();
-    aEqual('114': msgInfo4.specNb); // IFS Compile
+    aEqual('75': msgInfo4.specNb); // IFS Compile
   on-error;
     getLatestEscMsg(msgKey: *ON);
-    aEqual('11400': msgInfo4.specNb); // QSYS Compile
+    aEqual('7500': msgInfo4.specNb); // QSYS Compile
   endmon;
 
 end-proc;

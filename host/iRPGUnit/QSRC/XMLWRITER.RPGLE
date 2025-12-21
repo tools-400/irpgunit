@@ -29,7 +29,6 @@ ctl-opt DECEDIT('0.') NOMAIN;
 /include qinclude,CALLSTACK
 /include qinclude,CMDRUNSRV
 /include qinclude,JENKINS
-/include qinclude,JSONWTR
 /include qinclude,PGMMSG
 /include qinclude,CMDRUN
 /include qinclude,OSVERSION
@@ -233,7 +232,7 @@ dcl-proc writeProperties;
 
   writeProperty('os.version': OS_getVersion());
   writeProperty('irpgunit.version': RPGUNIT_VERSION);
-  writeProperty('output.type': g_xmlWriter.xmlType);
+  writeProperty('output.type': %trim(g_xmlWriter.xmlType));
 
   text = indent() + '</properties>' + CRLF;
   appendToXmlFile(text);

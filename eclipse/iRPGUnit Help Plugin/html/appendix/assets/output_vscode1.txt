@@ -4,14 +4,14 @@
     <property name="currentlibrary" value="RADDATZ400"/>
     <property name="user.librarylist" value="RPGUNITDVP QGPL QTEMP"/>
     <property name="os.version" value="V7R5M0"/>
-    <property name="irpgunit.version" value="v6.0.0.b012"/>
-    <property name="output.type" value="*VSCODE1  "/>
+    <property name="irpgunit.version" value="v6.0.0.r"/>
+    <property name="output.type" value="*VSCODE1"/>
   </properties>
-  <testcase name="test_assertEqual_string" assertions="1" classname="RUPLUGINT9" time="490.000" outcome="Failure" >
+  <testcase name="test_assertEqual_string" assertions="1" classname="RUPLUGINT9" time="427" outcome="Failure" >
   <assertion name="assertEqual_string" outcome="Failure" >
     <failure message="Expected &apos;Dagobert Duck&apos;, but was &apos;Donald Duck&apos;.">
       <callstack size="1">
-        <item>test_assertEqual_string (RUPLUGINT9->RUPLUGINT9:5700)</item>
+        <item program="RUPLUGINT9" programLibrary="RPGUNITDVP" module="RUPLUGINT9" moduleLibrary="RPGUNITDVP" procedure="test_assertEqual_string" line="5700"/>
       </callstack>
       <expected>
         <value>Dagobert Duck</value>

@@ -35,8 +35,6 @@ ctl-opt DECEDIT('0.') NOMAIN;
 
 /include qinclude,VSCODE
 
-/include qsysinc,QWCRDTAA
-
 /include qinclude,SDS
 
 dcl-ds g likeds(sharedChars_t) import;
@@ -114,7 +112,6 @@ dcl-proc VSCode_writeTestCaseEvents;
     text += '>' + CRLF;
     appendToXmlFile(text);
 
-
     VSCode_writeTestCaseEvent(abstractTestEvent);
 
     // close <assertion> element
@@ -152,15 +149,8 @@ dcl-proc VSCode_writeTestCaseEvent;
            + '" type="' + escapeXml(%trimr(runtimeErrorEvent.msg.id)) + '">' + CRLF;
     appendToXmlFile(text);
 
-    text = escapeXml(%trimr(runtimeErrorEvent.msg.qSndStmt.procNm) + ' ('+
-                      %trim(runtimeErrorEvent.msg.qSndStmt.qPgm.nm) + '->'+
-                      %trim(runtimeErrorEvent.msg.qSndStmt.qMod.nm) + ':');
-    if (runtimeErrorEvent.msg.qSndStmt.specNb = *blank);
-      text += '*N)' + CRLF;
-    else;
-      text += escapeXml(%trim(runtimeErrorEvent.msg.qSndStmt.specNb) + ')');
-    endif;
-    writeXmlElement('messageSender': text);
+    VSCode_writeCallstackEntry(runtimeErrorEvent.msg.qSndStmt: 'messageSender');
+    VSCode_writeCallstackEntry(runtimeErrorEvent.msg.qRcvStmt: 'messageReceiver');
 
     // close <error> element
     text = indent() + '</error>' + CRLF;
@@ -176,16 +166,9 @@ dcl-proc VSCode_writeTestCaseEvent;
     text += '">';
     appendToXmlFile(text);
 
-    if (not isUseJsonFormat());
-      VSCode_appendTestCaseAsXml(abstractTestEvent.failure);
-      text = indent();
-      appendToXmlFile(text);
-    else;
-      text = g.START_CDATA;
-      text += Jenkins_appendTestCaseAsJson(abstractTestEvent.failure);
-      text += indent() + g.END_CDATA;
-      appendToXmlFile(text);
-    endif;
+    VSCode_appendTestCaseAsXml(abstractTestEvent.failure);
+    text = indent();
+    appendToXmlFile(text);
 
     // close <failure> element
     text = '</failure>' + CRLF;
@@ -260,26 +243,37 @@ dcl-proc VSCode_writeCallstackEntries;
 
   Callstack_resetIteration(pCallstack);
   dow (Callstack_getNext(pCallstack: callstkEnt));
-    VSCode_writeCallstackEntry(callstkEnt);
+    VSCode_writeCallstackEntry(callstkEnt.qStmt: 'item');
   enddo;
 
 end-proc;
 
 // --------------------------------------------------------
 // Writes a callstack entry in VS Code style.
+// <item program="TEMPDET" module="TEMPDET" procedure="test_getDeptDetail_notFound" line="1465"/>
 // --------------------------------------------------------
 dcl-proc VSCode_writeCallstackEntry;
   dcl-pi *n extproc(*dclcase);
-    callstkEnt likeds(callstkEnt_t) const;
+    qStmt       likeds(qStatement_t) const;
+    elementName like(xmlName_t) const;
   end-pi;
 
   dcl-s text like(xmlBuffer_t);
 
-  text = callstkEnt.qStmt.procNm + ' ('
-                    + %trim(callstkEnt.qStmt.qPgm.nm) + '->'
-                    + %trim(callstkEnt.qStmt.qMod.nm) + ':'
-                    + %trim(callstkEnt.qStmt.specNb) + ')';
-  writeXmlElement('item': text);
+  g_xmlWriter.indLvl += 1;
+
+  text = indent() + '<' + elementName;
+  text += ' program="' + %trim(qStmt.qPgm.nm) + '"';
+  text += ' programLibrary="' + %trim(qStmt.qPgm.lib) + '"';
+  text += ' module="' + %trim(qStmt.qMod.nm) + '"';
+  text += ' moduleLibrary="' + %trim(qStmt.qMod.lib) + '"';
+  text += ' procedure="' + %trim(qStmt.procNm) + '"';
+  text += ' line="' + %trim(qStmt.specNb) + '"/>' + CRLF;
+
+  appendToXmlFile(text);
+
+on-exit;
+  g_xmlWriter.indLvl -= 1;
 
 end-proc;
 
@@ -376,51 +370,3 @@ on-exit;
 
 end-proc;
 
-//----------------------------------------------------------------------
-// Returns *on if the failure event is written in Json format.
-// CRTDTAARA DTAARA(RPGUNITDVP/RPGUNIT1) TYPE(*LGL) VALUE('1')
-//   TEXT('iRPGUnit - Enable Json Callstack Format')
-// CHGDTAARA DTAARA(RPGUNITDVP/RPGUNIT1 *ALL) VALUE('0')
-// DLTDTAARA DTAARA(RPGUNITDVP/RPGUNIT1)
-//
-// Options:
-//   not found -> XML
-//   '0'       -> XML
-//   '1'       -> Json
-//----------------------------------------------------------------------
-dcl-proc isUseJsonFormat;
-  dcl-pi *n ind extproc(*dclcase);
-  end-pi;
-
-  dcl-s isJsonFormat ind;
-  dcl-s charData char(1);
-  dcl-ds data likeds(rtvDtaAra_t) inz;
-  dcl-ds qDtaAra likeds(object_t) inz;
-  dcl-ds errorCode likeds(errorCode_t) inz(*likeds);
-
-  clear qDtaAra;
-  qDtaAra.nm = 'RPGUNIT1';
-  qDtaAra.lib = sds.pgmLib;
-
-  reset errorCode;
-
-  isJsonFormat = *off;
-
-  QWCRDTAA(data: %size(data): qDtaAra: 1: 1: errorCode);
-  if (errorCode.bytAvl = 0);
-    select;
-    when (data.type = '*LGL');
-      isJsonFormat = %subst(data.value: 1: data.length);
-    when (data.type = '*CHAR');
-      charData = %subst(data.value: 1: data.length);
-      if (charData = '1');
-        isJsonFormat = *on;
-      else;
-        isJsonFormat = *off;
-      endif;
-    endsl;
-  endif;
-
-  return isJsonFormat;
-
-end-proc;

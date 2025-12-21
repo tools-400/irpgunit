@@ -4,13 +4,13 @@ Unit Testing for RPG Developers on IBM i.
 
 ## Description
 
-iRPGUnit is an open source plugin for RDi 9.5.1.3+. The plug-in provides unit tests for RPG and Cobol (experimental) on IBM i.
+iRPGUnit is an open source plugin for RDi 9.6.0.13+. The plug-in provides unit tests for RPG and Cobol (experimental) on IBM i.
 
 iRPGUnit is a fork of the RPGUnit project, providing enhancements and an Eclipse plug-in for running unit test from your IBM Rational Developer for i.
 
 Further information about iRPGUnit are available on the [iRPGUnit Web Site](https://tools-400.github.io/irpgunit/).
 
-Please refer to the [iRPGUnit Version History](<https://tools-400.github.io/irpgunit/files/iRPGUnit for RDi 9.5.1.3+.pdf>) document to find out which operating system release is required for installing the iRPGUnit library.
+Please refer to the [iRPGUnit Version History](<https://tools-400.github.io/irpgunit/files/iRPGUnit for RDi 9.6.0.13+.pdf>) document to find out which operating system release is required for installing the iRPGUnit library.
 
 ## Preconditions
 
