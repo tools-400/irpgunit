@@ -12,8 +12,7 @@
 ///
 // Builds and returns a callstack version 1 item.
 ///
-dcl-pr Jenkins_appendTestCaseFailureV1 like(xmlBufferLarge_t) extproc('JENKINS_+
-                                                        Jenkins_appendTestCaseFailureV1');
+dcl-pr Jenkins_writeTestCaseFailureV1 extproc('JENKINS_Jenkins_writeTestCaseFailureV1');
   pCallstack  pointer const;
 end-pr;
 
@@ -27,7 +26,7 @@ end-pr;
 ///
 // Appends a test case event in text format.
 ///
-dcl-pr Jenkins_appendTestCaseFailureAsText extproc('JENKINS_Jenkins_appendTestCaseFailureAsText');
+dcl-pr Jenkins_writeTestCaseFailureAsText extproc('JENKINS_Jenkins_writeTestCaseFailureAsText');
   testFailureEvent likeds(testFailureEvent_t) const;
 end-pr;
 

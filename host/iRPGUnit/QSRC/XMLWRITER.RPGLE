@@ -49,11 +49,11 @@ dcl-c UTF8_START_CDATA u'003C0021005B00430044004100540041005B';
 dcl-c UTF8_END_CDATA u'005D005D003E';
 
 // The constents below are made of invariant charcaters.
-dcl-c TAB '  ';
-
 dcl-c XML_OUTCOME_SUCCESS 'Success';
 dcl-c XML_OUTCOME_FAILURE 'Failure';
 dcl-c XML_OUTCOME_ERROR 'Error';
+
+dcl-c TAB '  ';
 
 dcl-ds g likeds(sharedChars_t) export;
 dcl-ds g_xmlWriter likeds(xmlWriter_t) export;
@@ -92,6 +92,7 @@ dcl-proc writeXmlFile export;
   clear g_xmlWriter;
   g_xmlWriter.xmlType = xmlType;
   g_xmlWriter.isJUnitStyle = isJUnitStyle;
+  g_xmlWriter.isPrettyPrint = *on;
   g_xmlWriter.indLvl = 0;
   g_hFile = -1;
 
@@ -185,13 +186,13 @@ dcl-proc writeHeader;
 
   resolvedObject = resolveObjectPath(testSuiteName : '*SRVPGM');
 
-  text = '<?xml version="1.0" encoding="UTF-8" ?>' + CRLF +
-         '<testsuite errors="' + %char(result.errorCnt) + '" ' +
-         'failures="' + %char(result.failureCnt) + '" ' +
-         'hostname="' + getServerName() + '" ' +
-         'id="0" ' +
-         'name="' + %trimr(resolvedObject.lib) + '/' + %trimr(resolvedObject.nm) + '" ' +
-         'tests="' + %char(testSuite.testCasesCnt) + '" >' + CRLF;
+  text = '<?xml version="1.0" encoding="UTF-8" ?>' + newLine() +
+         '<testsuite errors="' + %char(result.errorCnt) + '"' +
+         ' failures="' + %char(result.failureCnt) + '"' +
+         ' hostname="' + getServerName() + '"' +
+         ' id="0"' +
+         ' name="' + %trimr(resolvedObject.lib) + '/' + %trimr(resolvedObject.nm) + '"' +
+         ' tests="' + %char(testSuite.testCasesCnt) + '">' + newLine();
 
   appendToXmlFile(text);
 
@@ -210,7 +211,7 @@ dcl-proc writeProperties;
 
   g_xmlWriter.indLvl += 1;
 
-  text = indent() + '<properties>' + CRLF;
+  text = indent() + '<properties>' + newLine();
   appendToXmlFile(text);
 
   libl = getLibl();
@@ -234,7 +235,7 @@ dcl-proc writeProperties;
   writeProperty('irpgunit.version': RPGUNIT_VERSION);
   writeProperty('output.type': %trim(g_xmlWriter.xmlType));
 
-  text = indent() + '</properties>' + CRLF;
+  text = indent() + '</properties>' + newLine();
   appendToXmlFile(text);
 
 on-exit;
@@ -255,7 +256,7 @@ dcl-proc writeProperty;
 
   g_xmlWriter.indLvl += 1;
 
-  text = indent() + '<property name="' + name + '" value="' + value + '"/>' + CRLF;
+  text = indent() + '<property name="' + name + '" value="' + value + '"/>' + newLine();
   appendToXmlFile(text);
 
 on-exit;
@@ -293,17 +294,17 @@ dcl-proc writeTestCasesJenkinsStyle;
     dow (pAbstractTestEvent <> *null);
 
       text = indent() + '<testcase name="'
-                 + buildReportTestCaseName(testCaseResult: abstractTestEvent) + '" ';
-      text += 'assertions="' + %char(getReportNumAsserts(testCaseResult)) + '" ';
-      text += 'classname="' + %trimr(testSuiteName.nm) + '" '; // TODO: should look which module
-      text += 'time="' + %char(execTimeSecs) + '" ';           // exports this testcase
-      text += '>' + CRLF;
+                 + buildReportTestCaseName(testCaseResult: abstractTestEvent) + '"';
+      text += ' assertions="' + %char(getReportNumAsserts(testCaseResult)) + '"';
+      text += ' classname="' + %trimr(testSuiteName.nm) + '"'; // TODO: should look which module
+      text += ' time="' + %char(execTimeSecs) + '"';           // exports this testcase
+      text += '>' + newLine();
       appendToXmlFile(text);
 
-      appendTestCaseEventXml(abstractTestEvent);
+      writeTestCaseEventXml(abstractTestEvent);
 
       // close <testcase> element
-      text = indent() + '</testcase>' + CRLF;
+      text = indent() + '</testcase>' + newLine();
       appendToXmlFile(text);
 
       pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
@@ -320,7 +321,7 @@ end-proc;
 //----------------------------------------------------------------------
 // Returns the XML representation of a test case event.
 //----------------------------------------------------------------------
-dcl-proc appendTestCaseEventXml export;
+dcl-proc writeTestCaseEventXml export;
   dcl-pi *n;
     abstractTestEvent likeds(abstractTestEvent_t) const;
   end-pi;
@@ -338,19 +339,19 @@ dcl-proc appendTestCaseEventXml export;
     text += indent() + '<error message="'
             + escapeXml(%trimr(abstractTestEvent.error.msg.txt))
             + '" type="' + escapeXml(%trimr(abstractTestEvent.error.msg.id)) + '">'
-            + CRLF;
+            + newLine();
     text += escapeXml(%trimr(abstractTestEvent.error.msg.qSndStmt.procNm) + ' ('
                       + %trim(abstractTestEvent.error.msg.qSndStmt.qPgm.nm) + '->'
                       + %trim(abstractTestEvent.error.msg.qSndStmt.qMod.nm) + ':');
 
     if (abstractTestEvent.error.msg.qSndStmt.specNb = *blank);
-      text += '*N)' + CRLF;
+      text += '*N)' + newLine();
     else;
-      text += escapeXml(%trim(abstractTestEvent.error.msg.qSndStmt.specNb) + ')') + CRLF;
+      text += escapeXml(%trim(abstractTestEvent.error.msg.qSndStmt.specNb) + ')') + newLine();
     endif;
 
     // close <error> element
-    text += indent() + '</error>' + CRLF;
+    text += indent() + '</error>' + newLine();
     appendToXmlFile(text);
 
   when (abstractTestEvent.outcome = TEST_CASE_FAILURE);
@@ -363,15 +364,13 @@ dcl-proc appendTestCaseEventXml export;
 
     // always the first section of the <failure> element
     if (g_xmlWriter.xmlType = XML_JENKINS_TYPE_1);
-      text = Jenkins_appendTestCaseFailureV1(abstractTestEvent.failure.pCallstk) + CRLF;
-      text += indent();
-      appendToXmlFile(text);
+      Jenkins_writeTestCaseFailureV1(abstractTestEvent.failure.pCallstk);
     else;
-      Jenkins_appendTestCaseFailureAsText(abstractTestEvent.failure);
+      Jenkins_writeTestCaseFailureAsText(abstractTestEvent.failure);
     endif;
 
     // close <failure> element
-    text = '</failure>' + CRLF;
+    text = '</failure>' + newLine();
     appendToXmlFile(text);
 
   endsl;
@@ -461,7 +460,7 @@ dcl-proc writeXmlElement export;
   if (value <> '');
     text = indent() + startXmlElement(name);
     text += value;
-    text += endXmlElement(name) + CRLF;
+    text += endXmlElement(name) + newLine();
     appendToXmlFile(text);
   endif;
 
@@ -509,8 +508,8 @@ end-proc;
 // https://stackoverflow.com/questions/1091945/what-characters-do-i-need-to-escape-in-xml-documents
 //----------------------------------------------------------------------
 dcl-proc escapeXml export;
-  dcl-pi *n varchar(100000);
-    xml varchar(100000) const;
+  dcl-pi *n like(xmlBuffer_t);
+    xml like(xmlBuffer_t) options(*varsize) const;
   end-pi;
 
   dcl-s escaped varchar(100000);
@@ -600,7 +599,7 @@ dcl-proc getServerName;
 end-proc;
 
 //----------------------------------------------------------------------
-// Returns indention for pretty printing.
+// Returns the indention for pretty printing.
 //----------------------------------------------------------------------
 dcl-proc indent export;
   dcl-pi *n varchar(100);
@@ -609,11 +608,34 @@ dcl-proc indent export;
   dcl-s i int(10);
   dcl-s indention varchar(100);
 
-  for i = 1 to g_xmlWriter.indLvl;
-    indention += TAB;
-  endfor;
+  indention = '';
+
+  if (g_xmlWriter.isPrettyPrint);
+    for i = 1 to g_xmlWriter.indLvl;
+      indention += TAB;
+    endfor;
+  endif;
 
   return indention;
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Returns the linefeed character for pretty printing.
+//----------------------------------------------------------------------
+dcl-proc newLine export;
+  dcl-pi *n varchar(10);
+  end-pi;
+
+  dcl-s linefeed varchar(10);
+
+  if (g_xmlWriter.isPrettyPrint);
+    linefeed = CRLF;
+  else;
+    linefeed = '';
+  endif;
+
+  return linefeed;
 
 end-proc;
 

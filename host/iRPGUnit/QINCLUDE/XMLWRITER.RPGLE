@@ -63,9 +63,10 @@ dcl-s xmlBuffer_t varchar(3000) template;
 dcl-s xmlBufferLarge_t varchar(10000) template;
 
 dcl-ds xmlWriter_t qualified template;
-  xmlType      like(xmlType_t);
-  isJUnitStyle ind;
-  indLvl       int(10);
+  xmlType       like(xmlType_t);
+  isJUnitStyle  ind;
+  isPrettyPrint ind;
+  indLvl        int(10);
 end-ds;
 
 dcl-ds sharedChars_t qualified template;
@@ -76,7 +77,7 @@ end-ds;
 ///
 // Returns the XML representation of a test case event.
 ///
-dcl-pr appendTestCaseEventXml extproc('XMLWRITER_appendTestCaseEventXml');
+dcl-pr writeTestCaseEventXml extproc('XMLWRITER_writeTestCaseEventXml');
   abstractTestEvent likeds(abstractTestEvent_t) const;
 end-pr;
 
@@ -94,8 +95,8 @@ end-pr;
 // Use this StackOverflow answer for implementing escaping:
 // https://stackoverflow.com/questions/1091945/what-characters-do-i-need-to-escape-in-xml-documents
 ///
-dcl-pr escapeXml varchar(100000) extproc('XMLWRITER_escapeXml');
-  xml varchar(100000) const;
+dcl-pr escapeXml like(xmlBuffer_t) extproc('XMLWRITER_escapeXml');
+  xml like(xmlBuffer_t) options(*varsize) const;
 end-pr;
 
 ///
@@ -113,9 +114,15 @@ dcl-pr getTestCaseName like(procNm_t) extproc('XMLWRITER_getTestCaseName');
 end-pr;
 
 ///
-// Returns indention for pretty printing.
+// Returns the indention for pretty printing.
 ///
 dcl-pr indent varchar(100) extproc('XMLWRITER_indent');
+end-pr;
+
+///
+// Returns the linefeed character for pretty printing.
+///
+dcl-pr newLine varchar(10) extproc('XMLWRITER_newLine');
 end-pr;
 
 ///

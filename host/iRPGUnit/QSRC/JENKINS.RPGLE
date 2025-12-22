@@ -31,28 +31,32 @@ ctl-opt DECEDIT('0.') NOMAIN;
 
 /include qinclude,JENKINS
 
+dcl-c TAB_TEXT '  ';
+
 dcl-ds g likeds(sharedChars_t) import;
 
 //----------------------------------------------------------------------
 // Builds and returns the callstack as XML.
 //----------------------------------------------------------------------
-dcl-proc Jenkins_appendTestCaseFailureV1 export;
-  dcl-pi *n like(xmlBufferLarge_t);
+dcl-proc Jenkins_writeTestCaseFailureV1 export;
+  dcl-pi *n;
     pCallstack  pointer const;
   end-pi;
 
   dcl-s text like(xmlBufferLarge_t);
 
-  text += escapeXml(Jenkins_buildCallStackV1(pCallstack));
+  text += Jenkins_buildCallStackAsTextV1(pCallstack);
 
-  return text;
+  text += newLine() + indent();
+  appendToXmlFile(text);
 
 end-proc;
 
 //----------------------------------------------------------------------
 // Builds and returns a callstack version 1 item.
+// NO PRETTY PRINTING!
 //----------------------------------------------------------------------
-dcl-proc Jenkins_buildCallStackV1;
+dcl-proc Jenkins_buildCallStackAsTextV1;
   dcl-pi *n like(xmlBufferLarge_t) extproc(*dclcase);
     pCallstk pointer const;
   end-pi;
@@ -60,11 +64,10 @@ dcl-proc Jenkins_buildCallStackV1;
   dcl-s text like(xmlBufferLarge_t);
   dcl-ds callstkEnt likeds(callStkEnt_t) inz;
 
-
   Callstack_resetIteration(pCallstk);
   dow (Callstack_getNext(pCallstk: callstkEnt));
     // example: iEqual (RUTESTCASE->ASSERT:124)
-    text += CRLF + buildCallstackEntry(callstkEnt);
+    text += CRLF + escapeXml(buildCallstackEntry(callstkEnt));
   enddo;
 
   return text;
@@ -94,7 +97,7 @@ end-proc;
 // --------------------------------------------------------
 // Appends a test case event in text format.
 // --------------------------------------------------------
-dcl-proc Jenkins_appendTestCaseFailureAsText export;
+dcl-proc Jenkins_writeTestCaseFailureAsText export;
   dcl-pi *n;
     testFailureEvent likeds(testFailureEvent_t) const;
   end-pi;
@@ -104,11 +107,11 @@ dcl-proc Jenkins_appendTestCaseFailureAsText export;
   text = g.START_CDATA;
   appendToXmlFile(text);
 
-  Jenkins_appendCallStackAsText(testFailureEvent.pCallstk);
+  Jenkins_writeCallStackAsTextV2(testFailureEvent.pCallstk);
 
-  Jenkins_appendFailureValuesAsText(testFailureEvent);
+  Jenkins_writeFailureValuesAsText(testFailureEvent);
 
-  Jenkins_appendDiagnosticMessagesAsText(testFailureEvent);
+  Jenkins_writeDiagnosticMessagesAsText(testFailureEvent);
 
   text = g.END_CDATA;
   appendToXmlFile(text);
@@ -117,8 +120,9 @@ end-proc;
 
 //----------------------------------------------------------------------
 // Appends the diagnostic messages in Json format.
+// NO PRETTY PRINTING!
 //----------------------------------------------------------------------
-dcl-proc Jenkins_appendDiagnosticMessagesAsText;
+dcl-proc Jenkins_writeDiagnosticMessagesAsText;
   dcl-pi *n extproc(*dclcase);
     testFailureEvent likeds(testFailureEvent_t) const;
   end-pi;
@@ -136,12 +140,14 @@ dcl-proc Jenkins_appendDiagnosticMessagesAsText;
     appendToXmlFile(text);
 
     if (testFailureEvent.logExpected.type = DT_UNDEFINED);
-      text = '  ' + crtNoValueMsg(LABEL_EXPECTED: testFailureEvent.logExpected.assertProc) + CRLF;
+      text = TAB_TEXT
+             + crtNoValueMsg(LABEL_EXPECTED: testFailureEvent.logExpected.assertProc) + CRLF;
       appendToXmlFile(text);
     endif;
 
     if (testFailureEvent.logActual.type = DT_UNDEFINED);
-      text = '  ' + crtNoValueMsg(LABEL_ACTUAL: testFailureEvent.logActual.assertProc) + CRLF;
+      text = TAB_TEXT
+             + crtNoValueMsg(LABEL_ACTUAL: testFailureEvent.logActual.assertProc) + CRLF;
       appendToXmlFile(text);
     endif;
 
@@ -151,8 +157,9 @@ end-proc;
 
 //----------------------------------------------------------------------
 // Builds and returns a callstack version 2 item.
+// NO PRETTY PRINTING!
 //----------------------------------------------------------------------
-dcl-proc Jenkins_appendCallStackAsText;
+dcl-proc Jenkins_writeCallStackAsTextV2;
   dcl-pi *n extproc(*dclcase);
     pCallstk pointer const;
   end-pi;
@@ -176,7 +183,7 @@ dcl-proc Jenkins_appendCallStackAsText;
   Callstack_resetIteration(pCallstk);
   dow (Callstack_getNext(pCallstk: callstkEnt));
     // example: iEqual (RUTESTCASE->ASSERT:124)
-    text = '  ' + buildCallstackEntry(callstkEnt) + CRLF;
+    text = TAB_TEXT + buildCallstackEntry(callstkEnt) + CRLF;
     appendToXmlFile(text);
   enddo;
 
@@ -185,7 +192,7 @@ end-proc;
 //----------------------------------------------------------------------
 // Appends the log value (expected and actual) to the Json object.
 //----------------------------------------------------------------------
-dcl-proc Jenkins_appendFailureValuesAsText;
+dcl-proc Jenkins_writeFailureValuesAsText;
   dcl-pi *n extproc(*dclcase);
     testFailureEvent likeds(testFailureEvent_t) const;
   end-pi;
@@ -197,6 +204,7 @@ end-proc;
 
 //----------------------------------------------------------------------
 // Appends a log value (expected or actual) to the Json object.
+// NO PRETTY PRINTING!
 //----------------------------------------------------------------------
 dcl-proc Jenkins_appendLogValueAsText;
   dcl-pi *n extproc(*dclcase);

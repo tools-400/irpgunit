@@ -64,18 +64,18 @@ dcl-proc VSCode_writeTestCases export;
     execTime = testCaseResult.execTimeMSecs;
 
     // open <testcase> element
-    text = indent() + '<testcase name="' + getTestCaseName(testCaseResult) + '" ';
-    text += 'assertions="' + %char(testCaseResult.assertCnt) + '" ';
-    text += 'classname="' + %trimr(testSuiteName.nm) + '" '; // TODO: should look which module
-    text += 'time="' + %char(execTime) + '" ';               // exports this testcase
-    text += 'outcome="' + outcomeToXml(testCaseResult.outcome) + '" ';
-    text += '>' + CRLF;
+    text = indent() + '<testcase name="' + getTestCaseName(testCaseResult) + '"';
+    text += ' assertions="' + %char(testCaseResult.assertCnt) + '"';
+    text += ' classname="' + %trimr(testSuiteName.nm) + '"'; // TODO: should look which module
+    text += ' time="' + %char(execTime) + '"';               // exports this testcase
+    text += ' outcome="' + outcomeToXml(testCaseResult.outcome) + '"';
+    text += '>' + newLine();
     appendToXmlFile(text);
 
     VSCode_writeTestCaseEvents(testCaseResult);
 
     // close <testcase> element
-    text = indent() + '</testcase>' + CRLF;
+    text = indent() + '</testcase>' + newLine();
     appendToXmlFile(text);
 
     pTestCaseResult = list_getNext(testSuite.testResults);
@@ -109,15 +109,15 @@ dcl-proc VSCode_writeTestCaseEvents;
 
     // open <assertion> element
     text = indent() + '<assertion name="'
-                                   + getAssertProcName(abstractTestEvent) + '" ';
-    text += 'outcome="' + outcomeToXml(abstractTestEvent.outcome) + '" ';
-    text += '>' + CRLF;
+                                   + getAssertProcName(abstractTestEvent) + '"';
+    text += ' outcome="' + outcomeToXml(abstractTestEvent.outcome) + '"';
+    text += '>' + newLine();
     appendToXmlFile(text);
 
     VSCode_writeTestCaseEvent(abstractTestEvent);
 
     // close <assertion> element
-    text = indent() + '</assertion>' + CRLF;
+    text = indent() + '</assertion>' + newLine();
     appendToXmlFile(text);
 
     pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
@@ -165,12 +165,12 @@ dcl-proc VSCode_appendTestCaseSuccess;
 
   dcl-s text like(xmlBuffer_t);
 
-  text = indent() + startXmlElement('success') + CRLF;
+  text = indent() + startXmlElement('success') + newLine();
   appendToXmlFile(text);
 
   VSCode_writeLogValue(LABEL_EXPECTED: testSuccessEvent.logExpected);
 
-  text = indent() + endXmlElement('success') + CRLF;
+  text = indent() + endXmlElement('success') + newLine();
   appendToXmlFile(text);
 
 end-proc;
@@ -188,14 +188,14 @@ dcl-proc VSCode_appendTestCaseError;
     // start <error> element
     text = indent() + '<error message="'
            + escapeXml(%trimr(runtimeErrorEvent.msg.txt))
-           + '" type="' + escapeXml(%trimr(runtimeErrorEvent.msg.id)) + '">' + CRLF;
+           + '" type="' + escapeXml(%trimr(runtimeErrorEvent.msg.id)) + '">' + newLine();
     appendToXmlFile(text);
 
     VSCode_writeCallstackEntry(runtimeErrorEvent.msg.qSndStmt: 'messageSender');
     VSCode_writeCallstackEntry(runtimeErrorEvent.msg.qRcvStmt: 'messageReceiver');
 
     // close <error> element
-    text = indent() + '</error>' + CRLF;
+    text = indent() + '</error>' + newLine();
     appendToXmlFile(text);
 
 end-proc;
@@ -213,7 +213,7 @@ dcl-proc VSCode_appendTestCaseFailure;
   // start <failure> element
   text = indent() + '<failure message="';
   text += escapeXml(%trimr(testFailureEvent.msg));
-  text += '">' + CRLF;
+  text += '">' + newLine();
   appendToXmlFile(text);
 
   VSCode_writeCallStack(testFailureEvent.pCallstk);
@@ -221,7 +221,7 @@ dcl-proc VSCode_appendTestCaseFailure;
   VSCode_writeDiagnosticMessages(testFailureEvent);
 
   // close <failure> element
-  text = indent() + '</failure>' + CRLF;
+  text = indent() + '</failure>' + newLine();
   appendToXmlFile(text);
 
 end-proc;
@@ -241,12 +241,12 @@ dcl-proc VSCode_writeCallStack;
 
   // start Json object
   size = Callstack_getNumE(pCallstk);
-  text = indent() + '<callstack size="' + %char(size) + '">' + CRLF;
+  text = indent() + '<callstack size="' + %char(size) + '">' + newLine();
   appendToXmlFile(text);
 
   VSCode_writeCallstackEntries(pCallstk);
 
-  text = indent() + '</callstack>' + CRLF;
+  text = indent() + '</callstack>' + newLine();
   appendToXmlFile(text);
 
 on-exit;
@@ -291,7 +291,7 @@ dcl-proc VSCode_writeCallstackEntry;
   text += ' module="' + %trim(qStmt.qMod.nm) + '"';
   text += ' moduleLibrary="' + %trim(qStmt.qMod.lib) + '"';
   text += ' procedure="' + %trim(qStmt.procNm) + '"';
-  text += ' line="' + %trim(qStmt.specNb) + '"/>' + CRLF;
+  text += ' line="' + %trim(qStmt.specNb) + '"/>' + newLine();
 
   appendToXmlFile(text);
 
@@ -327,7 +327,7 @@ dcl-proc VSCode_writeLogValue;
   g_xmlWriter.indLvl += 1;
 
   if (logValue.type <> NO_VALUE);
-    text = indent() + startXmlElement(name) + CRLF;
+    text = indent() + startXmlElement(name) + newLine();
     appendToXmlFile(text);
 
     writeXmlElement('value': logValue.value);
@@ -335,9 +335,9 @@ dcl-proc VSCode_writeLogValue;
     writeXmlElement('length': %char(logValue.length));
     writeXmlElement('originalLength': %char(logValue.originalLength));
 
-    text = indent() + endXmlElement(name) + CRLF;
+    text = indent() + endXmlElement(name) + newLine();
   else;
-    text = indent() + emptyXmlElement(name) + CRLF;
+    text = indent() + emptyXmlElement(name) + newLine();
   endif;
 
   appendToXmlFile(text);
@@ -377,13 +377,13 @@ dcl-proc VSCode_writeDiagnosticMessages;
 
   if (size > 0);
 
-    text = indent() + '<diagnosticMessages size="' + %char(size) + '">' + CRLF;
+    text = indent() + '<diagnosticMessages size="' + %char(size) + '">' + newLine();
     appendToXmlFile(text);
 
     writeXmlElement('item': message1);
     writeXmlElement('item': message2);
 
-    text = indent() + '</diagnosticMessages>' + CRLF;
+    text = indent() + '</diagnosticMessages>' + newLine();
     appendToXmlFile(text);
 
   endif;
