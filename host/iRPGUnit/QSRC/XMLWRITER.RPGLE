@@ -60,15 +60,6 @@ dcl-ds g_xmlWriter likeds(xmlWriter_t) export;
 
 dcl-s g_hFile int(10);
 
-dcl-ds g_status qualified inz;
-  json                varchar(50000);
-  json_countObject    int(10);
-  json_countArray     int(10);
-  json_indent         int(10);
-  json_isValueAllowed ind inz(*off);
-  json_isPrettyPrint  ind inz(*on);
-end-ds;
-
 //----------------------------------------------------------------------
 // Main entry point for writing the XML result file.
 //----------------------------------------------------------------------
@@ -86,8 +77,6 @@ dcl-proc writeXmlFile export;
   dcl-s indLvl int(10);
 
   initVariantCharacters();
-
-  clear g_status;
 
   clear g_xmlWriter;
   g_xmlWriter.xmlType = xmlType;
