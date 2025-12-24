@@ -192,7 +192,7 @@ dcl-proc Callstack_get export;
     return callstkEnt;
   endif;
 
-  if (callstk.header.iteration + 1 > callstk.header.numE);
+  if (idx > callstk.header.numE);
     clear callstkEnt;
     return callstkEnt;
   endif;
