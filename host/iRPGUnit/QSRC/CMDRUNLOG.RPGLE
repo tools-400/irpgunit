@@ -319,14 +319,14 @@ dcl-proc logHeader;
   dcl-s date            char(10);
 
   if not g_hdrWasPrinted;
-    getversion(version: date);
+    getVersion(version: date);
     opnPrt( srvPgm );
     logRawLine( '*** Tests of ' + %trim(srvPgm.nm) + ' ***');
     logRawLine('Date        : ' + %char(%date())
                                 + ' / '+%char(%time():*hms));
     logRawLine('Job         : ' + getFormattedJob());
     logRawLine('User        : ' + %trimr(sds.curruser));
-    logRawLine('iRPGUnit    : ' + 'v' + %trim(version));
+    logRawLine('iRPGUnit    : ' + %trim(version));
     logRawLine('IBM i       : ' + OS_getVersion());
 
     lineFeed();
