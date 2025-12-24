@@ -28,7 +28,7 @@ ctl-opt nomain;
 
 /include qinclude,VERSION
 
-dcl-proc getversion export;
+dcl-proc getVersion export;
   dcl-pi *N;
     version   char(20);
     date      char(10);
@@ -37,7 +37,7 @@ dcl-proc getversion export;
   if (RPGUNIT_DATE = 'xx.xx.xxxx'); // Date of dev. library
     date = %char(%date(): *iso);
   else;
-    date = convertdatetoiso(RPGUNIT_DATE);
+    date = convertDateToISO(RPGUNIT_DATE);
   endif;
 
   version = RPGUNIT_VERSION;
