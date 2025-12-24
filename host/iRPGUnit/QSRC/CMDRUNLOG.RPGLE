@@ -14,8 +14,6 @@
 //     >>PARM<<  OPTION(*EVENTF);
 //     >>PARM<<  DBGVIEW(*LIST);
 //   >>END-IMPORTANT<<
-//   >>CMD<<     STRREXPRC SRCMBR(A_INSTALL) SRCFILE(&LI/QBUILD) +
-//               PARM('CMPMOD &LI LIST');
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================
@@ -434,6 +432,7 @@ end-proc;
 dcl-proc logSuccess export;
   dcl-pi *N;
     testNm       like(procNm_t) const;
+    specNb       char(10) const;
     assertionCnt int(10) const;
   end-pi;
 
@@ -448,7 +447,12 @@ dcl-proc logSuccess export;
   initPrinter();
   logHeader(g_srvPgm);
 
-  logRawLine( %trimr(testNm) + ' - Success' );
+  if (specNb <> '');
+    logRawLine( %trimr(testNm) + ' (' + %trim(specNb) + ')' + ' - Success' );
+  else;
+    logRawLine( %trimr(testNm) + ' - Success' );
+  endif;
+
   logRawLine( INDENT + %char(assertionCnt) + ' assertions' );
   logRawLine( LINE_SEPARATOR );
   lineFeed();

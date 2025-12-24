@@ -163,9 +163,12 @@ dcl-proc VSCode_appendTestCaseSuccess;
     testSuccessEvent likeds(testSuccessEvent_t) const;
   end-pi;
 
+  dcl-ds callstkEnt likeds(callstkEnt_t) inz;
   dcl-s text like(xmlBuffer_t);
 
-  text = indent() + startXmlElement('success') + newLine();
+  callstkEnt = Callstack_get(testSuccessEvent.pCallstk: 1);
+
+  text = indent() + '<success line="' + %trim(callstkEnt.qStmt.specNb) + '">' + newLine();
   appendToXmlFile(text);
 
   VSCode_writeLogValue(LABEL_EXPECTED: testSuccessEvent.logExpected);

@@ -67,6 +67,7 @@ end-pr;
 ///
 dcl-pr logSuccess extproc('CMDRUNLOG_logSuccess');
   testnm       like(procNm_t) const;
+  specNb       char(10) const;
   assertionCnt int(10) const;
 end-pr;
 

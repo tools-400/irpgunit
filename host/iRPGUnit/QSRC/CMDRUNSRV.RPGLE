@@ -257,7 +257,11 @@ dcl-proc writeTestReport export;
 
   dcl-ds testCaseResult likeds(testCaseResult_t) based(pTestResult);
   dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
+  dcl-ds testSuccessEvent likeds(abstractTestEvent.success);
+  dcl-ds testFailureEvent likeds(abstractTestEvent.failure);
+  dcl-ds runtimeErrorEvent likeds(abstractTestEvent.error);
   dcl-s msg varchar(256);
+  dcl-ds callstkEnt likeds(callstkEnt_t) inz;
 
   list_resetIteration(testSuite.testResults);
   pTestResult = list_getNext(testSuite.testResults);
@@ -269,18 +273,26 @@ dcl-proc writeTestReport export;
 
       select;
       when (abstractTestEvent.outcome = TEST_CASE_SUCCESS);
-        logSuccess(testCaseResult.testName: testCaseResult.assertCnt);
+        testSuccessEvent = abstractTestEvent.success;
+        if (g_status.isJUnitStyle);
+          clear callstkEnt;
+        else;
+          callstkEnt = Callstack_get(testSuccessEvent.pCallstk: 1);
+        endif;
+        logSuccess(testCaseResult.testName: callstkEnt.qStmt.specNb: testCaseResult.assertCnt);
 
       when (abstractTestEvent.outcome = TEST_CASE_FAILURE);
+        testFailureEvent = abstractTestEvent.failure;
         // Log confirmed failure events only. Unconfirmed
         // events have been monitored, e.g.:
         //    callp(E) assert()
-        if (abstractTestEvent.failure.isConfirmed);
-          logFailure(testCaseResult.testName: abstractTestEvent.failure);
+        if (testFailureEvent.isConfirmed);
+          logFailure(testCaseResult.testName: testFailureEvent);
         endif;
 
       when (abstractTestEvent.outcome = TEST_CASE_ERROR);
-        logError(testCaseResult.testName: abstractTestEvent.error.msg);
+        runtimeErrorEvent = abstractTestEvent.error;
+        logError(testCaseResult.testName: runtimeErrorEvent.msg);
 
       endsl;
 
