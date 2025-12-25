@@ -80,13 +80,27 @@ end-pr;
 // Returns the callstack entry addressed by the specified index.
 //
 // @param pCallstk - pointer of the callstack buffer
-// @param dx       - index number of the callstack entry
+// @param idx      - index number of the callstack entry
 //
 // @return callstack entry
 ///
 dcl-pr Callstack_get likeds(callStkEnt_t) extproc('CALLSTACK_Callstack_get');
   pCallstk pointer const;
   idx      int(10) const;
+end-pr;
+
+///
+// Resets the iteration pointer and returns the first callstack entry.
+//
+// The next callstack entries can be retrieved by calling the
+// Callstack_getNext() procedure.
+//
+// @param pCallstk - pointer of the callstack buffer
+//
+// @return callstack entry
+///
+dcl-pr Callstack_getFirst likeds(callStkEnt_t) extproc('CALLSTACK_Callstack_getFirst');
+  pCallstk pointer const;
 end-pr;
 
 /include qinclude,TEMPLATES

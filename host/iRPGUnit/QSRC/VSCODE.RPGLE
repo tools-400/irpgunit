@@ -166,7 +166,7 @@ dcl-proc VSCode_appendTestCaseSuccess;
   dcl-ds callstkEnt likeds(callstkEnt_t) inz;
   dcl-s text like(xmlBuffer_t);
 
-  callstkEnt = Callstack_get(testSuccessEvent.pCallstk: 1);
+  callstkEnt = Callstack_getFirst(testSuccessEvent.pCallstk);
 
   text = indent() + '<success line="' + %trim(callstkEnt.qStmt.specNb) + '">' + newLine();
   appendToXmlFile(text);
@@ -188,18 +188,16 @@ dcl-proc VSCode_appendTestCaseError;
 
   dcl-s text like(xmlBuffer_t);
 
-    // start <error> element
-    text = indent() + '<error message="'
-           + escapeXml(%trimr(runtimeErrorEvent.msg.txt))
-           + '" type="' + escapeXml(%trimr(runtimeErrorEvent.msg.id)) + '">' + newLine();
-    appendToXmlFile(text);
+  text = indent() + '<error message="' + escapeXml(%trimr(runtimeErrorEvent.msg.txt)) + '"';
+  text += ' type="' + escapeXml(%trimr(runtimeErrorEvent.msg.id)) + '"';
+  text += '>' + newLine();
+  appendToXmlFile(text);
 
-    VSCode_writeCallstackEntry(runtimeErrorEvent.msg.qSndStmt: 'messageSender');
-    VSCode_writeCallstackEntry(runtimeErrorEvent.msg.qRcvStmt: 'messageReceiver');
+  VSCode_writeCallstackEntry(runtimeErrorEvent.msg.qSndStmt: 'messageSender');
+  VSCode_writeCallstackEntry(runtimeErrorEvent.msg.qRcvStmt: 'messageReceiver');
 
-    // close <error> element
-    text = indent() + '</error>' + newLine();
-    appendToXmlFile(text);
+  text = indent() + '</error>' + newLine();
+  appendToXmlFile(text);
 
 end-proc;
 
@@ -211,19 +209,21 @@ dcl-proc VSCode_appendTestCaseFailure;
     testFailureEvent likeds(testFailureEvent_t) const;
   end-pi;
 
+  dcl-ds callstkEnt likeds(callstkEnt_t) inz;
   dcl-s text like(xmlBuffer_t);
 
-  // start <failure> element
-  text = indent() + '<failure message="';
-  text += escapeXml(%trimr(testFailureEvent.msg));
-  text += '">' + newLine();
+  callstkEnt = Callstack_getFirst(testFailureEvent.pCallstk);
+
+  text = indent() + '<failure';
+  text += ' message="' +escapeXml(%trimr(testFailureEvent.msg)) + '"';
+  text += ' line="' + %trim(callstkEnt.qStmt.specNb) + '"';
+  text += '>' + newLine();
   appendToXmlFile(text);
 
   VSCode_writeCallStack(testFailureEvent.pCallstk);
   VSCode_writeFailureValues(testFailureEvent);
   VSCode_writeDiagnosticMessages(testFailureEvent);
 
-  // close <failure> element
   text = indent() + '</failure>' + newLine();
   appendToXmlFile(text);
 
@@ -242,9 +242,11 @@ dcl-proc VSCode_writeCallStack;
 
   g_xmlWriter.indLvl += 1;
 
-  // start Json object
   size = Callstack_getNumE(pCallstk);
-  text = indent() + '<callstack size="' + %char(size) + '">' + newLine();
+
+  text = indent() + '<callstack';
+  text += ' size="' + %char(size) + '"';
+  text += '>' + newLine();
   appendToXmlFile(text);
 
   VSCode_writeCallstackEntries(pCallstk);
@@ -294,7 +296,8 @@ dcl-proc VSCode_writeCallstackEntry;
   text += ' module="' + %trim(qStmt.qMod.nm) + '"';
   text += ' moduleLibrary="' + %trim(qStmt.qMod.lib) + '"';
   text += ' procedure="' + %trim(qStmt.procNm) + '"';
-  text += ' line="' + %trim(qStmt.specNb) + '"/>' + newLine();
+  text += ' line="' + %trim(qStmt.specNb) + '"';
+  text += '/>' + newLine();
 
   appendToXmlFile(text);
 

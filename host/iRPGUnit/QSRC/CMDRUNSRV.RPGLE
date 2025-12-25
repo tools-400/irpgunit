@@ -277,7 +277,7 @@ dcl-proc writeTestReport export;
         if (g_status.isJUnitStyle);
           clear callstkEnt;
         else;
-          callstkEnt = Callstack_get(testSuccessEvent.pCallstk: 1);
+          callstkEnt = Callstack_getFirst(testSuccessEvent.pCallstk);
         endif;
         logSuccess(testCaseResult.testName: callstkEnt.qStmt.specNb: testCaseResult.assertCnt);
 

@@ -14,8 +14,6 @@
 //     >>PARM<<  OPTION(*EVENTF);
 //     >>PARM<<  DBGVIEW(*LIST);
 //   >>END-IMPORTANT<<
-//   >>CMD<<     STRREXPRC SRCMBR(A_INSTALL) SRCFILE(&LI/QBUILD) +
-//               PARM('CMPMOD &LI LIST');
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================
@@ -200,6 +198,24 @@ dcl-proc Callstack_get export;
   callstkEnt = callstk.entry(idx);
 
   return callstkEnt;
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Returns the first callstack entry.
+//----------------------------------------------------------------------
+dcl-proc Callstack_getFirst export;
+  dcl-pi *N likeds(callStkEnt_t);
+    pCallstk pointer const;
+  end-pi;
+
+  dcl-ds callStkEnt likeds(callStkEnt_t) inz;
+
+  Callstack_resetIteration(pCallstk);
+
+  Callstack_getNext(pCallstk: callStkEnt);
+
+  return callStkEnt;
 
 end-proc;
 

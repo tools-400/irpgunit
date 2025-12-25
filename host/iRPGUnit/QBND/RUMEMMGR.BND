@@ -53,5 +53,6 @@ STRPGMEXP  PGMLVL(*CURRENT) SIGNATURE('MemoryManager')
   EXPORT SYMBOL("CALLSTACK_Callstack_resetIteration")
   EXPORT SYMBOL("CALLSTACK_Callstack_getNext")
   EXPORT SYMBOL("CALLSTACK_Callstack_get")
+  EXPORT SYMBOL("CALLSTACK_Callstack_getFirst")
 
 ENDPGMEXP
