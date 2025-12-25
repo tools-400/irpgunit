@@ -209,14 +209,6 @@ dcl-proc getNextLine;
     endsl;
   enddo;
 
-  if (splf.bufPos_p > splf.usrSpcEnd_p);
-    monitor;
-      readSplfBuf();
-      return getNextLine();
-    on-error;
-    endmon;
-  endif;
-
   fail('Reached end of spooled file.');
 
 end-proc;
@@ -281,8 +273,10 @@ dcl-proc readSplfBuf;
 
   aEqual( 'C' : qspGenHdr.compInd );
 
-  splf.bufPos_p = splf.pUsrSpc + qspGenHdr.firstBufOffs;
-  splf.usrSpcEnd_p = splf.pUsrSpc + qspGenHdr.usrSpcSizeUsed;
+//  splf.bufPos_p = splf.pUsrSpc + qspGenHdr.firstBufOffs;
+//  splf.usrSpcEnd_p = splf.pUsrSpc + qspGenHdr.usrSpcSizeUsed;
+
+  resetReadPointer();
 
 end-proc;
 
@@ -482,12 +476,14 @@ dcl-proc splfLineStartsWith export;
   end-proc;
 
 
-  dcl-proc splfContains export;
+dcl-proc splfContains export;
   dcl-pi *n;
     expString   varchar(256) const;
   end-pi;
 
   dcl-s line varchar(256);
+
+  resetReadPointer();
 
   dow (*on);
     line = getNextLine();
@@ -495,6 +491,19 @@ dcl-proc splfLineStartsWith export;
       return;
     endif;
   enddo;
+
+end-proc;
+
+
+dcl-proc resetReadPointer;
+  dcl-pi *n;
+  end-pi;
+
+  // QSP API generic header.
+  dcl-ds qspGenHdr likeds(qspGenHdr_t) based(splf.pUsrSpc);
+
+  splf.bufPos_p = splf.pUsrSpc + qspGenHdr.firstBufOffs;
+  splf.usrSpcEnd_p = splf.pUsrSpc + qspGenHdr.usrSpcSizeUsed;
 
 end-proc;
 

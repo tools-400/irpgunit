@@ -1078,6 +1078,54 @@ dcl-proc testOptionsExact export;
 end-proc;
 
 
+dcl-proc testErrorInAPI export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-s testStartTime   timestamp;
+  dcl-s i int(10);
+
+  if (TestSuite_isDirty('TESTPGM06': 'QTEMP'));
+    runCmd('RUCRTRPG TSTPGM(QTEMP/TESTPGM22) +
+            SRCFILE(QTESTCASES) DLTSPLF(*YES)');
+  endif;
+
+  testStartTime = getFullTimeStamp();
+  run('RUCALLTST TESTPGM22': errorExpected: '*ESCAPE': msgTxt);
+
+  aEqual('ERROR. 1 test case, 0 assertion, 0 failure, 1 error.': msgTxt);
+
+  assertJobLogContains('CPF3C07': testStartTime);
+
+  opnSplf('RPGUNIT': 'TESTPGM22');
+
+  splfLineStartsWith('*** Tests of TESTPGM22 ***');
+  splfSkipLine();  // Skip "Date"
+  splfSkipLine();  // Skip "Job"
+  splfSkipLine();  // Skip "User"
+  splfSkipLine();  // Skip "iRPGUnit : v3.0.0"
+  splfSkipLine();  // Skip "IBM i       : V7R3M0"
+  splfSkipLine();  // Skip [blank line]
+
+  splfSkipLine();  // Skip "Cur. library: *CRTDFT"
+  i = numRows;
+  dow (i > 0);
+    splfSkipLine();  // Skip lines of library list
+    i -= 1;
+  enddo;
+  splfSkipLine();  // Skip [blank line]
+
+  splfLineStartsWith('testRuntimeError - ERROR');
+  splfLineStartsWith('CPF3C07 - ');
+
+  splfContains('*N (QUSROBJD->');
+  splfContains('ERROR. 1 test case, 0 assertion, 0 failure, 1 error.');
+
+  cloSplf();
+
+end-proc;
+
+
 //----------------------------------------------------------------------
 //   Helper Procedures
 //----------------------------------------------------------------------
