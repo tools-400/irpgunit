@@ -209,6 +209,15 @@ dcl-proc getNextLine;
     endsl;
   enddo;
 
+  if (splf.bufPos_p > splf.usrSpcEnd_p);
+    monitor;
+      // Attempt reading the next buffer.
+      readSplfBuf();
+      return getNextLine();
+    on-error;
+    endmon;
+  endif;
+
   fail('Reached end of spooled file.');
 
 end-proc;
