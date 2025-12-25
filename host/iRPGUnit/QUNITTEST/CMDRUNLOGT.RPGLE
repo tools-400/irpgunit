@@ -49,6 +49,7 @@ ctl-opt NoMain Option(*SrcStmt);
 
 // Left margin of the log. Must match CMDRUNLOG.LEFT_MARGIN.
 dcl-c MARGIN '     ';
+dcl-c NO_SPEC_NBR '';
 
 //----------------------------------------------------------------------
 //   Global Variables
@@ -113,7 +114,7 @@ dcl-proc testLogSuccessWith1Assertion export;
 
   // Execution.
 
-  logSuccess(g_testNm: oneAssertion);
+  logSuccess(g_testNm: NO_SPEC_NBR: oneAssertion);
 
   // Controls.
 
@@ -145,7 +146,7 @@ dcl-proc testLogSuccessWith2Assertions export;
 
   // Execution.
 
-  logSuccess(g_testNm: twoAssertions);
+  logSuccess(g_testNm: NO_SPEC_NBR: twoAssertions);
 
   // Controls.
 
@@ -177,8 +178,8 @@ dcl-proc testLog2Successes export;
 
   // Execution.
 
-  logSuccess(g_testNm: 0);
-  logSuccess(testNm2: 0);
+  logSuccess(g_testNm: NO_SPEC_NBR: 0);
+  logSuccess(testNm2: NO_SPEC_NBR: 0);
 
   // Controls.
 

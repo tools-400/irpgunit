@@ -572,9 +572,9 @@ end-proc;
 
 dcl-proc logCompMsg export;
   dcl-pi *n;
-    msg             varchar(16384) const  options(*Varsize);
-    failures        int(10) const;
-    errors          int(10) const;
+    msg      varchar(16384) options(*Varsize) const;
+    failures int(10) const;
+    errors   int(10) const;
   end-pi;
 
 //  fail('Mock logCompMsg not implemented');
@@ -584,8 +584,8 @@ end-proc;
 
 dcl-proc logError export;
   dcl-pi *n;
-    testNm          const like(ProcNm_t);
-    excpMsgInfo     const likeds(Msg_t);
+    testNm      like(ProcNm_t) const;
+    excpMsgInfo likeds(Msg_t) const;
   end-pi;
 
   g_logIdx += 1;
@@ -598,8 +598,8 @@ end-proc;
 
 dcl-proc logFailure export;
   dcl-pi *n;
-    testNm           const like(ProcNm_t);
-    testFailureEvent const likeds(testFailureEvent_t);
+    testNm           like(ProcNm_t) const;
+    testFailureEvent likeds(testFailureEvent_t) const;
   end-pi;
 
   fail('Mock logFailure not implemented');
@@ -609,8 +609,9 @@ end-proc;
 
 dcl-proc logSuccess export;
   dcl-pi *n;
-    testNm          const like(ProcNm_t);
-    assertionCnt    int(10) const;
+    testNm       like(ProcNm_t) const;
+    specNb       char(10) const;
+    assertionCnt int(10) const;
   end-pi;
 
   g_logIdx += 1;
@@ -623,10 +624,10 @@ end-proc;
 
 dcl-proc setLogContext export;
   dcl-pi *n;
-    testPgm         likeds(Object_t) const;
-    detail          char(10) const;
-    output          char(10) const;
-    xmlStmfInfo     likeds(xmlStmfInfo_t) const;
+    testPgm     likeds(Object_t) const;
+    detail      char(10) const;
+    output      char(10) const;
+    xmlStmfInfo likeds(xmlStmfInfo_t) const;
   end-pi;
 
   fail('Mock setLogContext not implemented');
