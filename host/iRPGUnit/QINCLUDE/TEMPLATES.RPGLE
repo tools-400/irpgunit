@@ -107,8 +107,8 @@ dcl-s assertProcNm_t varchar(32) template;
 dcl-s dataType_t varchar(20) template;
 dcl-s xmlType_t char(10) template;
 
-dcl-c XML_JENKINS_TYPE_1 '*TYPE1';
-dcl-c XML_JENKINS_TYPE_2 '*TYPE2';
+dcl-c XML_JENKINS_TYPE_1 '*JENKINS1';
+dcl-c XML_JENKINS_TYPE_2 '*JENKINS2';
 dcl-c XML_TYPE_VSCODE_1 '*VSCODE1';
 
 dcl-c LABEL_EXPECTED 'expected';

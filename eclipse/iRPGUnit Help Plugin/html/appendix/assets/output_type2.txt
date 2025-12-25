@@ -5,7 +5,7 @@
     <property name="user.librarylist" value="RPGUNITDVP QGPL QTEMP"/>
     <property name="os.version" value="V7R5M0"/>
     <property name="irpgunit.version" value="v6.0.0.r"/>
-    <property name="output.type" value="*TYPE2"/>
+    <property name="output.type" value="*JENKINS2"/>
   </properties>
   <testcase name="test_assertEqual_string.assertEqual_string_1" assertions="1" classname="RUPLUGINT9" time="0.44" >
     <failure message="Expected &apos;Dagobert Duck&apos;, but was &apos;Donald Duck&apos;."><![CDATA[

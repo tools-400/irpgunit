@@ -97,6 +97,8 @@ dcl-proc writeXmlFile export;
     writeTestCasesJenkinsStyle(testSuite: testSuiteName: testSuiteResult);
   when (g_xmlWriter.xmlType = XML_TYPE_VSCODE_1);
     VSCode_writeTestCases(testSuite: testSuiteName: testSuiteResult);
+  other;
+    sndEscapeMsgAboveCtlBdy('Invalid XML type: ' + %trim(xmlType));
   endsl;
 
   writeFooter();

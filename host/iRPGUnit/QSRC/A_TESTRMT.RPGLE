@@ -89,7 +89,7 @@
        gi_qJobD.nm = JOBD_DEFAULT;
        gi_rclrsc = RCLRSC_NO;
        gi_xmlStmf = '';
-       gi_xmlType = '*TYPE2';
+       gi_xmlType = '*JENKINS2';
 
        g_isSuccess=
             runTestSuite(

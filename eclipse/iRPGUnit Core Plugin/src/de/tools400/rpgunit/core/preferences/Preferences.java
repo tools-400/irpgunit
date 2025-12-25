@@ -94,8 +94,8 @@ public final class Preferences {
     public static final String XML_STMF_NONE = ""; //$NON-NLS-1$
 
     private static final String XML_TYPE = RMTPGM + ".xmlType"; //$NON-NLS-1$
-    private static final String XML_JENKINS_TYPE_1 = "*TYPE1"; //$NON-NLS-1$
-    private static final String XML_JENKINS_TYPE_2 = "*TYPE2"; //$NON-NLS-1$
+    private static final String XML_JENKINS_TYPE_1 = "*JENKINS1"; //$NON-NLS-1$
+    private static final String XML_JENKINS_TYPE_2 = "*JENKINS2"; //$NON-NLS-1$
     private static final String XML_VSCODE_TYPE_1 = "*VSCODE1"; //$NON-NLS-1$
 
     /**

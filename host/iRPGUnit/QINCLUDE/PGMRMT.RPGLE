@@ -31,11 +31,11 @@
 // @param gi_rclRsc     - Resource reclamation option (*YES, *NO, *ALWAYS)
 // @param gi_xmlStmf    - XML output stream file path for test results
 // @param gi_xmlType    - Specifies the type of the generated XML stream file.
-//                        *TYPE1 = original type created by iRPGUnit <= v5.1.0.r
-//                        *TYPE2 = new type that associates a Json object to XML
-//                                 element '<failure>'. The Json object includes
-//                                 the stack trace as well as the 'expected' and
-//                                 'actual' test values.
+//                        *JENKINS1 = original type created by iRPGUnit <= v5.1.0.r
+//                        *JENKINS2 = new type that associates a Json object to XML
+//                                    element '<failure>'. The Json object includes
+//                                    the stack trace as well as the 'expected' and
+//                                    'actual' test values.
 // @param gi_onFailure  - Mode of how assertions are processed (*ABORT, *CONTINUE)
 ///
 dcl-pr pgmrmt extpgm('PGMRMT');

@@ -91,9 +91,9 @@ Version 6.0.0 - 21.12.2025
                  results.
  * Add 'expected' and 'actual' values.
  * Add keyword 'XMLTYPE' to command RUCALLTXT. Possible value:
-    - *TYPE1:    This type assigns the call stack in text format to XML
+    - *JENKINS1: This type assigns the call stack in text format to XML
                  element '<failure>'. (Jenkins Junit plug-in)
-    - *TYPE2:    This type adds the 'expected' and 'actual' values to XML
+    - *JENKINS2: This type adds the 'expected' and 'actual' values to XML
                  element '<failue>'. (Jenkins Junit plug-in)
     - *VSCODE1:  This type is used by the VS Code IBM I Testing extension.
  * Added the path of the XML stream file to the spooled file output.

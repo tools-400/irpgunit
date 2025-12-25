@@ -36,9 +36,9 @@
 //                          failure details, error messages, and execution statistics
 //                          Contains both summary and detailed test execution data
 // @param xmlType         - Specifies the type of XML to produce. The possible values are:
-//                            *TYPE1 - Legacy type.
-//                            *TYPE2 - Extended type designed for the 'IBM i Testing'
-//                                     VSCode plug-in.
+//                            *JENKINS1 - Legacy type.
+//                            *JENKINS2 - Extended type with 'expected' and 'actual' values.
+//                            *VSCODE1  - Output type for VS Code.
 // @param isJUnitStyle    - Specifies whether the test case fails on the first
 //                          failed assertion. Fails on the first failed assertion
 //                          if set to *on, otherwise continues.

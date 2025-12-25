@@ -105,9 +105,9 @@
                         TYPE(*CHAR)                          +
                         LEN(10)                              +
                         RSTD(*YES)                           +
-                        DFT(*TYPE2)                          +
-                        VALUES(*TYPE1                        +
-                               *TYPE2                        +
+                        DFT(*JENKINS2)                       +
+                        VALUES(*JENKINS1                     +
+                               *JENKINS2                     +
                                *VSCODE1)                     +
                         PROMPT('XML output type' 11)
 

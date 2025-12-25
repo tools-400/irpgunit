@@ -240,12 +240,10 @@ dcl-proc testLogFailureWithoutSpecNb export;
 
   aEqual(MARGIN + 'failure_without_spec_nb - FAIL    ': g_logLine(r ));
   aEqual(MARGIN + 'URE                               ': g_logLine(r+1));
-  aEqual(MARGIN + '                                  ': g_logLine(r+2))
-  ;                                                                    // new with *TYPE2 log output
+  aEqual(MARGIN + '                                  ': g_logLine(r+2)); // new with *JENKINS2
   aEqual(MARGIN + '  failure_without_spec_nb (MY_    ': g_logLine(r+3));
   aEqual(MARGIN + 'SRVPGM->MY_SRVPGM:*N)             ': g_logLine(r+4));
-  aEqual(MARGIN + '                                  ': g_logLine(r+5))
-  ;                                                                    // new with *TYPE2 log output
+  aEqual(MARGIN + '                                  ': g_logLine(r+5)); // new with *JENKINS2
   aEqual(MARGIN + 'Expected:          Not availab    ': g_logLine(r+6));
   aEqual(MARGIN + 'le                                ': g_logLine(r+7));
   aEqual(MARGIN + 'Actual:            Not availab    ': g_logLine(r+8));
@@ -370,7 +368,7 @@ end-proc;
 //                    '_name_that_requires_more_than_two_lines_for_beeing_pri'
 //                    'nted_on_the_iRPGUnit_spooled_file/irpgunit-ruplugint1.'
 //                    'xml'
-//      XML type    : *TYPE1
+//      XML type    : *JENKINS1
 //----------------------------------------------------------------------
 dcl-proc testLogStmfPath export;
   dcl-pi *n extproc(*dclcase);
@@ -387,7 +385,7 @@ dcl-proc testLogStmfPath export;
   g_xmlStmfInfo.path = '/home/RADDATZ/this_is_an-extra_ordinary_very_long_path_name_+
                       that_requires_more_than_two_lines_for_beeing_printed_on_the_+
                       iRPGUnit_spooled_file/irpgunit-ruplugint1.xml';
-  g_xmlStmfInfo.type = '*TYPE2';
+  g_xmlStmfInfo.type = '*JENKINS2';
 
   g_prtWidth = 80;
 
@@ -409,7 +407,7 @@ dcl-proc testLogStmfPath export;
         : g_logLine(3));
   aEqual(MARGIN + '              ''xml'''
         : g_logLine(4));
-  aEqual(MARGIN + 'XML type    : *TYPE2'
+  aEqual(MARGIN + 'XML type    : *JENKINS2'
         : g_logLine(5));
   iEqual(5: g_logIdx);
 

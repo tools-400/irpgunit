@@ -185,16 +185,16 @@ dcl-proc logFailure export;
 
   pCallstk = testFailureEvent.pCallstk;
   if (Callstack_getNumE(pCallstk) > 0);
-    lineFeed(); // new with *TYPE2 log output of 'expected' and 'actual' values
+    lineFeed(); // new with *JENKINS2 log output of 'expected' and 'actual' values
     Callstack_resetIteration(pCallstk);
     dow (Callstack_getNext(pCallstk: callstkEnt));
       //logStackEntry(failure.callStk.entry(i).qStmt);
       logStackEntry(callStkEnt.qStmt);
     enddo;
-    lineFeed(); // new with *TYPE2 log output of 'expected' and 'actual' values
+    lineFeed(); // new with *JENKINS2 log output of 'expected' and 'actual' values
   endif;
 
-  // new with *TYPE2 log output of 'expected' and 'actual' values
+  // new with *JENKINS2 log output of 'expected' and 'actual' values
   logValue(LABEL_EXPECTED: testFailureEvent.logExpected);
   logValue(LABEL_ACTUAL: testFailureEvent.logActual);
   logTruncated(testFailureEvent.logExpected: testFailureEvent.logActual);
@@ -351,7 +351,7 @@ end-proc;
 // Outputs the path and type of the XML stream file produced:
 //     XML file     : '/home/raddatz/very_long_stream_file_path_exceeding_56'
 //                    '_charcaters/iRPGUnit_<TSTPGM>-2025-10-16.04.13.29.log'
-//     XML type     : *TYPE2
+//     XML type     : *JENKINS2
 //----------------------------------------------------------------------
 dcl-proc logStmfPath export;
   dcl-pi *N;
