@@ -212,7 +212,7 @@ dcl-proc setLowMessageKey export;
 end-proc;
 
 
-dcl-proc getmonitoredmessage export;
+dcl-proc getMonitoredMessage export;
   dcl-pi *N likeds(msginfo_t) opdesc;
     doRmvMsg   ind const options(*nopass);
   end-pi;
