@@ -108,8 +108,12 @@ dcl-proc VSCode_writeTestCaseEvents;
   dow (pAbstractTestEvent <> *null);
 
     // open <assertion> element
-    text = indent() + '<assertion name="'
-                                   + getAssertProcName(abstractTestEvent) + '"';
+    text = indent() + '<assertion';
+
+    if (abstractTestEvent.outcome <> TEST_CASE_ERROR);
+      text += ' name="' + getAssertProcName(abstractTestEvent) + '"';
+    endif;
+
     text += ' outcome="' + outcomeToXml(abstractTestEvent.outcome) + '"';
     text += '>' + newLine();
     appendToXmlFile(text);
