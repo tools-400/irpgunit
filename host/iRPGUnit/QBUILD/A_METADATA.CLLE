@@ -1415,6 +1415,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(MKXMLSTMFT) +
+                          SRCTYPE(REXX) +
+                          TEXT('iRPGUnit - Build XMLSTMFT.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(MSGQT) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit SelfTest - Test Message Queue.')
@@ -1436,6 +1442,18 @@
                           MBR(RUNT) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit SelfTest - Test RUN.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(SAX) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - SAX Parser Unit Test Helper.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(SAX_H) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - SAX Parser Unit Test Helper.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
@@ -1472,6 +1490,12 @@
                           MBR(TESTUTILST) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit SelfTest - Test TESTUTILS.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(XMLSTMFT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit SelfTest - Test XML stream files.')
              MONMSG     MSGID(CPF3288)
 
              ENDPGM

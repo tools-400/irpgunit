@@ -883,6 +883,9 @@
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(MKUTILST) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(MKXMLSTMFT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(MSGQT) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
@@ -893,6 +896,12 @@
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(RUNT) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(SAX_H) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(SAX) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(SCRIPTST) +
@@ -911,6 +920,9 @@
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(TESTUTILST) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(XMLSTMFT) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
 
              /* ---------------------------------------------------- */

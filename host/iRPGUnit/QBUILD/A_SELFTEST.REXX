@@ -112,6 +112,7 @@
  createUnitTest(prdLib, bndDir, 'OPDESCT', dbgView)
  createUnitTest(prdLib, bndDir, 'PGMMSGT', dbgView)
  createUnitTest(prdLib, bndDir, 'RUNT', dbgView)
+ createUnitTest(prdLib, bndDir, 'XMLSTMFT', dbgView)
  createUnitTest(prdLib, bndDir, 'STRINGT', dbgView)
 
  createUnitTest(prdLib, bndDir, 'ACPTSTT', dbgView)
@@ -133,6 +134,7 @@
  runUnitTest(prdLib, 'OPDESCT')
  runUnitTest(prdLib, 'PGMMSGT')
  runUnitTest(prdLib, 'RUNT')
+ runUnitTest(prdLib, 'XMLSTMFT')
  runUnitTest(prdLib, 'STRINGT')
 
  runUnitTest(prdLib, 'ACPTSTT')

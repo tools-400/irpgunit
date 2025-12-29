@@ -435,6 +435,7 @@
    "DLTSRVPGM SRVPGM("_prdlib"/STMFT)"
    "DLTSRVPGM SRVPGM("_prdlib"/STRINGT)"
    "DLTSRVPGM SRVPGM("_prdlib"/TESTUTILST)"
+   "DLTSRVPGM SRVPGM("_prdlib"/XMLSTMFT)"
 
    "DLTSRVPGM SRVPGM("_prdlib"/CBL)"
    "DLTSRVPGM SRVPGM("_prdlib"/CBLSQL)"
@@ -500,6 +501,7 @@
    "DLTMOD MODULE("_prdLib"/PGMRMT)"
    "DLTMOD MODULE("_prdLib"/RMTRUNSRV)"
    "DLTMOD MODULE("_prdLib"/RUNT)"
+   "DLTMOD MODULE("_prdLib"/SAX)"
    "DLTMOD MODULE("_prdLib"/SPLF)"
    "DLTMOD MODULE("_prdLib"/SRCMBR)"
    "DLTMOD MODULE("_prdLib"/STMF)"
@@ -512,6 +514,7 @@
    "DLTMOD MODULE("_prdLib"/USRSPC)"
    "DLTMOD MODULE("_prdLib"/VERSION)"
    "DLTMOD MODULE("_prdLib"/VSCODE)"
+   "DLTMOD MODULE("_prdLib"/XMLSTMFT)"
    "DLTMOD MODULE("_prdLib"/XMLWRITER)"
 
    "DLTMOD MODULE("_prdlib"/CBL)"
@@ -605,6 +608,7 @@ createBindingDirectory:
 
    "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/LIBLC     *MODULE))"
    "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/SPLF      *MODULE))"
+   "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/SAX       *MODULE))"
 
    "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/RUTESTCASE *SRVPGM))"
    "ADDBNDDIRE BNDDIR("prdLib"/"bndDir") OBJ(("prdLib"/RUMEMMGR  *SRVPGM))"
@@ -653,6 +657,7 @@ compileModules:
 
    "CMPMOD MODULE("prdLib"/LIBLC    ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
    "CMPMOD MODULE("prdLib"/SPLF     ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   "CMPMOD MODULE("prdLib"/SAX      ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
    "CMPMOD MODULE("prdLib"/LLIST    ) SRCFILE(QLLIST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
 
