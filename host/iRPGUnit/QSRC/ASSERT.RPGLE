@@ -718,7 +718,6 @@ dcl-proc getLogValue export;
     logValue.isTruncated = *off;
     logValue.length = 0;
     logValue.originalLength = 0;
-    logValue.assertProc = getAssertProcName(g_status.procNamePrefix: assertProc);
   elseif (%len(value) > maxValueLength);
     logValue.value = %subst(value: 1: chunkLength)
                      + DELIMITER
@@ -726,13 +725,11 @@ dcl-proc getLogValue export;
     logValue.isTruncated = *on;
     logValue.length = %len(logValue.value);
     logValue.originalLength = %len(value);
-    logValue.assertProc = getAssertProcName(g_status.procNamePrefix: assertProc);
   else;
     logValue.value = value;
     logValue.isTruncated = *off;
     logValue.length = %len(logValue.value);
     logValue.originalLength = %len(value);
-    logValue.assertProc = getAssertProcName(g_status.procNamePrefix: assertProc);
   endif;
 
   return logValue;

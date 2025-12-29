@@ -372,12 +372,12 @@ dcl-proc VSCode_writeDiagnosticMessages;
   size = 0;
 
   if (testFailureEvent.logExpected.type = DT_UNDEFINED);
-    message1 = crtNoValueMsg(LABEL_EXPECTED: testFailureEvent.logExpected.assertProc);
+    message1 = crtNoValueMsg(LABEL_EXPECTED: testFailureEvent.assertProc);
     size += 1;
   endif;
 
   if (testFailureEvent.logActual.type = DT_UNDEFINED);
-    message2 = crtNoValueMsg(LABEL_ACTUAL: testFailureEvent.logActual.assertProc);
+    message2 = crtNoValueMsg(LABEL_ACTUAL: testFailureEvent.assertProc);
     size += 1;
   endif;
 
@@ -386,8 +386,13 @@ dcl-proc VSCode_writeDiagnosticMessages;
     text = indent() + '<diagnosticMessages size="' + %char(size) + '">' + newLine();
     appendToXmlFile(text);
 
-    writeXmlElement('item': message1);
-    writeXmlElement('item': message2);
+    if (message1 <> '');
+      writeXmlElement('item': message1);
+    endif;
+
+    if (message1 <> '');
+      writeXmlElement('item': message2);
+    endif;
 
     text = indent() + '</diagnosticMessages>' + newLine();
     appendToXmlFile(text);

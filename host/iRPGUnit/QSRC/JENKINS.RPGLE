@@ -141,13 +141,13 @@ dcl-proc Jenkins_writeDiagnosticMessagesAsText;
 
     if (testFailureEvent.logExpected.type = DT_UNDEFINED);
       text = TAB_TEXT
-             + crtNoValueMsg(LABEL_EXPECTED: testFailureEvent.logExpected.assertProc) + CRLF;
+             + crtNoValueMsg(LABEL_EXPECTED: testFailureEvent.assertProc) + CRLF;
       appendToXmlFile(text);
     endif;
 
     if (testFailureEvent.logActual.type = DT_UNDEFINED);
       text = TAB_TEXT
-             + crtNoValueMsg(LABEL_ACTUAL: testFailureEvent.logActual.assertProc) + CRLF;
+             + crtNoValueMsg(LABEL_ACTUAL: testFailureEvent.assertProc) + CRLF;
       appendToXmlFile(text);
     endif;
 

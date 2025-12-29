@@ -349,7 +349,6 @@ dcl-ds logValue_t qualified template;
    isTruncated    ind inz(*off);
    length         int(10) inz;
    originalLength int(10) inz;
-   assertProc     like(assertProcNm_t) inz;
 end-ds;
 
 dcl-ds testSuiteResult_t qualified;

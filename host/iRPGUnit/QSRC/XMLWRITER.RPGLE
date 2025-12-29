@@ -448,12 +448,10 @@ dcl-proc writeXmlElement export;
 
   g_xmlWriter.indLvl += 1;
 
-  if (value <> '');
-    text = indent() + startXmlElement(name);
-    text += value;
-    text += endXmlElement(name) + newLine();
-    appendToXmlFile(text);
-  endif;
+  text = indent() + startXmlElement(name);
+  text += value;
+  text += endXmlElement(name) + newLine();
+  appendToXmlFile(text);
 
 on-exit;
   g_xmlWriter.indLvl -= 1;
