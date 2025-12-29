@@ -525,6 +525,10 @@ end-proc;
 
 //----------------------------------------------------------------------
 // Iterates the test events and determines the final outcome.
+// Outcome priority (high to low):
+//   Error
+//   Failure
+//   Success
 //----------------------------------------------------------------------
 dcl-proc updateTestCaseOutcome;
   dcl-pi *n extproc(*dclcase);
@@ -539,7 +543,7 @@ dcl-proc updateTestCaseOutcome;
 
   list_resetIteration(testCaseResult.hTestEvents);
   pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
-  dow (pAbstractTestEvent <> *null);
+  dow (pAbstractTestEvent <> *null and testCaseResult.outcome = TEST_CASE_SUCCESS);
     select;
     when (abstractTestEvent.outcome = TEST_CASE_SUCCESS);
       testCaseResult.outcome = TEST_CASE_SUCCESS;
