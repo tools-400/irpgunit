@@ -107,9 +107,9 @@ dcl-proc assertEqual_string export;
   endif;
 
   if (dataTypeActual = DT_IND);
-    logActual = getLogValue(toInd(leftStr(actual: len_expected)): dataTypeActual: %proc());
+    logActual = getLogValue(toInd(leftStr(actual: len_actual)): dataTypeActual: %proc());
   else;
-    logActual = getLogValue(leftStr(actual: len_expected): dataTypeActual: %proc());
+    logActual = getLogValue(leftStr(actual: len_actual): dataTypeActual: %proc());
   endif;
 
   condition = leftStr(expected: len_expected) = leftStr(actual: len_actual);
