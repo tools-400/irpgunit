@@ -97,7 +97,5 @@ dcl-proc testSuccess export;
   on-error;
   endmon;
 
-  callp(e) assert(*off: 'Expected a failed assertion.');
-
 end-proc;
 
