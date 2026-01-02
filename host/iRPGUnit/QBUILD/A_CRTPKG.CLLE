@@ -776,6 +776,12 @@
              CPYF       FROMFILE(&DEVLIB/&QTESTCASES) +
                           TOFILE(&LIB/&QTESTCASES) FROMMBR(TESTPGM21) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTESTCASES) +
+                          TOFILE(&LIB/&QTESTCASES) FROMMBR(TESTPGM22) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTESTCASES) +
+                          TOFILE(&LIB/&QTESTCASES) FROMMBR(TESTPGM23) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
 
              /* ---------------------------------------------------- */
              /*  Copy source members: QUNITTEST                      */
