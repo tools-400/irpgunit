@@ -143,6 +143,9 @@ dcl-proc testLeftStr export;
   assert(leftStr(HELLO_WORLD: 0) = '':
          'Expected: empty string');
 
+  assert(leftStr('': 0) = '':
+         'Expected: empty string');
+
   monitor;
     assert(leftStr(HELLO_WORLD: -1) = '':
            'Expected RNX0100: Length or start position is out of range');
@@ -180,6 +183,9 @@ dcl-proc testRightStr export;
          'Expected: Hello');
 
   assert(rightStr(HELLO_WORLD: 0) = '':
+         'Expected: empty string');
+
+  assert(rightStr('': 0) = '':
          'Expected: empty string');
 
   monitor;
