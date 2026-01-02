@@ -1085,7 +1085,7 @@ dcl-proc testErrorInAPI export;
   dcl-s testStartTime   timestamp;
   dcl-s i int(10);
 
-  if (TestSuite_isDirty('TESTPGM06': 'QTEMP'));
+  if (TestSuite_isDirty('TESTPGM22': 'QTEMP'));
     runCmd('RUCRTRPG TSTPGM(QTEMP/TESTPGM22) +
             SRCFILE(QTESTCASES) DLTSPLF(*YES)');
   endif;
