@@ -9,11 +9,14 @@
 //  http://www.eclipse.org/legal/cpl-v10.html
 // ==========================================================================
 // >>PRE-COMPILER<<
-//   >>CRTCMD<<  RUCRTRPG  TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
+//   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
 //   >>IMPORTANT<<
-//     >>PARM<<  COPTION(*EVENTF *SRCSTMT);
+//     >>PARM<<  OPTION(*EVENTF);
+//     >>PARM<<  DBGVIEW(*LIST);
 //   >>END-IMPORTANT<<
 //   >>EXECUTE<<
+//   >>CMD<<     CRTSRVPGM SRVPGM(&LI/&OB) MODULE(&LI/&OB) +
+//                 EXPORT(*ALL) BNDDIR(&LI/IRPGUNIT);
 // >>END-PRE-COMPILER<<
 // ==========================================================================
 
