@@ -4,118 +4,180 @@
 /endif
 /define sax_h
 
-dcl-c XML_SAX_CONTINUE 0;
-dcl-c XML_SAX_ABORT 1;
+// ----------------------------------------------------
+// 1. Events discovered before the first XML element
+dcl-c XML_VERSION_INFO 25;
+dcl-c XML_ENCODING_DECL 10;
+dcl-c XML_STANDALONE_DECL '?';
+dcl-c XML_DOCTYPE_DECL '?';
+dcl-c XML_START_DOCUMENT 20;
 
-dcl-c NUM_CALLBACK_HANDLER 16;
-dcl-c NUM_TESTCASE 8;
-dcl-c NUM_ASSERTION 8;
-dcl-c NUM_STACK_ENTRY 8;
+// 2. Events related to XML elements
+dcl-c XML_START_ELEMENT 21;
+dcl-c XML_CHARS 5;
+dcl-c XML_PREDEF_REF '?';
+dcl-c XML_UCS2_REF '?';
+dcl-c XML_UNKNOWN_REF '?';
+dcl-c XML_END_ELEMENT 13;
 
-dcl-s xmlName_t varchar(64) template;
-dcl-s xmlPath_t varchar(1024) template;
-dcl-s xmlMessage_t varchar(128) template;
-dcl-s xmlInteger_t varchar(10) template;
-dcl-s xmlMsgId_t varchar(7) template;
-dcl-s xmlProcName_t varchar(64) template;
-dcl-s xmlObjName_t varchar(10) template;
-dcl-s xmlQObjName_t varchar(32) template;
-dcl-s xmlOutcome_t varchar(16) template;
+// 3. Events related to XML attributes
+dcl-c XML_ATTR_NAME 2;
+dcl-c XML_ATTR_CHARS 4;
+dcl-c XML_ATTR_PREDEF_REF '?';
+dcl-c XML_ATTR_UCS2_REF '?';
+dcl-c XML_UNKNOWN_ATTR_REF '?';
+dcl-c XML_END_ATTR 26;
+
+// 4. Events related to XML processing instructions
+dcl-c XML_PI_TARGET '?';
+dcl-c XML_PI_DATA '?';
+
+// 5. Events related to XML CDATA sections
+dcl-c XML_START_CDATA '?';
+// dcl-c XML_CHARS 5;
+dcl-c XML_END_CDATA '?';
+
+// 6. Other events
+dcl-c XML_COMMENT '?';
+dcl-c XML_EXCEPTION '?';
+dcl-c XML_END_DOCUMENT 12;
+// ----------------------------------------------------
+
+dcl-c SAX_CONTINUE 0;
+dcl-c SAX_ABORT 1;
+
+dcl-c NUM_CALLBACK_HANDLERS 16;
+dcl-c NUM_TESTCASES 8;
+dcl-c NUM_ASSERTIONS 8;
+dcl-c NUM_STACK_ENTRIES 8;
+dcl-c NUM_PROPERTIES 8;
+dcl-c NUM_DIAGNOSTIC_MESSAGES 4;
+
+dcl-s saxElemName_t varchar(128) template;
+dcl-s saxElementText_t varchar(1024) template;
+dcl-s saxAttrName_t varchar(64) template;
+dcl-s saxAttrValue_t varchar(512) template;
+dcl-s saxPath_t varchar(1024) template;
+dcl-s saxMessage_t varchar(128) template;
+dcl-s saxInteger_t varchar(10) template;
+dcl-s saxMsgId_t varchar(7) template;
+dcl-s saxProcName_t varchar(64) template;
+dcl-s saxObjName_t varchar(10) template;
+dcl-s saxQObjName_t varchar(32) template;
+dcl-s saxOutcome_t varchar(16) template;
+dcl-s saxBuffer_t varchar(2048) template;
+dcl-s saxDiagnosticMessage_t varchar(64) template;
 
 dcl-ds handler_t qualified template;
-  element         like(xmlName_t) inz;
+  elemName        like(saxElemName_t) inz;
   pHandler        pointer(*proc);
   pCurrentElement pointer;
 end-ds;
 
-dcl-ds xmlTestSuite_t qualified template;
+dcl-ds saxTestSuite_t qualified template;
   isNull         ind inz(*on);
-  attr_errors    like(xmlInteger_t) inz;
-  attr_failures  like(xmlInteger_t) inz;
+  attr_errors    like(saxInteger_t) inz;
+  attr_failures  like(saxInteger_t) inz;
   attr_hostname  varchar(200) inz;
   attr_id        varchar(10) inz;
-  attr_name      like(xmlQObjName_t) inz;
-  attr_tests     like(xmlInteger_t) inz;
-  testcases likeds(xmlTestCases_t) inz(*likeds);
+  attr_name      like(saxQObjName_t) inz;
+  attr_tests     like(saxInteger_t) inz;
+  properties     likeds(saxProperties_t) inz(*likeds);
+  testcases likeds(saxTestCases_t) inz(*likeds);
 end-ds;
 
-dcl-ds xmlTestCases_t qualified template;
+dcl-ds saxTestCases_t qualified template;
   size     int(10) inz;
-  testcase likeds(xmlTestCase_t) dim(NUM_TESTCASE) inz(*likeds);
+  testcase likeds(saxTestCase_t) dim(NUM_TESTCASES) inz(*likeds);
 end-ds;
 
-dcl-ds xmlTestCase_t qualified template;
+dcl-ds saxTestCase_t qualified template;
   isNull          ind inz(*on);
-  attr_name       like(xmlProcName_t) inz;
-  attr_assertions like(xmlInteger_t) inz;
-  attr_classname  like(xmlObjName_t) inz;
-  attr_time       like(xmlInteger_t) inz;
-  attr_outcome    like(xmlOutcome_t) inz;
-  assertions      likeds(xmlAssertions_t) inz(*likeds);
+  attr_name       like(saxProcName_t) inz;
+  attr_assertions like(saxInteger_t) inz;
+  attr_classname  like(saxObjName_t) inz;
+  attr_time       like(saxInteger_t) inz;
+  attr_outcome    like(saxOutcome_t) inz;
+  events          likeds(saxTestCaseEvents_t) inz(*likeds);
 end-ds;
 
-dcl-ds xmlAssertions_t qualified template;
-  size   int(10) inz;
-  assertion likeds(xmlAbstractAssertion_t) dim(NUM_ASSERTION) inz(*likeds);
+dcl-ds saxTestCaseEvents_t qualified template;
+  size          int(10) inz;
+  testCaseEvent likeds(saxAbstractTestCaseEvent_t) dim(NUM_ASSERTIONS) inz(*likeds);
 end-ds;
 
-dcl-ds xmlAbstractAssertion_t qualified template;
-  isNull  ind inz(*on);
-  attr_name    like(xmlProcName_t) inz;
-  attr_outcome like(xmlOutcome_t) inz;
-  failure      likeds(xmlFailureAssertion_t) pos(1);
-  success      likeds(xmlSuccessAssertion_t) pos(1);
-  error        likeds(xmlErrorAssertion_t) pos(1);
-end-ds;
-
-dcl-ds xmlFailureAssertion_t qualified template;
+dcl-ds saxAbstractTestCaseEvent_t qualified template;
   isNull       ind inz(*on);
-  attr_name    like(xmlProcName_t) inz;
-  attr_outcome like(xmlOutcome_t) inz('Failure');
-  attr_message like(xmlMessage_t) inz;
-  attr_line    like(xmlInteger_t) inz;
-  expected     likeds(xmlLogValue_t) inz(*likeds);
-  actual       likeds(xmlLogValue_t) inz(*likeds);
-  callstack    likeds(xmlCallstack_t) inz(*likeds);
+  attr_name    like(saxProcName_t) inz;
+  failure      likeds(saxFailureEvent_t) pos(1);
+  success      likeds(saxSuccessEvent_t) pos(1);
+  error        likeds(saxRuntimeErrorEvent_t) pos(1);
 end-ds;
 
-dcl-ds xmlSuccessAssertion_t qualified template;
+dcl-ds saxFailureEvent_t qualified template;
   isNull       ind inz(*on);
-  attr_name    like(xmlProcName_t) inz;
-  attr_outcome like(xmlOutcome_t) inz('Success');
-  attr_line    like(xmlInteger_t) inz;
-  expected     likeds(xmlLogValue_t) inz(*likeds);
+  attr_name    like(saxProcName_t) inz;
+  attr_message like(saxMessage_t) inz;
+  attr_line    like(saxInteger_t) inz;
+  expected     likeds(saxLogValue_t) inz(*likeds);
+  actual       likeds(saxLogValue_t) inz(*likeds);
+  callstack    likeds(saxCallstack_t) inz(*likeds);
+  elementText  like(saxElementText_t) inz;
+  diagMsgs     likeds(saxDiagnosticMessages_t) inz(*likeds);
 end-ds;
 
-dcl-ds xmlErrorAssertion_t qualified template;
+dcl-ds saxSuccessEvent_t qualified template;
   isNull       ind inz(*on);
-  attr_name    like(xmlProcName_t) inz;
-  attr_outcome like(xmlOutcome_t) inz('Error');
-  attr_message like(xmlMessage_t) inz;
-  attr_type    like(xmlMsgId_t) inz;
-  sender       likeds(xmlCallstackEntry_t) inz(*likeds);
-  receiver     likeds(xmlCallstackEntry_t) inz(*likeds);
+  attr_name    like(saxProcName_t) inz;
+  attr_line    like(saxInteger_t) inz;
+  expected     likeds(saxLogValue_t) inz(*likeds);
 end-ds;
 
-dcl-ds xmlLogValue_t qualified template;
+dcl-ds saxRuntimeErrorEvent_t qualified template;
+  isNull       ind inz(*on);
+  attr_name    like(saxProcName_t) inz;
+  attr_message like(saxMessage_t) inz;
+  attr_type    like(saxMsgId_t) inz;
+  sender       likeds(saxCallstackEntry_t) inz(*likeds);
+  receiver     likeds(saxCallstackEntry_t) inz(*likeds);
+  elementText  like(saxElementText_t) inz;
+end-ds;
+
+dcl-ds saxLogValue_t qualified template;
   isNull              ind inz(*on);
   attr_value          varchar(500) inz;
   attr_type           varchar(16) inz;
-  attr_length         like(xmlInteger_t) inz;
-  attr_originalLength like(xmlInteger_t) inz;
+  attr_length         like(saxInteger_t) inz;
+  attr_originalLength like(saxInteger_t) inz;
 end-ds;
 
-dcl-ds xmlCallstack_t qualified template;
+dcl-ds saxCallstack_t qualified template;
   size       int(10) inz;
-  stackEntry likeds(xmlCallstackEntry_t) dim(NUM_STACK_ENTRY) inz(*likeds);
+  stackEntry likeds(saxCallstackEntry_t) dim(NUM_STACK_ENTRIES) inz(*likeds);
 end-ds;
 
-dcl-ds xmlCallstackEntry_t qualified template;
+dcl-ds saxCallstackEntry_t qualified template;
   isNull         ind inz(*on);
-  attr_program   like(xmlObjName_t) inz;
-  attr_module    like(xmlObjName_t) inz;
-  attr_procedure like(xmlProcName_t) inz;
-  attr_line      like(xmlInteger_t) inz;
+  attr_program   like(saxObjName_t) inz;
+  attr_module    like(saxObjName_t) inz;
+  attr_procedure like(saxProcName_t) inz;
+  attr_line      like(saxInteger_t) inz;
+end-ds;
+
+dcl-ds saxProperties_t qualified template;
+  size     int(10) inz;
+  property likeds(saxProperty_t) dim(NUM_PROPERTIES) inz(*likeds);
+end-ds;
+
+dcl-ds saxProperty_t qualified template;
+  isNull      ind inz(*on);
+  attr_key    varchar(32) inz;
+  attr_value  varchar(1024) inz;
+end-ds;
+
+dcl-ds saxDiagnosticMessages_t qualified template;
+  size     int(10) inz;
+  message  like(saxDiagnosticMessage_t) dim(NUM_DIAGNOSTIC_MESSAGES) inz;
 end-ds;
 
 ///
@@ -128,7 +190,7 @@ end-pr;
 // SAX parser handler
 ///
 dcl-pr SAX_CallbackHandler int(10) extproc('SAX_SAX_CallbackHandler');
-  testsuite   likeds(xmlTestSuite_t);
+  testsuite   likeds(saxTestSuite_t);
   event       int(10) value;
   pString     pointer value;
   stringLen   int(20) value;

@@ -544,6 +544,12 @@
                           TEXT('Jenkins JUnit Example XML.')
              MONMSG     MSGID(CPF3288)
 
+             CHGPFM     FILE(&TARGETLIB/QMISC) +
+                          MBR(VSCODE) +
+                          SRCTYPE(XSD) +
+                          TEXT('VS Code Schema.')
+             MONMSG     MSGID(CPF3288)
+
              CHGPFM     FILE(&TARGETLIB/QPNLGRP) +
                           MBR(RUCALLTST) +
                           SRCTYPE(PNLGRP) +

@@ -37,7 +37,6 @@ ctl-opt DECEDIT('0.') NOMAIN;
 
 /include qinclude,SDS
 
-dcl-ds g likeds(sharedChars_t) import;
 dcl-ds g_xmlWriter likeds(xmlWriter_t) import;
 
 //----------------------------------------------------------------------
@@ -64,11 +63,13 @@ dcl-proc VSCode_writeTestCases export;
     execTime = testCaseResult.execTimeMSecs;
 
     // open <testcase> element
-    text = indent() + '<testcase name="' + getTestCaseName(testCaseResult) + '"';
-    text += ' assertions="' + %char(testCaseResult.assertCnt) + '"';
-    text += ' classname="' + %trimr(testSuiteName.nm) + '"'; // TODO: should look which module
-    text += ' time="' + %char(execTime) + '"';               // exports this testcase
+    text = indent() + '<testcase';
     text += ' outcome="' + outcomeToXml(testCaseResult.outcome) + '"';
+    text += ' classname="' + %trimr(testSuiteName.nm) + '"'; // TODO: should look which module
+                                                             // exports this testcase
+    text += ' name="' + getTestCaseName(testCaseResult) + '"';
+    text += ' assertions="' + %char(testCaseResult.assertCnt) + '"';
+    text += ' time="' + %char(execTime) + '"';
     text += '>' + newLine();
     appendToXmlFile(text);
 
@@ -94,41 +95,14 @@ dcl-proc VSCode_writeTestCaseEvents;
     testCaseResult likeds(testCaseResult_t) const;
   end-pi;
 
-  dcl-s text like(xmlBuffer_t);
   dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
-
-  g_xmlWriter.indLvl += 1;
-
-  if (g_xmlWriter.isJUnitStyle and testCaseResult.outcome = TEST_CASE_SUCCESS);
-    return;
-  endif;
 
   list_resetIteration(testCaseResult.hTestEvents);
   pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
   dow (pAbstractTestEvent <> *null);
-
-    // open <assertion> element
-    text = indent() + '<assertion';
-
-    if (abstractTestEvent.outcome <> TEST_CASE_ERROR);
-      text += ' name="' + getAssertProcName(abstractTestEvent) + '"';
-    endif;
-
-    text += ' outcome="' + outcomeToXml(abstractTestEvent.outcome) + '"';
-    text += '>' + newLine();
-    appendToXmlFile(text);
-
     VSCode_writeTestCaseEvent(abstractTestEvent);
-
-    // close <assertion> element
-    text = indent() + '</assertion>' + newLine();
-    appendToXmlFile(text);
-
     pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
   enddo;
-
-on-exit;
-  g_xmlWriter.indLvl -= 1;
 
 end-proc;
 
@@ -172,7 +146,11 @@ dcl-proc VSCode_appendTestCaseSuccess;
 
   callstkEnt = Callstack_getFirst(testSuccessEvent.pCallstk);
 
-  text = indent() + '<success line="' + %trim(callstkEnt.qStmt.specNb) + '">' + newLine();
+  text = indent() + '<success';
+  text += ' line="' + %trim(callstkEnt.qStmt.specNb) + '"';
+  text += ' name="' + getAssertProcName(testSuccessEvent) + '"';
+
+  text += '>' + newLine();
   appendToXmlFile(text);
 
   VSCode_writeLogValue(LABEL_EXPECTED: testSuccessEvent.logExpected);
@@ -192,7 +170,8 @@ dcl-proc VSCode_appendTestCaseError;
 
   dcl-s text like(xmlBuffer_t);
 
-  text = indent() + '<error message="' + escapeXml(%trimr(runtimeErrorEvent.msg.txt)) + '"';
+  text = indent() + '<error';
+  text += ' message="' + escapeXml(%trimr(runtimeErrorEvent.msg.txt)) + '"';
   text += ' type="' + escapeXml(%trimr(runtimeErrorEvent.msg.id)) + '"';
   text += '>' + newLine();
   appendToXmlFile(text);
@@ -219,8 +198,9 @@ dcl-proc VSCode_appendTestCaseFailure;
   callstkEnt = Callstack_getFirst(testFailureEvent.pCallstk);
 
   text = indent() + '<failure';
-  text += ' message="' +escapeXml(%trimr(testFailureEvent.msg)) + '"';
   text += ' line="' + %trim(callstkEnt.qStmt.specNb) + '"';
+  text += ' name="' + getAssertProcName(testFailureEvent) + '"';
+  text += ' message="' +escapeXml(%trimr(testFailureEvent.msg)) + '"';
   text += '>' + newLine();
   appendToXmlFile(text);
 

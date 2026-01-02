@@ -313,6 +313,7 @@ dcl-pr writeTestReport extproc('CMRUNSRV_writeTestReport');
   testSuite       likeds(testSuite_t) const;
   testSuiteName   likeds(Object_t) const;
   testSuiteResult likeds(testSuiteResult_t);
+  detail          like(detail_t) const;
 end-pr;
 
 

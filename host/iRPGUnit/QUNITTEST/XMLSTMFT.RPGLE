@@ -18,6 +18,36 @@
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================
+// *VSCODE Notices
+// ---------------
+// Test case 'testRuntimeError' ends different if executed with *CONTINUE!
+//
+// If executed with *ABORT, the test case is aborted on the second
+// assertEqual(), hence there are 2 test case events.
+// But if executed with *CONTINUE, the test case is aborted after the
+// second assertEqual() on the runCmd() statement, so there are 3 test
+// case events.
+//
+// *JENKINS Notices
+// ================
+//
+// *ABORT
+// ------
+// 'Success' events are never added to the XML file.
+// Only the events that match the test case result are
+// added to the XML output.
+//
+// *CONTINUE
+// ---------
+// Produces 1 test case per test event.
+// Test case name: [testCase].[assertion]_n
+//
+// Attributes not used for Jenkins XML:
+//   testcase.attr_outcome
+//   testCaseEvent.attr_outcome
+//   testCaseEvent.failure.attr_name
+//   testCaseEvent.failure.attr_line
+// ==========================================================================
 
 ctl-opt NoMain Option(*SrcStmt);
 
@@ -82,41 +112,166 @@ dcl-proc teardown export;
 end-proc;
 
 //----------------------------------------------------------------------
-//   Test Definitions
+// Tests the XML output of: *JENKINS1 / *ABORT
 //----------------------------------------------------------------------
-
 dcl-proc testJenkins1Abort export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
+  dcl-ds testSuite likeds(saxTestSuite_t) inz;
+  dcl-ds testCase likeds(saxTestCase_t) inz(*likeds);
+  dcl-ds testCaseEvent likeds(saxAbstractTestCaseEvent_t) inz(*likeds);
+  dcl-s msgTxt char(256);
+
+  if (TestSuite_isDirty('TESTPGM23': 'QTEMP'));
+    runCmd('RUCRTRPG TSTPGM(QTEMP/TESTPGM23) +
+            SRCFILE(QTESTCASES) DLTSPLF(*YES)');
+  endif;
+
+  saveAssertStatus();
+
+  run('RUCALLTST TSTPGM(QTEMP/TESTPGM23) ONFAILURE(*ABORT) '
+      + ' XMLSTMF(''' + g_status.tmpName + ''') XMLTYPE(*JENKINS1)'
+      : ERROR_EXPECTED: '*ESCAPE': msgTxt);
+
+  restoreAssertStatus();
+
+  testSuite = parseXml(g_status.tmpName);
+
+  validateJenkinsAbort(testSuite);
+
+  // Additional validations of 'testFailure'
+  testCase = getTestcase(testSuite.testcases: 1);
+  testCaseEvent = getTestCaseEvent(testCase.events: 1);
+  assertEqual('testFailure (TESTPGM23->TESTPGM23:4400)': testCaseEvent.failure.elementText);
+
+  // Additional validations of 'testRuntimeError'
+  testCase = getTestcase(testSuite.testcases: 2);
+  testCaseEvent = getTestCaseEvent(testCase.events: 1);
+  assertEqual('testRuntimeError (TESTPGM23->TESTPGM23:6600)': testCaseEvent.failure.elementText);
+
+  // Additional validations of 'Success'
+  // not applicable
+
 end-proc;
 
+//----------------------------------------------------------------------
+// Tests the XML output of: *JENKINS1 / *CONTINUE
+//----------------------------------------------------------------------
 dcl-proc testJenkins1Continue export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
+  dcl-ds testSuite likeds(saxTestSuite_t) inz;
+  dcl-ds testCase likeds(saxTestCase_t) inz(*likeds);
+  dcl-ds testCaseEvent likeds(saxAbstractTestCaseEvent_t) inz(*likeds);
+  dcl-s msgTxt char(256);
+
+  if (TestSuite_isDirty('TESTPGM23': 'QTEMP'));
+    runCmd('RUCRTRPG TSTPGM(QTEMP/TESTPGM23) +
+            SRCFILE(QTESTCASES) DLTSPLF(*YES)');
+  endif;
+
+  saveAssertStatus();
+
+  run('RUCALLTST TSTPGM(QTEMP/TESTPGM23) ONFAILURE(*CONTINUE) '
+      + ' XMLSTMF(''' + g_status.tmpName + ''') XMLTYPE(*JENKINS1)'
+      : ERROR_EXPECTED: '*ESCAPE': msgTxt);
+
+  restoreAssertStatus();
+
+  testSuite = parseXml(g_status.tmpName);
+
+  validateJenkinsContinue(testSuite);
+
+  // Additional validations of 'testFailure'
+  testCase = getTestcase(testSuite.testcases: 1);
+  testCaseEvent = getTestCaseEvent(testCase.events: 1);
+  assertEqual('testFailure (TESTPGM23->TESTPGM23:4400)': testCaseEvent.failure.elementText);
+
+  // Additional validations of 'testRuntimeError'
+  testCase = getTestcase(testSuite.testcases: 4);
+  testCaseEvent = getTestCaseEvent(testCase.events: 1);
+  assertEqual('testRuntimeError (TESTPGM23->TESTPGM23:6600)': testCaseEvent.failure.elementText);
+
+  testCase = getTestcase(testSuite.testcases: 5);
+  testCaseEvent = getTestCaseEvent(testCase.events: 1);
+  assertEqual('*N (QCMDEXC->*N:0277)': testCaseEvent.error.elementText);
+
+  // Additional validations of 'Success'
+  // not applicable
+
 end-proc;
 
+//----------------------------------------------------------------------
+// Tests the XML output of: *JENKINS2 / *ABORT
+//----------------------------------------------------------------------
 dcl-proc testJenkins2Abort export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
+  dcl-ds testSuite likeds(saxTestSuite_t) inz;
+  dcl-s msgTxt char(256);
+
+  if (TestSuite_isDirty('TESTPGM23': 'QTEMP'));
+    runCmd('RUCRTRPG TSTPGM(QTEMP/TESTPGM23) +
+            SRCFILE(QTESTCASES) DLTSPLF(*YES)');
+  endif;
+
+  saveAssertStatus();
+
+  run('RUCALLTST TSTPGM(QTEMP/TESTPGM23) ONFAILURE(*ABORT) '
+      + ' XMLSTMF(''' + g_status.tmpName + ''') XMLTYPE(*JENKINS2)'
+      : ERROR_EXPECTED: '*ESCAPE': msgTxt);
+
+  restoreAssertStatus();
+
+  testSuite = parseXml(g_status.tmpName);
+
+  validateJenkinsAbort(testSuite);
+
 end-proc;
 
+//----------------------------------------------------------------------
+// Tests the XML output of: *JENKINS2 / *CONTINUE
+//----------------------------------------------------------------------
 dcl-proc testJenkins2Continue export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
+  dcl-ds testSuite likeds(saxTestSuite_t) inz;
+  dcl-s msgTxt char(256);
+
+  if (TestSuite_isDirty('TESTPGM23': 'QTEMP'));
+    runCmd('RUCRTRPG TSTPGM(QTEMP/TESTPGM23) +
+            SRCFILE(QTESTCASES) DLTSPLF(*YES)');
+  endif;
+
+  saveAssertStatus();
+
+  run('RUCALLTST TSTPGM(QTEMP/TESTPGM23) ONFAILURE(*CONTINUE) '
+      + ' XMLSTMF(''' + g_status.tmpName + ''') XMLTYPE(*JENKINS2)'
+      : ERROR_EXPECTED: '*ESCAPE': msgTxt);
+
+  restoreAssertStatus();
+
+  testSuite = parseXml(g_status.tmpName);
+
+  validateJenkinsContinue(testSuite);
+
 end-proc;
 
+//----------------------------------------------------------------------
+// Tests the XML output of: *VSCODE1 / *ABORT
+//----------------------------------------------------------------------
 dcl-proc testVSCode1Abort export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds testSuite likeds(xmlTestSuite_t) inz(*likeds);
-  dcl-ds testCase likeds(xmlTestCase_t) inz(*likeds);
-  dcl-ds assertion likeds(xmlAbstractAssertion_t) inz(*likeds);
-  dcl-ds callstackEntry likeds(xmlCallstackEntry_t) inz(*likeds);
+  dcl-ds testSuite likeds(saxTestSuite_t) inz(*likeds);
+  dcl-ds testCase likeds(saxTestCase_t) inz(*likeds);
+  dcl-ds testCaseEvent likeds(saxAbstractTestCaseEvent_t) inz(*likeds);
+  dcl-ds callstackEntry likeds(saxCallstackEntry_t) inz(*likeds);
   dcl-s msgTxt char(256);
 
   if (TestSuite_isDirty('TESTPGM23': 'QTEMP'));
@@ -132,19 +287,18 @@ dcl-proc testVSCode1Abort export;
 
   restoreAssertStatus();
 
-  SAX_initialize();
-
-  xml-sax %handler(SAX_CallbackHandler: testSuite)
-          %XML(g_status.tmpName: 'doc=file');
+  testSuite = parseXml(g_status.tmpName);
 
   // Validate: Test Suite
-  assertEqual('1': testSuite.attr_errors);
-  assertEqual('1': testSuite.attr_failures);
+
+  assertEqual('0': testSuite.attr_errors);
+  assertEqual('2': testSuite.attr_failures);
   assert(testSuite.attr_hostname <> '');
   assertEqual('QTEMP/TESTPGM23': testSuite.attr_name);
   assertEqual('3': testSuite.attr_tests);
 
-  // Validate: Test Case #1
+  // Validate: Test Case #1: testFailure
+
   testCase = getTestcase(testSuite.testcases: 1);
   assertEqual('testFailure': testcase.attr_name);
   assertEqual('1': testcase.attr_assertions);
@@ -152,55 +306,70 @@ dcl-proc testVSCode1Abort export;
   assert(testcase.attr_time <> '');
   assertEqual('Failure': testcase.attr_outcome);
 
-  assertion = getAssertion(testCase.assertions: 1);
-  assertEqual('Failure': assertion.attr_outcome);
-  assertEqual('assertEqual_string': assertion.failure.attr_name);
-  assertEqual('Expected ''Donald'', but was ''Dagobert''.': assertion.failure.attr_message);
-  assertEqual('5400': assertion.failure.attr_line);
+  testCaseEvent = getTestCaseEvent(testCase.events: 1);
+//  assertEqual('Failure': testCaseEvent.attr_outcome);
+  assertEqual('assertEqual_string': testCaseEvent.failure.attr_name);
+  assertEqual('Expected ''Donald Duck'', but was ''Dagobert Duck''.'
+              : testCaseEvent.failure.attr_message);
+  assertEqual('4400': testCaseEvent.failure.attr_line);
 
-  callstackEntry = getCallstackEntry(assertion.failure.callstack: 1);
+  callstackEntry = getCallstackEntry(testCaseEvent.failure.callstack: 1);
   assertEqual('TESTPGM23': callstackEntry.attr_program);
   assertEqual('TESTPGM23': callstackEntry.attr_module);
   assertEqual('testFailure': callstackEntry.attr_procedure);
-  assertEqual('5400': callstackEntry.attr_line);
+  assertEqual('4400': callstackEntry.attr_line);
 
-  assertEqual(1: testcase.assertions.size);
+  assertEqual(1: testcase.events.size);
 
-  // Validate: Test Case #2
+  // Validate: Test Case #2: testRuntimeError
+
   testCase = getTestcase(testSuite.testcases: 2);
   assertEqual('testRuntimeError': testcase.attr_name);
-  assertEqual('1': testcase.attr_assertions);
+  assertEqual('2': testcase.attr_assertions);
   assertEqual('TESTPGM23': testcase.attr_classname);
   assert(testcase.attr_time <> '');
-  assertEqual('Error': testcase.attr_outcome);
+  assertEqual('Failure': testcase.attr_outcome);
 
-  assertion = getAssertion(testCase.assertions: 1);
-  assertEqual('Error': assertion.attr_outcome);
-  assertEqual('Errors occurred in command.': assertion.error.attr_message);
-  assertEqual('CPF0006': assertion.error.attr_type);
+  testCaseEvent = getTestCaseEvent(testCase.events: 2);
+//  assertEqual('Failure': testCaseEvent.attr_outcome);
+  assertEqual('Expected ''Daisy Duck'', but was ''Gustav Gans''.'
+              : testCaseEvent.failure.attr_message);
+  assertEqual('6600': testCaseEvent.failure.attr_line);
+  assertEqual('Daisy Duck': testCaseEvent.failure.expected.attr_value);
+  assertEqual('string': testCaseEvent.failure.expected.attr_type);
+  assertEqual('10': testCaseEvent.failure.expected.attr_length);
+  assertEqual('10': testCaseEvent.failure.expected.attr_originalLength);
+  assertEqual('Gustav Gans': testCaseEvent.failure.actual.attr_value);
+  assertEqual('string': testCaseEvent.failure.actual.attr_type);
+  assertEqual('11': testCaseEvent.failure.actual.attr_length);
+  assertEqual('11': testCaseEvent.failure.actual.attr_originalLength);
 
-  assertEqual(1: testcase.assertions.size);
+  assertEqual(2: testcase.events.size);
 
-  // Validate: Test Case #3
+  // Validate: Test Case #3: testSuccess
+
   testCase = getTestcase(testSuite.testcases: 3);
   assertEqual('testSuccess': testcase.attr_name);
-  assertEqual('2': testcase.attr_assertions);
+  assertEqual('3': testcase.attr_assertions);
   assertEqual('TESTPGM23': testcase.attr_classname);
   assert(testcase.attr_time <> '');
   assertEqual('Success': testcase.attr_outcome);
 
-  assertEqual(0: testcase.assertions.size);
+  assertEqual(3: testcase.events.size);
 
 end-proc;
 
+//----------------------------------------------------------------------
+// Tests the XML output of: *VSCODE1 / *CONTINUE
+//----------------------------------------------------------------------
 dcl-proc testVSCode1Continue export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds testSuite likeds(xmlTestSuite_t) inz(*likeds);
-  dcl-ds testCase likeds(xmlTestCase_t) inz(*likeds);
-  dcl-ds assertion likeds(xmlAbstractAssertion_t) inz(*likeds);
-  dcl-ds callstackEntry likeds(xmlCallstackEntry_t) inz(*likeds);
+  dcl-ds testSuite likeds(saxTestSuite_t) inz(*likeds);
+  dcl-ds testCase likeds(saxTestCase_t) inz(*likeds);
+  dcl-ds testCaseEvent likeds(saxAbstractTestCaseEvent_t) inz(*likeds);
+  dcl-ds callstackEntry likeds(saxCallstackEntry_t) inz(*likeds);
   dcl-s msgTxt char(256);
 
   if (TestSuite_isDirty('TESTPGM23': 'QTEMP'));
@@ -216,19 +385,18 @@ dcl-proc testVSCode1Continue export;
 
   restoreAssertStatus();
 
-  SAX_initialize();
-
-  xml-sax %handler(SAX_CallbackHandler: testSuite)
-          %XML(g_status.tmpName: 'doc=file');
+  testSuite = parseXml(g_status.tmpName);
 
   // Validate: Test Suite
+
   assertEqual('1': testSuite.attr_errors);
-  assertEqual('1': testSuite.attr_failures);
+  assertEqual('2': testSuite.attr_failures);
   assert(testSuite.attr_hostname <> '');
   assertEqual('QTEMP/TESTPGM23': testSuite.attr_name);
   assertEqual('3': testSuite.attr_tests);
 
-  // Validate: Test Case #1
+  // Validate: Test Case #1: testFailure
+
   testCase = getTestcase(testSuite.testcases: 1);
   assertEqual('testFailure': testcase.attr_name);
   assertEqual('2': testcase.attr_assertions);
@@ -236,54 +404,242 @@ dcl-proc testVSCode1Continue export;
   assert(testcase.attr_time <> '');
   assertEqual('Failure': testcase.attr_outcome);
 
-  assertion = getAssertion(testCase.assertions: 1);
-  assertEqual('Failure': assertion.attr_outcome);
-  assertEqual('assertEqual_string': assertion.failure.attr_name);
-  assertEqual('Expected ''Donald'', but was ''Dagobert''.': assertion.failure.attr_message);
-  assertEqual('5400': assertion.failure.attr_line);
+  testCaseEvent = getTestCaseEvent(testCase.events: 1);
+//  assertEqual('Failure': testCaseEvent.attr_outcome);
+  assertEqual('assertEqual_string': testCaseEvent.failure.attr_name);
+  assertEqual('Expected ''Donald Duck'', but was ''Dagobert Duck''.'
+              : testCaseEvent.failure.attr_message);
+  assertEqual('4400': testCaseEvent.failure.attr_line);
 
-  callstackEntry = getCallstackEntry(assertion.failure.callstack: 1);
+  callstackEntry = getCallstackEntry(testCaseEvent.failure.callstack: 1);
   assertEqual('TESTPGM23': callstackEntry.attr_program);
   assertEqual('TESTPGM23': callstackEntry.attr_module);
   assertEqual('testFailure': callstackEntry.attr_procedure);
-  assertEqual('5400': callstackEntry.attr_line);
+  assertEqual('4400': callstackEntry.attr_line);
 
-  assertEqual(2: testcase.assertions.size);
+  assertEqual(2: testcase.events.size);
 
-  // Validate: Test Case #2
+  // Validate: Test Case #2: testRuntimeError
+
   testCase = getTestcase(testSuite.testcases: 2);
   assertEqual('testRuntimeError': testcase.attr_name);
-  assertEqual('1': testcase.attr_assertions);
+  assertEqual('2': testcase.attr_assertions);
   assertEqual('TESTPGM23': testcase.attr_classname);
   assert(testcase.attr_time <> '');
   assertEqual('Error': testcase.attr_outcome);
 
-  assertion = getAssertion(testCase.assertions: 1);
-  assertEqual('Success': assertion.attr_outcome);
-  assertEqual('assertEqual_string': assertion.success.attr_name);
-  assertEqual('6800': assertion.success.attr_line);
+  testCaseEvent = getTestCaseEvent(testCase.events: 1);
+//  assertEqual('Success': testCaseEvent.attr_outcome);
+  assertEqual('assertEqual_string': testCaseEvent.success.attr_name);
+  assertEqual('6300': testCaseEvent.success.attr_line);
+  assertEqual('Tick': testCaseEvent.success.expected.attr_value);
+  assertEqual('string': testCaseEvent.success.expected.attr_type);
+  assertEqual('4': testCaseEvent.success.expected.attr_length);
+  assertEqual('4': testCaseEvent.success.expected.attr_originalLength);
 
-  assertEqual('Dagobert': assertion.success.expected.attr_value);
-  assertEqual('string': assertion.success.expected.attr_type);
-  assertEqual('8': assertion.success.expected.attr_length);
-  assertEqual('8': assertion.success.expected.attr_originalLength);
+  testCaseEvent = getTestCaseEvent(testCase.events: 2);
+//  assertEqual('Failure': testCaseEvent.attr_outcome);
+  assertEqual('assertEqual_string': testCaseEvent.failure.attr_name);
+  assertEqual('Expected ''Daisy Duck'', but was ''Gustav Gans''.'
+              : testCaseEvent.failure.attr_message);
+  assertEqual('6600': testCaseEvent.failure.attr_line);
+  assertEqual('Daisy Duck': testCaseEvent.failure.expected.attr_value);
+  assertEqual('string': testCaseEvent.failure.expected.attr_type);
+  assertEqual('10': testCaseEvent.failure.expected.attr_length);
+  assertEqual('10': testCaseEvent.failure.expected.attr_originalLength);
+  assertEqual('Gustav Gans': testCaseEvent.failure.actual.attr_value);
+  assertEqual('string': testCaseEvent.failure.actual.attr_type);
+  assertEqual('11': testCaseEvent.failure.actual.attr_length);
+  assertEqual('11': testCaseEvent.failure.actual.attr_originalLength);
 
-  assertion = getAssertion(testCase.assertions: 2);
-  assertEqual('Error': assertion.attr_outcome);
-  assertEqual('Errors occurred in command.': assertion.error.attr_message);
-  assertEqual('CPF0006': assertion.error.attr_type);
+  testCaseEvent = getTestCaseEvent(testCase.events: 3);
+//  assertEqual('Error': testCaseEvent.attr_outcome);
+  assertEqual('Errors occurred in command.': testCaseEvent.error.attr_message);
+  assertEqual('CPF0006': testCaseEvent.error.attr_type);
 
-  assertEqual(2: testcase.assertions.size);
+  assertEqual(3: testcase.events.size);
 
-  // Validate: Test Case #3
+  // Validate: Test Case #3: testSuccess
+
   testCase = getTestcase(testSuite.testcases: 3);
   assertEqual('testSuccess': testcase.attr_name);
+  assertEqual('3': testcase.attr_assertions);
+  assertEqual('TESTPGM23': testcase.attr_classname);
+  assert(testcase.attr_time <> '');
+  assertEqual('Failure': testcase.attr_outcome);
+
+  assertEqual(3: testcase.events.size);
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Validates the test results of *JENKINS1 and *JENKINS2 (*ABORT)
+//----------------------------------------------------------------------
+dcl-proc validateJenkinsAbort;
+  dcl-pi *n extproc(*dclcase);
+    testSuite likeds(saxTestSuite_t);
+  end-pi;
+
+  dcl-ds testCase likeds(saxTestCase_t) inz(*likeds);
+  dcl-ds testCaseEvent likeds(saxAbstractTestCaseEvent_t) inz(*likeds);
+
+  // Validate: Test Suite
+
+  assertEqual('0': testSuite.attr_errors);
+  assertEqual('2': testSuite.attr_failures);
+  assert(testSuite.attr_hostname <> '');
+  assertEqual('QTEMP/TESTPGM23': testSuite.attr_name);
+  assertEqual('3': testSuite.attr_tests);
+
+  // Validate: Test Case #1: testFailure
+
+  testCase = getTestcase(testSuite.testcases: 1);
+  assertEqual('testFailure': testcase.attr_name);
+  assertEqual('1': testcase.attr_assertions);
+  assertEqual('TESTPGM23': testcase.attr_classname);
+  assert(testcase.attr_time <> '');
+  assertEqual('': testcase.attr_outcome);
+
+  testCaseEvent = getTestCaseEvent(testCase.events: 1);
+//  assertEqual('': testCaseEvent.attr_outcome);
+  assertEqual('': testCaseEvent.failure.attr_name);
+  assertEqual('Expected ''Donald Duck'', but was ''Dagobert Duck''.'
+              : testCaseEvent.failure.attr_message);
+  assertEqual('': testCaseEvent.failure.attr_line);
+
+  assertEqual(0: testCaseEvent.failure.callstack.size);
+
+  assertEqual(1: testcase.events.size);
+
+  // Validate: Test Case #2: testRuntimeError
+
+  testCase = getTestcase(testSuite.testcases: 2);
+  assertEqual('testRuntimeError': testcase.attr_name);
   assertEqual('2': testcase.attr_assertions);
   assertEqual('TESTPGM23': testcase.attr_classname);
   assert(testcase.attr_time <> '');
-  assertEqual('Success': testcase.attr_outcome);
+  assertEqual('': testcase.attr_outcome);
 
-  assertEqual(2: testcase.assertions.size);
+  testCaseEvent = getTestCaseEvent(testCase.events: 1);
+//  assertEqual('': testCaseEvent.attr_outcome);
+  assertEqual('Expected ''Daisy Duck'', but was ''Gustav Gans''.'
+              : testCaseEvent.failure.attr_message);
+  assertEqual('': testCaseEvent.failure.attr_line);
+
+  assertEqual(*on: testCaseEvent.failure.expected.isNull);
+
+  assertEqual(1: testcase.events.size);
+
+  // Validate: Test Case #3: testSuccess
+
+  testCase = getTestcase(testSuite.testcases: 3);
+  assertEqual('testSuccess': testcase.attr_name);
+  assertEqual('3': testcase.attr_assertions);
+  assertEqual('TESTPGM23': testcase.attr_classname);
+  assert(testcase.attr_time <> '');
+  assertEqual('': testcase.attr_outcome);
+
+  assertEqual(0: testcase.events.size);
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Validates the test results of *JENKINS1 and *JENKINS2 (*CONTINUE)
+//----------------------------------------------------------------------
+dcl-proc validateJenkinsContinue;
+  dcl-pi *n extproc(*dclcase);
+    testSuite likeds(saxTestSuite_t);
+  end-pi;
+
+  dcl-ds testCase likeds(saxTestCase_t) inz(*likeds);
+  dcl-ds testCaseEvent likeds(saxAbstractTestCaseEvent_t) inz(*likeds);
+
+  // Validate: Test Suite
+
+  assertEqual('1': testSuite.attr_errors);
+  assertEqual('2': testSuite.attr_failures);
+  assert(testSuite.attr_hostname <> '');
+  assertEqual('QTEMP/TESTPGM23': testSuite.attr_name);
+  assertEqual('3': testSuite.attr_tests);
+
+  // Validate: Test Case #1: testFailure
+
+  testCase = getTestcase(testSuite.testcases: 1);
+  assertEqual('testFailure.assertEqual_string_1': testcase.attr_name);
+  assertEqual('1': testcase.attr_assertions);
+  assertEqual('TESTPGM23': testcase.attr_classname);
+  assert(testcase.attr_time <> '');
+  assertEqual('': testcase.attr_outcome);
+
+  testCaseEvent = getTestCaseEvent(testCase.events: 1);
+//  assertEqual('': testCaseEvent.attr_outcome);
+  assertEqual('': testCaseEvent.failure.attr_name);
+  assertEqual('Expected ''Donald Duck'', but was ''Dagobert Duck''.'
+              : testCaseEvent.failure.attr_message);
+  assertEqual('': testCaseEvent.failure.attr_line);
+  assertEqual(0: testCaseEvent.failure.callstack.size);
+
+  assertEqual(1: testcase.events.size);
+
+  testCase = getTestcase(testSuite.testcases: 2);
+  assertEqual('testFailure.aEqual_2': testcase.attr_name);
+  assertEqual('1': testcase.attr_assertions);
+  assertEqual('TESTPGM23': testcase.attr_classname);
+  assert(testcase.attr_time <> '');
+  assertEqual('': testcase.attr_outcome);
+
+  assertEqual(0: testcase.events.size);
+
+  // Validate: Test Case #2: testRuntimeError
+
+  testCase = getTestcase(testSuite.testcases: 3);
+  assertEqual('testRuntimeError.assertEqual_string_1': testcase.attr_name);
+  assertEqual('1': testcase.attr_assertions);
+  assertEqual('TESTPGM23': testcase.attr_classname);
+  assert(testcase.attr_time <> '');
+  assertEqual('': testcase.attr_outcome);
+
+  assertEqual(0: testcase.events.size);
+
+  testCase = getTestcase(testSuite.testcases: 4);
+  assertEqual('testRuntimeError.assertEqual_string_2': testcase.attr_name);
+  assertEqual('1': testcase.attr_assertions);
+  assertEqual('TESTPGM23': testcase.attr_classname);
+  assert(testcase.attr_time <> '');
+  assertEqual('': testcase.attr_outcome);
+
+  testCaseEvent = getTestCaseEvent(testCase.events: 1);
+//  assertEqual('': testCaseEvent.attr_outcome);
+  assertEqual('Expected ''Daisy Duck'', but was ''Gustav Gans''.'
+              : testCaseEvent.failure.attr_message);
+  assertEqual('': testCaseEvent.failure.attr_line);
+
+  assertEqual(1: testcase.events.size);
+
+  testCase = getTestcase(testSuite.testcases: 5);
+  assertEqual('testRuntimeError': testcase.attr_name);
+  assertEqual('1': testcase.attr_assertions);
+  assertEqual('TESTPGM23': testcase.attr_classname);
+  assert(testcase.attr_time <> '');
+  assertEqual('': testcase.attr_outcome);
+
+  testCaseEvent = getTestCaseEvent(testCase.events: 1);
+//  assertEqual('': testCaseEvent.attr_outcome);
+  assertEqual('Errors occurred in command.': testCaseEvent.error.attr_message);
+  assertEqual('CPF0006': testCaseEvent.error.attr_type);
+
+  assertEqual(1: testcase.events.size);
+
+  // Validate: Test Case #3: testSuccess
+
+  testCase = getTestcase(testSuite.testcases: 6);
+  assertEqual('testSuccess.assertEqual_string_1': testcase.attr_name);
+  assertEqual('1': testcase.attr_assertions);
+  assertEqual('TESTPGM23': testcase.attr_classname);
+  assert(testcase.attr_time <> '');
+  assertEqual('': testcase.attr_outcome);
+
+  assertEqual(0: testcase.events.size);
 
 end-proc;
 
@@ -292,8 +648,8 @@ end-proc;
 //----------------------------------------------------------------------
 
 dcl-proc getTestcase;
-  dcl-pi *n likeds(xmlTestCase_t) extproc(*dclcase);
-    testCases likeds(xmlTestCases_t) const;
+  dcl-pi *n likeds(saxTestCase_t) extproc(*dclcase);
+    testCases likeds(saxTestCases_t) const;
     index     int(10) const;
   end-pi;
 
@@ -301,19 +657,19 @@ dcl-proc getTestcase;
 
 end-proc;
 
-dcl-proc getAssertion;
-  dcl-pi *n likeds(xmlAbstractAssertion_t) extproc(*dclcase);
-    assertions likeds(xmlAssertions_t) const;
-    index      int(10) const;
+dcl-proc getTestCaseEvent;
+  dcl-pi *n likeds(saxAbstractTestCaseEvent_t) extproc(*dclcase);
+    testCaseEvents likeds(saxTestCaseEvents_t) const;
+    index          int(10) const;
   end-pi;
 
-  return assertions.assertion(index);
+  return testCaseEvents.testCaseEvent(index);
 
 end-proc;
 
 dcl-proc getCallstackEntry;
-  dcl-pi *n likeds(xmlCallstackEntry_t) extproc(*dclcase);
-    callstack likeds(xmlCallstack_t) const;
+  dcl-pi *n likeds(saxCallstackEntry_t) extproc(*dclcase);
+    callstack likeds(saxCallstack_t) const;
     index     int(10) const;
   end-pi;
 
@@ -343,3 +699,17 @@ dcl-proc run;
 
 end-proc;
 
+dcl-proc parseXml;
+  dcl-pi *n likeds(saxTestSuite_t) extproc(*dclcase);
+    path varchar(1024) options(*varsize);
+  end-pi;
+
+  dcl-ds testSuite likeds(saxTestSuite_t) inz;
+
+  SAX_initialize();
+
+  xml-sax %handler(SAX_CallbackHandler: testSuite) %XML(path: 'doc=file');
+
+  return testSuite;
+
+end-proc;

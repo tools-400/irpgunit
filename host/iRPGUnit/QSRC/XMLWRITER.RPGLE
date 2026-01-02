@@ -271,6 +271,8 @@ dcl-proc writeTestCasesJenkinsStyle;
 
   dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
 
+  dcl-s isSuccessEvent ind;
+
   g_xmlWriter.indLvl += 1;
 
   // Iterate the test cases...
@@ -280,9 +282,32 @@ dcl-proc writeTestCasesJenkinsStyle;
 
     execTimeSecs = getReportExecTimeSecs(testCaseResult);
 
+    isSuccessEvent = *off;
+
     list_resetIteration(testCaseResult.hTestEvents);
     pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
     dow (pAbstractTestEvent <> *null);
+
+      // ----------------------------------------------------------
+      // Check also CMDRUNSRV.writeTestReport(), when
+      // changing the logic for selecting the test case events.
+      if (testCaseResult.outcome = TEST_CASE_SUCCESS and isSuccessEvent);
+        leave;
+      endif;
+
+      if (abstractTestEvent.outcome = TEST_CASE_FAILURE
+          and not abstractTestEvent.failure.isConfirmed);
+        pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
+        iter;
+      endif;
+
+      if (g_xmlWriter.isJUnitStyle);
+        if (abstractTestEvent.outcome <> testCaseResult.outcome);
+          pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
+          iter;
+        endif;
+      endif;
+      // ----------------------------------------------------------
 
       text = indent() + '<testcase name="'
                  + buildReportTestCaseName(testCaseResult: abstractTestEvent) + '"';
@@ -297,6 +322,10 @@ dcl-proc writeTestCasesJenkinsStyle;
       // close <testcase> element
       text = indent() + '</testcase>' + newLine();
       appendToXmlFile(text);
+
+      if (abstractTestEvent.outcome = TEST_CASE_SUCCESS);
+        isSuccessEvent = *on;
+      endif;
 
       pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
     enddo;

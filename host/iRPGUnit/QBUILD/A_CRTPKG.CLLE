@@ -405,6 +405,9 @@
              CPYF       FROMFILE(&DEVLIB/&QMISC) +
                           TOFILE(&LIB/&QMISC) FROMMBR(JUNITSMPL) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QMISC) +
+                          TOFILE(&LIB/&QMISC) FROMMBR(VSCODE) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
 
              /* ---------------------------------------------------- */
              /*  Copy source members: QPNLGRP                        */

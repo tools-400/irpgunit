@@ -182,7 +182,7 @@ dcl-proc runTestSuite export;
   testSuiteResult.assertCnt = getAssertCalled();
 
   // Return result to printer file
-  writeTestReport(testSuite: qTestSuite: testSuiteResult);
+  writeTestReport(testSuite: qTestSuite: testSuiteResult: detail);
 
   // Return result to xml file
   if (xmlStmfInfo.path <> '');
@@ -253,9 +253,10 @@ dcl-proc writeTestReport export;
     testSuite       likeds(testSuite_t) const;
     testSuiteName   likeds(Object_t) const;
     testSuiteResult likeds(testSuiteResult_t);
+    detail          like(detail_t) const;
   end-pi;
 
-  dcl-ds testCaseResult likeds(testCaseResult_t) based(pTestResult);
+  dcl-ds testCaseResult likeds(testCaseResult_t) based(pTestCaseResult);
   dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
   dcl-ds testSuccessEvent likeds(abstractTestEvent.success);
   dcl-ds testFailureEvent likeds(abstractTestEvent.failure);
@@ -263,13 +264,43 @@ dcl-proc writeTestReport export;
   dcl-s msg varchar(256);
   dcl-ds callstkEnt likeds(callstkEnt_t) inz;
 
+  dcl-s isSuccessEvent ind;
+
   list_resetIteration(testSuite.testResults);
-  pTestResult = list_getNext(testSuite.testResults);
-  dow (pTestResult <> *null);
+  pTestCaseResult = list_getNext(testSuite.testResults);
+  dow (pTestCaseResult <> *null);
+
+    if (detail = DETAIL_BASIC and testCaseResult.outcome = TEST_CASE_SUCCESS);
+      pTestCaseResult = list_getNext(testSuite.testResults);
+      iter;
+    endif;
+
+    isSuccessEvent = *off;
 
     list_resetIteration(testCaseResult.hTestEvents);
     pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
     dow (pAbstractTestEvent <> *null);
+
+      // ----------------------------------------------------------
+      // Check also XMLWRITER.writeTestCasesJenkinsStyle(), when
+      // changing the logic for selecting the test case events.
+      if (testCaseResult.outcome = TEST_CASE_SUCCESS and isSuccessEvent);
+        leave;
+      endif;
+
+      if (abstractTestEvent.outcome = TEST_CASE_FAILURE
+          and not abstractTestEvent.failure.isConfirmed);
+        pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
+        iter;
+      endif;
+
+      if (g_status.isJUnitStyle);
+        if (abstractTestEvent.outcome <> testCaseResult.outcome);
+          pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
+          iter;
+        endif;
+      endif;
+      // ----------------------------------------------------------
 
       select;
       when (abstractTestEvent.outcome = TEST_CASE_SUCCESS);
@@ -280,15 +311,16 @@ dcl-proc writeTestReport export;
           callstkEnt = Callstack_getFirst(testSuccessEvent.pCallstk);
         endif;
         logSuccess(testCaseResult.testName: callstkEnt.qStmt.specNb: testCaseResult.assertCnt);
+        isSuccessEvent = *on;
 
       when (abstractTestEvent.outcome = TEST_CASE_FAILURE);
         testFailureEvent = abstractTestEvent.failure;
-        // Log confirmed failure events only. Unconfirmed
-        // events have been monitored, e.g.:
-        //    callp(E) assert()
-        if (testFailureEvent.isConfirmed);
+//        // Log confirmed failure events only. Unconfirmed
+//        // events have been monitored, e.g.:
+//        //    callp(E) assert()
+//        if (testFailureEvent.isConfirmed);
           logFailure(testCaseResult.testName: testFailureEvent);
-        endif;
+//        endif;
 
       when (abstractTestEvent.outcome = TEST_CASE_ERROR);
         runtimeErrorEvent = abstractTestEvent.error;
@@ -299,7 +331,7 @@ dcl-proc writeTestReport export;
       pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
     enddo;
 
-    pTestResult = list_getNext(testSuite.testResults);
+    pTestCaseResult = list_getNext(testSuite.testResults);
   enddo;
 
   msg = fmtCompMsg( testSuiteResult.runsCnt:
@@ -464,26 +496,7 @@ dcl-proc runTestProc export;
     testCaseResult.execTimeMSecs = 0;
   endif;
 
-  if (g_status.isJUnitStyle);
-    discardUnneededTestEvents(testCaseResult.hTestEvents);
-  else;
-    updateTestCaseOutcome(testCaseResult);
-  endif;
-
-  if (g_status.isJUnitStyle and testCaseResult.outcome = TEST_CASE_SUCCESS);
-    // Add success event to satisfy XMLWRITER and RMTRUNSRV.
-    // There is no specific assert procedure, as all asserts
-    // have been successfully executed.
-    testCaseResult.lastSuccessEvent = list_size(testCaseResult.hTestEvents) + 1;
-
-    clear testSuccessEvent;
-    testSuccessEvent.outcome = TEST_CASE_SUCCESS;
-    testSuccessEvent.assertProc = '';
-    testSuccessEvent.pCallstk = *null;
-
-    testCaseResult.lastSuccessEvent =
-      addSuccessTestEvent(testCaseResult.hTestEvents: testSuccessEvent);
-  endif;
+  updateTestCaseOutcome(testCaseResult);
 
   return testCaseResult;
 
@@ -495,7 +508,7 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc discardUnneededTestEvents;
   dcl-pi *n extproc(*dclcase);
-    hTestEvents pointer const;
+    testCaseResult likeds(testCaseResult_t);
   end-pi;
 
   dcl-s i int(10);
@@ -504,19 +517,35 @@ dcl-proc discardUnneededTestEvents;
 
   dcl-ds abstractTestEventDisposed likeds(abstractTestEvent_t) based(pAbstractTestEventDisposed);
 
-  listSize = list_size(hTestEvents);
+  listSize = list_size(testCaseResult.hTestEvents);
+
+  // At this point 'testCaseResult.outcome' contains the outcome
+  // of the last assertion or indicates a runtime error.
 
   idx = listSize;
   for i = 1 to listSize;
-    pAbstractTestEventDisposed = list_get(hTestEvents: idx - 1);
+    pAbstractTestEventDisposed = list_get(testCaseResult.hTestEvents: idx - 1);
     select;
-    when (abstractTestEventDisposed.outcome = TEST_CASE_SUCCESS);
-      disposeTestEvent(hTestEvents: idx);
+    // 'Error' has the higest priority. Hence set 'Error'
+    // without any restriction.
+    when (abstractTestEventDisposed.outcome = TEST_CASE_ERROR);
+      testCaseResult.outcome = TEST_CASE_ERROR;
+      testCaseResult.lastSuccessEvent = abstractTestEventDisposed.index;
+
+    // 'Failure' has the second higest priority. Hence set 'Failure'
+    // only, if it is currently set to 'Success'. Never overwrite 'Error'!
     when (abstractTestEventDisposed.outcome = TEST_CASE_FAILURE);
-      // dispose failure event and remove it from the list
+      // dispose unconfirmed failure event and remove it from the list
       if (not abstractTestEventDisposed.failure.isConfirmed);
-        disposeTestEvent(hTestEvents: idx);
+        disposeTestEvent(testCaseResult.hTestEvents: idx);
+        testCaseResult.lastFailureEvent = 0;
+      else;
+        testCaseResult.outcome = TEST_CASE_FAILURE;
+        testCaseResult.lastFailureEvent = abstractTestEventDisposed.index;
       endif;
+
+    when (abstractTestEventDisposed.outcome = TEST_CASE_SUCCESS);
+      disposeTestEvent(testCaseResult.hTestEvents: idx);
     endsl;
     idx -= 1;
   endfor;
@@ -526,9 +555,9 @@ end-proc;
 //----------------------------------------------------------------------
 // Iterates the test events and determines the final outcome.
 // Outcome priority (high to low):
-//   Error
+//   Error   (highest)
 //   Failure
-//   Success
+//   Success (lowest)
 //----------------------------------------------------------------------
 dcl-proc updateTestCaseOutcome;
   dcl-pi *n extproc(*dclcase);
@@ -537,21 +566,33 @@ dcl-proc updateTestCaseOutcome;
 
   dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
 
+  // At this point 'testCaseResult.outcome' contains the outcome
+  // of the last assertion or indicates a runtime error.
   if (testCaseResult.outcome = TEST_CASE_ERROR);
     return;
   endif;
 
   list_resetIteration(testCaseResult.hTestEvents);
   pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
-  dow (pAbstractTestEvent <> *null and testCaseResult.outcome = TEST_CASE_SUCCESS);
+  dow (pAbstractTestEvent <> *null and testCaseResult.outcome <> TEST_CASE_ERROR);
     select;
-    when (abstractTestEvent.outcome = TEST_CASE_SUCCESS);
-      testCaseResult.outcome = TEST_CASE_SUCCESS;
+    // 'Error' has the higest priority. Hence set 'Error'
+    // without any restriction.
+    when (abstractTestEvent.outcome = TEST_CASE_ERROR);
+      testCaseResult.outcome = TEST_CASE_ERROR;
       testCaseResult.lastSuccessEvent = abstractTestEvent.index;
+
+    // 'Failure' has the second higest priority. Hence set 'Failure'
+    // only, if it is currently set to 'Success'. Never overwrite 'Error'!
     when (abstractTestEvent.outcome = TEST_CASE_FAILURE);
-      testCaseResult.outcome = TEST_CASE_FAILURE;
-      testCaseResult.lastFailureEvent = abstractTestEvent.index;
+      if (abstractTestEvent.failure.isConfirmed);
+        if (testCaseResult.outcome = TEST_CASE_SUCCESS);
+          testCaseResult.outcome = TEST_CASE_FAILURE;
+        endif;
+        testCaseResult.lastFailureEvent = abstractTestEvent.index;
+      endif;
     endsl;
+
     pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
   enddo;
 
@@ -632,7 +673,7 @@ dcl-proc initTestResult export;
   dcl-ds testCaseResult likeds(testCaseResult_t);
 
   clear testCaseResult;
-  testCaseResult.outcome = TEST_CASE_SUCCESS;
+  testCaseResult.outcome = outcome;
   testCaseResult.testName = testName;
   testCaseResult.execTimeMSecs = 0;
   testCaseResult.assertCnt = 0;
@@ -709,13 +750,7 @@ dcl-proc disposeTestEvent;
   when (abstractTestEvent.outcome = TEST_CASE_FAILURE);
     disposeCallstack(abstractTestEvent.failure.pCallstk);
   when (abstractTestEvent.outcome = TEST_CASE_SUCCESS);
-    if (g_status.isJUnitStyle);
-      if (abstractTestEvent.success.pCallstk <> *null);
-        sndEscapeMsgAboveCtlBdy('Call stack must be *null if using JUnit style.');
-      endif;
-    else;
-      disposeCallstack(abstractTestEvent.success.pCallstk);
-    endif;
+    disposeCallstack(abstractTestEvent.success.pCallstk);
   endsl;
 
   list_remove(hTestEvents: idx - 1);
@@ -1268,12 +1303,15 @@ dcl-proc buildReportTestCaseName export;
   end-pi;
 
   dcl-s assertProcName like(assertProcNm_t);
+  dcl-s index int(10);
 
   select;
   when (abstractTestEvent.outcome = TEST_CASE_SUCCESS);
     assertProcName = abstractTestEvent.success.assertProc;
+    index = abstractTestEvent.success.index;
   when (abstractTestEvent.outcome = TEST_CASE_FAILURE);
     assertProcName = abstractTestEvent.failure.assertProc;
+    index = abstractTestEvent.failure.index;
   other;
     assertProcName = '';
   endsl;
@@ -1281,8 +1319,8 @@ dcl-proc buildReportTestCaseName export;
   if (g_status.isJUnitStyle or assertProcName = '');
     return %trimr(testCaseResult.testName);
   else;
-    return %trimr(testCaseResult.testName) + '.' + abstractTestEvent.failure.assertProc
-                                           + '_' + %char(abstractTestEvent.failure.index);
+    return %trimr(testCaseResult.testName) + '.' + assertProcName
+                                           + '_' + %char(index);
   endif;
 
 end-proc;

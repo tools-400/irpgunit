@@ -412,13 +412,7 @@ dcl-proc doAssert export;
     g_status.abstractTestEvent.success.outcome = TEST_CASE_SUCCESS;
     g_status.abstractTestEvent.success.logExpected = logExpected;
     g_status.abstractTestEvent.success.logActual = logActual;
-
-    if (g_status.isJUnitStyle);
-      g_status.abstractTestEvent.success.pCallstk = *null;
-    else;
-      g_status.abstractTestEvent.success.pCallstk = getCallStk(startProc: 1);
-    endif;
-
+    g_status.abstractTestEvent.success.pCallstk = getCallStk(startProc: 1);
     addSuccessTestEvent(g_status.hTestEvents: g_status.abstractTestEvent.success);
   endif;
 
@@ -437,18 +431,23 @@ dcl-proc doFail;
     getAssertProcName(g_status.procNamePrefix: startProc);
   g_status.abstractTestEvent.failure.msg = %trimr(msg);
   g_status.abstractTestEvent.failure.pCallstk = getCallStk(startProc);
+
+  if (not g_status.isJUnitStyle);
+    g_status.abstractTestEvent.failure.isConfirmed = *on;
+  endif;
+
   g_status.abstractTestEvent.index = list_size(g_status.hTestEvents) + 1;
 
   addFailureTestEvent(g_status.hTestEvents: g_status.abstractTestEvent.failure);
 
-  g_status.isAssertionError = *on;
-
   if (%addr(toCallStackE) = *null);
     // called by fail()
+    g_status.isAssertionError = *on;
     sndEscapeMsgToProcedure(msg: TEST_CASE_EXECUTOR);
   else;
     // called by assertion procedure
     if (g_status.isJUnitStyle);
+      g_status.isAssertionError = *on;
       sndEscapeMsg(msg: toCallStackE + 1);
     endif;
   endif;

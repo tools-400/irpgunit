@@ -95,7 +95,7 @@
    "SNDPGMMSG ",
      "MSGID(CPF9898) ",
      "MSGF(QCPFMSG) ",
-     "MSGDTA('Invalid option specfied: ''"option"''. Use INSTALL, CLEAN or CLEANALL')",
+     "MSGDTA('Invalid option specfied: ''"option"''. Use INSTALL, CMPMOD, CLEAN or CLEANALL')",
      "TOPGMQ(*PRV (*CTLBDY)) ",
      "MSGTYPE(*ESCAPE)"
  end
