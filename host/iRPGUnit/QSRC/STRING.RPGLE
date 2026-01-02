@@ -131,6 +131,10 @@ dcl-proc leftStr export;
 
   dcl-s subString like(string);
 
+  if (length = 0);
+    return '';
+  endif;
+
   if (length <= %len(string));
     subString = %subst(string: 1: length);
   else;
