@@ -1210,6 +1210,18 @@
                           TEXT('iRPGUnit Fixture - Errors in setUp and tearDown.')
              MONMSG     MSGID(CPF3288)
 
+             CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
+                          MBR(TESTPGM22) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit Fixture - Test Message Sender/Receiver.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
+                          MBR(TESTPGM23) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit Fixture - Test XML Output Files.')
+             MONMSG     MSGID(CPF3288)
+
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(ACPTSTT) +
                           SRCTYPE(RPGLE) +
