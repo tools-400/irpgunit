@@ -679,6 +679,62 @@ dcl-proc getElementValue;
 end-proc;
 
 //----------------------------------------------------------------------
+//   SAX: Returns the value of the current XML element as an array
+//        of text lines.
+//----------------------------------------------------------------------
+dcl-proc SAX_getElementTextLines export;
+  dcl-pi *n likeds(saxElementLines_t);
+    elemValue like(saxElementText_t) const;
+  end-pi;
+
+  dcl-s i int(10);
+  dcl-s char char(1);
+  dcl-s lineFeedChar char(1);
+  dcl-s line like(saxElementLine_t);
+  dcl-ds lines likeds(saxElementLines_t);
+
+  dcl-c CR x'0D';
+  dcl-c LF x'25';
+
+  clear lines;
+
+  if (elemValue = '');
+    lines.size = 0;
+    return lines;
+  endif;
+
+  i = 1;
+  dow (i <= %len(elemValue));
+    char = %subst(elemValue: i: 1);
+
+    // Initialize linefeed character
+    if (lineFeedChar = '' and (char = LF or char = CR));
+      lineFeedChar = char;
+    endif;
+
+    if (char = lineFeedChar);
+      lines.size += 1;
+      lines.line(lines.size) = line;
+      line = '';
+    else;
+      if (char <> CR and char <> LF);
+        line += char;
+      endif;
+    endif;
+    i += 1;
+  enddo;
+
+  if (line <> '');
+    lines.size += 1;
+    lines.line(lines.size) = line;
+    line = '';
+  endif;
+
+  return lines;
+
+end-proc;
+
+//----------------------------------------------------------------------
 //   Returns *on if the specified value is a whichtespace character.
 //----------------------------------------------------------------------
 dcl-proc isWhiteSpaceChar;

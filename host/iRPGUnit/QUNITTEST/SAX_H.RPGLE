@@ -52,9 +52,11 @@ dcl-c NUM_ASSERTIONS 8;
 dcl-c NUM_STACK_ENTRIES 8;
 dcl-c NUM_PROPERTIES 8;
 dcl-c NUM_DIAGNOSTIC_MESSAGES 4;
+dcl-c NUM_ELEMENT_LINES 16;
 
 dcl-s saxElemName_t varchar(128) template;
 dcl-s saxElementText_t varchar(1024) template;
+dcl-s saxElementLine_t varchar(128) template;
 dcl-s saxAttrName_t varchar(64) template;
 dcl-s saxAttrValue_t varchar(512) template;
 dcl-s saxPath_t varchar(1024) template;
@@ -180,10 +182,23 @@ dcl-ds saxDiagnosticMessages_t qualified template;
   message  like(saxDiagnosticMessage_t) dim(NUM_DIAGNOSTIC_MESSAGES) inz;
 end-ds;
 
+dcl-ds saxElementLines_t qualified template;
+  size int(10) inz;
+  line like(saxElementLine_t) dim(NUM_ELEMENT_LINES) inz;
+end-ds;
+
 ///
 // Initializes the SAX parser.
 ///
 dcl-pr SAX_initialize extproc('SAX_SAX_initialize');
+end-pr;
+
+///
+// Returns the value of the current XML element as an array
+// of text lines.
+///
+dcl-pr SAX_getElementTextLines likeds(saxElementLines_t) extproc('SAX_SAX_getElementTextLines');
+  elemValue like(saxElementText_t) const;
 end-pr;
 
 ///

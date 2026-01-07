@@ -211,7 +211,10 @@ dcl-proc testJenkins2Abort export;
   end-pi;
 
   dcl-ds testSuite likeds(saxTestSuite_t) inz;
+  dcl-ds testCase likeds(saxTestCase_t) inz(*likeds);
+  dcl-ds testCaseEvent likeds(saxAbstractTestCaseEvent_t) inz(*likeds);
   dcl-s msgTxt char(256);
+  dcl-ds lines likeds(saxElementLines_t) Inz;
 
   if (TestSuite_isDirty('TESTPGM23': 'QTEMP'));
     runCmd('RUCRTRPG TSTPGM(QTEMP/TESTPGM23) +
@@ -230,6 +233,39 @@ dcl-proc testJenkins2Abort export;
 
   validateJenkinsAbort(testSuite);
 
+  // Additional validations of 'testFailure'
+  testCase = getTestcase(testSuite.testcases: 1);
+  testCaseEvent = getTestCaseEvent(testCase.events: 1);
+
+  lines = SAX_getElementTextLines(testCaseEvent.failure.elementText);
+  assertEqual(8: lines.size);
+  assertEqual('Callstack:': lines.line(1));
+  assertEqual('  testFailure (TESTPGM23->TESTPGM23:4400)': lines.line(2));
+  assertEqual('': lines.line(3));
+  assertEqual('Expected:': lines.line(4));
+  assertEqual('  Donald Duck': lines.line(5));
+  assertEqual('': lines.line(6));
+  assertEqual('Actual:': lines.line(7));
+  assertEqual('  Dagobert Duck': lines.line(8));
+
+  // Additional validations of 'testRuntimeError'
+  testCase = getTestcase(testSuite.testcases: 2);
+  testCaseEvent = getTestCaseEvent(testCase.events: 1);
+
+  lines = SAX_getElementTextLines(testCaseEvent.failure.elementText);
+  assertEqual(8: lines.size);
+  assertEqual('Callstack:': lines.line(1));
+  assertEqual('  testRuntimeError (TESTPGM23->TESTPGM23:6600)': lines.line(2));
+  assertEqual('': lines.line(3));
+  assertEqual('Expected:': lines.line(4));
+  assertEqual('  Daisy Duck': lines.line(5));
+  assertEqual('': lines.line(6));
+  assertEqual('Actual:': lines.line(7));
+  assertEqual('  Gustav Gans': lines.line(8));
+
+  // Additional validations of 'Success'
+  // not applicable
+
 end-proc;
 
 //----------------------------------------------------------------------
@@ -239,8 +275,11 @@ dcl-proc testJenkins2Continue export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
+  dcl-ds testCase likeds(saxTestCase_t) inz(*likeds);
+  dcl-ds testCaseEvent likeds(saxAbstractTestCaseEvent_t) inz(*likeds);
   dcl-ds testSuite likeds(saxTestSuite_t) inz;
   dcl-s msgTxt char(256);
+  dcl-ds lines likeds(saxElementLines_t) Inz;
 
   if (TestSuite_isDirty('TESTPGM23': 'QTEMP'));
     runCmd('RUCRTRPG TSTPGM(QTEMP/TESTPGM23) +
@@ -258,6 +297,49 @@ dcl-proc testJenkins2Continue export;
   testSuite = parseXml(g_status.tmpName);
 
   validateJenkinsContinue(testSuite);
+
+  // Additional validations of 'testFailure'
+  testCase = getTestcase(testSuite.testcases: 1);
+  testCaseEvent = getTestCaseEvent(testCase.events: 1);
+
+  lines = SAX_getElementTextLines(testCaseEvent.failure.elementText);
+  assertEqual(8: lines.size);
+  assertEqual('Callstack:': lines.line(1));
+  assertEqual('  testFailure (TESTPGM23->TESTPGM23:4400)': lines.line(2));
+  assertEqual('': lines.line(3));
+  assertEqual('Expected:': lines.line(4));
+  assertEqual('  Donald Duck': lines.line(5));
+  assertEqual('': lines.line(6));
+  assertEqual('Actual:': lines.line(7));
+  assertEqual('  Dagobert Duck': lines.line(8));
+
+  // Additional validations of 'testRuntimeError'
+  testCase = getTestcase(testSuite.testcases: 4);
+  testCaseEvent = getTestCaseEvent(testCase.events: 1);
+
+  testCase = getTestcase(testSuite.testcases: 5);
+  testCaseEvent = getTestCaseEvent(testCase.events: 1);
+  assertEqual('*N (QCMDEXC->*N:0277)': testCaseEvent.error.elementText);
+
+  lines = SAX_getElementTextLines(testCaseEvent.error.elementText);
+  assertEqual(2: lines.size);
+  assertEqual('*N': lines.line(1));
+  assertEqual('(QCMDEXC->*N:0277)': lines.line(2));
+
+  // Additional validations of 'Success'
+  testCase = getTestcase(testSuite.testcases: 8);
+  testCaseEvent = getTestCaseEvent(testCase.events: 1);
+
+  lines = SAX_getElementTextLines(testCaseEvent.failure.elementText);
+  assertEqual(6: lines.size);
+  assertEqual('Callstack:': lines.line(1));
+  assertEqual('  testSuccess (TESTPGM23->TESTPGM23:9600)': lines.line(2));
+  assertEqual('': lines.line(3));
+  assertEqual('Diagnostic messages:': lines.line(4));
+  assertEqual('  No ''expected'' value. Procedure assert() does not provide this information.'
+             : lines.line(5));
+  assertEqual('  No ''actual'' value. Procedure assert() does not provide this information.'
+             : lines.line(6));
 
 end-proc;
 
