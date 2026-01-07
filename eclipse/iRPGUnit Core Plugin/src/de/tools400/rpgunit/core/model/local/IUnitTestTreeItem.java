@@ -20,4 +20,6 @@ public interface IUnitTestTreeItem {
     public boolean isSuccessful();
 
     public void setExpanded(boolean anExpanded);
+
+    public int category();
 }

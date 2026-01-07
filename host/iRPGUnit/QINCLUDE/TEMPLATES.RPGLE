@@ -25,6 +25,9 @@ dcl-c ORDER_REVERSE '*REVERSE';
 dcl-c DETAIL_BASIC '*BASIC';
 dcl-c DETAIL_ALL '*ALL';
 
+dcl-c ON_FAILURE_ABORT '*ABORT';
+dcl-c ON_FAILURE_CONTINUE '*CONTINUE';
+
 dcl-c OUTPUT_NONE '*NONE';
 dcl-c OUTPUT_ERROR '*ERROR';
 dcl-c OUTPUT_ALLWAYS '*ALLWAYS';
@@ -59,6 +62,7 @@ dcl-c COLON u'003A';
 
 dcl-s order_t char(10) template;
 dcl-s detail_t char(10) template;
+dcl-s onFailure_t char(10) template;
 dcl-s output_t char(10) template;
 dcl-s rclrsc_t char(10) template;
 dcl-s stmf_t varchar(1024) template;
@@ -74,6 +78,8 @@ dcl-c MAX_NUM_LIB 250;
 dcl-c MOD_CRT_RPG 'RNS9305';
 dcl-c MOD_CRT_CBL 'LNC0899';
 
+dcl-c CRLF x'0d25';
+
 dcl-ds libl_t template;
   nume   int(5) pos(1);
   lib    char(10) dim(MAX_NUM_LIB) pos(3);
@@ -87,35 +93,23 @@ end-ds;
 // ILE Activation Mark.
 dcl-s actMark_t int(10) template;
 
-// Empty Assertion Failure Event of version 1.
-dcl-ds EMPTY_ASSERT_FAIL_EVT likeds(assertFailEvt_t) inz(*likeds);
-
-dcl-ds EMPTY_ASSERT_FAIL_EVT_LONG likeds(assertFailEvtLong_t) inz(*likeds);
-
-// Assertion Failure Event.
-dcl-ds assertFailEvtLong_t qualified template;
+// Assertion Failure Event - External.
+dcl-ds assertFailEvtExt_t qualified template;
   msg          like(msgText_t) inz;
   logExpected  likeds(logValue_t) inz(*likeds);
   logActual    likeds(logValue_t) inz(*likeds);
-  callstk      likeds(callStk_t) inz(*likeds);
+  callstk      likeds(callStk_v1_t) inz(*likeds);
 end-ds;
 
-dcl-ds logValue_t qualified template;
-   value          varchar(2048) inz;
-   type           like(dataType_t) inz;
-   isTruncated    ind inz(*off);
-   length         int(10) inz;
-   originalLength int(10) inz;
-   assertProc     like(assertProcNm_t) inz;
-end-ds;
-
+dcl-s execTimeMSecs_t int(20) template;
+dcl-s execTimeSecs_t packed(22:2) template;
 dcl-s assertProcNm_t varchar(32) template;
 dcl-s dataType_t varchar(20) template;
-dcl-s xmlType_t varchar(10) template;
-dcl-s xmlType_fl_t char(10) template;
+dcl-s xmlType_t char(10) template;
 
-dcl-c XML_TYPE_1 '*TYPE1';
-dcl-c XML_TYPE_2 '*TYPE2';
+dcl-c XML_JENKINS_TYPE_1 '*JENKINS1';
+dcl-c XML_JENKINS_TYPE_2 '*JENKINS2';
+dcl-c XML_TYPE_VSCODE_1 '*VSCODE1';
 
 dcl-c LABEL_EXPECTED 'expected';
 dcl-c LABEL_ACTUAL 'actual';
@@ -132,22 +126,47 @@ dcl-c DT_STRING 'string';
 dcl-c DT_USER_DEFINED 'user-defined';
 dcl-c DT_UNDEFINED '*N';
 
-// Assertion Failure Event of version 1
+// Assertion Failure Event of v1
 dcl-ds assertFailEvt_t qualified template;
   msg       varchar(256) inz;
-  callstk   likeds(callStk_t) inz(*likeds);
+  callstk   likeds(callStk_v1_t) inz(*likeds);
 end-ds;
 
-// Call Stack.
-dcl-ds callStk_t qualified template;
+// callstk_v1
+//   numE
+//   entry(64)
+//     level
+//     qStmt
+//       qPgm
+//       qMod
+//       procNm
+//       specNb
+
+dcl-ds callStk_v1_t qualified template;
   numE    int(10) inz;
   entry   likeds(callStkEnt_t) dim(MAX_CALL_STK_SIZE) inz(*likeds);
 end-ds;
 
+// Call Stack.
+dcl-ds callStk_t qualified template;
+  header  likeds(callStkHdr_t) inz(*likeds);
+  entry   likeds(callStkEnt_t) dim(MAX_CALL_STK_SIZE) inz(*likeds);
+end-ds;
+
+// Call Stack header.
+dcl-ds callStkHdr_t qualified template;
+  id        char(20) inz(CALLSTACK_ID);
+  numE      int(10) inz;
+  maxE      int(10) inz;
+  iteration int(10) inz(-1);
+end-ds;
+
+dcl-c CALLSTACK_ID '*CALLSTACK';
+
 // Call Stack Entry.
 dcl-ds callStkEnt_t qualified template;
   level   int(10) inz;
-  qstmt   likeds(qStatement_t) inz(*likeds);
+  qStmt   likeds(qStatement_t) inz(*likeds);
 end-ds;
 
 // XML stream file information
@@ -160,18 +179,18 @@ end-ds;
 dcl-ds msg_t qualified template;
   id         char(7);
   txt        like(msgText_t);
-  rpldata    varchar(256);
+  rplData    varchar(256);
   key        char(4);
-  qsndstmt   likeds(qStatement_t);
-  qrcvstmt   likeds(qStatement_t);
+  qSndStmt   likeds(qStatement_t);
+  qRcvStmt   likeds(qStatement_t);
 end-ds;
 
 // Qualified program statement
 dcl-ds qStatement_t qualified template;
-  qpgm     likeds(object_t) inz(*likeds);
-  qmod     likeds(object_t) inz(*likeds);
-  procnm   like(procNm_t) inz;
-  specnb   char(10) inz;
+  qPgm     likeds(object_t) inz(*likeds);
+  qMod     likeds(object_t) inz(*likeds);
+  procNm   like(procNm_t) inz;
+  specNb   char(10) inz;
 end-ds;
 
 // Old style error message prior to version 2.0.0.
@@ -232,9 +251,10 @@ dcl-ds job_t qualified template;
 end-ds;
 
 // Named callable procedure.
-dcl-ds proc_t qualified template;
-  procnm    like(procNm_t);
-  procptr   pointer(*proc);
+dcl-ds proc_t qualified align template;
+  seqNbr    int(10);
+  procNm    like(procNm_t);
+  procPtr   pointer(*proc);
 end-ds;
 
 dcl-ds procNmList_t qualified template;
@@ -244,7 +264,9 @@ dcl-ds procNmList_t qualified template;
   gotonext   pointer(*proc);
 end-ds;
 
+dcl-s outcome_t char(1) template;
 dcl-s procNm_t varchar(256) template;
+dcl-s memSize_t zoned(25: 3) template;
 
 dcl-ds procNms_t qualified template;
   nume   int(5);
@@ -258,26 +280,6 @@ dcl-ds qlfJobNm_t qualified template;
   jobNb   char(6);
 end-ds;
 
-dcl-ds testResult_t qualified template;
-  outcome     char(1);
-  details;
-  failure     likeds(assertFailEvtLong_t) overlay(details);
-  error       likeds(msg_t) overlay(details);
-  testname    like(procNm_t);
-  exectime    int(20);
-  srcFile     char(10);
-  srcLib      char(10);
-  srcMbr      char(10);
-  assertCnt   int(10);
-end-ds;
-
-dcl-ds result_t qualified;
-  assertCnt  int(10);
-  errorCnt   int(10);
-  failureCnt int(10);
-  runsCnt    int(10);
-end-ds;
-
 dcl-ds testSuite_t qualified template;
   isCobol         ind;
   qName           likeds(object_t);
@@ -287,7 +289,73 @@ dcl-ds testSuite_t qualified template;
   testList        pointer;
   tearDown        likeds(proc_t);
   tearDownSuite   likeds(proc_t);
-  testResults     pointer;
+  testResults     pointer; // array(testCaseResult_t)
+end-ds;
+
+dcl-ds testCaseResult_t qualified template;
+  outcome          like(outcome_t);
+  seqNbr           int(10);
+  reserved_1       char(11);
+  testName         like(procNm_t);
+  execTimeMSecs    like(execTimeMSecs_t);
+  assertCnt        int(10);
+  lastErrorEvent   int(10);
+  lastFailureEvent int(10);
+  lastSuccessEvent int(10);
+  hTestEvents      pointer; // array(abstractTestEvent_t) -> failure & success events
+end-ds;
+
+// Assertion Event.
+dcl-ds abstractTestEvent_t qualified template;
+  outcome      like(outcome_t) inz(TEST_CASE_NULL);
+  index        int(10);
+  failure      likeds(testFailureEvent_t) pos(1) inz(*likeds);
+  success      likeds(testSuccessEvent_t) pos(1) inz(*likeds);
+  error        likeds(runtimeErrorEvent_t) pos(1) inz(*likeds);
+end-ds;
+
+// Assertion Success Event.
+dcl-ds testSuccessEvent_t qualified template;
+  outcome      like(outcome_t) inz(TEST_CASE_SUCCESS);
+  index        int(10);
+  assertProc   like(assertProcNm_t) inz;
+  logExpected  likeds(logValue_t) inz(*likeds);
+  logActual    likeds(logValue_t) inz(*likeds);
+  pCallstk     pointer inz;
+end-ds;
+
+// Assertion Failure Event.
+dcl-ds testFailureEvent_t qualified template;
+  outcome      like(outcome_t) inz(TEST_CASE_FAILURE);
+  index        int(10);
+  assertProc   like(assertProcNm_t) inz;
+  logExpected  likeds(logValue_t) inz(*likeds);
+  logActual    likeds(logValue_t) inz(*likeds);
+  pCallstk     pointer inz;
+  isConfirmed  ind inz(*off);
+  msg          like(msgText_t) inz;
+end-ds;
+
+// Runtime Error Event.
+dcl-ds runtimeErrorEvent_t qualified template;
+  outcome      like(outcome_t) inz(TEST_CASE_ERROR);
+  index        int(10);
+  msg          likeds(msg_t) inz;
+end-ds;
+
+dcl-ds logValue_t qualified template;
+   value          varchar(2048) inz;
+   type           like(dataType_t) inz;
+   isTruncated    ind inz(*off);
+   length         int(10) inz;
+   originalLength int(10) inz;
+end-ds;
+
+dcl-ds testSuiteResult_t qualified;
+  assertCnt  int(10);
+  errorCnt   int(10);
+  failureCnt int(10);
+  runsCnt    int(10);
 end-ds;
 
 // User profile name.
@@ -298,6 +366,9 @@ dcl-s text_t varchar(50) template;
 
 // String value (must be greater than COMPILEOPT)
 dcl-s string_t varchar(5120) template;
+
+// Buffer value (must not be greater than size of string_t)
+dcl-s buffer_t char(2560) template;
 
 // Value of a line of the log.
 dcl-s line_t varchar(256) template;
@@ -322,7 +393,8 @@ end-ds;
 dcl-c MAX_CALL_STK_SIZE 64;
 dcl-c CALL_STACK_INCOMPLETE '*INCOMPLETE';
 
-// TestResult_t.outcome can have three values.
+// testCaseResult_t.outcome can have three values.
+dcl-c TEST_CASE_NULL    '*';
 dcl-c TEST_CASE_SUCCESS 'S';
 dcl-c TEST_CASE_FAILURE 'F';
 dcl-c TEST_CASE_ERROR   'E';

@@ -9,46 +9,36 @@
 
 <body>
 <h1>Notices</h1>
-The following notices shall help you to use iRPGUnit properly and to understand 
+The following notices shall help you to use RPGUnit properly and to understand 
 unexpected results.
 
 <h2>How it works</h2>
-Basically iRPGUnit tries to works exactly the same as JUnit. But there is a
-problem with statements monitored by the <code>CALLP</code> extender <code>(E)</code>.
-Whereas monitor groups work just fine.
+Basically RPGUnit tries to works exactly the same as JUnit. But there is an
+edge case when assertions are monitored. If the test suite is executed with
+parameter <code>ONFAILURE</code> set to <code>*CONTINUE</code>, RPGUnit cannot detect
+that the assertion is monitored and hence reports an error.
+<p>
+The problem does not exist, if the test suite is executed with parameter
+<code>ONFAILURE</code> set to <code>*ABORT</code>, which is the default
+value.
 <p>
 
-<h2>Monitor Group</h2>
-iRPGUnit assertions are correctly processed. In case of a failing assertion, the error 
-is seen and added to the log.
-<p>
-<b>Works well</b>
+<b>Monitor Group</b>
 <code><pre class="indent">
 monitor;
 
    <span class="r-cmt">// calculation statements</span>
    
-   aEqual( 'HelloWorld' : 'Hello' ); <span class="r-cmt">// correctly reported</span>  
+   aEqual( 'HelloWorld' : 'Hello' );  
 
 on-error;
    <span class="r-cmt">// error handler</span>
 endmon;
 </pre></code> 
 
-<h2>CALLP - Error Extender</h2>
-iRPGUnit assertions do not work with the the error extender and hence you must ensure
-not to use <code>CALLP(E)</code> to call the iRPGUnit assertions.
-<p>
-<b>Good</b>
+<b>CALLP - Error Extender</b>
 <code><pre class="indent">
-aEqual( 'HelloWorld' : 'Hello' );
-
-callp aEqual( 'HelloWorld' : 'Hello' );
-</pre></code> 
-<p>
-<b>Wrong</b>
-<code><pre class="indent-red">
-callp(e) aEqual( 'HelloWorld' : 'Hello' ); // not reported by iRPGUnit!
+callp(e) aEqual( 'HelloWorld' : 'Hello' );
 </pre></code> 
 <p>
 <iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>

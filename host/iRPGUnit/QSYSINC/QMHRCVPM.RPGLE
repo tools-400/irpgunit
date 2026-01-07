@@ -6,16 +6,20 @@
 //
 
 dcl-pr qmhrcvpm extpgm('QMHRCVPM');
-  msgInfo         char(32767) options(*varsize);
-  msgInfoLen      int(10) const;
-  fmtNm           char(8) const;
-  callStkEnt      char(10) const;
-  callStkCnt      int(10) const;
-  msgType         char(10) const;
-  msgKey          char(4) const;
-  waitTime        int(10) const;
-  msgAction       char(10) const;
-  errorCode       char(32767) options(*varsize) noopt;
+  msgInfo    char(32767) options(*varsize);
+  msgInfoLen int(10) const;
+  fmtNm      char(8) const;
+  callStkEnt char(10) const;
+  callStkCnt int(10) const;
+  msgType    char(10) const;
+  msgKey     char(4) const;
+  waitTime   int(10) const;
+  msgAction  char(10) const;
+  errorCode  char(32767) options(*varsize) noopt;
+  lenStkE    int(10) options(*nopass) const;     // | optGrp 1
+  callStkEQ  char(20) options(*nopass) const;    // |
+  callStkEDT char(10) options(*nopass) const;    // | optGrp 2
+  ccsid      int(10) options(*nopass) const;     // |
 end-pr;
 
 dcl-ds rcvm0200hdr qualified template;

@@ -60,7 +60,7 @@
 
  select
  when (dbgView = '' | dbgView = 'NONE' | dbgView = '*NONE') then dbgView = '*NONE'
- when (dbgView = 'ALL' | dbgView = '*ALL') then dbgView = '*ALL'
+ when (dbgView = 'ALL' | dbgView = '*ALL') then dbgView = '*LIST'
  when (dbgView = 'STMT' | dbgView = '*STMT') then dbgView = '*STMT'
  when (dbgView = 'SOURCE' | dbgView = '*SOURCE') then dbgView = '*SOURCE'
  when (dbgView = 'LIST' | dbgView = '*LIST') then dbgView = '*LIST'

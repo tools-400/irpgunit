@@ -73,8 +73,10 @@ end-ds;
 dcl-ds splf qualified;
   qJob            likeds(QlfJobNm_t);
   name            char(10);
+  usrData         char(10);
   number          int(10);
   usrSpcNm        likeds(Object_t);
+  lineCounter     int(10);
   pUsrSpc         pointer;
   // - Handle
   hdl             int(10) inz(-1);
@@ -124,8 +126,8 @@ end-proc;
 
 dcl-proc dltSplfs export;
   dcl-pi *n int(10);
-    splfNm    like(UsrNm_t) const;
-    usrData   char(10) const;
+    splfNm  like(UsrNm_t) value;
+    usrData char(10) value;
   end-pi;
 
   dcl-s hLister like(hSplFLister_t);
@@ -188,6 +190,7 @@ dcl-proc getNextLine;
       splf.bufPos_p += %size(NULL);
       if (isLine);
         isLine = *off;
+        splf.lineCounter += 1;
         return line;
       endif;
     when (currentChar = NL);
@@ -211,6 +214,7 @@ dcl-proc getNextLine;
 
   if (splf.bufPos_p > splf.usrSpcEnd_p);
     monitor;
+      // Attempt reading the next buffer.
       readSplfBuf();
       return getNextLine();
     on-error;
@@ -224,8 +228,8 @@ end-proc;
 
 dcl-proc opnSplf export;
   dcl-pi *n;
-    splfNm    char(10) const;
-    usrData   char(10) const;
+    splfNm  char(10) value;
+    usrData char(10) value;
   end-pi;
 
 
@@ -237,8 +241,10 @@ dcl-proc opnSplf export;
 
   splf.qJob = splfId.qJob;
   splf.name = splfId.name;
+  splf.usrData = usrData;
   splf.number = splfId.number;
   splf.hdl = splfId.handle;
+  splf.lineCounter = 0;
 
   splf.usrSpcNm.nm = 'RUSPOOL';
   splf.usrSpcNm.lib = 'QTEMP';
@@ -482,12 +488,19 @@ dcl-proc splfLineStartsWith export;
   end-proc;
 
 
-  dcl-proc splfContains export;
+dcl-proc splfContains export;
   dcl-pi *n;
     expString   varchar(256) const;
   end-pi;
 
   dcl-s line varchar(256);
+
+  dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
+
+  if (splf.lineCounter > 0);
+    QSPCLOSP(splf.hdl: percolateErrors);
+    opnSplf(splf.name: splf.usrdata);
+  endif;
 
   dow (*on);
     line = getNextLine();

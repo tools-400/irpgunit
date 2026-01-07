@@ -17,7 +17,7 @@
 /*     Script parameters:                                              */
 /*       prdLib   - Name of the iRPGUnit product library.              */
 /*       dbgView  - The possible values are:                           */
-/*                  ALL     : Default. Generates all debug views when  */
+/*                  LIST    : Default. Generates *LIST debug view when */
 /*                            compiling the objects.                   */
 /*                  NONE    : Compiles the obejcts without debug       */
 /*                            views.                                   */
@@ -62,7 +62,7 @@
  end
 
  select
- when (dbgView = '' | dbgView = 'ALL' | dbgView = '*ALL') then dbgView = '*ALL'
+ when (dbgView = '' | dbgView = 'ALL' | dbgView = '*ALL') then dbgView = '*LIST'
  when (dbgView = 'STMT' | dbgView = '*STMT') then dbgView = '*STMT'
  when (dbgView = 'SOURCE' | dbgView = '*SOURCE') then dbgView = '*SOURCE'
  when (dbgView = 'LIST' | dbgView = '*LIST') then dbgView = '*LIST'

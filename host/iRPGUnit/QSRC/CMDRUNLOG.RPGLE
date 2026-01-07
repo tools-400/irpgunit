@@ -32,6 +32,7 @@ ctl-opt nomain;
 //   Imports
 //----------------------------------------------------------------------
 
+/include qinclude,CALLSTACK
 /include qinclude,CMDRUNPRT
 /include qinclude,TEMPLATES
 /include qinclude,STRING
@@ -162,14 +163,14 @@ end-proc;
 //----------------------------------------------------------------------
 // Log a failure event. See prototype.
 //----------------------------------------------------------------------
-dcl-proc logfailure export;
+dcl-proc logFailure export;
   dcl-pi *N;
-    testNm      like(procNm_t) const;
-    failure     likeds(assertFailEvtLong_t) const;
+    testNm           like(procNm_t) const;
+    testFailureEvent likeds(testFailureEvent_t) const;
   end-pi;
 
-  // Index.
-  dcl-s i int(10);
+  dcl-s pCallStk pointer;
+  dcl-ds callstkEnt likeds(callStkEnt_t) inz;
 
   if (g_output = OUTPUT_NONE);
     return;
@@ -180,20 +181,23 @@ dcl-proc logfailure export;
 
   logRawLine(%trimr(testNm) + SEPARATOR + 'FAILURE');
 
-  logRawLine(failure.msg);
+  logRawLine(testFailureEvent.msg);
 
-  if (failure.callStk.numE > 0);
-    lineFeed(); // new with *TYPE2 log output of 'expected' and 'actual' values
-    for i = 1 to failure.callStk.numE;
-      logStackEntry(failure.callStk.entry(i).qStmt);
-    endfor;
-    lineFeed(); // new with *TYPE2 log output of 'expected' and 'actual' values
+  pCallstk = testFailureEvent.pCallstk;
+  if (Callstack_getNumE(pCallstk) > 0);
+    lineFeed(); // new with *JENKINS2 log output of 'expected' and 'actual' values
+    Callstack_resetIteration(pCallstk);
+    dow (Callstack_getNext(pCallstk: callstkEnt));
+      //logStackEntry(failure.callStk.entry(i).qStmt);
+      logStackEntry(callStkEnt.qStmt);
+    enddo;
+    lineFeed(); // new with *JENKINS2 log output of 'expected' and 'actual' values
   endif;
 
-  // new with *TYPE2 log output of 'expected' and 'actual' values
-  logValue(LABEL_EXPECTED: failure.logExpected);
-  logValue(LABEL_ACTUAL: failure.logActual);
-  logTruncated(failure.logExpected: failure.logActual);
+  // new with *JENKINS2 log output of 'expected' and 'actual' values
+  logValue(LABEL_EXPECTED: testFailureEvent.logExpected);
+  logValue(LABEL_ACTUAL: testFailureEvent.logActual);
+  logTruncated(testFailureEvent.logExpected: testFailureEvent.logActual);
 
   prtLine(getLeftMargin() + LINE_SEPARATOR);
   lineFeed();
@@ -315,14 +319,14 @@ dcl-proc logHeader;
   dcl-s date            char(10);
 
   if not g_hdrWasPrinted;
-    getversion(version: date);
+    getVersion(version: date);
     opnPrt( srvPgm );
     logRawLine( '*** Tests of ' + %trim(srvPgm.nm) + ' ***');
     logRawLine('Date        : ' + %char(%date())
                                 + ' / '+%char(%time():*hms));
     logRawLine('Job         : ' + getFormattedJob());
     logRawLine('User        : ' + %trimr(sds.curruser));
-    logRawLine('iRPGUnit    : ' + 'v' + %trim(version));
+    logRawLine('iRPGUnit    : ' + %trim(version));
     logRawLine('IBM i       : ' + OS_getVersion());
 
     lineFeed();
@@ -347,7 +351,7 @@ end-proc;
 // Outputs the path and type of the XML stream file produced:
 //     XML file     : '/home/raddatz/very_long_stream_file_path_exceeding_56'
 //                    '_charcaters/iRPGUnit_<TSTPGM>-2025-10-16.04.13.29.log'
-//     XML type     : *TYPE2
+//     XML type     : *JENKINS2
 //----------------------------------------------------------------------
 dcl-proc logStmfPath export;
   dcl-pi *N;
@@ -428,6 +432,7 @@ end-proc;
 dcl-proc logSuccess export;
   dcl-pi *N;
     testNm       like(procNm_t) const;
+    specNb       char(10) const;
     assertionCnt int(10) const;
   end-pi;
 
@@ -442,7 +447,12 @@ dcl-proc logSuccess export;
   initPrinter();
   logHeader(g_srvPgm);
 
-  logRawLine( %trimr(testNm) + ' - Success' );
+  if (specNb <> '');
+    logRawLine( %trimr(testNm) + ' (' + %trim(specNb) + ')' + ' - Success' );
+  else;
+    logRawLine( %trimr(testNm) + ' - Success' );
+  endif;
+
   logRawLine( INDENT + %char(assertionCnt) + ' assertions' );
   logRawLine( LINE_SEPARATOR );
   lineFeed();

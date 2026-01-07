@@ -1,0 +1,157 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="testsuite" type="TestSuite"/>
+
+  <xs:complexType name="Properties">
+    <xs:sequence>
+      <xs:element type="Property" name="property" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Property">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="name"/>
+        <xs:attribute type="xs:string" name="value"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="TestCase">
+    <xs:choice minOccurs="1" maxOccurs="unbounded">
+      <xs:element type="FailureEvent" name="failure" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element type="SuccessEvent" name="success" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element type="ErrorEvent" name="error" minOccurs="0"/>
+    </xs:choice>
+    <xs:attribute type="Outcome" name="outcome"/>
+    <xs:attribute type="xs:string" name="classname"/>
+    <xs:attribute type="xs:string" name="name"/>
+    <xs:attribute type="xs:int" name="assertions"/>
+    <xs:attribute type="xs:decimal" name="time"/>
+  </xs:complexType>
+
+  <xs:complexType name="AbstractEvent">
+  </xs:complexType>
+
+  <xs:complexType name="FailureEvent">
+    <xs:complexContent>
+      <xs:extension base="AbstractEvent">
+        <xs:sequence>
+          <xs:element type="Callstack" name="callstack"/>
+          <xs:element type="LogValue" name="expected"/>
+          <xs:element type="LogValue" name="actual"/>
+          <xs:element type="Messages" name="diagnosticMessages" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="line"/>
+        <xs:attribute type="xs:string" name="name"/>
+        <xs:attribute type="xs:string" name="message"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="SuccessEvent">
+    <xs:complexContent>
+      <xs:extension base="AbstractEvent">
+        <xs:sequence>
+          <xs:element type="LogValue" name="expected"/>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="line"/>
+        <xs:attribute type="xs:string" name="name"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ErrorEvent">
+    <xs:complexContent>
+      <xs:extension base="AbstractEvent">
+        <xs:sequence>
+          <xs:element type="MessageSender" name="messageSender"/>
+          <xs:element type="MessageReceiver" name="messageReceiver"/>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="message"/>
+        <xs:attribute type="MessageId" name="type"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Messages">
+    <xs:sequence>
+      <xs:element type="Message" name="item" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute type="xs:int" name="size"/>
+  </xs:complexType>
+
+  <xs:complexType name="Message">
+    <xs:simpleContent>
+      <xs:extension base="xs:string"/>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:simpleType name="MessageId">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-Z]{1}[A-Z0-9]{2}[0-9A-F]{4}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="Callstack">
+    <xs:sequence>
+      <xs:element type="CallstackEntry" name="item"/>
+    </xs:sequence>
+    <xs:attribute type="xs:int" name="size"/>
+  </xs:complexType>
+
+  <xs:complexType name="CallstackEntry">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="program"/>
+        <xs:attribute type="xs:string" name="programLibrary"/>
+        <xs:attribute type="xs:string" name="module"/>
+        <xs:attribute type="xs:string" name="moduleLibrary"/>
+        <xs:attribute type="xs:string" name="procedure"/>
+        <xs:attribute type="xs:string" name="line"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:simpleType name="Outcome" final="restriction" >
+    <xs:restriction base="xs:string">
+        <xs:enumeration value="Success"/>
+        <xs:enumeration value="Failure"/>
+        <xs:enumeration value="Error"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="MessageSender">
+    <xs:complexContent>
+      <xs:extension base="CallstackEntry"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="MessageReceiver">
+    <xs:complexContent>
+      <xs:extension base="CallstackEntry"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="LogValue">
+    <xs:sequence minOccurs="0" maxOccurs="1">
+      <xs:element type="xs:string" name="value"/>
+      <xs:element type="xs:string" name="type"/>
+      <xs:element type="xs:int" name="length"/>
+      <xs:element type="xs:int" name="originalLength"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TestSuite">
+    <xs:sequence>
+      <xs:element type="Properties" name="properties"/>
+      <xs:element type="TestCase" name="testcase" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute type="xs:int" name="errors"/>
+    <xs:attribute type="xs:int" name="failures"/>
+    <xs:attribute type="xs:string" name="hostname"/>
+    <xs:attribute type="xs:int" name="id"/>
+    <xs:attribute type="xs:string" name="name"/>
+    <xs:attribute type="xs:int" name="tests"/>
+  </xs:complexType>
+</xs:schema>
+

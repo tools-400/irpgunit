@@ -11,7 +11,10 @@
 // >>PRE-COMPILER<<
 //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
 //   >>IMPORTANT<<
-//     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
+//     >>PARM<<  MODULE(&LI/ASSERTT);
+//     >>PARM<<  BNDSRVPGM(&LI/RUMEMMGR);
+//     >>PARM<<  BNDDIR(&LI/IRPGUNIT);
+//     >>PARM<<  COPTION(*EVENTF);
 //   >>END-IMPORTANT<<
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
@@ -24,7 +27,11 @@ ctl-opt NoMain Option(*SrcStmt);
 //----------------------------------------------------------------------
 
 /include qinclude,ASSERT
+/include qinclude,CMDRUNSRV
+/include qinclude,MEMMGR
 /include qinclude,TEMPLATES
+
+/include qllist,llist_h
 
 //----------------------------------------------------------------------
 //   Private Procedures
@@ -35,6 +42,23 @@ ctl-opt NoMain Option(*SrcStmt);
 //----------------------------------------------------------------------
 dcl-c FAILURE_MESSAGE 'Failure message';
 
+// Empty Assertion Failure Event of version 1.
+dcl-ds EMPTY_ASSERT_FAIL_EVT likeds(assertFailEvt_t) inz(*likeds);
+// Empty Assertion Failure Event of version 2.
+dcl-ds EMPTY_ASSERT_FAIL_EVT_LONG likeds(assertFailEvtExt_t) inz(*likeds);
+
+//----------------------------------------------------------------------
+//   Setup/Teardown Procedures
+//----------------------------------------------------------------------
+
+dcl-proc teardown export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+//  assertEqual(0: MemMgr_getNumAllocs());
+
+end-proc;
+
 //----------------------------------------------------------------------
 //   Test Procedures
 //----------------------------------------------------------------------
@@ -43,16 +67,45 @@ dcl-proc testClearAssertFailEvent export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds assertFailEvt likeds(assertFailEvt_t) inz;
-  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t) inz;
+  dcl-ds assertFailEvt_v1 likeds(assertFailEvt_t) inz;
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t) inz;
 
-  clrAssertFailEvt();
+  dcl-s hTestEvents pointer;
 
-  assertFailEvt = getAssertFailEvt();
-  assertFailEvtLong = getAssertFailEvtLong();
+  // -----------------------------
+  // save current assertion status
+  // -----------------------------
+  saveAssertStatus();
 
-  aEqual(EMPTY_ASSERT_FAIL_EVT: assertFailEvt);
-  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG: assertFailEvtLong);
+  // Setup.
+
+  hTestEvents = MemMgr_createList('hTestEvents');
+  clrAssertFailEvt(hTestEvents: '');
+
+  // Execution.
+
+  assertFailEvt_v1 = getAssertFailEvt();
+  assertFailEvtLong_v2 = getAssertFailEvtLong();
+
+  // Cleanup.
+
+  disposeTestEvents(hTestEvents);
+
+  // --------------------------------
+  // restore current assertion status
+  // --------------------------------
+  restoreAssertStatus();
+
+  // Controls.
+
+  aEqual(EMPTY_ASSERT_FAIL_EVT.msg: assertFailEvt_v1.msg);
+  iEqual(EMPTY_ASSERT_FAIL_EVT.callstk.numE: assertFailEvt_v1.callstk.numE);
+  aEqual(EMPTY_ASSERT_FAIL_EVT.callstk.entry(1).qStmt: assertFailEvt_v1.callstk.entry(1).qStmt);
+
+  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.msg: assertFailEvtLong_v2.msg);
+  iEqual(EMPTY_ASSERT_FAIL_EVT_LONG.callstk.numE: assertFailEvtLong_v2.callstk.numE);
+  aEqual(EMPTY_ASSERT_FAIL_EVT_LONG.callstk.entry(1).qStmt
+         : assertFailEvtLong_v2.callstk.entry(1).qStmt);
 
 end-proc;
 
@@ -61,8 +114,12 @@ dcl-proc testAssertWithFailure export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds assertFailEvt likeds(AssertFailEvtLong_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
 
+  // -----------------------------
+  // save current assertion status
+  // -----------------------------
+  saveAssertStatus();
 
   // Execution.
 
@@ -73,24 +130,29 @@ dcl-proc testAssertWithFailure export;
      // Success. Failure exception was seen.
   endmon;
 
+  assertFailEvtLong_v2 = getAssertFailEvtLong();
+
+  // --------------------------------
+  // restore current assertion status
+  // --------------------------------
+  restoreAssertStatus();
+
   // Controls.
 
-  assertFailEvt = getAssertFailEvtLong();
+  aEqual('Failure message.': assertFailEvtLong_v2.msg);
 
-  aEqual('Failure message.': assertFailEvt.msg);
-
-  aEqual('ASSERTT': assertFailEvt.callStk.Entry(1).qStmt.qPgm.nm);
-  aEqual('ASSERTT': assertFailEvt.callStk.Entry(1).qStmt.qMod.nm);
-  aEqual('testAssertWithFailure': assertFailEvt.callStk.Entry(1).qStmt.procNm);
+  aEqual('ASSERTT': assertFailEvtLong_v2.callStk.Entry(1).qStmt.qPgm.nm);
+  aEqual('ASSERTT': assertFailEvtLong_v2.callStk.Entry(1).qStmt.qMod.nm);
+  aEqual('testAssertWithFailure': assertFailEvtLong_v2.callStk.Entry(1).qStmt.procNm);
 
   // logValues are empty due to assert()
-  verifyEmptyLogValue('expected': assertFailEvt.logExpected);
-  verifyEmptyLogValue('actual': assertFailEvt.logActual);
+  verifyEmptyLogValue('expected': assertFailEvtLong_v2.logExpected);
+  verifyEmptyLogValue('actual': assertFailEvtLong_v2.logActual);
 
   monitor;
-    aEqual('70'  : assertFailEvt.callStk.Entry(1).qStmt.specNb); // IFS Compile
+    aEqual('127'  : assertFailEvtLong_v2.callStk.Entry(1).qStmt.specNb); // IFS Compile
   on-error;
-    aEqual('7000': assertFailEvt.callStk.Entry(1).qStmt.specNb); // QSYS Compile
+    aEqual('12700': assertFailEvtLong_v2.callStk.Entry(1).qStmt.specNb); // QSYS Compile
   endmon;
 
 end-proc;
@@ -101,8 +163,12 @@ dcl-proc testGoodByeIsNotHello export;
   end-pi;
 
   dcl-s excpWasSeen ind;
-  dcl-ds assertFailEvt likeds(AssertFailEvt_t);
+  dcl-ds assertFailEvt_v1 likeds(assertFailEvt_t);
 
+  // -----------------------------
+  // save current assertion status
+  // -----------------------------
+  saveAssertStatus();
 
   // Execution.
 
@@ -113,21 +179,26 @@ dcl-proc testGoodByeIsNotHello export;
     excpWasSeen = *on;
   endmon;
 
-  // Controls.
+  assertFailEvt_v1 = getAssertFailEvt();
 
-  assertFailEvt = getAssertFailEvt();
+  // --------------------------------
+  // restore current assertion status
+  // --------------------------------
+  restoreAssertStatus();
+
+  // Controls.
 
   assert(excpWasSeen: 'aEqual( Hello : Good bye ) should have raised an error message.');
 
-  aEqual('Expected ''Hello'', but was ''Good bye''.': assertFailEvt.msg);
-  aEqual('ASSERTT': assertFailEvt.callStk.Entry(1).qStmt.qPgm.nm);
-  aEqual('ASSERTT': assertFailEvt.callStk.Entry(1).qStmt.qMod.nm);
-  aEqual('testGoodByeIsNotHello': assertFailEvt.callStk.Entry(1).qStmt.procNm);
+  aEqual('Expected ''Hello'', but was ''Good bye''.': assertFailEvt_v1.msg);
+  aEqual('ASSERTT': assertFailEvt_v1.callStk.Entry(1).qStmt.qPgm.nm);
+  aEqual('ASSERTT': assertFailEvt_v1.callStk.Entry(1).qStmt.qMod.nm);
+  aEqual('testGoodByeIsNotHello': assertFailEvt_v1.callStk.Entry(1).qStmt.procNm);
 
   monitor;
-    aEqual('110'  : assertFailEvt.callStk.Entry(1).qStmt.specNb); // IFS Compile
+    aEqual('176'  : assertFailEvt_v1.callStk.Entry(1).qStmt.specNb); // IFS Compile
   on-error;
-    aEqual('11000': assertFailEvt.callStk.Entry(1).qStmt.specNb); // QSYS Compile
+    aEqual('17600': assertFailEvt_v1.callStk.Entry(1).qStmt.specNb); // QSYS Compile
   endmon;
 
 end-proc;
@@ -138,8 +209,12 @@ dcl-proc testTwoAndTwoIsNotEqualToFive export;
   end-pi;
 
   dcl-s excpWasSeen ind;
-  dcl-ds assertFailEvt likeds(AssertFailEvt_t);
+  dcl-ds assertFailEvt_v1 likeds(assertFailEvt_t);
 
+  // -----------------------------
+  // save current assertion status
+  // -----------------------------
+  saveAssertStatus();
 
   // Execution.
 
@@ -150,22 +225,27 @@ dcl-proc testTwoAndTwoIsNotEqualToFive export;
     excpWasSeen = *on;
   endmon;
 
-  // Controls.
+  assertFailEvt_v1 = getAssertFailEvt();
 
-  assertFailEvt = getAssertFailEvt();
+  // --------------------------------
+  // restore current assertion status
+  // --------------------------------
+  restoreAssertStatus();
+
+  // Controls.
 
   assert(excpWasSeen: 'iEqual(5: 2 + 2) should have raised an error message.');
 
-  aEqual('Expected 5, but was 4.': assertFailEvt.msg);
+  aEqual('Expected 5, but was 4.': assertFailEvt_v1.msg);
 
-  aEqual('ASSERTT': assertFailEvt.callStk.Entry(1).qStmt.qPgm.nm);
-  aEqual('ASSERTT': assertFailEvt.callStk.Entry(1).qStmt.qMod.nm);
-  aEqual('testTwoAndTwoIsNotEqualToFive': assertFailEvt.callStk.Entry(1).qStmt.procNm);
+  aEqual('ASSERTT': assertFailEvt_v1.callStk.Entry(1).qStmt.qPgm.nm);
+  aEqual('ASSERTT': assertFailEvt_v1.callStk.Entry(1).qStmt.qMod.nm);
+  aEqual('testTwoAndTwoIsNotEqualToFive': assertFailEvt_v1.callStk.Entry(1).qStmt.procNm);
 
   monitor;
-    aEqual('147': assertFailEvt.callStk.Entry(1).qStmt.specNb);  // IFS Compile
+    aEqual('222': assertFailEvt_v1.callStk.Entry(1).qStmt.specNb); // IFS Compile
   on-error;
-    aEqual('14700': assertFailEvt.callStk.Entry(1).qStmt.specNb);  // QSYS Compile
+    aEqual('22200': assertFailEvt_v1.callStk.Entry(1).qStmt.specNb); // QSYS Compile
   endmon;
 
 end-proc;
@@ -175,22 +255,30 @@ dcl-proc testAssertWithSuccess export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds assertFailEvt likeds(AssertFailEvtLong_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
+
+  // -----------------------------
+  // save current assertion status
+  // -----------------------------
+  saveAssertStatus();
 
   // Execution.
 
   assert( *on : 'Should not raise an error' );
+  assertFailEvtLong_v2 = getAssertFailEvtLong();
+
+  // --------------------------------
+  // restore current assertion status
+  // --------------------------------
+  restoreAssertStatus();
 
   // Controls.
 
-  assertFailEvt = getAssertFailEvtLong();
-
   // No exception message => OK.
+  aEqual('' : assertFailEvtLong_v2.msg);
 
-  aEqual('' : assertFailEvt.msg);
-
-  verifyEmptyLogValue('expected': assertFailEvt.logExpected);
-  verifyEmptyLogValue('actual': assertFailEvt.logActual);
+  verifyEmptyLogValue('expected': assertFailEvtLong_v2.logExpected);
+  verifyEmptyLogValue('actual': assertFailEvtLong_v2.logActual);
 
 end-proc;
 
@@ -204,7 +292,12 @@ dcl-proc testFail export;
 
   dcl-ds msgInfo likeds(MsgInfo_t);
 
-  dcl-ds assertFailEvt likeds(AssertFailEvtLong_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
+
+  // -----------------------------
+  // save current assertion status
+  // -----------------------------
+  saveAssertStatus();
 
   success = CMDRUNSRV_runProc(); // statement in error
 
@@ -219,10 +312,17 @@ dcl-proc testFail export;
     fail('fail() should have raised an exception');
   endsl;
 
-  assertFailEvt = getAssertFailEvtLong();
+  assertFailEvtLong_v2 = getAssertFailEvtLong();
 
-  verifyLogValue('expected': assertFailEvt.logExpected: '': '*N': *off: 0);
-  verifyLogValue('actual': assertFailEvt.logActual: '': '*N': *off: 0);
+  // --------------------------------
+  // restore current assertion status
+  // --------------------------------
+  restoreAssertStatus();
+
+  // Controls.
+
+  verifyLogValue('expected': assertFailEvtLong_v2.logExpected: '': '*N': *off: 0);
+  verifyLogValue('actual': assertFailEvtLong_v2.logActual: '': '*N': *off: 0);
 
 end-proc;
 
@@ -231,22 +331,30 @@ dcl-proc testTwoAndTwoEqualsFour export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds assertFailEvt likeds(AssertFailEvtLong_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
+
+  // -----------------------------
+  // save current assertion status
+  // -----------------------------
+  saveAssertStatus();
 
   // Execution.
 
   iEqual(4: 2 + 2);
+  assertFailEvtLong_v2 = getAssertFailEvtLong();
+
+  // --------------------------------
+  // restore current assertion status
+  // --------------------------------
+  restoreAssertStatus();
 
   // Controls.
 
-  assertFailEvt = getAssertFailEvtLong();
-
   // No exception message => OK.
+  aEqual('': assertFailEvtLong_v2.msg);
 
-  aEqual('': assertFailEvt.msg);
-
-  verifyLogValue('expected': assertFailEvt.logExpected: '4': 'integer': *off: 1);
-  verifyLogValue('actual': assertFailEvt.logActual: '4': 'integer': *off: 1);
+  verifyLogValue('expected': assertFailEvtLong_v2.logExpected: '4': 'integer': *off: 1);
+  verifyLogValue('actual': assertFailEvtLong_v2.logActual: '4': 'integer': *off: 1);
 
 end-proc;
 
@@ -255,22 +363,30 @@ dcl-proc testHelloEqualsHello export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds assertFailEvt likeds(AssertFailEvtLong_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
+
+  // -----------------------------
+  // save current assertion status
+  // -----------------------------
+  saveAssertStatus();
 
   // Execution.
 
   aEqual( 'Hello' : 'Hello' );
+  assertFailEvtLong_v2 = getAssertFailEvtLong();
+
+  // --------------------------------
+  // restore current assertion status
+  // --------------------------------
+  restoreAssertStatus();
 
   // Control.
 
-  assertFailEvt = getAssertFailEvtLong();
-
   // No exception message => OK.
+  aEqual('': assertFailEvtLong_v2.msg);
 
-  aEqual('': assertFailEvt.msg);
-
-  verifyLogValue('expected': assertFailEvt.logExpected: 'Hello': 'string': *off: 5);
-  verifyLogValue('actual': assertFailEvt.logActual: 'Hello': 'string': *off: 5);
+  verifyLogValue('expected': assertFailEvtLong_v2.logExpected: 'Hello': 'string': *off: 5);
+  verifyLogValue('actual': assertFailEvtLong_v2.logActual: 'Hello': 'string': *off: 5);
 
 end-proc;
 
@@ -281,6 +397,11 @@ dcl-proc testAssertCount export;
 
   dcl-s assertCallCntAtBeg int(10);
   dcl-s assertCallCnt int(10) Dim(4);
+
+  // -----------------------------
+  // save current assertion status
+  // -----------------------------
+  saveAssertStatus();
 
   // Setup.
 
@@ -300,6 +421,11 @@ dcl-proc testAssertCount export;
   callp(e) assert( *off : *blank );
   assertCallCnt(4) = getAssertCalled();
 
+  // --------------------------------
+  // restore current assertion status
+  // --------------------------------
+  restoreAssertStatus();
+
   // Controls.
 
   iEqual(assertCallCntAtBeg + 1: assertCallCnt(1));
@@ -314,25 +440,36 @@ dcl-proc testBigIntegerEquality export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds assertFailEvt likeds(AssertFailEvtLong_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
+
+  // -----------------------------
+  // save current assertion status
+  // -----------------------------
+  saveAssertStatus();
 
   // 0000000001111111111222222222233
   // 1234567890123456789012345678901
   iEqual( 9999999999999999999999999999999 :
           9999999999999999999999999999999 );
 
+  assertFailEvtLong_v2 = getAssertFailEvtLong();
+
+  // --------------------------------
+  // restore current assertion status
+  // --------------------------------
+  restoreAssertStatus();
+
   // Control.
 
-  assertFailEvt = getAssertFailEvtLong();
-
   // No exception message => OK.
-
-  aEqual('': assertFailEvt.msg);
+  aEqual('': assertFailEvtLong_v2.msg);
 
   verifyLogValue(
-    'expected': assertFailEvt.logExpected: '9999999999999999999999999999999': 'integer': *off: 31);
+    'expected': assertFailEvtLong_v2.logExpected: '9999999999999999999999999999999': 'integer': *off
+    : 31);
   verifyLogValue(
-    'actual': assertFailEvt.logActual: '9999999999999999999999999999999': 'integer': *off: 31);
+    'actual': assertFailEvtLong_v2.logActual: '9999999999999999999999999999999': 'integer': *off: 31
+    );
 
 end-proc;
 
@@ -341,24 +478,50 @@ dcl-proc testAssertClear export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-s assertCallCnt int(10);
+  dcl-s hTestEvents pointer;
+
+  dcl-s assertCalledBefore int(10);
+  dcl-s assertCalledAfter1 int(10);
+  dcl-s assertCalledAfter2 int(10);
+
+  // -----------------------------
+  // save current assertion status
+  // -----------------------------
+  saveAssertStatus();
 
   // Setup.
 
-  assertCallCnt = getAssertCalled();
+  hTestEvents = MemMgr_createList('hTestEvents');
+  clrAssertFailEvt(hTestEvents: '');
+
+  assertCalledBefore = getAssertCalled();
 
   // Execution.
 
-  assert(*on: *blank);
-  iEqual(4: 2+2);
-  aEqual('Hello': 'Hello');
-  callp(e) assert(*off: *blank);
+  assert(*on: *blank);           // 1. assert called
+  iEqual(4: 2+2);                // 2. assert called
+  aEqual('Hello': 'Hello');      // 3. assert called
+  callp(e) assert(*off: *blank); // 4. assert called
+
+  assertCalledAfter1 = getAssertCalled();
+
+  clearAssertCounter();
+
+  assertCalledAfter2 = getAssertCalled();
+
+  // Cleanup.
+
+  disposeTestEvents(hTestEvents);
+
+  // --------------------------------
+  // restore current assertion status
+  // --------------------------------
+  restoreAssertStatus();
 
   // Controls.
 
-  iEqual(assertCallCnt + 4: getAssertCalled());
-  clearAssertCounter();
-  iEqual(0: getAssertCalled());
+  iEqual(assertCalledBefore + 4: assertCalledAfter1);
+  iEqual(0: assertCalledAfter2);
 
 end-proc;
 
@@ -401,17 +564,23 @@ dcl-proc testToInd export;
 
 end-proc;
 
+
 dcl-proc testGetAssertFailEvt export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds assertFailEvt likeds(assertFailEvt_t);
-  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t);
+  dcl-ds assertFailEvt_v1 likeds(assertFailEvt_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
 
   dcl-s url1 varchar(200);
   dcl-s url2 varchar(200);
   dcl-s expectedMsgLong varchar(500);
   dcl-s expectedMsgShort varchar(500);
+
+  // -----------------------------
+  // save current assertion status
+  // -----------------------------
+  saveAssertStatus();
 
   // Setup.
 
@@ -435,7 +604,7 @@ dcl-proc testGetAssertFailEvt export;
           t.Compute/virtualMachines/VM-AXDEVTrview/joe.street''.';
 
   // Field 'msg' of 'assertFailEvt_t' is only 258 bytes long
-  expectedMsgShort = %subst(expectedMsgLong: 1: %len(assertFailEvt.msg: *max));
+  expectedMsgShort = %subst(expectedMsgLong: 1: %len(assertFailEvt_v1.msg: *max));
 
   // Execution.
 
@@ -445,51 +614,21 @@ dcl-proc testGetAssertFailEvt export;
   on-error;
   endmon;
 
+  assertFailEvt_v1 = getAssertFailEvt();
+  assertFailEvtLong_v2 = getAssertFailEvtLong();
+
+  // --------------------------------
+  // restore current assertion status
+  // --------------------------------
+  restoreAssertStatus();
+
   // Controls.
 
-  assertFailEvt = getAssertFailEvt();
-  assertFailEvtLong = getAssertFailEvtLong();
+  assert(assertFailEvtLong_v2.msg = expectedMsgLong: 'Message does not match the expected value');
+  assert(assertFailEvt_v1.msg = expectedMsgShort: 'Message texts must match');
 
-  assert(assertFailEvtLong.msg = expectedMsgLong: 'Message does not match the expected value');
-  assert(assertFailEvt.msg = expectedMsgShort: 'Message texts must match');
-
-  verifyLogValue('expected': assertFailEvtLong.logExpected: url1: 'string': *off: %len(url1));
-  verifyLogValue('actual': assertFailEvtLong.logActual: url2: 'string': *off: %len(url2));
-
-end-proc;
-
-
-//----------------------------------------------------------------------
-//   Procedure that simulates the test case executor procedure
-//   of module CMDRUNSRV. It must receive the message sent by fail().
-//----------------------------------------------------------------------
-
-dcl-proc CMDRUNSRV_runProc;
-  dcl-pi *n ind extproc(*dclcase);
-  end-pi;
-
-  monitor;
-    if (failInsideMonitorBlock());
-      return *off; // Let the caller report the error.
-    endif;
-  on-error;
-    // Success, exception seen.
-    return *on;
-  endmon;
-
-end-proc;
-
-
-dcl-proc failInsideMonitorBlock;
-  dcl-pi *n ind extproc(*dclcase);
-  end-pi;
-
-  monitor;
-    fail(FAILURE_MESSAGE);
-    return *off;
-  on-error;
-    return *on; // Bad. Message was captured.
-  endmon;
+  verifyLogValue('expected': assertFailEvtLong_v2.logExpected: url1: 'string': *off: %len(url1));
+  verifyLogValue('actual': assertFailEvtLong_v2.logActual: url2: 'string': *off: %len(url2));
 
 end-proc;
 
@@ -498,65 +637,82 @@ dcl-proc testAssertEqual_string export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds assertFailEvt likeds(assertFailEvt_t);
-  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
 
   // Test 1-char string
+  saveAssertStatus();
   assertEqual('1': '1');
-
-  assertFailEvtLong = getAssertFailEvtLong();
+  assertFailEvtLong_v2 = getAssertFailEvtLong();
+  restoreAssertStatus();
 
   // No exception message => OK.
+  aEqual('': assertFailEvtLong_v2.msg);
 
-  aEqual('': assertFailEvtLong.msg);
-
+  saveAssertStatus();
   assertEqual('e': 'e');
-
-  assertFailEvtLong = getAssertFailEvtLong();
+  assertFailEvtLong_v2 = getAssertFailEvtLong();
+  restoreAssertStatus();
 
   // No exception message => OK.
-
-  aEqual('': assertFailEvtLong.msg);
+  aEqual('': assertFailEvtLong_v2.msg);
 
   monitor;
+    saveAssertStatus();
     assertEqual('e': 'u');
+    restoreAssertStatus();
+
     fail('Expected the asssertion to fail.');
   on-error;
-    assertFailEvtLong = getAssertFailEvtLong();
-    assert(assertFailEvtLong.msg = 'Expected ''e'', but was ''u''.'
+    assertFailEvtLong_v2 = getAssertFailEvtLong();
+
+    restoreAssertStatus();
+
+    assert(assertFailEvtLong_v2.msg = 'Expected ''e'', but was ''u''.'
            : 'Error messages does not match expected value.');
-    verifyLogValue(LABEL_EXPECTED: assertFailEvtLong.logExpected
+    verifyLogValue(LABEL_EXPECTED: assertFailEvtLong_v2.logExpected
                    : 'e': 'string': *off: 1);
-    verifyLogValue(LABEL_ACTUAL: assertFailEvtLong.logActual
+    verifyLogValue(LABEL_ACTUAL: assertFailEvtLong_v2.logActual
                    : 'u': 'string': *off: 1);
   endmon;
 
   // Test equality
+  saveAssertStatus();
   assertEqual(LABEL_EXPECTED: LABEL_EXPECTED);
-
-  assertFailEvtLong = getAssertFailEvtLong();
+  assertFailEvtLong_v2 = getAssertFailEvtLong();
+  restoreAssertStatus();
 
   // No exception message => OK.
-
-  aEqual('': assertFailEvtLong.msg);
+  aEqual('': assertFailEvtLong_v2.msg);
 
   // Test unequality without assertion message
   monitor;
+    saveAssertStatus();
     assertEqual(LABEL_EXPECTED: 'unexpected value');
+    restoreAssertStatus();
+
     fail('Expected the asssertion to fail.');
   on-error;
-    assertFailEvtLong = getAssertFailEvtLong();
-    assert(assertFailEvtLong.msg = 'Expected ''expected'', but was ''unexpected value''.'
+    assertFailEvtLong_v2 = getAssertFailEvtLong();
+
+    restoreAssertStatus();
+
+    assert(assertFailEvtLong_v2.msg = 'Expected ''expected'', but was ''unexpected value''.'
            : 'Error messages does not match expected value.');
   endmon;
 
   // Test unequality with assertion message
   monitor;
+    saveAssertStatus();
     assertEqual(LABEL_EXPECTED: 'unexpected value': 'String values do not match');
+    restoreAssertStatus();
+
     fail('Expected the asssertion to fail.');
   on-error;
-    assertFailEvtLong = getAssertFailEvtLong();
-    assert(assertFailEvtLong.msg = 'String values do not match'
+    assertFailEvtLong_v2 = getAssertFailEvtLong();
+
+    restoreAssertStatus();
+
+    assert(assertFailEvtLong_v2.msg = 'String values do not match'
            : 'Error messages does not match expected value.');
   endmon;
 
@@ -567,38 +723,50 @@ dcl-proc testAssertEqual_integer export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
 
   // Test equality
+  saveAssertStatus();
   assertEqual(9223372036854775807: 9223372036854775807);
-
-  assertFailEvtLong = getAssertFailEvtLong();
+  assertFailEvtLong_v2 = getAssertFailEvtLong();
+  restoreAssertStatus();
 
   // No exception message => OK.
-
-  aEqual('': assertFailEvtLong.msg);
+  aEqual('': assertFailEvtLong_v2.msg);
 
   // Test unequality without assertion message
   monitor;
+    saveAssertStatus();
     assertEqual(-9223372036854775807: -123);
+    restoreAssertStatus();
+
     fail('Expected the asssertion to fail.');
   on-error;
-    assertFailEvtLong = getAssertFailEvtLong();
-    assert(assertFailEvtLong.msg = 'Expected ''-9223372036854775807'', but was ''-123''.'
+    assertFailEvtLong_v2 = getAssertFailEvtLong();
+
+    restoreAssertStatus();
+
+    assert(assertFailEvtLong_v2.msg = 'Expected ''-9223372036854775807'', but was ''-123''.'
            : 'Error messages does not match expected value.');
-    verifyLogValue(LABEL_EXPECTED: assertFailEvtLong.logExpected
+    verifyLogValue(LABEL_EXPECTED: assertFailEvtLong_v2.logExpected
                    : '-9223372036854775807,00000000000000000000': 'numeric': *off: 41);
-    verifyLogValue(LABEL_ACTUAL: assertFailEvtLong.logActual
+    verifyLogValue(LABEL_ACTUAL: assertFailEvtLong_v2.logActual
                    : '-123,00000000000000000000': 'numeric': *off: 25);
   endmon;
 
   // Test unequality with assertion message
   monitor;
+    saveAssertStatus();
     assertEqual(9223372036854775807: 123: 'Integer values do not match');
+    restoreAssertStatus();
+
     fail('Expected the asssertion to fail.');
   on-error;
-    assertFailEvtLong = getAssertFailEvtLong();
-    assert(assertFailEvtLong.msg = 'Integer values do not match'
+    assertFailEvtLong_v2 = getAssertFailEvtLong();
+
+    restoreAssertStatus();
+
+    assert(assertFailEvtLong_v2.msg = 'Integer values do not match'
            : 'Error messages does not match expected value.');
   endmon;
 
@@ -609,7 +777,7 @@ dcl-proc testAssertEqual_numeric export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
 
   dcl-s actualExact     packed(63:20) inz(*hival);
   dcl-s expectedExact   packed(63:20) inz(*hival);
@@ -639,6 +807,8 @@ dcl-proc testAssertEqual_numeric export;
   dcl-s expectedDouble  float(8) inz(*hival);
 
   // Test compiler
+  saveAssertStatus();
+
   assertEqual(actualExact: expectedExact);
   assertEqual(actualLess: expectedLess);
   assertEqual(expectedLike: actualLike);
@@ -649,6 +819,8 @@ dcl-proc testAssertEqual_numeric export;
 
   assertEqual(expectedSingle: actualSingle);
   assertEqual(expectedDouble: actualDouble);
+
+  restoreAssertStatus();
 
   // The following assertEqual() statement produces the following compiler error
   // message, if 'actualDecLoss' or 'expectedDecLoss' are defined with too many
@@ -661,35 +833,47 @@ dcl-proc testAssertEqual_numeric export;
   // assertEqual( expectedDecLoss : actualDecLoss );
 
   // Test equality
+  saveAssertStatus();
   assertEqual(1234567890,1234: 1234567890,1234);
-
-  assertFailEvtLong = getAssertFailEvtLong();
+  assertFailEvtLong_v2 = getAssertFailEvtLong();
+  restoreAssertStatus();
 
   // No exception message => OK.
-
-  aEqual('': assertFailEvtLong.msg);
+  aEqual('': assertFailEvtLong_v2.msg);
 
   // Test unequality without assertion message
   monitor;
+    saveAssertStatus();
     assertEqual(-1234567890,123: -1234567890,122);
+    restoreAssertStatus();
+
     fail('Expected the asssertion to fail.');
   on-error;
-    assertFailEvtLong = getAssertFailEvtLong();
-    assert(assertFailEvtLong.msg = 'Expected ''-1234567890,123'', but was ''-1234567890,122''.'
+    assertFailEvtLong_v2 = getAssertFailEvtLong();
+
+    restoreAssertStatus();
+
+    assert(assertFailEvtLong_v2.msg = 'Expected ''-1234567890,123'', but was ''-1234567890,122''.'
            : 'Error messages does not match expected value.');
-    verifyLogValue(LABEL_EXPECTED: assertFailEvtLong.logExpected
+    verifyLogValue(LABEL_EXPECTED: assertFailEvtLong_v2.logExpected
                    : '-1234567890,12300000000000000000': 'numeric': *off: 32);
-    verifyLogValue(LABEL_ACTUAL: assertFailEvtLong.logActual
+    verifyLogValue(LABEL_ACTUAL: assertFailEvtLong_v2.logActual
                    : '-1234567890,12200000000000000000': 'numeric': *off: 32);
   endmon;
 
   // Test unequality with assertion message
   monitor;
+    saveAssertStatus();
     assertEqual(1234567890,1234: 1234567890,1233: 'Numeric values do not match');
+    restoreAssertStatus();
+
     fail('Expected the asssertion to fail.');
   on-error;
-    assertFailEvtLong = getAssertFailEvtLong();
-    assert(assertFailEvtLong.msg = 'Numeric values do not match'
+    assertFailEvtLong_v2 = getAssertFailEvtLong();
+
+    restoreAssertStatus();
+
+    assert(assertFailEvtLong_v2.msg = 'Numeric values do not match'
            : 'Error messages does not match expected value.');
   endmon;
 
@@ -703,247 +887,323 @@ dcl-proc testAssertThat export;
   dcl-s expected varchar(128);
   dcl-s actual   varchar(128);
 
-  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
 
   // Test equality
+  saveAssertStatus();
   expected = 'Donald Duck';
   actual = expected;
   assertThat(%addr(expected): %addr(actual): %paddr(assertThatMatcherWithMsg));
-
-  assertFailEvtLong = getAssertFailEvtLong();
+  assertFailEvtLong_v2 = getAssertFailEvtLong();
+  restoreAssertStatus();
 
   // No exception message => OK.
-
-  aEqual('': assertFailEvtLong.msg);
+  aEqual('': assertFailEvtLong_v2.msg);
 
   // Test unequality without assertion message but
   // with a message returned by the matcher
   monitor;
+    saveAssertStatus();
     expected = 'Donald Duck';
     actual = 'Dagobert Duck';
     assertThat(%addr(expected): %addr(actual): %paddr(assertThatMatcherWithMsg));
+    restoreAssertStatus();
+
     fail('Expected the asssertion to fail.');
   on-error;
-    assertFailEvtLong = getAssertFailEvtLong();
-    assert(assertFailEvtLong.msg = 'Matcher: Actual values does not match expected value.'
+    assertFailEvtLong_v2 = getAssertFailEvtLong();
+
+    restoreAssertStatus();
+
+    assert(assertFailEvtLong_v2.msg = 'Matcher: Actual values does not match expected value.'
            : 'Error messages does not match message from matcher.');
-    verifyLogValue(LABEL_EXPECTED: assertFailEvtLong.logExpected
+    verifyLogValue(LABEL_EXPECTED: assertFailEvtLong_v2.logExpected
                    : 'Donald Duck': 'user-defined': *off: 11);
-    verifyLogValue(LABEL_ACTUAL: assertFailEvtLong.logActual
+    verifyLogValue(LABEL_ACTUAL: assertFailEvtLong_v2.logActual
                    : 'Dagobert Duck': 'user-defined': *off: 13);
   endmon;
 
   // Test unequality without any assertion message
   monitor;
+    saveAssertStatus();
     expected = 'Donald Duck';
     actual = 'Dagobert Duck';
     assertThat(%addr(expected): %addr(actual): %paddr(assertThatMatcherWithoutMsg));
+    restoreAssertStatus();
+
     fail('Expected the asssertion to fail.');
   on-error;
-    assertFailEvtLong = getAssertFailEvtLong();
-    assert(assertFailEvtLong.msg = NO_VALUE);
-    verifyLogValue(LABEL_EXPECTED: assertFailEvtLong.logExpected
+    assertFailEvtLong_v2 = getAssertFailEvtLong();
+
+    restoreAssertStatus();
+
+    assert(assertFailEvtLong_v2.msg = NO_VALUE);
+    verifyLogValue(LABEL_EXPECTED: assertFailEvtLong_v2.logExpected
                    : 'Donald Duck': 'user-defined': *off: 11);
-    verifyLogValue(LABEL_ACTUAL: assertFailEvtLong.logActual
+    verifyLogValue(LABEL_ACTUAL: assertFailEvtLong_v2.logActual
                    : 'Dagobert Duck': 'user-defined': *off: 13);
   endmon;
 
   // Test unequality with error message
   monitor;
+    saveAssertStatus();
     expected = 'Donald Duck';
     actual = 'Dagobert Duck';
     assertThat(%addr(expected): %addr(actual): %paddr(assertThatMatcherWithoutMsg):
                'Matcher did not accept actual value.');
+    restoreAssertStatus();
+
     fail('Expected the asssertion to fail.');
   on-error;
-    assertFailEvtLong = getAssertFailEvtLong();
-    assert(assertFailEvtLong.msg = 'Matcher did not accept actual value.');
+    assertFailEvtLong_v2 = getAssertFailEvtLong();
+
+    restoreAssertStatus();
+
+    assert(assertFailEvtLong_v2.msg = 'Matcher did not accept actual value.');
   endmon;
 
 end-proc;
+
 
 dcl-proc testAssertEqual_date export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
 
   // Test equality
+  saveAssertStatus();
   assertEqual(D'2024-09-16': D'2024-09-16');
-
-  assertFailEvtLong = getAssertFailEvtLong();
+  assertFailEvtLong_v2 = getAssertFailEvtLong();
+  restoreAssertStatus();
 
   // No exception message => OK.
-
-  aEqual('': assertFailEvtLong.msg);
+  aEqual('': assertFailEvtLong_v2.msg);
 
   // Test unequality without assertion message
   monitor;
+    saveAssertStatus();
     assertEqual(D'2024-09-16' : D'2002-01-02');
+    restoreAssertStatus();
+
     fail('Expected the asssertion to fail.');
   on-error;
-    assertFailEvtLong = getAssertFailEvtLong();
-    assert(assertFailEvtLong.msg = 'Expected ''2024-09-16'', but was ''2002-01-02''.'
+    assertFailEvtLong_v2 = getAssertFailEvtLong();
+
+    restoreAssertStatus();
+
+    assert(assertFailEvtLong_v2.msg = 'Expected ''2024-09-16'', but was ''2002-01-02''.'
            : 'Error messages does not match expected value.');
-    verifyLogValue(LABEL_EXPECTED: assertFailEvtLong.logExpected
+    verifyLogValue(LABEL_EXPECTED: assertFailEvtLong_v2.logExpected
                    : '2024-09-16': 'date': *off: 10);
-    verifyLogValue(LABEL_ACTUAL: assertFailEvtLong.logActual
+    verifyLogValue(LABEL_ACTUAL: assertFailEvtLong_v2.logActual
                    : '2002-01-02': 'date': *off: 10);
   endmon;
 
   // Test unequality with assertion message
   monitor;
+    saveAssertStatus();
     assertEqual(D'2024-09-16': D'2002-01-02': 'Date values do not match');
+    restoreAssertStatus();
+
     fail('Expected the asssertion to fail.');
   on-error;
-    assertFailEvtLong = getAssertFailEvtLong();
-    assert(assertFailEvtLong.msg = 'Date values do not match'
+    assertFailEvtLong_v2 = getAssertFailEvtLong();
+
+    restoreAssertStatus();
+
+    assert(assertFailEvtLong_v2.msg = 'Date values do not match'
            : 'Error messages does not match expected value.');
   endmon;
 
 end-proc;
+
 
 dcl-proc testAssertEqual_time export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
 
   // Test equality
+  saveAssertStatus();
   assertEqual( T'11.22.33' : T'11.22.33' );
-
-  assertFailEvtLong = getAssertFailEvtLong();
+  assertFailEvtLong_v2 = getAssertFailEvtLong();
+  restoreAssertStatus();
 
   // No exception message => OK.
-
-  aEqual('': assertFailEvtLong.msg);
+  aEqual('': assertFailEvtLong_v2.msg);
 
   // Test unequality without assertion message
   monitor;
+    saveAssertStatus();
     assertEqual(T'11.22.33': T'22.33.44');
+    restoreAssertStatus();
+
     fail('Expected the asssertion to fail.');
   on-error;
-    assertFailEvtLong = getAssertFailEvtLong();
-    assert(assertFailEvtLong.msg = 'Expected ''11.22.33'', but was ''22.33.44''.'
+    assertFailEvtLong_v2 = getAssertFailEvtLong();
+
+    restoreAssertStatus();
+
+    assert(assertFailEvtLong_v2.msg = 'Expected ''11.22.33'', but was ''22.33.44''.'
            : 'Error messages does not match expected value.');
-    verifyLogValue(LABEL_EXPECTED: assertFailEvtLong.logExpected
+    verifyLogValue(LABEL_EXPECTED: assertFailEvtLong_v2.logExpected
                    : '11.22.33': 'time': *off: 8);
-    verifyLogValue(LABEL_ACTUAL: assertFailEvtLong.logActual
+    verifyLogValue(LABEL_ACTUAL: assertFailEvtLong_v2.logActual
                    : '22.33.44': 'time': *off: 8);
   endmon;
 
   // Test unequality with assertion message
   monitor;
+    saveAssertStatus();
     assertEqual(T'11.22.33': T'22.33.44': 'Time values do not match');
+    restoreAssertStatus();
+
     fail('Expected the asssertion to fail.');
   on-error;
-    assertFailEvtLong = getAssertFailEvtLong();
-    assert(assertFailEvtLong.msg = 'Time values do not match'
+    assertFailEvtLong_v2 = getAssertFailEvtLong();
+
+    restoreAssertStatus();
+
+    assert(assertFailEvtLong_v2.msg = 'Time values do not match'
            : 'Error messages does not match expected value.');
   endmon;
 
 end-proc;
+
 
 dcl-proc testAssertEqual_timestamp export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
 
   // Test equality
+  saveAssertStatus();
   assertEqual(Z'2024-09-16-11.22.33.123456789012': Z'2024-09-16-11.22.33.123456789012');
-
-  assertFailEvtLong = getAssertFailEvtLong();
+  assertFailEvtLong_v2 = getAssertFailEvtLong();
+  restoreAssertStatus();
 
   // No exception message => OK.
-
-  aEqual('': assertFailEvtLong.msg);
+  aEqual('': assertFailEvtLong_v2.msg);
 
   // Test unequality without assertion message
   monitor;
+    saveAssertStatus();
     assertEqual(Z'2024-09-16-11.22.33.123456789012': Z'2023-01-16-22.33.44.654321789012');
+    restoreAssertStatus();
+
     fail('Expected the asssertion to fail.');
   on-error;
-    assertFailEvtLong = getAssertFailEvtLong();
-    assert(assertFailEvtLong.msg =
+    assertFailEvtLong_v2 = getAssertFailEvtLong();
+
+    restoreAssertStatus();
+
+    assert(assertFailEvtLong_v2.msg=
            'Expected ''2024-09-16-11.22.33.123456789012'', but was ' +
            '''2023-01-16-22.33.44.654321789012''.'
            : 'Error messages does not match expected value.');
-    verifyLogValue(LABEL_EXPECTED: assertFailEvtLong.logExpected
+    verifyLogValue(LABEL_EXPECTED: assertFailEvtLong_v2.logExpected
                    : '2024-09-16-11.22.33.123456789012': 'timestamp': *off: 32);
-    verifyLogValue(LABEL_ACTUAL: assertFailEvtLong.logActual
+    verifyLogValue(LABEL_ACTUAL: assertFailEvtLong_v2.logActual
                    : '2023-01-16-22.33.44.654321789012': 'timestamp': *off: 32);
   endmon;
 
   // Test unequality with assertion message
   monitor;
+    saveAssertStatus();
     assertEqual(Z'2024-09-16-11.22.33.123456789012': Z'2023-01-16-22.33.44.654321789012':
                 'Timestamp values do not match');
+    restoreAssertStatus();
+
     fail('Expected the asssertion to fail.');
   on-error;
-    assertFailEvtLong = getAssertFailEvtLong();
-    assert(assertFailEvtLong.msg = 'Timestamp values do not match'
+    assertFailEvtLong_v2 = getAssertFailEvtLong();
+
+    restoreAssertStatus();
+
+    assert(assertFailEvtLong_v2.msg = 'Timestamp values do not match'
            : 'Error messages does not match expected value.');
   endmon;
 
 end-proc;
 
+
 dcl-proc testAssertEqual_ind export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t);
+  dcl-ds failureEvent likeds(assertFailEvtExt_t);
 
   dcl-s ind1 ind inz(*on);
   dcl-s ind2 ind inz(*on);
 
   // Test indicator figurative constant.
   monitor;
+    saveAssertStatus();
     assertEqual(*on: *off);
+    restoreAssertStatus();
+
     fail('Expected the asssertion to fail.');
   on-error;
     // Does not yet work. Opened IBM support case:
-    assertFailEvtLong = getAssertFailEvtLong();
-    assert(assertFailEvtLong.msg = 'Expected ''1'', but was ''0''.'
+    failureEvent = getAssertFailEvtLong();
+
+    restoreAssertStatus();
+
+    assert(failureEvent.msg = 'Expected ''1'', but was ''0''.'
            : 'Error messages does not match expected value.');
-    verifyLogValue(LABEL_EXPECTED: assertFailEvtLong.logExpected
+    verifyLogValue(LABEL_EXPECTED: failureEvent.logExpected
                    : '*on': 'indicator': *off: 3);
-    verifyLogValue(LABEL_ACTUAL: assertFailEvtLong.logActual
+    verifyLogValue(LABEL_ACTUAL: failureEvent.logActual
                    : '*off': 'indicator': *off: 4);
   endmon;
 
   // Test equality
+  saveAssertStatus();
   ind2 = *on;
   ind2 = *on;
   assertEqual(ind1: ind2);
-
-  assertFailEvtLong = getAssertFailEvtLong();
+  failureEvent = getAssertFailEvtLong();
+  restoreAssertStatus();
 
   // No exception message => OK.
-
-  aEqual('': assertFailEvtLong.msg);
+  aEqual('': failureEvent.msg);
 
   // Test unequality without assertion message
   monitor;
+    saveAssertStatus();
     ind2 = *on;
     ind2 = *off;
     assertEqual(ind1: ind2);
+    restoreAssertStatus();
+
     fail('Expected the asssertion to fail.');
   on-error;
-    assertFailEvtLong = getAssertFailEvtLong();
-    assert(assertFailEvtLong.msg = 'Expected ''1'', but was ''0''.'
+    failureEvent = getAssertFailEvtLong();
+
+    restoreAssertStatus();
+
+    assert(failureEvent.msg = 'Expected ''1'', but was ''0''.'
            : 'Error messages does not match expected value.');
   endmon;
 
   // Test unequality with assertion message
   monitor;
+    saveAssertStatus();
     ind2 = *on;
     ind2 = *off;
     assertEqual(ind1: ind2: 'Indicator values do not match');
+    restoreAssertStatus();
+
     fail('Expected the asssertion to fail.');
   on-error;
-    assertFailEvtLong = getAssertFailEvtLong();
-    assert(assertFailEvtLong.msg = 'Indicator values do not match'
+    failureEvent = getAssertFailEvtLong();
+
+    restoreAssertStatus();
+
+    assert(failureEvent.msg = 'Indicator values do not match'
            : 'Error messages does not match expected value.');
   endmon;
 
@@ -1046,6 +1306,40 @@ dcl-proc verifyLogValue export;
     assert(logValue.originalLength = logValue.length
            : varName + '.length and .originalLength does not match');
   endif;
+
+end-proc;
+
+//----------------------------------------------------------------------
+//   Procedure that simulates the test case executor procedure
+//   of module CMDRUNSRV. It must receive the message sent by fail().
+//----------------------------------------------------------------------
+
+dcl-proc CMDRUNSRV_runProc;
+  dcl-pi *n ind extproc(*dclcase);
+  end-pi;
+
+  monitor;
+    if (failInsideMonitorBlock());
+      return *off; // Let the caller report the error.
+    endif;
+  on-error;
+    // Success, exception seen.
+    return *on;
+  endmon;
+
+end-proc;
+
+
+dcl-proc failInsideMonitorBlock;
+  dcl-pi *n ind extproc(*dclcase);
+  end-pi;
+
+  monitor;
+    fail(FAILURE_MESSAGE);
+    return *off;
+  on-error;
+    return *on; // Bad. Message was captured.
+  endmon;
 
 end-proc;
 

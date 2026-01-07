@@ -57,61 +57,46 @@ public final class Preferences {
      */
     private static final String RMTPGM = RPGUNIT + ".rmtpgm"; //$NON-NLS-1$
 
-    public static final String RUN_ORDER = RMTPGM + ".order"; //$NON-NLS-1$
+    private static final String RUN_ORDER = RMTPGM + ".order"; //$NON-NLS-1$
+    private static final String RUN_ORDER_API = "*API"; //$NON-NLS-1$
+    private static final String RUN_ORDER_REVERSE = "*REVERSE"; //$NON-NLS-1$
 
-    public static final String RUN_ORDER_API = "*API"; //$NON-NLS-1$
+    private static final String REPORT_DETAIL = RMTPGM + ".detail"; //$NON-NLS-1$
+    private static final String REPORT_DETAIL_BASIC = "*BASIC"; //$NON-NLS-1$
+    private static final String REPORT_DETAIL_ALL = "*ALL"; //$NON-NLS-1$
 
-    public static final String RUN_ORDER_REVERSE = "*REVERSE"; //$NON-NLS-1$
+    private static final String REPORT_ASSERT_MODE = RMTPGM + ".assertMode"; //$NON-NLS-1$
+    private static final String REPORT_ASSERT_MODE_ABORT = "*ABORT"; //$NON-NLS-1$
+    private static final String REPORT_ASSERT_MODE_CONTINUE = "*CONTINUE"; //$NON-NLS-1$
 
-    public static final String REPORT_DETAIL = RMTPGM + ".detail"; //$NON-NLS-1$
-
-    public static final String REPORT_DETAIL_BASIC = "*BASIC"; //$NON-NLS-1$
-
-    public static final String REPORT_DETAIL_ALL = "*ALL"; //$NON-NLS-1$
-
-    public static final String OUTPUT = RMTPGM + ".output"; //$NON-NLS-1$
-
+    private static final String OUTPUT = RMTPGM + ".output"; //$NON-NLS-1$
     public static final String OUTPUT_NONE = "*NONE"; //$NON-NLS-1$
+    private static final String OUTPUT_ERROR = "*ERROR"; //$NON-NLS-1$
+    private static final String OUTPUT_ALWAYS = "*ALLWAYS"; //$NON-NLS-1$
 
-    public static final String OUTPUT_ERROR = "*ERROR"; //$NON-NLS-1$
-
-    public static final String OUTPUT_ALWAYS = "*ALLWAYS"; //$NON-NLS-1$
-
-    public static final String LIBRARY_LIST = RMTPGM + ".libraryList"; //$NON-NLS-1$
-
+    private static final String LIBRARY_LIST = RMTPGM + ".libraryList"; //$NON-NLS-1$
     public static final String LIBRARY_LIST_CURRENT = "*CURRENT"; //$NON-NLS-1$
-
     public static final String LIBRARY_LIST_JOBD = "*JOBD"; //$NON-NLS-1$
 
-    public static final String JOBD_NAME = RMTPGM + ".jobDescription.name"; //$NON-NLS-1$
-
-    public static final String JOBD_LIBRARY = RMTPGM + ".jobDescription.library"; //$NON-NLS-1$
-
+    private static final String JOBD_NAME = RMTPGM + ".jobDescription.name"; //$NON-NLS-1$
+    private static final String JOBD_LIBRARY = RMTPGM + ".jobDescription.library"; //$NON-NLS-1$
     public static final String JOBD_NAME_DFT = "*DFT"; //$NON-NLS-1$
-
     public static final String JOBD_LIBRARY_LIBL = "*LIBL"; //$NON-NLS-1$
+    private static final String JOBD_DEFAULT_NAME = "*DFT"; //$NON-NLS-1$
+    private static final String JOBD_DEFAULT_LIBRARY = ""; //$NON-NLS-1$
 
-    public static final String JOBD_DEFAULT_NAME = "*DFT"; //$NON-NLS-1$
+    private static final String RECLAIM_RESOURCES = RMTPGM + ".reclaimResources"; //$NON-NLS-1$
+    private static final String RECLAIM_RESOURCES_NO = "*NO"; //$NON-NLS-1$
+    private static final String RECLAIM_RESOURCES_ALWAYS = "*ALWAYS"; //$NON-NLS-1$
+    private static final String RECLAIM_RESOURCES_ONCE = "*ONCE"; //$NON-NLS-1$
 
-    public static final String JOBD_DEFAULT_LIBRARY = ""; //$NON-NLS-1$
-
-    public static final String RECLAIM_RESOURCES = RMTPGM + ".reclaimResources"; //$NON-NLS-1$
-
-    public static final String RECLAIM_RESOURCES_NO = "*NO"; //$NON-NLS-1$
-
-    public static final String RECLAIM_RESOURCES_ALWAYS = "*ALWAYS"; //$NON-NLS-1$
-
-    public static final String RECLAIM_RESOURCES_ONCE = "*ONCE"; //$NON-NLS-1$
-
-    public static final String XML_STMF = RMTPGM + ".xmlStmf"; //$NON-NLS-1$
-
+    private static final String XML_STMF = RMTPGM + ".xmlStmf"; //$NON-NLS-1$
     public static final String XML_STMF_NONE = ""; //$NON-NLS-1$
 
-    public static final String XML_TYPE = RMTPGM + ".xmlType"; //$NON-NLS-1$
-
-    public static final String XML_TYPE_TYPE1 = "*TYPE1"; //$NON-NLS-1$
-
-    public static final String XML_TYPE_TYPE2 = "*TYPE2"; //$NON-NLS-1$
+    private static final String XML_TYPE = RMTPGM + ".xmlType"; //$NON-NLS-1$
+    private static final String XML_JENKINS_TYPE_1 = "*JENKINS1"; //$NON-NLS-1$
+    private static final String XML_JENKINS_TYPE_2 = "*JENKINS2"; //$NON-NLS-1$
+    private static final String XML_VSCODE_TYPE_1 = "*VSCODE1"; //$NON-NLS-1$
 
     /**
      * RPGUnit warning messages:
@@ -266,6 +251,14 @@ public final class Preferences {
         String tDetail = preferenceStore.getString(REPORT_DETAIL);
         if (isValidDetail(tDetail)) {
             return tDetail;
+        }
+        return getDefaultDetail();
+    }
+
+    public String getAssertMode() {
+        String tAssertMode = preferenceStore.getString(REPORT_ASSERT_MODE);
+        if (isValidAssertMode(tAssertMode)) {
+            return tAssertMode;
         }
         return getDefaultDetail();
     }
@@ -434,6 +427,10 @@ public final class Preferences {
         saveDetail(aDetail);
     }
 
+    public void setAssertMode(String anAssertMode) {
+        saveAssertMode(anAssertMode);
+    }
+
     public void setRunOrder(String anOrder) {
         saveOrder(anOrder);
     }
@@ -577,6 +574,7 @@ public final class Preferences {
         preferenceStore.setDefault(JOBD_NAME, getDefaultJobDescription().getName());
         preferenceStore.setDefault(JOBD_LIBRARY, getDefaultJobDescription().getLibrary());
         preferenceStore.setDefault(REPORT_DETAIL, getDefaultDetail());
+        preferenceStore.setDefault(REPORT_ASSERT_MODE, getDefaultAssertMode());
         preferenceStore.setDefault(REPORT_DISABLED, getDefaultReportDisabledState());
         preferenceStore.setDefault(XML_STMF_DISABLED, getDefaultXmlStmfDisabledState());
         preferenceStore.setDefault(RECLAIM_RESOURCES, getDefaultReclaimResources());
@@ -629,6 +627,13 @@ public final class Preferences {
         return false;
     }
 
+    private boolean isValidAssertMode(String aAssertMode) {
+        if (REPORT_ASSERT_MODE_ABORT.equals(aAssertMode) || REPORT_ASSERT_MODE_CONTINUE.equals(aAssertMode)) {
+            return true;
+        }
+        return false;
+    }
+
     private boolean isValidOrder(String anOrder) {
         if (RUN_ORDER_API.equals(anOrder) || RUN_ORDER_REVERSE.equals(anOrder)) {
             return true;
@@ -676,6 +681,10 @@ public final class Preferences {
 
     public String getDefaultDetail() {
         return REPORT_DETAIL_BASIC;
+    }
+
+    public String getDefaultAssertMode() {
+        return REPORT_ASSERT_MODE_ABORT;
     }
 
     public String getDefaultRunOrder() {
@@ -736,7 +745,7 @@ public final class Preferences {
     }
 
     public String getDefaultXmlType() {
-        return XML_TYPE_TYPE2;
+        return XML_JENKINS_TYPE_2;
     }
 
     public boolean getDefaultShowWarnMessages() {
@@ -779,6 +788,10 @@ public final class Preferences {
         return new String[] { REPORT_DETAIL_BASIC, REPORT_DETAIL_ALL };
     }
 
+    public String[] getAssertModeItems() {
+        return new String[] { REPORT_ASSERT_MODE_ABORT, REPORT_ASSERT_MODE_CONTINUE };
+    }
+
     public String[] getOutputItems() {
         return new String[] { OUTPUT_ALWAYS, OUTPUT_ERROR, OUTPUT_NONE };
     }
@@ -788,7 +801,7 @@ public final class Preferences {
     }
 
     public String[] getXmlTypeItems() {
-        return new String[] { XML_TYPE_TYPE1, XML_TYPE_TYPE2 };
+        return new String[] { XML_JENKINS_TYPE_1, XML_JENKINS_TYPE_2, XML_VSCODE_TYPE_1 };
     }
 
     public String[] getCheckTestSuiteItems() {
@@ -816,6 +829,10 @@ public final class Preferences {
 
     private void saveDetail(String aDetail) {
         preferenceStore.setValue(REPORT_DETAIL, aDetail);
+    }
+
+    private void saveAssertMode(String anAssertMode) {
+        preferenceStore.setValue(REPORT_ASSERT_MODE, anAssertMode);
     }
 
     private void saveOrder(String anOrder) {

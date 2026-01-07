@@ -81,36 +81,43 @@ b) Optionally run the RPGUnit self tests:
               History
 --------------------------------------
 
---------------------------
-
-Version 6.0.0 - 03.10.2025
+Version 6.0.0 - 21.12.2025
 --------------------------
  * Compiled plug-in for RDi 9.6.0.13.
+ * Added keyword 'ONFAILURE' to command RUCALLTST.
+    - *ABORT:    Executing assertions of a test case is canceled on the
+                 first failed assertion.
+    - *CONTINUE: All assertions of a test case are executed despite their
+                 results.
+ * Add 'expected' and 'actual' values.
+ * Add keyword 'XMLTYPE' to command RUCALLTXT. Possible value:
+    - *JENKINS1: This type assigns the call stack in text format to XML
+                 element '<failure>'. (Jenkins Junit plug-in)
+    - *JENKINS2: This type adds the 'expected' and 'actual' values to XML
+                 element '<failue>'. (Jenkins Junit plug-in)
+    - *VSCODE1:  This type is used by the VS Code IBM I Testing extension.
+ * Added the path of the XML stream file to the spooled file output.
+ * Added path replacement variable '<MSECONDS>' for including a 6-digit
+   microseconds value in the XML stream file path.
  * Added keyword options(*varsize) to procedure aEqual().
    Recompile your test suites to take advantage from this change.
    Without recompiling the test suites, the lengths of 'expected'
-   and 'actual' are always assumed as 32565.
+   and 'actual' are always assumed as 32565 bytes.
  * Fixed XML encoding of special characters of attribute 'message'
    of element 'failure'.
  * Wrapped text of element '<failure>' into a 'CDATA' section.
- * Add keyword 'XMLTYPE' to command RUCALLTXT. Possible value:
-    - Type of the XML output file of iRPGUnit <= v5.1.0.r. This type
-      assigns the call stack in text format to XML element '<failure>'.
-    - Type of the XML output file of iRPGUnit >= v6.0.0.r. This type
-      assigns a Json object to XML element '<failue>'.
- * Add 'expected' and 'actual' values.
  * Fixed compiling objects from a source file stored in an ASP group.
  * Dropped source physical file RPGUNIT1 with member TESTCASE.
-
---------------------------
+ * Dropped support support for version 3 (23.04.2017-09.04.2024)
+   user spaces.
+ * Fixed encoding of XML reports. Now reports are properly created with CCSID
+   UTF-8 (1208).
 
 Version 5.1.0 - 23.05.2025
 --------------------------
  * Added support for compiling test suites from stream files.
  * Added source stream file to test result user space.
  * Use COPTION when creating RPG/Cobol SQL modules.
-
---------------------------
 
 Version 5.0.1 - 24.09.2024
 --------------------------

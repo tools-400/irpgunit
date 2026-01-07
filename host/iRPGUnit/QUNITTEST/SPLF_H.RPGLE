@@ -16,23 +16,23 @@ dcl-pr cloSplf extproc('cloSplf');
 end-pr;
 
 dcl-pr opnSplf extproc('opnSplf');
-  splfNm      char(10) const;
-  usrData     char(10) const;
+  splfNm  char(10) value;
+  usrData char(10) value;
 end-pr;
 
 dcl-pr splfLineStartsWith extproc('splfLineStartsWith');
-  expString   varchar(256) const;
+  expString varchar(256) const;
 end-pr;
 
 dcl-pr splfContains extproc('splfContains');
-  expString   varchar(256) const;
+  expString varchar(256) const;
 end-pr;
 
 dcl-pr splfSkipLine extproc('splfSkipLine');
 end-pr;
 
 dcl-pr dltSplfs int(10) extproc('dltSplfs');
-  splfNm      char(10) const;
-  usrData     char(10) const;
+  splfNm  char(10) value;
+  usrData char(10) value;
 end-pr;
 

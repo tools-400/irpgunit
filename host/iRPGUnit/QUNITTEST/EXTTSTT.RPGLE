@@ -11,39 +11,10 @@
 // >>PRE-COMPILER<<
 //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
 //   >>IMPORTANT<<
-//     >>PARM<<  MODULE(&LI/CALLPRC   +
-//                      &LI/CMDRUNLOG +
-//                      &LI/CMDRUNPRT +
-//                      &LI/CMDRUNSRV +
-//                      &LI/EXTPRC    +
-//                      &LI/EXTTST    +
-//                      &LI/JOBLOG    +
-//                      &LI/LLIST     +
-//                      &LI/OBJECT    +
-//                      &LI/OSVERSION +
-//                      &LI/PGMMSG    +
-//                      &LI/SRCMBR    +
-//                      &LI/STMF      +
-//                      &LI/STRING    +
-//                      &LI/USRSPC    +
-//                     );
+//     >>PARM<<  BNDDIR(&LI/IRPGUNIT);
+//     >>PARM<<  BNDSRVPGM(&LI/RUMEMMGR);
 //     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
 //   >>END-IMPORTANT<<
-//   >>CMD<<     CMPMOD MODULE(&LI/CALLPRC  ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNLOG) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNPRT) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/CMDRUNSRV) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/EXTPRC   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/EXTTST   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/JOBLOG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/LLIST    ) SRCFILE(&SL/QLLIST) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/OBJECT   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/OSVERSION) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/PGMMSG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/SRCMBR   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/STMF     ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/STRING   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/USRSPC   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================
@@ -56,28 +27,28 @@ ctl-opt NoMain Option(*SrcStmt);
 
 /copy qinclude,ASSERT
 /copy qinclude,CALLPRC
+/copy qinclude,CMDRUNSRV
 /copy qinclude,EXTTST
 /copy qinclude,EXTPRC
+/copy qinclude,MEMMGR
 /copy qinclude,TEMPLATES
 
 //----------------------------------------------------------------------
 //   Global DS
 //----------------------------------------------------------------------
 
-dcl-ds testSuite likeds(TestSuite_t);
-
-dcl-s mockProcArray dim(2) like(ProcNm_t);
-dcl-ds mockProcNmList likeds(ProcNmList_t);
+dcl-s g_mockProcArray dim(2) like(ProcNm_t);
+dcl-ds g_mockProcNmList likeds(ProcNmList_t);
 
 //---------------------------------------------------------------------
 //   Global Variable
 //---------------------------------------------------------------------
 
-dcl-s dummyHandle char(5) inz('dummy');
-dcl-s mockProcIdx int(10);
-dcl-s mockProcCnt int(10);
+dcl-s g_dummyHandle char(5) inz('dummy');
+dcl-s g_mockProcIdx int(10);
+dcl-s g_mockProcCnt int(10);
 // Expected test procedure.
-dcl-ds expTestProc likeds(Proc_t);
+dcl-ds g_expTestProc likeds(Proc_t);
 
 //---------------------------------------------------------------------
 //   Program Status Data Structure
@@ -93,16 +64,16 @@ dcl-proc setup export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  clear expTestProc;
+  clear g_expTestProc;
 
-  clear mockProcArray;
-  mockProcIdx = 1;
-  mockProcCnt = 0;
+  clear g_mockProcArray;
+  g_mockProcIdx = 1;
+  g_mockProcCnt = 0;
 
-  mockProcNmList.handle = %addr(dummyHandle);
-  mockProcNmList.cnt = %paddr('getMockProcCnt');
-  mockProcNmList.getNm = %paddr('getMockProcNm');
-  mockProcNmList.goToNext = %paddr('goToNext');
+  g_mockProcNmList.handle = %addr(g_dummyHandle);
+  g_mockProcNmList.cnt = %paddr('getMockProcCnt');
+  g_mockProcNmList.getNm = %paddr('getMockProcNm');
+  g_mockProcNmList.goToNext = %paddr('goToNext');
 
 end-proc;
 
@@ -111,24 +82,30 @@ dcl-proc testOneProcOneTestCase export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
+  dcl-ds testSuite likeds(TestSuite_t);
+
   // Setup.
 
-  mockProcCnt = 1;
-  mockProcArray(1) = 'TEST_1';
+  g_mockProcCnt = 1;
+  g_mockProcArray(1) = 'TEST_1';
 
   // Execution.
 
-  testSuite = getTestSuite(mockProcNmList);
+  testSuite = getTestSuite(g_mockProcNmList);
+  testSuite.testResults = MemMgr_createList('testSuite.testResults');
 
   // Controls.
 
   iEqual(1: testSuite.testCasesCnt);
   aEqual(*blank: testSuite.setUp.procNm);
 
-  expTestProc.procNm = 'TEST_1';
-  testProcEqual(expTestProc: testSuite: 1);
+  g_expTestProc.procNm = 'TEST_1';
+  testProcEqual(g_expTestProc: testSuite: 1);
 
   aEqual(*blank: testSuite.tearDown.procNm);
+
+on-exit;
+  rclTestSuite(testSuite);
 
 end-proc;
 
@@ -137,12 +114,18 @@ dcl-proc testOneProcNoTestCase export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  mockProcCnt = 1;
-  mockProcArray(1) = 'NOT_A_TEST_1';
+  dcl-ds testSuite likeds(TestSuite_t) inz;
 
-  testSuite = getTestSuite( mockProcNmList);
+  g_mockProcCnt = 1;
+  g_mockProcArray(1) = 'NOT_A_TEST_1';
+
+  testSuite = getTestSuite( g_mockProcNmList);
+  testSuite.testResults = MemMgr_createList('testSuite.testResults');
 
   iEqual(0: testSuite.testCasesCnt);
+
+on-exit;
+  rclTestSuite(testSuite);
 
 end-proc;
 
@@ -151,19 +134,25 @@ dcl-proc testTwoProcsTwoTestCases export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  mockProcCnt = 2;
-  mockProcArray(1) = 'TEST_1';
-  mockProcArray(2) = 'TEST_2';
+  dcl-ds testSuite likeds(TestSuite_t);
 
-  testSuite = getTestSuite( mockProcNmList);
+  g_mockProcCnt = 2;
+  g_mockProcArray(1) = 'TEST_1';
+  g_mockProcArray(2) = 'TEST_2';
+
+  testSuite = getTestSuite( g_mockProcNmList);
+  testSuite.testResults = MemMgr_createList('testSuite.testResults');
 
   iEqual(2: testSuite.testCasesCnt);
 
-  expTestProc.procNm = 'TEST_1';
-  testProcEqual(expTestProc: testSuite: 1);
+  g_expTestProc.procNm = 'TEST_1';
+  testProcEqual(g_expTestProc: testSuite: 1);
 
-  expTestProc.procNm = 'TEST_2';
-  testProcEqual(expTestProc: testSuite: 2);
+  g_expTestProc.procNm = 'TEST_2';
+  testProcEqual(g_expTestProc: testSuite: 2);
+
+on-exit;
+  rclTestSuite(testSuite);
 
 end-proc;
 
@@ -172,17 +161,23 @@ dcl-proc testSetupProc export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  mockProcCnt = 2;
-  mockProcArray(1) = 'SETUP';
-  mockProcArray(2) = 'TEST_1';
+  dcl-ds testSuite likeds(TestSuite_t);
 
-  testSuite = getTestSuite(mockProcNmList);
+  g_mockProcCnt = 2;
+  g_mockProcArray(1) = 'SETUP';
+  g_mockProcArray(2) = 'TEST_1';
+
+  testSuite = getTestSuite(g_mockProcNmList);
+  testSuite.testResults = MemMgr_createList('testSuite.testResults');
 
   iEqual(1: testSuite.testCasesCnt);
   aEqual('SETUP': testSuite.setUp.procNm);
 
-  expTestProc.procNm = 'TEST_1';
-  testProcEqual(expTestProc: testSuite: 1);
+  g_expTestProc.procNm = 'TEST_1';
+  testProcEqual(g_expTestProc: testSuite: 1);
+
+on-exit;
+  rclTestSuite(testSuite);
 
 end-proc;
 
@@ -191,24 +186,30 @@ dcl-proc testTearDownProc export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
+  dcl-ds testSuite likeds(TestSuite_t);
+
   // Setup.
 
-  mockProcCnt = 2;
-  mockProcArray(1) = 'TEARDOWN';
-  mockProcArray(2) = 'TEST_1';
+  g_mockProcCnt = 2;
+  g_mockProcArray(1) = 'TEARDOWN';
+  g_mockProcArray(2) = 'TEST_1';
 
   // Execution.
 
-  testSuite = getTestSuite(mockProcNmList);
+  testSuite = getTestSuite(g_mockProcNmList);
+  testSuite.testResults = MemMgr_createList('testSuite.testResults');
 
   // Controls.
 
   iEqual( 1 : testSuite.testCasesCnt);
 
-  expTestProc.procNm = 'TEST_1';
-  testProcEqual(expTestProc: testSuite: 1);
+  g_expTestProc.procNm = 'TEST_1';
+  testProcEqual(g_expTestProc: testSuite: 1);
 
   aEqual('TEARDOWN': testSuite.tearDown.procNm);
+
+on-exit;
+  rclTestSuite(testSuite);
 
 end-proc;
 
@@ -217,15 +218,18 @@ dcl-proc testSetupSuite export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
+  dcl-ds testSuite likeds(TestSuite_t);
+
   // Setup.
 
-  mockProcCnt = 2;
-  mockProcArray(1) = 'SETUPSUITE';
-  mockProcArray(2) = 'TEST_1';
+  g_mockProcCnt = 2;
+  g_mockProcArray(1) = 'SETUPSUITE';
+  g_mockProcArray(2) = 'TEST_1';
 
   // Execution.
 
-  testSuite = getTestSuite( mockProcNmList);
+  testSuite = getTestSuite( g_mockProcNmList);
+  testSuite.testResults = MemMgr_createList('testSuite.testResults');
 
   // Controls.
 
@@ -233,8 +237,11 @@ dcl-proc testSetupSuite export;
   aEqual('SETUPSUITE': testSuite.setupSuite.procNm);
   aEqual(*blank: testSuite.setup.procNm);
 
-  expTestProc.procNm = 'TEST_1';
-  testProcEqual(expTestProc: testSuite: 1);
+  g_expTestProc.procNm = 'TEST_1';
+  testProcEqual(g_expTestProc: testSuite: 1);
+
+on-exit;
+  rclTestSuite(testSuite);
 
 end-proc;
 
@@ -243,15 +250,19 @@ dcl-proc testTeardownSuite export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
+  dcl-ds testSuite likeds(TestSuite_t);
+
   // Setup.
 
-  mockProcCnt = 2;
-  mockProcArray(1) = 'TEARDOWNSUITE';
-  mockProcArray(2) = 'TEST_1';
+  g_mockProcCnt = 2;
+  g_mockProcArray(1) = 'TEARDOWNSUITE';
+  g_mockProcArray(2) = 'TEST_1';
 
   // Execution.
 
-  testSuite = getTestSuite(mockProcNmList);
+  testSuite = getTestSuite(g_mockProcNmList);
+  testSuite.testResults = MemMgr_createList('testSuite.testResults');
+
 
   // Controls.
 
@@ -259,11 +270,14 @@ dcl-proc testTeardownSuite export;
   aEqual(*blank: testSuite.setupSuite.procNm);
   aEqual(*blank: testSuite.setup.procNm);
 
-  expTestProc.procNm = 'TEST_1';
-  testProcEqual(expTestProc: testSuite: 1);
+  g_expTestProc.procNm = 'TEST_1';
+  testProcEqual(g_expTestProc: testSuite: 1);
 
   aEqual(*blank: testSuite.tearDown.procNm);
   aEqual('TEARDOWNSUITE': testSuite.tearDownSuite.procNm);
+
+on-exit;
+  rclTestSuite(testSuite);
 
 end-proc;
 
@@ -275,6 +289,8 @@ dcl-proc testActivateTestSuite export;
   dcl-s actMark like(ActMark_t);
   dcl-ds srvPgm likeds(Object_t);
   dcl-ds testCase dim(3) likeds(Proc_t);
+
+  dcl-ds testSuite likeds(TestSuite_t);
 
 
   // Set up Activation Mark.
@@ -308,17 +324,17 @@ dcl-proc testActivateTestSuite export;
   assert(testSuite.setUp.procPtr = %paddr('ET_setUp'):
          'Resolution of ET_setUp failed');
 
-  expTestProc.procNm = 'ET_testProc_1';
-  expTestProc.procPtr = %paddr('ET_testProc_1');
-  testProcEqual(expTestProc: testSuite: 1);
+  g_expTestProc.procNm = 'ET_testProc_1';
+  g_expTestProc.procPtr = %paddr('ET_testProc_1');
+  testProcEqual(g_expTestProc: testSuite: 1);
 
-  expTestProc.procNm = 'ET_testProc_2';
-  expTestProc.procPtr = %paddr('ET_testProc_2');
-  testProcEqual(expTestProc: testSuite: 2);
+  g_expTestProc.procNm = 'ET_testProc_2';
+  g_expTestProc.procPtr = %paddr('ET_testProc_2');
+  testProcEqual(g_expTestProc: testSuite: 2);
 
-  expTestProc.procNm = 'ET_testProc_3';
-  expTestProc.procPtr = %paddr('ET_testProc_3');
-  testProcEqual(expTestProc: testSuite: 3);
+  g_expTestProc.procNm = 'ET_testProc_3';
+  g_expTestProc.procPtr = %paddr('ET_testProc_3');
+  testProcEqual(g_expTestProc: testSuite: 3);
 
   assert(testSuite.tearDown.procPtr = %paddr('ET_tearDown')
          : 'Resolution of ET_tearDown failed');
@@ -379,7 +395,7 @@ dcl-proc getMockProcNm;
   end-pi;
 
   assert('dummy' = mockProcNmListHandle: 'Wrong ProcNmList handle');
-  return mockProcArray(mockProcIdx);
+  return g_mockProcArray(g_mockProcIdx);
 
 end-proc;
 
@@ -391,7 +407,7 @@ dcl-proc goToNext;
   end-pi;
 
   assert('dummy' = mockProcNmListHandle: 'Wrong ProcNmList handle');
-  mockProcIdx += 1;
+  g_mockProcIdx += 1;
 
 end-proc;
 
@@ -403,7 +419,7 @@ dcl-proc getMockProcCnt;
   end-pi;
 
   assert('dummy' = mockProcNmListHandle: 'Wrong ProcNmList handle');
-  return mockProcCnt;
+  return g_mockProcCnt;
 
 end-proc;
 
@@ -449,9 +465,9 @@ dcl-proc return_SETUP_then_TEST_1;
   assert('dummy' = mockProcNmListHandle: 'Wrong ProcNmList handle');
 
   select;
-  when mockProcIdx = 1;
+  when g_mockProcIdx = 1;
     return 'SETUP';
-  when mockProcIdx = 2;
+  when g_mockProcIdx = 2;
     return 'TEST_1';
   other;
     fail('Unreachable code');
@@ -468,7 +484,7 @@ dcl-proc return_TEST_n;
 
   assert('dummy' = mockProcNmListHandle: 'Wrong ProcNmList handle');
 
-  return 'TEST_' + %char(mockProcIdx);
+  return 'TEST_' + %char(g_mockProcIdx);
 
 end-proc;
 

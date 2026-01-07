@@ -36,7 +36,7 @@ ctl-opt nomain;
 
 // Retrieve Procedure Info.
 // Stores procedure info in a user space.
-dcl-pr rtvprocinfo;
+dcl-pr rtvProcInfo;
   // Service program to analyze.
   srvPgm          value likeds(object_t);
   // Qualified user space name.
@@ -77,10 +77,9 @@ dcl-proc loadProcList export;
   end-pi;
 
   // List header structure.
-  dcl-ds listhdr likeds(listhdr_t)
-  based(proclist.hdr);
+  dcl-ds listhdr likeds(listhdr_t) based(procList.hdr);
   // Extracted procedure list.
-  dcl-ds proclist likeds(procList_t);
+  dcl-ds procList likeds(procList_t);
   // Qualified name of the user space that stores the proc info.
   dcl-ds usrSpc likeds(object_t);
 
@@ -88,12 +87,12 @@ dcl-proc loadProcList export;
   usrSpc.nm  = 'RUPROCLIST';
   usrSpc.lib = 'QTEMP';
 
-  proclist.hdr = crtusrspc( usrSpc: 'RPGUnit - Procedure list.');
-  rtvprocinfo( srvPgm: usrSpc );
+  procList.hdr = crtUsrSpc( usrSpc: 'RPGUnit - Procedure list.');
+  rtvProcInfo( srvPgm: usrSpc );
 
-  proclist.current = proclist.hdr + listhdr.listOffs;
+  procList.current = procList.hdr + listhdr.listOffs;
 
-  return proclist;
+  return procList;
 
 end-proc;
 
@@ -150,14 +149,14 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc goToNextProc export;
   dcl-pi *N;
-    proclist        likeds(procList_t);
+    procList likeds(procList_t);
   end-pi;
 
-  dcl-ds procdesc likeds(spgl0610_t)
-  based(proclist.current);
+  dcl-ds procDesc likeds(spgl0610_t)
+  based(procList.current);
 
 
-  proclist.current += procdesc.size;
+  procList.current += procDesc.size;
 
 end-proc goToNextProc;
 
@@ -165,7 +164,7 @@ end-proc goToNextProc;
 //----------------------------------------------------------------------
 // Stores procedure info in a user space. See prototype.
 //----------------------------------------------------------------------
-dcl-proc rtvprocinfo;
+dcl-proc rtvProcInfo;
   dcl-pi *N;
     srvPgm          value likeds(object_t);
     usrSpc          const likeds(object_t);

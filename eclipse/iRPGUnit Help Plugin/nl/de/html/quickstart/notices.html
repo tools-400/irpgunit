@@ -14,22 +14,22 @@ unerwartetes Verhalten richtig zu interpretieren.
 
 <h2>Prinzipielle Arbeitsweise</h2>
 Grundsätzlich bemüht sich RPGUnit die Arbeitsweise von JUnit exakt nachzubilden.
-Problematisch ist hierbei jedoch das überwachen von Programmanweisungen 
-auf Fehler. Hierzu stehen im RPG zwei Möglichkeiten zur Verfügung.
+Problematisch ist hierbei jedoch, wenn Zusicherungen überwacht und Fehler somit
+abgefangen werden. Ist hierbei der Parameter <code>ONFAILURE</code> auf
+<code>*CONTINUE</code> gesetzt, erkennt RPGUnit die Überwachung nicht und meldet
+einen Fehler.
+<p>
+Das Problem existiert nicht, wenn <code>ONFAILURE</code> auf <code>*ABORT</code>
+gesetzt ist, welches dem Standardwert entspricht.
 <p>
 
-<h2>Monitor Block</h2>
-Der Aufruf einer RPGUnit Prüffunktion innerhalb eines Monitor-Blocks führt zu einem
-protokollierten Fehler. Dies entspricht exakt dem Verhalten von JUnit. Auch dort werden 
-Fehler innerhalb eines <code>try/catch</code> Blocks erkannt und protokolliert.
-<p>
-<b>Unproblematisch</b>
+<b>Monitor Block</b>
 <code><pre class="indent">
 monitor;
 
    <span class="r-cmt">// calculation statements</span>
    
-   aEqual( 'HelloWorld' : 'Hello' ); <span class="r-cmt">// correctly reported</span>  
+   aEqual( 'HelloWorld' : 'Hello' );  
 
 on-error;
    <span class="r-cmt">// error handler</span>
@@ -37,20 +37,8 @@ endmon;
 </pre></code> 
 
 <h2>CALLP - Error Extender</h2>
-Beim Aufruf der RPGUnit Prüffunktionen werden auftretende Fehler ignoriert, wenn der 
-Aufruf über <code>CALLP(E)</code> erfolgt. Verzichten Sie daher beim auf den Error 
-Extender <code>(E)</code> beim Aufruf der Prüffuktionen über <code>CALLP</code>.
-<p>
-<b>Richtig</b>
 <code><pre class="indent">
-aEqual( 'HelloWorld' : 'Hello' );
-
-callp aEqual( 'HelloWorld' : 'Hello' );
-</pre></code> 
-<p>
-<b>Falsch</b>
-<code><pre class="indent-red">
-callp(e) aEqual( 'HelloWorld' : 'Hello' ); // not reported by RPGUnit!
+callp(e) aEqual( 'HelloWorld' : 'Hello' );
 </pre></code> 
 <p>
 <iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>

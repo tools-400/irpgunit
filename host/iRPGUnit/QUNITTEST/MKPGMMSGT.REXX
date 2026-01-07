@@ -17,7 +17,7 @@
 /*     Script parameters:                                              */
 /*       prdLib   - Name of the iRPGUnit product library.              */
 /*       dbgView  - The possible values are:                           */
-/*                  ALL     : Default. Generates all debug views when  */
+/*                  LIST    : Default. Generates *LIST debug view when */
 /*                            compiling the objects.                   */
 /*                  NONE    : Compiles the obejcts without debug       */
 /*                            views.                                   */
@@ -33,7 +33,7 @@
 /*   >>PRE-COMPILER<<                                                  */
 /*     >>CRTCMD<<  STRREXPRC SRCMBR(&SM) SRCFILE(&SL/&SF);             */
 /*     >>IMPORTANT<<                                                   */
-/*       >>PARM<< PARM('&LI');                                         */
+/*       >>PARM<< PARM('&LI *LIST');                                   */
 /*     >>END-IMPORTANT<<                                               */
 /*     >>EXECUTE<<                                                     */
 /*   >>END-PRE-COMPILER<<                                              */
@@ -65,7 +65,7 @@
  end
 
  select
- when (dbgView = '' | dbgView = 'ALL' | dbgView = '*ALL') then dbgView = '*ALL'
+ when (dbgView = '' | dbgView = 'ALL' | dbgView = '*ALL') then dbgView = '*LIST'
  when (dbgView = 'STMT' | dbgView = '*STMT') then dbgView = '*STMT'
  when (dbgView = 'SOURCE' | dbgView = '*SOURCE') then dbgView = '*SOURCE'
  when (dbgView = 'LIST' | dbgView = '*LIST') then dbgView = '*LIST'
@@ -88,19 +88,21 @@
  end
 
  /* -------------------------------------------- */
+ /*  Recreate the modules if needed.             */
+ /* -------------------------------------------- */
+
+ "STRREXPRC SRCMBR(A_INSTALL) SRCFILE(RPGUNITDVP/QBUILD) PARM('CMPMOD "prdLib" "dbgView" "tgtRls"')"
+
+ /* -------------------------------------------- */
  /*  Let's do it!                                */
  /* -------------------------------------------- */
- "CMPMOD MODULE("prdLib"/PGMMSGT  ) SRCFILE("prdLib"/QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/JOBLOG   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
- "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE("prdLib"/QSRC     ) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+
+ "CMPMOD MODULE("prdLib"/PGMMSGT   ) SRCFILE("prdLib"/QUNITTEST) DBGVIEW("dbgView") ",
+   "TGTRLS("tgtRls")"
 
  "CRTSRVPGM  SRVPGM("prdLib"/PGMMSGT) ",
-            "MODULE("prdLib"/PGMMSGT ",
-                     prdLib"/JOBLOG  ",
-                     prdLib"/PGMMSG) ",
             "EXPORT(*ALL) ",
-            "OPTION(*DUPPROC) ",
-            "BNDSRVPGM("prdLib"/RUTESTCASE) ",
+            "BNDDIR("prdLib"/IRPGUNIT) ",
             "TEXT('RPGUnit SelfTest - Test PGMMSG.')"
 
  "SNDPGMMSG ",

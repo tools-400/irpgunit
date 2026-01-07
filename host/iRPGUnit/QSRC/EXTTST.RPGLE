@@ -34,21 +34,22 @@ ctl-opt nomain;
 
 /include qinclude,CALLPRC
 /include qinclude,EXTPRC
+/include qinclude,MEMMGR
 /include qinclude,TEMPLATES
 /include qinclude,STRING
 /include qllist,llist_h
-
-dcl-pr memset          pointer extproc('memset');
-  i_pDest         pointer value;
-  i_char          int(10) value;
-  i_count         uns(10) value;
-end-pr;
 
 //----------------------------------------------------------------------
 //   Private Procedures
 //----------------------------------------------------------------------
 
-dcl-pr cnt             int(10) extproc(cnt_p);
+dcl-pr memset pointer extproc('memset');
+  i_pDest pointer value;
+  i_char  int(10) value;
+  i_count uns(10) value;
+end-pr;
+
+dcl-pr cnt int(10) extproc(cnt_p);
   procnmlisthandle
   pointer const;
 end-pr;
@@ -58,29 +59,19 @@ dcl-pr getnm like(procNm_t) extproc(getNm_p);
   pointer const;
 end-pr;
 
-dcl-pr getTestCasePtr  pointer;
-  testSuite       const likeds(testSuite_t);
-  testidx         int(10) const;
-end-pr;
-
 dcl-pr gotonext extproc(gotoNext_p);
   procnmlisthandle
   pointer const;
 end-pr;
-
-dcl-pr isTest          ind;
-  nm              const like(procNm_t);
-end-pr;
-
 
 //----------------------------------------------------------------------
 //   Global Variables
 //----------------------------------------------------------------------
 
 // Procedure pointers for ProcNmList_t.
-dcl-s cnt_p           pointer(*proc);
-dcl-s getNm_p         pointer(*proc);
-dcl-s gotoNext_p      pointer(*proc);
+dcl-s cnt_p pointer(*proc);
+dcl-s getNm_p pointer(*proc);
+dcl-s gotoNext_p pointer(*proc);
 
 
 //----------------------------------------------------------------------
@@ -89,21 +80,22 @@ dcl-s gotoNext_p      pointer(*proc);
 
 dcl-proc activateTestSuite export;
   dcl-pi *N;
-    testSuite       likeds(testSuite_t);
-    actMark         const like(actMark_t);
+    testSuite likeds(testSuite_t);
+    actMark   like(actMark_t) const;
   end-pi;
 
-  dcl-ds testcase likeds(proc_t) based(testcase_p);
-  dcl-s testcase_p      pointer;
-  dcl-s testidx         int(10);
+  dcl-ds testCase likeds(proc_t) based(pTtestCase);
+  dcl-s pTtestCase      pointer;
+  dcl-s testIdx         int(10);
 
 
   rslvProc( testSuite.setupsuite : actMark );
   rslvProc( testSuite.setup      : actMark );
 
-  for testidx = 1 to testSuite.testCasesCnt;
-    testcase_p = getTestCasePtr( testSuite : testidx );
-    rslvProc( testcase : actMark );
+  for testIdx = 1 to testSuite.testCasesCnt;
+    pTtestCase = getTestCasePtr( testSuite : testIdx );
+    testCase.seqNbr = testIdx;
+    rslvProc( testCase : actMark );
   endfor;
 
   rslvProc( testSuite.tearDown      : actMark );
@@ -113,12 +105,12 @@ end-proc;
 
 
 dcl-proc getTestCasePtr;
-  dcl-pi *N              pointer;
-    testSuite       const likeds(testSuite_t);
-    testidx         int(10) const;
+  dcl-pi *N pointer extproc(*dclcase);
+    testSuite likeds(testSuite_t) const;
+    testIdx   int(10) const;
   end-pi;
 
-  return testSuite.testList + %size( proc_t ) * ( testidx - 1 );
+  return testSuite.testList + %size(proc_t) * (testIdx - 1);
 
 end-proc;
 
@@ -126,13 +118,13 @@ end-proc;
 dcl-proc getTestNm export;
   dcl-pi *N like(procNm_t);
     testSuite       const likeds(testSuite_t);
-    testidx         int(10) const;
+    testIdx         int(10) const;
   end-pi;
 
   dcl-ds testproc likeds(proc_t);
 
 
-  testproc = getTestProc( testSuite : testidx );
+  testproc = getTestProc( testSuite : testIdx );
   return testproc.procnm;
 
 end-proc;
@@ -176,17 +168,16 @@ dcl-proc getTestSuite export;
   procCnt = cnt( privateData );
 
   clear testSuite;
-  testSuite.testList = %alloc( procCnt * %size( proc_t ) );
-  memset(testSuite.testList : x'00' : procCnt * %size( proc_t ));
-  testSuite.testResults = list_create();
+  testSuite.testList = MemMgr_alloc(procCnt * %size(proc_t): 'testSuite.testList');
+  memset(testSuite.testList : x'00': procCnt * %size(proc_t));
+  testSuite.testResults = *null;
 
   for procIdx = 1 to procCnt;
     procNm = getnm( privateData );
     select;
     when isTest( procNm );
       testSuite.testCasesCnt += 1;
-      testCase_p = getTestCasePtr( testSuite:
-                                   testSuite.testCasesCnt );
+      testCase_p = getTestCasePtr(testSuite: testSuite.testCasesCnt);
       clear testCase;
       testCase.procnm = procNm;
     when uCase(procNm) = 'SETUPSUITE';
@@ -218,7 +209,7 @@ end-proc;
 
 
 dcl-proc isTest;
-  dcl-pi *N ind;
+  dcl-pi *N ind extproc(*dclcase);
     nm   const like(procNm_t);
   end-pi;
 

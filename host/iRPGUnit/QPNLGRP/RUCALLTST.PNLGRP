@@ -61,16 +61,32 @@ Useful to check that there is no dependencies between test procedures.
 :eparml.
 :ehelp.
 .*
+:help name='RUCALLTST/ONFAILURE' WIDTH=64.
+On failed assertion (ONFAILURE) - Help
+:xh3.On failed assertion (ONFAILURE)
+:p.
+Specifies what to do if an assertion has failed.
+:parml.
+:pt.:pk def.*ABORT:epk.
+:pd.Processing of the test case is aborted after the first failed assertion. This
+action matches the JUnit behavior and equals the original mode of iRPGUnit.
+:pt.*CONTINUE
+:pd.Test case processing continues even if an assertion fails. This mode
+can generate unexpectedly large amounts of result data. The final result
+is :HP2.Error:EHP2., if an assertion fails, otherwise :HP2.Success:EHP2..
+:eparml.
+:ehelp.
+.*
 :help name='RUCALLTST/DETAIL' WIDTH=64.
 Report detail (DETAIL) - Help
 :xh3.Report detail (DETAIL)
 :p.
-Specifies how detailed the test run report should be.
+Specifies how detailed the printed test run report should be.
 :parml.
 :pt.:pk def.*BASIC:epk.
-:pd.Full detail for failures and errors, no detail for successes.
+:pd.Full details for failures and errors, no detail for successes.
 :pt.*ALL
-:pd.Full detail in all cases.
+:pd.Full details in all cases.
 :eparml.
 :ehelp.
 .*
@@ -227,22 +243,20 @@ XML output type (XMLTYPE) - Help
 :p.
 Specifies the type of the XML output file.
 :parml.
-:pt.*TYPE1
-:pd.Type of the XML output file of iRPGUnit <= v5.1.0.r. This type
+:pt.*JENKINS1
+:pd.Original XML format created by iRPGUnit <= v5.1.0.r. This type
 assigns the callstack in text format to XML element :HP2.'<failure>':EHP2..
-:pt.:pk def.*TYPE2:epk.
-:pd.Type of the XML output file of iRPGUnit >= v5.2.0.r. This type
-assigns a Json object to XML element :HP2.'<failue>':EHP2.. The Json object
-contains the information below:
-:lines.
-callStack         : array of the call stack entries
-expected          : expected test value
-actual            : actual value
-diagnosticMessages: Optional, diagnostic messages
-:elines.
+:pt.:pk def.*JENKINS2:epk.
+:pd.New XML format created by iRPGUnit >= v6.0.0.r. This type addds
+the callstack and the expected and actual values.
 :p.
 The actual and expected values are trucated after 2048 characters. The
 format of the truncated value is: :HP2.<firstBytes>....<lastBytes>:EHP2.
+:p.
+This option was added for VS Code.
+:pt.*VSCODE1
+:pd.This type produces an XML outfile for the VS Code :HP2.IBM i Testing:EHP2.
+extension.
 :p.
 This option was added for VS Code.
 :eparml.

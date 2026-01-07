@@ -84,7 +84,7 @@ dcl-proc testAssert_v3_oldStyle export;
   end-pi;
 
   dcl-s expectedMsg varchar(500);
-  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
 
   // Setup.
 
@@ -100,11 +100,11 @@ dcl-proc testAssert_v3_oldStyle export;
 
   // Controls.
 
-  assertFailEvtLong = getAssertFailEvtLong();
+  assertFailEvtLong_v2 = getAssertFailEvtLong();
 
-  assert(assertFailEvtLong.msg = expectedMsg
+  assert(assertFailEvtLong_v2.msg = expectedMsg
          : 'Message does not match the expected value');
-  assert(%len(assertFailEvtLong.msg) = %len(expectedMsg)
+  assert(%len(assertFailEvtLong_v2.msg) = %len(expectedMsg)
          : 'Message lengths do not match');
 
 end-proc;
@@ -119,7 +119,7 @@ dcl-proc testAssert_v3_newStyle export;
   end-pi;
 
   dcl-s expectedMsg varchar(500);
-  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
 
   // Setup.
 
@@ -135,11 +135,11 @@ dcl-proc testAssert_v3_newStyle export;
 
   // Controls.
 
-  assertFailEvtLong = getAssertFailEvtLong();
+  assertFailEvtLong_v2 = getAssertFailEvtLong();
 
-  assert(assertFailEvtLong.msg = expectedMsg
+  assert(assertFailEvtLong_v2.msg = expectedMsg
          : 'Message does not match the expected value');
-  assert(%len(assertFailEvtLong.msg) = %len(expectedMsg)
+  assert(%len(assertFailEvtLong_v2.msg) = %len(expectedMsg)
          : 'Message lengths do not match');
 
 end-proc;
@@ -155,7 +155,7 @@ dcl-proc testAssert_v4_fix_length export;
   end-pi;
 
   dcl-s expectedMsg varchar(500);
-  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
 
   // Setup.
 
@@ -171,11 +171,11 @@ dcl-proc testAssert_v4_fix_length export;
 
   // Controls.
 
-  assertFailEvtLong = getAssertFailEvtLong();
+  assertFailEvtLong_v2 = getAssertFailEvtLong();
 
-  assert(assertFailEvtLong.msg = expectedMsg
+  assert(assertFailEvtLong_v2.msg = expectedMsg
          : 'Message does not match the expected value');
-  assert(%len(assertFailEvtLong.msg) = %len(expectedMsg)
+  assert(%len(assertFailEvtLong_v2.msg) = %len(expectedMsg)
          : 'Message lengths do not match');
 
 end-proc;
@@ -190,7 +190,7 @@ dcl-proc testAssert_v4_varying_length export;
   end-pi;
 
   dcl-s expectedMsg varchar(500);
-  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
 
   // Setup.
 
@@ -206,11 +206,11 @@ dcl-proc testAssert_v4_varying_length export;
 
   // Controls.
 
-  assertFailEvtLong = getAssertFailEvtLong();
+  assertFailEvtLong_v2 = getAssertFailEvtLong();
 
-  assert(assertFailEvtLong.msg = expectedMsg
+  assert(assertFailEvtLong_v2.msg = expectedMsg
          : 'Message does not match the expected value');
-  assert(%len(assertFailEvtLong.msg) = %len(expectedMsg)
+  assert(%len(assertFailEvtLong_v2.msg) = %len(expectedMsg)
          : 'Message lengths do not match');
 
 end-proc;
@@ -225,7 +225,7 @@ dcl-proc testAEqual_v3 export;
   end-pi;
 
   dcl-s expectedMsg varchar(500);
-  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
 
   // Setup.
 
@@ -241,11 +241,11 @@ dcl-proc testAEqual_v3 export;
 
   // Controls.
 
-  assertFailEvtLong = getAssertFailEvtLong();
+  assertFailEvtLong_v2 = getAssertFailEvtLong();
 
-  assert(assertFailEvtLong.msg = expectedMsg
+  assert(assertFailEvtLong_v2.msg = expectedMsg
          : 'Message does not match the expected value');
-  assert(%len(assertFailEvtLong.msg) = %len(expectedMsg)
+  assert(%len(assertFailEvtLong_v2.msg) = %len(expectedMsg)
          : 'Message lengths do not match');
 
 end-proc;
@@ -261,7 +261,7 @@ dcl-proc testAEqual_v4_fix_length export;
   end-pi;
 
   dcl-s expectedMsg varchar(500);
-  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
 
   // Setup.
 
@@ -277,11 +277,11 @@ dcl-proc testAEqual_v4_fix_length export;
 
   // Controls.
 
-  assertFailEvtLong = getAssertFailEvtLong();
+  assertFailEvtLong_v2 = getAssertFailEvtLong();
 
-  assert(assertFailEvtLong.msg = expectedMsg
+  assert(assertFailEvtLong_v2.msg = expectedMsg
          : 'Message does not match the expected value');
-  assert(%len(assertFailEvtLong.msg) = %len(expectedMsg)
+  assert(%len(assertFailEvtLong_v2.msg) = %len(expectedMsg)
          : 'Message lengths do not match');
 
 end-proc;
@@ -296,7 +296,7 @@ dcl-proc testAEqual_v4_varying_length export;
   end-pi;
 
   dcl-s expectedMsg varchar(500);
-  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
 
   // Setup.
 
@@ -312,11 +312,11 @@ dcl-proc testAEqual_v4_varying_length export;
 
   // Controls.
 
-  assertFailEvtLong = getAssertFailEvtLong();
+  assertFailEvtLong_v2 = getAssertFailEvtLong();
 
-  assert(assertFailEvtLong.msg = expectedMsg
+  assert(assertFailEvtLong_v2.msg = expectedMsg
          : 'Message does not match the expected value');
-  assert(%len(assertFailEvtLong.msg) = %len(expectedMsg)
+  assert(%len(assertFailEvtLong_v2.msg) = %len(expectedMsg)
          : 'Message lengths do not match');
 
 end-proc;

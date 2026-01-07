@@ -15,7 +15,7 @@ As usual the preferences are available from the menu "Window" -> "Preferences".
 </p>
 
 <h3>Run order</h3>
-Specifies the order for running the test procedures.  Useful to check
+Specifies the order for running the test procedures. Useful to check
 that there is no dependencies between test procedures.<p>
 The possible values are:<p>
 <table width="80%">
@@ -24,6 +24,25 @@ The possible values are:<p>
 </colgroup>
 <tr><td valign="top">*API</td><td>Run test procedures in the order provided by the system API.</td></tr>
 <tr><td valign="top">*REVERSE</td><td>Run test procedures in reverse order.</td></tr>
+</table>
+<p>
+
+<h3>Processing of assertions</h3>
+Specifies how assertions are processed.<p>
+The possible values are:<p>
+<table width="80%">
+<colgroup>
+ <col width="100">
+</colgroup>
+<tr><td valign="top">*ABORT</td><td>Processing of the test case is aborted after the first failed assertion.
+This action matches the JUnit behavior and equals the original mode of iRPGUnit.</td></tr>
+<tr><td valign="top">*CONTINUE</td><td>Test case processing continues even if an assertion fails. This mode
+can generate unexpectedly large amounts of result data. The final
+result is <b>Failure</b>, if an assertion fails, otherwise <b>Success</b>.</td></tr>
+</table>
+<p>
+<table class="notice">
+<tr><td><b>Warning</b>: Option <b>*CONTINUE</b> may generate unexpectedly large amounts of result data.</td></tr>
 </table>
 <p>
 
@@ -159,13 +178,17 @@ Specifies the format of the XML output stream file:<p>
 <colgroup>
  <col width="100">
 </colgroup>
-<tr><td valign="top">*TYPE1</td><td>Legacy format of iRPGUnit <= v5.1.0.r.<br>
+<tr><td valign="top">*JENKINS1</td><td>Legacy format of iRPGUnit <= v5.1.0.r.<br>
                      Element <code>&lt;failure&gt;</code> (call stack) is append as text.<br>
                      This format only supports the Jenkins <a href="https://plugins.jenkins.io/junit/">JUnit</a> plug-in.
 </td></tr> 
-<tr><td valign="top">*TYPE2</td><td>New format of iRPGUnit >= v6.0.0.r.<br>
+<tr><td valign="top">*JENKINS2</td><td>New format of iRPGUnit >= v6.0.0.r.<br>
                      Element <code>&lt;failure&gt;</code> (call stack) is append in Json format.<br>
-                     This format supports both, the Jenkins <a href="https://plugins.jenkins.io/junit/">JUnit</a> plug-in and the VS Code <a href="https://github.com/IBM/vscode-ibmi-testing">IBM I Testing</a> extension.
+                     This format supports both, the Jenkins <a href="https://plugins.jenkins.io/junit/">JUnit</a> plug-in
+                     and the VS Code <a href="https://github.com/IBM/vscode-ibmi-testing">IBM I Testing</a> extension.
+</td></tr> 
+<tr><td valign="top">*VSCODE1</td><td>New XML output format exclusively for the VS Code
+                     <a href="https://github.com/IBM/vscode-ibmi-testing">IBM I Testing</a> extension.
 </td></tr> 
 </table>
 <p>

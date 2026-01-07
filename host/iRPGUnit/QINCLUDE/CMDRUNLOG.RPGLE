@@ -52,9 +52,9 @@ end-pr;
 // @param testnm  - Name of the test procedure that failed
 // @param failure - Detailed failure information including assertion details
 ///
-dcl-pr logfailure extproc('CMDRUNLOG_logFailure');
+dcl-pr logFailure extproc('CMDRUNLOG_logFailure');
   testnm      like(procNm_t) const;
-  failure     likeds(assertFailEvtLong_t) const;
+  failure     likeds(testFailureEvent_t) const;
 end-pr;
 
 ///
@@ -67,6 +67,7 @@ end-pr;
 ///
 dcl-pr logSuccess extproc('CMDRUNLOG_logSuccess');
   testnm       like(procNm_t) const;
+  specNb       char(10) const;
   assertionCnt int(10) const;
 end-pr;
 
@@ -116,7 +117,7 @@ end-pr;
 //
 // @param libldata - Updated library list data structure
 ///
-dcl-pr updateLogContext extproc('updateLogContext');
+dcl-pr updateLogContext extproc('CMDRUNLOG_updateLogContext');
   libldata likeds(liblData_t) const;
 end-pr;
 

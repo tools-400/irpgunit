@@ -58,6 +58,8 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
 
     private Combo cboReportDetail;
 
+    private Combo cboReportAssertMode;
+
     private Combo cboCreateReport;
 
     private Combo cboReclaimResources;
@@ -140,6 +142,18 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         cboRunOrder.setItems(getPreferences().getRunOrderItems());
         cboRunOrder.setToolTipText(Messages.PreferencesPage2_cboRunOrder_toolTipText);
         cboRunOrder.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        new Label(grpCommandParameters, SWT.NONE);
+
+        Label lblReportAssertMode = new Label(grpCommandParameters, SWT.NONE);
+        GridData gd_lblReportAssertMode = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+        gd_lblReportAssertMode.widthHint = COLUMN_1_WIDTH;
+        lblReportAssertMode.setLayoutData(gd_lblReportAssertMode);
+        lblReportAssertMode.setText(Messages.PreferencesPage2_lblReportAssertMode_text);
+
+        cboReportAssertMode = new Combo(grpCommandParameters, SWT.DROP_DOWN | SWT.READ_ONLY);
+        cboReportAssertMode.setItems(getPreferences().getAssertModeItems());
+        cboReportAssertMode.setToolTipText(Messages.PreferencesPage2_cboReportAssertMode_toolTipText);
+        cboReportAssertMode.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         new Label(grpCommandParameters, SWT.NONE);
 
         Label lblLibraryList = new Label(grpCommandParameters, SWT.NONE);
@@ -441,6 +455,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         chkDisableReport.setSelection(getPreferences().isReportDisabled());
         chkDisableXmlStmf.setSelection(getPreferences().isXmlStmfDisabled());
         cboReportDetail.setText(getPreferences().getDetail());
+        cboReportAssertMode.setText(getPreferences().getAssertMode());
         cboCreateReport.setText(getPreferences().getOutput());
         cboReclaimResources.setText(getPreferences().getReclaimResources());
         txtXmlStmf.setText(getPreferences().getXmlStmf());
@@ -465,6 +480,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         chkDisableReport.setSelection(getPreferences().getDefaultReportDisabledState());
         chkDisableXmlStmf.setSelection(getPreferences().getDefaultXmlStmfDisabledState());
         cboReportDetail.setText(getPreferences().getDefaultDetail());
+        cboReportAssertMode.setText(getPreferences().getDefaultAssertMode());
         cboCreateReport.setText(getPreferences().getDefaultOutput());
         cboReclaimResources.setText(getPreferences().getDefaultReclaimResources());
         txtXmlStmf.setText(getPreferences().getDefaultXmlStmf());
@@ -495,6 +511,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         I5ObjectName tJobDescription = new I5ObjectName(txtJobDesc.getText(), txtJobDescLib.getText());
         tPreferences.setJobDescription(tJobDescription);
         tPreferences.setDetail(cboReportDetail.getText());
+        tPreferences.setAssertMode(cboReportAssertMode.getText());
         tPreferences.setOutput(cboCreateReport.getText());
         tPreferences.setReclaimResources(cboReclaimResources.getText());
         tPreferences.setXmlStmf(txtXmlStmf.getText());

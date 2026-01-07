@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+    <title>Integration with Jenkins</title>
+</head>
+
+<body>
+<h1>Integration with Jenkins</h1>
+iRPGUnit Test Cases can be executed from a <a href="https://www.jenkins.io/">Jenkins</a> Pipeline.
+<p>
+The installation of Jenkins is beyond the scope of this help text. For more information,
+please refer to the Jenkins documentation.
+<p>
+<table>
+<tr>
+<td class="notice">Notice: The <a href="https://plugins.jenkins.io/pipeline-stage-view/">Pipeline Stage View</a>
+                   plug-in provides a nice visualization of the Jenkins pipelines. It should be installed by
+                   default but can also be installed separately.
+</td>
+</tr>
+</table>
+<p>
+<h2>Example Views</h2>
+<p>
+<h3>Pipeline View</h3>
+<p>
+<img src="assets/JenkinsPipelineView.png" alt="Jenkins Pipeline View">
+<p>
+<h3>Test Result</h3>
+<p>
+<img src="assets/JenkinsTestResult.png" alt="Jenkins Test Result">
+<p>
+<h2>Configuration</h2>
+<p>
+<h3>iRPGUnit</h3>
+<p>
+Set parameter <code>XMLTYPE</code> to <code>*JENKINS1</code> or <code>*JENKINS2</code>.
+<p>
+<h3>Pipeline</h3>
+<p>
+<iframe class="indent" src="assets/jenkins-pipeline.txt" width="90%" height="30%" name="iRPGUnit-Popup" />
+<p>
+<iframe src="../../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

@@ -243,6 +243,16 @@ dcl-pr getLatestEscMsg likeds(msg_t) extproc('PGMMSG_getLatestEscMsg');
 end-pr;
 
 ///
+// Retrieves the latest escape message between 'highMsgKey' and NOW.
+///
+dcl-pr caller like(procNm_t) extproc('PGMMSG_caller');
+  offset  int(3) options(*nopass: *omit) const;
+  module  char(10) options(*nopass: *omit);
+  program char(10) options(*nopass: *omit);
+  stmtID  char(10) options(*nopass: *omit);
+end-pr;
+
+///
 //----------------------------------------------------------------------
 //   Exported Constants
 //----------------------------------------------------------------------

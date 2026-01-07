@@ -11,15 +11,9 @@
 // >>PRE-COMPILER<<
 //   >>CRTCMD<<  RUCRTRPG TSTPGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);
 //   >>IMPORTANT<<
-//     >>PARM<<  MODULE(&LI/JOBLOG    +
-//                      &LI/STRING    +
-//                      &LI/PGMMSG    +
-//                      );
+//     >>PARM<<  BNDDIR(&LI/IRPGUNIT);
 //     >>PARM<<  COPTION(*SRCSTMT *EVENTF);
 //   >>END-IMPORTANT<<
-//   >>CMD<<     CMPMOD MODULE(&LI/JOBLOG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/STRING   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
-//   >>CMD<<     CMPMOD MODULE(&LI/PGMMSG   ) SRCFILE(&SL/QSRC) DBGVIEW(*LIST);
 //   >>EXECUTE<<
 // >>END-PRE-COMPILER<<
 // ==========================================================================
@@ -149,6 +143,9 @@ dcl-proc testLeftStr export;
   assert(leftStr(HELLO_WORLD: 0) = '':
          'Expected: empty string');
 
+  assert(leftStr('': 0) = '':
+         'Expected: empty string');
+
   monitor;
     assert(leftStr(HELLO_WORLD: -1) = '':
            'Expected RNX0100: Length or start position is out of range');
@@ -186,6 +183,9 @@ dcl-proc testRightStr export;
          'Expected: Hello');
 
   assert(rightStr(HELLO_WORLD: 0) = '':
+         'Expected: empty string');
+
+  assert(rightStr('': 0) = '':
          'Expected: empty string');
 
   monitor;
