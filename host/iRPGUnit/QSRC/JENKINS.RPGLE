@@ -43,12 +43,7 @@ dcl-proc Jenkins_writeTestCaseFailureV1 export;
     pCallstack  pointer const;
   end-pi;
 
-  dcl-s text like(xmlBufferLarge_t);
-
-  text += Jenkins_buildCallStackAsTextV1(pCallstack);
-
-  text += newLine() + indent();
-  appendToXmlFile(text);
+  Jenkins_writeCallStackAsTextV1(pCallstack);
 
 end-proc;
 
@@ -56,8 +51,8 @@ end-proc;
 // Builds and returns a callstack version 1 item.
 // NO PRETTY PRINTING!
 //----------------------------------------------------------------------
-dcl-proc Jenkins_buildCallStackAsTextV1;
-  dcl-pi *n like(xmlBufferLarge_t) extproc(*dclcase);
+dcl-proc Jenkins_writeCallStackAsTextV1;
+  dcl-pi *n extproc(*dclcase);
     pCallstk pointer const;
   end-pi;
 
@@ -70,7 +65,8 @@ dcl-proc Jenkins_buildCallStackAsTextV1;
     text += CRLF + escapeXml(buildCallstackEntry(callstkEnt));
   enddo;
 
-  return text;
+  text += newLine() + indent();
+  appendToXmlFile(text);
 
 end-proc;
 
@@ -97,7 +93,7 @@ end-proc;
 // --------------------------------------------------------
 // Appends a test case event in text format.
 // --------------------------------------------------------
-dcl-proc Jenkins_writeTestCaseFailureAsText export;
+dcl-proc Jenkins_writeTestCaseFailureV2 export;
   dcl-pi *n;
     testFailureEvent likeds(testFailureEvent_t) const;
   end-pi;
@@ -197,8 +193,8 @@ dcl-proc Jenkins_writeFailureValuesAsText;
     testFailureEvent likeds(testFailureEvent_t) const;
   end-pi;
 
-  Jenkins_appendLogValueAsText(LABEL_EXPECTED: testFailureEvent.logExpected);
-  Jenkins_appendLogValueAsText(LABEL_ACTUAL: testFailureEvent.logActual);
+  Jenkins_writeLogValueAsText(LABEL_EXPECTED: testFailureEvent.logExpected);
+  Jenkins_writeLogValueAsText(LABEL_ACTUAL: testFailureEvent.logActual);
 
 end-proc;
 
@@ -206,7 +202,7 @@ end-proc;
 // Appends a log value (expected or actual) to the Json object.
 // NO PRETTY PRINTING!
 //----------------------------------------------------------------------
-dcl-proc Jenkins_appendLogValueAsText;
+dcl-proc Jenkins_writeLogValueAsText;
   dcl-pi *n extproc(*dclcase);
     name     varchar(20) const;
     logValue likeds(logValue_t) const;

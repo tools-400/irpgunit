@@ -389,7 +389,7 @@ dcl-proc writeTestCaseEventXml export;
     if (g_xmlWriter.xmlType = XML_JENKINS_TYPE_1);
       Jenkins_writeTestCaseFailureV1(abstractTestEvent.failure.pCallstk);
     else;
-      Jenkins_writeTestCaseFailureAsText(abstractTestEvent.failure);
+      Jenkins_writeTestCaseFailureV2(abstractTestEvent.failure);
     endif;
 
     // close <failure> element
