@@ -70,6 +70,7 @@ dcl-proc writeXmlFile export;
     testSuiteName   likeds(Object_t) const;
     testSuiteResult likeds(testSuiteResult_t) const;
     xmlType         like(xmlType_t) const;
+    onFailure       like(onFailure_t) const;
     isJUnitStyle    ind const;
   end-pi;
 
@@ -80,6 +81,7 @@ dcl-proc writeXmlFile export;
 
   clear g_xmlWriter;
   g_xmlWriter.xmlType = xmlType;
+  g_xmlWriter.onFailure = onFailure;
   g_xmlWriter.isJUnitStyle = isJUnitStyle;
   g_xmlWriter.isPrettyPrint = *on;
   g_xmlWriter.indLvl = 0;
@@ -225,6 +227,7 @@ dcl-proc writeProperties;
   writeProperty('os.version': OS_getVersion());
   writeProperty('irpgunit.version': RPGUNIT_VERSION);
   writeProperty('output.type': %trim(g_xmlWriter.xmlType));
+  writeProperty('onFailure': %trim(g_xmlWriter.onFailure));
 
   text = indent() + '</properties>' + newLine();
   appendToXmlFile(text);

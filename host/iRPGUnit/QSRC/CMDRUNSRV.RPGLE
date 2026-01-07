@@ -62,7 +62,8 @@ ctl-opt nomain;
 
 dcl-ds g_status qualified inz;
   numListsCreated int(10);
-  isJUnitStyle ind inz(*on);
+  isJUnitStyle    ind inz(*on);
+  onFailure       like(onFailure_t);
 end-ds;
 
 //----------------------------------------------------------------------
@@ -128,7 +129,8 @@ dcl-proc runTestSuite export;
 
   dcl-ds xmlStmfInfo likeds(xmlStmfInfo_t) inz;
 
-  if (onFailure = ON_FAILURE_CONTINUE);
+  g_status.onFailure = onFailure;
+  if (g_status.onFailure = ON_FAILURE_CONTINUE);
     g_status.isJUnitStyle = *off;
   else;
     g_status.isJUnitStyle = *on;
@@ -187,8 +189,9 @@ dcl-proc runTestSuite export;
   // Return result to xml file
   if (xmlStmfInfo.path <> '');
     monitor;
-      writeXmlFile(xmlStmfInfo.path:
-                   testSuite: qTestSuite: testSuiteResult: xmlStmfInfo.type: g_status.isJUnitStyle);
+      writeXmlFile(xmlStmfInfo.path
+                   : testSuite: qTestSuite: testSuiteResult: xmlStmfInfo.type
+                   : g_status.onFailure: g_status.isJUnitStyle);
       xmlStmfMsg = 'Created XML file (' + xmlStmfInfo.type + '): ' + xmlStmfInfo.path;
       sndInfoMsg(xmlStmfMsg);
       xmlStmfMsg = '';

@@ -39,6 +39,9 @@
 //                            *JENKINS1 - Legacy type.
 //                            *JENKINS2 - Extended type with 'expected' and 'actual' values.
 //                            *VSCODE1  - Output type for VS Code.
+// @param onFailure       - Specifies the behavior on failed assertions. The possible values are:
+//                            *ABORT    - Aborts on a failed assertion.
+//                            *CONTINUE - Continues after a failed assertion.
 // @param isJUnitStyle    - Specifies whether the test case fails on the first
 //                          failed assertion. Fails on the first failed assertion
 //                          if set to *on, otherwise continues.
@@ -50,6 +53,7 @@ dcl-pr writeXmlFile extproc('XMLWRITER_writeXmlFile');
   testSuiteName   likeds(Object_t) const;
   testSuiteResult likeds(testSuiteResult_t) const;
   xmlType         like(xmlType_t) const;
+  onFailure       like(onFailure_t) const;
   isJUnitStyle    ind const;
 end-pr;
 
@@ -64,6 +68,7 @@ dcl-s xmlBufferLarge_t varchar(10000) template;
 
 dcl-ds xmlWriter_t qualified template;
   xmlType       like(xmlType_t);
+  onFailure     like(onFailure_t);
   isJUnitStyle  ind;
   isPrettyPrint ind;
   indLvl        int(10);
