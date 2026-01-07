@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iRPGUnit Core (required)
 Bundle-SymbolicName: de.tools400.rpgunit.core;singleton:=true
-Bundle-Version: 6.0.0.b015
+Bundle-Version: 6.0.0.b016
 Bundle-Activator: de.tools400.rpgunit.core.RPGUnitCorePlugin
 Bundle-Vendor: iRPGUnit Project Team
 Require-Bundle: org.eclipse.ui,
