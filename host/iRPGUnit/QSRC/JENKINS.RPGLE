@@ -26,14 +26,103 @@ ctl-opt DECEDIT('0.') NOMAIN;
 /include qinclude,COPYRIGHT
 
 /include qinclude,CALLSTACK
+/include qinclude,CMDRUNSRV
 /include qinclude,TEMPLATES
 /include qinclude,XMLWRITER
+/include qllist,llist_h
 
 /include qinclude,JENKINS
 
 dcl-c TAB_TEXT '  ';
 
 dcl-ds g likeds(sharedChars_t) import;
+dcl-ds g_xmlWriter likeds(xmlWriter_t) import;
+
+//----------------------------------------------------------------------
+// Writes the XML test cases section.
+//----------------------------------------------------------------------
+dcl-proc Jenkins_writeTestCases export;
+  dcl-pi *n;
+    testSuite     likeds(testSuite_t) const;
+    testSuiteName likeds(Object_t) const;
+    result        likeds(testSuiteResult_t) const;
+  end-pi;
+
+  dcl-ds testCaseResult likeds(testCaseResult_t) based(pTestResult);
+  dcl-s text like(xmlBufferLarge_t);
+  dcl-s execTimeSecs like(execTimeSecs_t);
+  dcl-s execTimeUnit like(execTimeUnit_t);
+
+  dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
+
+  dcl-s isSuccessEvent ind;
+
+  g_xmlWriter.indLvl += 1;
+
+  // Iterate the test cases...
+  list_resetIteration(testSuite.testResults);
+  pTestResult = list_getNext(testSuite.testResults);
+  dow (pTestResult <> *null);
+
+    execTimeSecs = getReportExecTimeSecs(testCaseResult);
+    execTimeUnit = TIME_UNIT_SECOND;
+
+    isSuccessEvent = *off;
+
+    list_resetIteration(testCaseResult.hTestEvents);
+    pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
+    dow (pAbstractTestEvent <> *null);
+
+      // ----------------------------------------------------------
+      // Check also CMDRUNSRV.writeTestReport(), when
+      // changing the logic for selecting the test case events.
+      if (testCaseResult.outcome = TEST_CASE_SUCCESS and isSuccessEvent);
+        leave;
+      endif;
+
+      if (abstractTestEvent.outcome = TEST_CASE_FAILURE
+          and not abstractTestEvent.failure.isConfirmed);
+        pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
+        iter;
+      endif;
+
+      if (g_xmlWriter.isJUnitStyle);
+        if (abstractTestEvent.outcome <> testCaseResult.outcome);
+          pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
+          iter;
+        endif;
+      endif;
+      // ----------------------------------------------------------
+
+      text = indent() + '<testcase name="'
+                 + buildReportTestCaseName(testCaseResult: abstractTestEvent) + '"';
+      text += ' assertions="' + %char(getReportNumAsserts(testCaseResult)) + '"';
+      text += ' classname="' + %trimr(testSuiteName.nm) + '"'; // TODO: should look which module
+      text += ' time="' + %char(execTimeSecs) + '"';           // exports this testcase
+      text += ' timeUnit="' + execTimeUnit + '"';
+      text += '>' + newLine();
+      appendToXmlFile(text);
+
+      writeTestCaseEventXml(abstractTestEvent);
+
+      // close <testcase> element
+      text = indent() + '</testcase>' + newLine();
+      appendToXmlFile(text);
+
+      if (abstractTestEvent.outcome = TEST_CASE_SUCCESS);
+        isSuccessEvent = *on;
+      endif;
+
+      pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
+    enddo;
+
+    pTestResult = list_getNext(testSuite.testResults);
+  enddo;
+
+on-exit;
+  g_xmlWriter.indLvl -= 1;
+
+end-proc;
 
 //----------------------------------------------------------------------
 // Builds and returns the callstack as XML.

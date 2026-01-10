@@ -52,6 +52,7 @@ dcl-proc VSCode_writeTestCases export;
   dcl-ds testCaseResult likeds(testCaseResult_t) based(pTestCaseResult);
   dcl-s text like(xmlBuffer_t);
   dcl-s execTime like(execTimeMSecs_t);
+  dcl-s execTimeUnit like(execTimeUnit_t);
 
   g_xmlWriter.indLvl += 1;
 
@@ -61,6 +62,7 @@ dcl-proc VSCode_writeTestCases export;
   dow (pTestCaseResult <> *null);
 
     execTime = testCaseResult.execTimeMSecs;
+    execTimeUnit = TIME_UNIT_MILLISECOND;
 
     // open <testcase> element
     text = indent() + '<testcase';

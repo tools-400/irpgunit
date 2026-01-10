@@ -94,9 +94,9 @@ dcl-proc writeXmlFile export;
 
   select;
   when (g_xmlWriter.xmlType = XML_JENKINS_TYPE_1);
-    writeTestCasesJenkinsStyle(testSuite: testSuiteName: testSuiteResult);
+    Jenkins_writeTestCases(testSuite: testSuiteName: testSuiteResult);
   when (g_xmlWriter.xmlType = XML_JENKINS_TYPE_2);
-    writeTestCasesJenkinsStyle(testSuite: testSuiteName: testSuiteResult);
+    Jenkins_writeTestCases(testSuite: testSuiteName: testSuiteResult);
   when (g_xmlWriter.xmlType = XML_TYPE_VSCODE_1);
     VSCode_writeTestCases(testSuite: testSuiteName: testSuiteResult);
   other;
@@ -252,89 +252,6 @@ dcl-proc writeProperty;
 
   text = indent() + '<property name="' + name + '" value="' + value + '"/>' + newLine();
   appendToXmlFile(text);
-
-on-exit;
-  g_xmlWriter.indLvl -= 1;
-
-end-proc;
-
-//----------------------------------------------------------------------
-// Writes the XML test cases section.
-//----------------------------------------------------------------------
-dcl-proc writeTestCasesJenkinsStyle;
-  dcl-pi *n extproc(*dclcase);
-    testSuite     likeds(testSuite_t) const;
-    testSuiteName likeds(Object_t) const;
-    result        likeds(testSuiteResult_t) const;
-  end-pi;
-
-  dcl-ds testCaseResult likeds(testCaseResult_t) based(pTestResult);
-  dcl-s text like(xmlBufferLarge_t);
-  dcl-s execTimeSecs like(execTimeSecs_t);
-
-  dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
-
-  dcl-s isSuccessEvent ind;
-
-  g_xmlWriter.indLvl += 1;
-
-  // Iterate the test cases...
-  list_resetIteration(testSuite.testResults);
-  pTestResult = list_getNext(testSuite.testResults);
-  dow (pTestResult <> *null);
-
-    execTimeSecs = getReportExecTimeSecs(testCaseResult);
-
-    isSuccessEvent = *off;
-
-    list_resetIteration(testCaseResult.hTestEvents);
-    pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
-    dow (pAbstractTestEvent <> *null);
-
-      // ----------------------------------------------------------
-      // Check also CMDRUNSRV.writeTestReport(), when
-      // changing the logic for selecting the test case events.
-      if (testCaseResult.outcome = TEST_CASE_SUCCESS and isSuccessEvent);
-        leave;
-      endif;
-
-      if (abstractTestEvent.outcome = TEST_CASE_FAILURE
-          and not abstractTestEvent.failure.isConfirmed);
-        pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
-        iter;
-      endif;
-
-      if (g_xmlWriter.isJUnitStyle);
-        if (abstractTestEvent.outcome <> testCaseResult.outcome);
-          pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
-          iter;
-        endif;
-      endif;
-      // ----------------------------------------------------------
-
-      text = indent() + '<testcase name="'
-                 + buildReportTestCaseName(testCaseResult: abstractTestEvent) + '"';
-      text += ' assertions="' + %char(getReportNumAsserts(testCaseResult)) + '"';
-      text += ' classname="' + %trimr(testSuiteName.nm) + '"'; // TODO: should look which module
-      text += ' time="' + %char(execTimeSecs) + '"';           // exports this testcase
-      text += '>' + newLine();
-      appendToXmlFile(text);
-
-      writeTestCaseEventXml(abstractTestEvent);
-
-      // close <testcase> element
-      text = indent() + '</testcase>' + newLine();
-      appendToXmlFile(text);
-
-      if (abstractTestEvent.outcome = TEST_CASE_SUCCESS);
-        isSuccessEvent = *on;
-      endif;
-
-      pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
-    enddo;
-
-    pTestResult = list_getNext(testSuite.testResults);
-  enddo;
 
 on-exit;
   g_xmlWriter.indLvl -= 1;

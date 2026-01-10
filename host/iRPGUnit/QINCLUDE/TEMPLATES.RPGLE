@@ -103,9 +103,13 @@ end-ds;
 
 dcl-s execTimeMSecs_t int(20) template;
 dcl-s execTimeSecs_t packed(22:2) template;
+dcl-s execTimeUnit_t varchar(20) template;
 dcl-s assertProcNm_t varchar(32) template;
 dcl-s dataType_t varchar(20) template;
 dcl-s xmlType_t char(10) template;
+
+dcl-c TIME_UNIT_SECOND 's';
+dcl-c TIME_UNIT_MILLISECOND 'ms';
 
 dcl-c XML_JENKINS_TYPE_1 '*JENKINS1';
 dcl-c XML_JENKINS_TYPE_2 '*JENKINS2';

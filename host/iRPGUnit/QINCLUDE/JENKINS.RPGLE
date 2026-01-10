@@ -8,6 +8,14 @@
 //  which accompanies this distribution, and is available at
 //  http://www.eclipse.org/legal/cpl-v10.html
 // ==========================================================================
+//----------------------------------------------------------------------
+// Writes the XML test cases section.
+//----------------------------------------------------------------------
+dcl-pr Jenkins_writeTestCases extproc('JENKINS_Jenkins_writeTestCases');
+  testSuite     likeds(testSuite_t) const;
+  testSuiteName likeds(Object_t) const;
+  result        likeds(testSuiteResult_t) const;
+end-pr;
 
 ///
 // Builds and returns a callstack version 1 item.
