@@ -373,6 +373,8 @@ dcl-proc testcaseHandler;
         testCase.attr_assertions = g_sax.attrValue;
       when (g_sax.attrName = 'time');
         testCase.attr_time = g_sax.attrValue;
+      when (g_sax.attrName = 'timeUnit');
+        testCase.attr_timeUnit = g_sax.attrValue;
       endsl;
     endsl;
 
