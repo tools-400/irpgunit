@@ -4,11 +4,11 @@
     <property name="currentlibrary" value="RADDATZ400"/>
     <property name="user.librarylist" value="RPGUNITDVP QGPL QTEMP"/>
     <property name="os.version" value="V7R5M0"/>
-    <property name="irpgunit.version" value="v6.0.0.b016"/>
+    <property name="irpgunit.version" value="v6.0.0.r"/>
     <property name="output.type" value="*VSCODE1"/>
     <property name="onFailure" value="*ABORT"/>
   </properties>
-  <testcase outcome="Failure" classname="RUPLUGINT9" name="test_assertEqual_string" assertions="1" time="494" timeUnit="millisecond">
+  <testcase outcome="Failure" classname="RUPLUGINT9" name="test_assertEqual_string" assertions="1" time="567" timeUnit="ms">
     <failure line="7100" name="assertEqual_string" message="String values must match">
       <callstack size="1">
         <item program="RUPLUGINT9" programLibrary="RPGUNITDVP" module="RUPLUGINT9" moduleLibrary="RPGUNITDVP" procedure="test_assertEqual_string" line="7100"/>
