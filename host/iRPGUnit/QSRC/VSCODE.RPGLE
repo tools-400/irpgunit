@@ -72,6 +72,7 @@ dcl-proc VSCode_writeTestCases export;
     text += ' name="' + getTestCaseName(testCaseResult) + '"';
     text += ' assertions="' + %char(testCaseResult.assertCnt) + '"';
     text += ' time="' + %char(execTime) + '"';
+    text += ' timeUnit="' + execTimeUnit + '"';
     text += '>' + newLine();
     appendToXmlFile(text);
 
