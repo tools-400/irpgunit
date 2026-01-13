@@ -623,45 +623,61 @@ createBindingDirectory:
 compileModules:
    PARSE ARG prdLib, dbgView, tgtRls
 
-   "CMPMOD MODULE("prdLib"/ASSERT   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/ASSERTV2 ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/CALLSTACK) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/CALLPRC  ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/CMDRUN   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/CMDRUNLOG) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/CMDRUNPRT) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/CMDRUNSRV) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/CMDRUNV  ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/CRTCBL   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/CRTRPG   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/CRTTST   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/JENKINS  ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/JOBLOG   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/EXTPRC   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/EXTTST   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/LIBL     ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/LSTSPLF  ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/MEMMGR   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/OBJECT   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/OSVERSION) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/PGMRMT   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/RMTRUNSRV) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/SRCMBR   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/STMF     ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/STRING   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/TAGTST   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/TESTUTILS) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/USRSPC   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/VERSION  ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/VSCODE   ) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/XMLWRITER) SRCFILE(QSRC) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   if dbgView <> '*NONE' then
+     optLvl = '*NONE'
+   else
+     optLvl = '*FULL'
 
-   "CMPMOD MODULE("prdLib"/LIBLC    ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/SPLF     ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
-   "CMPMOD MODULE("prdLib"/SAX      ) SRCFILE(QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   compileModule(prdLib, 'QSRC', 'ASSERT'  , dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'ASSERTV2', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'CALLSTACK', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'CALLPRC', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'CMDRUN', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'CMDRUNLOG', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'CMDRUNPRT', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'CMDRUNSRV', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'CMDRUNV', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'CRTCBL', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'CRTRPG', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'CRTTST', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'JENKINS', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'JOBLOG', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'EXTPRC', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'EXTTST', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'LIBL', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'LSTSPLF', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'MEMMGR', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'OBJECT', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'OSVERSION', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'PGMMSG', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'PGMRMT', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'RMTRUNSRV', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'SRCMBR', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'STMF', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'STRING', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'TAGTST', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'TESTUTILS', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'USRSPC', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'VERSION', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'VSCODE', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QSRC', 'XMLWRITER', dbgView, tgtRls, optLvl)
 
-   "CMPMOD MODULE("prdLib"/LLIST    ) SRCFILE(QLLIST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+   compileModule(prdLib, 'QUNITTEST', 'LIBLC', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QUNITTEST', 'SPLF', dbgView, tgtRls, optLvl)
+   compileModule(prdLib, 'QUNITTEST', 'SAX', dbgView, tgtRls, optLvl)
+
+   compileModule(prdLib, 'QLLIST', 'LLIST', dbgView, tgtRls, optLvl)
+
+   return ''
+
+ /* ------------------------------------------------------------- */
+ /*  Compile a module.                                            */
+ /* ------------------------------------------------------------- */
+ compileModule:
+   PARSE ARG prdLib, srcFile, objName, dbgView, tgtRls, optLvl
+
+   "CMPMOD MODULE("prdLib"/"objName") SRCFILE("srcFile") DBGVIEW("dbgView") ",
+     "TGTRLS("tgtRls") OPTIMIZE("optLvl")"
 
    return ''
 

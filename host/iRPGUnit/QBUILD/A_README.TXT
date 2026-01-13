@@ -81,7 +81,7 @@ b) Optionally run the RPGUnit self tests:
               History
 --------------------------------------
 
-Version 6.0.0 - 21.12.2025
+Version 6.0.0 - 13.01.2026
 --------------------------
  * Compiled plug-in for RDi 9.6.0.13.
  * Added keyword 'ONFAILURE' to command RUCALLTST.
@@ -112,6 +112,7 @@ Version 6.0.0 - 21.12.2025
    user spaces.
  * Fixed encoding of XML reports. Now reports are properly created with CCSID
    UTF-8 (1208).
+ * Compile modules with OPTIMIZE(*FULL) if compiling without a debug view.
 
 Version 5.1.0 - 23.05.2025
 --------------------------
