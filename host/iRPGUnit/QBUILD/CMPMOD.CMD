@@ -75,12 +75,12 @@
                         TYPE(*CHAR)                           +
                         LEN(10)                               +
                         MIN(0)                                +
-                        DFT(*NONE)                            +
-                        SPCVAL((*NONE)                        +
+                        DFT(*AUTO)                            +
+                        SPCVAL((*AUTO)                        +
+                               (*NONE)                        +
                                (*BASIC)                       +
-                               (*FULL)                        +
-                               (*AUTO))                       +
-                        CHOICE('*NONE, *BASIC, *FULL, *AUTO') +
+                               (*FULL))                       +
+                        CHOICE('*AUTO, *NONE, *BASIC, *FULL') +
                         PROMPT('Optimization level')
 
 MODULE:      QUAL       TYPE(*NAME) LEN(10) MIN(1)
