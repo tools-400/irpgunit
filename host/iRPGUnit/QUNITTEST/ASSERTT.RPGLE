@@ -45,7 +45,7 @@ dcl-c FAILURE_MESSAGE 'Failure message';
 // Empty Assertion Failure Event of version 1.
 dcl-ds EMPTY_ASSERT_FAIL_EVT likeds(assertFailEvt_t) inz(*likeds);
 // Empty Assertion Failure Event of version 2.
-dcl-ds EMPTY_ASSERT_FAIL_EVT_LONG likeds(assertFailEvtExt_t) inz(*likeds);
+dcl-ds EMPTY_ASSERT_FAIL_EVT_LONG likeds(assertFailEvtLong_t) inz(*likeds);
 
 //----------------------------------------------------------------------
 //   Setup/Teardown Procedures
@@ -68,7 +68,7 @@ dcl-proc testClearAssertFailEvent export;
   end-pi;
 
   dcl-ds assertFailEvt_v1 likeds(assertFailEvt_t) inz;
-  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t) inz;
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtLong_t) inz;
 
   dcl-s hTestEvents pointer;
 
@@ -114,7 +114,7 @@ dcl-proc testAssertWithFailure export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtLong_t);
 
   // -----------------------------
   // save current assertion status
@@ -255,7 +255,7 @@ dcl-proc testAssertWithSuccess export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtLong_t);
 
   // -----------------------------
   // save current assertion status
@@ -292,7 +292,7 @@ dcl-proc testFail export;
 
   dcl-ds msgInfo likeds(MsgInfo_t);
 
-  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtLong_t);
 
   // -----------------------------
   // save current assertion status
@@ -331,7 +331,7 @@ dcl-proc testTwoAndTwoEqualsFour export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtLong_t);
 
   // -----------------------------
   // save current assertion status
@@ -363,7 +363,7 @@ dcl-proc testHelloEqualsHello export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtLong_t);
 
   // -----------------------------
   // save current assertion status
@@ -440,7 +440,7 @@ dcl-proc testBigIntegerEquality export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtLong_t);
 
   // -----------------------------
   // save current assertion status
@@ -570,7 +570,7 @@ dcl-proc testGetAssertFailEvt export;
   end-pi;
 
   dcl-ds assertFailEvt_v1 likeds(assertFailEvt_t);
-  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtLong_t);
 
   dcl-s url1 varchar(200);
   dcl-s url2 varchar(200);
@@ -637,7 +637,7 @@ dcl-proc testAssertEqual_string export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtLong_t);
 
   // Test 1-char string
   saveAssertStatus();
@@ -723,7 +723,7 @@ dcl-proc testAssertEqual_integer export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtLong_t);
 
   // Test equality
   saveAssertStatus();
@@ -777,7 +777,7 @@ dcl-proc testAssertEqual_numeric export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtLong_t);
 
   dcl-s actualExact     packed(63:20) inz(*hival);
   dcl-s expectedExact   packed(63:20) inz(*hival);
@@ -887,7 +887,7 @@ dcl-proc testAssertThat export;
   dcl-s expected varchar(128);
   dcl-s actual   varchar(128);
 
-  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtLong_t);
 
   // Test equality
   saveAssertStatus();
@@ -969,7 +969,7 @@ dcl-proc testAssertEqual_date export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtLong_t);
 
   // Test equality
   saveAssertStatus();
@@ -1023,7 +1023,7 @@ dcl-proc testAssertEqual_time export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtLong_t);
 
   // Test equality
   saveAssertStatus();
@@ -1077,7 +1077,7 @@ dcl-proc testAssertEqual_timestamp export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtLong_t);
 
   // Test equality
   saveAssertStatus();
@@ -1134,7 +1134,7 @@ dcl-proc testAssertEqual_ind export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
 
-  dcl-ds failureEvent likeds(assertFailEvtExt_t);
+  dcl-ds failureEvent likeds(assertFailEvtLong_t);
 
   dcl-s ind1 ind inz(*on);
   dcl-s ind2 ind inz(*on);

@@ -84,7 +84,7 @@ dcl-proc testAssert_v3_oldStyle export;
   end-pi;
 
   dcl-s expectedMsg varchar(500);
-  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtLong_t);
 
   // Setup.
 
@@ -119,7 +119,7 @@ dcl-proc testAssert_v3_newStyle export;
   end-pi;
 
   dcl-s expectedMsg varchar(500);
-  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtLong_t);
 
   // Setup.
 
@@ -155,7 +155,7 @@ dcl-proc testAssert_v4_fix_length export;
   end-pi;
 
   dcl-s expectedMsg varchar(500);
-  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtLong_t);
 
   // Setup.
 
@@ -190,7 +190,7 @@ dcl-proc testAssert_v4_varying_length export;
   end-pi;
 
   dcl-s expectedMsg varchar(500);
-  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtLong_t);
 
   // Setup.
 
@@ -225,7 +225,7 @@ dcl-proc testAEqual_v3 export;
   end-pi;
 
   dcl-s expectedMsg varchar(500);
-  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtLong_t);
 
   // Setup.
 
@@ -261,7 +261,7 @@ dcl-proc testAEqual_v4_fix_length export;
   end-pi;
 
   dcl-s expectedMsg varchar(500);
-  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtLong_t);
 
   // Setup.
 
@@ -296,7 +296,7 @@ dcl-proc testAEqual_v4_varying_length export;
   end-pi;
 
   dcl-s expectedMsg varchar(500);
-  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtExt_t);
+  dcl-ds assertFailEvtLong_v2 likeds(assertFailEvtLong_t);
 
   // Setup.
 

@@ -456,7 +456,7 @@ end-pr;
 //
 // @return external extended assertion failure event data structure V2
 ///
-dcl-pr getAssertFailEvtLong extproc('getAssertFailEvtLong') likeds(assertFailEvtExt_t);
+dcl-pr getAssertFailEvtLong extproc('getAssertFailEvtLong') likeds(assertFailEvtLong_t);
 end-pr;
 
 ///

@@ -558,7 +558,7 @@ dcl-proc getAssertFailEvt export;
   dcl-pi *N likeds(assertFailEvt_t);
   end-pi;
 
-  dcl-ds assertFailEvtLong likeds(assertFailEvtExt_t) inz;
+  dcl-ds assertFailEvtLong likeds(assertFailEvtLong_t) inz;
 
   // Assert Failure Event of version 1
   dcl-ds assertFailEvt_v1 likeds(assertFailEvt_t) inz;
@@ -590,13 +590,13 @@ end-proc;
 // *** public API ***
 //----------------------------------------------------------------------
 dcl-proc getAssertFailEvtLong export;
-  dcl-pi *N likeds(assertFailEvtExt_t);
+  dcl-pi *N likeds(assertFailEvtLong_t);
   end-pi;
 
   dcl-ds abstractTestEvent likeds(abstractTestEvent_t) inz;
-  dcl-ds assertFailEvtExt likeds(assertFailEvtExt_t) inz;
+  dcl-ds assertFailEvtExt likeds(assertFailEvtLong_t) inz;
   dcl-ds callstkEnt likeds(callStkEnt_t) inz;
-  dcl-ds callstk_v2 likeds(assertFailEvtExt_t.callstk);
+  dcl-ds callstk_v2 likeds(assertFailEvtLong_t.callstk);
 
 
   // A callstack v1 must have the below structure.

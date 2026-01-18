@@ -94,7 +94,7 @@ end-ds;
 dcl-s actMark_t int(10) template;
 
 // Assertion Failure Event - External.
-dcl-ds assertFailEvtExt_t qualified template;
+dcl-ds assertFailEvtLong_t qualified template;
   msg          like(msgText_t) inz;
   logExpected  likeds(logValue_t) inz(*likeds);
   logActual    likeds(logValue_t) inz(*likeds);
