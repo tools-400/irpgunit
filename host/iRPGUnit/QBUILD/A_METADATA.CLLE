@@ -1499,6 +1499,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(SRCMBRT) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit SelfTest - Test SRCMBR.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(STMFT) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit SelfTest - Test STMF.')
