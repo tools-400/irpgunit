@@ -15,6 +15,7 @@
 
 dcl-c MAX_CALL_STK_SIZE 64;
 
+// Call Stack Entry v1.
 dcl-ds callStk_v1_t qualified template;
   numE    int(10) inz;
   entry   likeds(callStkEnt_t) dim(MAX_CALL_STK_SIZE) inz(*likeds);
@@ -55,7 +56,7 @@ dcl-ds assertFailEvtLong_t qualified template;
 end-ds;
 
 // Message information
-dcl-ds MsgInfo_t qualified template;
+dcl-ds msgInfo_t qualified template;
   id      char(7);
   txt     varchar(256);
   pgm     char(10);
@@ -85,7 +86,7 @@ dcl-s assertProcNmPrefix_t varchar(32) template;
 // Log value data type.
 dcl-s dataType_t varchar(20) template;
 
-// STream file path.
+// Stream file path.
 dcl-s ifsStmf_t varchar(4096);
 
 // Message replacement data or message text.
