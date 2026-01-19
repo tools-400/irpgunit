@@ -695,6 +695,12 @@
                           TOFILE(&LIB/&QTEMPLATE) FROMMBR(CBLSQL) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QTEMPLATE) +
+                          TOFILE(&LIB/&QTEMPLATE) FROMMBR(CBLSQLSTMF) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTEMPLATE) +
+                          TOFILE(&LIB/&QTEMPLATE) FROMMBR(CBLSTMF) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QTEMPLATE) +
                           TOFILE(&LIB/&QTEMPLATE) FROMMBR(RPG) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QTEMPLATE) +
@@ -923,6 +929,9 @@
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(SPLF) +
+                          TOMBR(*FROMMBR) MBROPT(*REPLACE)
+             CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
+                          TOFILE(&LIB/&QUNITTEST) FROMMBR(SRCMBRT) +
                           TOMBR(*FROMMBR) MBROPT(*REPLACE)
              CPYF       FROMFILE(&DEVLIB/&QUNITTEST) +
                           TOFILE(&LIB/&QUNITTEST) FROMMBR(STMFT) +
