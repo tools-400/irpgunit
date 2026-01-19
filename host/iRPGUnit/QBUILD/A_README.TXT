@@ -81,7 +81,7 @@ b) Optionally run the RPGUnit self tests:
               History
 --------------------------------------
 
-Version 6.0.0 - 13.01.2026
+Version 6.0.0 - 19.01.2026
 --------------------------
  * Compiled plug-in for RDi 9.6.0.13.
  * Added keyword 'ONFAILURE' to command RUCALLTST.
@@ -103,6 +103,8 @@ Version 6.0.0 - 13.01.2026
    Recompile your test suites to take advantage from this change.
    Without recompiling the test suites, the lengths of 'expected'
    and 'actual' are always assumed as 32565 bytes.
+ * Added member TYPES_H with internal type templates.
+ * Removed internal type templates from member TEMPLATES.
  * Fixed XML encoding of special characters of attribute 'message'
    of element 'failure'.
  * Wrapped text of element '<failure>' into a 'CDATA' section.

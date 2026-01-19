@@ -30,7 +30,7 @@ ctl-opt NoMain Option(*SrcStmt);
 /include qinclude,PGMMSG
 /include qinclude,SYSTEMAPI
 /include qunittest,SPLF_H
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 /include qinclude,TESTUTILS
 
 //----------------------------------------------------------------------

@@ -7,7 +7,7 @@
 // https://www.ibm.com/support/knowledgecenter/ssw_ibm_i_73/apis/QGYOLMSG.htm
 //
 
-/include qinclude,templates
+/include qinclude,TYPES_H
 /include qsysinc,opnlist
 
 dcl-pr qgyolmsg extpgm('QGYOLMSG');

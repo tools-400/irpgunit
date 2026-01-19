@@ -7,7 +7,7 @@
 // http://publib.boulder.ibm.com/iseries/v5r2/ic2924/info/apis/qgyolspl.htm
 //
 
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 /include qsysinc,OPNLIST
 
 dcl-pr qgyolspl extpgm('QGYOLSPL');

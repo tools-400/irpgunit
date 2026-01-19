@@ -33,7 +33,7 @@ ctl-opt NoMain Option(*SrcStmt);
 /copy qinclude,ASSERT
 /copy qinclude,ERRORCODE
 /copy qinclude,SYSTEMAPI
-/copy qinclude,TEMPLATES
+/copy qinclude,TYPES_H
 /copy qinclude,USRSPC
 
 /copy qinclude,LSTSPLF

@@ -370,6 +370,6 @@ dcl-pr ptrToStr like(string_t) extproc('STRING_ptrToStr');
   shortened ind options(*nopass);
 end-pr;
 
-/include qinclude,templates
+/include qinclude,TYPES_H
 
 /endif

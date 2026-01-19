@@ -451,7 +451,7 @@
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
                           MBR(TEMPLATES) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit - Type Templates.')
+                          TEXT('iRPGUnit - Public Type Templates.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
@@ -464,6 +464,12 @@
                           MBR(TESTUTILS) +
                           SRCTYPE(RPGLE) +
                           TEXT('iRPGUnit - Utilities.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
+                          MBR(TYPES_H) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit - Internal Type Templates.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QINCLUDE) +
@@ -1129,7 +1135,7 @@
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(TESTPGM08) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit Fixture - Missing SRVPGM.')
+                          TEXT('iRPGUnit Fixture - Missing SRVPGM.  CmpErr.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
@@ -1201,7 +1207,7 @@
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +
                           MBR(TESTPGM20) +
                           SRCTYPE(RPGLE) +
-                          TEXT('iRPGUnit Fixture - Test options(*exact)')
+                          TEXT('iRPGUnit Fixture - Test options(*exact).  CmpErr.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QTESTCASES) +

@@ -137,4 +137,4 @@ dcl-pr SplFLister_getUserData char(10) extproc('LSTSPLF_SplFLister_getUserData')
   i_hSplf pointer const;
 end-pr;
 
-/copy qinclude,TEMPLATES
+/copy qinclude,TYPES_H

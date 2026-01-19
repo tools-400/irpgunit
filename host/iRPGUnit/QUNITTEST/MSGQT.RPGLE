@@ -29,7 +29,7 @@ ctl-opt NoMain Option(*SrcStmt);
 /copy qinclude,ASSERT
 /copy qinclude,PGMMSG
 /copy qinclude,TESTUTILS
-/copy qinclude,TEMPLATES
+/copy qinclude,TYPES_H
 
 //----------------------------------------------------------------------
 //   Global Constants

@@ -179,7 +179,7 @@ end-ds;
 
 dcl-ds tmpl_receiver_v5 likeds(tmpl_sender_v5) template;
 
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 
 //-------------------------------------------------------------------------
 // Module Status

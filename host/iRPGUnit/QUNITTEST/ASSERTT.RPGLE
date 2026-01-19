@@ -29,7 +29,7 @@ ctl-opt NoMain Option(*SrcStmt);
 /include qinclude,ASSERT
 /include qinclude,CMDRUNSRV
 /include qinclude,MEMMGR
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 
 /include qllist,llist_h
 

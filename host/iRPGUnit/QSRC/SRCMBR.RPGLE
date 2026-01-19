@@ -29,7 +29,7 @@ ctl-opt nomain;
 /include qinclude,OBJECT
 /include qinclude,PGMMSG
 /include qinclude,STMF
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 /include qinclude,USRSPC
 /include qinclude,SYSTEMAPI
 /include qinclude,ERRORCODE

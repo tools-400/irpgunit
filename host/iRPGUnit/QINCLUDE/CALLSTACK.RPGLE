@@ -103,6 +103,6 @@ dcl-pr Callstack_getFirst likeds(callStkEnt_t) extproc('CALLSTACK_Callstack_getF
   pCallstk pointer const;
 end-pr;
 
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 
 /endif

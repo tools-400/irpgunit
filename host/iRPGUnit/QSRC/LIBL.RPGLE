@@ -33,7 +33,7 @@ ctl-opt nomain;
 //----------------------------------------------------------------------
 
 /include qinclude,MEMMGR
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 /include qinclude,SYSTEMAPI
 /include qinclude,ERRORCODE
 

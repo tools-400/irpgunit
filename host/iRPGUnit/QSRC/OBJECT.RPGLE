@@ -28,7 +28,7 @@ ctl-opt nomain;
 
 /include qinclude,SRCMBR
 /include qinclude,OBJECT
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 /include qinclude,SYSTEMAPI
 /include qinclude,ERRORCODE
 

@@ -14,7 +14,7 @@
 /if defined(IRPGUNIT_STMF)
 /include qinclude/TEMPLATES.rpgle
 /else
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 /endif
 
 dcl-ds sds likeds(sds_t) psds;

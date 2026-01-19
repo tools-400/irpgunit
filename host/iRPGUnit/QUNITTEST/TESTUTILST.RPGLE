@@ -31,7 +31,7 @@ ctl-opt NoMain Option(*SrcStmt);
 
 /copy qinclude,ASSERT
 /copy qinclude,TESTUTILS
-/copy qinclude,TEMPLATES
+/copy qinclude,TYPES_H
 /copy qinclude,STRING
 
 /copy qsysinc,QCMDEXC

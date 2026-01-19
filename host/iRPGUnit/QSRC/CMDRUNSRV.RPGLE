@@ -46,7 +46,7 @@ ctl-opt nomain;
 /include qinclude,OBJECT
 /include qinclude,PGMMSG
 /include qinclude,RMTRUNSRV
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 /include qinclude,TESTUTILS
 /include qinclude,STRING
 /include qinclude,XMLWRITER

@@ -188,15 +188,6 @@ dcl-pr getMonitoredMessage likeds(MsgInfo_t) extproc('getMonitoredMessage') opde
   doRmvMsg ind options(*nopass) const;
 end-pr;
 
-dcl-ds MsgInfo_t qualified template;
-  id      char(7);
-  txt     varchar(256);
-  pgm     char(10);
-  mod     char(10);
-  proc    varchar(256);
-  specNb  char(10);
-end-ds;
-
 ///
 // Assert joblog contains message
 //
@@ -440,7 +431,7 @@ end-pr;
 ///
 dcl-pr clrAssertFailEvt extproc('clrAssertFailEvt');
   pAssertEvents pointer const;
-  procNamePrefix like(assertProcNm_t) const;
+  procNamePrefix like(assertProcNmPrefix_t) const;
 end-pr;
 
 ///

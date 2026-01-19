@@ -27,7 +27,7 @@ ctl-opt NoMain Option(*SrcStmt);
 
 /copy qinclude,ASSERT
 /copy qinclude,LIBL
-/copy qinclude,TEMPLATES
+/copy qinclude,TYPES_H
 
 dcl-pr LIBLC extproc('LIBLC');
   curLib    char(10);

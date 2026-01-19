@@ -36,7 +36,7 @@ ctl-opt nomain;
 /include qinclude,ERRORCODE
 /include qinclude,MILIB
 /include qinclude,SYSTEMAPI
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 
 //----------------------------------------------------------------------
 //   Private Procedures

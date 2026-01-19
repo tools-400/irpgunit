@@ -32,7 +32,7 @@ ctl-opt main(pgmrmt);
 //   Imported Procedures
 //----------------------------------------------------------------------
 
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 /include qinclude,ASSERT
 /include qinclude,PGMMSG
 /include qinclude,CMDRUNSRV

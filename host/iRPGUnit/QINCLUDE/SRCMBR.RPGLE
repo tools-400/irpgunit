@@ -147,5 +147,5 @@ dcl-pr SrcMbr_getType varchar(10) extproc('SRCMBR_SrcMbr_getType');
   srcMbr   char(10) const;
 end-pr;
 
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 

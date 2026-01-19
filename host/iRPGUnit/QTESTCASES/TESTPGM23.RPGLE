@@ -31,7 +31,7 @@ ctl-opt NoMain Option(*SrcStmt);
 
 /include qinclude,TESTCASE
 /include qinclude,ASSERT
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 
 //----------------------------------------------------------------------
 //   Test 'Failure' / 'Success'

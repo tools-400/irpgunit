@@ -30,7 +30,7 @@ ctl-opt NoMain Option(*SrcStmt);
 /copy qinclude,LIBC_H
 /copy qinclude,LIBL
 /copy qinclude,CRTTST
-/copy qinclude,TEMPLATES
+/copy qinclude,TYPES_H
 
 //----------------------------------------------------------------------
 //   Constants

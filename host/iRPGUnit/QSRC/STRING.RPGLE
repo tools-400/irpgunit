@@ -41,7 +41,7 @@ ctl-opt decedit(*jobrun);
 //----------------------------------------------------------------------
 //   Type Templates
 //----------------------------------------------------------------------
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 
 dcl-ds errCode_t qualified template;
   bytPrv int(10);

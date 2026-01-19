@@ -31,7 +31,7 @@ ctl-opt nomain;
 /include qinclude,STRING
 /include qinclude,LSTSPLF
 /include qinclude,PGMMSG
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 /include qinclude,SRCMBR
 /include qinclude,STMF
 /include qinclude,SYSTEMAPI

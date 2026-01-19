@@ -48,6 +48,6 @@ dcl-pr cmdrun extpgm('RUCALLTST');
   gi_onFailure  like(onFailure_t) const;
 end-pr;
 
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 
 /endif

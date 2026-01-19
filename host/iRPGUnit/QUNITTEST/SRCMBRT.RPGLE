@@ -25,7 +25,7 @@ ctl-opt NoMain Option(*SrcStmt);
 //----------------------------------------------------------------------
 
 /copy qinclude,ASSERT
-/copy qinclude,TEMPLATES
+/copy qinclude,TYPES_H
 /copy qinclude,OBJECT
 /copy qinclude,SRCMBR
 /copy qinclude,SDS

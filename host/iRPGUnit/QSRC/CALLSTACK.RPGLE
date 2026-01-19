@@ -35,7 +35,7 @@ ctl-opt nomain;
 //   Imported Procedures
 //----------------------------------------------------------------------
 
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 
 //----------------------------------------------------------------------
 // Returns the pointer of an allocated callstack memory buffer.

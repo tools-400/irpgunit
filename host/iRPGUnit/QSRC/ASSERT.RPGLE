@@ -34,7 +34,7 @@ ctl-opt nomain;
 /include qinclude,JOBLOG
 /include qinclude,MEMMGR
 /include qinclude,PGMMSG
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 /include qinclude,STRING
 /include qinclude,SYSTEMAPI
 /include qsysinc,memcpy
@@ -510,7 +510,7 @@ end-proc;
 dcl-proc clrAssertFailEvt export;
   dcl-pi *N;
     pAssertEvents  pointer const;
-    procNamePrefix like(assertProcNm_t) const;
+    procNamePrefix like(assertProcNmPrefix_t) const;
   end-pi;
 
   resetAssertionError();

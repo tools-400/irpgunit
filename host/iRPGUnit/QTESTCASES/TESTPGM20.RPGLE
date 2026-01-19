@@ -1,6 +1,6 @@
 **free
 // ==========================================================================
-//  iRPGUnit Fixture - Test options(*exact)
+//  iRPGUnit Fixture - Test options(*exact). CmpErr.
 //  Intentionally fails compiling with errror:
 //  RNF3245 No prototype in the OVERLOAD keyword matches the parameters
 // ==========================================================================

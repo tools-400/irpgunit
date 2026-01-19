@@ -24,7 +24,7 @@ ctl-opt NoMain Option(*SrcStmt);
 //----------------------------------------------------------------------
 
 /include qinclude,ASSERT
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 
 //----------------------------------------------------------------------
 //   v3 and v4 prototypes.

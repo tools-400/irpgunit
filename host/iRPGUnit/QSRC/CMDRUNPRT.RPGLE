@@ -53,7 +53,7 @@ end-pr;
 //   Templates
 //----------------------------------------------------------------------
 
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 
 
 // Program Information Data Structure.
