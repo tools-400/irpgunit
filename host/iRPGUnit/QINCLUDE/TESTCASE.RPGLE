@@ -129,7 +129,7 @@ end-pr;
 dcl-pr assert extproc('assert') opdesc;
   condition  ind const;
  /if defined(RPGUNIT_INTERNAL)
-  msgIfFalse like(OldMsg_t) options(*nopass) const;
+  msgIfFalse like(oldMsg_t) options(*nopass) const;
  /else
   msgIfFalse varchar(16384) options(*varsize: *nopass) const;
  /endif
