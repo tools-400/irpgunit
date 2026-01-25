@@ -31,7 +31,7 @@ ctl-opt NoMain Option(*SrcStmt);
 /copy qinclude,EXTTST
 /copy qinclude,EXTPRC
 /copy qinclude,MEMMGR
-/copy qinclude,TEMPLATES
+/copy qinclude,TYPES_H
 
 //----------------------------------------------------------------------
 //   Global DS

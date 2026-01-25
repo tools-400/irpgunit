@@ -120,5 +120,5 @@ dcl-pr Stmf_getType varchar(10) extproc('STMF_Stmf_getType');
   stmf like(ifsStmf_t) const;
 end-pr;
 
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 

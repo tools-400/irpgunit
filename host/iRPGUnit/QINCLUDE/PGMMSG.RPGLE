@@ -278,7 +278,7 @@ dcl-c TWO_CALL_STK_LVL_ABOVE 2;
 ///
 dcl-c LAST_NEW_ESCAPE_MSG '';
 
-/include qinclude,templates
+/include qinclude,TYPES_H
 
 /endif
 

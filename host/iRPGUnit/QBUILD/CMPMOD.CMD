@@ -68,8 +68,20 @@
                         MIN(0)                               +
                         MAX(32)                              +
                         DFT(*NONE)                           +
-                        SPCVAL((*NONE    *N))                 +
+                        SPCVAL((*NONE    *N))                +
                         PROMPT('Define condition names')
+
+             PARM       KWD(OPTIMIZE)                         +
+                        TYPE(*CHAR)                           +
+                        LEN(10)                               +
+                        MIN(0)                                +
+                        DFT(*AUTO)                            +
+                        SPCVAL((*AUTO)                        +
+                               (*NONE)                        +
+                               (*BASIC)                       +
+                               (*FULL))                       +
+                        CHOICE('*AUTO, *NONE, *BASIC, *FULL') +
+                        PROMPT('Optimization level')
 
 MODULE:      QUAL       TYPE(*NAME) LEN(10) MIN(1)
              QUAL       TYPE(*NAME) LEN(10) MIN(1) +

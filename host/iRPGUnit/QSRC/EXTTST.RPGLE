@@ -35,7 +35,7 @@ ctl-opt nomain;
 /include qinclude,CALLPRC
 /include qinclude,EXTPRC
 /include qinclude,MEMMGR
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 /include qinclude,STRING
 /include qllist,llist_h
 

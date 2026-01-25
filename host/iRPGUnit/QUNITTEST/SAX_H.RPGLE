@@ -99,6 +99,7 @@ dcl-ds saxTestCase_t qualified template;
   attr_assertions like(saxInteger_t) inz;
   attr_classname  like(saxObjName_t) inz;
   attr_time       like(saxInteger_t) inz;
+  attr_timeUnit   varchar(10) inz;
   attr_outcome    like(saxOutcome_t) inz;
   events          likeds(saxTestCaseEvents_t) inz(*likeds);
 end-ds;

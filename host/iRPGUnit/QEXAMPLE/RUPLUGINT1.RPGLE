@@ -28,7 +28,7 @@ ctl-opt NoMain Option(*SrcStmt);
 
 /include qinclude,TESTCASE
 /include qinclude,ASSERT
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 
 //----------------------------------------------------------------------
 //   Test Procedures
@@ -39,7 +39,7 @@ dcl-proc testAllOK_4 export;
   end-pi;
 
   dcl-ds assertFailEvt_v1 likeds(assertFailEvt_t) inz;
-  dcl-ds assertFailEvt_v2 likeds(assertFailEvtExt_t) inz;
+  dcl-ds assertFailEvt_v2 likeds(assertFailEvtLong_t) inz;
 
   assert(*on: 'OK: 1');
   assert(*on: 'OK: 2');

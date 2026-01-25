@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite errors="0" failures="1" hostname="gfd400.gfd.de" id="0" name="RPGUNITDVP/RUPLUGINT9" tests="8">
+  <properties>
+    <property name="currentlibrary" value="RADDATZ400"/>
+    <property name="user.librarylist" value="RPGUNITDVP QGPL QTEMP"/>
+    <property name="os.version" value="V7R5M0"/>
+    <property name="irpgunit.version" value="v6.0.0.r"/>
+    <property name="output.type" value="*JENKINS2"/>
+    <property name="onFailure" value="*ABORT"/>
+  </properties>
+  <testcase name="test_assertEqual_string" assertions="1" classname="RUPLUGINT9" time="0.53" timeUnit="s">
+    <failure message="String values must match"><![CDATA[
+Callstack:
+  test_assertEqual_string (RUPLUGINT9->RUPLUGINT9:7100)
+
+Expected:
+  Dagobert Duck
+
+Actual:
+  Donald Duck
+]]></failure>
+  </testcase>
+</testsuite>

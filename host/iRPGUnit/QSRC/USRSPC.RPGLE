@@ -40,7 +40,7 @@ ctl-opt nomain;
 //   Global DS
 //----------------------------------------------------------------------
 
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 
 //----------------------------------------------------------------------
 //   Procedures Definition

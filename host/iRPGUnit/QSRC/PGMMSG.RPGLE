@@ -36,7 +36,7 @@ ctl-opt nomain;
 /include qinclude,JOBLOG
 /include qinclude,STRING
 /include qinclude,SYSTEMAPI
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 
 //----------------------------------------------------------------------
 //   Local Procedures

@@ -15,16 +15,16 @@
 </p>
 <b>Description:</b>
 <p class="indent">
-Pr�ft, ob das Jobprotokoll eine gegebene Nachrichten ID im gegebenen
-Zeitraum JETZT und <i>timeLimit</i> enth�lt.<br>
+Prüft, ob das Jobprotokoll eine gegebene Nachrichten ID im gegebenen
+Zeitraum JETZT und <i>timeLimit</i> enthält.<br>
 Der Wert von <i>timeLimit</i> sollte mit der Funktion <a href="./getFullTimestamp.html">getFullTimeStamp()</a> gesetzt werden.
 </p>
 <b>Beispiel:</b>
 <p>
 <code><pre class="indent">
 testStartTime = getFullTimeStamp();
-<span class="r-cmt">// ausf�hren des Tests, von dem erwartet wird, dass er eine</span>
-<span class="r-cmt">// Nachricht MCH1211 dem Jobprotokoll hinzuf�gt</span>
+<span class="r-cmt">// ausführen des Tests, von dem erwartet wird, dass er eine</span>
+<span class="r-cmt">// Nachricht MCH1211 dem Jobprotokoll hinzufügt</span>
 assertJobLogContains( 'MCH1211' : testStartTime );
 </pre></code>
 </p>

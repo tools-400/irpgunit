@@ -378,5 +378,5 @@ dcl-pr getReportExecTimeSecs like(execTimeSecs_t) extproc('CMDRUNSRV_getReportEx
   testCaseResult likeds(testCaseResult_t) const;
 end-pr;
 
-/include qinclude,templates
+/include qinclude,TYPES_H
 

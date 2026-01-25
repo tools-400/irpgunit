@@ -57,7 +57,7 @@ end-ds;
 
 /include qinclude,ASSERT
 /include qinclude,STRING
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 /include qinclude,ERRORCODE
 
 /include qsysinc,QUSRJOBI

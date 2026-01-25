@@ -29,7 +29,7 @@ ctl-opt DECEDIT('0.') NOMAIN;
 /include qinclude,CALLSTACK
 /include qinclude,IFSIO_H
 /include qinclude,JENKINS
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 /include qinclude,XMLWRITER
 /include qllist,llist_h
 
@@ -52,6 +52,7 @@ dcl-proc VSCode_writeTestCases export;
   dcl-ds testCaseResult likeds(testCaseResult_t) based(pTestCaseResult);
   dcl-s text like(xmlBuffer_t);
   dcl-s execTime like(execTimeMSecs_t);
+  dcl-s execTimeUnit like(execTimeUnit_t);
 
   g_xmlWriter.indLvl += 1;
 
@@ -61,6 +62,7 @@ dcl-proc VSCode_writeTestCases export;
   dow (pTestCaseResult <> *null);
 
     execTime = testCaseResult.execTimeMSecs;
+    execTimeUnit = TIME_UNIT_MILLISECOND;
 
     // open <testcase> element
     text = indent() + '<testcase';
@@ -70,6 +72,7 @@ dcl-proc VSCode_writeTestCases export;
     text += ' name="' + getTestCaseName(testCaseResult) + '"';
     text += ' assertions="' + %char(testCaseResult.assertCnt) + '"';
     text += ' time="' + %char(execTime) + '"';
+    text += ' timeUnit="' + execTimeUnit + '"';
     text += '>' + newLine();
     appendToXmlFile(text);
 

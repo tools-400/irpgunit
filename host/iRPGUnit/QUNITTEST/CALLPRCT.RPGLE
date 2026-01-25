@@ -28,7 +28,7 @@ ctl-opt NoMain Option(*SrcStmt);
 
 /copy qinclude,ASSERT
 /copy qinclude,CALLPRC
-/copy qinclude,TEMPLATES
+/copy qinclude,TYPES_H
 
 //----------------------------------------------------------------------
 //   Global Variables

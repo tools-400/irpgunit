@@ -32,7 +32,7 @@ ctl-opt nomain;
 //   Prototypes
 //----------------------------------------------------------------------
 /include qinclude,TAGTST
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 /include qsysinc,QLICOBJD
 /include qinclude,SRCMBR
 /include qinclude,STMF

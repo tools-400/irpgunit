@@ -35,7 +35,7 @@ ctl-opt main(crtRpg);
 
 /include qinclude,CRTTST
 /include qinclude,PGMMSG
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 /include qinclude,TESTUTILS
 /include qinclude,STRING
 

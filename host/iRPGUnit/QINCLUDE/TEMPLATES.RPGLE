@@ -4,185 +4,27 @@
 /endif
 /define templates
 // ==========================================================================
-//  iRPGUnit - Type Templates.
+//  iRPGUnit - Public Type Templates.
 // ==========================================================================
-//  Copyright (c) 2013-2025 iRPGUnit Project Team
+//  Copyright (c) 2013-2026 iRPGUnit Project Team
 //  All rights reserved. This program and the accompanying materials
 //  are made available under the terms of the Common Public License v1.0
 //  which accompanies this distribution, and is available at
 //  http://www.eclipse.org/legal/cpl-v10.html
 // ==========================================================================
 
-dcl-c TEST_CASE_EXECUTOR 'CMDRUNSRV_runProc';
+dcl-c MAX_CALL_STK_SIZE 64;
 
-dcl-c TEST_PREFIX 'TEST';
-
-dcl-c TSTPRC_ALL '*ALL';
-
-dcl-c ORDER_API '*API';
-dcl-c ORDER_REVERSE '*REVERSE';
-
-dcl-c DETAIL_BASIC '*BASIC';
-dcl-c DETAIL_ALL '*ALL';
-
-dcl-c ON_FAILURE_ABORT '*ABORT';
-dcl-c ON_FAILURE_CONTINUE '*CONTINUE';
-
-dcl-c OUTPUT_NONE '*NONE';
-dcl-c OUTPUT_ERROR '*ERROR';
-dcl-c OUTPUT_ALLWAYS '*ALLWAYS';
-
-dcl-c LIBRARY_LIST_JOBD '*JOBD';
-dcl-c LIBRARY_LIST_CURRENT '*CURRENT';
-
-dcl-c JOBD_DEFAULT '*DFT';
-
-dcl-c RCLRSC_NO '*NO';
-dcl-c RCLRSC_ALWAYS '*ALWAYS';
-dcl-c RCLRSC_ONCE '*ONCE';
-
-dcl-c NO_VALUE '*N';
-
-dcl-c NO_MSG_TEXT '*N';
-
-dcl-c MBR_RPGLE 'RPGLE';
-dcl-c MBR_SQLRPGLE 'SQLRPGLE';
-dcl-c MBR_CBLLE 'CBLLE';
-dcl-c MBR_SQLCBLLE 'SQLCBLLE';
-
-dcl-c PARM_DBGVIEW 'DBGVIEW';
-dcl-c PARM_DEFINE 'DEFINE';
-dcl-c PARM_TGTCCSID 'TGTCCSID';
-dcl-c PARM_INCDIR 'INCDIR';
-dcl-c PARM_OPTION 'OPTION';
-
-dcl-c SLASH u'002F';
-dcl-c BACK_SLASH u'005C';
-dcl-c COLON u'003A';
-
-dcl-s order_t char(10) template;
-dcl-s detail_t char(10) template;
-dcl-s onFailure_t char(10) template;
-dcl-s output_t char(10) template;
-dcl-s rclrsc_t char(10) template;
-dcl-s stmf_t varchar(1024) template;
-dcl-s stmf_fl_t char(1024) template;
-dcl-s yesno_t char(1) template;
-
-dcl-c TYPE_STMF '*STMF';
-dcl-c TYPE_MEMBER '*MBR';
-
-dcl-c MAX_NUM_LIB 250;
-
-// 'Modul created in' message IDs
-dcl-c MOD_CRT_RPG 'RNS9305';
-dcl-c MOD_CRT_CBL 'LNC0899';
-
-dcl-c CRLF x'0d25';
-
-dcl-ds libl_t template;
-  nume   int(5) pos(1);
-  lib    char(10) dim(MAX_NUM_LIB) pos(3);
-end-ds;
-
-dcl-ds liblData_t qualified template;
-  curlib   char(10) pos(1);
-  libl     likeds(libl_t);
-end-ds;
-
-// ILE Activation Mark.
-dcl-s actMark_t int(10) template;
-
-// Assertion Failure Event - External.
-dcl-ds assertFailEvtExt_t qualified template;
-  msg          like(msgText_t) inz;
-  logExpected  likeds(logValue_t) inz(*likeds);
-  logActual    likeds(logValue_t) inz(*likeds);
-  callstk      likeds(callStk_v1_t) inz(*likeds);
-end-ds;
-
-dcl-s execTimeMSecs_t int(20) template;
-dcl-s execTimeSecs_t packed(22:2) template;
-dcl-s assertProcNm_t varchar(32) template;
-dcl-s dataType_t varchar(20) template;
-dcl-s xmlType_t char(10) template;
-
-dcl-c XML_JENKINS_TYPE_1 '*JENKINS1';
-dcl-c XML_JENKINS_TYPE_2 '*JENKINS2';
-dcl-c XML_TYPE_VSCODE_1 '*VSCODE1';
-
-dcl-c LABEL_EXPECTED 'expected';
-dcl-c LABEL_ACTUAL 'actual';
-
-// Data type in user space, XML and printer output
-dcl-c DT_DATE 'date';
-dcl-c DT_FLOAT 'float';
-dcl-c DT_INT 'integer';
-dcl-c DT_IND 'indicator';
-dcl-c DT_NUMERIC 'numeric';
-dcl-c DT_TIME 'time';
-dcl-c DT_TIMESTAMP 'timestamp';
-dcl-c DT_STRING 'string';
-dcl-c DT_USER_DEFINED 'user-defined';
-dcl-c DT_UNDEFINED '*N';
-
-// Assertion Failure Event of v1
-dcl-ds assertFailEvt_t qualified template;
-  msg       varchar(256) inz;
-  callstk   likeds(callStk_v1_t) inz(*likeds);
-end-ds;
-
-// callstk_v1
-//   numE
-//   entry(64)
-//     level
-//     qStmt
-//       qPgm
-//       qMod
-//       procNm
-//       specNb
-
+// Call Stack Entry v1.
 dcl-ds callStk_v1_t qualified template;
   numE    int(10) inz;
   entry   likeds(callStkEnt_t) dim(MAX_CALL_STK_SIZE) inz(*likeds);
 end-ds;
 
-// Call Stack.
-dcl-ds callStk_t qualified template;
-  header  likeds(callStkHdr_t) inz(*likeds);
-  entry   likeds(callStkEnt_t) dim(MAX_CALL_STK_SIZE) inz(*likeds);
-end-ds;
-
-// Call Stack header.
-dcl-ds callStkHdr_t qualified template;
-  id        char(20) inz(CALLSTACK_ID);
-  numE      int(10) inz;
-  maxE      int(10) inz;
-  iteration int(10) inz(-1);
-end-ds;
-
-dcl-c CALLSTACK_ID '*CALLSTACK';
-
 // Call Stack Entry.
 dcl-ds callStkEnt_t qualified template;
   level   int(10) inz;
   qStmt   likeds(qStatement_t) inz(*likeds);
-end-ds;
-
-// XML stream file information
-dcl-ds xmlStmfInfo_t qualified template;
-  path like(stmf_t);
-  type like(xmlType_t);
-end-ds;
-
-// Program Message.
-dcl-ds msg_t qualified template;
-  id         char(7);
-  txt        like(msgText_t);
-  rplData    varchar(256);
-  key        char(4);
-  qSndStmt   likeds(qStatement_t);
-  qRcvStmt   likeds(qStatement_t);
 end-ds;
 
 // Qualified program statement
@@ -193,156 +35,37 @@ dcl-ds qStatement_t qualified template;
   specNb   char(10) inz;
 end-ds;
 
-// Old style error message prior to version 2.0.0.
-dcl-s oldMsg_t char(256);
-
-// MsgInfo_t is and must be defined in member TESTCASE!
-
-// SQL pre-compiler option RPGPPOPT
-dcl-s rpgPpOpt_t char(10);
-
-// SQL pre-compiler option COMPILEOPT
-dcl-s compileOpt_t varchar(5000);
-
-// CRTRPGMOD INCDIR parameter
-dcl-ds incdir_t qualified template;
-  size     int(5);
-  path     like(ifsStmf_t) dim(32);
-end-ds;
-
-// CRTRPGMOD TGTCCSID parameter
-dcl-s tgtCcsid_t like(ccsid_t);
-
-// CRTSQL*I CVTCCSID parameter
-dcl-s cvtCcsid_t like(ccsid_t);
-
-// CRTRPGMOD SRCSTMF parameter
-dcl-s ifsStmf_t varchar(4096);
-
-// ccsid of a source member or stream file
-dcl-s ccsid_t int(10);
-
 // Object qualified Name.
 dcl-ds object_t qualified template;
   nm    char(10) inz;
   lib   char(10) inz;
 end-ds;
 
-// Job qualified Name.
-dcl-ds qJob_t qualified template;
-  name            char(10);
-  user            char(10);
-  nbr             char(6);
+// Assertion Failure Event of v1
+dcl-ds assertFailEvt_t qualified template;
+  msg       varchar(256) inz;
+  callstk   likeds(callStk_v1_t) inz(*likeds);
 end-ds;
 
-// Spooled file qualified Name.
-dcl-ds splf_t qualified template;
-  system   char(10);
-  nm       char(10);
-  nbr      int(10);
-  job      likeds(job_t);
-end-ds;
-
-// Job qualified Name.
-dcl-ds job_t qualified template;
-  name   char(10);
-  user   char(10);
-  nbr    char(6);
-end-ds;
-
-// Named callable procedure.
-dcl-ds proc_t qualified align template;
-  seqNbr    int(10);
-  procNm    like(procNm_t);
-  procPtr   pointer(*proc);
-end-ds;
-
-dcl-ds procNmList_t qualified template;
-  handle     pointer;
-  cnt        pointer(*proc);
-  getnm      pointer(*proc);
-  gotonext   pointer(*proc);
-end-ds;
-
-dcl-s outcome_t char(1) template;
-dcl-s procNm_t varchar(256) template;
-dcl-s memSize_t zoned(25: 3) template;
-
-dcl-ds procNms_t qualified template;
-  nume   int(5);
-  name   like(procNm_t) dim(250);
-end-ds;
-
-// qualified Job Name.
-dcl-ds qlfJobNm_t qualified template;
-  jobNm   char(10);
-  usrNm   char(10);
-  jobNb   char(6);
-end-ds;
-
-dcl-ds testSuite_t qualified template;
-  isCobol         ind;
-  qName           likeds(object_t);
-  setupSuite      likeds(proc_t);
-  setup           likeds(proc_t);
-  testCasesCnt    int(10);
-  testList        pointer;
-  tearDown        likeds(proc_t);
-  tearDownSuite   likeds(proc_t);
-  testResults     pointer; // array(testCaseResult_t)
-end-ds;
-
-dcl-ds testCaseResult_t qualified template;
-  outcome          like(outcome_t);
-  seqNbr           int(10);
-  reserved_1       char(11);
-  testName         like(procNm_t);
-  execTimeMSecs    like(execTimeMSecs_t);
-  assertCnt        int(10);
-  lastErrorEvent   int(10);
-  lastFailureEvent int(10);
-  lastSuccessEvent int(10);
-  hTestEvents      pointer; // array(abstractTestEvent_t) -> failure & success events
-end-ds;
-
-// Assertion Event.
-dcl-ds abstractTestEvent_t qualified template;
-  outcome      like(outcome_t) inz(TEST_CASE_NULL);
-  index        int(10);
-  failure      likeds(testFailureEvent_t) pos(1) inz(*likeds);
-  success      likeds(testSuccessEvent_t) pos(1) inz(*likeds);
-  error        likeds(runtimeErrorEvent_t) pos(1) inz(*likeds);
-end-ds;
-
-// Assertion Success Event.
-dcl-ds testSuccessEvent_t qualified template;
-  outcome      like(outcome_t) inz(TEST_CASE_SUCCESS);
-  index        int(10);
-  assertProc   like(assertProcNm_t) inz;
-  logExpected  likeds(logValue_t) inz(*likeds);
-  logActual    likeds(logValue_t) inz(*likeds);
-  pCallstk     pointer inz;
-end-ds;
-
-// Assertion Failure Event.
-dcl-ds testFailureEvent_t qualified template;
-  outcome      like(outcome_t) inz(TEST_CASE_FAILURE);
-  index        int(10);
-  assertProc   like(assertProcNm_t) inz;
-  logExpected  likeds(logValue_t) inz(*likeds);
-  logActual    likeds(logValue_t) inz(*likeds);
-  pCallstk     pointer inz;
-  isConfirmed  ind inz(*off);
+// Assertion Failure Event Long v2 (external)
+dcl-ds assertFailEvtLong_t qualified template;
   msg          like(msgText_t) inz;
+  logExpected  likeds(logValue_t) inz(*likeds);
+  logActual    likeds(logValue_t) inz(*likeds);
+  callstk      likeds(callStk_v1_t) inz(*likeds);
 end-ds;
 
-// Runtime Error Event.
-dcl-ds runtimeErrorEvent_t qualified template;
-  outcome      like(outcome_t) inz(TEST_CASE_ERROR);
-  index        int(10);
-  msg          likeds(msg_t) inz;
+// Message information
+dcl-ds msgInfo_t qualified template;
+  id      char(7);
+  txt     varchar(256);
+  pgm     char(10);
+  mod     char(10);
+  proc    varchar(256);
+  specNb  char(10);
 end-ds;
 
+// Expected/actual log value.
 dcl-ds logValue_t qualified template;
    value          varchar(2048) inz;
    type           like(dataType_t) inz;
@@ -351,130 +74,24 @@ dcl-ds logValue_t qualified template;
    originalLength int(10) inz;
 end-ds;
 
-dcl-ds testSuiteResult_t qualified;
-  assertCnt  int(10);
-  errorCnt   int(10);
-  failureCnt int(10);
-  runsCnt    int(10);
-end-ds;
+// Procedure name.
+dcl-s procNm_t varchar(256) template;
 
-// User profile name.
-dcl-s usrNm_t char(10) template;
+// Assertion string value.
+dcl-s assertString_t varchar(32565:4) ccsid(*UTF8) template;
 
-// Object description
-dcl-s text_t varchar(50) template;
+// Assertion procedure name prefix.
+dcl-s assertProcNmPrefix_t varchar(32) template;
 
-// String value (must be greater than COMPILEOPT)
-dcl-s string_t varchar(5120) template;
+// Log value data type.
+dcl-s dataType_t varchar(20) template;
 
-// Buffer value (must not be greater than size of string_t)
-dcl-s buffer_t char(2560) template;
-
-// Value of a line of the log.
-dcl-s line_t varchar(256) template;
+// Stream file path.
+dcl-s ifsStmf_t varchar(4096);
 
 // Message replacement data or message text.
 dcl-s msgText_t varchar(1024) template;
 
-// Full qualified source member.
-dcl-ds srcMbr_t qualified template;
-  file   char(10);
-  lib    char(10);
-  mbr    char(10);
-end-ds;
-
-// Source information of a module
-dcl-ds srcInf_t qualified template;
-  type   char(10); // one of TYPE_STMF | TYPE_MEMBER
-  mbr    likeds(srcMbr_t);
-  stmf   like(stmf_t);
-end-ds;
-
-dcl-c MAX_CALL_STK_SIZE 64;
-dcl-c CALL_STACK_INCOMPLETE '*INCOMPLETE';
-
-// testCaseResult_t.outcome can have three values.
-dcl-c TEST_CASE_NULL    '*';
-dcl-c TEST_CASE_SUCCESS 'S';
-dcl-c TEST_CASE_FAILURE 'F';
-dcl-c TEST_CASE_ERROR   'E';
-
-dcl-c QUOTE const('''');
-
-
-// A sized array of OS400 objects.
-dcl-ds objectArray_t template qualified;
-  size     int(5);
-  object   dim(51) likeds(object_t);
-end-ds;
-
-// A sized list of options.
-dcl-ds options_t template qualified;
-  size     int(5);
-  option   char(12) dim(25);
-end-ds;
-
-// A sized list of compiler directives.
-dcl-ds defines_t template qualified;
-  size     int(5);
-  define   char(50) dim(32);
-end-ds;
-
-dcl-s headToken_t char(10) template;
-dcl-s dbgView_t char(10) template;
-dcl-s export_t char(10) template;
-dcl-s activationGroup_t char(10) template;
-
-dcl-s cmd_t varchar(8192) template;
-dcl-s serializedArray_t varchar(2048) template;
-dcl-s serializedObject_t varchar(21) template;
-dcl-s serializedOptions_t varchar(512) template;
-dcl-s serializedString_t varchar(5136) template;
-dcl-s targetRelease_t char(10) template;
-dcl-s assertString_t varchar(32565:4) CCSID(*UTF8) TEMPLATE;
-dcl-s assertNumeric_t zoned(63:20) template;
-dcl-s serializedIncDir_t varchar(131072) template; // 32 * 4096
-dcl-s serializedStmf_t varchar(4098) template; // 4096 + 2 * len(QUOTES)
-dcl-s serializedTgtCcsid_t varchar(20) template;
-
-// Program Status Data Structure.
-dcl-ds sds_t template qualified;
-  pgmname         char(10);
-  pgmstat         zoned(5);
-  prevstat        zoned(5);
-  lastseq         char(8);
-  lastsubr        char(8);
-  nbrparm         zoned(3);
-  exctype         char(3);
-  excnbr          char(4);
-  miinstruction   char(4);
-  workarea        char(30);
-  pgmLib          char(10);
-  excdata         char(80);
-  rnx9001exc      char(4);
-  lastfilelong    char(10);
-  unused_1        char(6);
-  datFmt          char(8);
-  year            zoned(2);
-  lastfileshort   char(8);
-  filestat        char(35);
-  job             char(10);
-  user            char(10);
-  nbr             zoned(6);
-  startdate       zoned(6);
-  rundate         zoned(6);
-  runtime         zoned(6);
-  compdate        char(6);
-  comptime        char(6);
-  complevel       char(4);
-  srcFile         char(10);
-  srcLib          char(10);
-  srcMbr          char(10);
-  pgmcontproc     char(10);
-  modcontproc     char(10);
-  sourceid1       int(5);
-  sourceid2       int(5);
-  curruser        char(10);
-  unused_2        char(62);
-end-ds;
+// Old style error message prior to version 2.0.0.
+dcl-s oldMsg_t char(256);
 

@@ -386,6 +386,7 @@ dcl-proc testVSCode1Abort export;
   assertEqual('1': testcase.attr_assertions);
   assertEqual('TESTPGM23': testcase.attr_classname);
   assert(testcase.attr_time <> '');
+  assertEqual('ms': testcase.attr_timeUnit);
   assertEqual('Failure': testcase.attr_outcome);
 
   testCaseEvent = getTestCaseEvent(testCase.events: 1);
@@ -410,6 +411,7 @@ dcl-proc testVSCode1Abort export;
   assertEqual('2': testcase.attr_assertions);
   assertEqual('TESTPGM23': testcase.attr_classname);
   assert(testcase.attr_time <> '');
+  assertEqual('ms': testcase.attr_timeUnit);
   assertEqual('Failure': testcase.attr_outcome);
 
   testCaseEvent = getTestCaseEvent(testCase.events: 2);
@@ -435,6 +437,7 @@ dcl-proc testVSCode1Abort export;
   assertEqual('3': testcase.attr_assertions);
   assertEqual('TESTPGM23': testcase.attr_classname);
   assert(testcase.attr_time <> '');
+  assertEqual('ms': testcase.attr_timeUnit);
   assertEqual('Success': testcase.attr_outcome);
 
   assertEqual(3: testcase.events.size);
@@ -484,6 +487,7 @@ dcl-proc testVSCode1Continue export;
   assertEqual('2': testcase.attr_assertions);
   assertEqual('TESTPGM23': testcase.attr_classname);
   assert(testcase.attr_time <> '');
+  assertEqual('ms': testcase.attr_timeUnit);
   assertEqual('Failure': testcase.attr_outcome);
 
   testCaseEvent = getTestCaseEvent(testCase.events: 1);
@@ -508,6 +512,7 @@ dcl-proc testVSCode1Continue export;
   assertEqual('2': testcase.attr_assertions);
   assertEqual('TESTPGM23': testcase.attr_classname);
   assert(testcase.attr_time <> '');
+  assertEqual('ms': testcase.attr_timeUnit);
   assertEqual('Error': testcase.attr_outcome);
 
   testCaseEvent = getTestCaseEvent(testCase.events: 1);
@@ -548,6 +553,7 @@ dcl-proc testVSCode1Continue export;
   assertEqual('3': testcase.attr_assertions);
   assertEqual('TESTPGM23': testcase.attr_classname);
   assert(testcase.attr_time <> '');
+  assertEqual('ms': testcase.attr_timeUnit);
   assertEqual('Failure': testcase.attr_outcome);
 
   assertEqual(3: testcase.events.size);
@@ -580,6 +586,7 @@ dcl-proc validateJenkinsAbort;
   assertEqual('1': testcase.attr_assertions);
   assertEqual('TESTPGM23': testcase.attr_classname);
   assert(testcase.attr_time <> '');
+  assertEqual('s': testcase.attr_timeUnit);
   assertEqual('': testcase.attr_outcome);
 
   testCaseEvent = getTestCaseEvent(testCase.events: 1);
@@ -600,6 +607,7 @@ dcl-proc validateJenkinsAbort;
   assertEqual('2': testcase.attr_assertions);
   assertEqual('TESTPGM23': testcase.attr_classname);
   assert(testcase.attr_time <> '');
+  assertEqual('s': testcase.attr_timeUnit);
   assertEqual('': testcase.attr_outcome);
 
   testCaseEvent = getTestCaseEvent(testCase.events: 1);
@@ -619,6 +627,7 @@ dcl-proc validateJenkinsAbort;
   assertEqual('3': testcase.attr_assertions);
   assertEqual('TESTPGM23': testcase.attr_classname);
   assert(testcase.attr_time <> '');
+  assertEqual('s': testcase.attr_timeUnit);
   assertEqual('': testcase.attr_outcome);
 
   assertEqual(0: testcase.events.size);
@@ -651,6 +660,7 @@ dcl-proc validateJenkinsContinue;
   assertEqual('1': testcase.attr_assertions);
   assertEqual('TESTPGM23': testcase.attr_classname);
   assert(testcase.attr_time <> '');
+  assertEqual('s': testcase.attr_timeUnit);
   assertEqual('': testcase.attr_outcome);
 
   testCaseEvent = getTestCaseEvent(testCase.events: 1);
@@ -668,6 +678,7 @@ dcl-proc validateJenkinsContinue;
   assertEqual('1': testcase.attr_assertions);
   assertEqual('TESTPGM23': testcase.attr_classname);
   assert(testcase.attr_time <> '');
+  assertEqual('s': testcase.attr_timeUnit);
   assertEqual('': testcase.attr_outcome);
 
   assertEqual(0: testcase.events.size);
@@ -679,6 +690,7 @@ dcl-proc validateJenkinsContinue;
   assertEqual('1': testcase.attr_assertions);
   assertEqual('TESTPGM23': testcase.attr_classname);
   assert(testcase.attr_time <> '');
+  assertEqual('s': testcase.attr_timeUnit);
   assertEqual('': testcase.attr_outcome);
 
   assertEqual(0: testcase.events.size);
@@ -688,6 +700,7 @@ dcl-proc validateJenkinsContinue;
   assertEqual('1': testcase.attr_assertions);
   assertEqual('TESTPGM23': testcase.attr_classname);
   assert(testcase.attr_time <> '');
+  assertEqual('s': testcase.attr_timeUnit);
   assertEqual('': testcase.attr_outcome);
 
   testCaseEvent = getTestCaseEvent(testCase.events: 1);
@@ -703,6 +716,7 @@ dcl-proc validateJenkinsContinue;
   assertEqual('1': testcase.attr_assertions);
   assertEqual('TESTPGM23': testcase.attr_classname);
   assert(testcase.attr_time <> '');
+  assertEqual('s': testcase.attr_timeUnit);
   assertEqual('': testcase.attr_outcome);
 
   testCaseEvent = getTestCaseEvent(testCase.events: 1);
@@ -719,6 +733,7 @@ dcl-proc validateJenkinsContinue;
   assertEqual('1': testcase.attr_assertions);
   assertEqual('TESTPGM23': testcase.attr_classname);
   assert(testcase.attr_time <> '');
+  assertEqual('s': testcase.attr_timeUnit);
   assertEqual('': testcase.attr_outcome);
 
   assertEqual(0: testcase.events.size);

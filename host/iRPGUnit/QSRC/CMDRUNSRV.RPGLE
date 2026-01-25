@@ -46,7 +46,7 @@ ctl-opt nomain;
 /include qinclude,OBJECT
 /include qinclude,PGMMSG
 /include qinclude,RMTRUNSRV
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 /include qinclude,TESTUTILS
 /include qinclude,STRING
 /include qinclude,XMLWRITER
@@ -1351,9 +1351,8 @@ dcl-proc getReportNumAsserts export;
 end-proc;
 
 //----------------------------------------------------------------------
-// Returns the number of assertions as displayed in the XML.
-// Returns the total number of assertions for assertion mode *ABORT,
-// otherwise 1.
+// Returns the test case execution time in seconds as shown in
+// the Jenkins XML output and the spooled file report.
 //----------------------------------------------------------------------
 dcl-proc getReportExecTimeSecs export;
   dcl-pi *n like(execTimeSecs_t);

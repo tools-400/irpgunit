@@ -152,4 +152,24 @@ compilation.
 :eparml.
 :ehelp.
 .*
+:help name='CMPMOD/OPTIMIZE' WIDTH=64.
+Optimization level (OPTIMIZE) - Help
+:xh3.Optimization level (OPTIMIZE)
+:p.
+Specifies the level of optimization, if any, of the
+module.
+:parml.
+:pt.:pk def.*AUTO:epk.
+:pd.Optimization depends on the debug view. If :HP2.DBGVIEW:EHP2.
+is set to :HP2.*LIST:EHP2., no optimization is applied, otherwise
+full optimization is performed.
+:pt.*NONE
+:pd.Generated code is not optimized.
+:pt.*BASIC
+:pd.Some optimization is performed on the generated code.
+:pt.*FULL
+:pd.Optimization which generates the most efficient code.
+:eparml.
+:ehelp.
+.*
 :epnlgrp.

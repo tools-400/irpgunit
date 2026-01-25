@@ -30,7 +30,7 @@ ctl-opt nomain;
 /include qinclude,STMF
 /include qinclude,PGMMSG
 /include qinclude,STRING
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 /include qsysinc,GETCWD
 /include qsysinc,STAT
 /include qsysinc,STRFTIME

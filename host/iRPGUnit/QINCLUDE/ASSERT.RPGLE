@@ -133,6 +133,6 @@ dcl-pr getFailureCounted int(10) extproc('ASSERT_getFailureCounted');
 end-pr;
 
 /include qinclude,TESTCASE
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 
 /endif

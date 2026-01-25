@@ -4,7 +4,8 @@
 <toc label="Appendix" link_to="./toc/toc.xml#appendix">
     <topic href="html/appendix/example_1.html"  label="iRPGUnit RPG Example" />
     <topic href="html/appendix/example_2.html"  label="iRPGUnit Cobol Example" />
-    <topic href="html/appendix/output_type_1.html"  label="iRPGUnit Output Type 1" />
-    <topic href="html/appendix/output_type_2.html"  label="iRPGUnit Output Type 2" />
+    <topic href="html/appendix/output_jenkins_1.html"  label="XML Output Jenkins Type 1" />
+    <topic href="html/appendix/output_jenkins_2.html"  label="XML Output Jenkins Type 2" />
+    <topic href="html/appendix/output_vscode_1.html"  label="XML Output VS Code Type 2" />
     <topic href="html/appendix/upload_save_file.html"  label="Upload Save File .cmd" />
 </toc>

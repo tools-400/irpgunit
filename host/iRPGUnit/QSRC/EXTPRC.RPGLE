@@ -27,7 +27,7 @@ ctl-opt nomain;
 //----------------------------------------------------------------------
 
 /include qinclude,EXTPRC
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 /include qinclude,ERRORCODE
 
 //----------------------------------------------------------------------

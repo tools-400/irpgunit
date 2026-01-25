@@ -10,18 +10,18 @@
 <body>
 <h1>Aktualisieren von v1.10.0 nach v2.0.0</h1>
 Alle bestehenden Unit Test Suites sollten sich problemlos mit iRPGUnit 2.0 erstellen und 
-ausf�hren lassen. Dennoch: 
+ausführen lassen. Dennoch: 
 <p>
 <table>
 <tr>
-<td class="notice"><b>Testen sie ihre bestehenden Test Suites sorgf�ltig innerhalb einer 
-                      gesch�tzten Testumgebung mit iRPGUnit 2.0, bevor sie endg�ltig auf 
+<td class="notice"><b>Testen sie ihre bestehenden Test Suites sorgfältig innerhalb einer 
+                      geschätzten Testumgebung mit iRPGUnit 2.0, bevor sie endgültig auf 
                       die neue Version umsteigen.</b></td>
 </tr>
 </table>
 <p>
-Unit Test, welche ausschlie�lich die folgenden Zusicherungen verwenden, lassen sich
-problemlos unter allen Versionen von RPGUnit kompilieren und ausf�hren:
+Unit Test, welche ausschließlich die folgenden Zusicherungen verwenden, lassen sich
+problemlos unter allen Versionen von RPGUnit kompilieren und ausführen:
 <ul>
 <li>assert()</li>
 <li>aEqual()</li>
@@ -53,9 +53,9 @@ Die folgenden Unit Tests (kompiliert mit v1.10) brechen unter iRPGUnit mit einem
 </ul>
 Die folgenden Unit Tests lassen sich mit iRPGUnit nicht kompilieren: 
 <ul>
-<li>Test Suite <i>CMDRUNT</i>: Prototyp <i>logCompMsg()</i> in Modul <i>CMDRUNLOG</i> wurde ge�ndert.</li>
+<li>Test Suite <i>CMDRUNT</i>: Prototyp <i>logCompMsg()</i> in Modul <i>CMDRUNLOG</i> wurde geändert.</li>
 <li>Test Suite <i>EXTTSTT</i>: Parameter <i>mockSrvPgm</i> der Prozedur getTestSuite() wurde entfernt.</li>
-<li>Test Suite <i>RUCRTTSTT</i>: /COPY Teildatei <i>RUCRTTST</i> wurde umbenannt in <i>CRTTST</i> und die Anzahl Parameter von getCrtRpgModCmd() und getCrtSrvPgmCmd() haben sich ge�ndert.</li>
+<li>Test Suite <i>RUCRTTSTT</i>: /COPY Teildatei <i>RUCRTTST</i> wurde umbenannt in <i>CRTTST</i> und die Anzahl Parameter von getCrtRpgModCmd() und getCrtSrvPgmCmd() haben sich geändert.</li>
 <li>Test Suite <i>RUNT</i>: /COPY Teildatei <i>RUCRTTST</i> wurde umbenannt in <i>CMDRUNSRV</i>.</li>
 </ul>
 <p>

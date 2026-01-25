@@ -79,5 +79,5 @@ dcl-pr setTestSuiteLibL ind extproc('LIBL_setTestSuiteLibL');
   testSuiteLib char(10) value;
 end-pr;
 
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 

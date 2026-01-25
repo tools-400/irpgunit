@@ -32,7 +32,7 @@ ctl-opt main(cmdRunV);
 //   Imported Procedures
 //----------------------------------------------------------------------
 
-/include qinclude,TEMPLATES
+/include qinclude,TYPES_H
 /include qinclude,PGMMSG
 /include qsysinc,strftime
 /include qsysinc,time
