@@ -1233,11 +1233,11 @@
                      by a new version of MS Word. (Raddatz, 12.9.2025) -->
                 <delete file="${project.doc.tmp}"/>
                 <copyfile src="${project.doc}" dest="${project.doc.tmp}"/>
-
+<!--
                 <winword file="${project.doc.tmp}" visible="true">
                     <saveAs toFile="${project.pdf}" saveFormat="pdf" />
                 </winword>
-
+-->
                 <delete file="${project.doc.tmp}"/>
 
                 <eclipse.refreshLocal resource="${build.project.core}" depth="infinite" />
