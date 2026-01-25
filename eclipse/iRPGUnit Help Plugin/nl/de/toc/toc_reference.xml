@@ -21,11 +21,11 @@
         <topic href="html/reference/assertMessageQueueContains.html" label="assertMessageQueueContains" />
     </topic>
     <topic label="Hilfsfunktionen">
-        <topic href="html/reference/getFullTimeStamp.html"           label="getFullTimeStamp" />
+        <topic href="html/reference/getFullTimestamp.html"           label="getFullTimeStamp" />
     </topic>
     <topic label="CL Befehle">
-        <topic href="html/reference/CLRPFM.html"                     label="CLRPFM"    />
-        <topic href="html/reference/RCLACTGRP.html"                  label="RCLACTGRP" />
+        <topic href="html/reference/clrpfm.html"                     label="CLRPFM"    />
+        <topic href="html/reference/rclactgrp.html"                  label="RCLACTGRP" />
         <topic href="html/reference/runCmd.html"                     label="runCmd"    />
         <topic href="html/reference/waitSeconds.html"                label="waitSeconds"/>
         <topic href="html/reference/displayStatusMessage.html"       label="displayStatusMessage" />

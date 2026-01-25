@@ -12,13 +12,13 @@
 <p>
 <h2>Symptom</h1>
 <p>
-Nachfolgend wird erkl�rt, warum folgende Fehlermeldung erscheint und wie das Prolbem behoben werden kann:
+Nachfolgend wird erklärt, warum folgende Fehlermeldung erscheint und wie das Prolbem behoben werden kann:
 <p class="indent">
 <img class="noborder" src="./assets/duplicate_irpgunit_objects_message.png">
 <p>
 <h2>Grund</h1>
 <p>
-Der Grund f�r dieses Problem ist, dass das Startprogramm RUCALLTST oder RUPGMRMT ein
+Der Grund für dieses Problem ist, dass das Startprogramm RUCALLTST oder RUPGMRMT ein
 anderes Serviceprogramm RUTESTCASE verwendet, als ihr Test Suite Serviceprogramm. Die
 kann beispielsweise passieren, wenn:
 <ul>
@@ -31,13 +31,13 @@ In diesem Fall sehen die Beziehungen der Objekte wie folgt aus:
 <p>
 <img class="noborder" src="./assets/duplicate_irpgunit_objects.png">
 <p>
-<h2>L�sung</h1>
+<h2>Lösung</h1>
 <p>
-F�r die L�sung des Problems existieren zwei Ans�tze:
+Für die Lösung des Problems existieren zwei Ansätze:
 <p>
 <ol>
-<li>�ndern sie die RSE Verbindung und ersetzten sie die dort angegebene iRPGUnit Bibliothek mit der Bibliothek auf der Einstellungsseite.</li>
-<li>�ffnen sie die Einstellungsseite und �ndern sie die Produktbibliothek auf <i>*LIBL</i>.</li>
+<li>Ändern sie die RSE Verbindung und ersetzten sie die dort angegebene iRPGUnit Bibliothek mit der Bibliothek auf der Einstellungsseite.</li>
+<li>Öffnen sie die Einstellungsseite und ändern sie die Produktbibliothek auf <i>*LIBL</i>.</li>
 </ol>
 <p>
 <iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
