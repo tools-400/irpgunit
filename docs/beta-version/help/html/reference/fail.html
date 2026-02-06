@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>fail (fail)</title>
+</head>
+
+<body>
+<img src="assets/cobol_ready.png" style="float:right; margin-right:20px;  margin-bottom:20px" border=0>
+<h1>fail (fail)</h1>
+<b>Syntax:</b>
+<p class="indent">
+<code>fail( 'message' );</code>
+</p>
+<b>Description:</b>
+<p class="indent">
+Produces an error and appends the specified <code>'message'</code> to the test 
+report. The test case is terminated.
+</p>
+<b>Return value:</b>
+<p class="indent">
+void
+</p>
+<b>Example:</b>
+<p>
+<code><pre class="indent">
+monitor;
+
+  produceAnException(doFailure);
+  
+  <span class="r-cmt-red">fail('produceAnException(..) should have raised an error.');</span>
+
+on-error;
+  <span class="r-cmt">// Success. Failure exception was seen.</span>
+endmon;
+</pre></code>
+</p>
+<b>Cobol Syntax:</b>
+<p class="indent">
+<code>
+Call "fail" Using<br>
+&nbsp;&nbsp;&nbsp;[By Content "message".
+</code>
+</p>
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

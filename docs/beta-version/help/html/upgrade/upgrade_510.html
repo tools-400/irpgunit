@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="../stylesheet.css">
+    <title>Upgrading From v5.1.0 to v6.0.0</title>
+</head>
+
+<body>
+<h1>Upgrading From v5.1.0 to v6.0.0</h1>
+<p>
+<h2>Breaking Change</h2>
+The layout of the user space for carrying the test results to the Eclipse iRPGUnit plug-in has changed.
+The current version is 6. Version 4 user spaces, introduced with v5.1.0.r (12.07.2025), are still supported.
+<p>
+<h2>Recommendation</h2>
+It is recommended to re-compile existing test suites, because of the change applied to procedure aEqual(). Without recompiling the test suites, the lengths of 'expected' and 'actual' are always assumed as 32565 bytes.
+<p>
+<h2>Processing of Assertions</h2>
+Optionally all assertions of a test case can be executed, now.
+Optional können jetzt alle Zusicherungen eines Testfalls abgerabeitet werden. Until now,
+the processing of assertions was aborted at the first error.
+<p>
+See: <a href="../quickstart/preferences.html">Preferences</a>
+<p>
+<h2>XML Output Type</h2>
+Starting with v6.0.0, the XML output type defaults to <code>*JENKINS2</code>. The old format
+is produced, if parameter <code>XMLTYPE</code> is set to <code>*JENKINS1</code>.
+<p>
+This change was required, because RPGUNIT shows the <b>expected</b> and <b>actual</b> values
+of a failed test case, now.
+<p>
+<h2>XML Output Type 1<h2>
+<p>
+<iframe class="indent" src="../appendix/assets/output_jenkins1.txt" width="90%" height="30%" name="iRPGUnit-Popup" ></iframe>
+<p>
+<h2>XML Output Type 2<h2>
+<p>
+<iframe class="indent" src="../appendix/assets/output_jenkins2.txt" width="90%" height="30%" name="iRPGUnit-Popup" ></iframe>
+<p>
+<h2>XML Output VS Code 1<h2>
+<p>
+<iframe class="indent" src="../appendix/assets/output_vscode1.txt" width="90%" height="30%" name="iRPGUnit-Popup" ></iframe>
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

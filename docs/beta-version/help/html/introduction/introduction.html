@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Quickstart</title>
+</head>
+
+<body>
+<h1>Introduction</h1>
+<a href="https://github.com/tools400/irpgunit/" target="_blank">
+<img src="assets/iRPGUnit.png" style="float:right; margin-right:20px;  margin-bottom:20px" border=0></a>
+The iRPGUnit plug-in connects the <i>IBM Rational Developer for i</i> with the RPGUnit library, that 
+was started by Lacton back in September 2006. It adds a context menu item to the Remote Systems 
+Explorer to let you run your RPGUnit test suites directly from there.
+<p>
+The plug-in bases on source code originally developed by Mihael Schmidt 
+for his <a href="http://rpgnextgen.com/">RPG Next Gen<a> editor. It fixes a few bugs 
+and adds many enhancements, such as a report viewer and the presentation
+of the call stack information in the <i>RPGUnit</i> view.
+<p>
+Furthermore there is an extension for integrating the <i>iSphere</i> plug-in. It is recommended
+to install the <i>iRPGUnit iSphere Integration Feature</i> for more convenience.
+<p>
+The RPGUnit library is an enhanced version of the library developed by <i>Laction</i> and 
+continued by <i>Cyril Clemenceau</i> at <a href="http://rpgunit.sourceforge.net/">RPGUnit at SourceForge</a>. 
+Unfortunately it looks like the project is no longer active. Nevertheless this website 
+still a good place to get information about using RPGUnit.
+<p>
+After starting the project with RPG, version 4 now also
+supports <a href="../quickstart/cobol/usage_cobol.html">Cobol</a>.
+<p>
+<table>
+<tr>
+  <td class="notice"><b>Important: Read the upgrade instructions when you consider to move to 
+                     iRPGUnit.</b><p>
+                     <a href="../upgrade/upgrade_032.html">Upgrading From v0.3.2 to v2.0.0</a><br>
+                     <a href="../upgrade/upgrade_110.html">Upgrading From v1.10.0 to v2.0.0</a><br>
+                     <a href="../upgrade/upgrade_242.html">Upgrading From v2.4.2 to v3.0.0</a><br>
+                     <a href="../upgrade/upgrade_320.html">Upgrading From v3.2.0 to v4.0.0</a><br>
+                     <a href="../upgrade/upgrade_404.html">Upgrading From v4.0.4 to v4.1.0</a><br>
+                     <a href="../upgrade/upgrade_421.html">Upgrading From v4.2.1 to v5.0.0</a><br>
+                     <a href="../upgrade/upgrade_510.html">Upgrading From v5.1.0 to v6.0.0</a><p>
+                     <b>Start with updating the plug-in then upload the new library.</b>
+  </td>
+</tr>
+</table>
+<p>
+<table>
+<tr>
+  <td class="important">It is important to know that starting with v3.0.0 source member TESTCASE has
+                        been moved from source file RPGUNIT1 to source file QINCLUDE. Currently iRPGUnit
+                        is shipped with a proxy member in file RPGUNIT1 to ensure backward compatibility
+                        at compile time. This proxy member will be removed after 31.12.2019 with a later
+                        version of iRPGUnit.<p>
+                        <b>Ensure to refactor your test suites in time!</b>
+  </td>
+</tr>
+</table>
+<p>
+Any comments or suggestions are greatly appreciated. Feel free to send your 
+email to: <a href="mailto:rpgunit@tools400.de?subject="iRPGUnit Feedback">rpgunit@tools400.de</a> or
+<a href="mailto:mihael@rpgnextgen.com?subject="iRPGUnit Feedback">mihael@rpgnextgen.com</a>.
+<p>
+Happy Unit Testing!
+<p>
+Thomas and Mihael
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

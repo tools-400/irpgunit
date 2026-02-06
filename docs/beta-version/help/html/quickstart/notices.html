@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Notices</title>
+</head>
+
+<body>
+<h1>Notices</h1>
+The following notices shall help you to use RPGUnit properly and to understand 
+unexpected results.
+
+<h2>How it works</h2>
+Basically RPGUnit tries to works exactly the same as JUnit. But there is an
+edge case when assertions are monitored. If the test suite is executed with
+parameter <code>ONFAILURE</code> set to <code>*CONTINUE</code>, RPGUnit cannot detect
+that the assertion is monitored and hence reports an error.
+<p>
+The problem does not exist, if the test suite is executed with parameter
+<code>ONFAILURE</code> set to <code>*ABORT</code>, which is the default
+value.
+<p>
+
+<b>Monitor Group</b>
+<code><pre class="indent">
+monitor;
+
+   <span class="r-cmt">// calculation statements</span>
+   
+   aEqual( 'HelloWorld' : 'Hello' );  
+
+on-error;
+   <span class="r-cmt">// error handler</span>
+endmon;
+</pre></code> 
+
+<b>CALLP - Error Extender</b>
+<code><pre class="indent">
+callp(e) aEqual( 'HelloWorld' : 'Hello' );
+</pre></code> 
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
