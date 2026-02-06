@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>getAssertFailEvt (get event of last failed assertion)</title>
+</head>
+
+<body>
+<h1>getAssertFailEvtLong (get event of last failed assertion, long message text)</h1>
+<p>
+<b>Syntax:</b>
+<p class="indent">
+<code>assertFailEvt = getAssertFailEvtLong();</code>
+</p>
+<b>Description:</b>
+<p class="indent">
+Returns a data structure with information about the last failed assertion. This
+procedure return a message text up to 1024 characters and replaces the getAssertFailEvt() 
+procedure.
+</p>
+<b>Funktionswert:</b>
+<p>
+<code><pre class="indent">
+<span class="r-cmt">&nbsp;&nbsp;// Assertion Failure Event.</span>
+D AssertFailEvtLong_t...
+D                 ds                  Qualified Template
+D  msg                                Like(msgText_t)
+D  callStkEnt                         LikeDs(CallStkEnt_t)
+D                                     Dim(MAX_CALL_STK_SIZE)
+
+D MAX_CALL_STK_SIZE...
+D                 c                   Const(64)
+
+<span class="r-cmt">&nbsp;&nbsp;// // Message replacement data or message text.</span>
+D msgText_t       s           1024a   Varying Template 
+
+<span class="r-cmt">&nbsp;&nbsp;// Call Stack Entry.</span>
+D CallStkEnt_t    ds                  Qualified Template
+D  pgmNm                        10a
+D  modNm                        10a
+D  procNm                      256a
+D  specNb                       10a
+</pre></code>
+<p>
+<b>Example:</b>
+<p>
+<code><pre class="indent">
+assertFailEvt = getAssertFailEvt();
+
+assert( excpWasSeen :
+        'aEqual( Hello : Good bye )'
+      + ' should have raised an error message.' );
+
+aEqual( 'Expected ''Hello'', but was ''Good bye''.' :
+        assertFailEvt.msg );
+</pre></code>
+</p>
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

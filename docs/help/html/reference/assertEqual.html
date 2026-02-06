@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="../stylesheet.css">
+    <title>assertEqual (assertEqual)</title>
+</head>
+
+<body>
+<h1>assertEqual (all data types)</h1>
+<b>Syntax:</b>
+<p class="indent">
+<code>assertEqual( 'expected' : 'actual' [: 'message');</code>
+</p>
+<b>Description:</b>
+<p class="indent">
+Compares the given values <code>'expected'</code> and 
+<code>'actual'</code>. The assertion fails, if both values are different.
+</p>
+<p class="indent">
+This assertion supports all data types.
+</p>
+<b>Return value:</b>
+<p class="indent">
+void
+</p>
+<b>Example 1 (string):</b>
+<p>
+<code><pre class="indent">
+assertEqual( 'Hello' : 'Hello' );          
+
+<span class="r-cmt">// No exception message => OK.</span>        
+
+assertEqual( 'HelloWorld' : 'Hello' );
+
+<span class="r-cmt-red">// Never reached!</span>        
+</pre></code>
+</p>
+<b>Example 2 (timestamp):</b>
+<p>
+<code><pre class="indent">
+assertEqual( z'2024-09-16-10.25.00.000' : z'2024-09-16-10.25.00.000' );          
+
+<span class="r-cmt">// No exception message => OK.</span>        
+
+assertEqual( z'2024-09-16-10.25.00.000' : z'2024-12-31-00.00.00.000' );          
+
+<span class="r-cmt-red">// Never reached!</span>        
+</pre></code>
+</p>
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

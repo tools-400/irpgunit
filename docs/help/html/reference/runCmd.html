@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>runCmd (execute CL command)</title>
+</head>
+
+<body>
+<h1>runCmd (execute CL command)</h1>
+<b>Syntax:</b>
+<p class="indent">
+<code>runCmd( 'command' );</code>
+</p>
+<b>Description:</b>
+<p class="indent">
+Uses the <code>QCMDEXC</code> API to execute the CL command specified at 
+parameter <code>command</code>.
+</p>
+<b>Return value:</b>
+<p class="indent">
+void
+</p>
+<b>Example:</b>
+<p>
+<code><pre class="indent">
+<span class="r-cmt">// Prints a job log.</span>
+
+runCmd( 'DSPJOBLOG JOB(*) OUTPUT(*PRINT)' );          
+</pre></code>
+</p>
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

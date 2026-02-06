@@ -1,0 +1,213 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Usage</title>
+</head>
+
+<body>
+<h1>General Information</h1>
+Using RPGUnit is split into two parts:
+<ol>
+<li>Creating test cases</li>
+<li>Running test cases</li>
+</ol>
+<h2>Creating test cases</h2>
+In RPG a test case is an exported procedure. Its name must start with <code>test</code> 
+in order to be accepted by the RPGUnit utility. But that also means that you must not 
+export procedures, starting with <code>test</code>, that are not intended to be a test 
+case.
+<p>
+In order to use RPGUnit procedures you need to add copy book <code>TESTCASE</code> 
+to your source member:
+For members:
+<code class="indent"><pre>
+ /include qinclude,TESTCASE                  iRPGUnit Test Suite
+</pre></code>
+For stream files:
+<code class="indent"><pre>
+ /include qinclude/TESTCASE.rpgle            iRPGUnit Test Suite
+</pre></code>
+<p>
+<u>Test case examples</u>
+<ul>
+<li>testGenerateUUID</li>
+<li>testUpdateStatus</li>
+<li>testGenerateMD5</li>
+<li>testGetNextRecord</li>
+</ul>
+<p>
+One or more test cases make a test suite. In RPG we use a service program for that.
+A test suite (service program) is compiled with command <code>RUCRTRPG</code>.
+<p class="indent">
+<code>RUCRTRPG TSTPGM(RPGUNIT/RUPLUGINT1) SRCFILE(RPGUNITT1)</code></p>
+<p>
+Member <a href="../appendix/assets/RPGUnitRPGTestSuite.txt"><code>QTEMPLATE.RPG</code></a> is 
+an example of a test suite. It does not do any harm but produces a spooled file with the
+execution flow. 
+<p>
+<table>
+<tr>
+<td class="notice">Note: You need to specify a named source member and compiler option <code>*EVENTF</code> in 
+                   order to get back your compile result in RDi. Furthermore parameter SRCMBR
+                   has to be set to the name of source member to enable RDi to load the compile 
+                   result. For example:<p>
+                   <code><u>RPGLE:</u><br>RUCRTRPG TSTPGM(&O/&N) SRCFILE(&L/&F) SRCMBR(&N) COPTION(*SRCSTMT *EVENTF) DBGVIEW(*LIST)
+                   <br><br><u>SQLRPGLE:</u><br>RUCRTRPG TSTPGM(&O/&N) SRCFILE(&L/&F) SRCMBR(&N) POPTION(*EVENTF) COMPILEOPT('DBGVIEW(*LIST)')</code><p>
+                   It is also recommended to specify <code>*SRCSTMT</code>, to directly jump to the failed source 
+                   statement, when double-clicking an error in the iRPGUnit view.</td>
+</tr>
+</table>
+<h2>Running test cases on a CL command line</h2>
+Once you have your test suites in place, you can execute them with command 
+<code>RUCALLTST</code>. By default the command executes all test cases of a
+test suite. If you want to run a single test case you can specify the name
+of the test case (procedure name) at parameter <code>TSTPRC</code> at the
+command prompt.  
+<p class="indent">
+<code class="code">RUCALLTST TSTPGM(RUPLUGINT1)</code></p>
+or
+<p class="indent">
+<code class="code">RUCALLTST TSTPGM(RUPLUGINT1) TSTPRC(TESTALLOK_2)</code></p>
+<p>
+<h2>Running test cases from RDi</h2>
+From RPi you can use the Remote Systems Explorer to run your test suites. There is a 
+new context menu 'Run RPGUnit Test' that lets you select and run your test suites.
+<p class="indent">
+<img src="assets/RunRPGUnitTest.png" alt="Run RPGUnit Test">
+</p>
+<p>
+The result is shown in view 'iRPGUnit': 
+<p class="indent">
+<img src="assets/RPGUnitView_Success.png" alt="Display RPGUnit Test Result">
+</p>
+From there you can choose between the following options:
+<ul>
+<li>Collapse All</li>
+<li>Expand All</li>
+<li>Show Failures Only</li>
+<li>Rerun All Test Cases</li>
+<li>Disable Report</li>
+<li>Enable Debug Mode</li>
+</ul>
+<p>
+The following options are available from the context menu: 
+<p class="indent">
+<img src="assets/RPGUnitPopupMenu.png" alt="iRPGUnit Context Menu">
+</p>
+<ul>
+<li>Rerun Selected Test Case</li>
+<li>Display Report</li>
+<li>Edit LPEX (also: mouse double-click)</li>
+<li>Remove Selected Test Suite</li>
+</ul>
+<table>
+<tr>
+<td class="notice">Known issue: The stream file editor cannot be positioned to the line with the unit test error, as 
+                   it is possible with the LPEX source member editor.</td>
+</tr>
+</table>
+<p>
+Header properties: 
+<p>
+<table>
+  <colgroup>
+   <col valign="top">
+   <col valign="top">
+   <col valign="top">
+  </colgroup>
+  <tr><td>Runs</td><td>:</td><td>Number of last executed test cases / Total number of test cases in view</td></tr>
+  <tr><td>Errors</td><td>:</td><td>Total number of errors in view</td></tr>
+  <tr><td>Failures</td><td>:</td><td>Total number of failed test cases in view</td></tr>
+  <tr><td>Assertions</td><td>:</td><td>Total number of executed assertions in view</td></tr>
+</table>
+<p>
+Result of a failed unit test: 
+<p class="indent">
+<img src="assets/RPGUnitView_Error.png" alt="Display RPGUnit Test Result">
+</p>
+<p>
+Use the properties view to see the properties of a selected line in a grid: 
+<p class="indent">
+<img src="assets/RPGUnitView_Error_Properties.png" alt="Display RPGUnit Test Result">
+</p>
+By default, the execution time is hidden in the properties view. You can display it 
+with the "Show Advanced Properties" <img align="top" src="assets/Show_Advanced_Properties_Button.png" /> button.
+<p>
+<table>
+<tr>
+<td class="info">Hint: Disable preference option <i>Show result view</i> to keep the focus on the view where you started a 
+                 unit test after a test run. The <i>RPGUnit</i> result view displays a green or red icon on the tab of the view
+                 to show the result.</td>
+</tr>
+</table>
+<p>
+<table>
+<tr><td><img src="assets/Icon_OK.png" /></td><td width="10">&nbsp;</td><td>Indicates that the unit test finished successfully.</td></tr>
+<tr><td><img src="assets/Icon_Error.png" /></td><td width="10">&nbsp;</td><td>Indicates that the unit test ended with errors. Check the result view for details.</td></tr>
+<tr><td><img src="assets/Icon_Canceled.png" /></td><td width="10">&nbsp;</td><td>Indicates that all unit tests had been canceled by the user. Check the result view for details.</td></tr>
+</table>
+<p>
+<h3>Unit Tests With Errors</h3>
+<p>
+In case that a unit test ended with errors, it may be helpful to see the messages of the job log. Use the
+<a href="./preferences.html">preferences</a> or the view menu to set the appropriate message capturing level: 
+<p class="indent">
+<img src="assets/RPGUnitView_Menu.png" alt="Display RPGUnit Test Result">
+</p>
+<p>
+<table>
+<tr><td valign="top" nowrap>Do not capture anything</td><td valign="top">-</td><td valign="top">No messages are captured from the job log.</td></tr>
+<tr><td valign="top" nowrap>Capture escape messages on unexpected errors</td><td valign="top">-</td><td valign="top">Escape messages are captured from the job log, when a test case ended with errors.</td></tr>
+<tr><td valign="top" nowrap>Capture all messages on unexpected errors</td><td valign="top">-</td><td valign="top">All messages of the job log are captured, when a test case ended with errors.</td></tr>
+<tr><td valign="top" nowrap>Capture all job log entries</td><td valign="top">-</td><td valign="top">All messages of the job log are captured at any time.</td></tr>
+<tr><td valign="top" nowrap>Format job log entries</td><td valign="top">-</td><td valign="top">Specifies whether or not the job log entries are formatted when appended to the <i>Commands Log</i> view.</td></tr>
+<tr><td valign="top" nowrap>Show compare viewer</td><td valign="top">-</td><td valign="top">Shows/hides the viewer for comparing the <i>expected</i> and <i>actual</i> values.</td></tr>
+<tr><td valign="top" nowrap>Show properties</td><td valign="top">-</td><td valign="top">Opens the properties with for displaying the properties of an entries of the <i>RPGUnit</i> view.</td></tr>
+</table>
+<p>
+Captured messages are displayed in the <i>Commands Log</i> view.
+<p>
+<h3>Compare Viewer</h3>
+The compare viewer displays the <i>expected</i> and <i>actual</i> values of a failed test case:
+<p class="indent">
+<img src="assets/RPGUnitView_Compare_Viewer.png" alt="Display RPGUnit Test Result">
+</p>
+<p>
+The '<code>«</code>' character indicates the end of a value to better detect trailing spaces.<br>
+<p>
+The content of the compare viewer can be horizontally scrolled with:
+<ul>
+<li>Left/Right keys (step width: 1)</li>
+<li>Ctrl+Left/Right keys (step width: word)</li>
+<li>Mouse wheel (step width: 1)</li>
+<li>Ctrl+Mouse wheel (step width: 10)</li>
+<li>Shift+Mouse wheel (step width: 50)</li>
+<li>Pos1 (start of text)</li>
+<li>End (end of text)</li>
+</ul>
+<p>
+The differences are displayed with the <i>Conflicting change color</i> defined at <i>Preferences - Colors and Fonts</i>.
+<p>
+The copy button next to the <i>Expected</i> and <i>Actual</i> labels copies the value to the clipboard. Its behavior can be modified like this:
+<ul>
+<li>Ctrl: Copies both values</li>
+<li>Shift: Copies both values prefixed with the label</li>
+</ul>
+<p>
+<h3>Error Messages</h3>
+The following error dialog is displayed, when a service program is not recognized as a RPGUnit test suite or when
+a procedure is not recognized as a test case. Check the following rules to identify the problem:
+<ul>
+<li>Depending on the preferences service programs must be tagged with 'RPGUNIT' (user defined attribute or description).</li>
+<li>Procedure names must start with 'test'.</li>
+</ul>
+<p class="indent">
+<img src="assets/TestCaseErrorMessages.png" alt="Error messages when attempting to run a test case">
+</p>
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

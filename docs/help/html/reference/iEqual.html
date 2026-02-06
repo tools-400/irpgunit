@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>iEqual (integer equal)</title>
+</head>
+
+<body>
+<h1>iEqual (integer equal)</h1>
+<b>Syntax:</b>
+<p class="indent">
+<code>iEqual( expected : actual [: 'fieldName');</code>
+</p>
+<b>Description:</b>
+<p class="indent">
+Compares the given Integer values <code>expected</code> and 
+<code>actual</code>. The assertion fails, if both values are different.
+</p>
+<b>Return value:</b>
+<p class="indent">
+void
+</p>
+<b>Example:</b>
+<p>
+<code><pre class="indent">
+iEqual( 123 : 123 );
+
+<span class="r-cmt">// No exception message => OK.</span>
+
+iEqual( 123 : 456 );
+
+<span class="r-cmt-red">// Never reached!</span>        
+</pre></code>
+</p>
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

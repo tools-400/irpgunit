@@ -793,7 +793,7 @@
 
         <!-- Homepage Help -->
         <if>
-            <equals arg1="${ignore.build.help}" arg2="false" />
+            <equals arg1="${build.help.enabled}" arg2="true" />
             <then>
                 <copy todir="${target.ide.uload.dir}/${beta.dir}/${build.pages.help}" >
                     <fileset dir="${build.upload.dir.help}">
