@@ -1,4 +1,4 @@
-# iRpgFormatter Logo
+# iRPGUnit Logo
 
 ![iRPGUnit Logo](iRPGUnit.png)
 
@@ -29,4 +29,4 @@ Untere Zeile:  30 pt, Arial, bold
 
 ---
 
-Gilt auch für: iRPGUnit
+Gilt auch für: iRPGFormatter
