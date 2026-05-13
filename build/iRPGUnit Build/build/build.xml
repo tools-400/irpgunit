@@ -344,6 +344,30 @@
 
     <!-- Check what shall be build -->
     <if>
+        <equals arg1="${build.marketplace.enabled}" arg2="true" />
+        <then>
+            <!-- build project doc -->
+            <echo>Building Eclipse Marketplace is enabled.</echo>
+        </then>
+        <else>
+            <property name="ignore.build.marketplace" value="true" />
+            <echo>IGNORED: Building Eclipse Marketplace</echo>
+        </else>
+    </if>
+
+    <if>
+        <equals arg1="${build.project.doc.enable}" arg2="true" />
+        <then>
+            <!-- build project doc -->
+            <echo>Building project documentation files is enabled.</echo>
+        </then>
+        <else>
+            <property name="ignore.build.project.doc" value="true" />
+            <echo>IGNORED: Building project documentation files</echo>
+        </else>
+    </if>
+
+    <if>
         <equals arg1="${build.help.enabled}" arg2="true" />
         <then>
             <!-- build help pages -->
@@ -362,7 +386,6 @@
             <echo>Building IBMi library is enabled.</echo>
         </then>
         <else>
-            <property name="build.library.enabled" value="true" />
             <echo>IGNORED: Building IBMi library</echo>
         </else>
     </if>
@@ -504,8 +527,14 @@
             <fileset dir="${build.template.dir.web}" excludes="${target.ide.exclude.web.files}" />
         </copy>
 
-        <echo>Loading marketplace installation hint</echo>
-        <loadfile property="marketplace.installation.hint" srcfile="${build.template.dir.web.build_target}/${marketplace.installation.hint.snippet}" />
+        <!-- build.marketplace.enabled -->
+        <if>
+            <equals arg1="${build.project.doc.enable}" arg2="true" />
+            <then>
+                <echo>Loading marketplace installation hint</echo>
+                <loadfile property="marketplace.installation.hint" srcfile="${build.template.dir.web.build_target}/${marketplace.installation.hint.snippet}" />
+            </then>
+        </if>
 
         <echo>Renaming ${target.ide.sf.dir} ...</echo>
         <!-- <move todir="${build.upload.dir.web.eclipse}\${target.ide.sf.dir}" > -->
@@ -660,9 +689,14 @@
 
         <replace file="${build.upload.dir.home}/${files.page}" token="@PLUGIN_NAME@" value="${build.public.project.name}" />
 
-        <copy todir="${build.upload.dir.files}" >
-            <fileset file="${project.pdf}" />
-        </copy>
+        <if>
+            <equals arg1="${build.project.doc.enable}" arg2="true" />
+            <then>
+                <copy todir="${build.upload.dir.files}" >
+                    <fileset file="${project.pdf}" />
+                </copy>
+            </then>
+        </if>
 
         <condition property="project.notifier.exists" >
             <available file="${project.notifier}" type="file" />
@@ -854,11 +888,16 @@
         </copy>
 
         <!-- Documentation pdf -->
-        <copy todir="${target.ide.uload.dir}/${beta.dir}/${build.pages.files}/" >
-            <fileset dir="${build.upload.dir.files}" >
-                <include name="${build.project.pdf}" />
-            </fileset>
-        </copy>
+        <if>
+            <equals arg1="${build.project.doc.enable}" arg2="true" />
+            <then>
+                <copy todir="${target.ide.uload.dir}/${beta.dir}/${build.pages.files}/" >
+                    <fileset dir="${build.upload.dir.files}" >
+                    <include name="${build.project.pdf}" />
+                    </fileset>
+                </copy>
+            </then>
+        </if>
 
     </target>
 
@@ -921,14 +960,6 @@
         <mkdir dir="${temp.dir.local_updatesite}" />
         <mkdir dir="${temp.dir.local_updatesite}/features" />
         <mkdir dir="${temp.dir.local_updatesite}/plugins" />
-        <mkdir dir="${temp.dir.local_updatesite}/Server" />
-
-        <if>
-            <equals arg1="${build.help.enabled}" arg2="true" />
-            <then>
-                <copy file="${build.template.dir.web.assets}/upload_savf.cmd" todir="${temp.dir.local_updatesite}/Server" />
-            </then>
-        </if>
 
         <copy todir="${temp.dir.local_updatesite}/features" >
             <fileset dir="${site.dir}/features" />
@@ -958,6 +989,8 @@
         <if>
             <equals arg1="${do.copy.site.xml}" arg2="true" />
             <then>
+                <mkdir dir="${temp.dir.local_updatesite}/Server" />
+                <copy file="${build.template.dir.web.assets}/upload_savf.cmd" todir="${temp.dir.local_updatesite}/Server" />
                 <copy todir="${temp.dir.local_updatesite}" >
                     <fileset dir="${site.dir}" includes="site.xml" />
                 </copy>
