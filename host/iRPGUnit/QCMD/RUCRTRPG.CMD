@@ -139,6 +139,15 @@
          /*   Additional parameters                */
          /* -------------------------------------- */
 
+             PARM       KWD(DLTMOD)                          +
+                          TYPE(*LGL)                         +
+                          PMTCTL(*PMTRQS)                    +
+                          DFT(*YES)                          +
+                          RSTD(*YES)                         +
+                          SPCVAL((*YES '1')                  +
+                                 (*NO  '0'))                 +
+                          PROMPT('Delete modules')
+
              PARM       KWD(ACTGRP)                          +
                           TYPE(*NAME)                        +
                           PMTCTL(*PMTRQS)                    +

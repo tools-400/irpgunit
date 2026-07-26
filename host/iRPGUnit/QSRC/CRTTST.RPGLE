@@ -1,4 +1,4 @@
-**FREE
+**free
 // ==========================================================================
 //  iRPGUnit - Implementation of RUCRT* commands.
 // ==========================================================================
@@ -57,9 +57,9 @@ ctl-opt nomain;
 //----------------------------------------------------------------------
 
 dcl-ds jobLogUserData_t qualified template;
-  timelimit       timestamp;
-  crtmsgid        char(7);
-  modules         likeds(objectArray_t) inz;
+  timelimit timestamp;
+  crtmsgid  char(7);
+  modules   likeds(objectArray_t) inz;
 end-ds;
 
 
@@ -75,27 +75,28 @@ dcl-ds srvPgm likeds(object_t);
 //---------------------------------------------------------------------
 
 dcl-proc crtTst export;
-  dcl-pi *N;
-    testPgm         likeds(object_t) const;
-    srcFile         likeds(object_t) const;
-    srcMbr          like(srcMbr_t.mbr) const;
-    srcStmf         like(ifsStmf_t) const;
-    text            like(text_t) const;
-    cOption         likeds(options_t) const;
-    dbgView         like(dbgView_t) const;
-    bndSrvPgm       likeds(objectArray_t) const;
-    bndDir          likeds(objectArray_t) const;
-    bOption         likeds(options_t) const;
-    define          likeds(defines_t) const;
-    dltSplF         like(yesno_t) const;
-    actGrp          like(activationGroup_t) const;
-    bModules        likeds(objectArray_t) const;
-    pRpgPpOpt       like(rpgPpOpt_t) const;
-    pOption         likeds(options_t) const;
-    compileOpt      like(compileOpt_t) const;
-    targetRls       like(targetRelease_t) const;
-    incDir          likeds(incDir_t) const;
-    tgtCcsid        like(tgtCcsid_t) const;
+  dcl-pi *n;
+    testPgm    likeds(object_t) const;
+    srcFile    likeds(object_t) const;
+    srcMbr     like(srcMbr_t.mbr) const;
+    srcStmf    like(ifsStmf_t) const;
+    text       like(text_t) const;
+    cOption    likeds(options_t) const;
+    dbgView    like(dbgView_t) const;
+    bndSrvPgm  likeds(objectArray_t) const;
+    bndDir     likeds(objectArray_t) const;
+    bOption    likeds(options_t) const;
+    define     likeds(defines_t) const;
+    dltSplF    like(yesno_t) const;
+    dltMod     like(yesNo_t) const;
+    actGrp     like(activationGroup_t) const;
+    bModules   likeds(objectArray_t) const;
+    pRpgPpOpt  like(rpgPpOpt_t) const;
+    pOption    likeds(options_t) const;
+    compileOpt like(compileOpt_t) const;
+    targetRls  like(targetRelease_t) const;
+    incDir     likeds(incDir_t) const;
+    tgtCcsid   like(tgtCcsid_t) const;
   end-pi;
 
   dcl-ds modules likeds(bModules) inz;
@@ -264,7 +265,7 @@ dcl-proc crtTst export;
 
   monitor;
     deleteModulesAndSpooledFiles(
-      dltsplf : startcompiletime : modulescreated );
+      dltsplf : dltMod : startcompiletime : modulescreated );
   on-error;
   endmon;
 
@@ -284,8 +285,8 @@ end-proc;
 
 
 dcl-proc isStmf;
-  dcl-pi *N ind extproc(*dclcase);
-    stmf   like(ifsStmf_t) const;
+  dcl-pi *n ind extproc(*dclcase);
+    stmf like(ifsStmf_t) const;
   end-pi;
 
   if (stmf <> '');
@@ -297,8 +298,8 @@ dcl-proc isStmf;
 end-proc;
 
 dcl-proc resolveLibraries;
-  dcl-pi *N likeds(objectArray_t) extproc(*dclcase);
-    modules   likeds(objectArray_t) const;
+  dcl-pi *n likeds(objectArray_t) extproc(*dclcase);
+    modules likeds(objectArray_t) const;
   end-pi;
 
   dcl-s i int(10);
@@ -331,9 +332,9 @@ end-proc;
 
 
 dcl-proc getCreatedModulesFromJobLog;
-  dcl-pi *N likeds(objectArray_t) extproc(*dclcase);
-    crtmsgid        char(7) const;
-    timelimit       timestamp const;
+  dcl-pi *n likeds(objectArray_t) extproc(*dclcase);
+    crtmsgid  char(7) const;
+    timelimit timestamp const;
   end-pi;
 
   dcl-s hreader like(hjoblogreader_t);
@@ -354,11 +355,11 @@ end-proc;
 
 dcl-proc jobLogCallback;
   dcl-pi *n ind extproc(*dclcase);
-    i_hMsgInfo      pointer const;
-    i_pUserData     pointer const;
-    i_msgId         char(7) const;
-    i_msgText       varchar(132) const;
-    i_msgSentTime   timestamp const;
+    i_hMsgInfo    pointer const;
+    i_pUserData   pointer const;
+    i_msgId       char(7) const;
+    i_msgText     varchar(132) const;
+    i_msgSentTime timestamp const;
   end-pi;
 
   dcl-ds userData likeds(jobLogUserData_t) based(i_pUserData);
@@ -367,13 +368,13 @@ dcl-proc jobLogCallback;
   dcl-ds module likeds(object_t);
 
   dcl-ds rns9305 qualified based(pMsgData);
-    mod   char(10);
-    lib   char(10);
+    mod char(10);
+    lib char(10);
   end-ds;
 
   dcl-ds lnc0899 qualified based(pMsgData);
-    length   int(5);
-    data     char(10);
+    length int(5);
+    data   char(10);
   end-ds;
 
   if (i_msgSentTime < userData.timelimit);
@@ -404,9 +405,9 @@ end-proc;
 
 
 dcl-proc addModules;
-  dcl-pi *N extproc(*dclcase);
-    modules   likeds(objectArray_t);
-    items     likeds(objectArray_t);
+  dcl-pi *n extproc(*dclcase);
+    modules likeds(objectArray_t);
+    items   likeds(objectArray_t);
   end-pi;
 
   dcl-s i int(10);
@@ -420,10 +421,10 @@ end-proc;
 
 
 dcl-proc addModule;
-  dcl-pi *N extproc(*dclcase);
-    modules      likeds(objectArray_t);
-    module       likeds(object_t) const;
-    isfirstmod   ind options(*nopass) const;
+  dcl-pi *n extproc(*dclcase);
+    modules    likeds(objectArray_t);
+    module     likeds(object_t) const;
+    isfirstmod ind options(*nopass) const;
   end-pi;
 
   dcl-s i int(10);
@@ -468,21 +469,21 @@ end-proc;
 
 
 dcl-proc crtRpgMod;
-  dcl-pi *N extproc(*dclcase);
-    testpgm         const likeds(object_t);
-    srcFile         const likeds(object_t);
-    srcMbr          const like(srcMbr_t.mbr);
-    srcStmf         like(ifsStmf_t) const;
-    coption         const likeds(options_t);
-    dbgview         const like(dbgView_t);
-    prpgppopt       const like(rpgPpOpt_t);
-    poption         const likeds(options_t);
-    compileopt      const like(compileOpt_t);
-    targetrls       const like(targetRelease_t);
-    define          const likeds(defines_t);
-    incDir          likeds(incDir_t) const;
-    tgtCcsid        like(tgtCcsid_t) const;
-    srcCcsid        like(cvtCcsid_t) const;
+  dcl-pi *n extproc(*dclcase);
+    testpgm    likeds(object_t) const;
+    srcFile    likeds(object_t) const;
+    srcMbr     like(srcMbr_t.mbr) const;
+    srcStmf    like(ifsStmf_t) const;
+    coption    likeds(options_t) const;
+    dbgview    like(dbgView_t) const;
+    prpgppopt  like(rpgPpOpt_t) const;
+    poption    likeds(options_t) const;
+    compileopt like(compileOpt_t) const;
+    targetrls  like(targetRelease_t) const;
+    define     likeds(defines_t) const;
+    incDir     likeds(incDir_t) const;
+    tgtCcsid   like(tgtCcsid_t) const;
+    srcCcsid   like(cvtCcsid_t) const;
   end-pi;
 
   // A command to be executed.
@@ -498,8 +499,8 @@ end-proc;
 
 
 dcl-proc sndCmdToJobLog;
-  dcl-pi *N extproc(*dclcase);
-    cmd   like(cmd_t) const options(*varsize);
+  dcl-pi *n extproc(*dclcase);
+    cmd like(cmd_t) options(*varsize) const;
   end-pi;
 
   dcl-s start int(10);
@@ -527,9 +528,9 @@ end-proc;
 
 
 dcl-proc sndCmdParmToJobLog;
-  dcl-pi *N extproc(*dclcase);
-    cmdParams     like(cmd_t) const options(*varsize);
-    firstIndent   varchar(4) const;
+  dcl-pi *n extproc(*dclcase);
+    cmdParams   like(cmd_t) options(*varsize) const;
+    firstIndent varchar(4) const;
   end-pi;
 
   dcl-s start int(10);
@@ -585,20 +586,20 @@ end-proc;
 
 
 dcl-proc crtCblMod;
-  dcl-pi *N;
-    testpgm         likeds(object_t) const;
-    srcFile         likeds(object_t) const;
-    srcMbr          like(srcMbr_t.mbr) const;
-    srcStmf         like(ifsStmf_t) const;
-    coption         likeds(options_t) const;
-    dbgview         like(dbgView_t) const;
-    poption         likeds(options_t) const;
-    compileopt      like(compileOpt_t) const;
-    targetrls       like(targetRelease_t) const;
-    define          likeds(defines_t) const;
-    incDir          likeds(incDir_t) const;
-    tgtCcsid        like(tgtCcsid_t) const;
-    srcCcsid        like(cvtCcsid_t) const;
+  dcl-pi *n;
+    testpgm    likeds(object_t) const;
+    srcFile    likeds(object_t) const;
+    srcMbr     like(srcMbr_t.mbr) const;
+    srcStmf    like(ifsStmf_t) const;
+    coption    likeds(options_t) const;
+    dbgview    like(dbgView_t) const;
+    poption    likeds(options_t) const;
+    compileopt like(compileOpt_t) const;
+    targetrls  like(targetRelease_t) const;
+    define     likeds(defines_t) const;
+    incDir     likeds(incDir_t) const;
+    tgtCcsid   like(tgtCcsid_t) const;
+    srcCcsid   like(cvtCcsid_t) const;
   end-pi;
 
   // A command to be executed.
@@ -615,10 +616,11 @@ end-proc;
 
 
 dcl-proc deleteModulesAndSpooledFiles;
-  dcl-pi *N extproc(*dclcase);
-    dltsplf         ind const;
-    starttime       timestamp const;
-    modules         const likeds(objectArray_t);
+  dcl-pi *n extproc(*dclcase);
+    dltSplf   ind const;
+    dltMod    ind const;
+    startTime timestamp const;
+    modules   likeds(objectArray_t) const;
   end-pi;
 
 
@@ -632,10 +634,12 @@ dcl-proc deleteModulesAndSpooledFiles;
   qJob.name = '*';
 
   for i = 1 to modules.size;
-    cmd = getDltModCmd( modules.object(i) );
-    qcmdexc(cmd: %len(cmd));
+    if (dltMod);
+      cmd = getDltModCmd( modules.object(i) );
+      qcmdexc(cmd: %len(cmd));
+    endif;
 
-    if (dltsplf);
+    if (dltSplf);
       hLister = splflister_init(qJob);
       splfLister_list(hLister: %paddr('deleteSplfCallback'));
     endif;
@@ -646,15 +650,15 @@ end-proc;
 
 dcl-proc deleteSplfCallback;
   dcl-pi *n ind extproc(*dclcase);
-    i_hsplf         pointer const;
-    i_puserdata     pointer const;
-    i_splfnm        char(10) const;
-    i_qJob          const likeds(job_t);
-    i_splfnbr       int(10) const;
-    i_filestatus    char(10) const;
+    i_hsplf      pointer const;
+    i_puserdata  pointer const;
+    i_splfnm     char(10) const;
+    i_qJob       likeds(job_t) const;
+    i_splfnbr    int(10) const;
+    i_filestatus char(10) const;
   end-pi;
 
-  dcl-s cmd             like(cmd_t);
+  dcl-s cmd like(cmd_t);
 
   cmd = 'DLTSPLF FILE(' + %trim(i_splfnm) + ') +
            JOB(' + %trim(i_qJob.nbr) + '/' +
@@ -669,19 +673,19 @@ dcl-proc deleteSplfCallback;
 end-proc;
 
 dcl-proc crtSrvPgm;
-  dcl-pi *N likeds(object_t) extproc(*dclcase);
-    testPgm         const likeds(object_t);
-    bndSrvPgm       const likeds(objectArray_t);
-    bndDir          const likeds(objectArray_t);
-    module          const likeds(objectArray_t);
-    bOption         const likeds(options_t);
-    actGrp          const like(activationGroup_t);
-    text            const like(text_t);
-    targetRls       const like(targetRelease_t);
+  dcl-pi *n likeds(object_t) extproc(*dclcase);
+    testPgm   likeds(object_t) const;
+    bndSrvPgm likeds(objectArray_t) const;
+    bndDir    likeds(objectArray_t) const;
+    module    likeds(objectArray_t) const;
+    bOption   likeds(options_t) const;
+    actGrp    like(activationGroup_t) const;
+    text      like(text_t) const;
+    targetRls like(targetRelease_t) const;
   end-pi;
 
   // Export all procedures from the service program.
-  dcl-c export_all const('*ALL');
+  dcl-c export_all '*ALL';
   // A command to be executed.
   dcl-s cmd like(cmd_t);
   // Bound Service Programs, with RPGUnit services included.
@@ -731,16 +735,16 @@ end-proc;
 
 
 dcl-proc getCrtSrvPgmCmd export;
-  dcl-pi *N       like(cmd_t);
-    testpgm         const likeds(object_t);
-    bndsrvpgm       const likeds(objectArray_t);
-    bnddir          const likeds(objectArray_t);
-    modules         const likeds(objectArray_t);
-    options         const likeds(options_t);
-    export          const like(export_t);
-    actgrp          const like(activationGroup_t);
-    text            const like(text_t );
-    targetrls       const like(targetRelease_t);
+  dcl-pi *n like(cmd_t);
+    testpgm   likeds(object_t) const;
+    bndsrvpgm likeds(objectArray_t) const;
+    bnddir    likeds(objectArray_t) const;
+    modules   likeds(objectArray_t) const;
+    options   likeds(options_t) const;
+    export    like(export_t) const;
+    actgrp    like(activationGroup_t) const;
+    text      like(text_t) const;
+    targetrls like(targetRelease_t) const;
   end-pi;
 
   // Command string accumulator.
@@ -769,8 +773,8 @@ end-proc;
 
 
 dcl-proc formatCommand;
-  dcl-pi *N like(cmd_t) extproc(*dclcase);
-    cmd   like(cmd_t) const;
+  dcl-pi *n like(cmd_t) extproc(*dclcase);
+    cmd like(cmd_t) const;
   end-pi;
 
   dcl-ds optCtrlBlk likeds(qcapcmd_optCtrlBlk_t);
@@ -796,21 +800,21 @@ end-proc;
 
 
 dcl-proc getCrtRpgModCmd export;
-  dcl-pi *N       like(cmd_t);
-    testPgm         likeds(object_t) const;
-    srcFile         likeds(object_t) const;
-    srcMbr          like(srcMbr_t.mbr) const;
-    srcStmf         like(ifsStmf_t) const;
-    cOption         likeds(options_t)const;
-    dbgView         like(dbgView_t)const;
-    pRpgPpOpt       like(rpgPpOpt_t)const;
-    pOptions        likeds(options_t)const;
-    compileOpt      like(compileOpt_t)const;
-    targetRls       like(targetRelease_t)const;
-    define          likeds(defines_t)const;
-    incDir          likeds(incDir_t) const;
-    tgtCcsid        like(tgtCcsid_t) const;
-    srcCcsid        like(cvtCcsid_t) const;
+  dcl-pi *n like(cmd_t);
+    testPgm    likeds(object_t) const;
+    srcFile    likeds(object_t) const;
+    srcMbr     like(srcMbr_t.mbr) const;
+    srcStmf    like(ifsStmf_t) const;
+    cOption    likeds(options_t) const;
+    dbgView    like(dbgView_t) const;
+    pRpgPpOpt  like(rpgPpOpt_t) const;
+    pOptions   likeds(options_t) const;
+    compileOpt like(compileOpt_t) const;
+    targetRls  like(targetRelease_t) const;
+    define     likeds(defines_t) const;
+    incDir     likeds(incDir_t) const;
+    tgtCcsid   like(tgtCcsid_t) const;
+    srcCcsid   like(cvtCcsid_t) const;
   end-pi;
 
   // Command string accumulator.
@@ -912,20 +916,20 @@ end-proc;
 
 
 dcl-proc getCrtCblModCmd export;
-  dcl-pi *N       like(cmd_t);
-    testpgm         const likeds(object_t);
-    srcFile         const likeds(object_t);
-    srcMbr          const like(srcMbr_t.mbr);
-    srcStmf         like(ifsStmf_t) const;
-    cOption         const likeds(options_t);
-    dbgView         const like(dbgView_t);
-    pOptions        const likeds(options_t);
-    compileOpt      const like(compileOpt_t);
-    targetRls       const like(targetRelease_t);
-    define          const likeds(defines_t);
-    incDir          likeds(incDir_t) const;
-    tgtCcsid        like(tgtCcsid_t) const;
-    srcCcsid        like(cvtCcsid_t) const;
+  dcl-pi *n like(cmd_t);
+    testpgm    likeds(object_t) const;
+    srcFile    likeds(object_t) const;
+    srcMbr     like(srcMbr_t.mbr) const;
+    srcStmf    like(ifsStmf_t) const;
+    cOption    likeds(options_t) const;
+    dbgView    like(dbgView_t) const;
+    pOptions   likeds(options_t) const;
+    compileOpt like(compileOpt_t) const;
+    targetRls  like(targetRelease_t) const;
+    define     likeds(defines_t) const;
+    incDir     likeds(incDir_t) const;
+    tgtCcsid   like(tgtCcsid_t) const;
+    srcCcsid   like(cvtCcsid_t) const;
   end-pi;
 
   // Command string accumulator.
@@ -1023,8 +1027,8 @@ end-proc;
 
 
 dcl-proc getDltModCmd;
-  dcl-pi *N like(cmd_t) extproc(*dclcase);
-    testPgm   const likeds(object_t);
+  dcl-pi *n like(cmd_t) extproc(*dclcase);
+    testPgm likeds(object_t) const;
   end-pi;
 
   // Command string accumulator.
@@ -1041,9 +1045,9 @@ end-proc;
 
 
 dcl-proc serializeObjectArray;
-  dcl-pi *N like(serializedArray_t) extproc(*dclcase);
-    headtoken   const like(headToken_t);
-    array       const likeds(objectArray_t);
+  dcl-pi *n like(serializedArray_t) extproc(*dclcase);
+    headtoken like(headToken_t) const;
+    array     likeds(objectArray_t) const;
   end-pi;
 
   // Serialized Object Array.
@@ -1073,8 +1077,8 @@ end-proc;
 
 
 dcl-proc serializeObjectName export;
-  dcl-pi *N like(serializedObject_t);
-    object   likeds(object_t) const;
+  dcl-pi *n like(serializedObject_t);
+    object likeds(object_t) const;
   end-pi;
 
   // Serialized object name.
@@ -1092,8 +1096,8 @@ end-proc;
 
 
 dcl-proc serializeStmfPath;
-  dcl-pi *N like(serializedStmf_t) extproc(*dclcase);
-    srcStmf   like(ifsStmf_t) options(*varsize) const;
+  dcl-pi *n like(serializedStmf_t) extproc(*dclcase);
+    srcStmf like(ifsStmf_t) options(*varsize) const;
   end-pi;
 
   // Serialized object name.
@@ -1107,9 +1111,9 @@ end-proc;
 
 
 dcl-proc serializeOptions;
-  dcl-pi *N like(serializedOptions_t) extproc(*dclcase);
-    headtoken   const like(headToken_t);
-    options     const likeds(options_t);
+  dcl-pi *n like(serializedOptions_t) extproc(*dclcase);
+    headtoken like(headToken_t) const;
+    options   likeds(options_t) const;
   end-pi;
 
   // Serialized Options.
@@ -1140,8 +1144,8 @@ end-proc;
 
 
 dcl-proc serializeDefines;
-  dcl-pi *N like(serializedOptions_t) extproc(*dclcase);
-    defines     const likeds(defines_t);
+  dcl-pi *n like(serializedOptions_t) extproc(*dclcase);
+    defines likeds(defines_t) const;
   end-pi;
 
   // Serialized Options.
@@ -1172,8 +1176,8 @@ end-proc;
 
 
 dcl-proc serializeTgtCcsid;
-  dcl-pi *N like(serializedTgtCcsid_t) extproc(*dclcase);
-    tgtCcsid    const like(tgtCcsid_t);
+  dcl-pi *n like(serializedTgtCcsid_t) extproc(*dclcase);
+    tgtCcsid like(tgtCcsid_t) const;
   end-pi;
 
   // Serialized Options.
@@ -1202,9 +1206,9 @@ end-proc;
 
 
 dcl-proc serializeCvtCcsid;
-  dcl-pi *N like(serializedTgtCcsid_t) extproc(*dclcase);
-    tgtCcsid    like(tgtCcsid_t) const;
-    cvtCcsid    like(cvtCcsid_t) const;
+  dcl-pi *n like(serializedTgtCcsid_t) extproc(*dclcase);
+    tgtCcsid like(tgtCcsid_t) const;
+    cvtCcsid like(cvtCcsid_t) const;
   end-pi;
 
   // Serialized Options.
@@ -1233,8 +1237,8 @@ end-proc;
 
 
 dcl-proc serializeIncDir;
-  dcl-pi *N like(serializedIncDir_t) extproc(*dclcase);
-    incDir      likeds(incDir_t) const;
+  dcl-pi *n like(serializedIncDir_t) extproc(*dclcase);
+    incDir likeds(incDir_t) const;
   end-pi;
 
   // Serialized Options.
@@ -1266,9 +1270,9 @@ end-proc;
 
 
 dcl-proc serializeString;
-  dcl-pi *N like(serializedString_t) extproc(*dclcase);
-    headtoken   like(headToken_t) const;
-    text        varchar(5000) options(*varsize) const;
+  dcl-pi *n like(serializedString_t) extproc(*dclcase);
+    headtoken like(headToken_t) const;
+    text      varchar(5000) options(*varsize) const;
   end-pi;
 
   // Serialized Options.
@@ -1301,9 +1305,9 @@ dcl-proc serializeString;
 end-proc;
 
 dcl-proc serializeValue;
-  dcl-pi *N like(serializedString_t) extproc(*dclcase);
-    headtoken   char(10) const;
-    value       const like(string_t);
+  dcl-pi *n like(serializedString_t) extproc(*dclcase);
+    headtoken char(10) const;
+    value     like(string_t) const;
   end-pi;
 
   // Serialized Options.
@@ -1321,7 +1325,7 @@ end-proc;
 
 
 dcl-proc haveCvtCcsidParam;
-  dcl-pi *N ind extproc(*dclcase);
+  dcl-pi *n ind extproc(*dclcase);
   end-pi;
 
   dcl-s osVersion char(6);

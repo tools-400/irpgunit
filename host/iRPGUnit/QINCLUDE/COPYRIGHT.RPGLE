@@ -1,4 +1,4 @@
-**FREE
+**free
 // ==========================================================================
 //  iRPGUnit Copyright Disclaimer.
 // ==========================================================================
@@ -8,12 +8,10 @@
 //  which accompanies this distribution, and is available at
 //  http://www.eclipse.org/legal/cpl-v10.html
 // ==========================================================================
-ctl-opt
-copyright('v6.0.0.v - xx.xx.xxxx - +
-           Copyright (c) 2013-xxxx iRPGUnit Project Team');
+ctl-opt copyright('v6.0.1.v - xx.xx.xxxx - Copyright (c) 2013-xxxx iRPGUnit Project Team');
 /if not defined(COPYRIGHT_DSPEC)
 /eof
 /endif
-dcl-c RPGUNIT_VERSION 'v6.0.0.v';
-dcl-c RPGUNIT_DATE    'xx.xx.xxxx';
+dcl-c RPGUNIT_VERSION 'v6.0.1.v';
+dcl-c RPGUNIT_DATE 'xx.xx.xxxx';
 

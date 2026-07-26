@@ -32,7 +32,8 @@
 // @param bndDir - Array of binding directories to search for dependencies
 // @param bOption - Binding options controlling the link process
 // @param define - Preprocessor defines for conditional compilation
-// @param dltSplF - Flag to delete compiler spooled files (*YES/*NO)
+// @param dltSplF - Flag to delete compiler spooled files on success (*YES/*NO)
+// @param dltMod - Flag to delete modules on success (*YES/*NO)
 // @param actGrp - Activation group specification for program execution
 // @param bModules - Array of additional modules to bind with the program
 // @param pRpgPpOpt - RPG-specific preprocessor options
@@ -55,6 +56,7 @@ dcl-pr crtTst extproc('CRTTST_crtTst');
   bOption    likeds(options_t) const;
   define     likeds(defines_t) const;
   dltSplF    like(yesno_t) const;
+  dltMod     like(yesNo_t) const;
   actGrp     like(activationGroup_t) const;
   bModules   likeds(objectArray_t) const;
   pRpgPpOpt  like(rpgPpOpt_t) const;

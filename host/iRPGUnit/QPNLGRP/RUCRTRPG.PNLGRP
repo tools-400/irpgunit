@@ -187,6 +187,19 @@ by the object creations commands are deleted on success.
 .* --------------------------------------
 .*  Additional parameters
 .* --------------------------------------
+:help name='RUCRTRPG/DLTMOD' WIDTH=64.
+Delete modules (DLTMOD) - Help
+:xh3.Delete modules (DLTMOD)
+:p.
+Specifies if all modules created by the object creations
+commands are deleted on success.
+:parml.
+:pt.:pk def.*YES:epk.
+:pd.Modules are deleted on success.
+:pt.*NO
+:pd.Modules are not deleted.
+:eparml.
+:ehelp.
 :help name='RUCRTRPG/ACTGRP' WIDTH=64.
 Activation group (ACTGRP) - Help
 :xh3.Activation group (ACTGRP)

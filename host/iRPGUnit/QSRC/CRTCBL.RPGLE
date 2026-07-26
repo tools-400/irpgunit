@@ -57,6 +57,7 @@ dcl-proc crtCbl;
     bOption      likeds(Options_t) const;
     define       likeds(defines_t) const;
     dltSplf      like(yesNo_t) const;
+    dltMod       like(yesNo_t) const;
     actGrp       like(ActivationGroup_t) const;
     bModules     likeds(ObjectArray_t) const;
     pOption      likeds(Options_t) const;
@@ -67,7 +68,7 @@ dcl-proc crtCbl;
   end-pi;
 
   crtTst(testPgm: srcFile: srcMbr: srcStmf: text: cOption: dbgView
-         : bndSrvPgm: bndDir: bOption: define: dltSplf: actGrp
+         : bndSrvPgm: bndDir: bOption: define: dltSplf: dltMod: actGrp
          : bModules: NO_VALUE: pOption: compileOpt: targetRls: incDir: tgtCcsid);
 
   *inlr = *on;

@@ -29,7 +29,8 @@
 // @param bndDir     - Array of binding directories to search for exports
 // @param bOption    - Binding options controlling service program creation
 // @param define     - Preprocessor definitions for conditional compilation
-// @param dltSplf    - Flag to delete compilation spooled files after creation
+// @param dltSplF    - Flag to delete compiler spooled files on success (*YES/*NO)
+// @param dltMod     - Flag to delete modules on success (*YES/*NO)
 // @param actGrp     - Activation group specification for runtime isolation
 // @param bModules   - Additional modules to include in the service program
 // @param pOption    - Preprocessor options for source processing
@@ -51,6 +52,7 @@ dcl-pr crtCbl extpgm('RUCRTCBL');
   bOption      likeds(Options_t) const;
   define       likeds(defines_t) const;
   dltSplf      like(yesNo_t) const;
+  dltMod       like(yesNo_t) const;
   actGrp       like(ActivationGroup_t) const;
   bModules     likeds(ObjectArray_t) const;
   pOption      likeds(Options_t) const;
