@@ -1,4 +1,4 @@
-**FREE
+**free
 // ==========================================================================
 //  iRPGUnit - XML File Writer.
 // ==========================================================================
@@ -18,7 +18,7 @@
 // >>END-PRE-COMPILER<<
 // ==========================================================================
 
-ctl-opt DECEDIT('0.') NOMAIN;
+ctl-opt decedit('0.') nomain;
 /define NO_DECEDIT
 /include qinclude,H_SPEC
 
@@ -437,6 +437,7 @@ dcl-proc writeFooter;
 
   text = '</testsuite>';
   appendToXmlFile(text);
+
 end-proc;
 
 //----------------------------------------------------------------------
@@ -452,13 +453,16 @@ dcl-proc escapeXml export;
 
   dcl-s escaped varchar(100000);
 
+  escaped = xml;
+
   escaped = %scanrpl('&' : '&amp;' : escaped);
-  escaped = %scanrpl('"' : '&quot;' : xml);
+  escaped = %scanrpl('"' : '&quot;' : escaped);
   escaped = %scanrpl('''' : '&apos;' : escaped);
   escaped = %scanrpl('<' : '&lt;' : escaped);
   escaped = %scanrpl('>' : '&gt;' : escaped);
 
   return escaped;
+
 end-proc;
 
 //----------------------------------------------------------------------
@@ -467,32 +471,32 @@ end-proc;
 dcl-proc resolveObjectPath;
   dcl-pi *n likeds(object_t) extproc(*dclcase);
     object likeds(Object_t) const;
-    type char(10) const;
+    type   char(10) const;
   end-pi;
 
   dcl-pr sys_retrieveObjectDescription extpgm('QUSROBJD');
-    receiver char(65535) options(*varsize);
-    length int(10) const;
-    format char(8) const;
+    receiver       char(65535) options(*varsize);
+    length         int(10) const;
+    format         char(8) const;
     qualObjectName char(20) const;
-    type char(10) const;
-    errorCode likeds(errorCode_t) options(*nopass);
+    type           char(10) const;
+    errorCode      likeds(errorCode_t) options(*nopass);
   end-pr;
 
   dcl-ds resolvedObject likeds(object_t);
 
   dcl-ds data qualified;
-    bytesReturned int(10);
-    bytesAvailable int(10);
-    name char(10);
-    library char(10);
-    type char(10);
-    returnLibrary char(10);
+    bytesReturned        int(10);
+    bytesAvailable       int(10);
+    name                 char(10);
+    library              char(10);
+    type                 char(10);
+    returnLibrary        char(10);
     auxStoragePoolNumber int(10);
-    owner char(10);
-    domain char(2);
-    created char(13);
-    changed char(13);
+    owner                char(10);
+    domain               char(2);
+    created              char(13);
+    changed              char(13);
   end-ds;
   dcl-ds errorCode likeds(errorCode_t);
 
@@ -511,6 +515,7 @@ dcl-proc resolveObjectPath;
   endif;
 
   return resolvedObject;
+
 end-proc;
 
 //----------------------------------------------------------------------
@@ -521,7 +526,7 @@ dcl-proc getServerName;
   end-pi;
 
   dcl-pr gethostname int(10) extproc('gethostname');
-    name pointer value;
+    name   pointer value;
     length int(10) value;
   end-pr;
 
@@ -534,6 +539,7 @@ dcl-proc getServerName;
   else;
     return %str(%addr(name));
   endif;
+
 end-proc;
 
 //----------------------------------------------------------------------
@@ -582,7 +588,7 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc startXmlElement export;
   dcl-pi *n like(xmlName_t);
-    name   like(xmlName_t) value;
+    name like(xmlName_t) value;
   end-pi;
 
   dcl-s element like(xmlName_t);
@@ -598,7 +604,7 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc endXmlElement export;
   dcl-pi *n like(xmlName_t);
-    name   like(xmlName_t) value;
+    name like(xmlName_t) value;
   end-pi;
 
   dcl-s element like(xmlName_t);
@@ -614,7 +620,7 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc emptyXmlElement export;
   dcl-pi *n like(xmlName_t);
-    name   like(xmlName_t) value;
+    name like(xmlName_t) value;
   end-pi;
 
   dcl-s element like(xmlName_t);

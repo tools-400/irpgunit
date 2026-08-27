@@ -1,4 +1,4 @@
-**FREE
+**free
 // ==========================================================================
 //  iRPGUnit - XML File Writer.
 // ==========================================================================
@@ -18,7 +18,7 @@
 // >>END-PRE-COMPILER<<
 // ==========================================================================
 
-ctl-opt DECEDIT('0.') NOMAIN;
+ctl-opt decedit('0.') nomain;
 /define NO_DECEDIT
 /include qinclude,H_SPEC
 
@@ -311,8 +311,8 @@ end-proc;
 //----------------------------------------------------------------------
 dcl-proc VSCode_writeLogValue;
   dcl-pi *n extproc(*dclcase);
-    name       like(xmlName_t) const;
-    logValue   likeds(logValue_t) const;
+    name     like(xmlName_t) const;
+    logValue likeds(logValue_t) const;
   end-pi;
 
   dcl-s text like(xmlBuffer_t);
@@ -323,7 +323,7 @@ dcl-proc VSCode_writeLogValue;
     text = indent() + startXmlElement(name) + newLine();
     appendToXmlFile(text);
 
-    writeXmlElement('value': logValue.value);
+    writeXmlElement('value': escapeXml(logValue.value));
     writeXmlElement('type': logValue.type);
     writeXmlElement('length': %char(logValue.length));
     writeXmlElement('originalLength': %char(logValue.originalLength));
