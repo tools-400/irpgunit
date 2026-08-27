@@ -224,6 +224,22 @@ Refer to the COMPILEOPT parameter in CRTSQLCBLI command help.
 of parameter DBGVIEW is automatically added.
 :ehelp.
 .*
+:help name='RUCRTCBL/CMPPARM' WIDTH=64.
+Additional compiler parameters (CMPPARM) - Help
+:xh3.Additional compiler parameters (CMPPARM)
+:p.
+Specify any additional compiler parameters for producing the
+command for compiling the module.
+:ehelp.
+.*
+:help name='RUCRTCBL/LNKPARM' WIDTH=64.
+Additional linker parameters (LNKPARM) - Help
+:xh3.Additional linker parameters (LNKPARM)
+:p.
+Specify any additional linker parameters for producing the
+command for linking the unit test service program.
+:ehelp.
+.*
 :help name='RUCRTCBL/TGTRLS' WIDTH=64.
 Target release (TGTRLS) - Help
 :xh3.Target release (TGTRLS)

@@ -209,6 +209,22 @@
                           PMTCTL(*PMTRQS)                    +
                           PROMPT('Pre-Compiler COMPILEOPT')
 
+             PARM       KWD(CMPPARM)                         +
+                          TYPE(*CHAR)                        +
+                          LEN(5000)                          +
+                          VARY(*YES *INT2)                   +
+                          CASE(*MIXED)                       +
+                          PMTCTL(*PMTRQS)                    +
+                          PROMPT('Additional compiler parameters')
+
+             PARM       KWD(LNKPARM)                         +
+                          TYPE(*CHAR)                        +
+                          LEN(5000)                          +
+                          VARY(*YES *INT2)                   +
+                          CASE(*MIXED)                       +
+                          PMTCTL(*PMTRQS)                    +
+                          PROMPT('Additional linker parameters')
+
              PARM       KWD(TGTRLS)                          +
                           TYPE(*NAME)                        +
                           PMTCTL(*PMTRQS)                    +

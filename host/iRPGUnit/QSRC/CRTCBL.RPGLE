@@ -45,31 +45,34 @@ ctl-opt main(crtCbl);
 
 dcl-proc crtCbl;
   dcl-pi *n;
-    testPgm      likeds(Object_t) const;
-    srcFile      likeds(Object_t) const;
-    srcMbr       like(SrcMbr_t.mbr) const;
-    srcStmf      like(ifsStmf_t) const;
-    text         like(Text_t) const;
-    cOption      likeds(Options_t) const;
-    dbgView      like(DbgView_t) const;
-    bndSrvPgm    likeds(ObjectArray_t) const;
-    bndDir       likeds(ObjectArray_t) const;
-    bOption      likeds(Options_t) const;
-    define       likeds(defines_t) const;
-    dltSplf      like(yesNo_t) const;
-    dltMod       like(yesNo_t) const;
-    actGrp       like(ActivationGroup_t) const;
-    bModules     likeds(ObjectArray_t) const;
-    pOption      likeds(Options_t) const;
-    compileOpt   like(CompileOpt_t) const;
-    targetRls    like(TargetRelease_t) const;
-    incDir       likeds(incDir_t) const;
-    tgtCcsid     like(tgtCcsid_t) const;
+    testPgm        likeds(Object_t) const;
+    srcFile        likeds(Object_t) const;
+    srcMbr         like(SrcMbr_t.mbr) const;
+    srcStmf        like(ifsStmf_t) const;
+    text           like(Text_t) const;
+    cOption        likeds(Options_t) const;
+    dbgView        like(DbgView_t) const;
+    bndSrvPgm      likeds(ObjectArray_t) const;
+    bndDir         likeds(ObjectArray_t) const;
+    bOption        likeds(Options_t) const;
+    define         likeds(defines_t) const;
+    dltSplf        like(yesNo_t) const;
+    dltMod         like(yesNo_t) const;
+    actGrp         like(ActivationGroup_t) const;
+    bModules       likeds(ObjectArray_t) const;
+    pOption        likeds(Options_t) const;
+    compileOpt     like(CompileOpt_t) const;
+    compilerParams like(compilerParams_t) const;
+    linkerParams   like(linkerParams_t) const;
+    targetRls      like(TargetRelease_t) const;
+    incDir         likeds(incDir_t) const;
+    tgtCcsid       like(tgtCcsid_t) const;
   end-pi;
 
   crtTst(testPgm: srcFile: srcMbr: srcStmf: text: cOption: dbgView
          : bndSrvPgm: bndDir: bOption: define: dltSplf: dltMod: actGrp
-         : bModules: NO_VALUE: pOption: compileOpt: targetRls: incDir: tgtCcsid);
+         : bModules: NO_VALUE: pOption: compileOpt: compilerParams: linkerParams
+         : targetRls: incDir: tgtCcsid);
 
   *inlr = *on;
 

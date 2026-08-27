@@ -1,5 +1,5 @@
 **free
-/if not defined (IRPGUNIT_CRTTST)
+/if not defined(IRPGUNIT_CRTTST)
 /define IRPGUNIT_CRTTST
 // ==========================================================================
 //  iRPGUnit - Implementation of RUCRT* commands.
@@ -21,50 +21,54 @@
 // entry point for the test creation process, handling both source members
 // and IFS stream files.
 //
-// @param testPgm - Target test program object specification (name/library)
-// @param srcFile - Source file object containing the test source code
-// @param srcMbr - Source member name within the source file
-// @param srcStmf - Alternative IFS stream file path for source code
-// @param text - Descriptive text for the created program object
-// @param cOption - Compiler-specific options controlling code generation
-// @param dbgView - Debug view setting (*SOURCE, *LIST, *ALL, *NONE)
-// @param bndSrvPgm - Array of service programs to bind with test program
-// @param bndDir - Array of binding directories to search for dependencies
-// @param bOption - Binding options controlling the link process
-// @param define - Preprocessor defines for conditional compilation
-// @param dltSplF - Flag to delete compiler spooled files on success (*YES/*NO)
-// @param dltMod - Flag to delete modules on success (*YES/*NO)
-// @param actGrp - Activation group specification for program execution
-// @param bModules - Array of additional modules to bind with the program
-// @param pRpgPpOpt - RPG-specific preprocessor options
-// @param pOption - Additional processor options for compilation
-// @param compileOpt - General compile options affecting code generation
-// @param targetRls - Target release version for backward compatibility
-// @param incDir - Include directories for copy member and prototype resolution
-// @param tgtCcsid - Target CCSID for character data conversion
+// @param testPgm        - Target test program object specification (name/library)
+// @param srcFile        - Source file object containing the test source code
+// @param srcMbr         - Source member name within the source file
+// @param srcStmf        - Alternative IFS stream file path for source code
+// @param text           - Descriptive text for the created program object
+// @param cOption        - Compiler-specific options controlling code generation
+// @param dbgView        - Debug view setting (*SOURCE, *LIST, *ALL, *NONE)
+// @param bndSrvPgm      - Array of service programs to bind with test program
+// @param bndDir         - Array of binding directories to search for dependencies
+// @param bOption        - Binding options controlling the link process
+// @param define         - Preprocessor defines for conditional compilation
+// @param dltSplF        - Flag to delete compiler spooled files on success (*YES/*NO)
+// @param dltMod         - Flag to delete modules on success (*YES/*NO)
+// @param actGrp         - Activation group specification for program execution
+// @param bModules       - Array of additional modules to bind with the program
+// @param pRpgPpOpt      - RPG-specific preprocessor options
+// @param pOption        - Additional processor options for compilation
+// @param compileOpt     - General compile options affecting code generation
+// @param compilerParams - Specifies additional compile parameters.
+// @param linkerParams   - Specifies additional linkage parameters.
+// @param targetRls      - Target release version for backward compatibility
+// @param incDir         - Include directories for copy member and prototype resolution
+// @param tgtCcsid       - Target CCSID for character data conversion
 ///
 dcl-pr crtTst extproc('CRTTST_crtTst');
-  testPgm    likeds(object_t) const;
-  srcFile    likeds(object_t) const;
-  srcMbr     like(srcMbr_t.mbr) const;
-  srcStmf    like(ifsStmf_t) const;
-  text       like(text_t) const;
-  cOption    likeds(options_t) const;
-  dbgView    like(dbgView_t) const;
-  bndSrvPgm  likeds(objectArray_t) const;
-  bndDir     likeds(objectArray_t) const;
-  bOption    likeds(options_t) const;
-  define     likeds(defines_t) const;
-  dltSplF    like(yesno_t) const;
-  dltMod     like(yesNo_t) const;
-  actGrp     like(activationGroup_t) const;
-  bModules   likeds(objectArray_t) const;
-  pRpgPpOpt  like(rpgPpOpt_t) const;
-  pOption    likeds(options_t) const;
-  compileOpt like(compileOpt_t) const;
-  targetRls  like(targetRelease_t) const;
-  incDir     likeds(incDir_t) const;
-  tgtCcsid   like(tgtCcsid_t) const;
+  testPgm        likeds(object_t) const;
+  srcFile        likeds(object_t) const;
+  srcMbr         like(srcMbr_t.mbr) const;
+  srcStmf        like(ifsStmf_t) const;
+  text           like(text_t) const;
+  cOption        likeds(options_t) const;
+  dbgView        like(dbgView_t) const;
+  bndSrvPgm      likeds(objectArray_t) const;
+  bndDir         likeds(objectArray_t) const;
+  bOption        likeds(options_t) const;
+  define         likeds(defines_t) const;
+  dltSplF        like(yesno_t) const;
+  dltMod         like(yesNo_t) const;
+  actGrp         like(activationGroup_t) const;
+  bModules       likeds(objectArray_t) const;
+  pRpgPpOpt      like(rpgPpOpt_t) const;
+  pOption        likeds(options_t) const;
+  compileOpt     like(compileOpt_t) const;
+  compilerParams like(compilerParams_t) const;
+  linkerParams   like(linkerParams_t) const;
+  targetRls      like(targetRelease_t) const;
+  incDir         likeds(incDir_t) const;
+  tgtCcsid       like(tgtCcsid_t) const;
 end-pr;
 
 ///
@@ -90,20 +94,21 @@ end-pr;
 // @return Complete CRTRPGMOD command string ready for system execution
 ///
 dcl-pr getCrtRpgModCmd like(cmd_t) extproc('CRTTST_getCrtRpgModCmd');
-  pgm        likeds(object_t) const;
-  srcFile    likeds(object_t) const;
-  srcMbr     like(srcMbr_t.mbr) const;
-  srcStmf    like(ifsStmf_t) const;
-  cOption    likeds(options_t) const;
-  dbgView    like(dbgView_t) const;
-  pRpgPpOpt  like(rpgPpOpt_t) const;
-  pOptions   likeds(options_t) const;
-  compileopt like(compileOpt_t) const;
-  targetRls  like(targetRelease_t) const;
-  define     likeds(defines_t) const;
-  incDir     likeds(incDir_t) const;
-  tgtCcsid   like(tgtCcsid_t) const;
-  cvtCcsid   like(cvtCcsid_t) const;
+  pgm            likeds(object_t) const;
+  srcFile        likeds(object_t) const;
+  srcMbr         like(srcMbr_t.mbr) const;
+  srcStmf        like(ifsStmf_t) const;
+  cOption        likeds(options_t) const;
+  dbgView        like(dbgView_t) const;
+  pRpgPpOpt      like(rpgPpOpt_t) const;
+  pOptions       likeds(options_t) const;
+  compileopt     like(compileOpt_t) const;
+  compilerParams like(compilerParams_t) const;
+  targetRls      like(targetRelease_t) const;
+  define         likeds(defines_t) const;
+  incDir         likeds(incDir_t) const;
+  tgtCcsid       like(tgtCcsid_t) const;
+  cvtCcsid       like(cvtCcsid_t) const;
 end-pr;
 
 ///
@@ -128,19 +133,20 @@ end-pr;
 // @return Complete CRTCBLMOD command string ready for system execution
 ///
 dcl-pr getCrtCblModCmd like(cmd_t) extproc('CRTTST_getCrtCblModCmd');
-  pgm        likeds(object_t) const;
-  srcFile    likeds(object_t) const;
-  srcMMr     like(srcMbr_t.mbr) const;
-  srcStmf    like(ifsStmf_t) const;
-  cOption    likeds(options_t) const;
-  dbgView    like(dbgView_t) const;
-  pOptions   likeds(options_t) const;
-  compileOpt like(compileOpt_t) const;
-  targetRls  like(targetRelease_t) const;
-  define     likeds(defines_t) const;
-  incDir     likeds(incDir_t) const;
-  tgtCcsid   like(tgtCcsid_t) const;
-  cvtCcsid   like(cvtCcsid_t) const;
+  pgm            likeds(object_t) const;
+  srcFile        likeds(object_t) const;
+  srcMMr         like(srcMbr_t.mbr) const;
+  srcStmf        like(ifsStmf_t) const;
+  cOption        likeds(options_t) const;
+  dbgView        like(dbgView_t) const;
+  pOptions       likeds(options_t) const;
+  compileOpt     like(compileOpt_t) const;
+  compilerParams like(compilerParams_t) const;
+  targetRls      like(targetRelease_t) const;
+  define         likeds(defines_t) const;
+  incDir         likeds(incDir_t) const;
+  tgtCcsid       like(tgtCcsid_t) const;
+  cvtCcsid       like(cvtCcsid_t) const;
 end-pr;
 
 ///
@@ -156,20 +162,22 @@ end-pr;
 // @param export - Export specification (*ALL, *SRCFILE, or binder language source)
 // @param actGrp - Activation group specification for service program execution
 // @param text - Descriptive text for the created service program object
+// @param linkerParams - Specifies link parameters.
 // @param targetRls - Target system release for backward compatibility
 //
 // @return Complete CRTSRVPGM command string ready for system execution
 ///
 dcl-pr getCrtSrvPgmCmd like(cmd_t) extproc('CRTTST_getCrtSrvPgmCmd');
-  pgm       likeds(object_t) const;
-  bndSrvPgm likeds(objectArray_t) const;
-  bndDir    likeds(objectArray_t) const;
-  module    likeds(objectArray_t) const;
-  options   likeds(options_t) const;
-  export    char(10) const;
-  actGrp    like(activationGroup_t) const;
-  text      like(text_t ) const;
-  targetRls like(targetRelease_t) const;
+  pgm          likeds(object_t) const;
+  bndSrvPgm    likeds(objectArray_t) const;
+  bndDir       likeds(objectArray_t) const;
+  module       likeds(objectArray_t) const;
+  options      likeds(options_t) const;
+  export       char(10) const;
+  actGrp       like(activationGroup_t) const;
+  text         like(text_t) const;
+  linkerParams like(linkerParams_t) const;
+  targetRls    like(targetRelease_t) const;
 end-pr;
 
 //----------------------------------------------------------------------

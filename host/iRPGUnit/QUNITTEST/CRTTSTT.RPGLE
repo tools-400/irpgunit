@@ -1,4 +1,4 @@
-**FREE
+**free
 // ==========================================================================
 //  iRPGUnit SelfTest - Test CRTTSTT.
 // ==========================================================================
@@ -19,7 +19,7 @@
 // >>END-PRE-COMPILER<<
 // ==========================================================================
 
-ctl-opt NoMain Option(*SrcStmt);
+ctl-opt nomain option(*srcstmt);
 
 //----------------------------------------------------------------------
 //   Imported Procedures
@@ -37,16 +37,16 @@ ctl-opt NoMain Option(*SrcStmt);
 //----------------------------------------------------------------------
 
 // No debugging view given by user.
-dcl-c noDbgView const(*blank);
+dcl-c noDbgView *blank;
 // RPG preprocessor options.
-dcl-c rpgPpOptLvl2 const('*LVL2');
+dcl-c rpgPpOptLvl2 '*LVL2';
 // No export option.
-dcl-c noExport const(*blank);
+dcl-c noExport *blank;
 // No text.
-dcl-c noText const(*blank);
+dcl-c noText *blank;
 
-dcl-c TEMP_DIR      '/temp/';
-dcl-c STMF_RPGLE    'temp_irpgunit1.rpgle';
+dcl-c TEMP_DIR '/temp/';
+dcl-c STMF_RPGLE 'temp_irpgunit1.rpgle';
 dcl-c STMF_SQLRPGLE 'temp_irpgunit1.sqlrpgle';
 dcl-c STMF_SQLCBLLE 'temp_irpgunit1.sqlcblle';
 
@@ -73,11 +73,15 @@ dcl-ds noBOption likeds(Options_t);
 // No modules.
 dcl-ds noModule likeds(ObjectArray_t);
 // No SQL pre-compiler compile option.
-dcl-s noCompileOpt    varchar(1);
+dcl-s noCompileOpt varchar(1);
+// No compiler parameters.
+dcl-s noCompilerParams varchar(1);
+// No linker parameters.
+dcl-s noLinkerParams varchar(1);
 // No activation group.
-dcl-s noActGrp        varchar(10);
+dcl-s noActGrp varchar(10);
 // No target release
-dcl-s noTargetRls     like(TargetRelease_t);
+dcl-s noTargetRls like(TargetRelease_t);
 // No condition names
 dcl-ds noDefine likeds(defines_t);
 // No include directories.
@@ -88,11 +92,11 @@ dcl-s noTgtCcsid like(tgtCcsid_t);
 dcl-s noCvtCcsid like(cvtCcsid_t);
 
 // Command to create an RPG module.
-dcl-s crtRpgModCmd    char(256);
+dcl-s crtRpgModCmd char(256);
 // Command to create a Cobol module.
-dcl-s crtCblModCmd    char(256);
+dcl-s crtCblModCmd char(256);
 // Command to create a Service Program object.
-dcl-s crtSrvPgmCmd    char(256);
+dcl-s crtSrvPgmCmd char(256);
 
 dcl-ds liblList likeds(LiblData_t);
 dcl-ds newLiblList likeds(LiblData_t);
@@ -181,13 +185,14 @@ dcl-proc testSrcFile export;
                                  rpgPpOptLvl2:
                                  noPOption:
                                  noCompileOpt:
+                                 noCompilerParams:
                                  noTargetRls:
                                  noDefine:
                                  noIncDir:
                                  noTgtCcsid:
                                  noCvtCcsid);
   aEqual('CRTRPGMOD MODULE(*CURLIB/SYSTYPES) +
-          SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES)': crtRpgModCmd);
+  SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES)': crtRpgModCmd);
 
 end-proc;
 
@@ -212,6 +217,7 @@ dcl-proc testSrcStmfRpgle export;
                                  rpgPpOptLvl2:
                                  noPOption:
                                  noCompileOpt:
+                                 noCompilerParams:
                                  noTargetRls:
                                  noDefine:
                                  incDir:
@@ -219,8 +225,7 @@ dcl-proc testSrcStmfRpgle export;
                                  noCvtCcsid);
   aEqual('CRTRPGMOD MODULE(*CURLIB/SYSTYPES) +
           SRCSTMF(''' + STMF_RPGLE + ''') +
-          INCDIR(''/home/dev/dir1'' ''/home/dev/dir2'') +
-          ': crtRpgModCmd);
+          INCDIR(''/home/dev/dir1'' ''/home/dev/dir2'') ': crtRpgModCmd);
 
 end-proc;
 
@@ -246,14 +251,14 @@ dcl-proc testSrcSrcMbrIncDirIgnored export;
                                  rpgPpOptLvl2:
                                  noPOption:
                                  noCompileOpt:
+                                 noCompilerParams:
                                  noTargetRls:
                                  noDefine:
                                  incDir:
                                  noTgtCcsid:
                                  noCvtCcsid);
   aEqual('CRTRPGMOD MODULE(*CURLIB/SYSTYPES) +
-          SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES) +
-          ': crtRpgModCmd);
+          SRCFILE(QSYSINC/QRPGLESRC) SRCMBR(SYSTYPES) ': crtRpgModCmd);
 
 end-proc;
 
@@ -277,6 +282,7 @@ dcl-proc testSrcSrcStmfIncDirIgnored export;
                                  rpgPpOptLvl2:
                                  noPOption:
                                  noCompileOpt:
+                                 noCompilerParams:
                                  noTargetRls:
                                  noDefine:
                                  incDir:
@@ -284,8 +290,7 @@ dcl-proc testSrcSrcStmfIncDirIgnored export;
                                  noCvtCcsid);
   aEqual('CRTRPGMOD MODULE(*CURLIB/SYSTYPES) +
           SRCSTMF(''' + STMF_RPGLE + ''') +
-          INCDIR(''/home/dev/dir1'') +
-          ': crtRpgModCmd);
+          INCDIR(''/home/dev/dir1'') ': crtRpgModCmd);
 
 end-proc;
 
@@ -311,6 +316,7 @@ dcl-proc testSrcStmfSqlrpgle export;
                                  rpgPpOptLvl2:
                                  noPOption:
                                  noCompileOpt:
+                                 noCompilerParams:
                                  noTargetRls:
                                  noDefine:
                                  incDir:
@@ -321,8 +327,7 @@ dcl-proc testSrcStmfSqlrpgle export;
           OBJTYPE(*MODULE) RPGPPOPT(*LVL2) +
           INCDIR(''/home/dev/dir1'') +
           CVTCCSID(*JOB) +
-          COMPILEOPT(''TGTCCSID(*JOB) INCDIR(''''/home/dev/dir1'''')'') +
-          ': crtRpgModCmd);
+          COMPILEOPT(''TGTCCSID(*JOB) INCDIR(''''/home/dev/dir1'''')'') ': crtRpgModCmd);
 
   // Parameter TGTCCSID is taken from COMPILEOPT, because
   // COMPILEOPT overrides it.
@@ -335,6 +340,7 @@ dcl-proc testSrcStmfSqlrpgle export;
                                  rpgPpOptLvl2:
                                  noPOption:
                                  'TGTCCSID(*SRC)':
+                                 noCompilerParams:
                                  noTargetRls:
                                  noDefine:
                                  incDir:
@@ -345,8 +351,7 @@ dcl-proc testSrcStmfSqlrpgle export;
           OBJTYPE(*MODULE) RPGPPOPT(*LVL2) +
           INCDIR(''/home/dev/dir1'') +
           CVTCCSID(*JOB) +
-          COMPILEOPT(''TGTCCSID(*SRC) INCDIR(''''/home/dev/dir1'''')'') +
-          ': crtRpgModCmd);
+          COMPILEOPT(''TGTCCSID(*SRC) INCDIR(''''/home/dev/dir1'''')'') ': crtRpgModCmd);
 
   // Parameter TGTCCSID is taken from source file.
   crtRpgModCmd = getCrtRpgModCmd('SYSTYPES  *CURLIB   ':
@@ -358,6 +363,7 @@ dcl-proc testSrcStmfSqlrpgle export;
                                  rpgPpOptLvl2:
                                  noPOption:
                                  'TGTCCSID(*SRC)':
+                                 noCompilerParams:
                                  noTargetRls:
                                  noDefine:
                                  incDir:
@@ -368,8 +374,7 @@ dcl-proc testSrcStmfSqlrpgle export;
           OBJTYPE(*MODULE) RPGPPOPT(*LVL2) +
           INCDIR(''/home/dev/dir1'') +
           CVTCCSID(273) +
-          COMPILEOPT(''TGTCCSID(*SRC) INCDIR(''''/home/dev/dir1'''')'') +
-          ': crtRpgModCmd);
+          COMPILEOPT(''TGTCCSID(*SRC) INCDIR(''''/home/dev/dir1'''')'') ': crtRpgModCmd);
 
 end-proc;
 
@@ -394,6 +399,7 @@ dcl-proc testSrcStmfSqlcblle export;
                                  noDbgView:
                                  noPOption:
                                  noCompileOpt:
+                                 noCompilerParams:
                                  noTargetRls:
                                  noDefine:
                                  incDir:
@@ -404,8 +410,7 @@ dcl-proc testSrcStmfSqlcblle export;
           OBJTYPE(*MODULE) +
           INCDIR(''/home/dev/dir1'') +
           CVTCCSID(*JOB) +
-          COMPILEOPT(''TGTCCSID(*JOB) INCDIR(''''/home/dev/dir1'''')'') +
-          ': crtRpgModCmd);
+          COMPILEOPT(''TGTCCSID(*JOB) INCDIR(''''/home/dev/dir1'''')'') ': crtRpgModCmd);
 
   // Parameter TGTCCSID is taken from COMPILEOPT, because
   // COMPILEOPT overrides it.
@@ -417,6 +422,7 @@ dcl-proc testSrcStmfSqlcblle export;
                                  noDbgView:
                                  noPOption:
                                  'TGTCCSID(*SRC)':
+                                 noCompilerParams:
                                  noTargetRls:
                                  noDefine:
                                  incDir:
@@ -427,8 +433,7 @@ dcl-proc testSrcStmfSqlcblle export;
           OBJTYPE(*MODULE) +
           INCDIR(''/home/dev/dir1'') +
           CVTCCSID(*JOB) +
-          COMPILEOPT(''TGTCCSID(*SRC) INCDIR(''''/home/dev/dir1'''')'') +
-          ': crtRpgModCmd);
+          COMPILEOPT(''TGTCCSID(*SRC) INCDIR(''''/home/dev/dir1'''')'') ': crtRpgModCmd);
 
   // Parameter TGTCCSID is taken from source file.
   crtRpgModCmd = getCrtCblModCmd('SYSTYPES  *CURLIB   ':
@@ -439,6 +444,7 @@ dcl-proc testSrcStmfSqlcblle export;
                                  noDbgView:
                                  noPOption:
                                  'TGTCCSID(*SRC)':
+                                 noCompilerParams:
                                  noTargetRls:
                                  noDefine:
                                  incDir:
@@ -449,8 +455,7 @@ dcl-proc testSrcStmfSqlcblle export;
           OBJTYPE(*MODULE) +
           INCDIR(''/home/dev/dir1'') +
           CVTCCSID(273) +
-          COMPILEOPT(''TGTCCSID(*SRC) INCDIR(''''/home/dev/dir1'''')'') +
-          ': crtRpgModCmd);
+          COMPILEOPT(''TGTCCSID(*SRC) INCDIR(''''/home/dev/dir1'''')'') ': crtRpgModCmd);
 
 end-proc;
 
@@ -473,6 +478,7 @@ dcl-proc testOneCompileOption export;
                                  rpgPpOptLvl2:
                                  noPOption:
                                  noCompileOpt:
+                                 noCompilerParams:
                                  noTargetRls:
                                  noDefine:
                                  noIncDir:
@@ -505,6 +511,7 @@ dcl-proc testTwoCompileOptions export;
                                  rpgPpOptLvl2:
                                  noPOption:
                                  noCompileOpt:
+                                 noCompilerParams:
                                  noTargetRls:
                                  noDefine:
                                  noIncDir:
@@ -530,6 +537,7 @@ dcl-proc testDbgView export;
                                  rpgPpOptLvl2:
                                  noPOption:
                                  noCompileOpt:
+                                 noCompilerParams:
                                  noTargetRls:
                                  noDefine:
                                  noIncDir:
@@ -559,6 +567,7 @@ dcl-proc testModTargetRls export;
                                  rpgPpOptLvl2:
                                  noPOption:
                                  noCompileOpt:
+                                 noCompilerParams:
                                  '*CURRENT':
                                  noDefine:
                                  noIncDir:
@@ -576,6 +585,7 @@ dcl-proc testModTargetRls export;
                                  '*LIST':
                                  noPOption:
                                  noCompileOpt:
+                                 noCompilerParams:
                                  '*CURRENT':
                                  noDefine:
                                  noIncDir:
@@ -611,6 +621,7 @@ dcl-proc testOneBndSrvPgm export;
                                  noExport:
                                  noActGrp:
                                  noText:
+                                 noLinkerParams:
                                  noTargetRls);
 
   // Control.
@@ -647,6 +658,7 @@ dcl-proc testTwoBndSrvPgm export;
                                  noExport:
                                  noActGrp:
                                  noText:
+                                 noLinkerParams:
                                  noTargetRls);
 
   // Control.
@@ -682,6 +694,7 @@ dcl-proc testOneBndDir export;
                                  noExport:
                                  noActGrp:
                                  noText:
+                                 noLinkerParams:
                                  noTargetRls);
 
   // Control.
@@ -716,6 +729,7 @@ dcl-proc testBndDirWithoutLibrary export;
                                  noExport:
                                  noActGrp:
                                  noText:
+                                 noLinkerParams:
                                  noTargetRls);
 
   // Control.
@@ -749,6 +763,7 @@ dcl-proc testOneBindingOption export;
                                  noExport:
                                  noActGrp:
                                  noText:
+                                 noLinkerParams:
                                  noTargetRls);
 
   // Control.
@@ -764,7 +779,7 @@ dcl-proc testExport export;
   end-pi;
 
   // Export option.
-  dcl-s export          char(10);
+  dcl-s export char(10);
 
 
   // Setup.
@@ -774,14 +789,15 @@ dcl-proc testExport export;
   // Execute.
 
   crtSrvPgmCmd = getCrtSrvPgmCmd('PGM_NAME  *CURLIB   ':
-                                 noBndSrvPgm:
-                                 noBndDir:
-                                 noModule:
-                                 noBOption:
-                                 export:
-                                 noActGrp:
-                                 noText:
-                                 noTargetRls);
+  noBndSrvPgm:
+  noBndDir:
+  noModule:
+  noBOption:
+  export:
+  noActGrp:
+  noText:
+  noLinkerParams:
+  noTargetRls);
 
   // Control.
 
@@ -806,14 +822,15 @@ dcl-proc testActGrp export;
   // Execute.
 
   crtSrvPgmCmd = getCrtSrvPgmCmd('PGM_NAME  *CURLIB   ':
-                                 noBndSrvPgm:
-                                 noBndDir:
-                                 noModule:
-                                 noBOption:
-                                 noExport:
-                                 actGrp:
-                                 noText:
-                                 noTargetRls);
+  noBndSrvPgm:
+  noBndDir:
+  noModule:
+  noBOption:
+  noExport:
+  actGrp:
+  noText:
+  noLinkerParams:
+  noTargetRls);
 
   // Control.
 
@@ -827,7 +844,7 @@ dcl-proc testTargetRls export;
   end-pi;
 
   // Export option.
-  dcl-s targetRls       like(TargetRelease_t);
+  dcl-s targetRls like(TargetRelease_t);
 
 
   // Setup.
@@ -837,14 +854,15 @@ dcl-proc testTargetRls export;
   // Execute.
 
   crtSrvPgmCmd = getCrtSrvPgmCmd('PGM_NAME  *CURLIB   ':
-                                 noBndSrvPgm:
-                                 noBndDir:
-                                 noModule:
-                                 noBOption:
-                                 noExport:
-                                 noActGrp:
-                                 noText:
-                                 targetRls);
+  noBndSrvPgm:
+  noBndDir:
+  noModule:
+  noBOption:
+  noExport:
+  noActGrp:
+  noText:
+  noLinkerParams:
+  targetRls);
 
   // Control.
 
@@ -858,7 +876,7 @@ dcl-proc testText export;
   end-pi;
 
   // Export option.
-  dcl-s text            char(50);
+  dcl-s text char(50);
 
 
   // Setup.
@@ -868,14 +886,15 @@ dcl-proc testText export;
   // Execute.
 
   crtSrvPgmCmd = getCrtSrvPgmCmd('PGM_NAME  *CURLIB   ':
-                                 noBndSrvPgm:
-                                 noBndDir:
-                                 noModule:
-                                 noBOption:
-                                 noExport:
-                                 noActGrp:
-                                 text:
-                                 noTargetRls);
+  noBndSrvPgm:
+  noBndDir:
+  noModule:
+  noBOption:
+  noExport:
+  noActGrp:
+  text:
+  noLinkerParams:
+  noTargetRls);
 
   // Control.
 
@@ -941,6 +960,7 @@ dcl-proc testCOptionSqlRpgle export;
                                  rpgPpOptLvl2:
                                  noPOption:
                                  noCompileOpt:
+                                 noCompilerParams:
                                  noTargetRls:
                                  noDefine:
                                  noIncDir:
@@ -950,8 +970,7 @@ dcl-proc testCOptionSqlRpgle export;
           SRCSTMF(''' + STMF_SQLRPGLE + ''') +
           OBJTYPE(*MODULE) RPGPPOPT(*LVL2) +
           CVTCCSID(*JOB) +
-          COMPILEOPT(''TGTCCSID(*JOB) OPTION(*SRCSTMT)'') +
-          ': crtRpgModCmd);
+          COMPILEOPT(''TGTCCSID(*JOB) OPTION(*SRCSTMT)'') ': crtRpgModCmd);
 
   crtRpgModCmd = getCrtRpgModCmd('SYSTYPES  *CURLIB   ':
                                  noSrcFile:
@@ -962,6 +981,7 @@ dcl-proc testCOptionSqlRpgle export;
                                  rpgPpOptLvl2:
                                  noPOption:
                                  'DBGVIEW(*LIST)':
+                                 noCompilerParams:
                                  noTargetRls:
                                  noDefine:
                                  noIncDir:
@@ -971,8 +991,7 @@ dcl-proc testCOptionSqlRpgle export;
           SRCSTMF(''' + STMF_SQLRPGLE + ''') +
           OBJTYPE(*MODULE) RPGPPOPT(*LVL2) +
           CVTCCSID(*JOB) +
-          COMPILEOPT(''DBGVIEW(*LIST) TGTCCSID(*JOB) OPTION(*SRCSTMT)'') +
-          ': crtRpgModCmd);
+          COMPILEOPT(''DBGVIEW(*LIST) TGTCCSID(*JOB) OPTION(*SRCSTMT)'') ': crtRpgModCmd);
 
 end-proc;
 
@@ -994,6 +1013,7 @@ dcl-proc testCOptionSqlCblle export;
                                  noDbgView:
                                  noPOption:
                                  noCompileOpt:
+                                 noCompilerParams:
                                  noTargetRls:
                                  noDefine:
                                  noIncDir:
@@ -1003,8 +1023,7 @@ dcl-proc testCOptionSqlCblle export;
           SRCSTMF(''' + STMF_SQLCBLLE + ''') +
           OBJTYPE(*MODULE) +
           CVTCCSID(*JOB) +
-          COMPILEOPT(''TGTCCSID(*JOB) OPTION(*NOMONOPRC)'') +
-          ': crtCblModCmd);
+          COMPILEOPT(''TGTCCSID(*JOB) OPTION(*NOMONOPRC)'') ': crtCblModCmd);
 
   crtCblModCmd = getCrtCblModCmd('SYSTYPES  *CURLIB   ':
                                  noSrcFile:
@@ -1014,6 +1033,7 @@ dcl-proc testCOptionSqlCblle export;
                                  noDbgView:
                                  noPOption:
                                  'DBGVIEW(*LIST)':
+                                 noCompilerParams:
                                  noTargetRls:
                                  noDefine:
                                  noIncDir:
@@ -1023,8 +1043,7 @@ dcl-proc testCOptionSqlCblle export;
           SRCSTMF(''' + STMF_SQLCBLLE + ''') +
           OBJTYPE(*MODULE) +
           CVTCCSID(*JOB) +
-          COMPILEOPT(''DBGVIEW(*LIST) TGTCCSID(*JOB) OPTION(*NOMONOPRC)'') +
-          ': crtCblModCmd);
+          COMPILEOPT(''DBGVIEW(*LIST) TGTCCSID(*JOB) OPTION(*NOMONOPRC)'') ': crtCblModCmd);
 
 end-proc;
 
@@ -1042,6 +1061,7 @@ dcl-proc testDbgViewSqlRpgle export;
                                  rpgPpOptLvl2:
                                  noPOption:
                                  noCompileOpt:
+                                 noCompilerParams:
                                  noTargetRls:
                                  noDefine:
                                  noIncDir:
@@ -1052,15 +1072,14 @@ dcl-proc testDbgViewSqlRpgle export;
           OBJTYPE(*MODULE) RPGPPOPT(*LVL2) +
           DBGVIEW(*LIST) +
           CVTCCSID(*JOB) +
-          COMPILEOPT(''TGTCCSID(*JOB)'') +
-          ': crtRpgModCmd);
+          COMPILEOPT(''TGTCCSID(*JOB)'') ': crtRpgModCmd);
 
 end-proc;
 
 
 dcl-proc crtStmf export;
   dcl-pi *n extproc(*dclcase);
-    stmf   like(ifsStmf_t) value;
+    stmf like(ifsStmf_t) value;
   end-pi;
 
   dcl-s fd int(10);
@@ -1085,7 +1104,7 @@ end-proc;
 
 dcl-proc dltStmf export;
   dcl-pi *n extproc(*dclcase);
-    stmf   like(ifsStmf_t) value;
+    stmf like(ifsStmf_t) value;
   end-pi;
 
   dcl-s rc int(10);

@@ -1,4 +1,4 @@
-**FREE
+**free
 /if defined(types_h)
 /eof
 /endif
@@ -81,20 +81,20 @@ dcl-c MOD_CRT_CBL 'LNC0899';
 dcl-c CRLF x'0d25';
 
 dcl-ds libl_t template;
-  nume   int(5) pos(1);
-  lib    char(10) dim(MAX_NUM_LIB) pos(3);
+  nume int(5) pos(1);
+  lib  char(10) dim(MAX_NUM_LIB) pos(3);
 end-ds;
 
 dcl-ds liblData_t qualified template;
-  curlib   char(10) pos(1);
-  libl     likeds(libl_t);
+  curlib char(10) pos(1);
+  libl   likeds(libl_t);
 end-ds;
 
 // ILE Activation Mark.
 dcl-s actMark_t int(10) template;
 
 dcl-s execTimeMSecs_t int(20) template;
-dcl-s execTimeSecs_t packed(22:2) template;
+dcl-s execTimeSecs_t packed(22: 2) template;
 dcl-s execTimeUnit_t varchar(20) template;
 dcl-s assertProcNm_t varchar(32) template;
 dcl-s xmlType_t char(10) template;
@@ -133,8 +133,8 @@ dcl-c DT_UNDEFINED '*N';
 
 // Call Stack.
 dcl-ds callStk_t qualified template;
-  header  likeds(callStkHdr_t) inz(*likeds);
-  entry   likeds(callStkEnt_t) dim(MAX_CALL_STK_SIZE) inz(*likeds);
+  header likeds(callStkHdr_t) inz(*likeds);
+  entry  likeds(callStkEnt_t) dim(MAX_CALL_STK_SIZE) inz(*likeds);
 end-ds;
 
 // Call Stack header.
@@ -155,12 +155,12 @@ end-ds;
 
 // Program Message.
 dcl-ds msg_t qualified template;
-  id         char(7);
-  txt        like(msgText_t);
-  rplData    varchar(256);
-  key        char(4);
-  qSndStmt   likeds(qStatement_t);
-  qRcvStmt   likeds(qStatement_t);
+  id       char(7);
+  txt      like(msgText_t);
+  rplData  varchar(256);
+  key      char(4);
+  qSndStmt likeds(qStatement_t);
+  qRcvStmt likeds(qStatement_t);
 end-ds;
 
 // MsgInfo_t is and must be defined in member TESTCASE!
@@ -171,10 +171,16 @@ dcl-s rpgPpOpt_t char(10);
 // SQL pre-compiler option COMPILEOPT
 dcl-s compileOpt_t varchar(5000);
 
+// Additional compile parameters
+dcl-s compilerParams_t varchar(5000);
+
+// Additional link parameters
+dcl-s linkerParams_t varchar(5000);
+
 // CRTRPGMOD INCDIR parameter
 dcl-ds incdir_t qualified template;
-  size     int(5);
-  path     like(ifsStmf_t) dim(32);
+  size int(5);
+  path like(ifsStmf_t) dim(32);
 end-ds;
 
 // CRTRPGMOD TGTCCSID parameter
@@ -188,65 +194,65 @@ dcl-s ccsid_t int(10);
 
 // Job qualified Name.
 dcl-ds qJob_t qualified template;
-  name            char(10);
-  user            char(10);
-  nbr             char(6);
+  name char(10);
+  user char(10);
+  nbr  char(6);
 end-ds;
 
 // Spooled file qualified Name.
 dcl-ds splf_t qualified template;
-  system   char(10);
-  nm       char(10);
-  nbr      int(10);
-  job      likeds(job_t);
+  system char(10);
+  nm     char(10);
+  nbr    int(10);
+  job    likeds(job_t);
 end-ds;
 
 // Job qualified Name.
 dcl-ds job_t qualified template;
-  name   char(10);
-  user   char(10);
-  nbr    char(6);
+  name char(10);
+  user char(10);
+  nbr  char(6);
 end-ds;
 
 // Named callable procedure.
 dcl-ds proc_t qualified align template;
-  seqNbr    int(10);
-  procNm    like(procNm_t);
-  procPtr   pointer(*proc);
+  seqNbr  int(10);
+  procNm  like(procNm_t);
+  procPtr pointer(*proc);
 end-ds;
 
 dcl-ds procNmList_t qualified template;
-  handle     pointer;
-  cnt        pointer(*proc);
-  getnm      pointer(*proc);
-  gotonext   pointer(*proc);
+  handle   pointer;
+  cnt      pointer(*proc);
+  getnm    pointer(*proc);
+  gotonext pointer(*proc);
 end-ds;
 
 dcl-s outcome_t char(1) template;
 dcl-s memSize_t zoned(25: 3) template;
 
 dcl-ds procNms_t qualified template;
-  nume   int(5);
-  name   like(procNm_t) dim(250);
+  nume int(5);
+  name like(procNm_t) dim(250);
 end-ds;
 
 // qualified Job Name.
 dcl-ds qlfJobNm_t qualified template;
-  jobNm   char(10);
-  usrNm   char(10);
-  jobNb   char(6);
+  jobNm char(10);
+  usrNm char(10);
+  jobNb char(6);
 end-ds;
 
 dcl-ds testSuite_t qualified template;
-  isCobol         ind;
-  qName           likeds(object_t);
-  setupSuite      likeds(proc_t);
-  setup           likeds(proc_t);
-  testCasesCnt    int(10);
-  testList        pointer;
-  tearDown        likeds(proc_t);
-  tearDownSuite   likeds(proc_t);
-  testResults     pointer; // array(testCaseResult_t)
+  isCobol       ind;
+  qName         likeds(object_t);
+  setupSuite    likeds(proc_t);
+  setup         likeds(proc_t);
+  testCasesCnt  int(10);
+  testList      pointer;
+  tearDown      likeds(proc_t);
+  tearDownSuite likeds(proc_t);
+  testResults   pointer; // array(testCaseResult_t)
 end-ds;
 
 dcl-ds testCaseResult_t qualified template;
@@ -264,40 +270,40 @@ end-ds;
 
 // Assertion Event.
 dcl-ds abstractTestEvent_t qualified template;
-  outcome      like(outcome_t) inz(TEST_CASE_NULL);
-  index        int(10);
-  failure      likeds(testFailureEvent_t) pos(1) inz(*likeds);
-  success      likeds(testSuccessEvent_t) pos(1) inz(*likeds);
-  error        likeds(runtimeErrorEvent_t) pos(1) inz(*likeds);
+  outcome like(outcome_t) inz(TEST_CASE_NULL);
+  index   int(10);
+  failure likeds(testFailureEvent_t) pos(1) inz(*likeds);
+  success likeds(testSuccessEvent_t) pos(1) inz(*likeds);
+  error   likeds(runtimeErrorEvent_t) pos(1) inz(*likeds);
 end-ds;
 
 // Assertion Success Event.
 dcl-ds testSuccessEvent_t qualified template;
-  outcome      like(outcome_t) inz(TEST_CASE_SUCCESS);
-  index        int(10);
-  assertProc   like(assertProcNm_t) inz;
-  logExpected  likeds(logValue_t) inz(*likeds);
-  logActual    likeds(logValue_t) inz(*likeds);
-  pCallstk     pointer inz;
+  outcome     like(outcome_t) inz(TEST_CASE_SUCCESS);
+  index       int(10);
+  assertProc  like(assertProcNm_t) inz;
+  logExpected likeds(logValue_t) inz(*likeds);
+  logActual   likeds(logValue_t) inz(*likeds);
+  pCallstk    pointer inz;
 end-ds;
 
 // Assertion Failure Event.
 dcl-ds testFailureEvent_t qualified template;
-  outcome      like(outcome_t) inz(TEST_CASE_FAILURE);
-  index        int(10);
-  assertProc   like(assertProcNm_t) inz;
-  logExpected  likeds(logValue_t) inz(*likeds);
-  logActual    likeds(logValue_t) inz(*likeds);
-  pCallstk     pointer inz;
-  isConfirmed  ind inz(*off);
-  msg          like(msgText_t) inz;
+  outcome     like(outcome_t) inz(TEST_CASE_FAILURE);
+  index       int(10);
+  assertProc  like(assertProcNm_t) inz;
+  logExpected likeds(logValue_t) inz(*likeds);
+  logActual   likeds(logValue_t) inz(*likeds);
+  pCallstk    pointer inz;
+  isConfirmed ind inz(*off);
+  msg         like(msgText_t) inz;
 end-ds;
 
 // Runtime Error Event.
 dcl-ds runtimeErrorEvent_t qualified template;
-  outcome      like(outcome_t) inz(TEST_CASE_ERROR);
-  index        int(10);
-  msg          likeds(msg_t) inz;
+  outcome like(outcome_t) inz(TEST_CASE_ERROR);
+  index   int(10);
+  msg     likeds(msg_t) inz;
 end-ds;
 
 dcl-ds testSuiteResult_t qualified;
@@ -324,45 +330,45 @@ dcl-s line_t varchar(256) template;
 
 // Full qualified source member.
 dcl-ds srcMbr_t qualified template;
-  file   char(10);
-  lib    char(10);
-  mbr    char(10);
+  file char(10);
+  lib  char(10);
+  mbr  char(10);
 end-ds;
 
 // Source information of a module
 dcl-ds srcInf_t qualified template;
-  type   char(10); // one of TYPE_STMF | TYPE_MEMBER
-  mbr    likeds(srcMbr_t);
-  stmf   like(stmf_t);
+  type char(10); // one of TYPE_STMF | TYPE_MEMBER
+  mbr  likeds(srcMbr_t);
+  stmf like(stmf_t);
 end-ds;
 
 dcl-c CALL_STACK_INCOMPLETE '*INCOMPLETE';
 
 // testCaseResult_t.outcome can have three values.
-dcl-c TEST_CASE_NULL    '*';
+dcl-c TEST_CASE_NULL '*';
 dcl-c TEST_CASE_SUCCESS 'S';
 dcl-c TEST_CASE_FAILURE 'F';
-dcl-c TEST_CASE_ERROR   'E';
+dcl-c TEST_CASE_ERROR 'E';
 
-dcl-c QUOTE const('''');
+dcl-c QUOTE '''';
 
 
 // A sized array of OS400 objects.
 dcl-ds objectArray_t template qualified;
-  size     int(5);
-  object   dim(51) likeds(object_t);
+  size   int(5);
+  object dim(51) likeds(object_t);
 end-ds;
 
 // A sized list of options.
 dcl-ds options_t template qualified;
-  size     int(5);
-  option   char(12) dim(25);
+  size   int(5);
+  option char(12) dim(25);
 end-ds;
 
 // A sized list of compiler directives.
 dcl-ds defines_t template qualified;
-  size     int(5);
-  define   char(50) dim(32);
+  size   int(5);
+  define char(50) dim(32);
 end-ds;
 
 dcl-s headToken_t char(10) template;
@@ -376,50 +382,50 @@ dcl-s serializedObject_t varchar(21) template;
 dcl-s serializedOptions_t varchar(512) template;
 dcl-s serializedString_t varchar(5136) template;
 dcl-s targetRelease_t char(10) template;
-dcl-s assertNumeric_t zoned(63:20) template;
+dcl-s assertNumeric_t zoned(63: 20) template;
 dcl-s serializedIncDir_t varchar(131072) template; // 32 * 4096
 dcl-s serializedStmf_t varchar(4098) template; // 4096 + 2 * len(QUOTES)
 dcl-s serializedTgtCcsid_t varchar(20) template;
 
 // Program Status Data Structure.
 dcl-ds sds_t template qualified;
-  pgmname         char(10);
-  pgmstat         zoned(5);
-  prevstat        zoned(5);
-  lastseq         char(8);
-  lastsubr        char(8);
-  nbrparm         zoned(3);
-  exctype         char(3);
-  excnbr          char(4);
-  miinstruction   char(4);
-  workarea        char(30);
-  pgmLib          char(10);
-  excdata         char(80);
-  rnx9001exc      char(4);
-  lastfilelong    char(10);
-  unused_1        char(6);
-  datFmt          char(8);
-  year            zoned(2);
-  lastfileshort   char(8);
-  filestat        char(35);
-  job             char(10);
-  user            char(10);
-  nbr             zoned(6);
-  startdate       zoned(6);
-  rundate         zoned(6);
-  runtime         zoned(6);
-  compdate        char(6);
-  comptime        char(6);
-  complevel       char(4);
-  srcFile         char(10);
-  srcLib          char(10);
-  srcMbr          char(10);
-  pgmcontproc     char(10);
-  modcontproc     char(10);
-  sourceid1       int(5);
-  sourceid2       int(5);
-  curruser        char(10);
-  unused_2        char(62);
+  pgmname       char(10);
+  pgmstat       zoned(5);
+  prevstat      zoned(5);
+  lastseq       char(8);
+  lastsubr      char(8);
+  nbrparm       zoned(3);
+  exctype       char(3);
+  excnbr        char(4);
+  miinstruction char(4);
+  workarea      char(30);
+  pgmLib        char(10);
+  excdata       char(80);
+  rnx9001exc    char(4);
+  lastfilelong  char(10);
+  unused_1      char(6);
+  datFmt        char(8);
+  year          zoned(2);
+  lastfileshort char(8);
+  filestat      char(35);
+  job           char(10);
+  user          char(10);
+  nbr           zoned(6);
+  startdate     zoned(6);
+  rundate       zoned(6);
+  runtime       zoned(6);
+  compdate      char(6);
+  comptime      char(6);
+  complevel     char(4);
+  srcFile       char(10);
+  srcLib        char(10);
+  srcMbr        char(10);
+  pgmcontproc   char(10);
+  modcontproc   char(10);
+  sourceid1     int(5);
+  sourceid2     int(5);
+  curruser      char(10);
+  unused_2      char(62);
 end-ds;
 
 /include qinclude,TEMPLATES

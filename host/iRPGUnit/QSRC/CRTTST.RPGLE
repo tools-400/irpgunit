@@ -76,27 +76,29 @@ dcl-ds srvPgm likeds(object_t);
 
 dcl-proc crtTst export;
   dcl-pi *n;
-    testPgm    likeds(object_t) const;
-    srcFile    likeds(object_t) const;
-    srcMbr     like(srcMbr_t.mbr) const;
-    srcStmf    like(ifsStmf_t) const;
-    text       like(text_t) const;
-    cOption    likeds(options_t) const;
-    dbgView    like(dbgView_t) const;
-    bndSrvPgm  likeds(objectArray_t) const;
-    bndDir     likeds(objectArray_t) const;
-    bOption    likeds(options_t) const;
-    define     likeds(defines_t) const;
-    dltSplF    like(yesno_t) const;
-    dltMod     like(yesNo_t) const;
-    actGrp     like(activationGroup_t) const;
-    bModules   likeds(objectArray_t) const;
-    pRpgPpOpt  like(rpgPpOpt_t) const;
-    pOption    likeds(options_t) const;
-    compileOpt like(compileOpt_t) const;
-    targetRls  like(targetRelease_t) const;
-    incDir     likeds(incDir_t) const;
-    tgtCcsid   like(tgtCcsid_t) const;
+    testPgm        likeds(object_t) const;
+    srcFile        likeds(object_t) const;
+    srcMbr         like(srcMbr_t.mbr) const;
+    srcStmf        like(ifsStmf_t) const;
+    text           like(text_t) const;
+    cOption        likeds(options_t) const;
+    dbgView        like(dbgView_t) const;
+    bndSrvPgm      likeds(objectArray_t) const;
+    bndDir         likeds(objectArray_t) const;
+    bOption        likeds(options_t) const;
+    define         likeds(defines_t) const;
+    dltSplF        like(yesno_t) const;
+    dltMod         like(yesNo_t) const;
+    actGrp         like(activationGroup_t) const;
+    bModules       likeds(objectArray_t) const;
+    pRpgPpOpt      like(rpgPpOpt_t) const;
+    pOption        likeds(options_t) const;
+    compileOpt     like(compileOpt_t) const;
+    compilerParams like(compilerParams_t) const;
+    linkerParams   like(linkerParams_t) const;
+    targetRls      like(targetRelease_t) const;
+    incDir         likeds(incDir_t) const;
+    tgtCcsid       like(tgtCcsid_t) const;
   end-pi;
 
   dcl-ds modules likeds(bModules) inz;
@@ -232,7 +234,8 @@ dcl-proc crtTst export;
       addModule( modules : testPgm : *on); // Add to position #1.
       // QDEVTOOLS/QLNCMSG RNS9305 - Module &1 placed in library &2.
       crtRpgMod(testPgm: qSrcFile: srcMbrRslv: localSrcStmf: coption: dbgview:
-                 pRpgPpOpt: poption: compileopt: targetRls: define: incDir: tgtCcsid: srcCcsid);
+                 pRpgPpOpt: poption: compileopt: compilerParams:
+                 targetRls: define: incDir: tgtCcsid: srcCcsid);
       modulescreated = getCreatedModulesFromJobLog(
                          MOD_CRT_RPG : startcompiletime );
       addModules( modules : modulescreated );
@@ -240,7 +243,8 @@ dcl-proc crtTst export;
       // There is no test case module to add for Cobol ==> See: *PGMID
       // QDEVTOOLS/QLNCMSG LNC0899 - Module &1 placed in library &2.
       crtCblMod(testPgm: qSrcFile: srcMbrRslv: localSrcStmf: coption: dbgview:
-                 poption: compileopt: targetRls: define: incDir: tgtCcsid: srcCcsid);
+                 poption: compileopt: compilerParams:
+                 targetRls: define: incDir: tgtCcsid: srcCcsid);
       modulescreated = getCreatedModulesFromJobLog(
                          MOD_CRT_CBL : startcompiletime );
       addModules( modules : modulescreated );
@@ -251,10 +255,10 @@ dcl-proc crtTst export;
 
     srvPgm = crtSrvPgm(
                 testPgm : bndSrvPgm : bndDir : modules : bOption :
-                actGrp : textRslv : targetRls);
+                actGrp : textRslv : linkerParams : targetRls);
 
-      tagTstSrvPgm(srvPgm : qSrcFile : srcMbrRslv: localSrcStmf);
-      // sndCompMsg( 'Updated (tagged) test suite ' + %trim(srvPgm.nm) + '.' );
+    tagTstSrvPgm(srvPgm : qSrcFile : srcMbrRslv: localSrcStmf);
+    // sndCompMsg( 'Updated (tagged) test suite ' + %trim(srvPgm.nm) + '.' );
 
     sndCompMsg( 'Test program ' + %trim(srvPgm.nm)
               + ' created in library ' + %trim(srvPgm.lib) + '.' );
@@ -318,7 +322,7 @@ dcl-proc resolveLibraries;
 
     if (libResolved = '');
       sndEscapeMsgAboveCtlBdy( 'Could not resolve module '
-                             +  Object_qName(modules.object(i)) );
+      +  Object_qName(modules.object(i)) );
     endif;
 
     rtnModules.size += 1;
@@ -435,7 +439,7 @@ dcl-proc addModule;
     // First remove module (if found)
     for i = 1 to modules.size;
       if (module.nm = modules.object(i).nm and
-          module.lib = modules.object(i).lib);
+        module.lib = modules.object(i).lib);
         r = i;
       endif;
       if (r > 0 and  r < i);
@@ -457,7 +461,7 @@ dcl-proc addModule;
   else;
     for i = 1 to modules.size;
       if (module.nm = modules.object(i).nm and
-          module.lib = modules.object(i).lib);
+        module.lib = modules.object(i).lib);
         return;
       endif;
     endfor;
@@ -470,30 +474,31 @@ end-proc;
 
 dcl-proc crtRpgMod;
   dcl-pi *n extproc(*dclcase);
-    testpgm    likeds(object_t) const;
-    srcFile    likeds(object_t) const;
-    srcMbr     like(srcMbr_t.mbr) const;
-    srcStmf    like(ifsStmf_t) const;
-    coption    likeds(options_t) const;
-    dbgview    like(dbgView_t) const;
-    prpgppopt  like(rpgPpOpt_t) const;
-    poption    likeds(options_t) const;
-    compileopt like(compileOpt_t) const;
-    targetrls  like(targetRelease_t) const;
-    define     likeds(defines_t) const;
-    incDir     likeds(incDir_t) const;
-    tgtCcsid   like(tgtCcsid_t) const;
-    srcCcsid   like(cvtCcsid_t) const;
+    testpgm        likeds(object_t) const;
+    srcFile        likeds(object_t) const;
+    srcMbr         like(srcMbr_t.mbr) const;
+    srcStmf        like(ifsStmf_t) const;
+    coption        likeds(options_t) const;
+    dbgview        like(dbgView_t) const;
+    prpgppopt      like(rpgPpOpt_t) const;
+    poption        likeds(options_t) const;
+    compileOpt     like(compileOpt_t) const;
+    compilerParams like(compilerParams_t) const;
+    targetRls      like(targetRelease_t) const;
+    define         likeds(defines_t) const;
+    incDir         likeds(incDir_t) const;
+    tgtCcsid       like(tgtCcsid_t) const;
+    srcCcsid       like(cvtCcsid_t) const;
   end-pi;
 
   // A command to be executed.
   dcl-s cmd like(cmd_t);
 
   cmd = getCrtRpgModCmd(testpgm: srcFile: srcMbr: srcStmf: coption: dbgview:
-                         prpgppopt: poption: compileopt: targetrls:
-                         define: incDir: tgtCcsid: srcCcsid);
-  sndCmdToJobLog(cmd);
-  qcmdexc(cmd: %len(cmd));
+                        prpgppopt: poption: compileOpt: compilerParams: targetRls:
+                        define: incDir: tgtCcsid: srcCcsid);
+                        sndCmdToJobLog(cmd);
+                        qcmdexc(cmd: %len(cmd));
 
 end-proc;
 
@@ -587,19 +592,20 @@ end-proc;
 
 dcl-proc crtCblMod;
   dcl-pi *n;
-    testpgm    likeds(object_t) const;
-    srcFile    likeds(object_t) const;
-    srcMbr     like(srcMbr_t.mbr) const;
-    srcStmf    like(ifsStmf_t) const;
-    coption    likeds(options_t) const;
-    dbgview    like(dbgView_t) const;
-    poption    likeds(options_t) const;
-    compileopt like(compileOpt_t) const;
-    targetrls  like(targetRelease_t) const;
-    define     likeds(defines_t) const;
-    incDir     likeds(incDir_t) const;
-    tgtCcsid   like(tgtCcsid_t) const;
-    srcCcsid   like(cvtCcsid_t) const;
+    testpgm        likeds(object_t) const;
+    srcFile        likeds(object_t) const;
+    srcMbr         like(srcMbr_t.mbr) const;
+    srcStmf        like(ifsStmf_t) const;
+    coption        likeds(options_t) const;
+    dbgview        like(dbgView_t) const;
+    poption        likeds(options_t) const;
+    compileOpt     like(compileOpt_t) const;
+    compilerParams like(compilerParams_t) const;
+    targetRls      like(targetRelease_t) const;
+    define         likeds(defines_t) const;
+    incDir         likeds(incDir_t) const;
+    tgtCcsid       like(tgtCcsid_t) const;
+    srcCcsid       like(cvtCcsid_t) const;
   end-pi;
 
   // A command to be executed.
@@ -607,7 +613,7 @@ dcl-proc crtCblMod;
 
 
   cmd = getCrtCblModCmd(testpgm: srcFile: srcMbr: srcStmf: coption: dbgview:
-                        poption: compileopt: targetrls:
+                        poption: compileOpt: compilerParams: targetRls:
                         define: incDir: tgtCcsid: srcCcsid);
   sndInfoMsg(cmd);
   qcmdexc(cmd: %len(cmd));
@@ -661,27 +667,28 @@ dcl-proc deleteSplfCallback;
   dcl-s cmd like(cmd_t);
 
   cmd = 'DLTSPLF FILE(' + %trim(i_splfnm) + ') +
-           JOB(' + %trim(i_qJob.nbr) + '/' +
-                   %trim(i_qJob.user) + '/' +
-                   %trim(i_qJob.name) + ') +
-           SPLNBR(' + %char(i_splfnbr) + ')';
+  JOB(' + %trim(i_qJob.nbr) + '/' +
+  %trim(i_qJob.user) + '/' +
+  %trim(i_qJob.name) + ') +
+  SPLNBR(' + %char(i_splfnbr) + ')';
 
   qcmdexc(cmd: %len(cmd));
 
-  return *on;
+return *on;
 
 end-proc;
 
 dcl-proc crtSrvPgm;
   dcl-pi *n likeds(object_t) extproc(*dclcase);
-    testPgm   likeds(object_t) const;
-    bndSrvPgm likeds(objectArray_t) const;
-    bndDir    likeds(objectArray_t) const;
-    module    likeds(objectArray_t) const;
-    bOption   likeds(options_t) const;
-    actGrp    like(activationGroup_t) const;
-    text      like(text_t) const;
-    targetRls like(targetRelease_t) const;
+    testPgm      likeds(object_t) const;
+    bndSrvPgm    likeds(objectArray_t) const;
+    bndDir       likeds(objectArray_t) const;
+    module       likeds(objectArray_t) const;
+    bOption      likeds(options_t) const;
+    actGrp       like(activationGroup_t) const;
+    text         like(text_t) const;
+    linkerParams like(linkerParams_t) const;
+    targetRls    like(targetRelease_t) const;
   end-pi;
 
   // Export all procedures from the service program.
@@ -704,7 +711,7 @@ dcl-proc crtSrvPgm;
     bndSrvPgmWithRU.object = bndSrvPgm.object;
     bndSrvPgmWithRU.size += 1;
     if (bndSrvPgmWithRU.object(i).nm = 'RUTESTCASE');
-      haveRpgUnitRuntime = *on;
+    haveRpgUnitRuntime = *on;
     endif;
   endfor;
 
@@ -714,16 +721,9 @@ dcl-proc crtSrvPgm;
     bndSrvPgmWithRU.object(bndSrvPgmWithRU.size).lib = '*LIBL';
   endif;
 
-  cmd = getCrtSrvPgmCmd( testPgm:
-                         bndSrvPgmWithRU:
-                         bndDir:
-                         module :
-                         bOption:
-                         export_all :
-                         actGrp:
-                         text :
-                         targetRls );
-  sndInfoMsg( cmd );
+  cmd = getCrtSrvPgmCmd(testPgm: bndSrvPgmWithRU: bndDir: module
+                        :bOption : export_all: actGrp: text: linkerParams: targetRls);
+ sndInfoMsg( cmd );
   qcmdexc( cmd : %len(cmd) );
 
   compMsgData = rcvMsgData( '*COMP' );
@@ -744,6 +744,7 @@ dcl-proc getCrtSrvPgmCmd export;
     export    like(export_t) const;
     actgrp    like(activationGroup_t) const;
     text      like(text_t) const;
+    lnkParm   like(linkerParams_t) const;
     targetrls like(targetRelease_t) const;
   end-pi;
 
@@ -760,6 +761,10 @@ dcl-proc getCrtSrvPgmCmd export;
   cmd += serializeString( 'TEXT' : text );
   cmd += serializeValue( 'TGTRLS' : targetrls );
   cmd += serializeString( 'DETAIL' : '*BASIC' );
+
+
+  // append arbitrary compile parameters
+  cmd += serializeArbitraryParams(lnkParm);
 
   if export <> *blank;
     cmd += 'EXPORT(' + %trim(export) + ') ';
@@ -791,8 +796,8 @@ dcl-proc formatCommand;
   optCtrlBlk.msgRtvKey = '';     // no msg key
   optCtrlBlk.res_01 = *allx'00';
 
-  qcapcmd( cmd : %len(cmd) : optCtrlBlk : %size(optCtrlBlk) : 'CPOP0100'
-         : rtncmd : %len(rtncmd) : rtncmdlenavl : errcode);
+  qcapcmd(cmd : %len(cmd) : optCtrlBlk : %size(optCtrlBlk) : 'CPOP0100'
+          : rtncmd : %len(rtncmd) : rtncmdlenavl : errcode);
 
   return %subst(rtncmd: 1: rtncmdlenavl);
 
@@ -801,20 +806,21 @@ end-proc;
 
 dcl-proc getCrtRpgModCmd export;
   dcl-pi *n like(cmd_t);
-    testPgm    likeds(object_t) const;
-    srcFile    likeds(object_t) const;
-    srcMbr     like(srcMbr_t.mbr) const;
-    srcStmf    like(ifsStmf_t) const;
-    cOption    likeds(options_t) const;
-    dbgView    like(dbgView_t) const;
-    pRpgPpOpt  like(rpgPpOpt_t) const;
-    pOptions   likeds(options_t) const;
-    compileOpt like(compileOpt_t) const;
-    targetRls  like(targetRelease_t) const;
-    define     likeds(defines_t) const;
-    incDir     likeds(incDir_t) const;
-    tgtCcsid   like(tgtCcsid_t) const;
-    srcCcsid   like(cvtCcsid_t) const;
+    testPgm        likeds(object_t) const;
+    srcFile        likeds(object_t) const;
+    srcMbr         like(srcMbr_t.mbr) const;
+    srcStmf        like(ifsStmf_t) const;
+    cOption        likeds(options_t) const;
+    dbgView        like(dbgView_t) const;
+    pRpgPpOpt      like(rpgPpOpt_t) const;
+    pOptions       likeds(options_t) const;
+    compileOpt     like(compileOpt_t) const;
+    compilerParams like(compilerParams_t) const;
+    targetRls      like(targetRelease_t) const;
+    define         likeds(defines_t) const;
+    incDir         likeds(incDir_t) const;
+    tgtCcsid       like(tgtCcsid_t) const;
+    srcCcsid       like(cvtCcsid_t) const;
   end-pi;
 
   // Command string accumulator.
@@ -869,9 +875,9 @@ dcl-proc getCrtRpgModCmd export;
         if (srcCcsid = 1208);
           sndEscapeMsgAboveCtlBdy(
             'Stream file with CCSID 1208 cannot be compiled, +
-             because command CRTSQLRPGI does not support +
-             parameter CVTCCSID. Install missing PTFs and +
-             try again.');
+            because command CRTSQLRPGI does not support +
+            parameter CVTCCSID. Install missing PTFs and +
+            try again.');
         endif;
       endif;
     endif;
@@ -894,14 +900,17 @@ dcl-proc getCrtRpgModCmd export;
       if (%scan( PARM_OPTION + '(' : uCase( cOption )) = 0);
         dbgCompileOpt += serializeOptions( 'OPTION' : cOption );
       endif;
-    else;
-      dbgCompileOpt = serializeDefines(define);
-      dbgCompileOpt += serializeTgtCcsid(tgtCcsid);
-      dbgCompileOpt += serializeIncDir(incDir);
-      dbgCompileOpt += serializeOptions( 'OPTION' : cOption );
+      else;
+        dbgCompileOpt = serializeDefines(define);
+        dbgCompileOpt += serializeTgtCcsid(tgtCcsid);
+        dbgCompileOpt += serializeIncDir(incDir);
+        dbgCompileOpt += serializeOptions( 'OPTION' : cOption );
     endif;
 
     cmd += serializeString( 'COMPILEOPT' : dbgCompileOpt);
+
+    // append arbitrary compile parameters
+    cmd += serializeArbitraryParams(compilerParams);
 
   // something we don't know about yet
   other;
@@ -917,19 +926,20 @@ end-proc;
 
 dcl-proc getCrtCblModCmd export;
   dcl-pi *n like(cmd_t);
-    testpgm    likeds(object_t) const;
-    srcFile    likeds(object_t) const;
-    srcMbr     like(srcMbr_t.mbr) const;
-    srcStmf    like(ifsStmf_t) const;
-    cOption    likeds(options_t) const;
-    dbgView    like(dbgView_t) const;
-    pOptions   likeds(options_t) const;
-    compileOpt like(compileOpt_t) const;
-    targetRls  like(targetRelease_t) const;
-    define     likeds(defines_t) const;
-    incDir     likeds(incDir_t) const;
-    tgtCcsid   like(tgtCcsid_t) const;
-    srcCcsid   like(cvtCcsid_t) const;
+    testpgm        likeds(object_t) const;
+    srcFile        likeds(object_t) const;
+    srcMbr         like(srcMbr_t.mbr) const;
+    srcStmf        like(ifsStmf_t) const;
+    cOption        likeds(options_t) const;
+    dbgView        like(dbgView_t) const;
+    pOptions       likeds(options_t) const;
+    compileOpt     like(compileOpt_t) const;
+    compilerParams like(compilerParams_t) const;
+    targetRls      like(targetRelease_t) const;
+    define         likeds(defines_t) const;
+    incDir         likeds(incDir_t) const;
+    tgtCcsid       like(tgtCcsid_t) const;
+    srcCcsid       like(cvtCcsid_t) const;
   end-pi;
 
   // Command string accumulator.
@@ -984,9 +994,9 @@ dcl-proc getCrtCblModCmd export;
         if (srcCcsid = 1208);
           sndEscapeMsgAboveCtlBdy(
             'Stream file with CCSID 1208 cannot be compiled, +
-             because command CRTSQLCBLI does not support +
-             parameter CVTCCSID. Install missing PTFs and +
-             try again.');
+            because command CRTSQLCBLI does not support +
+            parameter CVTCCSID. Install missing PTFs and +
+            try again.');
         endif;
       endif;
     endif;
@@ -1013,6 +1023,9 @@ dcl-proc getCrtCblModCmd export;
     endif;
 
     cmd += serializeString( 'COMPILEOPT' : dbgCompileOpt);
+
+    // append arbitrary compile parameters
+    cmd += serializeArbitraryParams(compilerParams);
 
   // something we don't know about yet
   other;
@@ -1057,21 +1070,21 @@ dcl-proc serializeObjectArray;
 
 
   if array.size = 0;
-    return '';
+  return '';
   endif;
 
   serialized = %trim(headtoken) + '(';
 
   for i = 1 to array.size;
     if (i >= 2);
-       serialized += ' ';
+      serialized += ' ';
     endif;
     serialized += serializeObjectName( array.object(i) );
   endfor;
 
   serialized += ') ';
 
-  return serialized;
+return serialized;
 
 end-proc;
 
@@ -1129,7 +1142,7 @@ dcl-proc serializeOptions;
 
   for i = 1 to options.size;
     if (i >= 2);
-       serialized += ' ';
+      serialized += ' ';
     endif;
     serialized += %trim(options.option(i));
   endfor;
@@ -1154,14 +1167,14 @@ dcl-proc serializeDefines;
   dcl-s i int(10);
 
   if defines.size = 0;
-    return '';
+  return '';
   endif;
 
   serialized = 'DEFINE(';
 
   for i = 1 to defines.size;
     if (i >= 2);
-       serialized += ' ';
+      serialized += ' ';
     endif;
     serialized += %trim(defines.define(i));
   endfor;
@@ -1248,14 +1261,14 @@ dcl-proc serializeIncDir;
 
 
   if incDir.size = 1 and incDir.path(1) = '*NONE';
-    return '';
+  return '';
   endif;
 
   serialized = 'INCDIR(';
 
   for i = 1 to incDir.size;
     if (i >= 2);
-       serialized += ' ';
+      serialized += ' ';
     endif;
     serialized += addQuotes(%trim(incDir.path(i)));
   endfor;
@@ -1304,6 +1317,7 @@ dcl-proc serializeString;
 
 end-proc;
 
+
 dcl-proc serializeValue;
   dcl-pi *n like(serializedString_t) extproc(*dclcase);
     headtoken char(10) const;
@@ -1318,6 +1332,25 @@ dcl-proc serializeValue;
   endif;
 
   serialized = %trim(headtoken) + '(' + %trim(value) + ') ';
+
+  return serialized;
+
+end-proc;
+
+
+dcl-proc serializeArbitraryParams;
+  dcl-pi *n like(serializedString_t) extproc(*dclcase);
+    value like(string_t) const;
+  end-pi;
+
+  // Serialized Options.
+  dcl-s serialized like(serializedString_t);
+
+  if %len(%trim(value)) = 0;
+    return '';
+  endif;
+
+  serialized = %trim(value) + ' ';
 
   return serialized;
 
