@@ -917,12 +917,12 @@ dcl-proc testErrorsInBothSetUpSuiteAndTearDownSuite export;
 
   splfLineStartsWith( 'setupSuite - ERROR');
   splfLineStartsWith( 'MCH1211 - ');
-  splfLineStartsWith( 'setupSuite (TESTPGM19->TESTPGM19:25');
+  splfLineStartsWith( 'setupSuite (TESTPGM19->TESTPGM19:35');
   splfLineStartsWith( '-----------------------');
   splfSkipLine();  // Skip [blank line]
   splfLineStartsWith( 'tearDownSuite - ERROR');
   splfLineStartsWith( 'MCH1211 - ');
-  splfLineStartsWith( 'tearDownSuite (TESTPGM19->TESTPGM19:44');
+  splfLineStartsWith( 'tearDownSuite (TESTPGM19->TESTPGM19:54');
   splfLineStartsWith( '-----------------------');
   splfSkipLine();  // Skip [blank line]
   splfLineStartsWith( 'ERROR. 0 test case, 0 assertion, 0 failure, 2 errors.');
