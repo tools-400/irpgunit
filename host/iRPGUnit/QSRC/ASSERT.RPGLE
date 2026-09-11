@@ -754,7 +754,7 @@ dcl-proc assertJoblogContains export;
   userData.isFound = *off;
   userData.msgID = msgID;
 
-  hReader = JobLogReader_init(jl_rd_previous);
+  hReader = JobLogReader_init(JL_RD_PREVIOUS);
   joblogreader_read(hReader: %paddr('ASSERT_jobLogCallback'): %addr(userData));
 
   assert(userData.isFound: 'Message ' + msgID + ' not found in the job log.');

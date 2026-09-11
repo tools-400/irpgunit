@@ -348,7 +348,7 @@ dcl-proc getCreatedModulesFromJobLog;
   userdata.timelimit = timelimit;
   userdata.crtmsgid = crtmsgid;
 
-  hreader = JobLogReader_init(jl_rd_previous);
+  hreader = JobLogReader_init(JL_RD_PREVIOUS);
   joblogreader_addfield(hreader: OLJL_RPL_DATA);
   joblogreader_read(hreader: %paddr('jobLogCallback'): %addr(userdata));
 
