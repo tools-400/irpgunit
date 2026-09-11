@@ -1,5 +1,5 @@
 /* =================================================================== */
-/*  iRPGUnit SelfTest - Build and run all self tests.                  */
+/*  iRPGUnit SelfTest - Build JOBLOGT2.                                */
 /* =================================================================== */
 /* Copyright (c) 2013-2019 iRPGUnit Project Team                       */
 /* All rights reserved. This program and the accompanying materials    */
@@ -10,7 +10,7 @@
 /*  Usage:                                                             */
 /*  a) Add the iRPGUnit library to your library list.                  */
 /*  b) Start the Rexx script with the following command:               */
-/*       STRREXPRC SRCMBR(MKUT) SRCFILE(QUNITTEST) PARM(prdLib)        */
+/*       STRREXPRC SRCMBR(MKJOBLOGT2) SRCFILE(QUNITTEST) PARM(prdLib)  */
 /*     where 'prdLib' is the library containing the RPGUnit            */
 /*     source files.                                                   */
 /*                                                                     */
@@ -33,7 +33,7 @@
 /*   >>PRE-COMPILER<<                                                  */
 /*     >>CRTCMD<<  STRREXPRC SRCMBR(&SM) SRCFILE(&SL/&SF);             */
 /*     >>IMPORTANT<<                                                   */
-/*       >>PARM<< PARM('&LI');                                         */
+/*       >>PARM<< PARM('&LI *LIST');                                   */
 /*     >>END-IMPORTANT<<                                               */
 /*     >>EXECUTE<<                                                     */
 /*   >>END-PRE-COMPILER<<                                              */
@@ -46,6 +46,9 @@
  SIGNAL on NOVALUE
  SIGNAL on SYNTAX
 
+ /* The utility that is installed */
+ UTILITY = 'JOBLOGT2'
+
  PARSE ARG prdLib dbgView tgtrls
 
  prdLib  = translate(strip(prdLib))
@@ -56,7 +59,7 @@
    "SNDPGMMSG ",
      "MSGID(CPF9898) ",
      "MSGF(QCPFMSG) ",
-     "MSGDTA('Usage: STRREXPRC SRCMBR(MKUT) SRCFILE(QUNITTEST) PARM(prdLib)')",
+     "MSGDTA('Usage: STRREXPRC SRCMBR(MKJOBLOGT2) SRCFILE(QUNITTEST) PARM(prdLib)')",
      "TOPGMQ(*PRV (*CTLBDY)) ",
      "MSGTYPE(*ESCAPE)"
  end
@@ -85,51 +88,32 @@
  end
 
  /* -------------------------------------------- */
- /*  Let's do it!                                */
+ /*  Recreate the modules if needed.             */
  /* -------------------------------------------- */
 
- /* Self-Tests. */
+ "STRREXPRC SRCMBR(A_INSTALL) SRCFILE(RPGUNITDVP/QBUILD) PARM('CMPMOD "prdLib" "dbgView" "tgtRls"')"
 
- executeUnitTest('MKASSERTT', 'ASSERTT')
- executeUnitTest('MKCALLPRCT', 'CALLPRCT')
- executeUnitTest('MKCMDRUNLT', 'CMDRUNLOGT')
- executeUnitTest('MKCMDRUNT', 'CMDRUNT')
- executeUnitTest('MKCMPTPLT', 'CMPTPLT')
- executeUnitTest('MKCRTTSTT', 'CRTTSTT')
- executeUnitTest('MKEXTPRCT', 'EXTPRCT')
- executeUnitTest('MKEXTTSTT', 'EXTTSTT')
- executeUnitTest('MKJOBLOGT', 'JOBLOGT')
- executeUnitTest('MKJOBLOGT2', 'JOBLOGT2')
- executeUnitTest('MKLIBLT', 'LIBLT')
- executeUnitTest('MKLSTSPLFT', 'LSTSPLFT')
- executeUnitTest('MKMSGQT', 'MSGQT')
- executeUnitTest('MKOPDESCT', 'OPDESCT')
- executeUnitTest('MKPGMMSGT', 'PGMMSGT')
- executeUnitTest('MKRUNT', 'RUNT')
- executeUnitTest('MKSRCMBRT', 'SRCMBRT')
- executeUnitTest('MKSTMFT', 'STMFT')
- executeUnitTest('MKSTRINGT', 'STRINGT')
- executeUnitTest('MKUTILST', 'TESTUTILST')
+ /* -------------------------------------------- */
+ /*  Let's do it!                                */
+ /* -------------------------------------------- */
+ "CMPMOD MODULE("prdLib"/JOBLOGT2 ) SRCFILE("prdLib"/QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/PGMMSG   ) SRCFILE("prdLib"/QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+ "CMPMOD MODULE("prdLib"/JOBLOG   ) SRCFILE("prdLib"/QUNITTEST) DBGVIEW("dbgView") TGTRLS("tgtRls")"
+
+ "CRTSRVPGM  SRVPGM("prdLib"/JOBLOGT2) ",
+            "MODULE("prdLib"/JOBLOGT2) ",
+            "EXPORT(*ALL) ",
+            "BNDDIR("prdLib"/IRPGUNIT) ",
+            "TEXT('RPGUnit SelfTest - Test ASSERT (job log).')"
 
  "SNDPGMMSG ",
    "MSGID(CPF9897) ",
    "MSGF(QCPFMSG) ",
-   "MSGDTA('Successfully executed self-tests: "prdLib"')",
+   "MSGDTA('Successfully compiled "UTILITY" in library: "prdLib"')",
    "TOPGMQ(*PRV (*CTLBDY)) ",
    "MSGTYPE(*INFO)"
 
  EXIT
-
- /* ------------------------------------------------------------- */
- /* Executes a given test case.                                   */
- /* ------------------------------------------------------------- */
- executeUnitTest:
-   PARSE ARG buildScript, unitTest
-
-   "STRREXPRC SRCMBR("buildScript") SRCFILE("prdLib"/QUNITTEST) PARM('"prdLib" "dbgView" "tgtRls"')"
-   "RUCALLTST  TSTPGM("prdLib"/"unitTest")"
-
-   return ''
 
  /* ------------------------------------------------------------- */
  /* Global Error handler                                          */
@@ -138,7 +122,7 @@
    "SNDPGMMSG ",
      "MSGID(CPF9898) ",
      "MSGF(QCPFMSG) ",
-     "MSGDTA('ERROR: Failed to run self-tests. Check the job log for details') ",
+     "MSGDTA('ERROR: Failed to install "UTILITY". Check the job log for details') ",
      "TOPGMQ(*PRV (*CTLBDY)) ",
      "MSGTYPE(*ESCAPE)"
 

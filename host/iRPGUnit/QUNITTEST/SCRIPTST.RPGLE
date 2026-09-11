@@ -264,6 +264,27 @@ dcl-proc testMKJOBLOGT export;
 end-proc;
 
 
+dcl-proc testMKJOBLOGT2 export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-c TEST_SUITE 'JOBLOGT2';
+
+  // Setup.
+
+  deleteTestSuite(TEST_SUITE);
+
+  // Run.
+
+  executeScript('MKJOBLOGT2');
+
+  // Check.
+
+  assert(checkTestSuite(TEST_SUITE): 'Service program ' + TEST_SUITE + ' not found.');
+
+end-proc;
+
+
 dcl-proc testMKLIBLT export;
   dcl-pi *n extproc(*dclcase);
   end-pi;

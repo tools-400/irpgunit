@@ -29,6 +29,7 @@ ctl-opt NoMain;
 /include qinclude,ERRORCODE
 /include qinclude,PGMMSG
 /include qsysinc,QGYOLJBL
+/include qsysinc,QGYGTLE
 /include qsysinc,QGYCLST
 
 /include qinclude,JOBLOG
@@ -48,7 +49,6 @@ dcl-ds hReader_t qualified template;
 end-ds;
 
 dcl-ds hMsgInfo_t qualified template;
-  pJobLogInfo pointer;
   pMsgInfo    pointer;
 end-ds;
 
@@ -212,7 +212,10 @@ dcl-proc JobLogReader_read export;
     i_msgSentTime timestamp    const;
   end-pr;
 
-  dcl-s jobLogList char(32766);
+  dcl-s oljl0100_buffer char(8192);
+  dcl-ds oljl0100 likeds(dsOljl0100EntHdr) based(pOljl0100);
+  dcl-s pOljl0100 pointer inz(%addr(oljl0100_buffer));
+
   dcl-ds listInfo likeds(dsOpnList);
   dcl-ds percolateErrors likeds(percolateErrors_t) inz(*likeds);
   dcl-ds msgBasicInfo likeds(dsOLJL0100EntHdr) based(p_msgBasicInfo);
@@ -233,35 +236,32 @@ dcl-proc JobLogReader_read export;
 
   prepareRead(io_hReader);
 
-  QGYOLJBL( jobLogList :
-            %size( jobLogList ) :
+  // Open job log and retrieve all messages
+  QGYOLJBL( oljl0100_buffer:
+            %size( oljl0100_buffer ):
             listInfo :
-            OLJL_FULL_SYNCHRONOUS_BUILD :
+            -1 :
             hReader.fieldSelect :
             hReader.fldSlcSize :
             percolateErrors);
 
-  p_msgBasicInfo = %addr(jobLogList);
   hReader.currMsgCnt = 1;
 
   pCallback = i_callback;
 
   dow 1=1;
-    if (hReader.currMsgCnt > listInfo.retRcdCnt);
-      if (listInfo.totalRcdCnt > listInfo.retRcdCnt);
-        sndEscapeMsgToCaller( 'Insufficient implementation. ' +
-              'Should use QGYGTLE to retrieve records after ' +
-                           %char( listInfo.retRcdCnt ) + '. ' +
-                                      'Please open an issue.' );
-      else;
-        leave;
-      endif;
+    if (hReader.currMsgCnt > listInfo.totalRcdCnt);
+      leave;
     endif;
 
-    clear hMsgInfo;
-    hMsgInfo.pJobLogInfo = %addr(jobLogList);
-    hMsgInfo.pMsgInfo = p_msgBasicInfo;
+    // Retrieve next message from job log
+    QGYGTLE(oljl0100_buffer: %size(oljl0100_buffer)
+            : listInfo.rqsHdl: listInfo: 1: hReader.currMsgCnt: percolateErrors);
 
+    clear hMsgInfo;
+    hMsgInfo.pMsgInfo = %addr(oljl0100_buffer);
+
+    p_msgBasicInfo = hMsgInfo.pMsgInfo;
     msgId = msgBasicInfo.msgId;
     msgText = JobLogReader_getCharValue(%addr(hMsgInfo): OLJL_MSG_WITH_RPL_DATA);
     msgSentTime = getSentTimeJobLogMsg( msgBasicInfo );
@@ -271,7 +271,6 @@ dcl-proc JobLogReader_read export;
     endif;
 
     // Go to next message in the job log.
-    p_msgBasicInfo = %addr( jobLogList ) + msgBasicInfo.nextEntOffs;
     hReader.currMsgCnt += 1;
   enddo;
 
@@ -491,7 +490,7 @@ dcl-proc JobLogReader_getCharValue export;
   dcl-s data char(3000) based(pData);
   dcl-s i int(10);
 
-  p_msgFieldInfo = hMsgInfo.pJobLogInfo + msgBasicInfo.retFldOffs;
+  p_msgFieldInfo = hMsgInfo.pMsgInfo + msgBasicInfo.retFldOffs;
 
   for i = 1 to msgBasicInfo.retFldCnt;
 
@@ -505,7 +504,7 @@ dcl-proc JobLogReader_getCharValue export;
       endif;
     endif;
 
-    p_msgFieldInfo = hMsgInfo.pJobLogInfo + msgFieldInfo.nextFldOffs;
+    p_msgFieldInfo = hMsgInfo.pMsgInfo + msgFieldInfo.nextFldOffs;
   endfor;
 
   if (value = '' and %parms() >= %parmnum(i_dftValue));

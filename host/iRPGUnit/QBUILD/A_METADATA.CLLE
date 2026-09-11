@@ -1289,6 +1289,12 @@
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(JOBLOGT2) +
+                          SRCTYPE(RPGLE) +
+                          TEXT('iRPGUnit SelfTest - Test JOBLOG #2.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
                           MBR(LIBLC) +
                           SRCTYPE(CLLE) +
                           TEXT('iRPGUnit - LIBL Unit Test Helper.')
@@ -1364,6 +1370,12 @@
                           MBR(MKJOBLOGT) +
                           SRCTYPE(REXX) +
                           TEXT('iRPGUnit - Build JOBLOGT.')
+             MONMSG     MSGID(CPF3288)
+
+             CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
+                          MBR(MKJOBLOGT2) +
+                          SRCTYPE(REXX) +
+                          TEXT('iRPGUnit - Build JOBLOGT2.')
              MONMSG     MSGID(CPF3288)
 
              CHGPFM     FILE(&TARGETLIB/QUNITTEST) +
