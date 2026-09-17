@@ -29,6 +29,7 @@ import com.ibm.as400.access.AS400FTP;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.CommandCall;
 import com.ibm.as400.access.FTP;
+import com.ibm.as400.access.IFSFile;
 import com.ibm.as400.access.Job;
 import com.ibm.as400.access.JobLog;
 import com.ibm.as400.access.QueuedMessage;
@@ -293,14 +294,24 @@ public class ProductLibraryUploader {
 
     private boolean checkLibraryPrecondition(String libraryName, String aspDeviceName) {
 
-        while (libraryExists(libraryName)) {
+        while (libraryExists(libraryName) && hasObjects(libraryName, aspDeviceName)) {
             if (!MessageDialog.openQuestion(shell, Messages.DialogTitle_Delete_Object,
                 Messages.bind(Messages.Library_A_does_already_exist, libraryName) + "\n\n"
                     + Messages.bind(Messages.Question_Do_you_want_to_delete_library_A, libraryName))) {
                 return false;
             }
             setStatus(Messages.bind(Messages.Deleting_library_A, libraryName));
-            deleteLibrary(libraryName, aspDeviceName, true);
+            if (!deleteLibrary(libraryName, aspDeviceName, true)) {
+                while (hasObjects(libraryName, aspDeviceName)) {
+                    if (!MessageDialog.openQuestion(shell, Messages.DialogTitle_Clear_Library,
+                        Messages.bind(Messages.Library_A_is_not_empty, libraryName) + "\n\n"
+                            + Messages.bind(Messages.Question_Do_you_want_to_clear_library_A, libraryName))) {
+                        return false;
+                    }
+                    setStatus(Messages.bind(Messages.Clearing_library_A, libraryName));
+                    clearLibrary(libraryName, aspDeviceName, true);
+                }
+            }
         }
 
         return true;
@@ -321,10 +332,49 @@ public class ProductLibraryUploader {
 
         cpfMsg = executeCommand(produceDeleteLibraryCommand(libraryName, aspDeviceName), logErrors);
         if (!cpfMsg.equals("")) {
+            MessageDialog.openError(shell, Messages.ERROR, Messages.bind(Messages.Could_not_delete_library_A_Error_B, libraryName, cpfMsg));
             return false;
         }
 
         return true;
+    }
+
+    private boolean clearLibrary(String libraryName, String aspDeviceName, boolean logErrors) {
+
+        String cpfMsg;
+
+        cpfMsg = executeCommand(produceClearLibraryCommand(libraryName, aspDeviceName), logErrors);
+        if (!cpfMsg.equals("")) {
+            MessageDialog.openError(shell, Messages.ERROR, Messages.bind(Messages.Could_not_clear_library_A_Error_B, libraryName, cpfMsg));
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean hasObjects(String libraryName, String aspDeviceName) {
+
+        try {
+
+            String path;
+            if (isASPDeviceSpecified(aspDeviceName)) {
+                path = "/" + aspDeviceName.toUpperCase() + "/QSYS.LIB/" + libraryName.toUpperCase() + ".LIB";
+            } else {
+                path = "/QSYS.LIB/" + libraryName.toUpperCase() + ".LIB";
+            }
+
+            IFSFile libraryDir = new IFSFile(as400, path);
+
+            String[] list = libraryDir.list();
+            if (list.length > 0) {
+                return true;
+            }
+
+        } catch (Exception e) {
+            setStatus(ExceptionHelper.getLocalizedMessage(e));
+        }
+
+        return false;
     }
 
     private boolean checkSaveFilePrecondition(String workLibrary, String saveFileName) {
@@ -678,6 +728,16 @@ public class ProductLibraryUploader {
     private String produceDeleteLibraryCommand(String productLibrary, String aspDevice) {
 
         String command = "DLTLIB LIB(" + productLibrary + ")";
+        if (isASPDeviceSpecified(aspDevice)) {
+            command += " ASPDEV(*)";
+        }
+
+        return command;
+    }
+
+    private String produceClearLibraryCommand(String productLibrary, String aspDevice) {
+
+        String command = "CLRLIB LIB(" + productLibrary + ")";
         if (isASPDeviceSpecified(aspDevice)) {
             command += " ASPDEV(*)";
         }

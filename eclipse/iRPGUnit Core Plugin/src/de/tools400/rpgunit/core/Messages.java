@@ -202,13 +202,19 @@ public class Messages extends NLS {
     public static String Tooltip_CloseButton;
 
     public static String DialogTitle_Delete_Object;
+    public static String DialogTitle_Clear_Library;
     public static String Connected_to_host_A;
     public static String Could_not_connect_to_host_A_Reason_B;
     public static String Could_not_set_asp_device_name_to_A;
+    public static String Could_not_delete_library_A_Error_B;
+    public static String Could_not_clear_library_A_Error_B;
     public static String Checking_library_A_for_existence;
     public static String Library_A_does_already_exist;
     public static String Question_Do_you_want_to_delete_library_A;
     public static String Deleting_library_A;
+    public static String Library_A_is_not_empty;
+    public static String Question_Do_you_want_to_clear_library_A;
+    public static String Clearing_library_A;
     public static String Checking_file_B_in_library_A_for_existence;
     public static String File_B_in_library_A_does_already_exist;
     public static String Creating_save_file_B_in_library_A;
