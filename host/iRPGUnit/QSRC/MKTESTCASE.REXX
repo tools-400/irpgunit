@@ -93,7 +93,7 @@
  /*  Recreate the modules if needed.             */
  /* -------------------------------------------- */
 
- "STRREXPRC SRCMBR(A_INSTALL) SRCFILE(RPGUNITDVP/QBUILD) PARM('CMPMOD "prdLib" "dbgView" "tgtRls"')"
+ "STRREXPRC SRCMBR(A_INSTALL) SRCFILE("prdLib"/QBUILD) PARM('CMPMOD "prdLib" "dbgView" "tgtRls"')"
 
  /* -------------------------------------------- */
  /*  Let's do it!                                */
