@@ -405,7 +405,7 @@
 
         <mkdir dir="${local.download.directory}" />
 
-        <ftp action="get" server="${IBMi.ftp.server}" userid="${IBMi.ftp.user}" password="${IBMi.ftp.password}" binary="true" verbose="true" remotedir="${IBMi.ftp.savefile.library}" systemTypeKey="OS/400" >
+        <ftp action="get" server="${IBMi.ftp.server}" userid="${IBMi.ftp.user}" password="${IBMi.ftp.password}" binary="true" passive="true" verbose="true" remotedir="${IBMi.ftp.savefile.library}" systemTypeKey="OS/400" >
             <fileset dir="${local.download.directory}" casesensitive="false" >
                 <include name="${IBMi.ftp.savefile.name}" />
             </fileset>
