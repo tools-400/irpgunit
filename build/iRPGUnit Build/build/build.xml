@@ -1,6 +1,6 @@
 <!--
  * =====================================================================
- *   This Ant script helps you to create an upload the project's 
+ *   This Ant script helps you to create an upload the project's
  *   update site.
  *
  *   In order to use all features of the script, you need to
@@ -420,7 +420,7 @@
 
     <!-- =============================================================
           Updates various files before the plug-in can be build
-          with option 'Plug-in Tools - Build Site' of 'site.xml'. 
+          with option 'Plug-in Tools - Build Site' of 'site.xml'.
          ============================================================= -->
     <target name="build" depends="checkBuildTarget, checkProjectPaths, clean, updateVersionNumber, updateHelpProject, createTagFile, refreshProjects" description="Step 2" >
 
@@ -546,12 +546,12 @@
     *   Creates the help pages.
     *   This target calls the build script of the 'Help Builder'
     *   project to create the help pages.
-    *   This target is not specific to RDi/WDSCi. It does not matter for 
+    *   This target is not specific to RDi/WDSCi. It does not matter for
     *   what target it is called.
     *
-    *   Set the build properties as shown below, if you want to update 
+    *   Set the build properties as shown below, if you want to update
     *   the help pages:
-    * 
+    *
     *     build.help.enabled=true
     *
     * ===================================================================== -->
@@ -956,8 +956,6 @@
         <if>
             <equals arg1="${do.copy.site.xml}" arg2="true" />
             <then>
-                <mkdir dir="${temp.dir.local_updatesite}/Server" />
-                <copy file="${build.template.dir.web.assets}/upload_savf.cmd" todir="${temp.dir.local_updatesite}/Server" />
                 <copy todir="${temp.dir.local_updatesite}" >
                     <fileset dir="${site.dir}" includes="site.xml" />
                 </copy>
@@ -967,7 +965,7 @@
 
     <!--
     * =====================================================================
-    *   Creates the tag file to indicate the project's version 
+    *   Creates the tag file to indicate the project's version
     *   of the zip file.
     * ===================================================================== -->
     <target name="createTagFile" >
@@ -1094,7 +1092,7 @@
     * =====================================================================
     *   Sets the properties that are used for building your local
     *   update site.
-    *   This target uses the properties stored in 
+    *   This target uses the properties stored in
     *   'localUpdateSite.properties'.
     * ===================================================================== -->
     <target name="setLocalUpdateSiteProperties" >
@@ -1188,19 +1186,15 @@
     <!--
     * =====================================================================
     *   Updates the help project with the following files:
-    *     - upload_savf.cmd
+    *     - n/a
     *
-    *   Set the build properties as shown below, if you want to update 
+    *   Set the build properties as shown below, if you want to update
     *   the help pages:
-    * 
+    *
     *     build.help.enabled=true
     *
     * ===================================================================== -->
     <target name="updateHelpProject" unless="ignore.build.help" >
-
-        <echo>Updating upload_savf.cmd in ${workspace.home}/${build.help.base.project} ...</echo>
-
-        <copy file="${build.template.dir.web.assets}/upload_savf.cmd" todir="${workspace.home}/${build.help.base.project}/html/appendix/assets" />
 
         <echo>Refreshing: ${build.help.base.project}</echo>
         <eclipse.refreshLocal resource="${build.help.base.project}" depth="infinite" />
@@ -1264,7 +1258,7 @@
                 <echo>Updating ${build.public.project.name} PDF file ...</echo>
 
                 <!-- Use a temporary file, because for whatever reasons the
-                     Word file is updated as well. Most like this is caused 
+                     Word file is updated as well. Most like this is caused
                      by a new version of MS Word. (Raddatz, 12.9.2025) -->
                 <delete file="${project.doc.tmp}" />
                 <copyfile src="${project.doc}" dest="${project.doc.tmp}" />
@@ -1320,7 +1314,7 @@
 
     <!--
     * =====================================================================
-    *   Checks whether of not the build has been started 
+    *   Checks whether of not the build has been started
     *   for the right target.
     * ===================================================================== -->
     <target name="checkBuildTarget" >
