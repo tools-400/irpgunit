@@ -656,8 +656,22 @@ dcl-proc formatNumeric export;
   dcl-s result varchar(128);
 
   result = %trimr(%triml(%editc(numericValue: 'P')): '0');
+
+  // Restore the leading zero of values below 1. It is suppressed by the
+  // edit code, unless the decimal format of the job is 'J'.
+  if (startsWith(',': result) or startsWith('.': result));
+    result = '0' + result;
+  elseif (startsWith('-,': result) or startsWith('-.': result));
+    result = '-0' + %subst(result: 2);
+  endif;
+
   if (endsWith(',': result) or endsWith('.': result));
     result = %subst(result: 1: %len(result) - 1);
+  endif;
+
+  // Safety net, in case the edit code blanked out a zero value.
+  if (result = '' or result = '-');
+    result = '0';
   endif;
 
   return result;
