@@ -108,7 +108,6 @@ document.write('\<ul id="treemenu" class="treeview">\
     <li><a href="../html/appendix/output_jenkins_1.html" target="content" style="text-decoration:none">XML Output Jenkins Type 1</a></li>\
     <li><a href="../html/appendix/output_jenkins_2.html" target="content" style="text-decoration:none">XML Output Jenkins Type 2</a></li>\
     <li><a href="../html/appendix/output_vscode_1.html" target="content" style="text-decoration:none">XML Output VS Code Type 2</a></li>\
-    <li><a href="../html/appendix/upload_save_file.html" target="content" style="text-decoration:none">Upload Save File .cmd</a></li>\
   </ul>\
   </li>\
 </ul>\
