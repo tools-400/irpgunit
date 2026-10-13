@@ -519,7 +519,8 @@ dcl-pr assertEqual overload(assertEqual_string
 // Message:
 //   Expected 'John Smith', but was 'actual'.
 //
-// If parameter 'message' is specified that is appened to the log.
+// If parameter 'message' is specified, it is used as a prefix of the
+// assertion failure message.
 //
 // @param expected - Expected value
 // @param actual   - Actual value
@@ -546,7 +547,8 @@ end-pr;
 // Message:
 //   Expected '123', but was 'actual'.
 //
-// If parameter 'message' is specified that is appened to the log.
+// If parameter 'message' is specified, it is used as a prefix of the
+// assertion failure message.
 //
 // @param Expected value
 // @param Actual value
@@ -572,7 +574,8 @@ end-pr;
 // Message:
 //   Expected '123,45', but was 'actual'.
 //
-// If parameter 'message' is specified that is appened to the log.
+// If parameter 'message' is specified, it is used as a prefix of the
+// assertion failure message.
 //
 // @param expected - Expected value
 // @param actual   - Actual value
@@ -598,7 +601,8 @@ end-pr;
 // Message:
 //   Expected '123,45', but was 'actual'.
 //
-// If parameter 'message' is specified that is appened to the log.
+// If parameter 'message' is specified, it is used as a prefix of the
+// assertion failure message.
 //
 // @param expected - Expected value
 // @param actual   - Actual value
@@ -624,7 +628,8 @@ end-pr;
 // Message:
 //   Expected '2024-09-16', but was '2023-01-11'.
 //
-// If parameter 'message' is specified that is appened to the log.
+// If parameter 'message' is specified, it is used as a prefix of the
+// assertion failure message.
 //
 // @param expected - Expected value
 // @param actual   - Actual value
@@ -650,7 +655,8 @@ end-pr;
 // Message:
 //   Expected '11.22.33', but was '22.33.44'.
 //
-// If parameter 'message' is specified that is appened to the log.
+// If parameter 'message' is specified, it is used as a prefix of the
+// assertion failure message.
 //
 // @param expected - Expected value
 // @param actual   - Actual value
@@ -676,7 +682,8 @@ end-pr;
 // Message:
 //   Expected '2024-09-16-11.22.33.123456', but was '2024-01-11-11.22.33.123456'.
 //
-// If parameter 'message' is specified that is appened to the log.
+// If parameter 'message' is specified, it is used as a prefix of the
+// assertion failure message.
 //
 // @param expected - Expected value
 // @param actual   - Actual value
@@ -702,7 +709,8 @@ end-pr;
 // Message:
 //   Expected '100', but was '200'.
 //
-// If parameter 'message' is specified that is appened to the log.
+// If parameter 'message' is specified, it is used as a prefix of the
+// assertion failure message.
 //
 // @param expected - Expected value
 // @param actual   - Actual value

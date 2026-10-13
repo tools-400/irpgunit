@@ -712,7 +712,9 @@ dcl-proc testAssertEqual_string export;
 
     restoreAssertStatus();
 
-    assert(assertFailEvtLong_v2.msg = 'String values do not match'
+    assert(assertFailEvtLong_v2.msg =
+           'String values do not match: Expected ''expected'', ' +
+           'but was ''unexpected value''.'
            : 'Error messages does not match expected value.');
   endmon;
 
@@ -766,7 +768,9 @@ dcl-proc testAssertEqual_integer export;
 
     restoreAssertStatus();
 
-    assert(assertFailEvtLong_v2.msg = 'Integer values do not match'
+    assert(assertFailEvtLong_v2.msg =
+           'Integer values do not match: Expected ''9223372036854775807'', ' +
+           'but was ''123''.'
            : 'Error messages does not match expected value.');
   endmon;
 
@@ -873,7 +877,9 @@ dcl-proc testAssertEqual_numeric export;
 
     restoreAssertStatus();
 
-    assert(assertFailEvtLong_v2.msg = 'Numeric values do not match'
+    assert(assertFailEvtLong_v2.msg =
+           'Numeric values do not match: Expected ''1234567890,1234'', ' +
+           'but was ''1234567890,1233''.'
            : 'Error messages does not match expected value.');
   endmon;
 
@@ -1012,7 +1018,9 @@ dcl-proc testAssertEqual_date export;
 
     restoreAssertStatus();
 
-    assert(assertFailEvtLong_v2.msg = 'Date values do not match'
+    assert(assertFailEvtLong_v2.msg =
+           'Date values do not match: Expected ''2024-09-16'', ' +
+           'but was ''2002-01-02''.'
            : 'Error messages does not match expected value.');
   endmon;
 
@@ -1066,7 +1074,9 @@ dcl-proc testAssertEqual_time export;
 
     restoreAssertStatus();
 
-    assert(assertFailEvtLong_v2.msg = 'Time values do not match'
+    assert(assertFailEvtLong_v2.msg =
+           'Time values do not match: Expected ''11.22.33'', ' +
+           'but was ''22.33.44''.'
            : 'Error messages does not match expected value.');
   endmon;
 
@@ -1123,7 +1133,10 @@ dcl-proc testAssertEqual_timestamp export;
 
     restoreAssertStatus();
 
-    assert(assertFailEvtLong_v2.msg = 'Timestamp values do not match'
+    assert(assertFailEvtLong_v2.msg =
+           'Timestamp values do not match: Expected ' +
+           '''2024-09-16-11.22.33.123456789012'', but was ' +
+           '''2023-01-16-22.33.44.654321789012''.'
            : 'Error messages does not match expected value.');
   endmon;
 
@@ -1203,7 +1216,8 @@ dcl-proc testAssertEqual_ind export;
 
     restoreAssertStatus();
 
-    assert(failureEvent.msg = 'Indicator values do not match'
+    assert(failureEvent.msg =
+           'Indicator values do not match: Expected ''1'', but was ''0''.'
            : 'Error messages does not match expected value.');
   endmon;
 

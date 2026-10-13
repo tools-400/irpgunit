@@ -92,13 +92,14 @@ dcl-proc assertEqual_string export;
   endif;
   // ---------------------------------------------------
 
-  if (%parms() >= %parmnum(message) and %addr(message) <> *NULL);
-    msg = message;
-  else;
-    msg = msg
+  if (%parms() >= %parmnum(message) and %addr(message) <> *NULL and
+      %trim(message) <> '');
+    msg = %trim(message) + ': ';
+  endif;
+
+  msg = msg
         + 'Expected ' + addQuotes(leftStr(expected: len_expected)) + ','
         + ' but was ' + addQuotes(leftStr(actual: len_actual)) + '.';
-  endif;
 
   if (dataTypeExpected = DT_IND);
     logExpected = getLogValue(toInd(leftStr(expected: len_expected)): dataTypeExpected: %proc());
@@ -157,13 +158,14 @@ dcl-proc assertEqual_numeric export;
   dcl-ds logExpected likeds(logValue_t) inz;
   dcl-ds logActual   likeds(logValue_t) inz;
 
-  if (%parms() >= %parmnum(message) and %addr(message) <> *NULL);
-    msg = message;
-  else;
-    msg = msg
+  if (%parms() >= %parmnum(message) and %addr(message) <> *NULL and
+      %trim(message) <> '');
+    msg = %trim(message) + ': ';
+  endif;
+
+  msg = msg
         + 'Expected ' + addQuotes(formatNumeric(expected)) + ','
         + ' but was ' + addQuotes(formatNumeric(actual)) + '.';
-  endif;
 
   logExpected = getLogValue(%char(expected): DT_NUMERIC: %proc());
   logActual = getLogValue(%char(actual): DT_NUMERIC: %proc());
@@ -186,13 +188,14 @@ dcl-proc assertEqual_float export;
   dcl-ds logExpected likeds(logValue_t) inz;
   dcl-ds logActual   likeds(logValue_t) inz;
 
-  if (%parms() >= %parmnum(message) and %addr(message) <> *NULL);
-    msg = message;
-  else;
-    msg = msg
+  if (%parms() >= %parmnum(message) and %addr(message) <> *NULL and
+      %trim(message) <> '');
+    msg = %trim(message) + ': ';
+  endif;
+
+  msg = msg
         + 'Expected ' + addQuotes(%char(expected)) + ','
         + ' but was ' + addQuotes(%char(actual)) + '.';
-  endif;
 
   logExpected = getLogValue(%char(expected): DT_FLOAT: %proc());
   logActual = getLogValue(%char(actual): DT_FLOAT: %proc());
@@ -215,13 +218,14 @@ dcl-proc assertEqual_date export;
   dcl-ds logExpected likeds(logValue_t) inz;
   dcl-ds logActual   likeds(logValue_t) inz;
 
-  if (%parms() >= %parmnum(message) and %addr(message) <> *NULL);
-    msg = message;
-  else;
-    msg = msg
+  if (%parms() >= %parmnum(message) and %addr(message) <> *NULL and
+      %trim(message) <> '');
+    msg = %trim(message) + ': ';
+  endif;
+
+  msg = msg
         + 'Expected ' + addQuotes(%char(expected)) + ','
         + ' but was ' + addQuotes(%char(actual)) + '.';
-  endif;
 
   logExpected = getLogValue(%char(expected: *iso): DT_DATE: %proc());
   logActual = getLogValue(%char(actual: *iso): DT_DATE: %proc());
@@ -244,13 +248,14 @@ dcl-proc assertEqual_time export;
   dcl-ds logExpected likeds(logValue_t) inz;
   dcl-ds logActual   likeds(logValue_t) inz;
 
-  if (%parms() >= %parmnum(message) and %addr(message) <> *NULL);
-    msg = message;
-  else;
-    msg = msg
+  if (%parms() >= %parmnum(message) and %addr(message) <> *NULL and
+      %trim(message) <> '');
+    msg = %trim(message) + ': ';
+  endif;
+
+  msg = msg
         + 'Expected ' + addQuotes(%char(expected)) + ','
         + ' but was ' + addQuotes(%char(actual)) + '.';
-  endif;
 
   logExpected = getLogValue(%char(expected: *iso): DT_TIME: %proc());
   logActual = getLogValue(%char(actual: *iso): DT_TIME: %proc());
@@ -273,13 +278,14 @@ dcl-proc assertEqual_timestamp export;
   dcl-ds logExpected likeds(logValue_t) inz;
   dcl-ds logActual   likeds(logValue_t) inz;
 
-  if (%parms() >= %parmnum(message) and %addr(message) <> *NULL);
-    msg = message;
-  else;
-    msg = msg
+  if (%parms() >= %parmnum(message) and %addr(message) <> *NULL and
+      %trim(message) <> '');
+    msg = %trim(message) + ': ';
+  endif;
+
+  msg = msg
         + 'Expected ' + addQuotes(%char(expected)) + ','
         + ' but was ' + addQuotes(%char(actual)) + '.';
-  endif;
 
   logExpected = getLogValue(%char(expected: *iso): DT_TIMESTAMP: %proc());
   logActual = getLogValue(%char(actual: *iso): DT_TIMESTAMP: %proc());
