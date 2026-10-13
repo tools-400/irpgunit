@@ -1200,6 +1200,14 @@ dcl-proc testAssertEqual_ind export;
 
     assert(failureEvent.msg = 'Expected ''1'', but was ''0''.'
            : 'Error messages does not match expected value.');
+
+    // Indicator variables are passed as a 1 byte character value and
+    // hence are not detected by the figurative constant check of
+    // assertEqual_string(). They are logged as a string value.
+    verifyLogValue(LABEL_EXPECTED: failureEvent.logExpected
+                   : '1': 'string': *off: 1);
+    verifyLogValue(LABEL_ACTUAL: failureEvent.logActual
+                   : '0': 'string': *off: 1);
   endmon;
 
   // Test unequality with assertion message
