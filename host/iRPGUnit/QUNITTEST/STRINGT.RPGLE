@@ -684,6 +684,46 @@ dcl-proc testParseNum export;
 
 end-proc;
 
+
+dcl-proc testFormatNumeric export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-c MAX_VALUE '9999999999999999999999999999999999999999999,99999999999999999999';
+
+  // Setup.
+
+  // Run & Check.
+
+  // Module STRING is compiled with DECEDIT(*JOBRUN). The decimal format is
+  // resolved when the module is activated, hence it cannot be varied here.
+  // Program TSTDECFMT runs this test case for every decimal format.
+
+  // The leading zero of values below 1 is suppressed by the edit code,
+  // unless the decimal format of the job is 'J'. It must be restored.
+  aEqual(toJobFmt('0'): formatNumeric(0): 'zero');
+  aEqual(toJobFmt('0,5'): formatNumeric(0,5): 'fraction');
+  aEqual(toJobFmt('-0,5'): formatNumeric(-0,5): 'negative fraction');
+  aEqual(toJobFmt('0,00000000000000000001'):
+         formatNumeric(0,00000000000000000001): 'smallest fraction');
+
+  // Trailing zeros of the integer part must be kept.
+  aEqual(toJobFmt('1'): formatNumeric(1): 'one');
+  aEqual(toJobFmt('10'): formatNumeric(10): 'ten');
+  aEqual(toJobFmt('100'): formatNumeric(100): 'hundred');
+  aEqual(toJobFmt('-1'): formatNumeric(-1): 'minus one');
+  aEqual(toJobFmt('-123'): formatNumeric(-123): 'negative integer');
+
+  // Trailing zeros of the decimal part must be removed.
+  aEqual(toJobFmt('1,5'): formatNumeric(1,50000): 'trailing decimal zeros');
+  aEqual(toJobFmt('1234567890,1234'):
+         formatNumeric(1234567890,1234): 'mixed value');
+
+  aEqual(toJobFmt(MAX_VALUE): formatNumeric(%dec(MAX_VALUE: 63: 20)):
+         'maximum value');
+
+end-proc;
+
 //----------------------------------------------------------------------
 //   Convert decimal string to job decimal format.
 //   Input string must be in decimal format 'J'.
