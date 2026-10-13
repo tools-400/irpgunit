@@ -66,6 +66,8 @@ dcl-proc assertEqual_string export;
 
   dcl-s len_expected int(10);
   dcl-s len_actual int(10);
+  dcl-s textExpected like(String_t);
+  dcl-s textActual   like(String_t);
 
   // --- Ugly hack for figurative constants *on/*off ---
   //     See:
@@ -92,26 +94,31 @@ dcl-proc assertEqual_string export;
   endif;
   // ---------------------------------------------------
 
+  // Display text of the values. Indicators are displayed as '*on'/'*off'
+  // in the message as well as in the logged value.
+  if (dataTypeExpected = DT_IND);
+    textExpected = toInd(leftStr(expected: len_expected));
+  else;
+    textExpected = leftStr(expected: len_expected);
+  endif;
+
+  if (dataTypeActual = DT_IND);
+    textActual = toInd(leftStr(actual: len_actual));
+  else;
+    textActual = leftStr(actual: len_actual);
+  endif;
+
   if (%parms() >= %parmnum(message) and %addr(message) <> *NULL and
       %trim(message) <> '');
     msg = %trim(message) + ': ';
   endif;
 
   msg = msg
-        + 'Expected ' + addQuotes(leftStr(expected: len_expected)) + ','
-        + ' but was ' + addQuotes(leftStr(actual: len_actual)) + '.';
+        + 'Expected ' + addQuotes(textExpected) + ','
+        + ' but was ' + addQuotes(textActual) + '.';
 
-  if (dataTypeExpected = DT_IND);
-    logExpected = getLogValue(toInd(leftStr(expected: len_expected)): dataTypeExpected: %proc());
-  else;
-    logExpected = getLogValue(leftStr(expected: len_expected): dataTypeExpected: %proc());
-  endif;
-
-  if (dataTypeActual = DT_IND);
-    logActual = getLogValue(toInd(leftStr(actual: len_actual)): dataTypeActual: %proc());
-  else;
-    logActual = getLogValue(leftStr(actual: len_actual): dataTypeActual: %proc());
-  endif;
+  logExpected = getLogValue(textExpected: dataTypeExpected: %proc());
+  logActual = getLogValue(textActual: dataTypeActual: %proc());
 
   condition = leftStr(expected: len_expected) = leftStr(actual: len_actual);
   doAssert(condition: logExpected: logActual: msg: ONE_CALL_STK_LVL_ABOVE: %proc());

@@ -1165,7 +1165,7 @@ dcl-proc testAssertEqual_ind export;
 
     restoreAssertStatus();
 
-    assert(failureEvent.msg = 'Expected ''1'', but was ''0''.'
+    assert(failureEvent.msg = 'Expected ''*on'', but was ''*off''.'
            : 'Error messages does not match expected value.');
     verifyLogValue(LABEL_EXPECTED: failureEvent.logExpected
                    : '*on': 'indicator': *off: 3);
