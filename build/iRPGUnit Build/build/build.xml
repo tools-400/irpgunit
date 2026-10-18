@@ -1,7 +1,23 @@
 <!--
  * =====================================================================
- *   This Ant script helps you to create an upload the project's
+ *   This Ant script helps you to create and upload the project's
  *   update site.
+ *
+ *   Version: 2026-10-18
+ *
+ *   This file is shared. It must be identical in all of the
+ *   following projects:
+ *
+ *     - IFS Projects   ifs-terminal-plugin/build/IFS Projects Build
+ *     - iRpgFormatter  irpgformatter-plugin/build/iRpgFormatter Build
+ *     - iRPGUnit       irpgunit/build/iRPGUnit Build
+ *     - iSphere        isphere-plugin/build/iSphere Build
+ *     - JCRCMDS        jcrcmds/build/JCRCMDS Build
+ *     - Rapid Fire     rapid-fire-plugin/build/Rapid Fire Build
+ *
+ *   Never change it in one project only. Project specific settings
+ *   belong into 'build.properties', the templates or the GitHub
+ *   pages repository.
  *
  *   In order to use all features of the script, you need to
  *   have the 'iSphere Ant Plugin' installed and the 'iSphere Help Builder'
@@ -9,26 +25,46 @@
  *
  *   The main switches to control the build process are:
  *
- *     build.version       - project version number
- *     build.help.enabled  - specifies whether to build the help pages
- *     build.dryrun        - specifies whether to apply changes to GitHub
+ *     build.version             - project version number
+ *     build.marketplace.enabled - specifies whether to add the Eclipse
+ *                                 Marketplace hint to the update site page
+ *     build.project.doc.enable  - specifies whether to publish the
+ *                                 project documentation (PDF)
+ *     build.help.enabled        - specifies whether to build the help pages
+ *     build.library.enabled     - specifies whether to include the IBM i
+ *                                 library
+ *     build.notifier.enable     - specifies whether to upload the notifier
+ *                                 file
+ *     build.winword.available   - specifies whether MS Word is available
+ *                                 for updating the PDF file
+ *     local.updateSite.enabled  - specifies whether to update the local
+ *                                 update site of your company
  *
- *   See also: build.properties
+ *   See also: build.properties, localUpdateSite.properties
  *
- *   Setup the el tools configuration:
+ *   Setup the external tools configuration:
  *
  *     1 JRE
  *     1.1 Select option "Run in the same JRE as the workspace".
+ *         It is required for the 'eclipse.*' tasks.
  *
  *     2 Classpath
- *     2.1 Add the following jars from [Project Build]/build/lib:
- *         - jsch-0.1.55.jar
+ *     2.1 Set 'Ant Home' to the Ant of the running RDi (1.9.8 or later).
+ *         Otherwise 'Build All' fails with:
+ *         NoSuchFieldError: JDTCompilerAdapter.release
+ *     2.2 Add the following jar from [Project Build]/build/lib.
+ *         It is required for target 'downloadIBMiLibrary' only:
  *         - commons-net-3.3-patched.jar
+ *
+ *   Workspace (recommended)
+ *
+ *     Enable option "Refresh using native hooks or polling" at:
+ *     Window -> Preferences -> General -> Workspace
  *
  *   Workspace structure
  *
  *     All Git repositories must be cloned into the same Eclipse workspace. An example
- *     workspace looks like that:
+ *     workspace with some of the repositories looks like that:
  *
  *     [workspace]
  *      ├╌╌ .analysis
@@ -52,9 +88,11 @@
  *   Preparing build:
  *
  *     1 Copy 'ftp-credentials_template.properties' to 'ftp-credentials.properties'
- *       and update properties. This file is required for build target 'downloadIBMiLibrary'.
+ *       and update properties. This file is required for build target 'downloadIBMiLibrary'
+ *       (only if build.library.enabled=true).
  *     2 Copy 'localUpdateSite_template.properties' to 'localUpdateSite.properties'
  *       and update properties. This file is required for build target 'uploadLocalUpdateSite'.
+ *       Without it, updating the local update site is disabled.
  *
  *   Here are the steps to create a new version of the plug-in:
  *
@@ -67,12 +105,12 @@
  *     1.3 On the PC change version number in COPYRIGHT.RPGLE.
  *     1.4 On the PC push changes of project's i Project to the AS/400.
  *     1.5 On the PC update the project history document, e.g. 'iSphere.doc'
- *         and also save it as a PDF file, e.g. 'iShere for RDi 9.6.0.13+.pdf'.
+ *         and also save it as a PDF file, e.g. 'iSphere for RDi 9.6.0.13+.pdf'.
  *     1.6 Refresh the project with the history document, e.g. 'iSphere Core Plugin'.
  *     1.7 On the PC increment version number of property 'build.version'
  *         in file 'build.properties'.
  *
- *     2 Creating the library
+ *     2 Creating the library (only if build.library.enabled=true)
  *     2.1 On the IBM i run the command for building the library.
  *     2.2 Run target 'downloadIBMiLibrary' of build.xml.
  *
@@ -80,15 +118,17 @@
  *     3.1 On the PC run target 'build' of file 'build.xml'.
  *     3.2 Right-click 'site.xml', select 'PDE Tools -> Build Site'.
  *     3.3 On the PC run target 'createGitHubFiles' of file 'build.xml'.
- *     3.4 On the PC run target 'uploadLocalUpdateSite' to update the
- *         local update site of your company.
- *     3.5 Optionally on the PC run target ''
- *     3.6 Check-in source code.
- *     3.7 Create version tag, e.g.: v002.004.001.r
+ *     3.4 Commit the changes with message 'Prepared <version>.'
+ *     3.5 On the PC run target 'uploadGitHubFiles' of file 'build.xml'.
+ *     3.6 Commit the changes with message 'Released <version>.'
+ *     3.7 Optionally on the PC run target 'uploadLocalUpdateSite' to update
+ *         the local update site of your company
+ *         (only if local.updateSite.enabled=true).
+ *     3.8 Create the version tag.
  *
- *     4 Eclipse Marketplace
+ *     4 Eclipse Marketplace (only if build.marketplace.enabled=true)
  *     4.1 Login to Eclipse Marketplace (https://marketplace.eclipse.org)
- *     4.2 Go to the project (iSphere, Rapid Fire or iRPGUnit)
+ *     4.2 Go to the project.
  *     4.3 Click the "Edit" button to enter edit mode.
  *     4.4 Scroll down to "Solution Version(s)" and click the "Edit" button
  *         next to "Solution".
@@ -105,6 +145,34 @@
         </classpath>
     </taskdef>
 
+    <!--
+    * =====================================================================
+    *   Refreshes the Eclipse project stored in folder 'dir'.
+    *   The project name is read from the '.project' file, because
+    *   the folder name may differ from the project name, e.g.
+    *   folder 'docs' of the GitHub pages repository.
+    *   Folders without a '.project' file are skipped.
+    * ===================================================================== -->
+    <macrodef name="refreshFolder" >
+        <attribute name="dir" />
+        <sequential>
+            <local name="refresh.project.text" />
+            <local name="refresh.project.name" />
+            <if>
+                <available file="@{dir}/.project" type="file" />
+                <then>
+                    <loadfile property="refresh.project.text" srcfile="@{dir}/.project" encoding="UTF-8" />
+                    <propertyregex property="refresh.project.name" input="${refresh.project.text}" regexp="&lt;name&gt;\s*(.*?)\s*&lt;/name&gt;" select="\1" />
+                    <echo>Refreshing project: ${refresh.project.name}</echo>
+                    <eclipse.refreshLocal resource="${refresh.project.name}" depth="infinite" />
+                </then>
+                <else>
+                    <echo>Refresh skipped, not an Eclipse project: @{dir}</echo>
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+
     <property name="plugin.name" value="${build.public.project.name}" />
     <property name="workspace.home" location="./../../../.." />
 
@@ -120,10 +188,16 @@
         <then>
             <property file="ftp-credentials.properties" />
         </then>
+        <elseif>
+            <equals arg1="${build.library.enabled}" arg2="true" />
+            <then>
+                <echo>File 'ftp-credentials.properties' not found.</echo>
+                <echo>Copy 'ftp-credentials_template.properties' to 'ftp-credentials.properties' and set the user names only (recommended).</echo>
+                <fail message="Ant script stopped." />
+            </then>
+        </elseif>
         <else>
-            <echo>File 'ftp-credentials.properties' not found.</echo>
-            <echo>Copy 'ftp-credentials_template.properties' to 'ftp-credentials.properties' and set the user names only (recommended).</echo>
-            <fail message="Ant script stopped." />
+            <echo>File 'ftp-credentials.properties' not found. It is not required, because building the IBM i library is disabled.</echo>
         </else>
     </if>
 
@@ -134,11 +208,13 @@
             <property file="localUpdateSite.properties" />
         </then>
         <else>
-            <echo>File 'localUpdateSite' not found.</echo>
-            <echo>Copy 'localUpdateSite_template.properties' to 'localUpdateSite.properties' and set the user names only (recommended).</echo>
-            <fail message="Ant script stopped." />
+            <echo>File 'localUpdateSite.properties' not found. Updating the local update site is disabled.</echo>
+            <echo>Copy 'localUpdateSite_template.properties' to 'localUpdateSite.properties' and set the paths to enable it.</echo>
         </else>
     </if>
+
+    <!-- Default value, if 'localUpdateSite.properties' does not set it -->
+    <property name="local.updateSite.enabled" value="false" />
 
     <!-- Set date and time -->
     <tstamp>
@@ -225,12 +301,17 @@
         </else>
     </if>
 
-    <!-- Set release/beta specific project URLs -->
-    <property name="target.ide.root.update.site.url" value="${build.pages.update.site.url}/update-site/eclipse/${target.ide.sf.dir}" />
-    <property name="target.ide.root.beta.update.site.url" value="${build.pages.update.site.url}/${build.pages.beta.version}/update-site/eclipse/${target.ide.sf.dir}" />
+    <!-- Remove trailing slashes from the base URLs. 'select' instead of 'replace',
+         because 'propertyregex' does not set the property, if the regexp does not match. -->
+    <propertyregex property="pages.update.site.base" input="${build.pages.update.site.url}" regexp="^(.*?)/*$" select="\1" />
+    <propertyregex property="pages.homepage.base" input="${build.pages.homepage.url}" regexp="^(.*?)/*$" select="\1" />
 
-    <property name="target.ide.root.help.site.url" value="${build.pages.homepage.url}/${build.pages.help}/" />
-    <property name="target.ide.root.beta.help.site.url" value="${build.pages.homepage.url}/${build.pages.beta.version}/${build.pages.help}/" />
+    <!-- Set release/beta specific project URLs -->
+    <property name="target.ide.root.update.site.url" value="${pages.update.site.base}/update-site/eclipse/${target.ide.sf.dir}" />
+    <property name="target.ide.root.beta.update.site.url" value="${pages.update.site.base}/${build.pages.beta.version}/update-site/eclipse/${target.ide.sf.dir}" />
+
+    <property name="target.ide.root.help.site.url" value="${pages.homepage.base}/${build.pages.help}/" />
+    <property name="target.ide.root.beta.help.site.url" value="${pages.homepage.base}/${build.pages.beta.version}/${build.pages.help}/" />
 
     <!-- Check for BETA or RELEASE version -->
     <propertyregex property="release.flag" input="${build.version}" regexp="${release.flag.regex}" select="\1" casesensitive="true" />
@@ -244,7 +325,6 @@
             <property name="version.info" value="&lt;div class=&quot;beta&quot;&gt;Beta Version - ${build.version}&lt;/div&gt;" />
             <property name="help.site.url" value="${target.ide.root.beta.help.site.url}" />
             <property name="files.version.regex" value="${files.beta.version.regex}" />
-            <property name="files.version.replace" value="${files.beta.version.replace}" />
             <property name="build.update.site.url" value="${target.ide.root.beta.update.site.url}" />
         </then>
         <else>
@@ -255,7 +335,6 @@
             <property name="version.info" value="&lt;div class=&quot;release&quot;&gt;Release Version - ${build.version}&lt;/div&gt;" />
             <property name="help.site.url" value="${target.ide.root.help.site.url}" />
             <property name="files.version.regex" value="${files.release.version.regex}" />
-            <property name="files.version.replace" value="${files.release.version.replace}" />
             <property name="build.update.site.url" value="${target.ide.root.update.site.url}" />
         </else>
     </if>
@@ -290,9 +369,6 @@
     <property name="html.files.zip.regex" value="(&lt;img id=&quot;${beta.dir}&quot;.*)(zip_file.png)(.*/files/{1,2})([a-z0-9.]+/|[A-Z@_]+/)(.*?)(&quot;&gt;)" />
     <property name="html.files.zip.replace" value="\1\2\3\4${target.ide.zip.file.name}\6" />
 
-    <property name="site.xml.property.url.regex" value="(&lt;site)([ ]*url=&quot;\S*&quot;[ ]*)?(&gt;)" />
-    <property name="site.xml.property.url.replace" value="\1 url=&quot;${target.ide.root.update.site.url}&quot;\3" />
-
     <!-- Set common upload properties -->
     <property name="build.dir" location="./.." />
     <property name="build.upload.dir" location="${build.dir}/upload" />
@@ -302,7 +378,6 @@
     <property name="build.template.dir.web" location="${build.template.dir}/template_updatesite_web" />
     <property name="build.template.dir.web.build_target" location="${build.template.dir.web}/eclipse/build_target" />
     <property name="build.template.dir.web.assets" location="${build.template.dir.web}/eclipse/build_target/assets" />
-    <property name="build.upload.dir" location="${build.dir}/upload" />
     <property name="build.upload.dir.files" location="${build.upload.dir}/sf-files/${beta.dir}" />
     <property name="build.upload.dir.updateSite" location="${build.upload.dir}/sf-updatesite/${beta.dir}" />
     <property name="build.upload.dir.updateSite.eclipse" location="${build.upload.dir}/sf-updatesite/${beta.dir}/eclipse/${target.ide.sf.dir}" />
@@ -350,7 +425,6 @@
             <echo>Building Eclipse Marketplace is enabled.</echo>
         </then>
         <else>
-            <property name="ignore.build.marketplace" value="true" />
             <echo>IGNORED: Building Eclipse Marketplace</echo>
         </else>
     </if>
@@ -362,7 +436,6 @@
             <echo>Building project documentation files is enabled.</echo>
         </then>
         <else>
-            <property name="ignore.build.project.doc" value="true" />
             <echo>IGNORED: Building project documentation files</echo>
         </else>
     </if>
@@ -390,6 +463,16 @@
         </else>
     </if>
 
+    <if>
+        <equals arg1="${local.updateSite.enabled}" arg2="true" />
+        <then>
+            <echo>Updating the local update site is enabled.</echo>
+        </then>
+        <else>
+            <echo>IGNORED: Updating the local update site</echo>
+        </else>
+    </if>
+
     <!--
     * =====================================================================
     *   Downloads the library from the System i.
@@ -413,8 +496,8 @@
 
         <move file="${local.download.directory}/${IBMi.ftp.savefile.name}" tofile="${local.savefile.directory}/${local.savefile.name}" overwrite="true" />
 
-        <eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
-        <eclipse.refreshLocal resource="${build.project.core}" depth="infinite" />
+        <refreshFolder dir="${workspace.home}/${build.project.name}" />
+        <refreshFolder dir="${workspace.home}/${build.project.core}" />
 
     </target>
 
@@ -430,8 +513,13 @@
         <echo>|  Right-click 'site.xml' and select 'PDE Tools' ->    |</echo>
         <echo>|  'Build Site' to build the update site.              |</echo>
         <echo>|                                                      |</echo>
-        <echo>|  Then proceed with:   createGitHubFiles              |</echo>
-        <echo>|                      -uploadGitHubFiles-             |</echo>
+        <echo>|  Then proceed with:                                  |</echo>
+        <echo>|    1. createGitHubFiles                              |</echo>
+        <echo>|    2. Commit 'Prepared &lt;version&gt;.'                   |</echo>
+        <echo>|    3. uploadGitHubFiles                              |</echo>
+        <echo>|    4. Commit 'Released &lt;version&gt;.'                   |</echo>
+        <echo>|    5. Optionally: uploadLocalUpdateSite              |</echo>
+        <echo>|    6. Create the version tag                         |</echo>
         <echo>+------------------------------------------------------+</echo>
         <echo>*** Finished ***</echo>
 
@@ -443,6 +531,7 @@
     <target name="createGitHubFiles" depends="updatePdfFile, prepareUpdateSite, createZipFile, createUpdateSite, createUpdateSiteHtmlPages, createHelpHtmlPages, createHomePageHtml, createFilesHtml, refreshProjects" description="Step 3" >
 
         <echo>GitHub files have been created in: ${build.upload.dir}</echo>
+        <echo>Next: Commit 'Prepared &lt;version&gt;.', then run target 'uploadGitHubFiles'.</echo>
 
     </target>
 
@@ -494,14 +583,17 @@
             <fileset dir="${build.template.dir.web}" excludes="${target.ide.exclude.web.files}" />
         </copy>
 
-        <!-- build.marketplace.enabled -->
         <if>
-            <equals arg1="${build.project.doc.enable}" arg2="true" />
+            <equals arg1="${build.marketplace.enabled}" arg2="true" />
             <then>
                 <echo>Loading marketplace installation hint</echo>
                 <loadfile property="marketplace.installation.hint" srcfile="${build.template.dir.web.build_target}/${marketplace.installation.hint.snippet}" />
             </then>
         </if>
+
+        <!-- Default value, if the hint has not been loaded. Must be set after 'loadfile',
+             because properties are immutable. -->
+        <property name="marketplace.installation.hint" value="" />
 
         <echo>Renaming ${target.ide.sf.dir} ...</echo>
         <!-- <move todir="${build.upload.dir.web.eclipse}\${target.ide.sf.dir}" > -->
@@ -537,7 +629,7 @@
         <echo>Found variable: ${replace.error.update.page}</echo>
         <fail if="replace.error.update.page" message="Not all variables have been replaced." />
 
-        <eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
+        <refreshFolder dir="${workspace.home}/${build.project.name}" />
 
     </target>
 
@@ -569,7 +661,7 @@
             <fileset dir="${workspace.home}/${build.help.builder}/upload" />
         </copy>
 
-        <eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
+        <refreshFolder dir="${workspace.home}/${build.project.name}" />
 
     </target>
 
@@ -601,29 +693,38 @@
         <replace file="${build.upload.dir.home}/${home.page}" token="@PROJECT_BUGS@" value="${build.pages.bugs.url}" />
         <replace file="${build.upload.dir.home}/${home.page}" token="@PLUGIN_NAME@" value="${build.public.project.name}" />
 
-        <replace file="${build.upload.dir.home}/${support.page}" token="@VERSION_NUMBER@" value="${build.version}" />
-        <replace file="${build.upload.dir.home}/${support.page}" token="@TODAY_YEAR@" value="${today.year}" />
-        <replace file="${build.upload.dir.home}/${support.page}" token="@TODAY@" value="${today.timestamp}" />
-
-        <replace file="${build.upload.dir.home}/${support.page}" token="@HOME_PAGE@" value="${build.pages.homepage.url}" />
-        <replace file="${build.upload.dir.home}/${support.page}" token="@PROJECT_BUGS@" value="${build.pages.bugs.url}" />
-        <replace file="${build.upload.dir.home}/${support.page}" token="@UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
-        <replace file="${build.upload.dir.home}/${support.page}" token="@BETA_UPDATE_SITE_URL@" value="${target.ide.root.beta.update.site.url}" />
-        <replace file="${build.upload.dir.home}/${support.page}" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
-        <replace file="${build.upload.dir.home}/${support.page}" token="@BETA_HELP_SITE_URL@" value="${target.ide.root.beta.help.site.url}" />
-        <replace file="${build.upload.dir.home}/${support.page}" token="@PLUGIN_NAME@" value="${build.public.project.name}" />
-
         <loadfile property="tmp.home.page" srcfile="${build.upload.dir.home}/${home.page}" />
         <propertyregex property="replace.error.home.page" input="${tmp.home.page}" regexp="${regex.check.variables}" select="\1" />
         <echo>Found variable: ${replace.error.home.page}</echo>
         <fail if="replace.error.home.page" message="Not all variables have been replaced." />
 
-        <loadfile property="tmp.support.page" srcfile="${build.upload.dir.home}/${support.page}" />
-        <propertyregex property="replace.error.support.page" input="${tmp.support.page}" regexp="${regex.check.variables}" select="\1" />
-        <echo>Found variable: ${replace.error.support.page}</echo>
-        <fail if="replace.error.support.page" message="Not all variables have been replaced." />
+        <!-- The support page is optional, e.g. JCRCMDS has none -->
+        <if>
+            <available file="${build.upload.dir.home}/${support.page}" type="file" />
+            <then>
+                <replace file="${build.upload.dir.home}/${support.page}" token="@VERSION_NUMBER@" value="${build.version}" />
+                <replace file="${build.upload.dir.home}/${support.page}" token="@TODAY_YEAR@" value="${today.year}" />
+                <replace file="${build.upload.dir.home}/${support.page}" token="@TODAY@" value="${today.timestamp}" />
 
-        <eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
+                <replace file="${build.upload.dir.home}/${support.page}" token="@HOME_PAGE@" value="${build.pages.homepage.url}" />
+                <replace file="${build.upload.dir.home}/${support.page}" token="@PROJECT_BUGS@" value="${build.pages.bugs.url}" />
+                <replace file="${build.upload.dir.home}/${support.page}" token="@UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
+                <replace file="${build.upload.dir.home}/${support.page}" token="@BETA_UPDATE_SITE_URL@" value="${target.ide.root.beta.update.site.url}" />
+                <replace file="${build.upload.dir.home}/${support.page}" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
+                <replace file="${build.upload.dir.home}/${support.page}" token="@BETA_HELP_SITE_URL@" value="${target.ide.root.beta.help.site.url}" />
+                <replace file="${build.upload.dir.home}/${support.page}" token="@PLUGIN_NAME@" value="${build.public.project.name}" />
+
+                <loadfile property="tmp.support.page" srcfile="${build.upload.dir.home}/${support.page}" />
+                <propertyregex property="replace.error.support.page" input="${tmp.support.page}" regexp="${regex.check.variables}" select="\1" />
+                <echo>Found variable: ${replace.error.support.page}</echo>
+                <fail if="replace.error.support.page" message="Not all variables have been replaced." />
+            </then>
+            <else>
+                <echo>No support page '${support.page}' found. Skipped.</echo>
+            </else>
+        </if>
+
+        <refreshFolder dir="${workspace.home}/${build.project.name}" />
 
     </target>
 
@@ -683,7 +784,7 @@
         <echo>Found variable: ${replace.error.files.page}</echo>
         <fail if="replace.error.files.page" message="Not all variables have been replaced." />
 
-        <eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
+        <refreshFolder dir="${workspace.home}/${build.project.name}" />
 
     </target>
 
@@ -733,8 +834,7 @@
             </else>
         </if>
 
-        <echo>Refreshing: ${target.ide.uload.dir}</echo>
-        <eclipse.refreshLocal resource="${target.ide.uload.dir}" depth="infinite" />
+        <refreshFolder dir="${target.ide.uload.dir}" />
 
     </target>
 
@@ -766,8 +866,7 @@
             </else>
         </if>
 
-        <echo>Refreshing: ${target.ide.uload.dir}</echo>
-        <eclipse.refreshLocal resource="${target.ide.uload.dir}" depth="infinite" />
+        <refreshFolder dir="${target.ide.uload.dir}" />
 
     </target>
 
@@ -866,6 +965,8 @@
             </then>
         </if>
 
+        <echo>Next: Commit 'Released &lt;version&gt;.', optionally run target 'uploadLocalUpdateSite', then create the version tag.</echo>
+
     </target>
 
     <!--
@@ -900,7 +1001,7 @@
     *   This target must be run, after all files have been built.
     *   This target is specific to RDi/WDSCi and controlled by build.target.
     * ===================================================================== -->
-    <target name="uploadLocalUpdateSite" unless="{local.updateSite.disabled}" depends="setLocalUpdateSiteProperties, cleanLocalUpdateSite" description="Step 5" >
+    <target name="uploadLocalUpdateSite" if="${local.updateSite.enabled}" depends="setLocalUpdateSiteProperties, cleanLocalUpdateSite" description="Step 5" >
 
         <echo>Uploading local update site '${local.updateSite.path}' ...</echo>
 
@@ -942,7 +1043,12 @@
             <fileset dir="${site.dir}" includes="*.tag" />
         </copy>
 
-        <copy file="${project.pdf}" todir="${temp.dir.local_updatesite}" overwrite="true" />
+        <if>
+            <equals arg1="${build.project.doc.enable}" arg2="true" />
+            <then>
+                <copy file="${project.pdf}" todir="${temp.dir.local_updatesite}" overwrite="true" />
+            </then>
+        </if>
 
         <if>
             <equals arg1="${build.library.enabled}" arg2="true" />
@@ -970,11 +1076,11 @@
     * ===================================================================== -->
     <target name="createTagFile" >
 
-        <echo>Creating version tag file ${k} ...</echo>
+        <echo>Creating version tag file ${updatesite.tag.file} ...</echo>
 
         <touch file="${updatesite.tag.file}" />
 
-        <eclipse.refreshLocal resource="${build.updatesite}" depth="infinite" />
+        <refreshFolder dir="${workspace.home}/${build.updatesite}" />
 
     </target>
 
@@ -1019,8 +1125,7 @@
             <fileset dir="${build.upload.dir}" includes="**/*" />
         </delete>
 
-        <echo>Refreshing: ${build.project.name}</echo>
-        <eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
+        <refreshFolder dir="${workspace.home}/${build.project.name}" />
 
     </target>
 
@@ -1066,8 +1171,7 @@
             <fileset dir="${site.dir}" includes="*.tag" />
         </delete>
 
-        <echo>Refreshing: ${build.updatesite}</echo>
-        <eclipse.refreshLocal resource="${build.updatesite}" depth="infinite" />
+        <refreshFolder dir="${workspace.home}/${build.updatesite}" />
 
     </target>
 
@@ -1075,8 +1179,10 @@
     * =====================================================================
     *   Removes all files from the local update site folders of
     *   your company.
+    *   The 'if' attribute is required here, because Ant executes
+    *   the dependencies of a target before it evaluates 'if'.
     * ===================================================================== -->
-    <target name="cleanLocalUpdateSite" depends="setLocalUpdateSiteProperties" >
+    <target name="cleanLocalUpdateSite" if="${local.updateSite.enabled}" depends="setLocalUpdateSiteProperties" >
 
         <echo>Cleaning local update Site '${local.updateSite.path}' ...</echo>
 
@@ -1094,8 +1200,11 @@
     *   update site.
     *   This target uses the properties stored in
     *   'localUpdateSite.properties'.
+    *   The path must be absolute. An empty path would point to the
+    *   directory of this script and 'cleanLocalUpdateSite' would
+    *   delete its files.
     * ===================================================================== -->
-    <target name="setLocalUpdateSiteProperties" >
+    <target name="setLocalUpdateSiteProperties" if="${local.updateSite.enabled}" >
 
         <if>
             <equals arg1="${is.beta.version}" arg2="true" />
@@ -1106,6 +1215,11 @@
                 <property name="local.updateSite.path" value="${local.updateSite.release.path}" />
             </else>
         </if>
+
+        <condition property="local.updateSite.path.isAbsolute" >
+            <matches string="${local.updateSite.path}" pattern="^([A-Za-z]:)?[\\/]" />
+        </condition>
+        <fail unless="local.updateSite.path.isAbsolute" message="Path of the local update site is empty or not absolute: '${local.updateSite.path}'. Check 'localUpdateSite.properties'." />
 
     </target>
 
@@ -1170,7 +1284,7 @@
                             <fileset dir="${workspace.home}\@{project}" includes="site.xml" />
                         </replaceregexp>
 
-                        <eclipse.refreshLocal resource="@{project}" depth="infinite" />
+                        <refreshFolder dir="${workspace.home}/@{project}" />
                     </then>
                     <else>
                         <echo message="** Problem? Project not found: ${workspace.home}\@{project} **" />
@@ -1196,8 +1310,7 @@
     * ===================================================================== -->
     <target name="updateHelpProject" unless="ignore.build.help" >
 
-        <echo>Refreshing: ${build.help.base.project}</echo>
-        <eclipse.refreshLocal resource="${build.help.base.project}" depth="infinite" />
+        <refreshFolder dir="${workspace.home}/${build.help.base.project}" />
 
         <echo>Done.</echo>
 
@@ -1211,7 +1324,7 @@
 
         <echo>Verifying that the PDF file is up to date ...</echo>
 
-        <eclipse.refreshLocal resource="${build.project.core}" depth="infinite" />
+        <refreshFolder dir="${workspace.home}/${build.project.core}" />
 
         <condition property="is.project.doc" >
             <and>
@@ -1269,7 +1382,7 @@
 
                 <delete file="${project.doc.tmp}" />
 
-                <eclipse.refreshLocal resource="${build.project.core}" depth="infinite" />
+                <refreshFolder dir="${workspace.home}/${build.project.core}" />
             </then>
         </if>
 
@@ -1314,7 +1427,7 @@
 
     <!--
     * =====================================================================
-    *   Checks whether of not the build has been started
+    *   Checks whether or not the build has been started
     *   for the right target.
     * ===================================================================== -->
     <target name="checkBuildTarget" >
@@ -1339,10 +1452,8 @@
 
     <!--
     * =====================================================================
-    *   Updates the version numbers of the following files:
-    *     - MANIFEST.MF
-    *     - feature.xml
-    *     - site.xml
+    *   Checks whether the projects listed in 'build.projects' and,
+    *   if the help is enabled, in 'build.help.projects' exist.
     * ===================================================================== -->
     <target name="checkProjectPaths" >
 
@@ -1388,10 +1499,8 @@
 
     <!--
     * =====================================================================
-    *   Updates the version numbers of the following files:
-    *     - MANIFEST.MF
-    *     - feature.xml
-    *     - site.xml
+    *   Updates file 'helpproject.properties' with the help projects
+    *   and the title of the help pages.
     * ===================================================================== -->
     <target name="updateHelpBuilderProperties" unless="ignore.build.help" >
 
@@ -1419,21 +1528,19 @@
 
     <!--
     * =====================================================================
-    *   Refreshs the projects listed in 'build.properties'.
+    *   Refreshes the projects listed in 'build.properties'.
     * ===================================================================== -->
     <target name="refreshProjects" >
 
-        <echo>Refereshing projects ...</echo>
+        <echo>Refreshing projects ...</echo>
 
         <for list="${build.projects}" delimiter="," param="project" >
             <sequential>
-                <eclipse.refreshLocal resource="@{project}" depth="infinite" />
-                <echo>* @{project}</echo>
+                <refreshFolder dir="${workspace.home}/@{project}" />
             </sequential>
         </for>
 
-        <echo>* ${ant.project.name}</echo>
-        <eclipse.refreshLocal resource="${ant.project.name}" depth="infinite" />
+        <refreshFolder dir="${build.dir}" />
 
         <echo>Done.</echo>
 
