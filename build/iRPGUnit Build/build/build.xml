@@ -3,12 +3,12 @@
  *   This Ant script helps you to create and upload the project's
  *   update site.
  *
- *   Version: 2026-10-18
+ *   Version: 2026-10-19
  *
  *   This file is shared. It must be identical in all of the
  *   following projects:
  *
- *     - IFS Projects   ifs-terminal-plugin/build/IFS Projects Build
+ *     - IFS Projects   ifs-projects-plugin/build/IFS Projects Build
  *     - iRpgFormatter  irpgformatter-plugin/build/iRpgFormatter Build
  *     - iRPGUnit       irpgunit/build/iRPGUnit Build
  *     - iSphere        isphere-plugin/build/iSphere Build
