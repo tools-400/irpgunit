@@ -3,7 +3,7 @@
  *   This Ant script helps you to create and upload the project's
  *   update site.
  *
- *   Version: 2026-10-19
+ *   Version: 2026-10-20
  *
  *   This file is shared. It must be identical in all of the
  *   following projects:
@@ -39,6 +39,13 @@
  *                                 for updating the PDF file
  *     local.updateSite.enabled  - specifies whether to update the local
  *                                 update site of your company
+ *
+ *   The 'Release' and the 'Beta' section of the home page and of the
+ *   'files' page are published, only if they are relevant: the release
+ *   section, if a release version has been published, the beta section,
+ *   if the published beta version is newer than the release version.
+ *   The sections are enclosed in 'BEGIN <name>' and 'END <name>' html
+ *   comments in the templates of the home page project.
  *
  *   See also: build.properties, localUpdateSite.properties
  *
@@ -173,6 +180,188 @@
         </sequential>
     </macrodef>
 
+    <!--
+    * =====================================================================
+    *   Stores the names of the files of directory 'dir' that match
+    *   'includes' in property 'property', separated by commas. The
+    *   property is set to an empty string, if the directory does not
+    *   exist or does not contain a matching file.
+    * ===================================================================== -->
+    <macrodef name="findFileNames" >
+        <attribute name="dir" />
+        <attribute name="includes" />
+        <attribute name="property" />
+        <sequential>
+            <pathconvert property="@{property}" pathsep="," setonempty="true" >
+                <fileset dir="@{dir}" includes="@{includes}" erroronmissingdir="false" />
+                <mapper type="flatten" />
+            </pathconvert>
+        </sequential>
+    </macrodef>
+
+    <!--
+    * =====================================================================
+    *   Stores the name of the first file of directory 'dir' that matches
+    *   'includes' in property 'property'. The property is set to an empty
+    *   string, if the directory does not exist or does not contain a
+    *   matching file.
+    * ===================================================================== -->
+    <macrodef name="findFileName" >
+        <attribute name="dir" />
+        <attribute name="includes" />
+        <attribute name="property" />
+        <sequential>
+            <local name="find.file.names" />
+            <findFileNames dir="@{dir}" includes="@{includes}" property="find.file.names" />
+            <propertyregex property="@{property}" input="${find.file.names}" regexp="^([^,]*)" select="\1" defaultValue="" />
+        </sequential>
+    </macrodef>
+
+    <!--
+    * =====================================================================
+    *   Fails, if directory 'dir' holds more than one file that matches
+    *   'includes'. Else the file that is published at the project's web
+    *   pages would be picked at random.
+    * ===================================================================== -->
+    <macrodef name="checkSingleFile" >
+        <attribute name="dir" />
+        <attribute name="includes" />
+        <sequential>
+            <local name="check.file.names" />
+            <findFileNames dir="@{dir}" includes="@{includes}" property="check.file.names" />
+            <if>
+                <matches string="${check.file.names}" pattern="," />
+                <then>
+                    <fail message="More than one file '@{includes}' found in: @{dir}${line.separator}Found: ${check.file.names}" />
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <!--
+    * =====================================================================
+    *   Fails, if the version number of update site zip file 'file' could
+    *   not be determined. Else the related section would silently
+    *   disappear from the project's web pages.
+    * ===================================================================== -->
+    <macrodef name="checkZipFileVersion" >
+        <attribute name="dir" />
+        <attribute name="file" />
+        <attribute name="version" />
+        <sequential>
+            <if>
+                <and>
+                    <not>
+                        <equals arg1="@{file}" arg2="" />
+                    </not>
+                    <equals arg1="@{version}" arg2="" />
+                </and>
+                <then>
+                    <fail message="Could not determine the version number of: @{dir}/@{file}" />
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <!--
+    * =====================================================================
+    *   Stores the version number that is encoded in the name of an update
+    *   site zip file in property 'property', for example '1.0.0.b002' of
+    *   'IFS Projects for RDi 9.6.0.13+ (v1.0.0.b002 Update Site).zip'.
+    *   The property is set to an empty string, if attribute 'file' does
+    *   not contain a version number.
+    * ===================================================================== -->
+    <macrodef name="zipFileVersion" >
+        <attribute name="file" />
+        <attribute name="property" />
+        <sequential>
+            <propertyregex property="@{property}" input="@{file}" regexp="\(v(${version.number.search.regex}) " select="\1" defaultValue="" />
+        </sequential>
+    </macrodef>
+
+    <!--
+    * =====================================================================
+    *   Stores the 3-digit representation of number 'value' in property
+    *   'property', for example '007' of '7'.
+    * ===================================================================== -->
+    <macrodef name="padNumber" >
+        <attribute name="value" />
+        <attribute name="property" />
+        <sequential>
+            <propertyregex property="@{property}" input="00@{value}" regexp="([0-9]{3})$" select="\1" defaultValue="000" />
+        </sequential>
+    </macrodef>
+
+    <!--
+    * =====================================================================
+    *   Stores a numerical key of version 'version' in property 'property'.
+    *   The key is used for comparing two version numbers. It is built of
+    *   the major, minor and micro version number and the number of the
+    *   beta version, where a release version counts as '999':
+    *
+    *     1.0.0.b002 -> 1001000000002
+    *     1.0.0.r    -> 1001000000999
+    *
+    *   The property is set to an empty string, if 'version' is empty.
+    * ===================================================================== -->
+    <macrodef name="versionKey" >
+        <attribute name="version" />
+        <attribute name="property" />
+        <sequential>
+            <local name="version.major" />
+            <local name="version.minor" />
+            <local name="version.micro" />
+            <local name="version.beta" />
+            <local name="version.key.major" />
+            <local name="version.key.minor" />
+            <local name="version.key.micro" />
+            <local name="version.key.beta" />
+            <if>
+                <equals arg1="@{version}" arg2="" />
+                <then>
+                    <property name="@{property}" value="" />
+                </then>
+                <else>
+                    <propertyregex property="version.major" input="@{version}" regexp="^([0-9]+)" select="\1" defaultValue="0" />
+                    <propertyregex property="version.minor" input="@{version}" regexp="^[0-9]+\.([0-9]+)" select="\1" defaultValue="0" />
+                    <propertyregex property="version.micro" input="@{version}" regexp="^[0-9]+\.[0-9]+\.([0-9]+)" select="\1" defaultValue="0" />
+                    <propertyregex property="version.beta" input="@{version}" regexp="\.b([0-9]+)$" select="\1" defaultValue="999" />
+                    <padNumber value="${version.major}" property="version.key.major" />
+                    <padNumber value="${version.minor}" property="version.key.minor" />
+                    <padNumber value="${version.micro}" property="version.key.micro" />
+                    <padNumber value="${version.beta}" property="version.key.beta" />
+                    <property name="@{property}" value="1${version.key.major}${version.key.minor}${version.key.micro}${version.key.beta}" />
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <!--
+    * =====================================================================
+    *   Removes a section of an html page, if attribute 'enabled' is not
+    *   'true'. Else the section is kept and only its markers are removed.
+    *   A section starts with an html comment 'BEGIN name' and ends with an
+    *   html comment 'END name', each of them on a line of its own.
+    * ===================================================================== -->
+    <macrodef name="htmlSection" >
+        <attribute name="file" />
+        <attribute name="name" />
+        <attribute name="enabled" />
+        <sequential>
+            <if>
+                <equals arg1="@{enabled}" arg2="true" />
+                <then>
+                    <echo>Keeping section '@{name}' of: @{file}</echo>
+                    <replaceregexp file="@{file}" match="[ \t]*&lt;!-- (?:BEGIN|END) @{name} --&gt;[ \t]*\r?\n" replace="" flags="g" byline="false" />
+                </then>
+                <else>
+                    <echo>Removing section '@{name}' of: @{file}</echo>
+                    <replaceregexp file="@{file}" match="(?s)[ \t]*&lt;!-- BEGIN @{name} --&gt;.*?&lt;!-- END @{name} --&gt;[ \t]*\r?\n" replace="" flags="g" byline="false" />
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+
     <property name="plugin.name" value="${build.public.project.name}" />
     <property name="workspace.home" location="./../../../.." />
 
@@ -254,10 +443,6 @@
 
     <property name="version.number.search.regex" value="[1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{1,3}|r[0-9]{0,1}))?" />
 
-    <property name="files.release.version.regex" value="(&lt;h3&gt;Release Version )([1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{1,3}|r[0-9]{0,1}))?)(&lt;/h3&gt;)" />
-    <property name="files.beta.version.regex" value="(&lt;h3&gt;Beta Version )([1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{1,3}|r[0-9]{0,1}))?)(&lt;/h3&gt;)" />
-    <property name="files.version.replace" value="\1${build.version}\3" />
-
     <property name="validate.version.regex" value="^(${version.number.validation.regex})$" />
     <property name="release.flag.regex" value="^(?:${version.number.validation.regex})$" />
 
@@ -284,9 +469,6 @@
 
     <property name="html.copyright.2.version.regex" value="(Copyright:\s)([0-9]{4})" />
     <property name="html.copyright.2.version.replace" value="\1${today.year}" />
-
-    <property name="html.copyright.3.version.regex" value="(Updated: )([0-9]{2}\.[0-9]{2}\.[0-9]{4} - [0-9]{2}:[0-9]{2}:[0-9]{2})" />
-    <property name="html.copyright.3.version.replace" value="\1${today.timestamp}" />
 
     <property name="regex.check.variables" value="(@.+?@|\$\{.+?})" />
 
@@ -324,7 +506,6 @@
             <property name="beta.dir" value="${build.pages.beta.version}" />
             <property name="version.info" value="&lt;div class=&quot;beta&quot;&gt;Beta Version - ${build.version}&lt;/div&gt;" />
             <property name="help.site.url" value="${target.ide.root.beta.help.site.url}" />
-            <property name="files.version.regex" value="${files.beta.version.regex}" />
             <property name="build.update.site.url" value="${target.ide.root.beta.update.site.url}" />
         </then>
         <else>
@@ -334,7 +515,6 @@
             <property name="beta.dir" value="." />
             <property name="version.info" value="&lt;div class=&quot;release&quot;&gt;Release Version - ${build.version}&lt;/div&gt;" />
             <property name="help.site.url" value="${target.ide.root.help.site.url}" />
-            <property name="files.version.regex" value="${files.release.version.regex}" />
             <property name="build.update.site.url" value="${target.ide.root.update.site.url}" />
         </else>
     </if>
@@ -365,9 +545,109 @@
     <property name="target.ide.zip.file.name" value="${build.public.project.name} for ${target.ide.product.name.short} (v${build.version} Update Site).zip" />
     <property name="target.ide.uload.dir" value="${workspace.home}/${build.ftp.project}/${build.pages.root}" />
 
-    <!-- Set regular expressions and replacement values that use property "beta.dir" and "target.ide.zip.file.name" -->
-    <property name="html.files.zip.regex" value="(&lt;img id=&quot;${beta.dir}&quot;.*)(zip_file.png)(.*/files/{1,2})([a-z0-9.]+/|[A-Z@_]+/)(.*?)(&quot;&gt;)" />
-    <property name="html.files.zip.replace" value="\1\2\3\4${target.ide.zip.file.name}\6" />
+    <!-- Set the URLs of the published files -->
+    <property name="pages.files.release.url" value="${pages.homepage.base}/${build.pages.files}" />
+    <property name="pages.files.beta.url" value="${pages.homepage.base}/${build.pages.beta.version}/${build.pages.files}" />
+
+    <!-- Get the files that are currently published at the project's web pages -->
+    <property name="docs.files.dir.release" location="${target.ide.uload.dir}/${build.pages.files}" />
+    <property name="docs.files.dir.beta" location="${target.ide.uload.dir}/${build.pages.beta.version}/${build.pages.files}" />
+
+    <findFileName dir="${docs.files.dir.release}/${target.ide.sf.dir}" includes="*.zip" property="docs.release.zip.file" />
+    <findFileName dir="${docs.files.dir.beta}/${target.ide.sf.dir}" includes="*.zip" property="docs.beta.zip.file" />
+    <findFileName dir="${docs.files.dir.release}" includes="*.pdf" property="docs.release.pdf.file" />
+    <findFileName dir="${docs.files.dir.beta}" includes="*.pdf" property="docs.beta.pdf.file" />
+
+    <zipFileVersion file="${docs.release.zip.file}" property="docs.release.version" />
+    <zipFileVersion file="${docs.beta.zip.file}" property="docs.beta.version" />
+
+    <!-- Set the documentation file of the version that is built -->
+    <if>
+        <equals arg1="${build.project.doc.enable}" arg2="true" />
+        <then>
+            <property name="build.pdf.file" value="${build.project.pdf}" />
+        </then>
+        <else>
+            <property name="build.pdf.file" value="" />
+        </else>
+    </if>
+
+    <!-- Set the release and the beta version of the project's web pages, as
+         they are, when this build has been uploaded: the version of the
+         channel that is built is the version of this build, the version of
+         the other channel is the version that is currently published. -->
+    <if>
+        <equals arg1="${is.beta.version}" arg2="true" />
+        <then>
+            <property name="files.release.version" value="${docs.release.version}" />
+            <property name="files.release.zip.file" value="${docs.release.zip.file}" />
+            <property name="files.release.pdf.file" value="${docs.release.pdf.file}" />
+            <property name="files.beta.version" value="${build.version}" />
+            <property name="files.beta.zip.file" value="${target.ide.zip.file.name}" />
+            <property name="files.beta.pdf.file" value="${build.pdf.file}" />
+        </then>
+        <else>
+            <property name="files.release.version" value="${build.version}" />
+            <property name="files.release.zip.file" value="${target.ide.zip.file.name}" />
+            <property name="files.release.pdf.file" value="${build.pdf.file}" />
+            <property name="files.beta.version" value="${docs.beta.version}" />
+            <property name="files.beta.zip.file" value="${docs.beta.zip.file}" />
+            <property name="files.beta.pdf.file" value="${docs.beta.pdf.file}" />
+        </else>
+    </if>
+
+    <!-- The release section is relevant, if a release version is published -->
+    <condition property="files.release.section.enabled" value="true" else="false" >
+        <not>
+            <equals arg1="${files.release.version}" arg2="" />
+        </not>
+    </condition>
+
+    <!-- The beta section is relevant, if the beta version is newer than the
+         release version -->
+    <versionKey version="${files.release.version}" property="files.release.version.key" />
+    <versionKey version="${files.beta.version}" property="files.beta.version.key" />
+    <if>
+        <equals arg1="${files.beta.version}" arg2="" />
+        <then>
+            <property name="files.beta.section.enabled" value="false" />
+        </then>
+        <elseif>
+            <equals arg1="${files.release.version}" arg2="" />
+            <then>
+                <property name="files.beta.section.enabled" value="true" />
+            </then>
+        </elseif>
+        <else>
+            <math result="files.version.difference" operand1="${files.beta.version.key}" operation="subtract" operand2="${files.release.version.key}" datatype="long" />
+            <condition property="files.beta.section.enabled" value="true" else="false" >
+                <not>
+                    <matches string="${files.version.difference}" pattern="^(-|0$)" />
+                </not>
+            </condition>
+        </else>
+    </if>
+
+    <!-- The documentation file is optional -->
+    <condition property="files.release.pdf.enabled" value="true" else="false" >
+        <and>
+            <equals arg1="${files.release.section.enabled}" arg2="true" />
+            <not>
+                <equals arg1="${files.release.pdf.file}" arg2="" />
+            </not>
+        </and>
+    </condition>
+    <condition property="files.beta.pdf.enabled" value="true" else="false" >
+        <and>
+            <equals arg1="${files.beta.section.enabled}" arg2="true" />
+            <not>
+                <equals arg1="${files.beta.pdf.file}" arg2="" />
+            </not>
+        </and>
+    </condition>
+
+    <echo>Release version of the web pages: '${files.release.version}' (section: ${files.release.section.enabled})</echo>
+    <echo>Beta version of the web pages: '${files.beta.version}' (section: ${files.beta.section.enabled})</echo>
 
     <!-- Set common upload properties -->
     <property name="build.dir" location="./.." />
@@ -395,6 +675,9 @@
     <property name="project.doc.tmp" location="${workspace.home}/${build.project.core}/${build.folder.doc}/_${build.project.doc}" />
     <property name="project.pdf" location="${workspace.home}/${build.project.core}/${build.folder.doc}/${build.project.pdf}" />
     <property name="project.notifier" location="${workspace.home}/${build.project.notifier}/${build.project.notify}" />
+
+    <!-- Set the name of the snippet with the library installation hint -->
+    <property name="library.installation.hint.snippet" value="library.snippet" />
 
     <!-- Set the name of the default home page file -->
     <property name="home.page" value="index.html" />
@@ -528,7 +811,7 @@
     <!-- =============================================================
           Updates 'Docs' with the current project documentation.
          ============================================================= -->
-    <target name="createGitHubFiles" depends="updatePdfFile, prepareUpdateSite, createZipFile, createUpdateSite, createUpdateSiteHtmlPages, createHelpHtmlPages, createHomePageHtml, createFilesHtml, refreshProjects" description="Step 3" >
+    <target name="createGitHubFiles" depends="checkPublishedFiles, updatePdfFile, prepareUpdateSite, createZipFile, createUpdateSite, createUpdateSiteHtmlPages, createHelpHtmlPages, createHomePageHtml, createFilesHtml, refreshProjects" description="Step 3" >
 
         <echo>GitHub files have been created in: ${build.upload.dir}</echo>
         <echo>Next: Commit 'Prepared &lt;version&gt;.', then run target 'uploadGitHubFiles'.</echo>
@@ -595,6 +878,17 @@
              because properties are immutable. -->
         <property name="marketplace.installation.hint" value="" />
 
+        <if>
+            <equals arg1="${build.library.enabled}" arg2="true" />
+            <then>
+                <echo>Loading library installation hint</echo>
+                <loadfile property="library.installation.hint" srcfile="${build.template.dir.web.build_target}/${library.installation.hint.snippet}" />
+            </then>
+        </if>
+
+        <!-- Default value, if the hint has not been loaded -->
+        <property name="library.installation.hint" value="" />
+
         <echo>Renaming ${target.ide.sf.dir} ...</echo>
         <!-- <move todir="${build.upload.dir.web.eclipse}\${target.ide.sf.dir}" > -->
         <move todir="${build.upload.dir.web.eclipse}" >
@@ -603,6 +897,11 @@
 
         <echo>Renaming index.html ...</echo>
         <move file="${build.upload.dir.web.eclipse}/${build.target}_index.html" tofile="${build.upload.dir.web.eclipse}/index.html" />
+
+        <!-- Remove the sections that are not relevant -->
+        <htmlSection file="${build.upload.dir.web.eclipse}/index.html" name="MARKETPLACE" enabled="${build.marketplace.enabled}" />
+        <htmlSection file="${build.upload.dir.web.eclipse}/index.html" name="HELP" enabled="${build.help.enabled}" />
+        <htmlSection file="${build.upload.dir.web.eclipse}/index.html" name="LIBRARY" enabled="${build.library.enabled}" />
 
         <echo>Replacing '@' variables ...</echo>
 
@@ -613,6 +912,8 @@
         <replace file="${build.upload.dir.web.eclipse}/index.html" token="@TODAY_YEAR@" value="${today.year}" />
         <replace file="${build.upload.dir.web.eclipse}/index.html" token="@VERSION_NUMBER@" value="${build.version}" />
         <replace file="${build.upload.dir.web.eclipse}/index.html" token="@MARKETPLACE_INSTALLATION@" value="${marketplace.installation.hint}" />
+        <replace file="${build.upload.dir.web.eclipse}/index.html" token="@LIBRARY_INSTALLATION@" value="${library.installation.hint}" />
+        <replace file="${build.upload.dir.web.eclipse}/index.html" token="@PROJECT_LOGO_ATTRIBUTES@" value="${build.project.logo.attributes}" />
         <replace file="${build.upload.dir.web.eclipse}/index.html" token="@REPOSITORY_NAME@" value="${build.repository.name}" />
 
         <replace file="${build.upload.dir.web.eclipse}/index.html" token="@PROJECT_HOME@" value="${build.pages.project.url}" />
@@ -667,17 +968,56 @@
 
     <!--
     * =====================================================================
+    *   Checks the files that are published at the project's web pages.
+    *   The release and the beta version are read from the names of the
+    *   published update site zip files. This target fails, if a version
+    *   number cannot be determined or if a file cannot be identified,
+    *   because the web pages would silently lose a section or get a
+    *   link to the wrong file.
+    * ===================================================================== -->
+    <target name="checkPublishedFiles" >
+
+        <echo>Checking the published files of: ${target.ide.uload.dir}</echo>
+
+        <if>
+            <available file="${workspace.home}/${build.ftp.project}" type="dir" />
+            <then>
+                <!-- Fine. Nothing to do. -->
+            </then>
+            <else>
+                <fail message="Pages repository not found: ${workspace.home}/${build.ftp.project}" />
+            </else>
+        </if>
+
+        <checkSingleFile dir="${docs.files.dir.release}/${target.ide.sf.dir}" includes="*.zip" />
+        <checkSingleFile dir="${docs.files.dir.beta}/${target.ide.sf.dir}" includes="*.zip" />
+        <checkSingleFile dir="${docs.files.dir.release}" includes="*.pdf" />
+        <checkSingleFile dir="${docs.files.dir.beta}" includes="*.pdf" />
+
+        <checkZipFileVersion dir="${docs.files.dir.release}/${target.ide.sf.dir}" file="${docs.release.zip.file}" version="${docs.release.version}" />
+        <checkZipFileVersion dir="${docs.files.dir.beta}/${target.ide.sf.dir}" file="${docs.beta.zip.file}" version="${docs.beta.version}" />
+
+        <echo>Done.</echo>
+
+    </target>
+
+    <!--
+    * =====================================================================
     *   Creates the project's home page.
     * ===================================================================== -->
     <target name="createHomePageHtml" >
 
         <echo>Creating ${build.public.project.name} home page (html) ...</echo>
 
-        <copy todir="${build.upload.dir.home}" >
+        <copy todir="${build.upload.dir.home}" overwrite="true" >
             <fileset dir="${workspace.home}/${build.homepage.project}/html" >
-                <exclude name="/html/${files.page}" />
+                <exclude name="${files.page}" />
             </fileset>
         </copy>
+
+        <!-- Remove the sections that are not relevant -->
+        <htmlSection file="${build.upload.dir.home}/${home.page}" name="RELEASE" enabled="${files.release.section.enabled}" />
+        <htmlSection file="${build.upload.dir.home}/${home.page}" name="BETA" enabled="${files.beta.section.enabled}" />
 
         <replace file="${build.upload.dir.home}/${home.page}" token="@VERSION_NUMBER@" value="${build.version}" />
         <replace file="${build.upload.dir.home}/${home.page}" token="@TODAY_YEAR@" value="${today.year}" />
@@ -736,24 +1076,35 @@
 
         <echo>Creating ${build.public.project.name} '${build.pages.files}' page (html) ...</echo>
 
-        <copy todir="${build.upload.dir.home}" >
+        <copy todir="${build.upload.dir.home}" overwrite="true" >
             <fileset dir="${workspace.home}/${build.homepage.project}/html" >
                 <include name="${files.page}" />
             </fileset>
         </copy>
 
+        <!-- Remove the sections that are not relevant -->
+        <htmlSection file="${build.upload.dir.home}/${files.page}" name="RELEASE" enabled="${files.release.section.enabled}" />
+        <htmlSection file="${build.upload.dir.home}/${files.page}" name="BETA" enabled="${files.beta.section.enabled}" />
+        <htmlSection file="${build.upload.dir.home}/${files.page}" name="RELEASE_PDF" enabled="${files.release.pdf.enabled}" />
+        <htmlSection file="${build.upload.dir.home}/${files.page}" name="BETA_PDF" enabled="${files.beta.pdf.enabled}" />
+
         <replace file="${build.upload.dir.home}/${files.page}" token="@VERSION_NUMBER@" value="${build.version}" />
         <replace file="${build.upload.dir.home}/${files.page}" token="@TODAY_YEAR@" value="${today.year}" />
         <replace file="${build.upload.dir.home}/${files.page}" token="@TODAY@" value="${today.timestamp}" />
-        <replace file="${build.upload.dir.home}/${files.page}" token="@PDF_FILE@" value="${build.project.pdf}" />
-        <replace file="${build.upload.dir.home}/${files.page}" token="@ZIP_FILE@" value="${target.ide.zip.file.name}" />
         <replace file="${build.upload.dir.home}/${files.page}" token="@TARGET_IDE@" value="${target.ide.sf.dir}" />
         <replace file="${build.upload.dir.home}/${files.page}" token="@TARGET_IDE_FULL_NAME@" value="${target.ide.ide.product.full.name}" />
         <replace file="${build.upload.dir.home}/${files.page}" token="@FILES_PAGE@" value="${build.pages.files.url}" />
-
         <replace file="${build.upload.dir.home}/${files.page}" token="@HOME_PAGE@" value="${build.pages.homepage.url}" />
-        <replace file="${build.upload.dir.home}/${files.page}" token="@TARGET_IDE@" value="${target.ide.sf.dir}" />
-        <replace file="${build.upload.dir.home}/${files.page}" token="@TARGET_IDE_FULL_NAME@" value="${target.ide.ide.product.full.name}" />
+
+        <replace file="${build.upload.dir.home}/${files.page}" token="@RELEASE_FILES_URL@" value="${pages.files.release.url}" />
+        <replace file="${build.upload.dir.home}/${files.page}" token="@RELEASE_VERSION@" value="${files.release.version}" />
+        <replace file="${build.upload.dir.home}/${files.page}" token="@RELEASE_ZIP_FILE@" value="${files.release.zip.file}" />
+        <replace file="${build.upload.dir.home}/${files.page}" token="@RELEASE_PDF_FILE@" value="${files.release.pdf.file}" />
+
+        <replace file="${build.upload.dir.home}/${files.page}" token="@BETA_FILES_URL@" value="${pages.files.beta.url}" />
+        <replace file="${build.upload.dir.home}/${files.page}" token="@BETA_VERSION@" value="${files.beta.version}" />
+        <replace file="${build.upload.dir.home}/${files.page}" token="@BETA_ZIP_FILE@" value="${files.beta.zip.file}" />
+        <replace file="${build.upload.dir.home}/${files.page}" token="@BETA_PDF_FILE@" value="${files.beta.pdf.file}" />
 
         <replace file="${build.upload.dir.home}/${files.page}" token="@PLUGIN_NAME@" value="${build.public.project.name}" />
 
@@ -811,7 +1162,6 @@
                     <!-- delete: [workspace]/[project]/docs/beta-version -->
                     <fileset dir="${target.ide.uload.dir}/${beta.dir}" >
                         <include name="**/*" />
-                        <exclude name="${files.page}" />
                         <exclude name="${build.pages.help}/" />
                         <exclude name=".project" />
                         <exclude name=".settings/" />
@@ -825,7 +1175,6 @@
                     <fileset dir="${target.ide.uload.dir}" >
                         <include name="**/*" />
                         <exclude name="${build.pages.beta.version}/" />
-                        <exclude name="${files.page}" />
                         <exclude name="${build.pages.help}/" />
                         <exclude name=".project" />
                         <exclude name=".settings/" />
@@ -876,43 +1225,14 @@
     *   This target must be run, after the GitHub files have been built.
     *   This target is specific to RDi/WDSCi and controlled by build.target.
     * ===================================================================== -->
-    <target name="uploadGitHubFiles" depends="checkBuildTarget, cleanDocsDirectory, uploadGitHubNotifier, refreshProjects" description="Step 4" >
+    <target name="uploadGitHubFiles" depends="checkBuildTarget, checkPublishedFiles, cleanDocsDirectory, uploadGitHubNotifier, refreshProjects" description="Step 4" >
 
         <echo>Creating GitHub '${build.pages.root}' directory ...</echo>
 
-        <!-- Upload (include) files/index.html if not present -->
-        <condition property="docs.files.index.html.exists" >
-            <available filepath="${target.ide.uload.dir}" file="${files.page}" type="file" />
-        </condition>
-
-        <if>
-            <equals arg1="${docs.files.index.html.exists}" arg2="true" />
-            <then>
-                <echo>... copying homepage files, excluding: ${files.page}</echo>
-                <property name="exclude.docs.files.index.html" value="${files.page}" />
-
-                <replaceregexp match="${html.copyright.1.version.regex}" replace="${html.copyright.1.version.replace}" byline="true" >
-                    <fileset file="${target.ide.uload.dir}/${files.page}" />
-                </replaceregexp>
-                <replaceregexp match="${html.copyright.2.version.regex}" replace="${html.copyright.2.version.replace}" byline="true" >
-                    <fileset file="${target.ide.uload.dir}/${files.page}" />
-                </replaceregexp>
-                <replaceregexp match="${html.copyright.3.version.regex}" replace="${html.copyright.3.version.replace}" byline="true" >
-                    <fileset file="${target.ide.uload.dir}/${files.page}" />
-                </replaceregexp>
-            </then>
-            <else>
-                <echo>... copying homepage files, including: ${files.page}</echo>
-                <property name="exclude.docs.files.index.html" value="" />
-            </else>
-        </if>
-
         <!-- Homepage -->
-        <copy todir="${target.ide.uload.dir}" failonerror="false" >
+        <copy todir="${target.ide.uload.dir}" overwrite="true" failonerror="false" >
             <fileset dir="${build.upload.dir.home}" >
                 <include name="**" />
-                <!-- Exclude files/index.html, because we must update the existing file! -->
-                <exclude name="${exclude.docs.files.index.html}" />
             </fileset>
         </copy>
 
@@ -927,17 +1247,6 @@
                 </copy>
             </then>
         </if>
-
-        <!-- Replace zip file name -->
-        <replaceregexp match="${html.files.zip.regex}" replace="${html.files.zip.replace}" flags="g" byline="true" >
-            <!-- file is always in docs/files and never in 'beta-version/files' -->
-            <fileset file="${target.ide.uload.dir}/${files.page}" />
-        </replaceregexp>
-
-        <!-- Replace version number -->
-        <replaceregexp match="${files.version.regex}" replace="${files.version.replace}" flags="g" byline="true" >
-            <fileset file="${target.ide.uload.dir}/${files.page}" />
-        </replaceregexp>
 
         <!-- Update Site -->
         <copy todir="${target.ide.uload.dir}/${beta.dir}/update-site/eclipse/${target.ide.sf.dir}" >
