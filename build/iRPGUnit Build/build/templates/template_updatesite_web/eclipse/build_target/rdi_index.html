@@ -1,6 +1,7 @@
 <html>
     <head>
         <meta http-equiv="cache-control" content="no-cache">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="description" content="@PLUGIN_NAME@ Plug-in Update Site">
         <meta name="author" content="@PLUGIN_NAME@ Project Team">
         <meta name="keywords" content="@PLUGIN_NAME@, Plugin, RDI, Eclipse, AS400">
@@ -11,12 +12,14 @@
         <table width="100%" border="0">
         <tr>
             <td align="left" >
-                <a href="@HOME_PAGE@"><img src="./assets/project-logo.gif" alt="@PLUGIN_NAME@ - Eclipse Update Site for RDi" border="0" style="padding-right:10px;"/></a>
+                <a href="@HOME_PAGE@"><img src="./assets/project-logo.gif" alt="@PLUGIN_NAME@ - Eclipse Update Site for RDi" @PROJECT_LOGO_ATTRIBUTES@ style="padding-right:10px;"/></a>
             </td>
-           <td align="left" width="100%" >
+            <td align="left" width="100%" >
                 <h1>@PLUGIN_NAME@ Plug-in Update Site @IDE_PRODUCT_NAME_SHORT@</h1>
                 <p>Hi, this is the <a href="@PROJECT_HOME@">@PLUGIN_NAME@</a> plug-in update site for @IDE_PRODUCT_NAME_LONG@.</p>
+<!-- BEGIN HELP -->
                 <p>Visit the <a href="@HELP_URL@">@PLUGIN_NAME@</a> help site to find out more about the plug-in.</p>
+<!-- END HELP -->
             </td>
         </tr>
         </table>
@@ -26,10 +29,12 @@
         <div class="section">
         <h2>Installing the Plug-In</h2>
         <p/>
+<!-- BEGIN MARKETPLACE -->
         <h3>Using Eclipse Marketplace</h3>
         <p>
 @MARKETPLACE_INSTALLATION@
         <p>
+<!-- END MARKETPLACE -->
         <h3>Using the @PLUGIN_NAME@ Update Site</h3>
         <p>From the main menu, select "Help > Install New Software..." to enter the "Install" dialog.<br><br>
         Drag-and-drop the URL of the <a href="@UPDATE_SITE_URL@">update site</a> into the "Work with:" field:<br><br></p>
@@ -61,23 +66,11 @@
         <li>Press the [Add] button to add the zip file to the list of available update sites.</li>
         <li>Use the [Archive...] button to select the zip file.</li>
         </ul>
+<!-- BEGIN LIBRARY -->
         <p>
         <h2>Installing the @PROJECT_LIBRARY@ Library</h2>
-        <p class="indent">
-        The most easiest way to install the library is to upload it from the preference page of the @PLUGIN_NAME@ 
-        plug-in. However that requires that you are allowed to start a FTP connection to your host.
-        <p>
-        Take these steps to use the embedded installer:
-        <ul>
-        <li>Goto 'Window -> Preferences'.</li>
-        <li>Click the upload button next to option 'Runtime: Product library'.</li>
-        <li>Select a connection.</li>
-        <li>Check the FTP port. The default is 21.</li>
-        <li>Check the library. The default is 'RPGUNIT'.</li>
-        <li>Click the [Install] button.</li>
-        </ul>
-        <p>
-        Refer to the @PLUGIN_NAME@ <a target="_help" href="@HELP_URL@">help</a> page to see more options for installing the library.
+@LIBRARY_INSTALLATION@
+<!-- END LIBRARY -->
         <p>
         The following terms are trademarks of the IBM Corporation in the United States or other countries or both:
         <ul>

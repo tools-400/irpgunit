@@ -22,20 +22,28 @@
         <h2 class="release">Local Update Sites</h2>
         <div class="section">
         This page provides the local update sites of the @PLUGIN_NAME@ plug-in.
+<!-- BEGIN RELEASE -->
 
-        <h3>Release Version 1.0.0.r</h3>
+        <h3>Release Version @RELEASE_VERSION@</h3>
         <p/>
         <table class="nomargin">
-        <tr><td><img id="." class="noborder" src="../assets/zip_file.png"></td><td><a href="@FILES_PAGE@/@TARGET_IDE@/@ZIP_FILE@">@TARGET_IDE_FULL_NAME@</a></td></tr>
-        <tr><td><img id="." class="noborder" src="../assets/pdf_file.png"></td><td><a href="@FILES_PAGE@/@PDF_FILE@">@PDF_FILE@</a></td></tr>
+        <tr><td><img class="noborder" src="../assets/zip_file.png"></td><td><a href="@RELEASE_FILES_URL@/@TARGET_IDE@/@RELEASE_ZIP_FILE@">@TARGET_IDE_FULL_NAME@</a></td></tr>
+<!-- BEGIN RELEASE_PDF -->
+        <tr><td><img class="noborder" src="../assets/pdf_file.png"></td><td><a href="@RELEASE_FILES_URL@/@RELEASE_PDF_FILE@">@RELEASE_PDF_FILE@</a></td></tr>
+<!-- END RELEASE_PDF -->
         </table>
+<!-- END RELEASE -->
+<!-- BEGIN BETA -->
 
-        <h3>Beta Version 1.0.0.b001</h3>
+        <h3>Beta Version @BETA_VERSION@</h3>
         <p/>
         <table class="nomargin">
-        <tr><td><img id="beta-version" class="noborder" src="../assets/zip_file.png"></td><td><a href="https://tools-400.github.io/irpgunit/beta-version/files/@TARGET_IDE@/@ZIP_FILE@">@TARGET_IDE_FULL_NAME@</a></td></tr>
-        <tr><td><img id="beta-version" class="noborder" src="../assets/pdf_file.png"></td><td><a href="https://tools-400.github.io/irpgunit/beta-version/files/@PDF_FILE@">@PDF_FILE@</a></td></tr>
+        <tr><td><img class="noborder" src="../assets/zip_file.png"></td><td><a href="@BETA_FILES_URL@/@TARGET_IDE@/@BETA_ZIP_FILE@">@TARGET_IDE_FULL_NAME@</a></td></tr>
+<!-- BEGIN BETA_PDF -->
+        <tr><td><img class="noborder" src="../assets/pdf_file.png"></td><td><a href="@BETA_FILES_URL@/@BETA_PDF_FILE@">@BETA_PDF_FILE@</a></td></tr>
+<!-- END BETA_PDF -->
         </table>
+<!-- END BETA -->
 
         <br>
         <hr>
