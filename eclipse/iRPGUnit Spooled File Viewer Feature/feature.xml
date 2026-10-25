@@ -20,7 +20,6 @@
 
    <url>
       <update label="iRPGUnit - Remote Update Site" url="https://tools-400.github.io/irpgunit/update-site/eclipse/rdi8.0/"/>
-      <discovery label="iRPGUnit Project Team" url="http://www.tools400.de"/>
    </url>
 
    <requires>
