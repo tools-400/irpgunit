@@ -202,10 +202,16 @@ Finished.
 <h3>Renaming the RPGUnit Library</h3>
 <p>
 Starting with version 4 you can use the <i>UPDLIB</i> command to update the references between the
-RPGUnit objects after renaming the library.
+RPGUnit objects after renaming the library or after restoring it with a different name, e.g. <i>RPGUNIT6</i>.
+This is also required when the <i>IBM i Testing</i> extension of Visual Studio Code has installed
+iRPGUnit into a product library other than <code>RPGUNIT</code>.
 <pre class="indent">
-  UPDLIB LIB(libName)
+  CHGCMD CMD(RPGUNIT6/UPDLIB) PGM(*REXX) REXSRCFILE(RPGUNIT6/QBUILD) HLPPNLGRP(RPGUNIT6/UPDLIBHLP)
+  RPGUNIT6/UPDLIB LIB(RPGUNIT6)
 </pre>
+<p>
+The <i>CHGCMD</i> command is required, because the <i>UPDLIB</i> command still points to
+the Rexx source file of the original library.
 <p>
 Then the library does not necessarily have to be recompiled.
 <p>
