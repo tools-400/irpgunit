@@ -3,7 +3,7 @@
       id="de.tools400.rpgunit.spooledfileviewer"
       label="iRPGUnit Spooled File Viewer Feature (recommended, if iSphere is missing)"
       version="6.0.7.r"
-      provider-name="Tools400"
+      provider-name="Tools/400"
       plugin="de.tools400.rpgunit.core">
 
    <description url="https://tools-400.github.io/irpgunit/">
