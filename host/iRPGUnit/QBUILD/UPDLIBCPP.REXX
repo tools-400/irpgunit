@@ -35,6 +35,9 @@
  /*  Let's do it!                                */
  /* -------------------------------------------- */
 
+ /* Update service programs */
+ "UPDSRVPGM SRVPGM("library"/RUTESTCASE) MODULE(*NONE) SRVPGMLIB("library")"
+
  /* Update programs */
  "UPDPGM PGM("library"/RUCALLTST) MODULE(*NONE) SRVPGMLIB("library")"
 
