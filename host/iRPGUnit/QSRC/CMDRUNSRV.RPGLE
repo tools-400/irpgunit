@@ -494,7 +494,7 @@ dcl-proc runTestProc export;
   endTime = %timestamp();
 
   if (startTime < endTime);
-    testCaseResult.execTimeMSecs = %diff(endTime: startTime: *mseconds);
+    testCaseResult.execTimeMSecs = %div(%diff(endTime: startTime: *mseconds): 1000);
   else;
     testCaseResult.execTimeMSecs = 0;
   endif;
