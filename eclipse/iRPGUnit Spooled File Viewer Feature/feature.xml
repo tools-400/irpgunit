@@ -2,7 +2,7 @@
 <feature
       id="de.tools400.rpgunit.spooledfileviewer"
       label="iRPGUnit Spooled File Viewer Feature (recommended, if iSphere is missing)"
-      version="6.0.9.r"
+      version="6.0.10.r"
       provider-name="Tools/400"
       plugin="de.tools400.rpgunit.core">
 
@@ -23,7 +23,7 @@
    </url>
 
    <requires>
-      <import feature="de.tools400.rpgunit.core" version="6.0.9.r" match="greaterOrEqual"/>
+      <import feature="de.tools400.rpgunit.core" version="6.0.10.r" match="greaterOrEqual"/>
    </requires>
 
    <plugin
