@@ -17,7 +17,6 @@ import org.eclipse.ui.views.properties.IPropertySource;
 import de.tools400.rpgunit.core.Messages;
 import de.tools400.rpgunit.core.extensions.testcase.IRPGUnitTestCaseItem;
 import de.tools400.rpgunit.core.extensions.view.IRPGUnitSpooledFile;
-import de.tools400.rpgunit.core.helpers.IntHelper;
 import de.tools400.rpgunit.core.jobs.ibmi.RPGUnitTestRunner;
 import de.tools400.rpgunit.core.model.ibmi.I5ServiceProgram;
 
@@ -198,10 +197,11 @@ public class UnitTestCase extends AbstractUnitTestObject
         }
 
         IEditableSource editableSource;
-        if (testCaseEvents.isEmpty()) {
+        UnitTestCaseEvent unitTestCaseEvent = getFirstUnitTestCaseEventOfOutcome();
+        if (unitTestCaseEvent == null) {
             editableSource = null;
         } else {
-            editableSource = testCaseEvents.get(0).getEditableSource();
+            editableSource = unitTestCaseEvent.getEditableSource();
         }
 
         return editableSource;
@@ -212,18 +212,38 @@ public class UnitTestCase extends AbstractUnitTestObject
 
         int statementNumber = -1;
 
-        if (getOutcome() == Outcome.ERROR) {
-            UnitTestCaseEvent unitTestCaseEvent = testCaseEvents.get(0);
-            UnitTestMessageReceiver messageReceiver = unitTestCaseEvent.getMessageReceiver();
-            String statementNumberString = messageReceiver.getStatementNumberText();
-            statementNumber = IntHelper.tryParseInt(statementNumberString, -1);
-        } else if (getOutcome() == Outcome.FAILURE) {
-            if (!testCaseEvents.isEmpty()) {
-                statementNumber = testCaseEvents.get(0).getStatementNumber();
+        if (getOutcome() == Outcome.ERROR || getOutcome() == Outcome.FAILURE) {
+            UnitTestCaseEvent unitTestCaseEvent = getFirstUnitTestCaseEventOfOutcome();
+            if (unitTestCaseEvent != null) {
+                statementNumber = unitTestCaseEvent.getStatementNumber();
             }
         }
 
         return statementNumber;
+    }
+
+    /**
+     * Returns the first event with the outcome of the test case. With
+     * ONFAILURE(*CONTINUE) the events start with the successful assertions,
+     * which must not be used for positioning to the failed assertion.
+     *
+     * @return first event with the outcome of the test case, the first event,
+     *         if there is no such event, or <code>null</code>, if the test case
+     *         has no events
+     */
+    private UnitTestCaseEvent getFirstUnitTestCaseEventOfOutcome() {
+
+        if (testCaseEvents.isEmpty()) {
+            return null;
+        }
+
+        for (UnitTestCaseEvent tUnitTestCaseEvent : testCaseEvents) {
+            if (tUnitTestCaseEvent.getOutcome() == getOutcome()) {
+                return tUnitTestCaseEvent;
+            }
+        }
+
+        return testCaseEvents.get(0);
     }
 
     public IRPGUnitSpooledFile getSpooledFile() {

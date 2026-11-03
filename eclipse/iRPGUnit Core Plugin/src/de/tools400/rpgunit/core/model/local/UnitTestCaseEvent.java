@@ -172,12 +172,13 @@ public class UnitTestCaseEvent extends AbstractUnitTestObject implements IUnitTe
 
         if (getOutcome() == Outcome.ERROR) {
             UnitTestMessageReceiver messageReceiver = getMessageReceiver();
-            String statementNumberString = messageReceiver.getStatementNumberText();
-            statementNumber = IntHelper.tryParseInt(statementNumberString, -1);
-        } else if (getOutcome() == Outcome.FAILURE) {
-            if (!callStackEntries.isEmpty()) {
-                statementNumber = callStackEntries.get(0).getStatementNumber();
+            if (messageReceiver != null) {
+                String statementNumberString = messageReceiver.getStatementNumberText();
+                statementNumber = IntHelper.tryParseInt(statementNumberString, -1);
             }
+        } else if (!callStackEntries.isEmpty()) {
+            // Failures and successes (ONFAILURE(*CONTINUE))
+            statementNumber = callStackEntries.get(0).getStatementNumber();
         }
 
         return statementNumber;
