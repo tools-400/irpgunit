@@ -62,6 +62,10 @@ ctl-opt NoMain Option(*SrcStmt);
 //----------------------------------------------------------------------
 
 /include qinclude,ASSERT
+/include qinclude,CALLSTACK
+/include qinclude,MEMMGR
+/include qinclude,XMLWRITER
+/include qllist,llist_h
 /include qinclude,IFSIO_H
 /include qinclude,OBJECT
 /include qinclude,PGMMSG
@@ -577,6 +581,89 @@ dcl-proc testVSCode1Continue export;
 end-proc;
 
 //----------------------------------------------------------------------
+// Tests the diagnostic messages of: *VSCODE1
+// Only the 'expected' value is missing.
+// No assertion produces this case as of today. Hence the XML file is
+// written from a constructed test result.
+//----------------------------------------------------------------------
+dcl-proc testVSCode1DiagMsgNoExpectedValue export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-ds testSuite likeds(saxTestSuite_t) inz(*likeds);
+  dcl-ds testCase likeds(saxTestCase_t) inz(*likeds);
+  dcl-ds testCaseEvent likeds(saxAbstractTestCaseEvent_t) inz(*likeds);
+
+  testSuite = writeVSCodeFailure(*on: *off);
+
+  testCase = getTestcase(testSuite.testcases: 1);
+  testCaseEvent = getTestCaseEvent(testCase.events: 1);
+  assertEqual('': testCaseEvent.failure.expected.attr_type);
+  assertEqual('string': testCaseEvent.failure.actual.attr_type);
+  assertEqual('Dagobert Duck': testCaseEvent.failure.actual.attr_value);
+
+  assertEqual(1: testCaseEvent.failure.diagMsgs.size);
+  assertEqual('No ''expected'' value. Procedure myAssert() does not provide this information.'
+              : testCaseEvent.failure.diagMsgs.message(1));
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Tests the diagnostic messages of: *VSCODE1
+// Only the 'actual' value is missing.
+// No assertion produces this case as of today. Hence the XML file is
+// written from a constructed test result.
+//----------------------------------------------------------------------
+dcl-proc testVSCode1DiagMsgNoActualValue export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-ds testSuite likeds(saxTestSuite_t) inz(*likeds);
+  dcl-ds testCase likeds(saxTestCase_t) inz(*likeds);
+  dcl-ds testCaseEvent likeds(saxAbstractTestCaseEvent_t) inz(*likeds);
+
+  testSuite = writeVSCodeFailure(*off: *on);
+
+  testCase = getTestcase(testSuite.testcases: 1);
+  testCaseEvent = getTestCaseEvent(testCase.events: 1);
+  assertEqual('string': testCaseEvent.failure.expected.attr_type);
+  assertEqual('Donald Duck': testCaseEvent.failure.expected.attr_value);
+  assertEqual('': testCaseEvent.failure.actual.attr_type);
+
+  assertEqual(1: testCaseEvent.failure.diagMsgs.size);
+  assertEqual('No ''actual'' value. Procedure myAssert() does not provide this information.'
+              : testCaseEvent.failure.diagMsgs.message(1));
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Tests the diagnostic messages of: *VSCODE1
+// Both values are missing, e.g. assert() and fail().
+//----------------------------------------------------------------------
+dcl-proc testVSCode1DiagMsgNoValues export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-ds testSuite likeds(saxTestSuite_t) inz(*likeds);
+  dcl-ds testCase likeds(saxTestCase_t) inz(*likeds);
+  dcl-ds testCaseEvent likeds(saxAbstractTestCaseEvent_t) inz(*likeds);
+
+  testSuite = writeVSCodeFailure(*on: *on);
+
+  testCase = getTestcase(testSuite.testcases: 1);
+  testCaseEvent = getTestCaseEvent(testCase.events: 1);
+  assertEqual('': testCaseEvent.failure.expected.attr_type);
+  assertEqual('': testCaseEvent.failure.actual.attr_type);
+
+  assertEqual(2: testCaseEvent.failure.diagMsgs.size);
+  assertEqual('No ''expected'' value. Procedure myAssert() does not provide this information.'
+              : testCaseEvent.failure.diagMsgs.message(1));
+  assertEqual('No ''actual'' value. Procedure myAssert() does not provide this information.'
+              : testCaseEvent.failure.diagMsgs.message(2));
+
+end-proc;
+
+//----------------------------------------------------------------------
 // Validates the test results of *JENKINS1 and *JENKINS2 (*ABORT)
 //----------------------------------------------------------------------
 dcl-proc validateJenkinsAbort;
@@ -838,6 +925,108 @@ dcl-proc getCallstackEntry;
   end-pi;
 
   return callstack.stackEntry(index);
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Writes a *VSCODE1 XML file with 1 failed test case and returns the
+// parsed XML file. The test case has 1 failure event, whose
+// 'expected' or 'actual' value or both values can be missing.
+//----------------------------------------------------------------------
+dcl-proc writeVSCodeFailure;
+  dcl-pi *n likeds(saxTestSuite_t) extproc(*dclcase);
+    isNoExpectedValue ind const;
+    isNoActualValue   ind const;
+  end-pi;
+
+  dcl-c DIAG_TEST_CASE_NAME 'testDiagnosticMessages';
+  dcl-c DIAG_EVENTS_TEXT 'XMLSTMFT.hTestEvents';
+  dcl-c DIAG_RESULTS_TEXT 'XMLSTMFT.testResults';
+  dcl-c DIAG_CALLSTACK_TEXT 'XMLSTMFT.pCallstk';
+
+  dcl-ds testSuite likeds(testSuite_t) inz;
+  dcl-ds testSuiteResult likeds(testSuiteResult_t) inz;
+  dcl-ds testCaseResult likeds(testCaseResult_t) inz;
+  dcl-ds testEvent likeds(abstractTestEvent_t) inz(*likeds);
+  dcl-ds callstkEnt likeds(callStkEnt_t) inz(*likeds);
+  dcl-s pCallstk pointer;
+
+  testSuite.qName.nm = 'TESTSUITE';
+  testSuite.qName.lib = 'QTEMP';
+  testSuite.testCasesCnt = 1;
+  testSuite.testResults = MemMgr_createList(DIAG_RESULTS_TEXT);
+
+  testCaseResult.outcome = TEST_CASE_FAILURE;
+  testCaseResult.testName = DIAG_TEST_CASE_NAME;
+  testCaseResult.assertCnt = 1;
+  testCaseResult.lastFailureEvent = 1;
+  testCaseResult.hTestEvents = MemMgr_createList(DIAG_EVENTS_TEXT);
+
+  pCallstk = Callstack_alloc(1: DIAG_CALLSTACK_TEXT);
+  callstkEnt.qStmt.qPgm = testSuite.qName;
+  callstkEnt.qStmt.qMod = testSuite.qName;
+  callstkEnt.qStmt.procNm = DIAG_TEST_CASE_NAME;
+  callstkEnt.qStmt.specNb = '100';
+  Callstack_addEntry(pCallstk: callstkEnt);
+
+  testEvent.failure.outcome = TEST_CASE_FAILURE;
+  testEvent.failure.index = 1;
+  testEvent.failure.assertProc = 'myAssert';
+  testEvent.failure.msg = 'Assertion failed.';
+  testEvent.failure.isConfirmed = *on;
+  testEvent.failure.pCallstk = pCallstk;
+  testEvent.failure.logExpected = crtLogValue(isNoExpectedValue: 'Donald Duck');
+  testEvent.failure.logActual = crtLogValue(isNoActualValue: 'Dagobert Duck');
+  list_add(testCaseResult.hTestEvents: %addr(testEvent): %size(testEvent));
+
+  list_add(testSuite.testResults: %addr(testCaseResult): %size(testCaseResult));
+
+  testSuiteResult.runsCnt = 1;
+  testSuiteResult.assertCnt = 1;
+  testSuiteResult.failureCnt = 1;
+
+  writeXmlFile(g_status.tmpName: testSuite: testSuite.qName: testSuiteResult
+               : XML_TYPE_VSCODE_1: ON_FAILURE_ABORT: *on);
+
+  return parseXml(g_status.tmpName);
+
+on-exit;
+  if (testCaseResult.hTestEvents <> *null);
+    MemMgr_disposeList(testCaseResult.hTestEvents: DIAG_EVENTS_TEXT);
+  endif;
+
+  if (testSuite.testResults <> *null);
+    MemMgr_disposeList(testSuite.testResults: DIAG_RESULTS_TEXT);
+  endif;
+
+  if (pCallstk <> *null);
+    Callstack_dealloc(pCallstk: DIAG_CALLSTACK_TEXT);
+  endif;
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Returns an 'expected' or 'actual' log value of type 'string'
+// or an undefined log value.
+//----------------------------------------------------------------------
+dcl-proc crtLogValue;
+  dcl-pi *n likeds(logValue_t) extproc(*dclcase);
+    isNoValue ind const;
+    value     varchar(256) const;
+  end-pi;
+
+  dcl-ds logValue likeds(logValue_t) inz(*likeds);
+
+  if (isNoValue);
+    logValue.type = DT_UNDEFINED;
+  else;
+    logValue.value = value;
+    logValue.type = DT_STRING;
+    logValue.length = %len(value);
+    logValue.originalLength = %len(value);
+  endif;
+
+  return logValue;
 
 end-proc;
 

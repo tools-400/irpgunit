@@ -377,7 +377,7 @@ dcl-proc VSCode_writeDiagnosticMessages;
       writeXmlElement('item': message1);
     endif;
 
-    if (message1 <> '');
+    if (message2 <> '');
       writeXmlElement('item': message2);
     endif;
 

@@ -68,7 +68,7 @@ dcl-s saxObjName_t varchar(10) template;
 dcl-s saxQObjName_t varchar(32) template;
 dcl-s saxOutcome_t varchar(16) template;
 dcl-s saxBuffer_t varchar(2048) template;
-dcl-s saxDiagnosticMessage_t varchar(64) template;
+dcl-s saxDiagnosticMessage_t varchar(128) template;
 
 dcl-ds handler_t qualified template;
   elemName        like(saxElemName_t) inz;

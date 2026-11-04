@@ -637,10 +637,13 @@ dcl-proc diagnosticMessagesHandler;
 
   pDiagMsgs = pElement;
 
+  // Check 'elemName', because 'g_sax.elemName' is the name of the
+  // last started element. At the end of the <diagnosticMessages>
+  // element it is still 'item', which would add an item.
   select;
   when (event = *XML_END_ELEMENT); // 13
     select;
-    when (g_sax.elemName = 'item');
+    when (elemName = 'item');
       diagMsgs.size += 1;
       diagMsgs.message(diagMsgs.size) = getElementValue();
     endsl;
