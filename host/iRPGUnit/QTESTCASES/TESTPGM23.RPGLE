@@ -2,9 +2,9 @@
 // ==========================================================================
 //  iRPGUnit Fixture - Test XML Output Files.
 //  ONFAILURE(*ABORT):
-//  FAILURE. 3 test cases, 6 assertions, 2 failures, 0 error.
+//  FAILURE. 4 test cases, 6 assertions, 2 failures, 0 error.
 //  ONFAILURE(*CONTINUE):
-//  ERROR. 3 test cases, 7 assertions, 2 failures, 1 error.
+//  ERROR. 4 test cases, 7 assertions, 2 failures, 1 error.
 // ==========================================================================
 //  Copyright (c) 2013-2019 iRPGUnit Project Team
 //  All rights reserved. This program and the accompanying materials
@@ -94,6 +94,26 @@ dcl-proc testSuccess export;
   monitor;
     // *JENKINS / *CONTINUE, test case #8
     assert(*off: 'Expected a failed assertion.');
+  on-error;
+  endmon;
+
+end-proc;
+
+//----------------------------------------------------------------------
+//   Test 'Success' without assertions
+//   Produces a 'Success' without test case events, regardless of
+//   ONFAILURE(*ABORT) or ONFAILURE(*CONTINUE). Hence the test case
+//   must be added to the XML file without an event.
+//----------------------------------------------------------------------
+dcl-proc testWithoutAssertion export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-s count int(10);
+
+  // *JENKINS / *CONTINUE, test case #9
+  monitor;
+    count += 1;
   on-error;
   endmon;
 

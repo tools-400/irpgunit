@@ -254,6 +254,61 @@ on-exit;
 end-proc;
 
 
+dcl-proc test_runTests_SuccessfulTestWithDetailAllAndNoAssertion export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-ds testSuite likeds(TestSuite_t) inz;
+  dcl-ds testCase dim(1) likeds(Proc_t) based(testSuite.testList);
+  dcl-ds result likeds(testSuiteResult_t) inz;
+
+  // -----------------------------
+  // save current assertion status
+  // -----------------------------
+  saveAssertStatus();
+
+  // Setup.
+
+  testSuite = crtTestSuite(g_qTestSuite);
+
+  // ensure the test suite has at least 1 test procedure
+  if (not (testSuite.testCasesCnt >= 1));
+    snd-msg *escape 'Test suite must have at least 1 test case.';
+  endif;
+
+  // set number of test cases to 1 and override the test case
+  testSuite.testCasesCnt = 1;
+  testCase(1).procNm = 'successful_test_without_assertion';
+  testCase(1).procPtr = %paddr(successful_test_without_assertion);
+  g_procNms.numE = 1;
+  g_procNms.name(1) = ALL_PROCS;
+
+  // Execution.
+
+  runTests(result: testSuite: g_procNms: ORDER_API: DETAIL_ALL: RCLRSC_NO);
+
+  writeTestReport(testSuite: g_qTestSuite: result: DETAIL_ALL);
+
+  // --------------------------------
+  // restore current assertion status
+  // --------------------------------
+  restoreAssertStatus();
+
+  // Controls.
+
+  // A successful test case without assertions has no test event,
+  // but must be logged anyway.
+  iEqual(1: g_logIdx);
+  aEqual(TEST_CASE_SUCCESS: g_logLine(1).type);
+  aEqual('successful_test_without_assertion': g_logLine(1).procNm);
+  iEqual(0: g_logLine(1).assertionCnt);
+
+on-exit;
+  rclTestSuite(testSuite);
+
+end-proc;
+
+
 dcl-proc test_runTests_TwoSuccessfulTestsWithDetailAll export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
@@ -695,6 +750,15 @@ dcl-proc successful_test_with_two_assertions export;
 
   iEqual(4: 2+2);
   iEqual(4: 2+2);
+
+end-proc;
+
+// Dummy test procedure.
+dcl-proc successful_test_without_assertion export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  g_procWithNoErrorWasCalled = *on;
 
 end-proc;
 

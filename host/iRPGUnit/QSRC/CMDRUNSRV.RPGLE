@@ -285,7 +285,7 @@ dcl-proc writeTestReport export;
     dow (pAbstractTestEvent <> *null);
 
       // ----------------------------------------------------------
-      // Check also XMLWRITER.writeTestCasesJenkinsStyle(), when
+      // Check also JENKINS.Jenkins_writeTestCases(), when
       // changing the logic for selecting the test case events.
       if (testCaseResult.outcome = TEST_CASE_SUCCESS and isSuccessEvent);
         leave;
@@ -333,6 +333,16 @@ dcl-proc writeTestReport export;
 
       pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
     enddo;
+
+    // ----------------------------------------------------------
+    // Check also JENKINS.Jenkins_writeTestCases(), when
+    // changing the logic for test cases without a success event.
+    // A successful test case has no success event, if it did not
+    // call an assertion or if all its assertions were monitored.
+    if (testCaseResult.outcome = TEST_CASE_SUCCESS and not isSuccessEvent);
+      logSuccess(testCaseResult.testName: '': testCaseResult.assertCnt);
+    endif;
+    // ----------------------------------------------------------
 
     pTestCaseResult = list_getNext(testSuite.testResults);
   enddo;
@@ -1365,10 +1375,13 @@ dcl-proc getReportExecTimeSecs export;
   dcl-c DIGITS %len(execTimeSecs);
   dcl-c DECPOS %decpos(execTimeSecs);
 
-  if (g_status.isJUnitStyle);
+  numTestCaseEvents = list_size(testCaseResult.hTestEvents);
+
+  // A test case without test events is reported as one test case,
+  // e.g. a successful test case that did not call an assertion.
+  if (g_status.isJUnitStyle or numTestCaseEvents = 0);
     execTimeSecs = %dech(testCaseResult.execTimeMSecs / 1000: DIGITS: DECPOS);
   else;
-    numTestCaseEvents = list_size(testCaseResult.hTestEvents);
     execTimeSecs = %dech(testCaseResult.execTimeMSecs / numTestCaseEvents / 1000: DIGITS: DECPOS);
   endif;
 

@@ -49,9 +49,7 @@ dcl-proc Jenkins_writeTestCases export;
   end-pi;
 
   dcl-ds testCaseResult likeds(testCaseResult_t) based(pTestResult);
-  dcl-s text like(xmlBufferLarge_t);
   dcl-s execTimeSecs like(execTimeSecs_t);
-  dcl-s execTimeUnit like(execTimeUnit_t);
 
   dcl-ds abstractTestEvent likeds(abstractTestEvent_t) based(pAbstractTestEvent);
 
@@ -65,7 +63,6 @@ dcl-proc Jenkins_writeTestCases export;
   dow (pTestResult <> *null);
 
     execTimeSecs = getReportExecTimeSecs(testCaseResult);
-    execTimeUnit = TIME_UNIT_SECOND;
 
     isSuccessEvent = *off;
 
@@ -94,20 +91,11 @@ dcl-proc Jenkins_writeTestCases export;
       endif;
       // ----------------------------------------------------------
 
-      text = indent() + '<testcase name="'
-                 + buildReportTestCaseName(testCaseResult: abstractTestEvent) + '"';
-      text += ' assertions="' + %char(getReportNumAsserts(testCaseResult)) + '"';
-      text += ' classname="' + %trimr(testSuiteName.nm) + '"'; // TODO: should look which module
-      text += ' time="' + %char(execTimeSecs) + '"';           // exports this testcase
-      text += ' timeUnit="' + execTimeUnit + '"';
-      text += '>' + newLine();
-      appendToXmlFile(text);
-
-      writeTestCaseEventXml(abstractTestEvent);
-
-      // close <testcase> element
-      text = indent() + '</testcase>' + newLine();
-      appendToXmlFile(text);
+      Jenkins_writeTestCase(buildReportTestCaseName(testCaseResult: abstractTestEvent)
+                            : getReportNumAsserts(testCaseResult)
+                            : testSuiteName
+                            : execTimeSecs
+                            : abstractTestEvent);
 
       if (abstractTestEvent.outcome = TEST_CASE_SUCCESS);
         isSuccessEvent = *on;
@@ -116,11 +104,60 @@ dcl-proc Jenkins_writeTestCases export;
       pAbstractTestEvent = list_getNext(testCaseResult.hTestEvents);
     enddo;
 
+    // ----------------------------------------------------------
+    // Check also CMDRUNSRV.writeTestReport(), when
+    // changing the logic for test cases without a success event.
+    // A successful test case has no success event, if it did not
+    // call an assertion or if all its assertions were monitored.
+    // Write it anyway, because otherwise it would be missing in
+    // the XML file.
+    if (testCaseResult.outcome = TEST_CASE_SUCCESS and not isSuccessEvent);
+      Jenkins_writeTestCase(%trimr(testCaseResult.testName)
+                            : testCaseResult.assertCnt
+                            : testSuiteName
+                            : execTimeSecs
+                            : *omit);
+    endif;
+    // ----------------------------------------------------------
+
     pTestResult = list_getNext(testSuite.testResults);
   enddo;
 
 on-exit;
   g_xmlWriter.indLvl -= 1;
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Writes a <testcase> element. The element has no child element,
+// if no test case event is passed.
+//----------------------------------------------------------------------
+dcl-proc Jenkins_writeTestCase;
+  dcl-pi *n extproc(*dclcase);
+    testCaseName      like(string_t) const;
+    numAsserts        int(10) const;
+    testSuiteName     likeds(Object_t) const;
+    execTimeSecs      like(execTimeSecs_t) const;
+    abstractTestEvent likeds(abstractTestEvent_t) const options(*omit);
+  end-pi;
+
+  dcl-s text like(xmlBufferLarge_t);
+
+  text = indent() + '<testcase name="' + testCaseName + '"';
+  text += ' assertions="' + %char(numAsserts) + '"';
+  text += ' classname="' + %trimr(testSuiteName.nm) + '"'; // TODO: should look which module
+  text += ' time="' + %char(execTimeSecs) + '"';           // exports this testcase
+  text += ' timeUnit="' + TIME_UNIT_SECOND + '"';
+  text += '>' + newLine();
+  appendToXmlFile(text);
+
+  if (%addr(abstractTestEvent) <> *null);
+    writeTestCaseEventXml(abstractTestEvent);
+  endif;
+
+  // close <testcase> element
+  text = indent() + '</testcase>' + newLine();
+  appendToXmlFile(text);
 
 end-proc;
 

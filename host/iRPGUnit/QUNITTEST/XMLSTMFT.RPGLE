@@ -42,6 +42,12 @@
 // Produces 1 test case per test event.
 // Test case name: [testCase].[assertion]_n
 //
+// *ABORT and *CONTINUE
+// --------------------
+// A successful test case without success event, e.g. a test
+// case without assertions, produces 1 test case without event.
+// Test case name: [testCase]
+//
 // Attributes not used for Jenkins XML:
 //   testcase.attr_outcome
 //   testCaseEvent.attr_outcome
@@ -377,7 +383,8 @@ dcl-proc testVSCode1Abort export;
   assertEqual('2': testSuite.attr_failures);
   assert(testSuite.attr_hostname <> '');
   assertEqual('QTEMP/TESTPGM23': testSuite.attr_name);
-  assertEqual('3': testSuite.attr_tests);
+  assertEqual('4': testSuite.attr_tests);
+  assertEqual(4: testSuite.testcases.size);
 
   // Validate: Test Case #1: testFailure
 
@@ -442,6 +449,10 @@ dcl-proc testVSCode1Abort export;
 
   assertEqual(3: testcase.events.size);
 
+  // Validate: Test Case #4: testWithoutAssertion
+
+  validateVSCodeWithoutAssertion(getTestcase(testSuite.testcases: 4));
+
 end-proc;
 
 //----------------------------------------------------------------------
@@ -478,7 +489,8 @@ dcl-proc testVSCode1Continue export;
   assertEqual('2': testSuite.attr_failures);
   assert(testSuite.attr_hostname <> '');
   assertEqual('QTEMP/TESTPGM23': testSuite.attr_name);
-  assertEqual('3': testSuite.attr_tests);
+  assertEqual('4': testSuite.attr_tests);
+  assertEqual(4: testSuite.testcases.size);
 
   // Validate: Test Case #1: testFailure
 
@@ -558,6 +570,10 @@ dcl-proc testVSCode1Continue export;
 
   assertEqual(3: testcase.events.size);
 
+  // Validate: Test Case #4: testWithoutAssertion
+
+  validateVSCodeWithoutAssertion(getTestcase(testSuite.testcases: 4));
+
 end-proc;
 
 //----------------------------------------------------------------------
@@ -577,7 +593,8 @@ dcl-proc validateJenkinsAbort;
   assertEqual('2': testSuite.attr_failures);
   assert(testSuite.attr_hostname <> '');
   assertEqual('QTEMP/TESTPGM23': testSuite.attr_name);
-  assertEqual('3': testSuite.attr_tests);
+  assertEqual('4': testSuite.attr_tests);
+  assertEqual(4: testSuite.testcases.size);
 
   // Validate: Test Case #1: testFailure
 
@@ -632,6 +649,10 @@ dcl-proc validateJenkinsAbort;
 
   assertEqual(0: testcase.events.size);
 
+  // Validate: Test Case #4: testWithoutAssertion
+
+  validateJenkinsWithoutAssertion(getTestcase(testSuite.testcases: 4));
+
 end-proc;
 
 //----------------------------------------------------------------------
@@ -651,7 +672,9 @@ dcl-proc validateJenkinsContinue;
   assertEqual('2': testSuite.attr_failures);
   assert(testSuite.attr_hostname <> '');
   assertEqual('QTEMP/TESTPGM23': testSuite.attr_name);
-  assertEqual('3': testSuite.attr_tests);
+  assertEqual('4': testSuite.attr_tests);
+  // 1 test case per test event plus 1 test case without event.
+  assertEqual(9: testSuite.testcases.size);
 
   // Validate: Test Case #1: testFailure
 
@@ -735,6 +758,50 @@ dcl-proc validateJenkinsContinue;
   assert(testcase.attr_time <> '');
   assertEqual('s': testcase.attr_timeUnit);
   assertEqual('': testcase.attr_outcome);
+
+  assertEqual(0: testcase.events.size);
+
+  // Validate: Test Case #4: testWithoutAssertion
+
+  validateJenkinsWithoutAssertion(getTestcase(testSuite.testcases: 9));
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Validates test case 'testWithoutAssertion' of *JENKINS1 and
+// *JENKINS2 (*ABORT and *CONTINUE)
+//----------------------------------------------------------------------
+dcl-proc validateJenkinsWithoutAssertion;
+  dcl-pi *n extproc(*dclcase);
+    testCase likeds(saxTestCase_t) const;
+  end-pi;
+
+  assertEqual('testWithoutAssertion': testcase.attr_name);
+  assertEqual('0': testcase.attr_assertions);
+  assertEqual('TESTPGM23': testcase.attr_classname);
+  assert(testcase.attr_time <> '');
+  assertEqual('s': testcase.attr_timeUnit);
+  assertEqual('': testcase.attr_outcome);
+
+  assertEqual(0: testcase.events.size);
+
+end-proc;
+
+//----------------------------------------------------------------------
+// Validates test case 'testWithoutAssertion' of *VSCODE1
+// (*ABORT and *CONTINUE)
+//----------------------------------------------------------------------
+dcl-proc validateVSCodeWithoutAssertion;
+  dcl-pi *n extproc(*dclcase);
+    testCase likeds(saxTestCase_t) const;
+  end-pi;
+
+  assertEqual('testWithoutAssertion': testcase.attr_name);
+  assertEqual('0': testcase.attr_assertions);
+  assertEqual('TESTPGM23': testcase.attr_classname);
+  assert(testcase.attr_time <> '');
+  assertEqual('ms': testcase.attr_timeUnit);
+  assertEqual('Success': testcase.attr_outcome);
 
   assertEqual(0: testcase.events.size);
 
