@@ -45,3 +45,7 @@ PTFs SI70942 and SI70936 are required for compiling test suites from UTF-8 (Ccsi
 The iRPGUnit plug-in uses a fork of the [RPGUnit](https://sourceforge.net/projects/rpgunit/) library, which was started by Lacton back in September 2006.
 
 Some bugs have been fixed and Mihael Schmidt at [RPG Next Gen](http://www.rpgnextgen.com/http://www.rpgnextgen.com/) added an interface to the IBM Rational Developer for i and started developing the iRPGUnit plug-in. I took over the project and widely enhanced the plug-in. Now the project is supported by Mihael and me.
+
+## Liability
+
+This software is free and provided without warranty. You use it at your own risk: test it with non-critical data first, and back up your data before you use it. The [license](LICENSE) applies in addition.
