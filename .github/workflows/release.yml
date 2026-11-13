@@ -1,0 +1,175 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/files/rdi8.0/**'
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+.r'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Nur anzeigen, was getaggt und veroeffentlicht wuerde'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Determine the release
+        id: release
+        shell: bash
+        env:
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          # Push eines Tags: der Tag bestimmt das Release.
+          if [ "${REF_TYPE}" = "tag" ]; then
+            echo "Tag ${REF_NAME} wurde gepusht."
+            echo "tag=${REF_NAME}" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+
+          # Push auf main oder manueller Start: das Update-Site-ZIP bestimmt
+          # die Version.
+          shopt -s nullglob
+          ZIPS=( docs/files/rdi8.0/*"Update Site).zip" )
+          if [ ${#ZIPS[@]} -ne 1 ]; then
+            echo "Update-Site-ZIP nicht eindeutig (${#ZIPS[@]} Treffer):" >&2
+            printf '  %s\n' "${ZIPS[@]}" >&2
+            exit 1
+          fi
+          ZIP="${ZIPS[0]}"
+
+          RE='\(v([0-9]+\.[0-9]+\.[0-9]+\.r) Update Site\)\.zip$'
+          if [[ ! "${ZIP}" =~ ${RE} ]]; then
+            echo "Keine Release-Version: ${ZIP}"
+            exit 0
+          fi
+          TAG="v${BASH_REMATCH[1]}"
+
+          if [ -n "$(git ls-remote --tags origin "refs/tags/${TAG}")" ]; then
+            echo "Tag ${TAG} existiert bereits."
+            exit 0
+          fi
+
+          # Der Commit, der das ZIP zuletzt geaendert hat, ist der
+          # Release-Commit.
+          COMMIT=$(git log -1 --format=%H -- "${ZIP}")
+          echo "Tag ${TAG} -> $(git log -1 --format='%h %s' "${COMMIT}")"
+
+          {
+            echo "tag=${TAG}"
+            echo "commit=${COMMIT}"
+          } >> "${GITHUB_OUTPUT}"
+
+      - name: Create the tag
+        if: steps.release.outputs.commit != '' && !inputs.dry_run
+        shell: bash
+        env:
+          TAG: ${{ steps.release.outputs.tag }}
+          COMMIT: ${{ steps.release.outputs.commit }}
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git tag -a "${TAG}" -m "Tag ${TAG}." "${COMMIT}"
+          git push origin "refs/tags/${TAG}"
+
+      - name: Check out the release
+        if: steps.release.outputs.tag != ''
+        shell: bash
+        env:
+          REF: ${{ steps.release.outputs.commit || steps.release.outputs.tag }}
+        run: git checkout --quiet --detach "${REF}"
+
+      - name: Resolve version and assets
+        id: assets
+        if: steps.release.outputs.tag != ''
+        shell: bash
+        env:
+          TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          set -euo pipefail
+          VERSION="${TAG#v}"
+          echo "Version: ${VERSION}"
+
+          # Der Name der PDF enthaelt die RDi-Version.
+          mapfile -t PDFS < <(compgen -G "docs/files/iRPGUnit for RDi*.pdf" || true)
+          if [ ${#PDFS[@]} -ne 1 ]; then
+            echo "PDF nicht eindeutig (${#PDFS[@]} Treffer)." >&2
+            exit 1
+          fi
+          PDF="${PDFS[0]}"
+
+          shopt -s nullglob
+          ZIPS=( "docs/files/rdi8.0/iRPGUnit for RDi"*"(v${VERSION} Update Site).zip" )
+          if [ ${#ZIPS[@]} -ne 1 ]; then
+            echo "Update-Site-ZIP fuer v${VERSION} nicht eindeutig (${#ZIPS[@]} Treffer):" >&2
+            printf '  %s\n' "${ZIPS[@]}" >&2
+            exit 1
+          fi
+          ZIP="${ZIPS[0]}"
+          echo "PDF: ${PDF}"
+          echo "ZIP: ${ZIP}"
+
+          # Die Save-Datei der Bibliothek kommt nur dazu, wenn sich die
+          # Bibliothek seit dem vorigen Release geaendert hat: Die VS Code
+          # Extension IBM i Testing bietet jedes Release mit RPGUNIT.SAVF als
+          # Update der Bibliothek an.
+          SAVF="docs/update-site/eclipse/rdi8.0/Server/RPGUNIT.SAVF"
+          if [ ! -f "${SAVF}" ]; then
+            echo "Save-Datei nicht gefunden: ${SAVF}" >&2
+            exit 1
+          fi
+          PREV=$( { git tag --list 'v*.*.*.r' | grep -vxF "${TAG}" || true; echo "${TAG}"; }                   | sort -V | grep -B1 -xF "${TAG}" | head -1 )
+          [ "${PREV}" = "${TAG}" ] && PREV=""
+          BODY=""
+          if [ -n "${PREV}" ] && git diff --quiet "${PREV}" HEAD -- "${SAVF}"; then
+            echo "Bibliothek seit ${PREV} unveraendert: ohne Save-Datei."
+            BODY="The library is unchanged since ${PREV}. Take its save file from that release."
+            SAVF=""
+          else
+            echo "Bibliothek seit ${PREV:-dem Beginn} geaendert: mit Save-Datei ${SAVF}."
+          fi
+
+          {
+            echo "version=${VERSION}"
+            echo "pdf_path=${PDF}"
+            echo "zip_path=${ZIP}"
+            echo "savf_path=${SAVF}"
+            echo "body=${BODY}"
+          } >> "${GITHUB_OUTPUT}"
+
+      - name: Create GitHub Release
+        if: steps.release.outputs.tag != '' && !inputs.dry_run
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ steps.release.outputs.tag }}
+          # IBM i Testing liest die Version aus dem Namen: genau v<VERSION>.
+          name: v${{ steps.assets.outputs.version }}
+          body: ${{ steps.assets.outputs.body }}
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: true
+          files: |
+            ${{ steps.assets.outputs.pdf_path }}
+            ${{ steps.assets.outputs.zip_path }}
+            ${{ steps.assets.outputs.savf_path }}
