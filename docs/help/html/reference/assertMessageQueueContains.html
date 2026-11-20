@@ -4,25 +4,31 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
-	<title>assertMessageQueueContains (assert job log contains message)</title>
+	<title>assertMessageQueueContains (assert message queue contains message)</title>
 </head>
 
 <body>
-<h1>assertMessageQueueContains (assert job log contains message)</h1>
+<h1>assertMessageQueueContains (assert message queue contains message)</h1>
 <b>Syntax:</b>
 <p class="indent">
-<code>assertMessageQueueContains( userOrQueue : library : [msgId : [msgText : [msgHelp : timeLimit );</code>
+<code>assertMessageQueueContains( userOrQueue : library : msgId : msgText : msgHelp : sinceTime );</code>
 </p>
 <b>Description:</b>
 <p class="indent">
-Checks whether a given message queue contains the specified message between NOW and <i>timeLimit</i>. The
-message is identified by any combination of ID, message text or message help. Unused selection parameters
-must be omitted.
+Checks whether a given message queue contains a message, that has been sent since <i>sinceTime</i>. The
+message is identified by any combination of ID, message text or message help and must match all specified
+selection parameters. Unused selection parameters must be omitted (<i>*omit</i>).
 </p>
 <p class="indent">
-Message ID can be set to <i>*EMPTY</i> to test whether a message queue is empty. All other parameters must be omitted.<br>
-Message text and message help can be specified as *generic* strings values.<br/>
-The value of <i>timeLimit</i> should be created with <a href="./getFullTimestamp.html">getFullTimeStamp()</a>.
+<i>userOrQueue</i> and <i>library</i> specify the message queue. If <i>library</i> is omitted, <i>userOrQueue</i>
+is the name of a user profile, whose message queue is searched.<br>
+Message ID can be set to <i>*EMPTY</i> to test that no message has been sent to the message queue since
+<i>sinceTime</i>. All other selection parameters must be omitted.<br>
+Message text and message help can be specified as generic strings with <i>*</i> at the beginning and/or at the
+end, e.g. <i>Order*</i>, <i>*processed</i> or <i>*Order*</i>. The comparison is not case-sensitive. At most the
+first 4096 characters of the message help are compared.<br/>
+Messages sent before <i>sinceTime</i> are ignored. The value of <i>sinceTime</i> should be created with
+<a href="./getFullTimestamp.html">getFullTimeStamp()</a>.
 </p>
 <b>Return value:</b>
 <p class="indent">
@@ -40,7 +46,7 @@ assertMessageQueueContains( 'QMSGQT' : 'QTEMP' : *omit : 'MSGQT - iRPGUnit' : *o
 <p>
 <code><pre class="indent">
 testStartTime = getFullTimeStamp();
-<span class="r-cmt">// run the test, that is expected to add no messages to the message queue</span>
+<span class="r-cmt">// run the test, that is expected to add no message to the message queue</span>
 assertMessageQueueContains( 'QMSGQT' : 'QTEMP' : '*EMPTY' : *omit : *omit : testStartTime );
 </pre></code>
 </p>

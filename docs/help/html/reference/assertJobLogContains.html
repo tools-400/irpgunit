@@ -11,12 +11,13 @@
 <h1>assertJobLogContains (assert job log contains message)</h1>
 <b>Syntax:</b>
 <p class="indent">
-<code>assertJobLogContains( msgId : timeLimit );</code>
+<code>assertJobLogContains( msgId : sinceTime );</code>
 </p>
 <b>Description:</b>
 <p class="indent">
-Checks whether the job log contains the specified message ID between NOW and <i>timeLimit</i>.<br>
-The value of <i>timeLimit</i> should be created with <a href="./getFullTimestamp.html">getFullTimeStamp()</a>.
+Checks whether the job log contains a message with the specified message ID, that has been sent since
+<i>sinceTime</i>. Messages sent before <i>sinceTime</i> are ignored.<br>
+The value of <i>sinceTime</i> should be created with <a href="./getFullTimestamp.html">getFullTimeStamp()</a>.
 </p>
 <b>Return value:</b>
 <p class="indent">
